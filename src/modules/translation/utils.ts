@@ -22,7 +22,9 @@ export function addAvailableLocaleData(): void {
   addLocaleData(Array.prototype.concat(enIntlData, esIntlData))
 }
 
-export function getPreferredLocale(): string {
+export function getPreferredLocale(
+  availableLocales: string[] = ['en']
+): string {
   const navigator = window.navigator
 
   let locale =
@@ -30,17 +32,11 @@ export function getPreferredLocale(): string {
 
   locale = locale.slice(0, 2)
 
-  if (!getAvailableLocales().includes(locale)) {
+  if (!availableLocales.includes(locale)) {
     locale = DEFAULT_LOCALE
   }
 
   return locale
-}
-
-export function getAvailableLocales(): string[] {
-  // This is a hardcoded list that replicates the `Translation/locales` folder on the server
-  // It saves us a request
-  return ['en', 'es']
 }
 
 export function setI18n(intl: InjectedIntl) {
