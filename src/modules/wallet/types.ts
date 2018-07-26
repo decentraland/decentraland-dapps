@@ -9,10 +9,6 @@ export const CONNECT_WALLET_REQUEST = '[Request] Connect Wallet'
 export const CONNECT_WALLET_SUCCESS = '[Success] Connect Wallet'
 export const CONNECT_WALLET_FAILURE = '[Failure] Connect Wallet'
 
-export const COMPUTE_BALANCES_REQUEST = '[Request] Compute Wallet Balances'
-export const COMPUTE_BALANCES_SUCCESS = '[Success] Compute Wallet Balances'
-export const COMPUTE_BALANCES_FAILURE = '[Failure] Compute Wallet Balances'
-
 // Interface and type definitions
 
 export type ConnectWalletSuccess = ReturnType<
