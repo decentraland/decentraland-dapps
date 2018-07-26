@@ -1,6 +1,12 @@
-import { call, select, takeEvery, put, ForkEffect } from 'redux-saga/effects'
+import {
+  call,
+  select,
+  takeEvery,
+  put,
+  ForkEffect,
+  all
+} from 'redux-saga/effects'
 import { eth, Contract } from 'decentraland-eth'
-import { Network } from 'decentraland-eth/dist/ethereum/eth'
 import { CONNECT_WALLET_REQUEST, BaseWallet } from './types'
 import { connectWalletSuccess, connectWalletFailure } from './actions'
 import { connectEthereumWallet } from './utils'
@@ -36,10 +42,16 @@ export function createWalletSaga({
       let address: string = yield call(() => eth.getAddress())
       address = address.toLowerCase()
 
-      const network: Network = yield call(eth.getNetwork)
+      const manaTokenContract = eth.getContract('MANAToken')
+
+      const [network, mana] = yield all([
+        eth.getNetwork(),
+        manaTokenContract.balanceOf(address)
+      ])
 
       const wallet: BaseWallet = {
         address,
+        mana,
         network: network.name,
         type: eth.wallet.type,
         derivationPath: eth.wallet.derivationPath

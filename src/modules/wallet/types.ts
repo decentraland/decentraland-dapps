@@ -34,6 +34,7 @@ export interface BaseWallet {
   type: string
   network: string
   address: string
+  mana: number
   locale?: string
   derivationPath?: string
 }
