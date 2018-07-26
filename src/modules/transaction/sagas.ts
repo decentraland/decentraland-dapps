@@ -1,5 +1,5 @@
 import { txUtils } from 'decentraland-eth'
-import { call, put, select, takeEvery } from 'redux-saga/effects'
+import { call, put, select, takeEvery, ForkEffect } from 'redux-saga/effects'
 import {
   FETCH_TRANSACTION_REQUEST,
   WATCH_PENDING_TRANSACTIONS,
@@ -10,7 +10,7 @@ import {
 import { fetchTransactionFailure, fetchTransactionSuccess } from './actions'
 import { getData, getLoading } from './selectors'
 
-export function* transactionSaga() {
+export function* transactionSaga(): IterableIterator<ForkEffect> {
   yield takeEvery(FETCH_TRANSACTION_REQUEST, handleTransactionRequest)
   yield takeEvery(WATCH_PENDING_TRANSACTIONS, handleWatchPendingTransactions)
 }

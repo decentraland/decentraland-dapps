@@ -19,7 +19,7 @@ const INITIAL_STATE: TransactionState = {
 export function transactionReducer(
   state = INITIAL_STATE,
   action: TransactionActions
-) {
+): TransactionState {
   switch (action.type) {
     case FETCH_TRANSACTION_REQUEST: {
       const actionRef = action.payload.action
