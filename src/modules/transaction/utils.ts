@@ -1,8 +1,5 @@
 import { AnyAction } from 'redux'
-import {
-  Transaction,
-  TransactionPayload,
-} from './types'
+import { Transaction, TransactionPayload } from './types'
 
 // Special flag used to determine transaction hashes to be monitored
 export const TRANSACTION_ACTION_FLAG = '_watch_tx'
@@ -33,4 +30,31 @@ export function buildTransactionPayload(
       events
     }
   }
+}
+
+export type EtherscanHrefOptions = {
+  txHash?: string
+  address?: string
+  blockNumber?: number
+}
+
+export function getEtherscanHref(
+  { txHash, address, blockNumber }: EtherscanHrefOptions,
+  network: string
+) {
+  const pathname = address
+    ? `/address/${address}`
+    : blockNumber
+      ? `/block/${blockNumber}`
+      : `/tx/${txHash}`
+
+  return `${getEtherscanOrigin(network)}${pathname}`
+}
+
+export function getEtherscanOrigin(network: string) {
+  let origin = 'https://etherscan.io'
+  if (network && network !== 'mainnet') {
+    origin = `https://${network}.etherscan.io`
+  }
+  return origin
 }
