@@ -11,13 +11,19 @@ import {
 import { STORAGE_LOAD } from './types'
 import { hasLocalStorage } from '../../lib/localStorage'
 import { disabledMiddleware } from '../../lib/disabledMiddleware'
+import {
+  FETCH_TRANSACTION_REQUEST,
+  FETCH_TRANSACTION_SUCCESS,
+  FETCH_TRANSACTION_FAILURE
+} from '../transaction/types'
 
 const disabledLoad = (store: Store<any>) =>
   setTimeout(() => store.dispatch({ type: STORAGE_LOAD, payload: {} }))
 
 export function createStorageMiddleware(
   storageKey: string,
-  paths: string[] | string[][] = []
+  paths: string[] | string[][] = [],
+  actions: string[] = []
 ) {
   if (!hasLocalStorage()) {
     return {
@@ -40,7 +46,11 @@ export function createStorageMiddleware(
       CHANGE_LOCALE,
       FETCH_TRANSLATIONS_REQUEST,
       FETCH_TRANSLATIONS_SUCCESS,
-      FETCH_TRANSLATIONS_FAILURE
+      FETCH_TRANSLATIONS_FAILURE,
+      FETCH_TRANSACTION_REQUEST,
+      FETCH_TRANSACTION_SUCCESS,
+      FETCH_TRANSACTION_FAILURE,
+      ...actions
     ]
   )
   const load = (store: Store<any>) => storage.createLoader(storageEngine)(store)
