@@ -16,6 +16,7 @@ import {
   FETCH_TRANSACTION_SUCCESS,
   FETCH_TRANSACTION_FAILURE
 } from '../transaction/types'
+import { RootMiddleware } from '../../types'
 
 const disabledLoad = (store: Store<any>) =>
   setTimeout(() => store.dispatch({ type: STORAGE_LOAD, payload: {} }))
@@ -27,7 +28,7 @@ export function createStorageMiddleware(
 ) {
   if (!hasLocalStorage()) {
     return {
-      storageMiddleware: disabledMiddleware,
+      storageMiddleware: disabledMiddleware as RootMiddleware,
       loadStorageMiddleware: disabledLoad
     }
   }
