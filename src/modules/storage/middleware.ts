@@ -15,7 +15,10 @@ import { disabledMiddleware } from '../../lib/disabledMiddleware'
 const disabledLoad = (store: Store<any>) =>
   setTimeout(() => store.dispatch({ type: STORAGE_LOAD, payload: {} }))
 
-export function createStorageMiddleware(storageKey: string) {
+export function createStorageMiddleware(
+  storageKey: string,
+  paths: string[] | string[][] = []
+) {
   if (!hasLocalStorage()) {
     return {
       storageMiddleware: disabledMiddleware,
@@ -24,8 +27,11 @@ export function createStorageMiddleware(storageKey: string) {
   }
 
   const storageEngine = filter(createStorageEngine(storageKey), [
+    'transaction',
     'translation',
-    ['wallet', 'data', 'locale']
+    ['wallet', 'data', 'locale'],
+    ['wallet', 'data', 'derivationPath'],
+    ...paths
   ])
   const storageMiddleware: Middleware = storage.createMiddleware(
     storageEngine,
