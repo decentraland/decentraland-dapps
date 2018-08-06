@@ -54,7 +54,7 @@
     "typescript": "^2.9.2"
   },
   "peerDependencies": {
-    "decentraland-eth": "^2.1.0",
+    "decentraland-eth": ">=2.1.0",
     "decentraland-ui": "^1.8.0",
     "react": "^16.4.1",
     "react-redux": "^5.0.7",
@@ -69,15 +69,9 @@
   },
   "nyc": {
     "all": true,
-    "include": [
-      "src/**/*.ts"
-    ],
-    "extension": [
-      ".ts"
-    ],
-    "reporter": [
-      "text-summary"
-    ],
+    "include": ["src/**/*.ts"],
+    "extension": [".ts"],
+    "reporter": ["text-summary"],
     "sourceMap": true,
     "instrument": true
   }
