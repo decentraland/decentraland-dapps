@@ -29,7 +29,7 @@ export async function connectEthereumWallet(
       )
       throw error
     }
-    await new Promise(resolve => setTimeout(() => resolve, 50))
+    await new Promise(resolve => setTimeout(() => resolve(), 50))
     return connectEthereumWallet(options, retries + 1)
   }
 }
