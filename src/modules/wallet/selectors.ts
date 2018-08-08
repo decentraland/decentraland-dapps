@@ -1,5 +1,7 @@
 import { AnyAction } from 'redux'
-import { CONNECT_WALLET_REQUEST, WalletState, BaseWallet } from './types'
+import { BaseWallet } from './types'
+import { WalletState } from './reducer'
+import { CONNECT_WALLET_REQUEST } from './actions'
 import { isLoadingType } from '../loading/selectors'
 
 export const getState = (state: any): WalletState => state.wallet

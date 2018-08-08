@@ -1,6 +1,8 @@
 import { connect } from 'react-redux'
-import { connectWalletRequest } from '../../modules/wallet/actions'
-import { WalletActions } from '../../modules/wallet/types'
+import {
+  connectWalletRequest,
+  ConnectWalletRequestAction
+} from '../../modules/wallet/actions'
 import { WalletProviderProps } from './types'
 import WalletProvider from './WalletProvider'
 import { RootDispatch } from '../../types'
@@ -8,7 +10,7 @@ import { RootDispatch } from '../../types'
 const mapState = (_: any, ownProps: WalletProviderProps): WalletProviderProps =>
   ownProps
 
-const mapDispatch = (dispatch: RootDispatch<WalletActions>) => ({
+const mapDispatch = (dispatch: RootDispatch<ConnectWalletRequestAction>) => ({
   onConnect: () => dispatch(connectWalletRequest())
 })
 

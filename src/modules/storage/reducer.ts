@@ -1,6 +1,10 @@
 import { AnyAction, Reducer } from 'redux'
 import * as storage from 'redux-storage'
-import { STORAGE_LOAD, StorageState } from './types'
+import { STORAGE_LOAD } from './actions'
+
+export type StorageState = {
+  loading: boolean
+}
 
 export const INITIAL_STATE: StorageState = {
   loading: true
@@ -9,7 +13,7 @@ export const INITIAL_STATE: StorageState = {
 export function storageReducerWrapper(
   reducer: any,
   merger?: storage.StateMerger
-): Reducer<{}> {
+): Reducer<{} | undefined> {
   return storage.reducer(reducer, merger)
 }
 

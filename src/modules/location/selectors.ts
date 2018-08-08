@@ -1,9 +1,11 @@
-export const hasRouter = (state: any) => !!state.router
+import { RouterState } from 'react-router-redux'
 
-export const getLocation = (state: any) =>
-  hasRouter(state) && state.router.location
+export const hasRouter = (state: any): boolean => !!state.router
 
-export const getPathname = (state: any) => {
+export const getLocation = (state: any): RouterState['location'] | null =>
+  hasRouter(state) ? (state.router as RouterState).location : null
+
+export const getPathname = (state: any): string | null => {
   if (!hasRouter(state)) {
     return null
   }
@@ -14,7 +16,7 @@ export const getPathname = (state: any) => {
   return location.pathname
 }
 
-export const getPathAction = (state: any) => {
+export const getPathAction = (state: any): string | null => {
   if (!hasRouter(state)) {
     return null
   }
@@ -22,5 +24,5 @@ export const getPathAction = (state: any) => {
   if (!pathname) {
     return null
   }
-  return pathname.split('/').pop()
+  return pathname.split('/').pop() as string | null
 }

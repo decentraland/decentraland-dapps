@@ -1,11 +1,12 @@
 import { takeEvery, put, call, ForkEffect } from 'redux-saga/effects'
 import * as flatten from 'flat'
+import { Translation } from './types'
 import {
+  fetchTranslationsSuccess,
+  fetchTranslationsFailure,
   FETCH_TRANSLATIONS_REQUEST,
-  FetchTranslationRequest,
-  Translation
-} from './types'
-import { fetchTranslationsSuccess, fetchTranslationsFailure } from './actions'
+  FetchTranslationsRequestAction
+} from './actions'
 import { setCurrentLocale } from './utils'
 
 export type TranslationSagaOptions = {
@@ -17,7 +18,9 @@ export function createTranslationSaga({
   getTranslation,
   translations
 }: TranslationSagaOptions): () => IterableIterator<ForkEffect> {
-  function* handleFetchTranslationsRequest(action: FetchTranslationRequest) {
+  function* handleFetchTranslationsRequest(
+    action: FetchTranslationsRequestAction
+  ) {
     try {
       const { locale } = action.payload
       let result

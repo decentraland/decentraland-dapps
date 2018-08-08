@@ -1,4 +1,4 @@
-import { StorageState } from './types'
+import { StorageState } from './reducer'
 
 export const getState: (state: any) => StorageState = state => state.storage
 

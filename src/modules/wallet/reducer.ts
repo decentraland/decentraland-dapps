@@ -1,16 +1,25 @@
+import { BaseWallet } from './types'
+import { loadingReducer, LoadingState } from '../loading/reducer'
 import {
+  ConnectWalletRequestAction,
+  ConnectWalletSuccessAction,
+  ConnectWalletFailureAction,
   CONNECT_WALLET_REQUEST,
   CONNECT_WALLET_SUCCESS,
-  CONNECT_WALLET_FAILURE,
-  WalletState,
-  WalletActions
-} from './types'
+  CONNECT_WALLET_FAILURE
+} from './actions'
 import {
   CHANGE_LOCALE,
   FETCH_TRANSLATIONS_SUCCESS,
-  TranslationActions
-} from '../translation/types'
-import { loadingReducer } from '../loading/reducer'
+  ChangeLocaleAction,
+  FetchTranslationsSuccessAction
+} from '../translation/actions'
+
+export type WalletState = {
+  data: Partial<BaseWallet>
+  loading: LoadingState
+  error: string | null
+}
 
 export const INITIAL_STATE: WalletState = {
   data: {},
@@ -18,10 +27,17 @@ export const INITIAL_STATE: WalletState = {
   error: null
 }
 
+export type WalletReducerAction =
+  | ConnectWalletRequestAction
+  | ConnectWalletSuccessAction
+  | ConnectWalletFailureAction
+  | ChangeLocaleAction
+  | FetchTranslationsSuccessAction
+
 export function walletReducer(
-  state = INITIAL_STATE,
-  action: WalletActions | TranslationActions
-) {
+  state: WalletState = INITIAL_STATE,
+  action: WalletReducerAction
+): WalletState {
   switch (action.type) {
     case CONNECT_WALLET_REQUEST:
       return {

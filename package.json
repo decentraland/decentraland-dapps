@@ -10,7 +10,6 @@
     "@types/react-intl": "^2.3.8",
     "@types/react-redux": "^6.0.4",
     "@types/react-router-redux": "^5.0.14",
-    "@types/redux-logger": "^3.0.6",
     "@types/redux-storage": "^4.0.11",
     "@types/redux-storage-engine-localstorage": "^1.1.0",
     "@types/segment-analytics": "0.0.28",

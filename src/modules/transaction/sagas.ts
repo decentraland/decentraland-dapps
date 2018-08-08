@@ -1,13 +1,13 @@
 import { txUtils } from 'decentraland-eth'
 import { call, put, select, takeEvery, ForkEffect } from 'redux-saga/effects'
+import { Transaction, TransactionStatus } from './types'
 import {
+  fetchTransactionFailure,
+  fetchTransactionSuccess,
   FETCH_TRANSACTION_REQUEST,
   WATCH_PENDING_TRANSACTIONS,
-  FetchTransactionRequest,
-  Transaction,
-  TransactionStatus
-} from './types'
-import { fetchTransactionFailure, fetchTransactionSuccess } from './actions'
+  FetchTransactionRequestAction
+} from './actions'
 import { getData, getLoading } from './selectors'
 
 export function* transactionSaga(): IterableIterator<ForkEffect> {
@@ -19,7 +19,7 @@ const watchIndex: { [hash: string]: boolean } = {
   // hash: true
 }
 
-function* handleTransactionRequest(action: FetchTransactionRequest) {
+function* handleTransactionRequest(action: FetchTransactionRequestAction) {
   const hash = action.payload.hash
   const transactions: Transaction[] = yield select(getData)
   const transaction = transactions.find(tx => tx.hash === hash)
@@ -59,7 +59,7 @@ function* handleWatchPendingTransactions() {
 
   for (const tx of allTransactions) {
     if (!watchIndex[tx.hash]) {
-      const action: FetchTransactionRequest = {
+      const action: FetchTransactionRequestAction = {
         type: FETCH_TRANSACTION_REQUEST,
         payload: { hash: tx.hash, address: tx.from, action: { type: null } }
       }

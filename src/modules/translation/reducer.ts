@@ -1,12 +1,21 @@
+import { loadingReducer, LoadingState } from '../loading/reducer'
 import {
+  ChangeLocaleAction,
   CHANGE_LOCALE,
   FETCH_TRANSLATIONS_REQUEST,
   FETCH_TRANSLATIONS_SUCCESS,
   FETCH_TRANSLATIONS_FAILURE,
-  TranslationState,
-  TranslationActions
-} from './types'
-import { loadingReducer } from '../loading/reducer'
+  FetchTranslationsRequestAction,
+  FetchTranslationsSuccessAction,
+  FetchTranslationsFailureAction
+} from './actions'
+import { Translation } from './types'
+
+export type TranslationState = {
+  data: Translation
+  loading: LoadingState
+  error: string | null
+}
 
 export const INITIAL_STATE: TranslationState = {
   data: {},
@@ -14,9 +23,15 @@ export const INITIAL_STATE: TranslationState = {
   error: null
 }
 
+export type TranslationReducerAction =
+  | ChangeLocaleAction
+  | FetchTranslationsRequestAction
+  | FetchTranslationsSuccessAction
+  | FetchTranslationsFailureAction
+
 export function translationReducer(
   state = INITIAL_STATE,
-  action: TranslationActions
+  action: TranslationReducerAction
 ): TranslationState {
   switch (action.type) {
     case CHANGE_LOCALE:

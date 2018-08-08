@@ -1,13 +1,14 @@
-import { LoadingActions } from './types'
 import { removeLast, getType, getStatus } from './utils'
 import { AnyAction } from 'redux'
 
-export const INITIAL_STATE: AnyAction[] = []
+export type LoadingState = AnyAction[]
+
+export const INITIAL_STATE: LoadingState = []
 
 export function loadingReducer(
-  state: AnyAction[] = INITIAL_STATE,
-  action: LoadingActions
-): AnyAction[] {
+  state: LoadingState = INITIAL_STATE,
+  action: AnyAction
+): LoadingState {
   const type = getType(action) // ie. "Fetch Address Parcels"
   const status = getStatus(action) // REQUEST, SUCCESS, FAILURE
 

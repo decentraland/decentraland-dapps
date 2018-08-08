@@ -1,4 +1,4 @@
-import { TranslationState } from './types'
+import { TranslationState } from './reducer'
 
 export const getState: (state: any) => TranslationState = state =>
   state.translation

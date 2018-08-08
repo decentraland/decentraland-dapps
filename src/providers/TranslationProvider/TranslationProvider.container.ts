@@ -2,9 +2,11 @@ import { connect } from 'react-redux'
 import { getLocale } from '../../modules/wallet/selectors'
 import { isLoading } from '../../modules/storage/selectors'
 import { getData } from '../../modules/translation/selectors'
-import { fetchTranslationsRequest } from '../../modules/translation/actions'
+import {
+  fetchTranslationsRequest,
+  FetchTranslationsRequestAction
+} from '../../modules/translation/actions'
 import { getPreferredLocale } from '../../modules/translation/utils'
-import { TranslationActions } from '../../modules/translation/types'
 import { TranslationProviderProps } from './types'
 import { RootDispatch } from '../../types'
 import TranslationProvider from './TranslationProvider'
@@ -27,7 +29,9 @@ const mapState = (
   }
 }
 
-const mapDispatch = (dispatch: RootDispatch<TranslationActions>) => ({
+const mapDispatch = (
+  dispatch: RootDispatch<FetchTranslationsRequestAction>
+) => ({
   onFetchTranslations: (locale: string) =>
     dispatch(fetchTranslationsRequest(locale))
 })

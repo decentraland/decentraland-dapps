@@ -1,21 +1,4 @@
 import { contracts } from 'decentraland-eth'
-import { ActionType } from 'typesafe-actions'
-import { LoadingState } from '../loading/types'
-import * as actions from './actions'
-
-// Action Types
-
-export const CONNECT_WALLET_REQUEST = '[Request] Connect Wallet'
-export const CONNECT_WALLET_SUCCESS = '[Success] Connect Wallet'
-export const CONNECT_WALLET_FAILURE = '[Failure] Connect Wallet'
-
-// Interface and type definitions
-
-export type ConnectWalletSuccess = ReturnType<
-  typeof actions.connectWalletSuccess
->
-
-export type WalletActions = ActionType<typeof actions>
 
 export type BigNumber = {
   toString(): string
@@ -33,10 +16,4 @@ export interface BaseWallet {
   mana: number
   locale?: string
   derivationPath?: string
-}
-
-export type WalletState = {
-  data: Partial<BaseWallet>
-  loading: LoadingState
-  error: string | null
 }

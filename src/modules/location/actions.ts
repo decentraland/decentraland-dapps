@@ -1,4 +1,7 @@
 import { action } from 'typesafe-actions'
-import { NAVIGATE_TO } from './types'
+
+export const NAVIGATE_TO = 'Navigate to URL'
 
 export const navigateTo = (url: string) => action(NAVIGATE_TO, { url })
+
+export type NavigateToAction = ReturnType<typeof navigateTo>

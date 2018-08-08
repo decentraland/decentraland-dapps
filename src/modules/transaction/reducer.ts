@@ -1,14 +1,20 @@
+import { TransactionStatus, Transaction } from './types'
+import { getTransactionFromAction } from './utils'
+import { loadingReducer, LoadingState } from '../loading/reducer'
 import {
-  TransactionActions,
-  FETCH_TRANSACTION_FAILURE,
+  FetchTransactionRequestAction,
+  FetchTransactionSuccessAction,
+  FetchTransactionFailureAction,
   FETCH_TRANSACTION_REQUEST,
   FETCH_TRANSACTION_SUCCESS,
-  TransactionState,
-  TransactionStatus,
-  Transaction
-} from './types'
-import { getTransactionFromAction } from './utils'
-import { loadingReducer } from '../loading/reducer'
+  FETCH_TRANSACTION_FAILURE
+} from './actions'
+
+export type TransactionState = {
+  data: Transaction[]
+  loading: LoadingState
+  error: string | null
+}
 
 const INITIAL_STATE: TransactionState = {
   data: [],
@@ -16,9 +22,14 @@ const INITIAL_STATE: TransactionState = {
   error: null
 }
 
+export type TransactionReducerAction =
+  | FetchTransactionRequestAction
+  | FetchTransactionSuccessAction
+  | FetchTransactionFailureAction
+
 export function transactionReducer(
   state = INITIAL_STATE,
-  action: TransactionActions
+  action: TransactionReducerAction
 ): TransactionState {
   switch (action.type) {
     case FETCH_TRANSACTION_REQUEST: {

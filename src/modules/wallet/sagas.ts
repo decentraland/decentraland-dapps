@@ -7,8 +7,12 @@ import {
   all
 } from 'redux-saga/effects'
 import { eth, Contract } from 'decentraland-eth'
-import { CONNECT_WALLET_REQUEST, BaseWallet } from './types'
-import { connectWalletSuccess, connectWalletFailure } from './actions'
+import { BaseWallet } from './types'
+import {
+  connectWalletSuccess,
+  connectWalletFailure,
+  CONNECT_WALLET_REQUEST
+} from './actions'
 import { connectEthereumWallet } from './utils'
 import { getData } from './selectors'
 

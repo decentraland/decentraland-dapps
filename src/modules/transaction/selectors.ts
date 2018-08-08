@@ -1,4 +1,5 @@
-import { Transaction, TransactionState, TransactionStatus } from './types'
+import { Transaction, TransactionStatus } from './types'
+import { TransactionState } from './reducer'
 
 export const getState: (state: any) => TransactionState = state =>
   state.transaction
