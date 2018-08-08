@@ -1,5 +1,4 @@
 import { eth, wallets, Contract } from 'decentraland-eth'
-import { utils } from 'decentraland-commons'
 import { isMobile } from '../../lib/utils'
 
 interface ConnectOptions {
@@ -30,7 +29,7 @@ export async function connectEthereumWallet(
       )
       throw error
     }
-    await utils.sleep(50)
+    await new Promise(resolve => setTimeout(() => resolve, 50))
     return connectEthereumWallet(options, retries + 1)
   }
 }

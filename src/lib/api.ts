@@ -1,8 +1,6 @@
 import axios, { AxiosResponse, AxiosError, AxiosRequestConfig } from 'axios'
-import { Log } from 'decentraland-commons'
 
 const httpClient = axios.create()
-const log = new Log('API')
 
 export interface APIParam {
   [key: string]: any
@@ -29,8 +27,6 @@ export class BaseAPI {
         options.data = params
       }
     }
-
-    log.info(options.url)
 
     return httpClient
       .request(options)

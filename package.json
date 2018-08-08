@@ -16,7 +16,6 @@
     "@types/uuid": "^3.4.3",
     "axios": "^0.17.0",
     "date-fns": "^1.29.0",
-    "decentraland-commons": "^5.1.0",
     "flat": "^4.1.0",
     "react-intl": "^2.4.0",
     "redux-storage": "^4.1.2",
