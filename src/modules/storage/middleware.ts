@@ -1,10 +1,8 @@
-import { Store, Middleware, AnyAction, Dispatch } from 'redux'
 import * as storage from 'redux-storage'
 import createStorageEngine from 'redux-storage-engine-localstorage'
 import filter from 'redux-storage-decorator-filter'
 import { hasLocalStorage } from '../../lib/localStorage'
 import { disabledMiddleware } from '../../lib/disabledMiddleware'
-import { RootMiddleware } from '../../types'
 import { STORAGE_LOAD } from './actions'
 import {
   CHANGE_LOCALE,
@@ -18,7 +16,7 @@ import {
   FETCH_TRANSACTION_FAILURE
 } from '../transaction/actions'
 
-const disabledLoad = (store: Store<any>) =>
+const disabledLoad = (store: any) =>
   setTimeout(() => store.dispatch({ type: STORAGE_LOAD, payload: {} }))
 
 export function createStorageMiddleware(
@@ -28,8 +26,8 @@ export function createStorageMiddleware(
 ) {
   if (!hasLocalStorage()) {
     return {
-      storageMiddleware: disabledMiddleware as RootMiddleware,
-      loadStorageMiddleware: disabledLoad
+      storageMiddleware: disabledMiddleware as any,
+      loadStorageMiddleware: disabledLoad as any
     }
   }
 
@@ -40,11 +38,7 @@ export function createStorageMiddleware(
     ['wallet', 'data', 'derivationPath'],
     ...paths
   ])
-  const storageMiddleware: Middleware<
-    any,
-    any,
-    Dispatch<AnyAction>
-  > = storage.createMiddleware(
+  const storageMiddleware: any = storage.createMiddleware(
     storageEngine,
     [],
     [
@@ -58,7 +52,7 @@ export function createStorageMiddleware(
       ...actions
     ]
   )
-  const load = (store: Store<any>) => storage.createLoader(storageEngine)(store)
+  const load = (store: any) => storage.createLoader(storageEngine)(store)
 
   return { storageMiddleware, loadStorageMiddleware: load }
 }
