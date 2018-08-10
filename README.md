@@ -809,7 +809,7 @@ add(
 
 The loading module is used to keep track of async actions in the state.
 
-## Usage
+### Usage
 
 You can use the selectors `isLoading(state)` and `isLoadingType(state, ACTION_TYPE)` from `decentraland-dapps/dist/modules/loading/selectors` to know if a domain has pending actions or if a specific action is still pending
 
@@ -897,7 +897,7 @@ getPathname(state)
 getPathAction(state) // returns the final part of a url (after the last slash)
 ```
 
-## Installation
+#### Installation
 
 You need to add a saga to use this module
 
