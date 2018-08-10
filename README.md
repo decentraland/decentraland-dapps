@@ -95,7 +95,7 @@ ReactDOM.render(
 
 **Reducer**:
 
-Import the `walletReducer` and add it at the root level of your dapp's reducer as `wallet`, like this:
+Import the `walletReducer` and add it at the root level of your dApp's reducer as `wallet`, like this:
 
 ```ts
 import { combineReducers } from 'redux'
@@ -139,7 +139,7 @@ You can extend the wallet module if you need to.
 <details><summary>Learn More</summary>
 <p>
 
-Say you want to add the amount of `land` as a property of the wallet, you can create a `wallet` module in your dapp and add the following files:
+Say you want to add the amount of `land` as a property of the wallet, you can create a `wallet` module in your dApp and add the following files:
 
 **Types**:
 
@@ -285,7 +285,7 @@ This module is required to use other modules like `Transaction` and `Translation
 
 ### Installation
 
-You need to add a middleware and a two reducers to you dapp.
+You need to add a middleware and a two reducers to your dApp.
 
 **Middleware**:
 
@@ -336,7 +336,7 @@ export const rootReducer = storageReducerWrapper(
 
 ### Advanced Usage
 
-This module is necessary to use other modules like `Transaction` or `Translation`, but you can also use it to make other parts of your dapp's state persistent
+This module is necessary to use other modules like `Transaction` or `Translation`, but you can also use it to make other parts of your dApp's state persistent
 
 <details><summary>Learn More</summary>
 <p>
@@ -557,3 +557,164 @@ export function invitesReducer(
 
 </p>
 </details>
+
+## Translation
+
+This module allows you to do do i18n.
+
+### Dependencies
+
+This module requires you to install the `Storage` module
+
+### Usage
+
+Using the helper `t()` you can add translations to your dApp
+
+```tsx
+import * as React from 'react'
+import { t } from 'decentraland-dapps/modules/translation/utils'
+
+export default class BuyButton extends React.PureComponent {
+  render() {
+    return <button>{t('but_page.buy_button')}</button>
+  }
+}
+```
+
+Then you just have to provide locale files like this:
+
+_en.json_
+
+```json
+{
+  "buy_page": {
+    "buy_button": "Buy"
+  }
+}
+```
+
+_es.json_
+
+```json
+{
+  "buy_page": {
+    "buy_button": "Comprar"
+  }
+}
+```
+
+Yon can use dispatch the `changeLocale(locale: string)` action from `decentraland-dapps/dist/modules/translation/actions` to change the language
+
+### Installation
+
+You will need to add a provider, a reducer and a saga to use this module
+
+**Provider**:
+
+Add the `<TranslationProvider>` as a child of your `redux` provider, passing the `locales` that you want to support. If you use `react-router-redux` make sure the `<ConnectedRouter>` is a child of the `<TranslationProvider>` and not the other way around, like this:
+
+```tsx
+import * as React from 'react'
+import * as ReactDOM from 'react-dom'
+import { Provider } from 'react-redux'
+import { ConnectedRouter } from 'react-router-redux'
+import TranslationProvider from 'decentraland-dapps/dist/providers/TranslationProvider'
+import { store, history } from './store'
+
+ReactDOM.render(
+  <Provider store={store}>
+    <TranslationProvider locales={['en', 'es', 'ko', 'zh']}>
+      <ConnectedRouter history={history}>{/* Your App */}</ConnectedRouter>
+    </TranslationProvider>
+  </Provider>,
+  document.getElementById('root')
+)
+```
+
+**Reducer**:
+
+Add the `translationReducer` as `translation` to your `rootReducer`:
+
+```ts
+import { combineReducers } from 'redux'
+import { translationReducer as translation } from 'decentraland-dapps/dist/modules/translation/reducer'
+
+export const rootReducer = combineReducers({
+  translation
+  // your other reducers
+})
+```
+
+**Saga**:
+
+Create a `translationSaga` and add it to your `rootSaga`. You need to provide an object containing all the translations, or a function that takes the `locale` and returns a `Promise` of the translations for that locale (you can use that to fetch the translations from a server instead of bundling them in the app). Here are examples for the two options:
+
+1. Bundling the translations in the dApp:
+
+_en.json_
+
+```json
+{
+  "buy_page": {
+    "buy_button": "Buy"
+  }
+}
+```
+
+_es.json_
+
+```json
+{
+  "buy_page": {
+    "buy_button": "Comprar"
+  }
+}
+```
+
+_translations.ts_
+
+```ts
+const en = require('./en.json')
+const es = require('./es.json')
+export { en, es }
+```
+
+_sagas.ts_
+
+```ts
+import { all } from 'redux-saga/effects'
+import { createTranslationSaga } from 'decentraland-dapps/dist/modules/translation/sagas'
+import * as translations from './translations'
+
+export const translationSaga = createTranslationSaga({
+  translations
+})
+
+export function* rootSaga() {
+  yield all([
+    translationSaga()
+    // your other sagas
+  ])
+}
+```
+
+2. Fetching translations from server
+
+_sagas.ts_
+
+```ts
+import { all } from 'redux-saga/effects'
+import { createTranslationSaga } from 'decentraland-dapps/dist/modules/translation/sagas'
+import { api } from 'lib/api'
+
+export const translationSaga = createTranslationSaga({
+  getTranslation: locale => api.fetchTranslations(locale)
+})
+
+export function* rootSaga() {
+  yield all([
+    translationSaga()
+    // your other sagas
+  ])
+}
+```
