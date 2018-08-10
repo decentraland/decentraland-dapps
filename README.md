@@ -109,11 +109,11 @@ import { all } from 'redux-saga/effects'
 import { eth, contracts } from 'decentraland-eth'
 import { createWalletSaga } from '@dapps/modules/wallet/sagas'
 
-const manaToken = new contracts.MANAToken('0xdeadbeeffaceb00c') // contract address here
+const MANAToken = new contracts.MANAToken('0xdeadbeeffaceb00c') // contract address here
 
 const walletSaga = createWalletSaga({
   provider: 'https://mainnet.infura.io', // this param is required to have Ledger support
-  contracts: [manaToken], // add all the contracts you will use here, but manaToken is required!
+  contracts: [MANAToken], // add all the contracts you will use here, but MANAToken is required!
   eth // you have to pass the `eth` instance because it's a singleton
 })
 
