@@ -33,7 +33,7 @@ CONNECT_WALLET_SUCCESS
 CONNECT_WALLET_FAILURE
 ```
 
-Also you can que types for those actions from that same file:
+Also you can import types for those actions from that same file:
 
 ```tsx
 ConnectWalletRequestAction
