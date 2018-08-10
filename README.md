@@ -8,6 +8,8 @@ Common modules for our dApps
 
 - [Modules](https://github.com/decentraland/decentraland-dapps#modules)
   - [Wallet](https://github.com/decentraland/decentraland-dapps#wallet)
+  - [Storage](https://github.com/decentraland/decentraland-dapps#storage)
+  - [Transaction](https://github.com/decentraland/decentraland-dapps#transaction)
 
 # Modules
 
@@ -15,7 +17,7 @@ Common modules for our dApps
 
 This module takes care of connecting to MetaMask/Ledger, and insert in the state some useful information like address, network, mana and derivationPath.
 
-### Usage 
+### Usage
 
 You can use the following selectors importing them from `decentraland-dapps/dist/modules/wallet/selectors`:
 
@@ -268,6 +270,286 @@ function* handleFetchLandAmountRequest(action: FetchLandAmountRequestAction) {
     yield put(fetchLandAmountSuccess(address, land))
   } catch (error) {
     yield put(fetchLandAmountFailure(error.message))
+  }
+}
+```
+
+</p>
+</details>
+
+## Storage
+
+The storage module allows you to save parts of the redux store in localStorage to make them persistent.
+This module is required to use other modules like `Transaction` and `Translation`.
+
+### Installation
+
+You need to add a middleware and a two reducers to you dapp.
+
+**Middleware**:
+
+You will need to create a `storageMiddleware` and add apply it along with your other middlewares:
+
+```ts
+// store.ts
+import { applyMiddleware, compose, createStore } from 'redux'
+import { createStorageMiddleware } from 'decentraland-dapps/dist/modules/storage/middleware'
+
+const composeEnhancers =
+  (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
+
+const { storageMiddleware, loadStorageMiddleware } = createStorageMiddleware(
+  'storage-key', // this is the key used to save the state in localStorage (required)
+  [], // array of paths from state to be persisted (optional)
+  [] // array of actions types that will trigger a SAVE (optional)
+)
+
+const middleware = applyMiddleware(
+  // your other middlewares
+  storageMiddleware
+)
+const enhancer = composeEnhancers(middleware)
+const store = createStore(rootReducer, enhancer)
+
+loadStorageMiddleware(store)
+```
+
+**Reducer**:
+
+You will need to add `storageReducer` as `storage` to your `rootReducer` and then wrap the whole reducer with `storageReducerWrapper`
+
+```ts
+import { combineReducers } from 'redux'
+
+import {
+  storageReducer as storage,
+  storageReducerWrapper
+} from '@dapps/modules/storage/reducer'
+
+export const rootReducer = storageReducerWrapper(
+  combineReducers({
+    storage
+  })
+)
+```
+
+### Advanced Usage
+
+This module is necessary to use other modules like `Transaction` or `Translation`, but you can also use it to make other parts of your dapp's state persistent
+
+<details><summary>Learn More</summary>
+<p>
+
+The first parameter of `createStorageMiddleware` is the key used to store the state data in localStorage (required).
+
+The second parameter is an array of paths from the state that you want to be stored, ie:
+
+```ts
+const paths = [['invites'][('user', 'name')]]
+```
+
+That will make `state.invites` and `state.user.name` persistent. This parameter is optional and you don't have to configure it to use the `Transaction` and/or `Translation` modules.
+
+The third parameter is an array of action types that will trigger a SAVE of the state in localStorage, ie:
+
+```ts
+const actionTypes = [SEND_INVITE_SUCCESS]
+```
+
+This parameter is optional and is and you don't have to configure it to use the `Transaction` and/or `Translation` modules.
+
+</p>
+</details>
+
+## Transaction
+
+The transaction module allows you to watch for pending transactions and keep track of the transaction history.
+
+### Dependencies
+
+This module requires you to install the `Storage` module in order to work.
+
+### Usage
+
+When you have an action that creates a transaction and you want to watch it, you can do with `buildTransactionPayload`:
+
+```ts
+import { action } from 'typesafe-actions'
+import { buildTransactionPayload } from '@dapps/modules/transaction/utils'
+
+// Send Invite
+
+export const SEND_INVITE_REQUEST = '[Request] Send Invite'
+export const SEND_INVITE_SUCCESS = '[Success] Send Invite'
+export const SEND_INVITE_FAILURE = '[Failure] Send Invite'
+
+export const sendInvitesRequest = (address: string) =>
+  action(SEND_INVITE_REQUEST, {
+    address
+  })
+
+export const sendInvitesSuccess = (txHash: string, address: string) =>
+  action(SEND_INVITE_SUCCESS, {
+    ...buildTransactionPayload(txHash, {
+      address
+    }),
+    address
+  })
+
+export const sendInvitesFailure = (address: string, errorMessage: string) =>
+  action(SEND_INVITE_FAILURE, {
+    address,
+    errorMessage
+  })
+
+export type SendInvitesRequestAction = ReturnType<typeof sendInvitesRequest>
+export type SendInvitesSuccessAction = ReturnType<typeof sendInvitesSuccess>
+export type SendInvitesFailureAction = ReturnType<typeof sendInvitesFailure>
+```
+
+Then you can use the selectors `getPendingTransactions` and `getTransactionHistory` from `decentraland-dapps/dist/modules/transaction/selectors` to get the list of pending transactions and the transaction history.
+
+### Installation
+
+You need to add a middleware, a reducer and a saga to use this module.
+
+**Middleare**:
+
+Create the `transactionMiddleware` and apply it
+
+```ts
+// store.ts
+import { createTransactionMiddleware } from 'decenraland-dapps/dist/modules/transaction/middleware'
+const transactionMiddleware = createTransactionMiddleware()
+
+const middleware = applyMiddleware(
+  // your other middlewares
+  transactionMiddleware
+)
+```
+
+**Reducer**:
+
+Add `transactionReducer` as `transaction` to your `rootReducer`
+
+```ts
+import { combineReducers } from 'redux'
+import { transactionReducer as transaction } from 'decentraland-dapps/dist/modules/transaction/reducer'
+
+export const rootReducer = combineReducers({
+  transaction
+  // your other reducers
+})
+```
+
+**Saga**:
+
+Add `transactionSaga` to your `rootSaga`
+
+```ts
+import { all } from 'redux-saga/effects'
+import { transactionSaga } from 'decentraland-dapps/dist/modules/transaction/sagas'
+
+export function* rootSaga() {
+  yield all([
+    transactionSaga()
+    // your other sagas
+  ])
+}
+```
+
+### Advanced Usage
+
+You can make your reducers listen to confirmed transactions and update your state accordingly
+
+<details><summary>Learn More</summary>
+<p>
+
+Taking the example of the `SEND_INVITE_SUCCESS` action type shown in the `Usage` section above, let's say we want to decrement the amount of available invites after the transaction is mined, we can do so by adding the `FETCH_TRANSACTION_SUCCESS` action type in our reducer:
+
+```diff
+// modules/invite/reducer
+import { AnyAction } from 'redux'
+import { loadingReducer } from '@dapps/modules/loading/reducer'
+import {
+  FETCH_INVITES_REQUEST,
+  FETCH_INVITES_SUCCESS,
+  FETCH_INVITES_FAILURE,
+  FetchInvitesSuccessAction,
+  FetchInvitesFailureAction,
+  FetchInvitesRequestAction,
++  SEND_INVITE_SUCCESS
+} from './actions'
++ import { FETCH_TRANSACTION_SUCCESS, FetchTransactionSuccessAction } from 'decentraland-dapps/dist/modules/transaction/actions';
+
+export type InviteState = {
+  loading: AnyAction[]
+  data: {
+    [address: string]: number
+  }
+  error: null | string
+}
+
+export type InviteReducerAction =
+  | FetchInvitesRequestAction
+  | FetchInvitesSuccessAction
+  | FetchInvitesFailureAction
++  | FetchTransactionSuccessAction
+
+export const InviteInitialState: InviteState = {
+  loading: [],
+  data: {},
+  error: null
+}
+
+export function invitesReducer(
+  state: InviteState = InviteInitialState,
+  action: InviteReducerAction
+): InviteState {
+  switch (action.type) {
+    case FETCH_INVITES_REQUEST: {
+      return {
+        ...state,
+        loading: loadingReducer(state.loading, action)
+      }
+    }
+    case FETCH_INVITES_SUCCESS: {
+      return {
+        loading: loadingReducer(state.loading, action),
+        data: {
+          ...state.data,
+          [action.payload.address]: action.payload.amount
+        },
+        error: null
+      }
+    }
+    case FETCH_INVITES_FAILURE: {
+      return {
+        ...state,
+        loading: loadingReducer(state.loading, action),
+        error: action.payload.errorMessage
+      }
+    }
++    case FETCH_TRANSACTION_SUCCESS: {
++      const { transaction } = action.payload
++      switch (transaction.actionType) {
++        case SEND_INVITE_SUCCESS: {
++          const { address } = (transaction as any).payload
++          return {
++            ...state,
++            data: {
++              ...state.data,
++              [address]: state.data[address] - 1
++            }
++          }
++        }
++        default:
++          return state
++      }
++    }
+    default: {
+      return state
+    }
   }
 }
 ```
