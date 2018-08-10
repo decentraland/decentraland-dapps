@@ -12,6 +12,7 @@ Common modules for our dApps
   - [Transaction](https://github.com/decentraland/decentraland-dapps#transaction)
   - [Translation](https://github.com/decentraland/decentraland-dapps#translation)
   - [Analytics](https://github.com/decentraland/decentraland-dapps#analytics)
+  - [Loading](https://github.com/decentraland/decentraland-dapps#loading)
 
 # Modules
 
@@ -498,14 +499,14 @@ export type InviteReducerAction =
   | FetchInvitesFailureAction
 +  | FetchTransactionSuccessAction
 
-export const InviteInitialState: InviteState = {
+export const INITIAL_STATE: InviteState = {
   loading: [],
   data: {},
   error: null
 }
 
 export function invitesReducer(
-  state: InviteState = InviteInitialState,
+  state: InviteState = INITIAL_STATE,
   action: InviteReducerAction
 ): InviteState {
   switch (action.type) {
@@ -795,3 +796,85 @@ add(
   action => (action.isAuthorized ? 'Authorize LAND' : 'Unauthorize LAND')
 )
 ```
+
+## Loading
+
+The loading module is used to keep track of async actions in the state.
+
+## Usage
+
+You can use the selectors `isLoading(state)` and `isLoadingType(state, ACTION_TYPE)` from `decentraland-dapps/dist/modules/loading/selectors` to know if a domain has pending actions or if a specific action is still pending
+
+In order to use these selectors you need to use the `loadingReducer` within your domain reducers, here is an example:
+
+```ts
+import {
+  loadingReducer,
+  LoadingState
+} from 'decentraland-dapps/dist/modules/loading/reducer'
+import {
+  FETCH_INVITES_REQUEST,
+  FETCH_INVITES_SUCCESS,
+  FETCH_INVITES_FAILURE,
+  FetchInvitesSuccessAction,
+  FetchInvitesFailureAction,
+  FetchInvitesRequestAction
+} from './actions'
+
+export type InviteState = {
+  loading: LoadingState
+  data: {
+    [address: string]: number
+  }
+  error: null | string
+}
+
+export const INITIAL_STATE: InviteState = {
+  loading: [],
+  data: {},
+  error: null
+}
+
+export type InviteReducerAction =
+  | FetchInvitesRequestAction
+  | FetchInvitesSuccessAction
+  | FetchInvitesFailureAction
+
+export function invitesReducer(
+  state: InviteState = INITIAL_STATE,
+  action: InviteReducerAction
+): InviteState {
+  switch (action.type) {
+    case FETCH_INVITES_REQUEST: {
+      return {
+        ...state,
+        loading: loadingReducer(state.loading, action)
+      }
+    }
+    case FETCH_INVITES_SUCCESS: {
+      return {
+        loading: loadingReducer(state.loading, action),
+        data: {
+          ...state.data,
+          [action.payload.address]: action.payload.amount
+        },
+        error: null
+      }
+    }
+    case FETCH_INVITES_FAILURE: {
+      return {
+        ...state,
+        loading: loadingReducer(state.loading, action),
+        error: action.payload.errorMessage
+      }
+    }
+    default: {
+      return state
+    }
+  }
+}
+```
+
+Now we can for example use the selector `isLoadingType(state.invite.loading, FETCH_INVITES_REQUEST)` to know if that particular action is still pending, or `isLoading(states.invite)` to know if there's any pending action for that domain.
+
+Also, all the pending actions are stored in an array in `state.invite.loading` so we can use that information in the UI if needed (i.e. disable a button)
