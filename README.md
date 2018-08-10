@@ -948,11 +948,11 @@ Common containers for dApps
 
 The `<Navbar>` container can be used in the same way as the `<Navbar>` component from `decentaland-ui` but it's already connected to the redux store. You can override any `NavbarProp` if you want to connect differently, and you can pass all the regular `NavbarProps` to it.
 
-## Dependencies
+### Dependencies
 
 This container requires you to install the `Wallet` module
 
-## Usage
+### Usage
 
 This is an example of a `Page` component that uses the `<Navbar>` container:
 
@@ -990,7 +990,7 @@ This `<Navbar>` will show the user's blockie and mana balance because it is conn
 
 The `<EtherscanLink>` can be used to link a transaction hash to Etherscan.io, and it connects to the redux store to know on which network the user is on.
 
-#### Dependencies
+### Dependencies
 
 This container requires you to install the `Wallet` modules
 
