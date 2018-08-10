@@ -990,11 +990,11 @@ This `<Navbar>` will show the user's blockie and mana balance because it is conn
 
 The `<EtherscanLink>` can be used to link a transaction hash to Etherscan.io, and it connects to the redux store to know on which network the user is on.
 
-## Dependencies
+#### Dependencies
 
 This container requires you to install the `Wallet` modules
 
-## Usage
+### Usage
 
 ```tsx
 import * as React from 'react'
