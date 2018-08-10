@@ -127,7 +127,12 @@ export function* rootSaga() {
 
 ### Advanced Usage
 
-You can extend the wallet module if you need to. Say you want to add the amount of `land` as a property of the wallet, you can create a `wallet` module in your dapp and add the following files:
+You can extend the wallet module if you need to.
+
+<details><summary>Learn More</summary>
+<p>
+
+Say you want to add the amount of `land` as a property of the wallet, you can create a `wallet` module in your dapp and add the following files:
 
 **Types**:
 
@@ -262,3 +267,6 @@ function* handleFetchLandAmountRequest(action: FetchLandAmountRequestAction) {
   }
 }
 ```
+
+</p>
+</details>
