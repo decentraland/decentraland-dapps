@@ -1,6 +1,6 @@
 # Decentraland dApps
 
-Common parts for our dApps
+Common modules for our dApps
 
 # Table of Contents
 
