@@ -196,14 +196,16 @@ const INITIAL_STATE: WalletState = {
 
 export function walletReducer(state = INITIAL_STATE, action: AnyAction) {
   switch (action.type) {
-    case FETCH_WALLET_LAND_AMOUNT_SUCCESS:
+    case FETCH_WALLET_LAND_AMOUNT_SUCCESS: {
+      const { land } = action.payload
       return {
         ...state,
         data: {
           ...state.data,
-          land: action.land
+          land
         }
       }
+    }
     default:
       return baseWallerReducer(state, action as BaseWalletReducerAction)
   }
