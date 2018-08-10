@@ -11,6 +11,7 @@ Common modules for our dApps
   - [Storage](https://github.com/decentraland/decentraland-dapps#storage)
   - [Transaction](https://github.com/decentraland/decentraland-dapps#transaction)
   - [Translation](https://github.com/decentraland/decentraland-dapps#translation)
+  - [Analytics](https://github.com/decentraland/decentraland-dapps#analytics)
 
 # Modules
 
@@ -560,7 +561,7 @@ export function invitesReducer(
 
 ## Translation
 
-This module allows you to do do i18n.
+This module allows you to do i18n.
 
 ### Dependencies
 
@@ -717,4 +718,80 @@ export function* rootSaga() {
     // your other sagas
   ])
 }
+```
+
+## Analytics
+
+The analytics module let's integrate Segment into your dApp.
+
+You need to have the `Wallet` module installed in order to send `identify` events.
+
+You need to use `react-router-redux` in order to send `page` events.
+
+To send `track` events, add an `analytics.ts` file and require it from your entry point, and use the `add()` helper to add actions that you want to track:
+
+```ts
+// analytics.ts
+import { add } from 'decentraland-dapps/dist/modules/analytics/utils'
+import {
+  CREATE_VOTE_SUCCESS,
+  CreateVoteSuccessAction
+} from 'modules/vote/actions'
+
+add(CREATE_VOTE_SUCCESS, 'Vote', (action: CreateVoteSuccessAction) => ({
+  poll_id: action.payload.vote.poll_id,
+  option_id: action.payload.vote.option_id,
+  address: action.payload.wallet.address
+}))
+```
+
+The first parameter is the action type that you want to track (required).
+
+The second parameter is the event name for that action (it will show up with that name in Segment). If none provided the action type will be used as the event name.
+
+The third parameter is a function that takes the action and returns the data that you want to associate with that event (it will be sent to Segment). If none is provided the whole action will be sent.
+
+### Installation
+
+You need to apply a middleware and a saga to use this module
+
+**Middleware**:
+
+```ts
+// store.ts
+import { createAnalyticsMiddleware } from '@dapps/modules/analytics/middleware'
+
+const analyticsMiddleware = createAnalyticsMiddleware('SEGMENT WRITE KEY')
+
+const middleware = applyMiddleware(
+  // your other middlewares
+  analyticsMiddleware
+)
+const enhancer = composeEnhancers(middleware)
+const store = createStore(rootReducer, enhancer)
+```
+
+**Saga**:
+
+```ts
+import { all } from 'redux-saga/effects'
+import { analyticsSaga } from 'decentraland-dapps/dist/modules/analytics/sagas'
+
+export function* rootSaga() {
+  yield all([
+    analyticsSaga()
+    // your other sagas
+  ])
+}
+```
+
+### Advanced Usage
+
+You can use the same redux action type to generate different Segment events if you pass a function as the second parameter instead of a string:
+
+```ts
+add(
+  AUTHORIZE_LAND_SUCCESS,
+  action => (action.isAuthorized ? 'Authorize LAND' : 'Unauthorize LAND')
+)
 ```
