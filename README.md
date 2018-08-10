@@ -10,6 +10,7 @@ Common modules for our dApps
   - [Wallet](https://github.com/decentraland/decentraland-dapps#wallet)
   - [Storage](https://github.com/decentraland/decentraland-dapps#storage)
   - [Transaction](https://github.com/decentraland/decentraland-dapps#transaction)
+  - [Translation](https://github.com/decentraland/decentraland-dapps#translation)
 
 # Modules
 
@@ -113,7 +114,7 @@ You will need to create a `walletSaga` and add it to your `rootSaga`:
 ```ts
 import { all } from 'redux-saga/effects'
 import { eth, contracts } from 'decentraland-eth'
-import { createWalletSaga } from '@dapps/modules/wallet/sagas'
+import { createWalletSaga } from 'decentraland-dapps/dist/modules/wallet/sagas'
 
 const MANAToken = new contracts.MANAToken('0xdeadbeeffaceb00c') // contract address here
 
@@ -324,7 +325,7 @@ import { combineReducers } from 'redux'
 import {
   storageReducer as storage,
   storageReducerWrapper
-} from '@dapps/modules/storage/reducer'
+} from 'decentraland-dapps/dist/modules/storage/reducer'
 
 export const rootReducer = storageReducerWrapper(
   combineReducers({
@@ -375,7 +376,7 @@ When you have an action that creates a transaction and you want to watch it, you
 
 ```ts
 import { action } from 'typesafe-actions'
-import { buildTransactionPayload } from '@dapps/modules/transaction/utils'
+import { buildTransactionPayload } from 'decentraland-dapps/dist/modules/transaction/utils'
 
 // Send Invite
 
@@ -470,7 +471,7 @@ Taking the example of the `SEND_INVITE_SUCCESS` action type shown in the `Usage`
 ```diff
 // modules/invite/reducer
 import { AnyAction } from 'redux'
-import { loadingReducer } from '@dapps/modules/loading/reducer'
+import { loadingReducer } from 'decentraland-dapps/dist/modules/loading/reducer'
 import {
   FETCH_INVITES_REQUEST,
   FETCH_INVITES_SUCCESS,
