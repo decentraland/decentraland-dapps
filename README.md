@@ -897,7 +897,7 @@ getPathname(state)
 getPathAction(state) // returns the final part of a url (after the last slash)
 ```
 
-#### Installation
+### Installation
 
 You need to add a saga to use this module
 
