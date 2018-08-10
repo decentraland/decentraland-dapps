@@ -233,7 +233,7 @@ const MANAToken = new contracts.MANAToken('0x...')
 const LANDRegistry = new contracts.LANDRegistry('0x...')
 
 const baseWalletSaga = createWalletSaga({
-  provider: env.get('REACT_APP_PROVIDER_URL'),
+  provider: 'https://{network}.infura.io',
   contracts: [MANAToken, LANDRegistry],
   eth
 })
