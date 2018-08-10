@@ -1,3 +1,5 @@
+![](https://raw.githubusercontent.com/decentraland/web/gh-pages/img/decentraland.ico)
+
 # Decentraland dApps
 
 Common modules for our dApps
