@@ -13,8 +13,16 @@ Common modules for our dApps
   - [Translation](https://github.com/decentraland/decentraland-dapps#translation)
   - [Analytics](https://github.com/decentraland/decentraland-dapps#analytics)
   - [Loading](https://github.com/decentraland/decentraland-dapps#loading)
+  - [Location](https://github.com/decentraland/decentraland-dapps#location)
+- [Lib](https://github.com/decentraland/decentraland-dapps#lib)
+  - [API](https://github.com/decentraland/decentraland-dapps#api)
+- [Containers](https://github.com/decentraland/decentraland-dapps#lib)
+  - [Navbar](https://github.com/decentraland/decentraland-dapps#navbar)
+  - [EtherscanLink](https://github.com/decentraland/decentraland-dapps#etherscanlink)
 
 # Modules
+
+Common redux modules for dApps
 
 ## Wallet
 
@@ -878,3 +886,123 @@ export function invitesReducer(
 Now we can for example use the selector `isLoadingType(state.invite.loading, FETCH_INVITES_REQUEST)` to know if that particular action is still pending, or `isLoading(states.invite)` to know if there's any pending action for that domain.
 
 Also, all the pending actions are stored in an array in `state.invite.loading` so we can use that information in the UI if needed (i.e. disable a button)
+
+## Location
+
+The location module provides a `navigateTo` action that wrapps `react-router-redux`'s `push` action. It also provides some helpful selectors:
+
+```ts
+getLocation(state)
+getPathname(state)
+getPathAction(state) // returns the final part of a url (after the last slash)
+```
+
+## Installation
+
+You need to add a saga to use this module
+
+**Saga**:
+
+```ts
+import { all } from 'redux-saga/effects'
+import { locationSaga } from 'decentraland-dapps/modules/location/sagas'
+
+export function* rootSaga() {
+  yield all([
+    locationSaga()
+    // your other sagas
+  ])
+}
+```
+
+# Lib
+
+Common libraries for dApps
+
+## API
+
+The `BaseAPI` class can be extended to make requests and it handles the unwrapping of responses by `decentraland-server`
+
+### Usage
+
+```ts
+// lib/api
+import { BaseAPI } from 'decentraland-dapps/dist/lib/api'
+
+const URL = 'http://localhost/api'
+
+export class API extends BaseAPI {
+  fetchSomething() {
+    return this.request('get', '/something', {})
+  }
+}
+
+export const api = new API(URL)
+```
+
+# Containers
+
+Common containers for dApps
+
+## Navbar
+
+The `<Navbar>` container can be used in the same way as the `<Navbar>` component from `decentaland-ui` but it's already connected to the redux store. You can override any `NavbarProp` if you want to connect differently, and you can pass all the regular `NavbarProps` to it.
+
+## Dependencies
+
+This container requires you to install the `Wallet` module
+
+## Usage
+
+This is an example of a `Page` component that uses the `<Navbar>` container:
+
+```tsx
+import * as React from 'react'
+
+import { Container } from 'decentraland-ui'
+import Navbar from 'decentraland-dapps/dist/containers/Navbar'
+
+import './Page.css'
+
+export default class Page extends React.PureComponent {
+  static defaultProps = {
+    children: null
+  }
+
+  render() {
+    const { children } = this.props
+
+    return (
+      <>
+        <Navbar />
+        <div className="Page">
+          <Container>{children}</Container>
+        </div>
+      </>
+    )
+  }
+}
+```
+
+This `<Navbar>` will show the user's blockie and mana balance because it is connected to the store.
+
+## EtherscanLink
+
+The `<EtherscanLink>` can be used to link a transaction hash to Etherscan.io, and it connects to the redux store to know on which network the user is on.
+
+## Usage
+
+```tsx
+import * as React from 'react'
+import EtherscanLink from 'decentraland-dapps/dist/containers/EtherscanLink'
+
+export default class MyComponent extends React.PureComponent {
+  render() {
+    return (
+      <p>
+        You sent an <EtherscanLink txHash={'0x...'}>invite</EtherscanLink>
+      </p>
+    )
+  }
+}
+```
