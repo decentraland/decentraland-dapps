@@ -15,6 +15,8 @@ Common modules for our dApps
 
 This module takes care of connecting to MetaMask/Ledger, and insert in the state some useful information like address, network, mana and derivationPath.
 
+### Usage 
+
 You can use the following selectors importing them from `decentraland-dapps/dist/modules/wallet/selectors`:
 
 ```tsx
