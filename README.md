@@ -430,7 +430,7 @@ Create the `transactionMiddleware` and apply it
 
 ```ts
 // store.ts
-import { createTransactionMiddleware } from 'decenraland-dapps/dist/modules/transaction/middleware'
+import { createTransactionMiddleware } from 'decentraland-dapps/dist/modules/transaction/middleware'
 const transactionMiddleware = createTransactionMiddleware()
 
 const middleware = applyMiddleware(
