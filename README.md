@@ -378,7 +378,7 @@ The transaction module allows you to watch for pending transactions and keep tra
 
 ### Dependencies
 
-This module requires you to install the `Storage` module in order to work.
+This module requires you to install the [Storage](https://github.com/decentraland/decentraland-dapps#storage) module in order to work.
 
 ### Usage
 
@@ -574,7 +574,7 @@ This module allows you to do i18n.
 
 ### Dependencies
 
-This module requires you to install the `Storage` module
+This module requires you to install the [Storage](https://github.com/decentraland/decentraland-dapps#storage) module
 
 ### Usage
 
@@ -950,7 +950,7 @@ The `<Navbar>` container can be used in the same way as the `<Navbar>` component
 
 ### Dependencies
 
-This container requires you to install the `Wallet` module
+This container requires you to install the [Wallet](https://github.com/decentraland/decentraland-dapps#wallet) module
 
 ### Usage
 
@@ -992,7 +992,7 @@ The `<EtherscanLink>` can be used to link a transaction hash to Etherscan.io, an
 
 ### Dependencies
 
-This container requires you to install the `Wallet` modules
+This container requires you to install the [Wallet](https://github.com/decentraland/decentraland-dapps#wallet) module
 
 ### Usage
 
