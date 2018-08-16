@@ -113,7 +113,7 @@ import { walletReducer as wallet } from 'decentraland-dapps/dist/modules/wallet/
 
 export const rootReducer = combineReducers({
   wallet
-  // your other reducers here
+  // your other reducers
 })
 ```
 
@@ -339,7 +339,8 @@ import {
 
 export const rootReducer = storageReducerWrapper(
   combineReducers({
-    storage
+    storage,
+    // your other reducers
   })
 )
 ```
@@ -424,7 +425,7 @@ Then you can use the selectors `getPendingTransactions` and `getTransactionHisto
 
 You need to add a middleware, a reducer and a saga to use this module.
 
-**Middleare**:
+**Middleware**:
 
 Create the `transactionMiddleware` and apply it
 
@@ -582,7 +583,7 @@ Using the helper `t()` you can add translations to your dApp
 
 ```tsx
 import * as React from 'react'
-import { t } from 'decentraland-dapps/modules/translation/utils'
+import { t } from 'decentraland-dapps/dist/modules/translation/utils'
 
 export default class BuyButton extends React.PureComponent {
   render() {
@@ -613,7 +614,7 @@ _es.json_
 }
 ```
 
-Yon can use dispatch the `changeLocale(locale: string)` action from `decentraland-dapps/dist/modules/translation/actions` to change the language
+Yon can dispatch the `changeLocale(locale: string)` action from `decentraland-dapps/dist/modules/translation/actions` to change the language
 
 ### Installation
 
