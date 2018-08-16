@@ -29,19 +29,17 @@ export function createWalletSaga({
 }: WalletSagaOptions): () => IterableIterator<ForkEffect> {
   function* handleConnectWalletRequest() {
     try {
-      if (!eth.isConnected()) {
-        const { address, derivationPath } = yield select(getData)
+      const walletData: BaseWallet = yield select(getData)
 
-        yield call(() =>
-          connectEthereumWallet({
-            address,
-            derivationPath,
-            provider,
-            contracts,
-            eth
-          })
-        )
-      }
+      yield call(() =>
+        connectEthereumWallet({
+          address: walletData.address,
+          derivationPath: walletData.derivationPath,
+          provider,
+          contracts,
+          eth
+        })
+      )
 
       let address: string = yield call(() => eth.getAddress())
       address = address.toLowerCase()
