@@ -1,16 +1,17 @@
 import { connect } from 'react-redux'
 import { getNetwork } from '../../modules/wallet/selectors'
 import EtherscanLink from './EtherscanLink'
-import { EtherscanLinkProps } from './types'
+import { MapStateProps, MapDispatchProps } from './EtherscanLink.types'
 
-const mapState = (state: any): Partial<EtherscanLinkProps> => {
+const mapState = (state: any): MapStateProps => {
   return {
-    network: getNetwork(state)
+    network: getNetwork(state) || ''
   }
 }
 
-const mapDispatch = (_: any): Partial<EtherscanLinkProps> => ({})
+const mapDispatch = (_: any): MapDispatchProps => ({})
 
-export default connect<Partial<EtherscanLinkProps>>(mapState, mapDispatch)(
-  EtherscanLink as any
-) as any
+export default connect(
+  mapState,
+  mapDispatch
+)(EtherscanLink) as any

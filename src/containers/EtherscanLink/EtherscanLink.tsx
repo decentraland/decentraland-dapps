@@ -1,16 +1,12 @@
 import * as React from 'react'
 import { getEtherscanHref } from '../../modules/transaction/utils'
-import { EtherscanLinkProps } from './types'
+import { Props, DefaultProps } from './EtherscanLink.types'
 
-export default class EtherscanLink extends React.PureComponent<
-  EtherscanLinkProps
-> {
-  static propTypes = {}
-
-  static defaultProps = {
+export default class EtherscanLink extends React.PureComponent<Props> {
+  static defaultProps: DefaultProps = {
     className: 'etherscan-link',
     target: '_blank',
-    text: null
+    text: ''
   }
 
   render() {

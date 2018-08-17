@@ -32,6 +32,8 @@ const mergeProps = (
   ...ownProps
 })
 
-export default connect<NavbarProps>(mapState, mapDispatch, mergeProps)(
-  Navbar
-) as any
+export default connect(
+  mapState,
+  mapDispatch,
+  mergeProps
+)(Navbar) as any
