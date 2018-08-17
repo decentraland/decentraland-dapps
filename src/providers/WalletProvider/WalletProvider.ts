@@ -1,8 +1,8 @@
 import * as React from 'react'
-import { WalletProviderProps } from './types'
+import { DefaultProps, Props } from './WalletProvider.types'
 
-export default class Wallet extends React.PureComponent<WalletProviderProps> {
-  static defaultProps = {
+export default class WalletProvider extends React.PureComponent<Props> {
+  static defaultProps: DefaultProps = {
     children: null
   }
 

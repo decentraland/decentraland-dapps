@@ -6,16 +6,14 @@ import {
   I18nProvider,
   addAvailableLocaleData
 } from '../../modules/translation/utils'
-import { TranslationProviderProps } from './types'
+import { Props } from './TranslationProvider.types'
 
-export default class TranslationProvider extends React.PureComponent<
-  TranslationProviderProps
-> {
+export default class TranslationProvider extends React.PureComponent<Props> {
   componentWillMount() {
     addAvailableLocaleData()
   }
 
-  componentWillReceiveProps(nextProps: TranslationProviderProps) {
+  componentWillReceiveProps(nextProps: Props) {
     const { locale, onFetchTranslations } = nextProps
 
     if (this.props.locale !== locale) {

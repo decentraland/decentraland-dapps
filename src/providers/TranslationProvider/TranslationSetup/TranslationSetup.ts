@@ -1,14 +1,12 @@
 import * as React from 'react'
-import { TranslationSetupProps } from './types'
+import { Props } from './TranslationSetup.types'
 
-export default class TranslationProvider extends React.PureComponent<
-  TranslationSetupProps
-> {
+export default class TranslationProvider extends React.PureComponent<Props> {
   componentWillMount() {
     this.props.setI18n(this.props.intl)
   }
 
-  componentWillReceiveProps(nextProps: TranslationSetupProps) {
+  componentWillReceiveProps(nextProps: Props) {
     const { intl } = nextProps
     if (intl) {
       this.props.setI18n(intl)
