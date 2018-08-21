@@ -1,6 +1,6 @@
-import { MiddlewareAPI, Dispatch, AnyAction } from 'redux'
+import { MiddlewareAPI, Dispatch, AnyAction, Action } from 'redux'
 
-export type RootDispatch<A = AnyAction> = Dispatch<A>
+export type RootDispatch<A extends Action = AnyAction> = Dispatch<A>
 
 export type RootMiddleware = (
   store: MiddlewareAPI<any>
