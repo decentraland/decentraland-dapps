@@ -1,4 +1,4 @@
-import { Migrations } from './types'
+import { Migrations, LocalStorage } from './types'
 
 export function hasLocalStorage(): boolean {
   try {
@@ -13,12 +13,12 @@ export function hasLocalStorage(): boolean {
   }
 }
 
-export const localStorage = hasLocalStorage()
+export const localStorage: LocalStorage = hasLocalStorage()
   ? window.localStorage
   : {
-      getItem: (key: string) => key,
-      setItem: (_: string, __: string) => null,
-      removeItem: (_: string) => null
+      getItem: () => null,
+      setItem: () => null,
+      removeItem: () => null
     }
 
 export function migrateStorage<T>(key: string, migrations: Migrations<T>) {

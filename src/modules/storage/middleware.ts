@@ -21,15 +21,9 @@ const disabledLoad = (store: any) =>
   setTimeout(() => store.dispatch({ type: STORAGE_LOAD, payload: {} }))
 
 export function createStorageMiddleware<T>(options: StorageMiddleware<T>) {
-  const {
-    storageKey,
-    migrations,
-    paths = [],
-    actions = [],
-    isLocalStorage = true
-  } = options
+  const { storageKey, migrations, paths = [], actions = [] } = options
 
-  if (isLocalStorage && !hasLocalStorage()) {
+  if (!hasLocalStorage()) {
     return {
       storageMiddleware: disabledMiddleware as any,
       loadStorageMiddleware: disabledLoad as any

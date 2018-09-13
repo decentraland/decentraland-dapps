@@ -5,5 +5,4 @@ export interface StorageMiddleware<T> {
   paths: string[] | string[][]
   actions: string[]
   migrations: Migrations<T>
-  isLocalStorage: boolean
 }
