@@ -18,6 +18,7 @@ export interface TransactionPayload {
     hash: string
     payload: any
     events: string[]
+    withReceipt?: boolean
   }
 }
 
