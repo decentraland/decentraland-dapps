@@ -31,6 +31,18 @@ export enum NetworkName {
   rinkeby = 'rinkeby'
 }
 
+interface Arg {
+  name: string
+  type: string
+  value: string
+}
+
+interface Log {
+  events: Arg[]
+  name: string
+  [key: string]: any
+}
+
 interface Receipt {
-  logs: any[]
+  logs: Log[]
 }

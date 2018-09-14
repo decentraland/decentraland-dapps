@@ -339,7 +339,7 @@ import {
 
 export const rootReducer = storageReducerWrapper(
   combineReducers({
-    storage,
+    storage
     // your other reducers
   })
 )
@@ -1025,4 +1025,3 @@ export default class MyComponent extends React.PureComponent {
   }
 }
 ```
-

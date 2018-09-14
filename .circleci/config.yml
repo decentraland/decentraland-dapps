@@ -10,13 +10,13 @@ jobs:
           command: sudo apt-get update && sudo apt install -y libusb-1.0-0 libusb-1.0-0-dev
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "package.json" }}
+            - v1-dependencies-{{ checksum "package-lock.json" }}
             - v1-dependencies-
       - run: npm i
       - save_cache:
           paths:
             - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+          key: v1-dependencies-{{ checksum "package-lock.json" }}
       - run: npm run test
 
 workflows:
