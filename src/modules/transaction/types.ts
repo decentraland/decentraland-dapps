@@ -31,18 +31,18 @@ export enum NetworkName {
   rinkeby = 'rinkeby'
 }
 
-interface Arg {
+export interface Arg {
   name: string
   type: string
   value: string
 }
 
-interface Log {
+export interface Log {
   events: Arg[]
   name: string
   [key: string]: any
 }
 
-interface Receipt {
+export interface Receipt {
   logs: Log[]
 }
