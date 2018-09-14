@@ -24,18 +24,20 @@ export const localStorage: LocalStorage = hasLocalStorage()
 export function migrateStorage<T>(key: string, migrations: Migrations<T>) {
   let version = 1
   const dataString = localStorage.getItem(key)
-  const data = JSON.parse(<string>dataString)
+  if (dataString) {
+    const data = JSON.parse(dataString as string)
 
-  if (data.storage) {
-    version = parseInt(data.storage.version || 0) + 1
-  }
+    if (data.storage) {
+      version = parseInt(data.storage.version || 0, 10) + 1
+    }
 
-  while (!!migrations[version]) {
-    const newData = migrations[version](data)
-    localStorage.setItem(
-      key,
-      JSON.stringify({ ...(<Object>newData), storage: { version } })
-    )
-    version++
+    while (migrations[version]) {
+      const newData = migrations[version](data)
+      localStorage.setItem(
+        key,
+        JSON.stringify({ ...(newData as Object), storage: { version } })
+      )
+      version++
+    }
   }
 }
