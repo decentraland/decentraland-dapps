@@ -13,16 +13,19 @@ export function hasLocalStorage(): boolean {
   }
 }
 
-export const localStorage: LocalStorage = hasLocalStorage()
-  ? window.localStorage
-  : {
-      getItem: () => null,
-      setItem: () => null,
-      removeItem: () => null
-    }
+export function getLocalStorage(): LocalStorage {
+  return hasLocalStorage()
+    ? window.localStorage
+    : {
+        getItem: () => null,
+        setItem: () => null,
+        removeItem: () => null
+      }
+}
 
 export function migrateStorage<T>(key: string, migrations: Migrations<T>) {
   let version = 1
+  const localStorage = getLocalStorage()
   const dataString = localStorage.getItem(key)
   if (dataString) {
     const data = JSON.parse(dataString as string)

@@ -1,14 +1,13 @@
 import { expect } from 'chai'
 import { Migrations } from './types'
+import {
+  hasLocalStorage,
+  migrateStorage,
+  getLocalStorage
+} from './localStorage'
 declare var global: any
 let fakeStore = {}
 global.window = {}
-global.window['localStorage'] = {
-  getItem: (key: string) => fakeStore[key],
-  setItem: (key: string, value: string) => (fakeStore[key] = value),
-  removeItem: (key: string) => delete fakeStore[key]
-}
-import { hasLocalStorage, migrateStorage, localStorage } from './localStorage'
 
 describe('localStorage', function() {
   const migrations: Migrations<any> = {
@@ -38,6 +37,7 @@ describe('localStorage', function() {
   describe('migrateStorage', function() {
     it('should migrate', function() {
       const key = 'key'
+      const localStorage = getLocalStorage()
       localStorage.setItem(key, JSON.stringify('{}'))
       let data = JSON.parse(localStorage.getItem(key) as string)
       expect(data.storage).to.equal(undefined)
@@ -48,6 +48,7 @@ describe('localStorage', function() {
 
     it('should not migrate if there is no migrations left', function() {
       const key = 'key'
+      const localStorage = getLocalStorage()
       localStorage.setItem(key, JSON.stringify('{}'))
       let data = JSON.parse(localStorage.getItem(key) as string)
       expect(data.storage).to.equal(undefined)
