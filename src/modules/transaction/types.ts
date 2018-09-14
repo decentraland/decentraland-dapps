@@ -11,6 +11,8 @@ export interface Transaction {
   from: string
   actionType: string
   status: TransactionStatus
+  withReceipt?: boolean
+  receipt?: Receipt
 }
 
 export interface TransactionPayload {
@@ -18,6 +20,7 @@ export interface TransactionPayload {
     hash: string
     payload: any
     events: string[]
+    withReceipt?: boolean
   }
 }
 
@@ -26,4 +29,20 @@ export enum NetworkName {
   ropsten = 'ropsten',
   kovan = 'kovan',
   rinkeby = 'rinkeby'
+}
+
+export interface Arg {
+  name: string
+  type: string
+  value: string
+}
+
+export interface Log {
+  events: Arg[]
+  name: string
+  [key: string]: any
+}
+
+export interface Receipt {
+  logs: Log[]
 }

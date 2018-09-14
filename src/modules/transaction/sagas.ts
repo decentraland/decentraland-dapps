@@ -28,13 +28,18 @@ function* handleTransactionRequest(action: FetchTransactionRequestAction) {
   try {
     watchIndex[hash] = true
 
-    yield call(() => txUtils.getConfirmedTransaction(hash, transaction.events))
+    const receipt = yield call(() =>
+      txUtils.getConfirmedTransaction(hash, transaction.events)
+    )
 
     delete watchIndex[hash]
 
     const newTransaction: Transaction = {
       ...transaction,
-      status: TransactionStatus.Confirmed
+      status: TransactionStatus.Confirmed,
+      receipt: {
+        logs: transaction.withReceipt ? receipt.receipt.logs : []
+      }
     }
     yield put(fetchTransactionSuccess(newTransaction))
   } catch (error) {

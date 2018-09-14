@@ -32,6 +32,18 @@ export function buildTransactionPayload(
   }
 }
 
+export function buildTransactionWithReceiptPayload(
+  hash: string,
+  payload = {},
+  events: string[] = []
+): TransactionPayload {
+  const txPayload = buildTransactionPayload(hash, payload, events)
+
+  txPayload[TRANSACTION_ACTION_FLAG].withReceipt = true
+
+  return txPayload
+}
+
 export type EtherscanHrefOptions = {
   txHash?: string
   address?: string

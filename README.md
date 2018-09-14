@@ -339,7 +339,7 @@ import {
 
 export const rootReducer = storageReducerWrapper(
   combineReducers({
-    storage,
+    storage
     // your other reducers
   })
 )
@@ -418,6 +418,20 @@ export type SendInvitesRequestAction = ReturnType<typeof sendInvitesRequest>
 export type SendInvitesSuccessAction = ReturnType<typeof sendInvitesSuccess>
 export type SendInvitesFailureAction = ReturnType<typeof sendInvitesFailure>
 ```
+
+Or `buildTransactionWithReceiptPayload` if you need the tx event logs
+
+```ts
+export const sendInvitesSuccess = (txHash: string, address: string) =>
+  action(SEND_INVITE_SUCCESS, {
+    ...buildTransactionWithReceiptPayload(txHash, {
+      address
+    }),
+    address
+  })
+```
+
+It will save the event logs inside `{ receipt: { logs: [] } }` after the tx was confirmed
 
 Then you can use the selectors `getPendingTransactions` and `getTransactionHistory` from `decentraland-dapps/dist/modules/transaction/selectors` to get the list of pending transactions and the transaction history.
 
