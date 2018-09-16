@@ -1,26 +1,87 @@
 version: 2
 jobs:
-  decentraland-dapps:
+  test:
     docker:
-      - image: circleci/node:9.11.1
+      - image: circleci/node:8.9.4
+
+    working_directory: /tmp/decentraland-dapps
+
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - dependencies-{{ checksum "package-lock.json" }}
       - run:
           name: Install system dependencies
           command: sudo apt-get update && sudo apt install -y libusb-1.0-0 libusb-1.0-0-dev
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package-lock.json" }}
-            - v1-dependencies-
-      - run: npm i
+      - run:
+          name: Install node dependencies
+          command: npm install
       - save_cache:
           paths:
             - node_modules
-          key: v1-dependencies-{{ checksum "package-lock.json" }}
-      - run: npm run test
+          key: dependencies-{{ checksum "package-lock.json" }}
+      - run:
+          name: Run tests
+          command: npm test
+
+  build:
+    docker:
+      - image: circleci/node:8.9.4
+
+    working_directory: /tmp/decentraland-dapps
+
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - dependencies-{{ checksum "package-lock.json" }}
+      - run:
+          name: Install system dependencies
+          command: sudo apt-get update && sudo apt install -y libusb-1.0-0 libusb-1.0-0-dev
+      - run:
+          name: Install node dependencies
+          command: npm install
+      - run:
+          name: Build library
+          command: npm run build
+      - save_cache:
+          paths:
+            - dist
+          key: dist-{{ .Branch }}-{{ .Revision }}
+
+  release:
+    docker:
+      - image: circleci/node:8.9.4
+
+    working_directory: /tmp/decentraland-dapps
+
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - dist-{{ .Branch }}-{{ .Revision }}
+      - restore_cache:
+          keys:
+            - dependencies-{{ checksum "package-lock.json" }}
+      - run:
+          name: Install node dependencies
+          command: npm install
+      - run:
+          name: Semantic release
+          command: npm run semantic-release
 
 workflows:
   version: 2
-  build:
+  test-build-release:
     jobs:
-      - decentraland-dapps
+      - test
+      - build:
+          requires:
+            - test
+      - release:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
