@@ -1,9 +1,10 @@
 import * as storage from 'redux-storage'
 import createStorageEngine from 'redux-storage-engine-localstorage'
 import filter from 'redux-storage-decorator-filter'
-import { hasLocalStorage } from '../../lib/localStorage'
+import { hasLocalStorage, migrateStorage } from '../../lib/localStorage'
 import { disabledMiddleware } from '../../lib/disabledMiddleware'
 import { STORAGE_LOAD } from './actions'
+import { StorageMiddleware } from './types'
 import {
   CHANGE_LOCALE,
   FETCH_TRANSLATIONS_REQUEST,
@@ -19,11 +20,9 @@ import {
 const disabledLoad = (store: any) =>
   setTimeout(() => store.dispatch({ type: STORAGE_LOAD, payload: {} }))
 
-export function createStorageMiddleware(
-  storageKey: string,
-  paths: string[] | string[][] = [],
-  actions: string[] = []
-) {
+export function createStorageMiddleware<T>(options: StorageMiddleware<T>) {
+  const { storageKey, migrations = {}, paths = [], actions = [] } = options
+
   if (!hasLocalStorage()) {
     return {
       storageMiddleware: disabledMiddleware as any,
@@ -31,11 +30,14 @@ export function createStorageMiddleware(
     }
   }
 
+  migrateStorage(storageKey, migrations)
+
   const storageEngine = filter(createStorageEngine(storageKey), [
     'transaction',
     'translation',
     ['wallet', 'data', 'locale'],
     ['wallet', 'data', 'derivationPath'],
+    ['storage', 'version'],
     ...paths
   ])
   const storageMiddleware: any = storage.createMiddleware(

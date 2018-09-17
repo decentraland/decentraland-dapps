@@ -28,7 +28,7 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "tsc --project tsconfig.json",
-    "test": "nyc mocha --require ts-node/register src/**/*.spec.ts",
+    "test": "nyc mocha --require ts-node/register src/**/*.spec.ts src/**/**/*.spec.ts",
     "test:watch": "npm test -- --watch --watch-extensions ts",
     "semantic-release": "semantic-release",
     "commitmsg": "validate-commit-msg"

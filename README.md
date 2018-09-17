@@ -290,12 +290,12 @@ function* handleFetchLandAmountRequest(action: FetchLandAmountRequestAction) {
 
 ## Storage
 
-The storage module allows you to save parts of the redux store in localStorage to make them persistent.
-This module is required to use other modules like `Transaction` and `Translation`.
+The storage module allows you to save parts of the redux store in localStorage to make them persistent and migrate it from different versions without loosing it.
+This module is required to use other modules like `Transaction`, `Translation` and `Wallet`.
 
 ### Installation
 
-You need to add a middleware and a two reducers to your dApp.
+You need to add a middleware and two reducers to your dApp.
 
 **Middleware**:
 
@@ -305,15 +305,17 @@ You will need to create a `storageMiddleware` and add apply it along with your o
 // store.ts
 import { applyMiddleware, compose, createStore } from 'redux'
 import { createStorageMiddleware } from 'decentraland-dapps/dist/modules/storage/middleware'
+import { migrations } from './migrations'
 
 const composeEnhancers =
   (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 
-const { storageMiddleware, loadStorageMiddleware } = createStorageMiddleware(
-  'storage-key', // this is the key used to save the state in localStorage (required)
-  [], // array of paths from state to be persisted (optional)
-  [] // array of actions types that will trigger a SAVE (optional)
-)
+const { storageMiddleware, loadStorageMiddleware } = createStorageMiddleware({
+  storageKey: 'storage-key' // this is the key used to save the state in localStorage (required)
+  paths: [] // array of paths from state to be persisted (optional)
+  actions: [] // array of actions types that will trigger a SAVE (optional)
+  migrations: migrations // migration object that will migrate your localstorage (optional)
+})
 
 const middleware = applyMiddleware(
   // your other middlewares
@@ -324,6 +326,29 @@ const store = createStore(rootReducer, enhancer)
 
 loadStorageMiddleware(store)
 ```
+
+**Migrations**:
+
+`migrations` looks like
+
+`migrations.ts`:
+
+```ts
+export const migrations = {
+  2: migrateToVersion2(data),
+  3: migrateToVersion3(data)
+}
+```
+
+Where every `key` represent a migration and every `method` should return the new localstorage data:
+
+```ts
+function migrateToVersion2(data) {
+  return omit(data, 'translations')
+}
+```
+
+You don't need to care about updating the version of the migration because it will be set automatically.
 
 **Reducer**:
 
@@ -347,7 +372,7 @@ export const rootReducer = storageReducerWrapper(
 
 ### Advanced Usage
 
-This module is necessary to use other modules like `Transaction` or `Translation`, but you can also use it to make other parts of your dApp's state persistent
+This module is necessary to use other modules like `Transaction`, `Translation` and `Wallet`, but you can also use it to make other parts of your dApp's state persistent
 
 <details><summary>Learn More</summary>
 <p>
