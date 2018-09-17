@@ -27,13 +27,15 @@ export function migrateStorage<T>(key: string, migrations: Migrations<T>) {
   let version = 1
   const localStorage = getLocalStorage()
   const dataString = localStorage.getItem(key)
+
   if (dataString) {
     const data = JSON.parse(dataString as string)
 
     if (data.storage) {
-      version = parseInt(data.storage.version || 0, 10) + 1
+      version = parseInt(data.storage.version || 0, 10)
     }
 
+    version++
     while (migrations[version]) {
       const newData = migrations[version](data)
       localStorage.setItem(

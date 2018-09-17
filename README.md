@@ -291,7 +291,7 @@ function* handleFetchLandAmountRequest(action: FetchLandAmountRequestAction) {
 ## Storage
 
 The storage module allows you to save parts of the redux store in localStorage to make them persistent and migrate it from different versions without loosing it.
-This module is required to use other modules like `Transaction`, `Translation`, `Wallet` and `Storage`.
+This module is required to use other modules like `Transaction`, `Translation` and `Wallet`.
 
 ### Installation
 
@@ -314,7 +314,7 @@ const { storageMiddleware, loadStorageMiddleware } = createStorageMiddleware({
   storageKey: 'storage-key' // this is the key used to save the state in localStorage (required)
   paths: [] // array of paths from state to be persisted (optional)
   actions: [] // array of actions types that will trigger a SAVE (optional)
-  migrations: migrations // migration object that will migrate your localstorage
+  migrations: migrations // migration object that will migrate your localstorage (optional)
 })
 
 const middleware = applyMiddleware(
@@ -335,7 +335,6 @@ loadStorageMiddleware(store)
 
 ```ts
 export const migrations = {
-  1: migrateToVersion1(data),
   2: migrateToVersion2(data),
   3: migrateToVersion3(data)
 }
@@ -344,7 +343,7 @@ export const migrations = {
 Where every `key` represent a migration and every `method` should return the new localstorage data:
 
 ```ts
-function migrateToVersion1(data) {
+function migrateToVersion2(data) {
   return omit(data, 'translations')
 }
 ```
@@ -373,7 +372,7 @@ export const rootReducer = storageReducerWrapper(
 
 ### Advanced Usage
 
-This module is necessary to use other modules like `Transaction`, `Translation`, `Wallet` and `Storage`, but you can also use it to make other parts of your dApp's state persistent
+This module is necessary to use other modules like `Transaction`, `Translation` and `Wallet`, but you can also use it to make other parts of your dApp's state persistent
 
 <details><summary>Learn More</summary>
 <p>

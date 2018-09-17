@@ -11,8 +11,7 @@ global.window = {}
 
 describe('localStorage', function() {
   const migrations: Migrations<any> = {
-    '1': (data: any) => data,
-    '2': (data: any) => data
+    2: (data: any) => data
   }
 
   beforeEach(function() {
