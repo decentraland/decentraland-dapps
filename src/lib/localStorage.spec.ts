@@ -11,7 +11,7 @@ global.window = {}
 
 describe('localStorage', function() {
   const migrations: Migrations<any> = {
-    2: (data: any) => data
+    2: (data: any) => ({ ...data, data: 'new version' })
   }
 
   beforeEach(function() {
@@ -43,6 +43,17 @@ describe('localStorage', function() {
       migrateStorage(key, migrations)
       data = JSON.parse(localStorage.getItem(key) as string)
       expect(data.storage.version).to.equal(2)
+      expect(data.data).to.equal('new version')
+    })
+
+    it('should set corrent version', function() {
+      const key = 'key'
+      const localStorage = getLocalStorage()
+
+      localStorage.setItem(key, JSON.stringify('{ storage: { version: null }}'))
+      migrateStorage(key, migrations)
+      let data = JSON.parse(localStorage.getItem(key) as string)
+      expect(data.storage.version).to.equal(2)
     })
 
     it('should not migrate if there is no migrations left', function() {
@@ -54,6 +65,7 @@ describe('localStorage', function() {
       migrateStorage(key, migrations)
       data = JSON.parse(localStorage.getItem(key) as string)
       expect(data.storage.version).to.equal(2)
+
       migrateStorage(key, migrations)
       expect(data.storage.version).to.equal(2)
     })
