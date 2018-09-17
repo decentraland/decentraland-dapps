@@ -6,13 +6,19 @@ import {
   fetchTransactionSuccess,
   FETCH_TRANSACTION_REQUEST,
   WATCH_PENDING_TRANSACTIONS,
-  FetchTransactionRequestAction
+  FetchTransactionRequestAction,
+  watchPendingTransactions
 } from './actions'
+import {
+  CONNECT_WALLET_SUCCESS,
+  ConnectWalletSuccessAction
+} from '../wallet/actions'
 import { getData, getLoading } from './selectors'
 
 export function* transactionSaga(): IterableIterator<ForkEffect> {
   yield takeEvery(FETCH_TRANSACTION_REQUEST, handleTransactionRequest)
   yield takeEvery(WATCH_PENDING_TRANSACTIONS, handleWatchPendingTransactions)
+  yield takeEvery(CONNECT_WALLET_SUCCESS, handleConnectWalletSuccess)
 }
 
 const watchIndex: { [hash: string]: boolean } = {
@@ -71,4 +77,8 @@ function* handleWatchPendingTransactions() {
       yield handleTransactionRequest(action)
     }
   }
+}
+
+function* handleConnectWalletSuccess(_: ConnectWalletSuccessAction) {
+  yield put(watchPendingTransactions())
 }
