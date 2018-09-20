@@ -83,31 +83,21 @@ function* handleFetchTransactionRequest(action: FetchTransactionRequestAction) {
       const nonceInState = txInState == null ? null : txInState.nonce
       const nonceInNetwork = isUnknown ? null : (tx as TransactionStatus).nonce
 
-      console.log(
-        `[${hash}] Nonce in state: ${nonceInState} - Nonce in network: ${nonceInNetwork}`
-      )
-
       if (nonceInNetwork != null && nonceInState == null) {
-        console.log(`[${hash}] Update nonce {${nonceInNetwork}}`)
         yield put(updateTransactionNonce(hash, nonceInNetwork))
       }
 
       // update status
       const statusInState = txInState == null ? null : txInState.status
       const statusInNetwork = isUnknown ? null : tx.type
-      console.log(
-        `[${hash}] Status in state: ${statusInState} - Status in network: ${statusInNetwork}`
-      )
+
       if (statusInState !== statusInNetwork) {
         // check if dropped
         if (statusInState != null && statusInNetwork == null) {
-          console.log(`[${hash}] Detected dropped tx`)
           const nonce = nonceInState || nonceInNetwork
           if (nonce) {
-            console.log(`[${hash}] The tx nonce is ${nonce}`)
             yield put(replaceTransactionRequest(hash, nonce))
           }
-          console.log(`[${hash}] About to throw`)
           throw new FailedTransactionError(
             hash,
             txUtils.TRANSACTION_TYPES.dropped
@@ -123,11 +113,6 @@ function* handleFetchTransactionRequest(action: FetchTransactionRequestAction) {
       tx = yield call(() => txUtils.getTransaction(hash))
       isUnknown = tx == null
     }
-
-    console.log(
-      `[${hash}] Done with status ${tx.type}`,
-      JSON.parse(JSON.stringify(tx))
-    )
 
     delete watchPendingIndex[hash]
 
@@ -157,8 +142,6 @@ function* handleReplaceTransactionRequest(
 
   watchDroppedIndex[hash] = true
 
-  console.log(`[${hash}] watching dropped transaction`)
-
   let checkpoint = null
 
   while (true) {
@@ -170,9 +153,7 @@ function* handleReplaceTransactionRequest(
     }
 
     // get latest block
-    console.log(`Fetching latest block...`)
     const blockNumber = yield call(() => eth.getBlockNumber())
-    console.log(`Starting from block ${blockNumber}`)
 
     let highestNonce = 0
     let replacedBy = null
@@ -181,9 +162,6 @@ function* handleReplaceTransactionRequest(
     const startBlock = blockNumber
     const endBlock = checkpoint || blockNumber - 100
     for (let i = startBlock; i > endBlock; i--) {
-      console.log(
-        `Checking block ${i} - ${startBlock - i + 1}/${startBlock - endBlock}`
-      )
       let block = yield call(() => eth.getBlock(i, true))
       const transactions: TransactionStatus[] =
         block != null && block.transactions != null ? block.transactions : []
@@ -201,18 +179,15 @@ function* handleReplaceTransactionRequest(
     }
 
     checkpoint = blockNumber
-    console.log(`Checkpoint at block ${blockNumber}`)
 
     // if a replacement tx was found, replace it
     if (replacedBy) {
-      console.log(`[${hash}] found replacement tranasction ${replacedBy.hash}`)
       yield put(replaceTransactionSuccess(hash, replacedBy.hash))
       break
     }
 
     // if there was nonce higher to than the one in the tx, we can mark it as replaced (altough we don't know which tx replaced it)
     if (highestNonce >= nonce) {
-      console.log(`[${hash}] found transactions with higher nonce`)
       yield put(
         updateTransactionStatus(
           action.payload.hash,
@@ -226,7 +201,6 @@ function* handleReplaceTransactionRequest(
     yield call(delay, txUtils.TRANSACTION_FETCH_DELAY)
   }
 
-  console.log(`[${hash}] stop watching dropped transaction`)
   delete watchDroppedIndex[action.payload.hash]
 }
 
@@ -239,11 +213,6 @@ function* handleWatchPendingTransactions() {
   )
 
   const allTransactions = transactionRequests.concat(pendingTransactions)
-
-  console.log(
-    `Watching ${allTransactions.length} pending transactions`,
-    allTransactions
-  )
 
   for (const tx of allTransactions) {
     if (!watchPendingIndex[tx.hash]) {
@@ -263,11 +232,6 @@ function* handleWatchDroppedTransactions() {
     transaction =>
       transaction.status === txUtils.TRANSACTION_TYPES.dropped &&
       transaction.nonce != null
-  )
-
-  console.log(
-    `Watching ${droppedTransactions.length} dropped transactions`,
-    droppedTransactions
   )
 
   for (const tx of droppedTransactions) {
