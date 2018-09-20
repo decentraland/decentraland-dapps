@@ -1,16 +1,21 @@
-export enum TransactionStatus {
-  Pending = 'pending',
-  Confirmed = 'confirmed',
-  Failed = 'failed'
-}
+import { txUtils } from 'decentraland-eth'
+
+export const FINISHED_TYPES = [
+  txUtils.TRANSACTION_TYPES.confirmed,
+  txUtils.TRANSACTION_TYPES.reverted,
+  txUtils.TRANSACTION_TYPES.dropped,
+  txUtils.TRANSACTION_TYPES.replaced
+] as any[]
 
 export interface Transaction {
   events: string[]
   hash: string
+  nonce: number | null
+  replacedBy: string | null
   timestamp: number
   from: string
   actionType: string
-  status: TransactionStatus
+  status: txUtils.Transaction['type'] | null
   withReceipt?: boolean
   receipt?: Receipt
 }

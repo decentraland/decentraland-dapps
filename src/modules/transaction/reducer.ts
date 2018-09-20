@@ -1,4 +1,4 @@
-import { TransactionStatus, Transaction } from './types'
+import { Transaction } from './types'
 import { getTransactionFromAction } from './utils'
 import { loadingReducer, LoadingState } from '../loading/reducer'
 import {
@@ -7,8 +7,15 @@ import {
   FetchTransactionFailureAction,
   FETCH_TRANSACTION_REQUEST,
   FETCH_TRANSACTION_SUCCESS,
-  FETCH_TRANSACTION_FAILURE
+  FETCH_TRANSACTION_FAILURE,
+  UPDATE_TRANSACTION_STATUS,
+  UpdateTransactionStatusAction,
+  UPDATE_TRANSACTION_NONCE,
+  UpdateTransactionNonceAction,
+  REPLACE_TRANSACTION_SUCCESS,
+  ReplaceTransactionSuccessAction
 } from './actions'
+import { txUtils } from 'decentraland-eth'
 
 export type TransactionState = {
   data: Transaction[]
@@ -26,6 +33,9 @@ export type TransactionReducerAction =
   | FetchTransactionRequestAction
   | FetchTransactionSuccessAction
   | FetchTransactionFailureAction
+  | UpdateTransactionStatusAction
+  | UpdateTransactionNonceAction
+  | ReplaceTransactionSuccessAction
 
 export function transactionReducer(
   state = INITIAL_STATE,
@@ -45,7 +55,10 @@ export function transactionReducer(
             timestamp: Date.now(),
             from: action.payload.address,
             actionType: actionRef.type,
-            status: TransactionStatus.Pending
+            // these always start as null, and they get updated by the saga
+            status: null,
+            nonce: null,
+            replacedBy: null
           }
         ]
       }
@@ -61,28 +74,74 @@ export function transactionReducer(
             actionTransaction.hash === transaction.hash
               ? {
                 ...transaction,
-                ...actionTransaction,
-                status: TransactionStatus.Confirmed
+                ...actionTransaction
               }
               : transaction
         )
       }
     }
     case FETCH_TRANSACTION_FAILURE: {
-      const actionTransaction = action.payload.transaction
+      const { hash, status, message } = action.payload
       return {
         loading: loadingReducer(state.loading, action),
-        error: action.payload.error,
+        error: message,
         data: state.data.map(
           (transaction: Transaction) =>
             // prettier-ignore
-            actionTransaction.hash === transaction.hash
+            hash === transaction.hash
               ? {
                 ...transaction,
-                ...actionTransaction,
-                status: TransactionStatus.Failed,
-                error: action.payload.error
+                status
               }
+              : transaction
+        )
+      }
+    }
+    case UPDATE_TRANSACTION_STATUS: {
+      return {
+        loading: loadingReducer(state.loading, action),
+        error: null,
+        data: state.data.map(
+          (transaction: Transaction) =>
+            // prettier-ignore
+            action.payload.hash === transaction.hash
+              ? {
+                ...transaction,
+                status: action.payload.status
+              }
+              : transaction
+        )
+      }
+    }
+    case UPDATE_TRANSACTION_NONCE: {
+      return {
+        loading: loadingReducer(state.loading, action),
+        error: null,
+        data: state.data.map(
+          (transaction: Transaction) =>
+            // prettier-ignore
+            action.payload.hash === transaction.hash
+              ? {
+                  ...transaction,
+                  nonce: action.payload.nonce
+                }
+              : transaction
+        )
+      }
+    }
+    case REPLACE_TRANSACTION_SUCCESS: {
+      return {
+        loading: loadingReducer(state.loading, action),
+        error: null,
+        data: state.data.map(
+          (transaction: Transaction) =>
+            // prettier-ignore
+            action.payload.hash === transaction.hash
+              ? {
+                  ...transaction,
+                  status: txUtils.TRANSACTION_TYPES.replaced,
+                  replacedBy: action.payload.replaceBy
+                }
               : transaction
         )
       }
