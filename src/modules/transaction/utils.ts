@@ -1,5 +1,6 @@
 import { AnyAction } from 'redux'
-import { Transaction, TransactionPayload } from './types'
+import { Transaction, TransactionPayload, FINISHED_TYPES } from './types'
+import { txUtils } from 'decentraland-eth'
 
 // Special flag used to determine transaction hashes to be monitored
 export const TRANSACTION_ACTION_FLAG = '_watch_tx'
@@ -69,4 +70,8 @@ export function getEtherscanOrigin(network: string) {
     origin = `https://${network}.etherscan.io`
   }
   return origin
+}
+
+export function isPending(status: txUtils.Transaction['type'] | null): boolean {
+  return !(FINISHED_TYPES as any[]).includes(status)
 }

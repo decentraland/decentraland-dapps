@@ -14,7 +14,10 @@ import {
 import {
   FETCH_TRANSACTION_REQUEST,
   FETCH_TRANSACTION_SUCCESS,
-  FETCH_TRANSACTION_FAILURE
+  FETCH_TRANSACTION_FAILURE,
+  UPDATE_TRANSACTION_STATUS,
+  UPDATE_TRANSACTION_NONCE,
+  REPLACE_TRANSACTION_SUCCESS
 } from '../transaction/actions'
 
 const disabledLoad = (store: any) =>
@@ -51,6 +54,9 @@ export function createStorageMiddleware<T>(options: StorageMiddleware<T>) {
       FETCH_TRANSACTION_REQUEST,
       FETCH_TRANSACTION_SUCCESS,
       FETCH_TRANSACTION_FAILURE,
+      UPDATE_TRANSACTION_STATUS,
+      UPDATE_TRANSACTION_NONCE,
+      REPLACE_TRANSACTION_SUCCESS,
       ...actions
     ]
   )

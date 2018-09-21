@@ -1,6 +1,7 @@
 import { AnyAction } from 'redux'
 import { action } from 'typesafe-actions'
 import { Transaction } from './types'
+import { txUtils } from 'decentraland-eth'
 
 // Fetch transaction
 
@@ -23,12 +24,14 @@ export const fetchTransactionSuccess = (transaction: Transaction) =>
   action(FETCH_TRANSACTION_SUCCESS, { transaction })
 
 export const fetchTransactionFailure = (
-  transaction: Transaction,
-  error: string
+  hash: string,
+  status: txUtils.Transaction['type'],
+  message: string
 ) =>
   action(FETCH_TRANSACTION_FAILURE, {
-    transaction,
-    error
+    hash,
+    status,
+    message
   })
 
 export type FetchTransactionRequestAction = ReturnType<
@@ -43,11 +46,77 @@ export type FetchTransactionFailureAction = ReturnType<
 
 // Watch pending transactions
 
-export const WATCH_PENDING_TRANSACTIONS = 'Watch pending transactions'
+export const WATCH_PENDING_TRANSACTIONS = 'Watch Pending Transactions'
 
 export const watchPendingTransactions = () =>
   action(WATCH_PENDING_TRANSACTIONS, {})
 
 export type WatchPendingTransactionsAction = ReturnType<
-  typeof fetchTransactionFailure
+  typeof watchPendingTransactions
+>
+
+// Update transaction status
+
+export const UPDATE_TRANSACTION_STATUS = 'Update Transaction Status'
+
+export const updateTransactionStatus = (
+  hash: string,
+  status: txUtils.Transaction['type'] | null
+) => action(UPDATE_TRANSACTION_STATUS, { hash, status })
+
+export type UpdateTransactionStatusAction = ReturnType<
+  typeof updateTransactionStatus
+>
+
+// Update transaction nonce
+
+export const UPDATE_TRANSACTION_NONCE = 'Update Transaction Nonce'
+
+export const updateTransactionNonce = (hash: string, nonce: number) =>
+  action(UPDATE_TRANSACTION_NONCE, { hash, nonce })
+
+export type UpdateTransactionNonceAction = ReturnType<
+  typeof updateTransactionNonce
+>
+
+// Watch dropped transactions
+
+export const WATCH_DROPPED_TRANSACTIONS = 'Watch Dropped Transactions'
+
+export const watchDroppedTransactions = () =>
+  action(WATCH_DROPPED_TRANSACTIONS, {})
+
+export type WatchDroppedTransactionsAction = ReturnType<
+  typeof watchDroppedTransactions
+>
+
+// Replace transaction
+
+export const REPLACE_TRANSACTION_REQUEST = '[Request] Replace Transaction'
+export const REPLACE_TRANSACTION_SUCCESS = '[Success] Replace Transaction'
+export const REPLACE_TRANSACTION_FAILURE = '[Failure] Replace Transaction'
+
+export const replaceTransactionRequest = (hash: string, nonce: number) =>
+  action(REPLACE_TRANSACTION_REQUEST, {
+    hash,
+    nonce
+  })
+
+export const replaceTransactionSuccess = (hash: string, replaceBy: string) =>
+  action(REPLACE_TRANSACTION_SUCCESS, { hash, replaceBy })
+
+export const replaceTransactionFailure = (hash: string, error: string) =>
+  action(REPLACE_TRANSACTION_FAILURE, {
+    hash,
+    error
+  })
+
+export type ReplaceTransactionRequestAction = ReturnType<
+  typeof replaceTransactionRequest
+>
+export type ReplaceTransactionSuccessAction = ReturnType<
+  typeof replaceTransactionSuccess
+>
+export type ReplaceTransactionFailureAction = ReturnType<
+  typeof replaceTransactionFailure
 >
