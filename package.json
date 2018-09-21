@@ -38,7 +38,7 @@
     "@types/mocha": "^5.2.5",
     "chai": "^4.1.2",
     "dcl-tslint-config-standard": "^1.0.1",
-    "decentraland-eth": "^5.0.0-rc7",
+    "decentraland-eth": "^5.0.0",
     "decentraland-ui": "^1.8.0",
     "husky": "^0.14.3",
     "mocha": "^5.2.0",
@@ -57,7 +57,7 @@
     "validate-commit-message": "^3.0.1"
   },
   "peerDependencies": {
-    "decentraland-eth": ">=5.0.0-rc7",
+    "decentraland-eth": ">=5.0.0",
     "decentraland-ui": "^1.8.0",
     "react": "^16.4.1",
     "react-redux": "^5.0.7",
