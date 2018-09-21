@@ -30,8 +30,8 @@ import {
   CONNECT_WALLET_SUCCESS,
   ConnectWalletSuccessAction
 } from '../wallet/actions'
-import { getData, getLoading, getTransaction } from './selectors'
-import { isPending } from './utils'
+import { getData, getTransaction } from './selectors'
+import { isPending, buildActionRef } from './utils'
 import { TransactionStatus } from 'decentraland-eth/dist/ethereum/wallets/Wallet'
 
 export function* transactionSaga(): IterableIterator<ForkEffect> {
@@ -151,7 +151,7 @@ function* handleReplaceTransactionRequest(
     // check if tx has status, this is to recover from a tx that is dropped momentarily
     const tx = yield call(() => txUtils.getTransaction(hash))
     if (tx != null) {
-      yield put(fetchTransactionRequest(account, hash, { type: null }))
+      yield put(fetchTransactionRequest(account, hash, buildActionRef(tx)))
       break
     }
 
@@ -208,23 +208,20 @@ function* handleReplaceTransactionRequest(
 }
 
 function* handleWatchPendingTransactions() {
-  const transactionRequests: Transaction[] = yield select(getLoading)
-
   const transactions: Transaction[] = yield select(getData)
   const pendingTransactions = transactions.filter(transaction =>
     isPending(transaction.status)
   )
 
-  const allTransactions = transactionRequests.concat(pendingTransactions)
-
-  for (const tx of allTransactions) {
+  for (const tx of pendingTransactions) {
     if (!watchPendingIndex[tx.hash]) {
       // don't watch transactions that are too old
-      if (tx.timestamp > Date.now() - PENDING_TRANSACTION_THRESHOLD)
+      if (tx.timestamp > Date.now() - PENDING_TRANSACTION_THRESHOLD) {
         yield fork(
           handleFetchTransactionRequest,
-          fetchTransactionRequest(tx.from, tx.hash, { type: null })
+          fetchTransactionRequest(tx.from, tx.hash, buildActionRef(tx))
         )
+      }
     }
   }
 }
