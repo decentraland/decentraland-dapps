@@ -5,7 +5,7 @@ export const FINISHED_TYPES = [
   txUtils.TRANSACTION_TYPES.reverted,
   txUtils.TRANSACTION_TYPES.dropped,
   txUtils.TRANSACTION_TYPES.replaced
-] as any[]
+]
 
 export interface Transaction {
   events: string[]

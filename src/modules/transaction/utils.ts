@@ -73,5 +73,5 @@ export function getEtherscanOrigin(network: string) {
 }
 
 export function isPending(status: txUtils.Transaction['type'] | null): boolean {
-  return !FINISHED_TYPES.includes(status)
+  return !(FINISHED_TYPES as any[]).includes(status)
 }

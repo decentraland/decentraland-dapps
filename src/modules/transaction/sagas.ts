@@ -8,7 +8,7 @@ import {
   fork
 } from 'redux-saga/effects'
 import { delay } from 'redux-saga'
-import { Transaction, FINISHED_TYPES } from './types'
+import { Transaction } from './types'
 import {
   fetchTransactionFailure,
   fetchTransactionSuccess,
@@ -41,6 +41,9 @@ export function* transactionSaga(): IterableIterator<ForkEffect> {
   yield takeEvery(WATCH_DROPPED_TRANSACTIONS, handleWatchDroppedTransactions)
   yield takeEvery(CONNECT_WALLET_SUCCESS, handleConnectWalletSuccess)
 }
+
+const BLOCKS_DEPTH = 100
+const PENDING_TRANSACTION_THRESHOLD = 72 * 60 * 60 * 1000 // 72hs
 
 const watchPendingIndex: { [hash: string]: boolean } = {
   // hash: true
@@ -81,7 +84,7 @@ function* handleFetchTransactionRequest(action: FetchTransactionRequestAction) {
 
       // update nonce
       const nonceInState = txInState == null ? null : txInState.nonce
-      const nonceInNetwork = isUnknown ? null : (tx as TransactionStatus).nonce
+      const nonceInNetwork = isUnknown ? null : tx.nonce
 
       if (nonceInNetwork != null && nonceInState == null) {
         yield put(updateTransactionNonce(hash, nonceInNetwork))
@@ -158,9 +161,9 @@ function* handleReplaceTransactionRequest(
     let highestNonce = 0
     let replacedBy = null
 
-    // loop through the last 100
+    // loop through the last blocks
     const startBlock = blockNumber
-    const endBlock = checkpoint || blockNumber - 100
+    const endBlock = checkpoint || blockNumber - BLOCKS_DEPTH
     for (let i = startBlock; i > endBlock; i--) {
       let block = yield call(() => eth.getBlock(i, true))
       const transactions: TransactionStatus[] =
@@ -208,16 +211,16 @@ function* handleWatchPendingTransactions() {
   const transactionRequests: Transaction[] = yield select(getLoading)
 
   const transactions: Transaction[] = yield select(getData)
-  const pendingTransactions = transactions.filter(
-    transaction => !FINISHED_TYPES.includes(transaction.status)
+  const pendingTransactions = transactions.filter(transaction =>
+    isPending(transaction.status)
   )
 
   const allTransactions = transactionRequests.concat(pendingTransactions)
 
   for (const tx of allTransactions) {
     if (!watchPendingIndex[tx.hash]) {
-      // don't watch transactions that are older than 72 hs
-      if (tx.timestamp > Date.now() - 72 * 60 * 60 * 1000)
+      // don't watch transactions that are too old
+      if (tx.timestamp > Date.now() - PENDING_TRANSACTION_THRESHOLD)
         yield fork(
           handleFetchTransactionRequest,
           fetchTransactionRequest(tx.from, tx.hash, { type: null })
