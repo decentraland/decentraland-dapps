@@ -1,4 +1,4 @@
-import { IntlProvider, addLocaleData, InjectedIntl } from 'react-intl'
+import { IntlProvider, addLocaleData, InjectedIntl, FormattedMessage } from 'react-intl'
 
 // Check the method: getAvailableLocales below to see which locales to add
 // Then, you'll need to add it to: addAvailableLocaleData and setCurrentLocale
@@ -74,3 +74,5 @@ export function getCurrentLocale() {
 export function t(id: string, values?: any) {
   return i18n.formatMessage({ id }, values)
 }
+
+export const T = FormattedMessage
