@@ -221,6 +221,11 @@ function* handleWatchPendingTransactions() {
           handleFetchTransactionRequest,
           fetchTransactionRequest(tx.from, tx.hash, buildActionRef(tx))
         )
+      } else {
+        // mark it as dropped if it's too old
+        yield put(
+          updateTransactionStatus(tx.hash, txUtils.TRANSACTION_TYPES.dropped)
+        )
       }
     }
   }
