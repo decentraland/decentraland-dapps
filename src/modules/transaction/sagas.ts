@@ -94,13 +94,15 @@ function* handleFetchTransactionRequest(action: FetchTransactionRequestAction) {
       const statusInState = txInState == null ? null : txInState.status
       const statusInNetwork = isUnknown ? null : tx.type
 
-      if (statusInState !== statusInNetwork) {
-        // check if dropped
-        if (statusInState != null && statusInNetwork == null) {
-          const nonce = nonceInState || nonceInNetwork
-          if (nonce) {
-            yield put(replaceTransactionRequest(hash, nonce))
-          }
+      const nonce = nonceInState || nonceInNetwork
+      if (statusInState !== statusInNetwork && nonce != null) {
+        // check if dropped or replaced
+        const isDropped = statusInState != null && statusInNetwork == null
+        const isReplaced =
+          statusInNetwork === txUtils.TRANSACTION_TYPES.replaced
+        if (isDropped || isReplaced) {
+          // mark tx as dropped even if it was returned with a 'replaced' status, let the saga find its replacement
+          yield put(replaceTransactionRequest(hash, nonce))
           throw new FailedTransactionError(
             hash,
             txUtils.TRANSACTION_TYPES.dropped
@@ -185,7 +187,15 @@ function* handleReplaceTransactionRequest(
 
     // if a replacement tx was found, replace it
     if (replacedBy) {
-      yield put(replaceTransactionSuccess(hash, replacedBy.hash))
+      // this is a tx that was wrongly marked as replaced
+      // could be due to a race condition when fetching the account nonce
+      // it will be sent back to the pending tx saga that will mark it as confirmed/reverted
+      if (hash === replacedBy.hash) {
+        yield put(fetchTransactionRequest(account, hash, buildActionRef(tx)))
+      } else {
+        // replacement found!
+        yield put(replaceTransactionSuccess(hash, replacedBy.hash))
+      }
       break
     }
 
