@@ -187,7 +187,15 @@ function* handleReplaceTransactionRequest(
 
     // if a replacement tx was found, replace it
     if (replacedBy) {
-      yield put(replaceTransactionSuccess(hash, replacedBy.hash))
+      // this is a tx that was wrongly marked as replaced
+      // could be due to a race condition when fetching the account nonce
+      // it will be sent back to the pending tx saga that will mark it as confirmed/reverted
+      if (hash === replacedBy.hash) {
+        yield put(fetchTransactionRequest(account, hash, buildActionRef(tx)))
+      } else {
+        // replacement found!
+        yield put(replaceTransactionSuccess(hash, replacedBy.hash))
+      }
       break
     }
 
