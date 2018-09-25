@@ -12,9 +12,6 @@ jobs:
           keys:
             - dependencies-{{ checksum "package-lock.json" }}
       - run:
-          name: Install system dependencies
-          command: sudo apt-get update && sudo apt install -y libusb-1.0-0 libusb-1.0-0-dev
-      - run:
           name: Install node dependencies
           command: npm install
       - save_cache:
@@ -36,9 +33,6 @@ jobs:
       - restore_cache:
           keys:
             - dependencies-{{ checksum "package-lock.json" }}
-      - run:
-          name: Install system dependencies
-          command: sudo apt-get update && sudo apt install -y libusb-1.0-0 libusb-1.0-0-dev
       - run:
           name: Install node dependencies
           command: npm install
