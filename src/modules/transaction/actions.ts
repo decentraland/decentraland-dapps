@@ -120,3 +120,29 @@ export type ReplaceTransactionSuccessAction = ReturnType<
 export type ReplaceTransactionFailureAction = ReturnType<
   typeof replaceTransactionFailure
 >
+
+// Clear Transactions (multiple)
+
+export const CLEAR_TRANSACTIONS = 'Clear Transactions'
+
+export const clearTransactions = (
+  address: string,
+  clearPendings: boolean = false
+) =>
+  action(CLEAR_TRANSACTIONS, {
+    address,
+    clearPendings
+  })
+
+export type ClearTransactionsAction = ReturnType<typeof clearTransactions>
+
+// Clear Transaction (single)
+
+export const CLEAR_TRANSACTION = 'Clear Transaction'
+
+export const clearTransaction = (hash: string) =>
+  action(CLEAR_TRANSACTION, {
+    hash
+  })
+
+export type ClearTransactionAction = ReturnType<typeof clearTransaction>

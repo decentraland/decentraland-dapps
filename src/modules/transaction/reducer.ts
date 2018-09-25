@@ -13,9 +13,14 @@ import {
   UPDATE_TRANSACTION_NONCE,
   UpdateTransactionNonceAction,
   REPLACE_TRANSACTION_SUCCESS,
-  ReplaceTransactionSuccessAction
+  ReplaceTransactionSuccessAction,
+  ClearTransactionsAction,
+  ClearTransactionAction,
+  CLEAR_TRANSACTIONS,
+  CLEAR_TRANSACTION
 } from './actions'
 import { txUtils } from 'decentraland-eth'
+import { isPending } from './utils'
 
 export type TransactionState = {
   data: Transaction[]
@@ -36,6 +41,8 @@ export type TransactionReducerAction =
   | UpdateTransactionStatusAction
   | UpdateTransactionNonceAction
   | ReplaceTransactionSuccessAction
+  | ClearTransactionsAction
+  | ClearTransactionAction
 
 export function transactionReducer(
   state = INITIAL_STATE,
@@ -143,6 +150,24 @@ export function transactionReducer(
                   replacedBy: action.payload.replaceBy
                 }
               : transaction
+        )
+      }
+    }
+    case CLEAR_TRANSACTIONS: {
+      return {
+        ...state,
+        data: state.data.filter(
+          transaction =>
+            transaction.from !== action.payload.address &&
+            (action.payload.clearPendings || !isPending(transaction.status))
+        )
+      }
+    }
+    case CLEAR_TRANSACTION: {
+      return {
+        ...state,
+        data: state.data.filter(
+          transaction => transaction.hash !== action.payload.hash
         )
       }
     }
