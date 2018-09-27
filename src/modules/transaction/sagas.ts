@@ -77,7 +77,11 @@ function* handleFetchTransactionRequest(action: FetchTransactionRequestAction) {
     let isUnknown = tx == null
 
     // loop while tx is pending
-    while (isUnknown || isPending(tx.type)) {
+    while (
+      isUnknown ||
+      isPending(tx.type) ||
+      tx.type === txUtils.TRANSACTION_TYPES.replaced // let replaced transactions be kept in the loop so it can be picked up as dropped
+    ) {
       const txInState: Transaction = yield select(state =>
         getTransaction(state, hash)
       )
