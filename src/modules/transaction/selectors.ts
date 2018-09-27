@@ -27,6 +27,11 @@ export const getTransactionsByStatus = (
     .filter(tx => tx.from === address && tx.status === status)
     .sort(sortByTimestamp)
 
+export const getTransactions = (state: any, address: string): Transaction[] =>
+  getData(state)
+    .filter(tx => tx.from === address)
+    .sort(sortByTimestamp)
+
 export const getPendingTransactions = (
   state: any,
   address: string
