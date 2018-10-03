@@ -52,11 +52,14 @@ export function transactionReducer(
     case FETCH_TRANSACTION_REQUEST: {
       const actionRef = action.payload.action
       const transaction = getTransactionFromAction(actionRef)
+      const otherTransactions = state.data.filter(
+        otherTransaction => otherTransaction.hash !== transaction.hash
+      )
       return {
         loading: loadingReducer(state.loading, action),
         error: null,
         data: [
-          ...state.data,
+          ...otherTransactions,
           {
             ...transaction,
             timestamp: Date.now(),
