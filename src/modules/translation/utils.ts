@@ -1,13 +1,16 @@
-import { IntlProvider, addLocaleData, InjectedIntl, FormattedMessage } from 'react-intl'
+import {
+  IntlProvider,
+  addLocaleData,
+  InjectedIntl,
+  FormattedMessage
+} from 'react-intl'
 
-// Check the method: getAvailableLocales below to see which locales to add
-// Then, you'll need to add it to: addAvailableLocaleData and setCurrentLocale
-// This is annoying but better than bundling 200KB of locales
 import * as enIntlData from 'react-intl/locale-data/en'
 import * as esIntlData from 'react-intl/locale-data/es'
 import * as frIntlData from 'react-intl/locale-data/fr'
 import * as koIntlData from 'react-intl/locale-data/ko'
 import * as zhIntlData from 'react-intl/locale-data/zh'
+import * as jaIntlData from 'react-intl/locale-data/ja'
 
 // We use require here to make ts-loader happy
 const enFnsData = require('date-fns/locale/en')
@@ -15,6 +18,7 @@ const esFnsData = require('date-fns/locale/es')
 const frFnsData = require('date-fns/locale/fr')
 const koFnsData = require('date-fns/locale/ko')
 const zhFnsData = require('date-fns/locale/zh_cn')
+const jaFnsData = require('date-fns/locale/ja')
 
 const DEFAULT_LOCALE = 'en'
 
@@ -31,7 +35,8 @@ export function addAvailableLocaleData(): void {
       esIntlData,
       frIntlData,
       koIntlData,
-      zhIntlData
+      zhIntlData,
+      jaIntlData
     )
   )
 }
@@ -63,7 +68,8 @@ export function setCurrentLocale(localeName: string) {
     es: esFnsData,
     fr: frFnsData,
     ko: koFnsData,
-    zh: zhFnsData
+    zh: zhFnsData,
+    ja: jaFnsData
   }[localeName || DEFAULT_LOCALE]
 }
 
