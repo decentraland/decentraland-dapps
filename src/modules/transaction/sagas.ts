@@ -155,9 +155,16 @@ function* handleReplaceTransactionRequest(
 
   while (true) {
     // check if tx has status, this is to recover from a tx that is dropped momentarily
-    const tx = yield call(() => txUtils.getTransaction(hash))
+    const tx: txUtils.Transaction = yield call(() =>
+      txUtils.getTransaction(hash)
+    )
     if (tx != null) {
-      yield put(fetchTransactionRequest(account, hash, buildActionRef(tx)))
+      const txInState: Transaction = yield select(state =>
+        getTransaction(state, hash)
+      )
+      yield put(
+        fetchTransactionRequest(account, hash, buildActionRef(txInState))
+      )
       break
     }
 
@@ -195,7 +202,12 @@ function* handleReplaceTransactionRequest(
       // could be due to a race condition when fetching the account nonce
       // it will be sent back to the pending tx saga that will mark it as confirmed/reverted
       if (hash === replacedBy.hash) {
-        yield put(fetchTransactionRequest(account, hash, buildActionRef(tx)))
+        const txInState: Transaction = yield select(state =>
+          getTransaction(state, hash)
+        )
+        yield put(
+          fetchTransactionRequest(account, hash, buildActionRef(txInState))
+        )
       } else {
         // replacement found!
         yield put(replaceTransactionSuccess(hash, replacedBy.hash))

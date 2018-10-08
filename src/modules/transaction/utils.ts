@@ -2,16 +2,13 @@ import { AnyAction } from 'redux'
 import { Transaction, TransactionPayload, FINISHED_TYPES } from './types'
 import { txUtils } from 'decentraland-eth'
 
-// Dummy action used as action ref when reinserting a pending transaction into the saga that watches pending txs
-export const DUMMY_ACTION_REF = '_dummy_action_ref'
-
 // Special flag used to determine transaction hashes to be monitored
 export const TRANSACTION_ACTION_FLAG = '_watch_tx'
 
 export function buildActionRef(transaction: Transaction) {
-  const { hash, events, withReceipt, ...payload } = transaction
+  const { actionType, events, withReceipt, payload } = transaction
   return {
-    type: DUMMY_ACTION_REF,
+    type: actionType,
     payload: (withReceipt
       ? buildTransactionWithReceiptPayload
       : buildTransactionPayload)(transaction.hash, payload, events)

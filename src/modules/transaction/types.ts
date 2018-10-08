@@ -18,6 +18,7 @@ export interface Transaction {
   status: txUtils.Transaction['type'] | null
   withReceipt?: boolean
   receipt?: Receipt
+  payload?: any
 }
 
 export interface TransactionPayload {
