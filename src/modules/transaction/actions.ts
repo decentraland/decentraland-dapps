@@ -90,6 +90,17 @@ export type WatchDroppedTransactionsAction = ReturnType<
   typeof watchDroppedTransactions
 >
 
+// Watch reverted transaction
+
+export const WATCH_REVERTED_TRANSACTION = 'Watch Reverted Transaction'
+
+export const watchRevertedTransaction = (hash: string) =>
+  action(WATCH_REVERTED_TRANSACTION, { hash })
+
+export type WatchRevertedTransactionAction = ReturnType<
+  typeof watchRevertedTransaction
+>
+
 // Replace transaction
 
 export const REPLACE_TRANSACTION_REQUEST = '[Request] Replace Transaction'
