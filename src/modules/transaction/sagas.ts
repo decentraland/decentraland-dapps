@@ -291,6 +291,7 @@ function* handleWatchRevertedTransaction(
   }
 
   do {
+    yield call(delay, txUtils.TRANSACTION_FETCH_DELAY)
     const tx: txUtils.Transaction | null = yield call(() =>
       txUtils.getTransaction(hash)
     )
