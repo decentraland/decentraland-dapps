@@ -297,7 +297,7 @@ function* handleWatchRevertedTransaction(
     )
     if (tx != null && tx.type === TRANSACTION_TYPES.confirmed) {
       yield put(updateTransactionStatus(hash, TRANSACTION_TYPES.confirmed))
-      break
+      return
     }
   } while (txInState.timestamp > Date.now() - REVERTED_TRANSACTION_THRESHOLD)
 }
