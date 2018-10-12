@@ -53,6 +53,9 @@ const BLOCKS_DEPTH = 100
 const PENDING_TRANSACTION_THRESHOLD = 72 * 60 * 60 * 1000 // 72 hours
 const REVERTED_TRANSACTION_THRESHOLD = 60 * 60 * 1000 // 1 hour
 
+const isExpired = (transaction: Transaction, threshold: number) =>
+  Date.now() - transaction.timestamp > threshold
+
 const watchPendingIndex: { [hash: string]: boolean } = {
   // hash: true
 }
@@ -246,7 +249,7 @@ function* handleWatchPendingTransactions() {
   for (const tx of pendingTransactions) {
     if (!watchPendingIndex[tx.hash]) {
       // don't watch transactions that are too old
-      if (tx.timestamp > Date.now() - PENDING_TRANSACTION_THRESHOLD) {
+      if (!isExpired(tx, PENDING_TRANSACTION_THRESHOLD)) {
         yield fork(
           handleFetchTransactionRequest,
           fetchTransactionRequest(tx.from, tx.hash, buildActionRef(tx))
@@ -299,7 +302,7 @@ function* handleWatchRevertedTransaction(
       yield put(updateTransactionStatus(hash, TRANSACTION_TYPES.confirmed))
       return
     }
-  } while (txInState.timestamp > Date.now() - REVERTED_TRANSACTION_THRESHOLD)
+  } while (!isExpired(txInState, REVERTED_TRANSACTION_THRESHOLD))
 }
 
 function* handleConnectWalletSuccess(_: ConnectWalletSuccessAction) {
@@ -314,7 +317,7 @@ function* handleConnectWalletSuccess(_: ConnectWalletSuccessAction) {
   const revertedTransactions = transactions.filter(
     transaction =>
       transaction.status === TRANSACTION_TYPES.reverted &&
-      transaction.timestamp > Date.now() - REVERTED_TRANSACTION_THRESHOLD
+      !isExpired(transaction, REVERTED_TRANSACTION_THRESHOLD)
   )
   for (const transaction of revertedTransactions) {
     yield put(watchRevertedTransaction(transaction.hash))
