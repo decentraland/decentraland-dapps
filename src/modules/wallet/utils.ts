@@ -65,5 +65,6 @@ export async function isWalletApproved() {
 
   // `isApproved` is not standard. It's supported by MetaMask and it's expected to be implemented by other wallet vendors
   // but we need to check just in case.
-  return ethereum.isApproved ? await ethereum.isApproved() : true
+  const aprobable = ethereum._metamask || ethereum
+  return aprobable.isApproved ? await aprobable.isApproved() : true
 }

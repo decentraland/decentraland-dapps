@@ -20,7 +20,9 @@ export interface BaseWallet {
 
 export interface EthereumWindow {
   ethereum?: {
+    _metamask: { isApproved: () => Promise<boolean> }
     isApproved: () => Promise<boolean>
+
     enable: () => Promise<string[]>
   }
 }
