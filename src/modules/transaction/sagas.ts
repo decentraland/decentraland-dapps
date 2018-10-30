@@ -289,10 +289,6 @@ function* handleWatchRevertedTransaction(
     getTransaction(state, hash)
   )
 
-  if (txInState.status !== TRANSACTION_TYPES.reverted) {
-    return
-  }
-
   do {
     yield call(delay, txUtils.TRANSACTION_FETCH_DELAY)
     const tx: txUtils.Transaction | null = yield call(() =>
