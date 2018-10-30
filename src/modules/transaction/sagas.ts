@@ -27,7 +27,8 @@ import {
   fetchTransactionRequest,
   watchRevertedTransaction,
   WatchRevertedTransactionAction,
-  WATCH_REVERTED_TRANSACTION
+  WATCH_REVERTED_TRANSACTION,
+  fixRevertedTransaction
 } from './actions'
 import {
   CONNECT_WALLET_SUCCESS,
@@ -295,7 +296,7 @@ function* handleWatchRevertedTransaction(
       txUtils.getTransaction(hash)
     )
     if (tx != null && tx.type === TRANSACTION_TYPES.confirmed) {
-      yield put(updateTransactionStatus(hash, TRANSACTION_TYPES.confirmed))
+      yield put(fixRevertedTransaction(hash))
       return
     }
   } while (!isExpired(txInState, REVERTED_TRANSACTION_THRESHOLD))
