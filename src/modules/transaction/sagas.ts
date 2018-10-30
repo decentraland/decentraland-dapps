@@ -51,7 +51,7 @@ export function* transactionSaga(): IterableIterator<ForkEffect> {
 
 const BLOCKS_DEPTH = 100
 const PENDING_TRANSACTION_THRESHOLD = 72 * 60 * 60 * 1000 // 72 hours
-const REVERTED_TRANSACTION_THRESHOLD = 60 * 60 * 1000 // 1 hour
+const REVERTED_TRANSACTION_THRESHOLD = 24 * 60 * 60 * 1000 // 24 hours
 
 const isExpired = (transaction: Transaction, threshold: number) =>
   Date.now() - transaction.timestamp > threshold
