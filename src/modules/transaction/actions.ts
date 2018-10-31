@@ -101,6 +101,17 @@ export type WatchRevertedTransactionAction = ReturnType<
   typeof watchRevertedTransaction
 >
 
+// Fix reverted transaction
+
+export const FIX_REVERTED_TRANSACTION = 'Fix Reverted Transaction'
+
+export const fixRevertedTransaction = (hash: string) =>
+  action(FIX_REVERTED_TRANSACTION, { hash })
+
+export type FixRevertedTransactionAction = ReturnType<
+  typeof fixRevertedTransaction
+>
+
 // Replace transaction
 
 export const REPLACE_TRANSACTION_REQUEST = '[Request] Replace Transaction'

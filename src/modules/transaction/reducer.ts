@@ -17,7 +17,9 @@ import {
   ClearTransactionsAction,
   ClearTransactionAction,
   CLEAR_TRANSACTIONS,
-  CLEAR_TRANSACTION
+  CLEAR_TRANSACTION,
+  FixRevertedTransactionAction,
+  FIX_REVERTED_TRANSACTION
 } from './actions'
 import { txUtils } from 'decentraland-eth'
 import { isPending } from './utils'
@@ -41,6 +43,7 @@ export type TransactionReducerAction =
   | UpdateTransactionStatusAction
   | UpdateTransactionNonceAction
   | ReplaceTransactionSuccessAction
+  | FixRevertedTransactionAction
   | ClearTransactionsAction
   | ClearTransactionAction
 
@@ -118,6 +121,22 @@ export function transactionReducer(
               ? {
                 ...transaction,
                 status: action.payload.status
+              }
+              : transaction
+        )
+      }
+    }
+    case FIX_REVERTED_TRANSACTION: {
+      return {
+        loading: loadingReducer(state.loading, action),
+        error: null,
+        data: state.data.map(
+          (transaction: Transaction) =>
+            // prettier-ignore
+            action.payload.hash === transaction.hash
+              ? {
+                ...transaction,
+                status: txUtils.TRANSACTION_TYPES.confirmed
               }
               : transaction
         )

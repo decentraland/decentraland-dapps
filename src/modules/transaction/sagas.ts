@@ -27,7 +27,8 @@ import {
   fetchTransactionRequest,
   watchRevertedTransaction,
   WatchRevertedTransactionAction,
-  WATCH_REVERTED_TRANSACTION
+  WATCH_REVERTED_TRANSACTION,
+  fixRevertedTransaction
 } from './actions'
 import {
   CONNECT_WALLET_SUCCESS,
@@ -51,7 +52,7 @@ export function* transactionSaga(): IterableIterator<ForkEffect> {
 
 const BLOCKS_DEPTH = 100
 const PENDING_TRANSACTION_THRESHOLD = 72 * 60 * 60 * 1000 // 72 hours
-const REVERTED_TRANSACTION_THRESHOLD = 60 * 60 * 1000 // 1 hour
+const REVERTED_TRANSACTION_THRESHOLD = 24 * 60 * 60 * 1000 // 24 hours
 
 const isExpired = (transaction: Transaction, threshold: number) =>
   Date.now() - transaction.timestamp > threshold
@@ -289,17 +290,13 @@ function* handleWatchRevertedTransaction(
     getTransaction(state, hash)
   )
 
-  if (txInState.status !== TRANSACTION_TYPES.reverted) {
-    return
-  }
-
   do {
     yield call(delay, txUtils.TRANSACTION_FETCH_DELAY)
     const tx: txUtils.Transaction | null = yield call(() =>
       txUtils.getTransaction(hash)
     )
     if (tx != null && tx.type === TRANSACTION_TYPES.confirmed) {
-      yield put(updateTransactionStatus(hash, TRANSACTION_TYPES.confirmed))
+      yield put(fixRevertedTransaction(hash))
       return
     }
   } while (!isExpired(txInState, REVERTED_TRANSACTION_THRESHOLD))
