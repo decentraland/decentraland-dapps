@@ -1,9 +1,10 @@
 import { eth, wallets, Contract } from 'decentraland-eth'
 import { isMobile } from '../../lib/utils'
+import { EthereumWindow } from './types'
 
 interface ConnectOptions {
   address: string
-  provider: string
+  provider: object | string
   contracts: Contract[]
   derivationPath?: string
   eth: typeof eth
@@ -48,4 +49,22 @@ function getWallets(
 
 export function isLedgerWallet() {
   return eth.wallet instanceof wallets.LedgerWallet
+}
+
+export function isApprovableWallet() {
+  const { ethereum } = window as EthereumWindow
+  return ethereum !== undefined && typeof ethereum.enable === 'function'
+}
+
+export async function isWalletApproved() {
+  const { ethereum } = window as EthereumWindow
+
+  if (ethereum === undefined) {
+    return false
+  }
+
+  // `isApproved` is not standard. It's supported by MetaMask and it's expected to be implemented by other wallet vendors
+  // but we need to check just in case.
+  const aprobable = ethereum._metamask || ethereum
+  return aprobable.isApproved ? await aprobable.isApproved() : true
 }

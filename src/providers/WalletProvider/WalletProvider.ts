@@ -1,4 +1,8 @@
 import * as React from 'react'
+import {
+  isApprovableWallet,
+  isWalletApproved
+} from '../../modules/wallet/utils'
 import { DefaultProps, Props } from './WalletProvider.types'
 
 export default class WalletProvider extends React.PureComponent<Props> {
@@ -6,9 +10,19 @@ export default class WalletProvider extends React.PureComponent<Props> {
     children: null
   }
 
-  componentWillMount() {
+  async componentWillMount() {
     const { onConnect } = this.props
-    onConnect()
+
+    if (await this.shouldConnect()) {
+      onConnect()
+    }
+  }
+
+  async shouldConnect() {
+    return (
+      !isApprovableWallet() ||
+      (isApprovableWallet() && (await isWalletApproved()))
+    )
   }
 
   render() {

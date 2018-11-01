@@ -17,3 +17,12 @@ export interface BaseWallet {
   locale?: string
   derivationPath?: string
 }
+
+export interface EthereumWindow {
+  ethereum?: {
+    _metamask: { isApproved: () => Promise<boolean> }
+    isApproved: () => Promise<boolean>
+
+    enable: () => Promise<string[]>
+  }
+}
