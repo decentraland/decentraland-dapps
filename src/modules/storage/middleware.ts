@@ -7,9 +7,7 @@ import { STORAGE_LOAD } from './actions'
 import { StorageMiddleware } from './types'
 import {
   CHANGE_LOCALE,
-  FETCH_TRANSLATIONS_REQUEST,
-  FETCH_TRANSLATIONS_SUCCESS,
-  FETCH_TRANSLATIONS_FAILURE
+  FETCH_TRANSLATIONS_SUCCESS
 } from '../translation/actions'
 import {
   FETCH_TRANSACTION_REQUEST,
@@ -50,9 +48,7 @@ export function createStorageMiddleware<T>(options: StorageMiddleware<T>) {
     [],
     [
       CHANGE_LOCALE,
-      FETCH_TRANSLATIONS_REQUEST,
       FETCH_TRANSLATIONS_SUCCESS,
-      FETCH_TRANSLATIONS_FAILURE,
       FETCH_TRANSACTION_REQUEST,
       FETCH_TRANSACTION_SUCCESS,
       FETCH_TRANSACTION_FAILURE,

@@ -1,6 +1,6 @@
 {
   "name": "decentraland-dapps",
-  "version": "0.0.0-development",
+  "version": "3.8.1-rc3",
   "main": "dist",
   "dependencies": {
     "@types/axios": "^0.14.0",
