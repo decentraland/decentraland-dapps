@@ -1,8 +1,5 @@
 {
-  "extends": [
-    "dcl-tslint-config-standard",
-    "tslint-plugin-prettier"
-  ],
+  "extends": ["dcl-tslint-config-standard", "tslint-plugin-prettier"],
   "rules": {
     "no-commented-out-code": false,
     "jsx-no-multiline-js": false,
