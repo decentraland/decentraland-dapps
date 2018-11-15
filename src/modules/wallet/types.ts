@@ -1,4 +1,5 @@
 import { contracts } from 'decentraland-eth'
+import { Locale } from 'decentraland-ui'
 
 export type BigNumber = {
   toString(): string
@@ -14,7 +15,7 @@ export interface BaseWallet {
   network: string
   address: string
   mana: number
-  locale?: string
+  locale?: Locale
   derivationPath?: string
 }
 

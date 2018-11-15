@@ -5,6 +5,8 @@ import {
   FormattedMessage
 } from 'react-intl'
 
+import { Locale } from 'decentraland-ui'
+
 import * as enIntlData from 'react-intl/locale-data/en'
 import * as esIntlData from 'react-intl/locale-data/es'
 import * as frIntlData from 'react-intl/locale-data/fr'
@@ -42,14 +44,14 @@ export function addAvailableLocaleData(): void {
 }
 
 export function getPreferredLocale(
-  availableLocales: string[] = ['en']
-): string {
+  availableLocales: Locale[] = ['en']
+): Locale {
   const navigator = window.navigator
 
-  let locale =
+  const navigatorLocale =
     (navigator.languages && navigator.languages[0]) || navigator.language
 
-  locale = locale.slice(0, 2)
+  let locale: Locale = navigatorLocale.slice(0, 2) as Locale
 
   if (!availableLocales.includes(locale)) {
     locale = DEFAULT_LOCALE
@@ -62,7 +64,7 @@ export function setI18n(intl: InjectedIntl) {
   i18n = intl
 }
 
-export function setCurrentLocale(localeName: string) {
+export function setCurrentLocale(localeName: Locale) {
   currentLocale = {
     en: enFnsData,
     es: esFnsData,
