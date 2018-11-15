@@ -1,0 +1,44 @@
+{
+  "@dapps": {
+    "footer": {
+      "dropdown": {
+        "en": "Inglés",
+        "es": "Español",
+        "fr": "Francés",
+        "ja": "Japonés",
+        "ko": "Coreano",
+        "zh": "Chino"
+      },
+      "links": {
+        "content": "Política de contenido",
+        "ethics": "Código de Ética",
+        "home": "Inicio",
+        "privacy": "Política de privacidad",
+        "terms": "Términos de Uso"
+      }
+    },
+    "navbar": {
+      "account": {
+        "connecting": "Conectando...",
+        "signIn": "Conectar"
+      },
+      "menu": {
+        "agora": "Agora",
+        "blog": "Blog",
+        "docs": "Docs",
+        "marketplace": "Marketplace"
+      }
+    },
+    "sign_in": {
+      "connect": "Conectar",
+      "connected": "Conectado",
+      "connecting": "Conectando...",
+      "error": "No se pudo conectar a la billetera.",
+      "get_started": "Comenzar",
+      "options": {
+        "desktop": "Puedes usar la extensión {metamask_link} o una billetera de hardware como {ledger_nano_link}.",
+        "mobile": "Puedes utilizar navegadores móviles como {coinbase_link} o {imtoken_link}."
+      }
+    }
+  }
+}

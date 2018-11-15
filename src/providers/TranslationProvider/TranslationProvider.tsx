@@ -16,7 +16,7 @@ export default class TranslationProvider extends React.PureComponent<Props> {
   componentWillReceiveProps(nextProps: Props) {
     const { locale, onFetchTranslations } = nextProps
 
-    if (this.props.locale !== locale) {
+    if (locale && this.props.locale !== locale) {
       onFetchTranslations(locale)
     }
   }

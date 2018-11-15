@@ -1,4 +1,5 @@
 import { action } from 'typesafe-actions'
+import { Locale } from 'decentraland-ui'
 import { TranslationKeys } from './types'
 
 // Fetch translations
@@ -7,10 +8,10 @@ export const FETCH_TRANSLATIONS_REQUEST = '[Request] Fetch Translations'
 export const FETCH_TRANSLATIONS_SUCCESS = '[Success] Fetch Translations'
 export const FETCH_TRANSLATIONS_FAILURE = '[Failure] Fetch Translations'
 
-export const fetchTranslationsRequest = (locale: string) =>
+export const fetchTranslationsRequest = (locale: Locale) =>
   action(FETCH_TRANSLATIONS_REQUEST, { locale })
 export const fetchTranslationsSuccess = (
-  locale: string,
+  locale: Locale,
   translations: TranslationKeys
 ) => action(FETCH_TRANSLATIONS_SUCCESS, { locale, translations })
 export const fetchTranslationsFailure = (error: string) =>
@@ -30,7 +31,7 @@ export type FetchTranslationsFailureAction = ReturnType<
 
 export const CHANGE_LOCALE = 'Change locale'
 
-export const changeLocale = (locale: string) =>
+export const changeLocale = (locale: Locale) =>
   action(CHANGE_LOCALE, { locale })
 
 export type ChangeLocaleAction = ReturnType<typeof changeLocale>

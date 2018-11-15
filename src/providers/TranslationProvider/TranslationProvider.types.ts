@@ -1,9 +1,11 @@
+import { Locale } from 'decentraland-ui'
+
 import { fetchTranslationsRequest } from '../../modules/translation/actions'
 import { TranslationKeys } from '../../modules/translation/types'
 
 export interface Props {
-  locale: string
-  locales: string[]
+  locale?: Locale
+  locales: Locale[]
   translations?: TranslationKeys
   children?: React.ReactNode
   onFetchTranslations: typeof fetchTranslationsRequest

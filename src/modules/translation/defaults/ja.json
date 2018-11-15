@@ -1,0 +1,44 @@
+{
+  "@dapps": {
+    "footer": {
+      "dropdown": {
+        "en": "英語",
+        "es": "スペイン語",
+        "fr": "フランス語",
+        "ja": "日本人",
+        "ko": "韓国語",
+        "zh": "中国語"
+      },
+      "links": {
+        "content": "コンテンツポリシー",
+        "ethics": "倫理規定",
+        "home": "ホーム",
+        "privacy": "個人情報保護方針",
+        "terms": "利用規約"
+      }
+    },
+    "navbar": {
+      "account": {
+        "connecting": "接続中...",
+        "signIn": "サインイン"
+      },
+      "menu": {
+        "agora": "Agora",
+        "blog": "Blog",
+        "docs": "Docs",
+        "marketplace": "Marketplace"
+      }
+    },
+    "sign_in": {
+      "connect": "接続する",
+      "connected": "接続済み",
+      "connecting": "接続中...",
+      "error": "ウォレットに接続できませんでした。",
+      "get_started": "開始する",
+      "options": {
+        "desktop": "{metamask_link}拡張や{ledger_nano_link}のようなハードウェア・ウォレットを使用できます。",
+        "mobile": "{coinbase_link}や{imtoken_link}などのモバイルブラウザを使用できます。"
+      }
+    }
+  }
+}

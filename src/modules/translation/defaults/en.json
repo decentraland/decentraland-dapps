@@ -1,0 +1,44 @@
+{
+  "@dapps": {
+    "footer": {
+      "dropdown": {
+        "en": "English",
+        "es": "Spanish",
+        "fr": "French",
+        "ja": "Japanese",
+        "ko": "Korean",
+        "zh": "Chinese"
+      },
+      "links": {
+        "content": "Content Policy",
+        "ethics": "Code of Ethics",
+        "home": "Home",
+        "privacy": "Privacy Policy",
+        "terms": "Terms of Use"
+      }
+    },
+    "navbar": {
+      "account": {
+        "connecting": "Connecting...",
+        "signIn": "Sign In"
+      },
+      "menu": {
+        "agora": "Agora",
+        "blog": "Blog",
+        "docs": "Docs",
+        "marketplace": "Marketplace"
+      }
+    },
+    "sign_in": {
+      "connect": "Connect",
+      "connected": "Connected",
+      "connecting": "Connecting...",
+      "error": "Could not connect to wallet.",
+      "get_started": "Get Started",
+      "options": {
+        "desktop": "You can use the {metamask_link} extension or a hardware wallet like {ledger_nano_link}.",
+        "mobile": "You can use mobile browsers such as {coinbase_link} or {imtoken_link}."
+      }
+    }
+  }
+}

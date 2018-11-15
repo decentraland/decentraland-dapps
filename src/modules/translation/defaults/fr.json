@@ -1,0 +1,44 @@
+{
+  "@dapps": {
+    "footer": {
+      "dropdown": {
+        "en": "Anglais",
+        "es": "Espanol",
+        "fr": "Français",
+        "ja": "Japonais",
+        "ko": "Coréen",
+        "zh": "Chinois"
+      },
+      "links": {
+        "content": "Contenu",
+        "ethics": "Code d'éthique",
+        "home": "Accueil",
+        "privacy": "Confidentialité",
+        "terms": "Conditions d'utilisation"
+      }
+    },
+    "navbar": {
+      "account": {
+        "connecting": "De liaison...",
+        "signIn": "Se connecter"
+      },
+      "menu": {
+        "agora": "Agora",
+        "blog": "Blog",
+        "docs": "Docs",
+        "marketplace": "Marketplace"
+      }
+    },
+    "sign_in": {
+      "connect": "Relier",
+      "connected": "Connecté",
+      "connecting": "De liaison...",
+      "error": "Impossible de se connecter au portefeuille.",
+      "get_started": "Commencer",
+      "options": {
+        "desktop": "Vous pouvez utiliser l'extension {metamask_link} ou un portefeuille matériel comme {ledger_nano_link}.",
+        "mobile": "Vous pouvez utiliser des navigateurs mobiles tels que {coinbase_link} ou {imtoken_link}."
+      }
+    }
+  }
+}

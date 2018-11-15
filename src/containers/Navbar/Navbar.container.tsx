@@ -1,32 +1,39 @@
 import { connect } from 'react-redux'
-import { goBack, RouterAction } from 'react-router-redux'
-import { Navbar, NavbarProps } from 'decentraland-ui'
-import { RootDispatch } from '../../types'
+import { RouterAction } from 'react-router-redux'
+
+import Navbar from './Navbar'
+import { NavbarProps, MapStateProps, MapDispatchProps } from './Navbar.types'
 import {
   getData as getWallet,
   isConnected,
   isConnecting
 } from '../../modules/wallet/selectors'
+import { isEnabled } from '../../modules/translation/selectors'
+import { connectWalletRequest } from '../../modules/wallet/actions'
+import { RootDispatch } from '../../types'
 
-const mapState = (state: any): NavbarProps => {
+const mapState = (state: any): MapStateProps => {
   const wallet = getWallet(state)
   return {
     mana: wallet.mana,
     address: wallet.address,
     isConnected: isConnected(state),
-    isConnecting: isConnecting(state)
+    isConnecting: isConnecting(state),
+    hasTranslations: isEnabled(state)
   }
 }
 
-const mapDispatch = (dispatch: RootDispatch<RouterAction>) => ({
-  onBack: () => dispatch(goBack())
+const mapDispatch = (
+  dispatch: RootDispatch<RouterAction>
+): MapDispatchProps => ({
+  onSignIn: () => dispatch(connectWalletRequest())
 })
 
 const mergeProps = (
-  stateProps: Partial<NavbarProps>,
-  dispatchProps: Partial<NavbarProps>,
-  ownProps: Partial<NavbarProps>
-) => ({
+  stateProps: MapStateProps,
+  dispatchProps: MapDispatchProps,
+  ownProps: NavbarProps
+): NavbarProps => ({
   ...stateProps,
   ...dispatchProps,
   ...ownProps
