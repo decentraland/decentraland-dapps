@@ -29,9 +29,9 @@ export default class Footer extends React.PureComponent<FooterProps> {
     }
   }
 
-  handleChange = (_: any, { value }: any) => {
+  handleChange: FooterProps['onChange'] = (_, { value }) => {
     const { locale, onChange } = this.props
-    if (value != locale && onChange) {
+    if (value && value !== locale && onChange) {
       onChange(_, { value })
     }
   }
