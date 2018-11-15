@@ -60,29 +60,3 @@ export function formatDateTime(
 export function formatNumber(amount: number = 0, digits: number = 2) {
   return parseFloat((+amount).toFixed(digits)).toLocaleString()
 }
-
-/**
- * Merges deeply all the properties from one or more source objects into a target object. It will return a new object.
- * @param {object} target The target object
- * @param {...object} sources The source object(s)
- */
-export function merge<T extends Object>(
-  target: T = {} as T,
-  ...sources: (T | undefined)[]
-) {
-  return [target, ...sources].reduce<T>(
-    (result, obj) => _merge<T>(result, obj),
-    {} as T
-  )
-}
-
-function _merge<T extends Object>(target: T = {} as T, source: T = {} as T) {
-  const merged: T = Object.keys(source).reduce((result: T, key: string) => {
-    result[key] =
-      typeof source[key] === 'object'
-        ? _merge(target[key], source[key])
-        : source[key]
-    return result
-  }, target)
-  return merged
-}

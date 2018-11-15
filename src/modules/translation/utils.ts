@@ -84,3 +84,27 @@ export function t(id: string, values?: any) {
 }
 
 export const T = FormattedMessage
+
+export function mergeTranslations<T extends { [key: string]: T | string }>(
+  target: T = {} as T,
+  ...sources: (T | undefined)[]
+) {
+  return [target, ...sources].reduce<T>(
+    (result, obj) => _mergeTranslations<T>(result, obj),
+    {} as T
+  )
+}
+
+function _mergeTranslations<T extends { [key: string]: T | string }>(
+  target: T = {} as T,
+  source: T = {} as T
+) {
+  const merged: T = Object.keys(source).reduce((result: T, key: string) => {
+    result[key] =
+      typeof source[key] === 'object'
+        ? _mergeTranslations(target[key] as T, source[key] as T)
+        : source[key]
+    return result
+  }, target)
+  return merged
+}

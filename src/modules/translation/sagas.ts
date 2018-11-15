@@ -7,9 +7,8 @@ import {
   FETCH_TRANSLATIONS_REQUEST,
   FetchTranslationsRequestAction
 } from './actions'
-import { setCurrentLocale } from './utils'
+import { setCurrentLocale, mergeTranslations } from './utils'
 import * as defaultTranslations from './defaults'
-import { merge } from '../../lib/utils'
 
 export type TranslationSagaOptions = {
   getTranslation?: (locale: string) => Promise<Translation>
@@ -39,7 +38,7 @@ export function createTranslationSaga({
       setCurrentLocale(locale)
 
       // merge translations and defaults
-      result = merge<TranslationKeys>(
+      result = mergeTranslations<TranslationKeys>(
         flatten(defaultTranslations[locale]),
         result
       )
