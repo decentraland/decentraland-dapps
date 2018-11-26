@@ -4,23 +4,23 @@
       "dropdown": {
         "en": "英语",
         "es": "西班牙语",
-        "fr": "法国",
-        "ja": "日本",
-        "ko": "朝鲜的",
+        "fr": "法语",
+        "ja": "日语",
+        "ko": "韩文",
         "zh": "中文"
       },
       "links": {
         "content": "内容政策",
         "ethics": "道德准则",
-        "home": "家",
+        "home": "主页",
         "privacy": "隐私政策",
         "terms": "使用条款"
       }
     },
     "navbar": {
       "account": {
-        "connecting": "连接...",
-        "signIn": "登入"
+        "connecting": "正在连接...",
+        "signIn": "登陆"
       },
       "menu": {
         "agora": "Agora",
@@ -30,14 +30,14 @@
       }
     },
     "sign_in": {
-      "connect": "连",
-      "connected": "连接的",
-      "connecting": "连接...",
+      "connect": "连接",
+      "connected": "已连接",
+      "connecting": "连接中 ...",
       "error": "无法连接到钱包。",
-      "get_started": "入门",
+      "get_started": "开始",
       "options": {
-        "desktop": "您可以使用{metamask_link}扩展名或硬件钱包，如{ledger_nano_link}。",
-        "mobile": "您可以使用移动浏览器，例如{coinbase_link}或{imtoken_link}。"
+        "desktop": "您可以使用 {metamask_link} 扩展程序或硬件钱包，如 {ledger_nano_link}。",
+        "mobile": "您可以使用移动浏览器，如 {coinbase_link} 或 {imtoken_link}。"
       }
     }
   }
