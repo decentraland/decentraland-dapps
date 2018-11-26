@@ -24,9 +24,9 @@
       },
       "menu": {
         "agora": "Agora",
-        "blog": "博文",
-        "docs": "文档",
-        "marketplace": "虚拟市场"
+        "blog": "Blog",
+        "docs": "Docs",
+        "marketplace": "Marketplace"
       }
     },
     "sign_in": {
