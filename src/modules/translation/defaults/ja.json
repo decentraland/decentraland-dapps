@@ -5,7 +5,7 @@
         "en": "英語",
         "es": "スペイン語",
         "fr": "フランス語",
-        "ja": "日本人",
+        "ja": "日本語",
         "ko": "韓国語",
         "zh": "中国語"
       },
@@ -24,9 +24,9 @@
       },
       "menu": {
         "agora": "Agora",
-        "blog": "Blog",
-        "docs": "Docs",
-        "marketplace": "Marketplace"
+        "blog": "ブログ",
+        "docs": "ドキュメント",
+        "marketplace": "マーケット"
       }
     },
     "sign_in": {
@@ -36,7 +36,7 @@
       "error": "ウォレットに接続できませんでした。",
       "get_started": "開始する",
       "options": {
-        "desktop": "{metamask_link}拡張や{ledger_nano_link}のようなハードウェア・ウォレットを使用できます。",
+        "desktop": "{metamask_link}拡張や{ledger_nano_link}のようなハードウェアウォレットを使用できます。",
         "mobile": "{coinbase_link}や{imtoken_link}などのモバイルブラウザを使用できます。"
       }
     }
