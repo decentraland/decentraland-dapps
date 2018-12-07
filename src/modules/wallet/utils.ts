@@ -56,7 +56,7 @@ export function isApprovableWallet() {
   return ethereum !== undefined && typeof ethereum.enable === 'function'
 }
 
-export async function isWalletApproved() {
+export async function isWalletApproved(): Promise<boolean> {
   const { ethereum } = window as EthereumWindow
 
   if (ethereum === undefined) {
@@ -65,6 +65,24 @@ export async function isWalletApproved() {
 
   // `isApproved` is not standard. It's supported by MetaMask and it's expected to be implemented by other wallet vendors
   // but we need to check just in case.
-  const aprobable = ethereum._metamask || ethereum
-  return aprobable.isApproved ? await aprobable.isApproved() : true
+  const approvable = ethereum._metamask || ethereum
+
+  if (!approvable.isApproved) {
+    return true
+  }
+
+  // `isApproved` sometimes hangs and never resolves or rejects the promise.
+  // To mitigate this we'll use Promise.race, but we need `hasFinished` to avoid firing both functions.
+  // `Promise.race` will *not* cancel the slower promise
+  let hasFinished = false
+
+  return await Promise.race([
+    approvable.isApproved().then(result => {
+      hasFinished = true
+      return result
+    }),
+    new Promise(resolve => setTimeout(resolve, 150)).then(
+      () => (!hasFinished ? isWalletApproved() : false)
+    )
+  ])
 }
