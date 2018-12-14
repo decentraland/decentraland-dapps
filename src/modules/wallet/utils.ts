@@ -76,7 +76,7 @@ export async function isWalletApproved(): Promise<boolean> {
   // `Promise.race` will *not* cancel the slower promise
   let hasFinished = false
 
-  return await Promise.race([
+  return Promise.race([
     approvable.isApproved().then(result => {
       hasFinished = true
       return result
