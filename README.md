@@ -17,7 +17,10 @@ Common modules for our dApps
 - [Lib](https://github.com/decentraland/decentraland-dapps#lib)
   - [API](https://github.com/decentraland/decentraland-dapps#api)
 - [Containers](https://github.com/decentraland/decentraland-dapps#lib)
+  - [App](https://github.com/decentraland/decentraland-dapps#app)
   - [Navbar](https://github.com/decentraland/decentraland-dapps#navbar)
+  - [Footer](https://github.com/decentraland/decentraland-dapps#footer)
+  - [SignInPage](https://github.com/decentraland/decentraland-dapps#signinpage)
   - [EtherscanLink](https://github.com/decentraland/decentraland-dapps#etherscanlink)
 
 # Modules
@@ -929,17 +932,33 @@ Also, all the pending actions are stored in an array in `state.invite.loading` s
 
 ## Location
 
-The location module provides a `navigateTo` action that wrapps `react-router-redux`'s `push` action. It also provides some helpful selectors:
+The location module provides a `navigateTo`, `navigateToSignIn` and `navigateToRoot` actions that wrapps `react-router-redux`'s `push` action. It also provides some helpful selectors:
 
 ```ts
 getLocation(state)
 getPathname(state)
 getPathAction(state) // returns the final part of a url (after the last slash)
+isSignIn(state)
+isRoot(state)
 ```
 
 ### Installation
 
-You need to add a saga to use this module
+You need to add a reducer and a saga to use this module
+
+**Reducer**:
+
+Add the `translationReducer` as `translation` to your `rootReducer`:
+
+```ts
+import { combineReducers } from 'redux'
+import { locationReducer as location } from 'decentraland-dapps/dist/modules/location/reducer'
+
+export const rootReducer = combineReducers({
+  location
+  // your other reducers
+})
+```
 
 **Saga**:
 
@@ -954,6 +973,33 @@ export function* rootSaga() {
   ])
 }
 ```
+
+### Advanced Usage
+
+You can use different paths for default locations by creating a location reducer
+
+<details><summary>Learn More</summary>
+<p>
+
+```ts
+import { combineReducers } from 'redux'
+import { createLocationReducer } from 'decentraland-dapps/dist/modules/location/reducer'
+
+const locationReducer = createLocationReducer({
+  root: '/',
+  signIn: '/sign-in'
+})
+
+export const rootReducer = combineReducers({
+  location
+  // your other reducers
+})
+```
+
+This way you can change the default locations to use different ones. This will be used by the selectors like `isSignIn` and `isRoot`. which impacts the behaviour of several containers like `Navbar` and `SignInPage`
+
+</p>
+</details>
 
 # Lib
 
@@ -990,7 +1036,7 @@ The `<Navbar>` container can be used in the same way as the `<Navbar>` component
 
 ### Dependencies
 
-This container requires you to install the [Wallet](https://github.com/decentraland/decentraland-dapps#wallet) module
+This container requires you to install the [Wallet](https://github.com/decentraland/decentraland-dapps#wallet) and the [Location](https://github.com/decentraland/decentraland-dapps#location) modules
 
 ### Usage
 
@@ -1025,6 +1071,275 @@ export default class Page extends React.PureComponent {
 ```
 
 This `<Navbar>` will show the user's blockie and mana balance because it is connected to the store.
+
+## Navbar
+
+The `<Navbar>` container can be used in the same way as the `<Navbar>` component from `decentaland-ui` but it's already connected to the redux store. You can override any `NavbarProp` if you want to connect differently, and you can pass all the regular `NavbarProps` to it.
+
+### Dependencies
+
+This container requires you to install the [Wallet](https://github.com/decentraland/decentraland-dapps#wallet) and the [Location](https://github.com/decentraland/decentraland-dapps#location) modules. It also has support for i18n out of the box if you include the [Translation](https://github.com/decentraland/decentraland-dapps#translation) module.
+
+### Usage
+
+This is an example of a `SomePage` component that uses the `<Navbar>` container:
+
+```tsx
+import * as React from 'react'
+
+import { Container } from 'decentraland-ui'
+import Navbar from 'decentraland-dapps/dist/containers/Navbar'
+
+import './SomePage.css'
+
+export default class SomePage extends React.PureComponent {
+  static defaultProps = {
+    children: null
+  }
+
+  render() {
+    const { children } = this.props
+
+    return (
+      <>
+        <div className="SomePage">
+          <Container>{children}</Container>
+        </div>
+        <Navbar />
+      </>
+    )
+  }
+}
+```
+
+This `<Navbar>` will show the user's blockie and mana balance because it is connected to the store.
+
+### i18n
+
+If you are using the [Translation](https://github.com/decentraland/decentraland-dapps#translation) module, the `Navbar` contatiner comes with support for the 6 languages supported by the library.
+
+### Advanced Usage
+
+You can override any of the default translations for any locale if you need to
+
+<details><summary>Learn More</summary>
+<p>
+
+Say you want to override some translations in English, just include any or all of the following translations in your `en.json` locale file:
+
+```json
+{
+  "@dapps": {
+    "navbar": {
+      "account": {
+        "connecting": "Connecting...",
+        "signIn": "Sign In"
+      },
+      "menu": {
+        "agora": "Agora",
+        "blog": "Blog",
+        "docs": "Docs",
+        "marketplace": "Marketplace"
+      }
+    }
+  }
+}
+```
+
+## Footer
+
+The `<Footer>` container can be used in the same way as the `<Footer>` component from `decentaland-ui` but it's already connected to the redux store. You can override any `FooterProps` if you want to connect differently, and you can pass all the regular `FooterProps` to it.
+
+### Dependencies
+
+The `<Footer>` container has support for i18n out of the box if you include the [Translation](https://github.com/decentraland/decentraland-dapps#translation) module.
+
+### Usage
+
+This is an example of a `SomePage` component that uses the `<Footer>` container:
+
+```tsx
+import * as React from 'react'
+
+import { Container } from 'decentraland-ui'
+import Navbar from 'decentraland-dapps/dist/containers/Navbar'
+
+import './SomePage.css'
+
+export default class SomePage extends React.PureComponent {
+  render() {
+    const { children } = this.props
+    return (
+      <>
+        <div className="SomePage">
+          <Container>{children}</Container>
+        </div>
+        <Footer locales={['en', 'es']} />
+      </>
+    )
+  }
+}
+```
+
+This `<Footer>` will show all only English and Spanish as the options in the language dropdown. If you don't provide any it will use the 6 supported languages: `en`, `es`, `fr`, `jp`, `ko` and `zh`.
+
+### i18n
+
+If you are using the [Translation](https://github.com/decentraland/decentraland-dapps#translation) module, the `Footer` contatiner comes with support for the 6 languages supported by the library.
+
+### Advanced Usage
+
+You can override any of the default translations for any locale if you need to
+
+<details><summary>Learn More</summary>
+<p>
+
+Say you want to override some translations in English, just include any or all of the following translations in your `en.json` locale file:
+
+```json
+{
+  "@dapps": {
+    "footer": {
+      "dropdown": {
+        "en": "English",
+        "es": "Spanish",
+        "fr": "French",
+        "ja": "Japanese",
+        "ko": "Korean",
+        "zh": "Chinese"
+      },
+      "links": {
+        "content": "Content Policy",
+        "ethics": "Code of Ethics",
+        "home": "Home",
+        "privacy": "Privacy Policy",
+        "terms": "Terms of Use"
+      }
+    }
+  }
+}
+```
+
+## SignInPage
+
+The `<SignInPage>` container can be used in the same way as the `<SignIn>` component from `decentaland-ui` but it's already connected to the redux store. You can override any `SignInProp` if you want to connect differently, and you can pass all the regular `SignInProps` to it.
+
+### Dependencies
+
+This container requires you to install the [Wallet](https://github.com/decentraland/decentraland-dapps#wallet) and the [Location](https://github.com/decentraland/decentraland-dapps#location) modules. It also has support for i18n out of the box if you include the [Translation](https://github.com/decentraland/decentraland-dapps#translation) module.
+
+### Usage
+
+You can import the `<SignInPage>` container and use it on your routes:
+
+```tsx
+import * as React from 'react'
+import { Switch, Route } from 'react-router-dom'
+
+import SignInPage from 'decentraland-dapps/dist/containers/SignInPage'
+
+//...
+
+<Switch>
+  <Route exact path='/' component={...} />
+  {/* your dapps routes... */}
+  <Route exact path='/sign-in' component={SignInPage} />
+</Switch>
+```
+
+### i18n
+
+If you are using the [Translation](https://github.com/decentraland/decentraland-dapps#translation) module, the `SignInPage` contatiner comes with support for the 6 languages supported by the library.
+
+### Advanced Usage
+
+You can override any of the default translations for any locale if you need to
+
+<details><summary>Learn More</summary>
+<p>
+
+Say you want to override some translations in English, just include any or all of the following translations in your `en.json` locale file:
+
+```json
+{
+  "@dapps": {
+    "sign_in": {
+      "connect": "Connect",
+      "connected": "Connected",
+      "connecting": "Connecting...",
+      "error": "Could not connect to wallet.",
+      "get_started": "Get Started",
+      "options": {
+        "desktop": "You can use the {metamask_link} extension or a hardware wallet like {ledger_nano_link}.",
+        "mobile": "You can use mobile browsers such as {coinbase_link} or {imtoken_link}."
+      }
+    }
+  }
+}
+```
+
+## App
+
+The `<App>` container is the easiest way to bootstrap your dApp. Internally it will use a `<Navbar>`, `<Page>` and `<Footer>` components, and connect them all to the redux store. It takes all the props from `NavbarProps`, `PageProps` and `FooterProps` and if you provide any of them it will override the connected props.
+
+It also has a `hero` and a `heroHeight` props that can be used to easily include a hero for the homepage (optional).
+
+### Dependencies
+
+This container requires you to install the [Wallet](https://github.com/decentraland/decentraland-dapps#wallet) and the [Location](https://github.com/decentraland/decentraland-dapps#location) modules. It also has support for i18n out of the box if you include the [Translation](https://github.com/decentraland/decentraland-dapps#translation) module.
+
+### Usage
+
+You just need to use the `<App>` component to wrapp your dApp:
+
+```tsx
+import App from 'decentraland-dapps/dist/containers/App'
+
+export default class MyApp extends React.Component {
+  render() {
+    return <App>{/* your dApp here */}</App>
+  }
+}
+```
+
+You can pass any `NavbarProps`, `FooterProps` or `PageProps` and they will be passed down to the corresponding component:
+
+```tsx
+import App from 'decentraland-dapps/dist/containers/App'
+
+export default class MyApp extends React.Component {
+  render() {
+    return (
+      <App activePage="marketplace" locales={['en', 'es']}>
+        {/* your dApp here */}
+      </App>
+    )
+  }
+}
+```
+
+You can also pass a `hero` and it will be used in the homepage, and adjust the height of the hero with the prop `heroHeight` (default height is `302` pixels)
+
+```tsx
+import App from 'decentraland-dapps/dist/containers/App'
+
+import Hero from '../components/Hero'
+
+export default class MyApp extends React.Component {
+  render() {
+    return (
+      <App
+        hero={<Hero />}
+        heroHeight={302}
+        activePage="marketplace"
+        locales={['en', 'es']}
+      >
+        {/* your dApp here */}
+      </App>
+    )
+  }
+}
+```
 
 ## EtherscanLink
 
