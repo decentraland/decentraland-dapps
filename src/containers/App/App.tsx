@@ -11,7 +11,7 @@ export default class App extends React.PureComponent<
 > {
   render() {
     const { hero, isHomePage, children, ...rest } = this.props
-    const hasHero = hero !== null && isHomePage
+    const hasHero = hero != null && isHomePage
     return (
       <>
         <Navbar {...rest as NavbarProps}>{hasHero ? hero : null}</Navbar>
