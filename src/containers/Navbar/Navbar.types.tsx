@@ -6,7 +6,12 @@ export type NavbarProps = NavbarComponentProps & {
 
 export type MapStateProps = Pick<
   NavbarProps,
-  'mana' | 'address' | 'isConnected' | 'isConnecting' | 'hasTranslations'
+  | 'mana'
+  | 'address'
+  | 'isConnected'
+  | 'isConnecting'
+  | 'isSignIn'
+  | 'hasTranslations'
 >
 
 export type MapDispatchProps = Pick<NavbarProps, 'onSignIn'>
