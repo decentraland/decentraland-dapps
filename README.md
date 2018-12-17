@@ -948,7 +948,7 @@ You need to add a reducer and a saga to use this module
 
 **Reducer**:
 
-Add the `translationReducer` as `translation` to your `rootReducer`:
+Add the `locationReducer` as `location` to your `rootReducer`:
 
 ```ts
 import { combineReducers } from 'redux'
@@ -985,7 +985,7 @@ You can use different paths for default locations by creating a location reducer
 import { combineReducers } from 'redux'
 import { createLocationReducer } from 'decentraland-dapps/dist/modules/location/reducer'
 
-const locationReducer = createLocationReducer({
+const location = createLocationReducer({
   root: '/',
   signIn: '/sign-in'
 })
@@ -1102,10 +1102,10 @@ export default class SomePage extends React.PureComponent {
 
     return (
       <>
+        <Navbar />
         <div className="SomePage">
           <Container>{children}</Container>
         </div>
-        <Navbar />
       </>
     )
   }
