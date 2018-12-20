@@ -1,4 +1,6 @@
 import { RouterState } from 'react-router-redux'
+import { Locations } from './types'
+import { LocationState } from '../../../node_modules/@types/history'
 
 export const hasRouter = (state: any): boolean => !!state.router
 
@@ -25,4 +27,18 @@ export const getPathAction = (state: any): string | null => {
     return null
   }
   return pathname.split('/').pop() as string | null
+}
+
+export const getState = (state: any): LocationState => state.location
+
+export const getLocations = (state: any): Locations => getState(state).locations
+
+export const isSignIn = (state: any): boolean => {
+  const pathname = getPathname(state)
+  return pathname === getLocations(state).signIn
+}
+
+export const isRoot = (state: any): boolean => {
+  const pathname = getPathname(state)
+  return pathname === getLocations(state).root
 }

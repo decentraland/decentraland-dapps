@@ -1,5 +1,7 @@
+import { txUtils } from 'decentraland-eth'
+
 import { Transaction } from './types'
-import { getTransactionFromAction } from './utils'
+import { getTransactionFromAction, isPending } from './utils'
 import { loadingReducer, LoadingState } from '../loading/reducer'
 import {
   FetchTransactionRequestAction,
@@ -21,8 +23,6 @@ import {
   FixRevertedTransactionAction,
   FIX_REVERTED_TRANSACTION
 } from './actions'
-import { txUtils } from 'decentraland-eth'
-import { isPending } from './utils'
 
 export type TransactionState = {
   data: Transaction[]
@@ -148,7 +148,6 @@ export function transactionReducer(
         error: null,
         data: state.data.map(
           (transaction: Transaction) =>
-            // prettier-ignore
             action.payload.hash === transaction.hash
               ? {
                   ...transaction,
@@ -164,7 +163,6 @@ export function transactionReducer(
         error: null,
         data: state.data.map(
           (transaction: Transaction) =>
-            // prettier-ignore
             action.payload.hash === transaction.hash
               ? {
                   ...transaction,

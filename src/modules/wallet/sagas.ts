@@ -31,7 +31,7 @@ export function createWalletSaga({
     try {
       if (isApprovableWallet()) {
         const { ethereum } = window as EthereumWindow
-        yield call(() => ethereum!.enable())
+        yield call(() => ethereum!.enable!())
 
         // Unfortunately we need to override the provider supplied to this method
         // if we're dealing with approbable wallets (the first being Metamask, probably more to come).

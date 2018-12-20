@@ -24,6 +24,6 @@ export interface EthereumWindow {
     _metamask: { isApproved: () => Promise<boolean> }
     isApproved: () => Promise<boolean>
 
-    enable: () => Promise<string[]>
+    enable?: () => Promise<string[]>
   }
 }

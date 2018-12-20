@@ -9,7 +9,9 @@
       { "printWidth": 80, "singleQuote": true, "semi": false }
     ],
     "quotemark": [true, "single", "jsx-double"],
-    "jsx-boolean-value": [false]
+    "jsx-boolean-value": [false],
+    "strict-type-predicates": false,
+    "ter-indent": false
   },
   "linterOptions": {
     "exclude": ["config/**/*.js", "node_modules/**/*.ts", "./**/*.js"]

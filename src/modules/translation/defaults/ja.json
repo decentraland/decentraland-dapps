@@ -24,9 +24,9 @@
       },
       "menu": {
         "agora": "Agora",
-        "blog": "ブログ",
-        "docs": "ドキュメント",
-        "marketplace": "マーケット"
+        "blog": "Blog",
+        "docs": "Docs",
+        "marketplace": "Marketplace"
       }
     },
     "sign_in": {

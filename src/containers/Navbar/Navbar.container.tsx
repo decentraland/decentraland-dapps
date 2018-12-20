@@ -9,7 +9,8 @@ import {
   isConnecting
 } from '../../modules/wallet/selectors'
 import { isEnabled } from '../../modules/translation/selectors'
-import { connectWalletRequest } from '../../modules/wallet/actions'
+import { isSignIn } from '../../modules/location/selectors'
+import { navigateToSignIn } from '../../modules/location/actions'
 import { RootDispatch } from '../../types'
 
 const mapState = (state: any): MapStateProps => {
@@ -19,6 +20,7 @@ const mapState = (state: any): MapStateProps => {
     address: wallet.address,
     isConnected: isConnected(state),
     isConnecting: isConnecting(state),
+    isSignIn: isSignIn(state),
     hasTranslations: isEnabled(state)
   }
 }
@@ -26,7 +28,7 @@ const mapState = (state: any): MapStateProps => {
 const mapDispatch = (
   dispatch: RootDispatch<RouterAction>
 ): MapDispatchProps => ({
-  onSignIn: () => dispatch(connectWalletRequest())
+  onSignIn: () => dispatch(navigateToSignIn())
 })
 
 const mergeProps = (
