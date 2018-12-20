@@ -1032,49 +1032,7 @@ Common containers for dApps
 
 ## Navbar
 
-The `<Navbar>` container can be used in the same way as the `<Navbar>` component from `decentaland-ui` but it's already connected to the redux store. You can override any `NavbarProp` if you want to connect differently, and you can pass all the regular `NavbarProps` to it.
-
-### Dependencies
-
-This container requires you to install the [Wallet](https://github.com/decentraland/decentraland-dapps#wallet) and the [Location](https://github.com/decentraland/decentraland-dapps#location) modules
-
-### Usage
-
-This is an example of a `Page` component that uses the `<Navbar>` container:
-
-```tsx
-import * as React from 'react'
-
-import { Container } from 'decentraland-ui'
-import Navbar from 'decentraland-dapps/dist/containers/Navbar'
-
-import './Page.css'
-
-export default class Page extends React.PureComponent {
-  static defaultProps = {
-    children: null
-  }
-
-  render() {
-    const { children } = this.props
-
-    return (
-      <>
-        <Navbar />
-        <div className="Page">
-          <Container>{children}</Container>
-        </div>
-      </>
-    )
-  }
-}
-```
-
-This `<Navbar>` will show the user's blockie and mana balance because it is connected to the store.
-
-## Navbar
-
-The `<Navbar>` container can be used in the same way as the `<Navbar>` component from `decentaland-ui` but it's already connected to the redux store. You can override any `NavbarProp` if you want to connect differently, and you can pass all the regular `NavbarProps` to it.
+The `<Navbar>` container can be used in the same way as the `<Navbar>` component from [decentraland-ui](https://github.com/decentraland/ui) but it's already connected to the redux store. You can override any `NavbarProp` if you want to connect differently, and you can pass all the regular `NavbarProps` to it.
 
 ### Dependencies
 
@@ -1148,7 +1106,7 @@ Say you want to override some translations in English, just include any or all o
 
 ## Footer
 
-The `<Footer>` container can be used in the same way as the `<Footer>` component from `decentaland-ui` but it's already connected to the redux store. You can override any `FooterProps` if you want to connect differently, and you can pass all the regular `FooterProps` to it.
+The `<Footer>` container can be used in the same way as the `<Footer>` component from [decentraland-ui](https://github.com/decentraland/ui) but it's already connected to the redux store. You can override any `FooterProps` if you want to connect differently, and you can pass all the regular `FooterProps` to it.
 
 ### Dependencies
 
@@ -1181,7 +1139,7 @@ export default class SomePage extends React.PureComponent {
 }
 ```
 
-This `<Footer>` will show all only English and Spanish as the options in the language dropdown. If you don't provide any it will use the 6 supported languages: `en`, `es`, `fr`, `jp`, `ko` and `zh`.
+This `<Footer>` will show only English and Spanish as the options in the language dropdown. If you don't provide any it will use the 6 supported languages: `en`, `es`, `fr`, `jp`, `ko` and `zh`.
 
 ### i18n
 
@@ -1222,7 +1180,7 @@ Say you want to override some translations in English, just include any or all o
 
 ## SignInPage
 
-The `<SignInPage>` container can be used in the same way as the `<SignIn>` component from `decentaland-ui` but it's already connected to the redux store. You can override any `SignInProp` if you want to connect differently, and you can pass all the regular `SignInProps` to it.
+The `<SignInPage>` container can be used in the same way as the `<SignIn>` component from [decentraland-ui](https://github.com/decentraland/ui) but it's already connected to the redux store. You can override any `SignInProp` if you want to connect differently, and you can pass all the regular `SignInProps` to it.
 
 ### Dependencies
 
