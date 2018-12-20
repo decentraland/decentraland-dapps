@@ -932,7 +932,7 @@ Also, all the pending actions are stored in an array in `state.invite.loading` s
 
 ## Location
 
-The location module provides a `navigateTo`, `navigateToSignIn` and `navigateToRoot` actions that wrapps `react-router-redux`'s `push` action. It also provides some helpful selectors:
+The location module provides the `navigateTo`, `navigateToSignIn` and `navigateToRoot` actions that wrap `react-router-redux`'s `push` action. It also provides some helpful selectors:
 
 ```ts
 getLocation(state)
