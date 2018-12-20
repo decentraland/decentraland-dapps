@@ -1104,6 +1104,9 @@ Say you want to override some translations in English, just include any or all o
 }
 ```
 
+</p>
+</details>
+
 ## Footer
 
 The `<Footer>` container can be used in the same way as the `<Footer>` component from [decentraland-ui](https://github.com/decentraland/ui) but it's already connected to the redux store. You can override any `FooterProps` if you want to connect differently, and you can pass all the regular `FooterProps` to it.
@@ -1139,7 +1142,7 @@ export default class SomePage extends React.PureComponent {
 }
 ```
 
-This `<Footer>` will show only English and Spanish as the options in the language dropdown. If you don't provide any it will use the 6 supported languages: `en`, `es`, `fr`, `jp`, `ko` and `zh`.
+This `<Footer>` will show only English and Spanish as the options in the language dropdown. If you don't provide any it will use only English.
 
 ### i18n
 
@@ -1177,6 +1180,9 @@ Say you want to override some translations in English, just include any or all o
   }
 }
 ```
+
+</p>
+</details>
 
 ## SignInPage
 
@@ -1235,6 +1241,9 @@ Say you want to override some translations in English, just include any or all o
   }
 }
 ```
+
+</p>
+</details>
 
 ## App
 
