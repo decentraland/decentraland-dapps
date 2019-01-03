@@ -1,3 +1,3 @@
-import WalletProvier from './WalletProvider.container'
+import WalletProvider from './WalletProvider.container'
 
-export default WalletProvier
+export default WalletProvider
