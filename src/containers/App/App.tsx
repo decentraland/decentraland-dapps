@@ -13,13 +13,13 @@ export default class App extends React.PureComponent<
     const { hero, isHomePage, children, ...rest } = this.props
     const hasHero = hero != null && isHomePage
     return (
-      <>
+      <React.Fragment>
         <Navbar {...rest as NavbarProps}>{hasHero ? hero : null}</Navbar>
         <Page hasHero={hasHero} {...rest as PageProps}>
           {children}
         </Page>
         <Footer {...rest as FooterProps} />
-      </>
+      </React.Fragment>
     )
   }
 }

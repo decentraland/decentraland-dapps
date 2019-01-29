@@ -10,4 +10,3 @@ export interface Props extends DefaultProps {
 
 export type MapStateProps = {}
 export type MapDispatchProps = Pick<Props, 'onConnect'>
-
