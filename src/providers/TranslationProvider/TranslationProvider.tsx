@@ -30,10 +30,10 @@ export default class TranslationProvider extends React.PureComponent<Props> {
 
     return translations ? (
       <I18nProvider locale={locale} messages={translations}>
-        <React.Fragment>
+        <>
           <TranslationSetup />
           {children}
-        </React.Fragment>
+        </>
       </I18nProvider>
     ) : (
       this.renderLoading()

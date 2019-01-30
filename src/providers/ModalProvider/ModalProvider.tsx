@@ -27,10 +27,10 @@ export default class ModalProvider extends React.PureComponent<Props> {
     }
 
     return (
-      <React.Fragment>
+      <>
         {children}
         {ModalComponents}
-      </React.Fragment>
+      </>
     )
   }
 }
