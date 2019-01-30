@@ -1009,7 +1009,7 @@ Leverages redux state and provides actions to open and close each modal by name.
 ```ts
 openModal(name: string, metadata: any = null)
 closeModal(name: string)
-closeAllModal()
+closeAllModals()
 ```
 
 It also provides a selector to get the open modals:
