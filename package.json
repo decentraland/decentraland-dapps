@@ -3,7 +3,6 @@
   "version": "0.0.0-development",
   "main": "dist",
   "dependencies": {
-    "@types/axios": "^0.14.0",
     "@types/flat": "0.0.28",
     "@types/node": "^10.1.2",
     "@types/react": "^16.4.7",
@@ -39,7 +38,7 @@
     "chai": "^4.1.2",
     "dcl-tslint-config-standard": "^1.0.1",
     "decentraland-eth": "^6.0.0",
-    "decentraland-ui": "^1.15.0",
+    "decentraland-ui": "^1.16.2",
     "husky": "^0.14.3",
     "mocha": "^5.2.0",
     "nyc": "^12.0.2",
@@ -58,7 +57,7 @@
   },
   "peerDependencies": {
     "decentraland-eth": ">=6.0.0",
-    "decentraland-ui": "^1.15.0",
+    "decentraland-ui": "^1.16.2",
     "react": "^16.4.1",
     "react-redux": "^5.0.7",
     "react-router-redux": "^5.0.0-alpha.6",

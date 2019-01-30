@@ -3,7 +3,7 @@ import { Locale } from 'decentraland-ui'
 import { fetchTranslationsRequest } from '../../modules/translation/actions'
 import { TranslationKeys } from '../../modules/translation/types'
 
-export interface Props {
+export type Props = {
   locale?: Locale
   locales: Locale[]
   translations?: TranslationKeys

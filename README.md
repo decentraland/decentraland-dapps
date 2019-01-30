@@ -14,6 +14,7 @@ Common modules for our dApps
   - [Analytics](https://github.com/decentraland/decentraland-dapps#analytics)
   - [Loading](https://github.com/decentraland/decentraland-dapps#loading)
   - [Location](https://github.com/decentraland/decentraland-dapps#location)
+  - [Modal](https://github.com/decentraland/decentraland-dapps#modal)
 - [Lib](https://github.com/decentraland/decentraland-dapps#lib)
   - [API](https://github.com/decentraland/decentraland-dapps#api)
 - [Containers](https://github.com/decentraland/decentraland-dapps#lib)
@@ -944,7 +945,7 @@ isRoot(state)
 
 ### Installation
 
-You need to add a reducer and a saga to use this module
+In order to use this module you need to add a reducer and a saga.
 
 **Reducer**:
 
@@ -1000,6 +1001,95 @@ This way you can change the default locations to use different ones. This will b
 
 </p>
 </details>
+
+## Modal
+
+Leverages redux state and provides actions to open and close each modal by name. It provides two simple actions:
+
+```ts
+openModal(name: string, metadata: any = null)
+closeModal(name: string)
+closeAllModals()
+```
+
+It also provides a selector to get the open modals:
+
+```
+getOpenModals(state): ModalState
+```
+
+### Installation
+
+In order to use this module you need to add a reducer and a provider.
+
+**Provider**:
+
+Add the `<ModalProvider>` as a parent of your routes. It takes an object of `{ {modalName: string]: React.Component }` as a prop (`components`). It'll use it to render the appropiate modal when you call `openModal(name: string)`
+
+```tsx
+import * as React from 'react'
+import * as ReactDOM from 'react-dom'
+import { Provider } from 'react-redux'
+import { ConnectedRouter } from 'react-router-redux'
+import ModalProvider from 'decentraland-dapps/dist/providers/ModalProvider'
+import * as modals from 'components/Modals'
+import { store, history } from './store'
+
+ReactDOM.render(
+  <Provider store={store}>
+    <ModalProvider components={modals}>
+      <ConnectedRouter history={history}>{/* Your App */}</ConnectedRouter>
+    </ModalProvider>
+  </Provider>,
+  document.getElementById('root')
+)
+```
+
+where `modals` could look like this:
+
+```ts
+// components/Modals/index.ts
+
+export { default as HelpModal } from './HelpModal'
+```
+
+Each modal will receive the properties defined on the `ModalComponent` type, found on `modules/modal/types`, so for example:
+
+```tsx
+import { ModalProps } from 'decentraland-dapps/dist/modules/modal/types'
+
+type HelpModalProps = ModalProps & {
+  // Some custom props, maybe from a container
+}
+
+export default class HelpModal extends React.Component<HelpModalProps> {
+  onClose = () => {
+    const { modal, onClose } = this.props
+    closeModal(modal.name)
+  }
+
+  render() {
+    const { modal } = this.props
+    // Do something with modal.metadata
+    // The Modal component here can be whatever you like, just make sure to call closeModal(name) when you want to close it, to update the state
+    return <Modal open={modal.open} onClose={onClose} />
+  }
+}
+```
+
+**Reducer**:
+
+Add the `modalReducer` as `modal` to your `rootReducer`:
+
+```ts
+import { combineReducers } from 'redux'
+import { modalReducer as modal } from 'decentraland-dapps/dist/modules/modal/reducer'
+
+export const rootReducer = combineReducers({
+  modal
+  // your other reducers
+})
+```
 
 # Lib
 
