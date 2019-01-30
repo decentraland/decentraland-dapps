@@ -1,8 +1,9 @@
 export type Modal = {
   open: boolean
+  name: string
   metadata: any
 }
 
-export type ModalComponent = {
+export type ModalProps = {
   modal: Modal
 }

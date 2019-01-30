@@ -1,18 +1,11 @@
 import * as React from 'react'
 
-import { ModalComponent } from '../../modules/modal/types'
+import { ModalProps } from '../../modules/modal/types'
 import { DefaultProps, Props } from './ModalProvider.types'
 
 export default class ModalProvider extends React.PureComponent<Props> {
   static defaultProps: DefaultProps = {
     children: null
-  }
-
-  getCloseHandler(name: string) {
-    return (event: React.MouseEvent<HTMLElement>) => {
-      this.props.onClose(name)
-      event.preventDefault()
-    }
   }
 
   render() {
@@ -22,7 +15,7 @@ export default class ModalProvider extends React.PureComponent<Props> {
 
     for (const name in modals) {
       const modal = modals[name]
-      let ModalComponent: React.ComponentType<ModalComponent> = components[name]
+      let ModalComponent: React.ComponentType<ModalProps> = components[name]
 
       if (!ModalComponent) {
         if (name) {
@@ -36,7 +29,7 @@ export default class ModalProvider extends React.PureComponent<Props> {
     return (
       <React.Fragment>
         {children}
-        <div className="dapps-modals">{ModalComponents}</div>
+        {ModalComponents}
       </React.Fragment>
     )
   }
