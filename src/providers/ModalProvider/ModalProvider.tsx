@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { Modal } from '../../modules/modal/types'
+import { ModalComponent } from '../../modules/modal/types'
 import { DefaultProps, Props } from './ModalProvider.types'
 
 export default class ModalProvider extends React.PureComponent<Props> {
@@ -21,8 +21,8 @@ export default class ModalProvider extends React.PureComponent<Props> {
     const ModalComponents: JSX.Element[] = []
 
     for (const name in modals) {
-      const { open, metadata } = modals[name]
-      let ModalComponent: React.ComponentType<Modal> = components[name]
+      const modal = modals[name]
+      let ModalComponent: React.ComponentType<ModalComponent> = components[name]
 
       if (!ModalComponent) {
         if (name) {
@@ -30,9 +30,7 @@ export default class ModalProvider extends React.PureComponent<Props> {
         }
       }
 
-      ModalComponents.push(
-        <ModalComponent key={name} open={open} metadata={metadata} />
-      )
+      ModalComponents.push(<ModalComponent key={name} modal={modal} />)
     }
 
     return (
