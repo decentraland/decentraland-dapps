@@ -1004,12 +1004,13 @@ This way you can change the default locations to use different ones. This will b
 
 ## Modal
 
-Leverages redux state and provides actions to open and close each modal by name. It provides two simple actions:
+Leverages redux state and provides actions to open and close each modal by name. It provides a few simple actions:
 
 ```ts
 openModal(name: string, metadata: any = null)
 closeModal(name: string)
 closeAllModals()
+toggleModal(name: sgtring)
 ```
 
 It also provides a selector to get the open modals:
@@ -1090,6 +1091,39 @@ export const rootReducer = combineReducers({
   // your other reducers
 })
 ```
+
+### Advanced Usage
+
+You can have add more strict typing to the actions:
+
+<details><summary>Learn More</summary>
+<p>
+The modal actions allow for a generic type for the name. So say you want to type the name of your available modals, you can create a `modal` module in your dApp and add the following files:
+
+**Types**:
+
+```ts
+// modules/types/actions.ts
+import * as modals from 'components/Modals' // same import as the one use for <ModalProvider />
+
+export ModalName = keyof typeof modals
+```
+
+**Actions**:
+
+```ts
+// modules/modal/actions.ts
+import { getModalActions } from 'decentraland-dapps/dist/modules/modal/actions'
+import { ModalName } from './types'
+
+const { openModal, closeModal, toggleModal } = getModalActions<ModalName>()
+
+export * from 'decentraland-dapps/dist/modules/modal/actions'
+export { openModal, closeModal, toggleModal }
+```
+
+</p>
+</details>
 
 # Lib
 

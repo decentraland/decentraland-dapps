@@ -2,9 +2,11 @@ import {
   OPEN_MODAL,
   CLOSE_MODAL,
   CLOSE_ALL_MODALS,
+  TOGGLE_MODAL,
   OpenModalAction,
   CloseModalAction,
-  CloseAllModalsAction
+  CloseAllModalsAction,
+  ToggleModalAction
 } from './actions'
 import { Modal } from './types'
 
@@ -16,6 +18,7 @@ export type ModalReducerAction =
   | OpenModalAction
   | CloseModalAction
   | CloseAllModalsAction
+  | ToggleModalAction
 
 export function modalReducer(
   state = INITIAL_STATE,
@@ -48,6 +51,18 @@ export function modalReducer(
       } else {
         // Invalid modal name
         return state
+      }
+    }
+    case TOGGLE_MODAL: {
+      const { name } = action.payload
+      const modal = state[name] || { open: false }
+
+      return {
+        ...state,
+        [name]: {
+          ...modal,
+          open: !modal.open
+        }
       }
     }
     case CLOSE_ALL_MODALS: {
