@@ -17,12 +17,14 @@ Common modules for our dApps
   - [Modal](https://github.com/decentraland/decentraland-dapps#modal)
 - [Lib](https://github.com/decentraland/decentraland-dapps#lib)
   - [API](https://github.com/decentraland/decentraland-dapps#api)
-- [Containers](https://github.com/decentraland/decentraland-dapps#lib)
+- [Containers](https://github.com/decentraland/decentraland-dapps#containers)
   - [App](https://github.com/decentraland/decentraland-dapps#app)
   - [Navbar](https://github.com/decentraland/decentraland-dapps#navbar)
   - [Footer](https://github.com/decentraland/decentraland-dapps#footer)
   - [SignInPage](https://github.com/decentraland/decentraland-dapps#signinpage)
   - [EtherscanLink](https://github.com/decentraland/decentraland-dapps#etherscanlink)
+- [Components](https://github.com/decentraland/decentraland-dapps#components)
+  - [Intercom](https://github.com/decentraland/decentraland-dapps#intercom)
 
 # Modules
 
@@ -1452,6 +1454,35 @@ export default class MyComponent extends React.PureComponent {
       <p>
         You sent an <EtherscanLink txHash={'0x...'}>invite</EtherscanLink>
       </p>
+    )
+  }
+}
+```
+
+# Components
+
+Common Components for dApps
+
+## Intercom
+
+The `<Intercom>` will add an [intercom](https://www.intercom.com/) widget to your app
+
+### Usage
+
+```tsx
+import * as React from 'react'
+import Intercom from 'decentraland-dapps/dist/components/Intercom'
+
+export default class MyComponent extends React.PureComponent {
+  render() {
+    return (
+      <div>
+        {/* (...) */}
+        <Intercom
+          appId={YOUR_APP_ID}
+          data={/*optional data sent to intercom */}
+        />
+      </div>
     )
   }
 }
