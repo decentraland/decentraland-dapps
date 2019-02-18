@@ -15,12 +15,14 @@ export default class ModalProvider extends React.PureComponent<Props> {
 
     for (const name in modals) {
       const modal = modals[name]
-      let ModalComponent: React.ComponentType<ModalProps> = components[name]
+      if (!modal.open) {
+        continue
+      }
+
+      const ModalComponent: React.ComponentType<ModalProps> = components[name]
 
       if (!ModalComponent) {
-        if (name) {
-          throw new Error(`Couldn't find a modal Component named "${name}"`)
-        }
+        throw new Error(`Couldn't find a modal Component named "${name}"`)
       }
 
       ModalComponents.push(<ModalComponent key={name} modal={modal} />)
