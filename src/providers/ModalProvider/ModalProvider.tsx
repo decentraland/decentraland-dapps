@@ -30,7 +30,12 @@ export default class ModalProvider extends React.PureComponent<Props> {
 
       const onClose = this.getOnClose(modal.name)
       ModalComponents.push(
-        <Component key={name} name={name} onClose={onClose} />
+        <Component
+          key={name}
+          name={name}
+          metadata={modal.metadata}
+          onClose={onClose}
+        />
       )
     }
 

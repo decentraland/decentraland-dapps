@@ -22,6 +22,7 @@ Common modules for our dApps
   - [Navbar](https://github.com/decentraland/decentraland-dapps#navbar)
   - [Footer](https://github.com/decentraland/decentraland-dapps#footer)
   - [SignInPage](https://github.com/decentraland/decentraland-dapps#signinpage)
+  - [Modal](https://github.com/decentraland/decentraland-dapps#modal)
   - [EtherscanLink](https://github.com/decentraland/decentraland-dapps#etherscanlink)
 - [Components](https://github.com/decentraland/decentraland-dapps#components)
   - [Intercom](https://github.com/decentraland/decentraland-dapps#intercom)
@@ -1059,6 +1060,7 @@ export { default as HelpModal } from './HelpModal'
 Each modal will receive the properties defined on the `ModalComponent` type, found on `modules/modal/types`, so for example:
 
 ```tsx
+import { Modal } from 'decentraland-ui'
 import { ModalProps } from 'decentraland-dapps/dist/modules/modal/types'
 
 type HelpModalProps = ModalProps & {
@@ -1066,19 +1068,16 @@ type HelpModalProps = ModalProps & {
 }
 
 export default class HelpModal extends React.Component<HelpModalProps> {
-  onClose = () => {
-    const { modal, onClose } = this.props
-    closeModal(modal.name)
-  }
-
   render() {
-    const { modal } = this.props
-    // Do something with modal.metadata
-    // The Modal component here can be whatever you like, just make sure to call closeModal(name) when you want to close it, to update the state
-    return <Modal open={modal.open} onClose={onClose} />
+    const { name, metadata, onClose } = this.props
+    // The Modal component here can be whatever you like, just make sure to call onClose when you want to close it, to update the state
+    // For more examples check the advanced usage
+    return <Modal open={true} className={name} onClose={onClose} />
   }
 }
 ```
+
+If want to use [decentraland-ui's Modal](https://github.com/decentraland/ui) but you don't want to repeat the `open`, `className` and `onClose` props, you can use this module's [Modal](https://github.com/decentraland/decentraland-dapps#modal)
 
 **Reducer**:
 
@@ -1432,6 +1431,41 @@ export default class MyApp extends React.Component {
     )
   }
 }
+```
+
+## Modal
+
+The `<Modal>` it's a shorthand for some common features used by modals provided to [ModalProvider](https://github.com/decentraland/decentraland-dapps#modal).
+
+### Usage
+
+```tsx
+import * as React from 'react'
+import Modal from 'decentraland-dapps/dist/containers/Modal'
+
+export default class MyComponent extends React.PureComponent {
+  render() {
+    return (
+      const { name } = this.props
+
+      <Modal name={name} {/* Other Modal props from decentraland ui */>
+        <Modal.Header>
+        </Modal.Header>
+        <Modal.Description>
+        </Modal.Description>
+      </Modal>
+    )
+  }
+}
+```
+
+Behind the scenes Modal is setting the following properties:
+
+```js
+open={true}
+className={name}
+size="small"
+onClose={/*close the modal by name*/}
 ```
 
 ## EtherscanLink

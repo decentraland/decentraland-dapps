@@ -3,6 +3,7 @@ import { closeModal } from '../../modules/modal/actions'
 
 export type ModalProps = {
   name: string
+  metadata?: any
   onClose: () => ReturnType<typeof closeModal>
 }
 export type ModalComponent = React.ComponentType<ModalProps>
