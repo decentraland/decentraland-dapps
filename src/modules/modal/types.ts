@@ -3,7 +3,3 @@ export type Modal = {
   name: string
   metadata: any
 }
-
-export type ModalProps = {
-  modal: Modal
-}

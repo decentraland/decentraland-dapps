@@ -1,11 +1,14 @@
 import * as React from 'react'
 
-import { ModalProps } from '../../modules/modal/types'
-import { DefaultProps, Props } from './ModalProvider.types'
+import { DefaultProps, Props, ModalComponent } from './ModalProvider.types'
 
 export default class ModalProvider extends React.PureComponent<Props> {
   static defaultProps: DefaultProps = {
     children: null
+  }
+
+  getCloseHandler(name: string) {
+    return () => this.props.onClose(name)
   }
 
   render() {
@@ -15,15 +18,25 @@ export default class ModalProvider extends React.PureComponent<Props> {
 
     for (const name in modals) {
       const modal = modals[name]
-      let ModalComponent: React.ComponentType<ModalProps> = components[name]
-
-      if (!ModalComponent) {
-        if (name) {
-          throw new Error(`Couldn't find a modal Component named "${name}"`)
-        }
+      if (!modal.open) {
+        continue
       }
 
-      ModalComponents.push(<ModalComponent key={name} modal={modal} />)
+      const Component: ModalComponent = components[name]
+
+      if (!Component) {
+        throw new Error(`Couldn't find a modal Component named "${name}"`)
+      }
+
+      const onClose = this.getCloseHandler(modal.name)
+      ModalComponents.push(
+        <Component
+          key={name}
+          name={name}
+          metadata={modal.metadata}
+          onClose={onClose}
+        />
+      )
     }
 
     return (

@@ -1,14 +1,22 @@
 import { ModalState } from '../../modules/modal/reducer'
-import { ModalProps } from '../../modules/modal/types'
+import { closeModal } from '../../modules/modal/actions'
+
+export type ModalProps = {
+  name: string
+  metadata?: any
+  onClose: () => ReturnType<typeof closeModal>
+}
+export type ModalComponent = React.ComponentType<ModalProps>
 
 export type DefaultProps = {
   children: React.ReactNode | null
 }
 
 export type Props = DefaultProps & {
-  components: Record<string, React.ComponentType<ModalProps>>
+  components: Record<string, ModalComponent>
   modals: ModalState
+  onClose: typeof closeModal
 }
 
 export type MapStateProps = Pick<Props, 'modals'>
-export type MapDispatchProps = {}
+export type MapDispatchProps = Pick<Props, 'onClose'>
