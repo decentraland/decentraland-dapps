@@ -7,7 +7,7 @@ export default class ModalProvider extends React.PureComponent<Props> {
     children: null
   }
 
-  getOnClose(name: string) {
+  getCloseHandler(name: string) {
     return () => this.props.onClose(name)
   }
 
@@ -28,7 +28,7 @@ export default class ModalProvider extends React.PureComponent<Props> {
         throw new Error(`Couldn't find a modal Component named "${name}"`)
       }
 
-      const onClose = this.getOnClose(modal.name)
+      const onClose = this.getCloseHandler(modal.name)
       ModalComponents.push(
         <Component
           key={name}
