@@ -10,7 +10,8 @@ export default class Modal extends React.PureComponent<ModalProps> {
   }
 
   render() {
-    const { name, ...modalProps } = this.props
+    // Omit `onCloseModal` from the props we pass down to ModalComponent
+    const { name, onCloseModal, ...modalProps } = this.props
 
     return (
       <ModalComponent
