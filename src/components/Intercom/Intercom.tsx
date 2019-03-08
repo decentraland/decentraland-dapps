@@ -17,7 +17,21 @@ export default class Intercom extends React.PureComponent<Props> {
 
   constructor(props: Props) {
     super(props)
-    this.widget = new IntercomWidget(props.appId, props.settings)
+    this.widget = IntercomWidget.getInstance()
+
+    if (!this.widget.appId) {
+      this.widget.init(props.appId, props.settings)
+    } else {
+      if (this.widget.appId !== props.appId) {
+        throw new Error(
+          `Intercom widget already inicialized with app id "${
+            props.appId
+          }". Only one intercom widget is allowed.`
+        )
+      }
+
+      // Else, all settings will be ignored but no notice will be given
+    }
   }
 
   componentDidMount() {
@@ -25,7 +39,7 @@ export default class Intercom extends React.PureComponent<Props> {
   }
 
   componentDidUpdate() {
-    this.widget.setSettings(this.props.settings)
+    this.widget.settings = this.props.settings
     this.renderWidget()
   }
 
