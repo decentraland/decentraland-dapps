@@ -46,13 +46,6 @@ export class IntercomWidget {
     }
   }
 
-  /**
-   * @deprecated
-   */
-  setSettings(settings: IntercomSettings) {
-    this.settings = settings
-  }
-
   inject() {
     return new Promise(resolve => {
       if (this.isInjected()) {
