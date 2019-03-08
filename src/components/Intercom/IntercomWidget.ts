@@ -5,23 +5,45 @@ import { IntercomWindow, IntercomSettings } from './Intercom.types'
 const intercomWindow = window as IntercomWindow
 
 export class IntercomWidget {
-  appId: string
-  settings: IntercomSettings
+  private _appId: string
+  private _settings: IntercomSettings
   client: (method: string, arg?: any) => void
 
-  constructor(appId: string, settings?: IntercomSettings) {
+  static instance: IntercomWidget
+
+  private constructor() {}
+
+  static getInstance(): IntercomWidget {
+    if (!this.instance) {
+      this.instance = new IntercomWidget()
+    }
+    return this.instance
+  }
+
+  set appId(id: string) {
+    this._appId = id
+    this.client = getWindowClient(id)
+  }
+
+  get appId() {
+    return this._appId
+  }
+
+  set settings(settings: IntercomSettings) {
+    this._settings = settings
+    intercomWindow.intercomSettings = settings
+  }
+
+  get settings() {
+    return this._settings
+  }
+
+  init(appId: string, settings?: IntercomSettings) {
     this.appId = appId
 
     if (settings) {
-      this.setSettings(settings)
+      this.settings = settings
     }
-
-    this.client = getWindowClient(this.appId)
-  }
-
-  setSettings(settings: IntercomSettings) {
-    this.settings = settings
-    intercomWindow.intercomSettings = settings
   }
 
   inject() {
@@ -31,17 +53,17 @@ export class IntercomWidget {
       }
 
       const script = insertScript({
-        src: `https://widget.intercom.io/widget/${this.appId}`
+        src: `https://widget.intercom.io/widget/${this._appId}`
       })
       script.addEventListener('load', resolve, true)
     }).then(() => {
-      this.client = getWindowClient(this.appId)
+      this.client = getWindowClient(this._appId)
     })
   }
 
   render(data: Record<string, any> = {}) {
     this.client('reattach_activator')
-    this.client('update', { ...data, app_id: this.appId })
+    this.client('update', { ...data, app_id: this._appId })
   }
 
   showNewMessage(text: string) {
