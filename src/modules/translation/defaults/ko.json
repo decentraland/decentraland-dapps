@@ -26,7 +26,8 @@
         "agora": "Agora",
         "blog": "Blog",
         "docs": "Docs",
-        "marketplace": "Marketplace"
+        "marketplace": "Marketplace",
+        "builder": "Builder"
       }
     },
     "sign_in": {
