@@ -7,17 +7,14 @@ import Footer from '../Footer'
 import { AppProps } from './App.types'
 
 export default class App extends React.PureComponent<
-  AppProps & NavbarProps & PageProps & FooterProps
+  Partial<AppProps & NavbarProps & PageProps & FooterProps>
 > {
   render() {
-    const { hero, isHomePage, children, ...rest } = this.props
-    const hasHero = hero != null && isHomePage
+    const { children, ...rest } = this.props
     return (
       <>
-        <Navbar {...rest as NavbarProps}>{hasHero ? hero : null}</Navbar>
-        <Page hasHero={hasHero} {...rest as PageProps}>
-          {children}
-        </Page>
+        <Navbar {...rest as NavbarProps} />
+        <Page {...rest as PageProps}>{children}</Page>
         <Footer {...rest as FooterProps} />
       </>
     )
