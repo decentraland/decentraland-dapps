@@ -1,6 +1,5 @@
 export type AppProps = {
-  hero: React.ReactNode
+  isOverlay: boolean
+  isFullscreen: boolean
   isHomePage: boolean
 }
-
-export type MapStateProps = Pick<AppProps, 'isHomePage'>
