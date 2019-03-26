@@ -785,7 +785,7 @@ You can use the [Storage](https://github.com/decentraland/decentraland-dapps#sto
 <details><summary>Learn More</summary>
 <p>
 
-After [installing the Storage module](https://github.com/decentraland/decentraland-dapps#storage) you can persist the translations by adding `'translation'` to your storage middlewate paths:
+After [installing the Storage module](https://github.com/decentraland/decentraland-dapps#storage) you can persist the translations by adding `'translation'` to your storage middleware paths:
 
 ```ts
 // store.ts
