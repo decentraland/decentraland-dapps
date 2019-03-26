@@ -796,7 +796,7 @@ const { storageMiddleware, loadStorageMiddleware } = createStorageMiddleware({
 })
 ```
 
-This will store the translation module in `localStorage`, so next time your application is started it will boot will all the translations populated before even fetching them from the server.
+This will store the translation module in `localStorage`, so next time your application is started it will boot with all the translations populated before even fetching them from the server.
 
 </p>
 </details>
