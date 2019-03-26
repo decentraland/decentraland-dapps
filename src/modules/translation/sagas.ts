@@ -30,9 +30,7 @@ export function createTranslationSaga({
       } else if (translations) {
         result = flatten(translations[locale])
       } else {
-        throw new Error(
-          'You must provide `allTranslations` or `getTranslations`'
-        )
+        throw new Error('You must provide `translations` or `getTranslations`')
       }
 
       setCurrentLocale(locale)
