@@ -3,7 +3,11 @@ import { connect } from 'react-redux'
 import { Locale } from 'decentraland-ui'
 
 import TranslationProvider from './TranslationProvider'
-import { MapStateProps, MapDispatchProps } from './TranslationProvider.types'
+import {
+  MapStateProps,
+  MapDispatchProps,
+  OwnProps
+} from './TranslationProvider.types'
 import { getLocale } from '../../modules/wallet/selectors'
 import { isLoading } from '../../modules/storage/selectors'
 import { getData } from '../../modules/translation/selectors'
@@ -11,13 +15,16 @@ import { fetchTranslationsRequest } from '../../modules/translation/actions'
 import { getPreferredLocale } from '../../modules/translation/utils'
 import { RootDispatch } from '../../types'
 
-const mapState = (state: any): MapStateProps => {
+const mapState = (state: any, ownProps: OwnProps): MapStateProps => {
   // Wait until the locale is loaded from the storage to select it
   let locale
   let translations
 
   if (!isLoading(state)) {
-    locale = getLocale(state) || getPreferredLocale()
+    locale =
+      getLocale(state) ||
+      getPreferredLocale(ownProps.locales) ||
+      ownProps.locales[0]
     if (locale) {
       const translationsInState = getData(state)[locale]
       if (translationsInState) {

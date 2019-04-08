@@ -22,8 +22,6 @@ const koFnsData = require('date-fns/locale/ko')
 const zhFnsData = require('date-fns/locale/zh_cn')
 const jaFnsData = require('date-fns/locale/ja')
 
-const DEFAULT_LOCALE = 'en'
-
 // cache
 let i18n: InjectedIntl
 let currentLocale: typeof enFnsData
@@ -43,9 +41,11 @@ export function addAvailableLocaleData(): void {
   )
 }
 
-export function getPreferredLocale(
-  availableLocales: Locale[] = ['en']
-): Locale {
+export function getPreferredLocale(availableLocales: Locale[]): Locale | null {
+  if (!availableLocales) {
+    throw new Error('Failed to get preferred locale: Missing locale list')
+  }
+
   const navigator = window.navigator
 
   const navigatorLocale =
@@ -54,7 +54,7 @@ export function getPreferredLocale(
   let locale: Locale = navigatorLocale.slice(0, 2) as Locale
 
   if (!availableLocales.includes(locale)) {
-    locale = DEFAULT_LOCALE
+    return null
   }
 
   return locale
@@ -72,7 +72,7 @@ export function setCurrentLocale(localeName: Locale) {
     ko: koFnsData,
     zh: zhFnsData,
     ja: jaFnsData
-  }[localeName || DEFAULT_LOCALE]
+  }[localeName]
 }
 
 export function getCurrentLocale() {

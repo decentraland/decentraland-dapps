@@ -11,5 +11,7 @@ export type Props = {
   onFetchTranslations: typeof fetchTranslationsRequest
 }
 
+export type OwnProps = Pick<Props, 'locales'>
+
 export type MapStateProps = Pick<Props, 'locale' | 'translations'>
 export type MapDispatchProps = Pick<Props, 'onFetchTranslations'>
