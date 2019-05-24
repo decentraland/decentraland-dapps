@@ -38,10 +38,7 @@ describe('localStorage', function() {
       const key = 'key'
       const localStorage = getLocalStorage()
       localStorage.setItem(key, JSON.stringify('{}'))
-      let data = JSON.parse(localStorage.getItem(key) as string)
-      expect(data.storage).to.equal(undefined)
-      migrateStorage(key, migrations)
-      data = JSON.parse(localStorage.getItem(key) as string)
+      const data = migrateStorage(key, migrations)
       expect(data.storage.version).to.equal(2)
       expect(data.data).to.equal('new version')
     })
@@ -51,8 +48,7 @@ describe('localStorage', function() {
       const localStorage = getLocalStorage()
 
       localStorage.setItem(key, JSON.stringify('{ storage: { version: null }}'))
-      migrateStorage(key, migrations)
-      let data = JSON.parse(localStorage.getItem(key) as string)
+      const data = migrateStorage(key, migrations)
       expect(data.storage.version).to.equal(2)
     })
 
@@ -60,13 +56,12 @@ describe('localStorage', function() {
       const key = 'key'
       const localStorage = getLocalStorage()
       localStorage.setItem(key, JSON.stringify('{}'))
-      let data = JSON.parse(localStorage.getItem(key) as string)
-      expect(data.storage).to.equal(undefined)
-      migrateStorage(key, migrations)
-      data = JSON.parse(localStorage.getItem(key) as string)
+      let data = migrateStorage(key, migrations)
       expect(data.storage.version).to.equal(2)
 
-      migrateStorage(key, migrations)
+      localStorage.setItem(key, JSON.stringify(data))
+
+      data = migrateStorage(key, migrations)
       expect(data.storage.version).to.equal(2)
     })
   })

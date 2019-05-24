@@ -23,13 +23,16 @@ export function getLocalStorage(): LocalStorage {
       }
 }
 
-export function migrateStorage<T>(key: string, migrations: Migrations<T>) {
+export function migrateStorage<T>(
+  key: string,
+  migrations: Migrations<T>
+): T | null {
   let version = 1
   const localStorage = getLocalStorage()
   const dataString = localStorage.getItem(key)
 
   if (dataString) {
-    const data = JSON.parse(dataString as string)
+    let data = JSON.parse(dataString)
 
     if (data.storage && data.storage.version) {
       version = parseInt(data.storage.version, 10)
@@ -37,15 +40,16 @@ export function migrateStorage<T>(key: string, migrations: Migrations<T>) {
     let nextVersion = version + 1
 
     while (migrations[nextVersion]) {
-      const newData = migrations[nextVersion](data)
-      localStorage.setItem(
-        key,
-        JSON.stringify({
-          ...(newData as Object),
-          storage: { version: nextVersion }
-        })
-      )
+      data = migrations[nextVersion](data)
+      if (!data.storage) {
+        data.storage = {}
+      }
+      data.storage.version = nextVersion
       nextVersion++
     }
+
+    return data
   }
+
+  return null
 }
