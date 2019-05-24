@@ -23,7 +23,10 @@ export function getLocalStorage(): LocalStorage {
       }
 }
 
-export function migrateStorage<T>(key: string, migrations: Migrations<T>) {
+export function migrateStorage<T>(
+  key: string,
+  migrations: Migrations<T>
+): T | null {
   let version = 1
   const localStorage = getLocalStorage()
   const dataString = localStorage.getItem(key)
@@ -38,7 +41,7 @@ export function migrateStorage<T>(key: string, migrations: Migrations<T>) {
 
     while (migrations[nextVersion]) {
       data = migrations[nextVersion](data)
-      if (data.storage) {
+      if (!data.storage) {
         data.storage = {}
       }
       data.storage.version = nextVersion
