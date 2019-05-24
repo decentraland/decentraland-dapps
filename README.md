@@ -621,7 +621,7 @@ This module allows you to do i18n.
 
 ### Dependencies
 
-This module requires you to install the [Storage](https://github.com/decentraland/decentraland-dapps#storage) module
+This module has an optional dependency on [Storage](https://github.com/decentraland/decentraland-dapps#storage) module to cache translations and boot the application faster. To learn more read the `Advanced Usage` section of this module.
 
 ### Usage
 
@@ -775,6 +775,31 @@ export function* rootSaga() {
   ])
 }
 ```
+
+Read the `Advanced Usage` section below to learn how to cache translations and make your application boot faster.
+
+### Advanced Usage
+
+You can use the [Storage](https://github.com/decentraland/decentraland-dapps#storage) module to cache translations (read `2. Fetching translations from server` above).
+
+<details><summary>Learn More</summary>
+<p>
+
+After [installing the Storage module](https://github.com/decentraland/decentraland-dapps#storage) you can persist the translations by adding `'translation'` to your storage middleware paths:
+
+```ts
+// store.ts
+
+const { storageMiddleware, loadStorageMiddleware } = createStorageMiddleware({
+  storageKey: 'my-dapp-storage',
+  paths: ['translation']
+})
+```
+
+This will store the translation module in `localStorage`, so next time your application is started it will boot with all the translations populated before even fetching them from the server.
+
+</p>
+</details>
 
 ## Analytics
 
