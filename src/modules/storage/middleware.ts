@@ -1,3 +1,4 @@
+import { Store } from 'redux'
 import * as storage from 'redux-storage'
 import createStorageEngine from 'redux-storage-engine-localstorage'
 import filter from 'redux-storage-decorator-filter'
@@ -34,7 +35,17 @@ export function createStorageMiddleware<T>(options: StorageMiddleware<T>) {
     }
   }
 
-  migrateStorage(storageKey, migrations)
+  const localStorageState = migrateStorage(storageKey, migrations)
+  let setItemFailure = false
+
+  if (localStorageState) {
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(localStorageState))
+    } catch (e) {
+      setItemFailure = true
+      console.warn(e.message)
+    }
+  }
 
   const storageEngine = filter(createStorageEngine(storageKey), [
     'transaction',
@@ -62,7 +73,19 @@ export function createStorageMiddleware<T>(options: StorageMiddleware<T>) {
       ...actions
     ]
   )
-  const load = (store: any) => storage.createLoader(storageEngine)(store)
+  const load = (store: Store<any>) => {
+    if (setItemFailure) {
+      const unsubscribe = store.subscribe(() => {
+        const state = store.getState()
+        if (state.storage.loading === false) {
+          unsubscribe()
+          store.dispatch({ type: storage.LOAD, payload: localStorageState })
+        }
+      })
+    }
+
+    storage.createLoader(storageEngine)(store)
+  }
 
   return { storageMiddleware, loadStorageMiddleware: load }
 }
