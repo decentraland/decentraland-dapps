@@ -14,8 +14,14 @@ interface Response {
 export class BaseAPI {
   constructor(public url: string) {}
 
-  request(method: string, path: string, params?: APIParam) {
+  request(
+    method: string,
+    path: string,
+    params: APIParam | null = null,
+    axiosRequestConfig: AxiosRequestConfig = {}
+  ) {
     let options: AxiosRequestConfig = {
+      ...axiosRequestConfig,
       method,
       url: this.getUrl(path)
     }
