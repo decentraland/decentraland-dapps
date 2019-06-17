@@ -22,7 +22,12 @@
     "redux-storage-engine-localstorage": "^1.1.4",
     "tslint": "^5.7.0",
     "tslint-config-prettier": "^1.10.0",
-    "typesafe-actions": "^2.0.3"
+    "typesafe-actions": "^2.0.3",
+    "react": "^16.4.1",
+    "react-redux": "^5.0.7",
+    "react-router-redux": "^5.0.0-alpha.6",
+    "redux": "^3.7.2",
+    "redux-saga": "^0.16.0"
   },
   "scripts": {
     "prebuild": "rimraf dist",
@@ -43,11 +48,6 @@
     "mocha": "^5.2.0",
     "nyc": "^12.0.2",
     "prettier": "^1.10.2",
-    "react": "^16.4.1",
-    "react-redux": "^5.0.7",
-    "react-router-redux": "^5.0.0-alpha.6",
-    "redux": "^3.7.2",
-    "redux-saga": "^0.16.0",
     "semantic-release": "^15.9.15",
     "ts-node": "^7.0.0",
     "tslint-language-service": "^0.9.9",
