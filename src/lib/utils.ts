@@ -39,12 +39,12 @@ export function toObjectByKey<T extends Object>(
   currentValues: DataByKey<T> = {},
   key: keyof T
 ): DataByKey<T> {
-  return values.reduce(
-    (valueHash, value) => ({
-      ...valueHash,
-      [value[key].toString()]: value
-    }),
-    currentValues
+  return values.reduce<DataByKey<T>>(
+    (obj, value) => {
+      obj[value[key] as any] = value
+      return obj
+    },
+    { ...currentValues }
   )
 }
 

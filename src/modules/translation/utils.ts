@@ -100,6 +100,7 @@ function _mergeTranslations<T extends { [key: string]: T | string }>(
   source: T = {} as T
 ) {
   const merged: T = Object.keys(source).reduce((result: T, key: string) => {
+    // @ts-ignore
     result[key] =
       typeof source[key] === 'object'
         ? _mergeTranslations(target[key] as T, source[key] as T)

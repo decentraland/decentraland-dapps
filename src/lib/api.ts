@@ -15,7 +15,7 @@ export class BaseAPI {
   constructor(public url: string) {}
 
   request(
-    method: string,
+    method: AxiosRequestConfig['method'],
     path: string,
     params: APIParam | null = null,
     axiosRequestConfig: AxiosRequestConfig = {}

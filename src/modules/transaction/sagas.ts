@@ -5,9 +5,9 @@ import {
   select,
   takeEvery,
   ForkEffect,
-  fork
+  fork,
+  delay
 } from 'redux-saga/effects'
-import { delay } from 'redux-saga'
 import { Transaction } from './types'
 import {
   fetchTransactionFailure,
