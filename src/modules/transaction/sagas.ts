@@ -124,7 +124,7 @@ function* handleFetchTransactionRequest(action: FetchTransactionRequestAction) {
       }
 
       // sleep
-      yield call(delay, txUtils.TRANSACTION_FETCH_DELAY)
+      yield delay(txUtils.TRANSACTION_FETCH_DELAY)
 
       // update tx status from network
       tx = yield call(() => txUtils.getTransaction(hash))
@@ -235,7 +235,7 @@ function* handleReplaceTransactionRequest(
     }
 
     // sleep
-    yield call(delay, txUtils.TRANSACTION_FETCH_DELAY)
+    yield delay(txUtils.TRANSACTION_FETCH_DELAY)
   }
 
   delete watchDroppedIndex[action.payload.hash]
@@ -291,7 +291,7 @@ function* handleWatchRevertedTransaction(
   )
 
   do {
-    yield call(delay, txUtils.TRANSACTION_FETCH_DELAY)
+    yield delay(txUtils.TRANSACTION_FETCH_DELAY)
     const tx: txUtils.Transaction | null = yield call(() =>
       txUtils.getTransaction(hash)
     )
