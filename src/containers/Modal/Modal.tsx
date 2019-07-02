@@ -6,7 +6,7 @@ import { ModalProps } from './Modal.types'
 export default class Modal extends React.PureComponent<ModalProps> {
   handleClose = () => {
     const { name, onCloseModal } = this.props
-    onCloseModal(name)
+    onCloseModal!(name)
   }
 
   render() {
