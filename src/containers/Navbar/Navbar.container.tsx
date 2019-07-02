@@ -45,4 +45,4 @@ export default connect(
   mapState,
   mapDispatch,
   mergeProps
-)(Navbar) as any
+)(Navbar)

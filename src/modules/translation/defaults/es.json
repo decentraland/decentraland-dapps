@@ -23,6 +23,7 @@
         "signIn": "Conectar"
       },
       "menu": {
+        "avatars": "Avatars",
         "agora": "Agora",
         "blog": "Blog",
         "docs": "Docs",

@@ -23,6 +23,7 @@
         "signIn": "로그인"
       },
       "menu": {
+        "avatars": "Avatars",
         "agora": "Agora",
         "blog": "Blog",
         "docs": "Docs",

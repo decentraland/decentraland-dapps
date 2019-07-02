@@ -28,4 +28,4 @@ export default connect(
   mapState,
   mapDispatch,
   mergeProps
-)(Modal) as any
+)(Modal)

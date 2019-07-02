@@ -36,4 +36,4 @@ export default connect(
   mapState,
   mapDispatch,
   mergeProps
-)(Footer) as any
+)(Footer)

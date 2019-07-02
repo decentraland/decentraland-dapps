@@ -15,4 +15,4 @@ const mapDispatch = (_: any): MapDispatchProps => ({})
 export default connect(
   mapState,
   mapDispatch
-)(EtherscanLink) as any
+)(EtherscanLink)

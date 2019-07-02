@@ -23,6 +23,7 @@
         "signIn": "登陆"
       },
       "menu": {
+        "avatars": "Avatars",
         "agora": "Agora",
         "blog": "Blog",
         "docs": "Docs",
