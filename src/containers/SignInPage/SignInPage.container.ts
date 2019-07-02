@@ -25,4 +25,4 @@ const mapDispatch = (dispatch: RootDispatch): MapDispatchProps => ({
 export default connect(
   mapState,
   mapDispatch
-)(SignInPage) as any
+)(SignInPage)
