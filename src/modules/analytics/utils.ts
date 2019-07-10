@@ -4,10 +4,13 @@ import {
   ActionType,
   EventName,
   GetPayload,
-  AnalyticsWindow
+  AnalyticsWindow,
+  TransformPayload
 } from './types'
 
 export const trackedActions: { [key: string]: AnalyticsAction } = {}
+
+let transformPayload: TransformPayload | null = null
 
 export function add(
   actionType: ActionType,
@@ -44,7 +47,10 @@ export function track(action: AnyAction) {
       payload = getPayload(action)
     }
 
-    analytics.track(event, payload)
+    analytics.track(
+      event,
+      transformPayload ? transformPayload(payload) : payload
+    )
   }
 }
 
@@ -58,4 +64,10 @@ export function isTrackable(action: AnyAction) {
 
 export function getAnalytics() {
   return (window as AnalyticsWindow).analytics
+}
+
+export function configure(params: { transformPayload?: TransformPayload }) {
+  if (params.transformPayload) {
+    transformPayload = params.transformPayload
+  }
 }
