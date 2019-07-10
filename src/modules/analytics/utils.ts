@@ -4,14 +4,11 @@ import {
   ActionType,
   EventName,
   GetPayload,
-  AnalyticsWindow
+  AnalyticsWindow,
+  TransformPayload
 } from './types'
 
 export const trackedActions: { [key: string]: AnalyticsAction } = {}
-
-type TrackPayload = string | undefined | Record<string, any>
-
-type TransformPayload = (payload: TrackPayload) => TrackPayload
 
 let transformPayload: TransformPayload | null = null
 
