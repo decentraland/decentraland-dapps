@@ -9,7 +9,11 @@ import {
 
 export const trackedActions: { [key: string]: AnalyticsAction } = {}
 
-let globalPayload: Record<string, any> | null = null
+type TrackPayload = string | undefined | Record<string, any>
+
+type TransformPayload = (payload: TrackPayload) => TrackPayload
+
+let transformPayload: TransformPayload | null = null
 
 export function add(
   actionType: ActionType,
@@ -46,20 +50,9 @@ export function track(action: AnyAction) {
       payload = getPayload(action)
     }
 
-    const isSimplePayload = typeof payload === 'string' || payload === undefined
-    const ignoreGlobalPayload = !globalPayload || isSimplePayload
-
-    if (isSimplePayload && globalPayload) {
-      console.warn(
-        `Warning: tracked event payload (${payload}) can not be merged with configured global payload`
-      )
-    }
-
     analytics.track(
       event,
-      ignoreGlobalPayload
-        ? payload
-        : { ...(payload as Record<string, any>), ...globalPayload }
+      transformPayload ? transformPayload(payload) : payload
     )
   }
 }
@@ -76,8 +69,8 @@ export function getAnalytics() {
   return (window as AnalyticsWindow).analytics
 }
 
-export function configure(params: { payload?: Record<string, any> }) {
-  if (params.payload) {
-    globalPayload = params.payload
+export function configure(params: { transformPayload?: TransformPayload }) {
+  if (params.transformPayload) {
+    transformPayload = params.transformPayload
   }
 }
