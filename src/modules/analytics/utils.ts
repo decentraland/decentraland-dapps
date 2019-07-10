@@ -9,6 +9,8 @@ import {
 
 export const trackedActions: { [key: string]: AnalyticsAction } = {}
 
+let globalPayload: Record<string, any> | null = null
+
 export function add(
   actionType: ActionType,
   eventName?: EventName,
@@ -44,7 +46,21 @@ export function track(action: AnyAction) {
       payload = getPayload(action)
     }
 
-    analytics.track(event, payload)
+    const isSimplePayload = typeof payload === 'string' || payload === undefined
+    const ignoreGlobalPayload = !globalPayload || isSimplePayload
+
+    if (isSimplePayload && globalPayload) {
+      console.warn(
+        `Warning: tracked event payload (${payload}) can not be merged with configured global payload`
+      )
+    }
+
+    analytics.track(
+      event,
+      ignoreGlobalPayload
+        ? payload
+        : { ...(payload as Record<string, any>), ...globalPayload }
+    )
   }
 }
 
@@ -58,4 +74,10 @@ export function isTrackable(action: AnyAction) {
 
 export function getAnalytics() {
   return (window as AnalyticsWindow).analytics
+}
+
+export function configure(params: { payload?: Record<string, any> }) {
+  if (params.payload) {
+    globalPayload = params.payload
+  }
 }
