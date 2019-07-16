@@ -4,7 +4,7 @@ export type SignInPageProps = SignInProps & {
   hasTranslations?: boolean
 }
 
-export type SignInState = {
+export type SignInPageState = {
   hasError: boolean
 }
 

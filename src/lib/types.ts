@@ -1,3 +1,5 @@
+declare module 'react-intl'
+
 export interface DataByKey<T> {
   [key: string]: T
 }

@@ -1,7 +1,12 @@
 import { connect } from 'react-redux'
 
 import SignInPage from './SignInPage'
-import { MapDispatchProps, MapStateProps } from './SignInPage.types'
+import {
+  MapDispatchProps,
+  MapStateProps,
+  SignInPageProps,
+  SignInPageState
+} from './SignInPage.types'
 import { RootDispatch } from '../../types'
 import { isEnabled } from '../../modules/translation/selectors'
 import { connectWalletRequest } from '../../modules/wallet/actions'
@@ -22,7 +27,12 @@ const mapDispatch = (dispatch: RootDispatch): MapDispatchProps => ({
   onConnect: () => dispatch(connectWalletRequest())
 })
 
-export default connect(
+export default connect<
+  MapStateProps,
+  MapDispatchProps,
+  SignInPageProps,
+  SignInPageState
+>(
   mapState,
   mapDispatch
-)(SignInPage)
+)(SignInPage) as any

@@ -2,13 +2,13 @@ import * as React from 'react'
 
 import { SignIn, SignInI18N } from 'decentraland-ui'
 
-import { SignInPageProps, SignInState } from './SignInPage.types'
+import { SignInPageProps, SignInPageState } from './SignInPage.types'
 import { T } from '../../modules/translation/utils'
 import { isMobile } from '../../lib/utils'
 
 export default class SignInPage extends React.PureComponent<
   SignInPageProps,
-  SignInState
+  SignInPageState
 > {
   constructor(props: SignInPageProps) {
     super(props)

@@ -2,3 +2,6 @@ src
 tsconfig.json
 tslint.json
 .nyc_output
+.git
+.circleci
+.vscode

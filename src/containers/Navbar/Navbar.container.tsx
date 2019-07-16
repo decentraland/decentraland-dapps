@@ -1,5 +1,4 @@
 import { connect } from 'react-redux'
-import { RouterAction } from 'react-router-redux'
 
 import Navbar from './Navbar'
 import { NavbarProps, MapStateProps, MapDispatchProps } from './Navbar.types'
@@ -10,7 +9,10 @@ import {
 } from '../../modules/wallet/selectors'
 import { isEnabled } from '../../modules/translation/selectors'
 import { isSignIn } from '../../modules/location/selectors'
-import { navigateToSignIn } from '../../modules/location/actions'
+import {
+  navigateToSignIn,
+  NavigateToSignInAction
+} from '../../modules/location/actions'
 import { RootDispatch } from '../../types'
 
 const mapState = (state: any): MapStateProps => {
@@ -26,7 +28,7 @@ const mapState = (state: any): MapStateProps => {
 }
 
 const mapDispatch = (
-  dispatch: RootDispatch<RouterAction>
+  dispatch: RootDispatch<NavigateToSignInAction>
 ): MapDispatchProps => ({
   onSignIn: () => dispatch(navigateToSignIn())
 })
@@ -45,4 +47,4 @@ export default connect(
   mapState,
   mapDispatch,
   mergeProps
-)(Navbar)
+)(Navbar) as any

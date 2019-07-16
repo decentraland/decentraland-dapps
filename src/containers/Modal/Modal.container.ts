@@ -1,15 +1,14 @@
 import { connect } from 'react-redux'
-import { RouterAction } from 'react-router-redux'
 
 import Modal from './Modal'
 import { ModalProps, MapStateProps, MapDispatchProps } from './Modal.types'
 import { RootDispatch } from '../../types'
-import { closeModal } from '../../modules/modal/actions'
+import { closeModal, CloseModalAction } from '../../modules/modal/actions'
 
 const mapState = (_: any): MapStateProps => ({})
 
 const mapDispatch = (
-  dispatch: RootDispatch<RouterAction>
+  dispatch: RootDispatch<CloseModalAction>
 ): MapDispatchProps => ({
   onCloseModal: (name: string) => dispatch(closeModal(name))
 })
@@ -28,4 +27,4 @@ export default connect(
   mapState,
   mapDispatch,
   mergeProps
-)(Modal)
+)(Modal) as any

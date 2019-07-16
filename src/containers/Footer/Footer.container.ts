@@ -1,5 +1,4 @@
 import { connect } from 'react-redux'
-import { RouterAction } from 'react-router-redux'
 import { Locale } from 'decentraland-ui'
 
 import Footer from './Footer'
@@ -7,7 +6,10 @@ import { FooterProps, MapDispatchProps, MapStateProps } from './Footer.types'
 import { RootDispatch } from '../../types'
 import { getLocale } from '../../modules/wallet/selectors'
 import { isEnabled } from '../../modules/translation/selectors'
-import { changeLocale } from '../../modules/translation/actions'
+import {
+  changeLocale,
+  ChangeLocaleAction
+} from '../../modules/translation/actions'
 
 const mapState = (state: any): MapStateProps => {
   return {
@@ -17,7 +19,7 @@ const mapState = (state: any): MapStateProps => {
 }
 
 const mapDispatch = (
-  dispatch: RootDispatch<RouterAction>
+  dispatch: RootDispatch<ChangeLocaleAction>
 ): MapDispatchProps => ({
   onChange: (_, { value }) => dispatch(changeLocale(value as Locale))
 })
@@ -36,4 +38,4 @@ export default connect(
   mapState,
   mapDispatch,
   mergeProps
-)(Footer)
+)(Footer) as any
