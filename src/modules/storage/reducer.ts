@@ -1,5 +1,6 @@
 import { AnyAction, Reducer } from 'redux'
-import * as storage from 'redux-storage'
+import * as storage from 'redux-persistence'
+import { StateMerger } from 'redux-persistence/dist/types'
 import { STORAGE_LOAD } from './actions'
 
 export type StorageState = {
@@ -14,7 +15,7 @@ export const INITIAL_STATE: StorageState = {
 
 export function storageReducerWrapper(
   reducer: any,
-  merger?: storage.StateMerger
+  merger?: StateMerger
 ): Reducer<{} | undefined> {
   return storage.reducer(reducer, merger)
 }

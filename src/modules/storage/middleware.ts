@@ -1,5 +1,5 @@
 import { Store } from 'redux'
-import * as storage from 'redux-storage'
+import * as storage from 'redux-persistence'
 import createStorageEngine from 'redux-storage-engine-localstorage'
 import filter from 'redux-storage-decorator-filter'
 import { hasLocalStorage, migrateStorage } from '../../lib/localStorage'
@@ -54,24 +54,30 @@ export function createStorageMiddleware<T>(options: StorageMiddleware<T>) {
     ['storage', 'version'],
     ...paths
   ])
-  const storageMiddleware: any = storage.createMiddleware(
-    storageEngine,
-    [],
-    [
-      CHANGE_LOCALE,
-      FETCH_TRANSLATIONS_SUCCESS,
-      FETCH_TRANSACTION_REQUEST,
-      FETCH_TRANSACTION_SUCCESS,
-      FETCH_TRANSACTION_FAILURE,
-      UPDATE_TRANSACTION_STATUS,
-      UPDATE_TRANSACTION_NONCE,
-      REPLACE_TRANSACTION_SUCCESS,
-      FIX_REVERTED_TRANSACTION,
-      CLEAR_TRANSACTIONS,
-      CLEAR_TRANSACTION,
-      ...actions
-    ]
-  )
+
+  const whitelist = [
+    CHANGE_LOCALE,
+    FETCH_TRANSLATIONS_SUCCESS,
+    FETCH_TRANSACTION_REQUEST,
+    FETCH_TRANSACTION_SUCCESS,
+    FETCH_TRANSACTION_FAILURE,
+    UPDATE_TRANSACTION_STATUS,
+    UPDATE_TRANSACTION_NONCE,
+    REPLACE_TRANSACTION_SUCCESS,
+    FIX_REVERTED_TRANSACTION,
+    CLEAR_TRANSACTIONS,
+    CLEAR_TRANSACTION,
+    ...actions
+  ]
+
+  const storageMiddleware: any = storage.createMiddleware(storageEngine, {
+    filterAction: (action: any) => {
+      return whitelist.includes(action.type)
+    },
+    transform: options.transform,
+    onError: options.onError
+  })
+
   const load = (store: Store<any>) => {
     if (setItemFailure) {
       const unsubscribe = store.subscribe(() => {
