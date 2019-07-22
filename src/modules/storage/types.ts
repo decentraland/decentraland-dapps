@@ -5,4 +5,6 @@ export interface StorageMiddleware<T> {
   paths?: (string | string[])[]
   actions?: string[]
   migrations?: Migrations<T>
+  transform?: <T>(state: T) => T
+  onError?: (err: Error) => void
 }
