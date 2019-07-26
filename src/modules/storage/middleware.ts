@@ -71,9 +71,7 @@ export function createStorageMiddleware<T>(options: StorageMiddleware<T>) {
   ]
 
   const storageMiddleware: any = storage.createMiddleware(storageEngine, {
-    filterAction: (action: any) => {
-      return whitelist.includes(action.type)
-    },
+    filterAction: (action: any) => whitelist.includes(action.type),
     transform: options.transform,
     onError: options.onError
   })

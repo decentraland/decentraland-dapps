@@ -16,7 +16,7 @@
     "date-fns": "^1.29.0",
     "flat": "^4.1.0",
     "react-intl": "^2.4.0",
-    "redux-persistence": "^1.1.0",
+    "redux-persistence": "^1.1.1",
     "redux-storage-decorator-filter": "^1.1.8",
     "redux-storage-engine-localstorage": "^1.1.4",
     "tslint": "^5.7.0",
