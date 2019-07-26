@@ -871,9 +871,8 @@ export function* rootSaga() {
 You can use the same redux action type to generate different Segment events if you pass a function as the second parameter instead of a string:
 
 ```ts
-add(
-  AUTHORIZE_LAND_SUCCESS,
-  action => (action.isAuthorized ? 'Authorize LAND' : 'Unauthorize LAND')
+add(AUTHORIZE_LAND_SUCCESS, action =>
+  action.isAuthorized ? 'Authorize LAND' : 'Unauthorize LAND'
 )
 ```
 
