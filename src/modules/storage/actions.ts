@@ -1,4 +1,6 @@
-import { LOAD, SAVE } from 'redux-persistence'
-
-export const STORAGE_LOAD = LOAD
-export const STORAGE_SAVE = SAVE
+export {
+  LoadAction,
+  SaveAction,
+  LOAD as STORAGE_LOAD,
+  SAVE as STORAGE_SAVE
+} from 'redux-persistence'
