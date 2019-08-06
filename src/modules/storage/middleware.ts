@@ -1,6 +1,6 @@
 import { Store } from 'redux'
 import * as storage from 'redux-persistence'
-import createStorageEngine from 'redux-storage-engine-localstorage'
+import createStorageEngine from 'redux-persistence-engine-localstorage'
 import filter from 'redux-storage-decorator-filter'
 import { hasLocalStorage, migrateStorage } from '../../lib/localStorage'
 import { disabledMiddleware } from '../../lib/disabledMiddleware'

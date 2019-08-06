@@ -17,8 +17,8 @@
     "flat": "^4.1.0",
     "react-intl": "^2.4.0",
     "redux-persistence": "^1.1.2",
+    "redux-persistence-engine-localstorage": "^1.0.0",
     "redux-storage-decorator-filter": "^1.1.8",
-    "redux-storage-engine-localstorage": "^1.1.4",
     "tslint": "^5.7.0",
     "tslint-config-prettier": "^1.10.0",
     "typesafe-actions": "^2.0.3"
