@@ -17,7 +17,7 @@ function handleConnectWalletSuccess(action: ConnectWalletSuccessAction) {
   const analytics = getAnalytics()
 
   if (analytics) {
-    analytics.identify(wallet.address)
+    analytics.identify({ 'ethAddress': wallet.address })
   }
 }
 
