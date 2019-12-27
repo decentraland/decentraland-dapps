@@ -41,11 +41,8 @@ import {
   getTransaction as getTransactionInState,
   getTransactions
 } from './selectors'
-import {
-  isPending,
-  buildActionRef,
-  getTransaction as getTransactionFromNetwork
-} from './utils'
+import { isPending, buildActionRef } from './utils'
+import { getTransaction as getTransactionFromNetwork } from './txUtils'
 import { getAddress } from '../wallet/selectors'
 
 export function* transactionSaga(): IterableIterator<ForkEffect> {

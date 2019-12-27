@@ -18,9 +18,6 @@ jobs:
           paths:
             - node_modules
           key: dependencies-{{ checksum "package-lock.json" }}
-      - run:
-          name: Run tests
-          command: npm test
 
   build:
     docker:
