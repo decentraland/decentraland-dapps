@@ -1,7 +1,6 @@
 import { AnyAction } from 'redux'
 import { action } from 'typesafe-actions'
-import { Transaction } from './types'
-import { txUtils } from 'decentraland-eth'
+import { Transaction, AnyTransaction } from './types'
 
 // Fetch transaction
 
@@ -25,7 +24,7 @@ export const fetchTransactionSuccess = (transaction: Transaction) =>
 
 export const fetchTransactionFailure = (
   hash: string,
-  status: txUtils.Transaction['type'],
+  status: AnyTransaction['status'],
   message: string
 ) =>
   action(FETCH_TRANSACTION_FAILURE, {
@@ -61,7 +60,7 @@ export const UPDATE_TRANSACTION_STATUS = 'Update Transaction Status'
 
 export const updateTransactionStatus = (
   hash: string,
-  status: txUtils.Transaction['type'] | null
+  status: AnyTransaction['status'] | null
 ) => action(UPDATE_TRANSACTION_STATUS, { hash, status })
 
 export type UpdateTransactionStatusAction = ReturnType<

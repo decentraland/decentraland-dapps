@@ -1,73 +1,50 @@
-import {
-  call,
-  select,
-  takeEvery,
-  put,
-  ForkEffect,
-  all
-} from 'redux-saga/effects'
-import { eth, Contract } from 'decentraland-eth'
-import { EthereumWindow, BaseWallet } from './types'
+import { Eth } from 'web3x-es/eth'
+import { Address } from 'web3x-es/address'
+import { put, call, takeLatest, all } from 'redux-saga/effects'
 import {
   connectWalletSuccess,
   connectWalletFailure,
   CONNECT_WALLET_REQUEST
 } from './actions'
-import { isApprovableWallet, connectEthereumWallet } from './utils'
-import { getData } from './selectors'
+import { MANA } from '../../contracts/MANA'
+import { Wallet } from './types'
+import { fromWei } from 'web3x-es/utils'
 
 export type WalletSagaOptions = {
-  provider: object | string
-  contracts: Contract[]
-  eth: typeof eth
+  MANA_ADDRESS: string
 }
 
-export function createWalletSaga({
-  provider,
-  contracts,
-  eth
-}: WalletSagaOptions): () => IterableIterator<ForkEffect> {
+export function createWalletSaga(
+  options: WalletSagaOptions = {
+    MANA_ADDRESS: '0x0f5d2fb29fb7d3cfee444a200298f468908cc942'
+  }
+) {
+  const { MANA_ADDRESS } = options
   function* handleConnectWalletRequest() {
     try {
-      if (isApprovableWallet()) {
-        const { ethereum } = window as EthereumWindow
-        yield call(() => ethereum!.enable!())
-
-        // Unfortunately we need to override the provider supplied to this method
-        // if we're dealing with approbable wallets (the first being Metamask, probably more to come).
-        // When a wallet is needs to call `enable` to work (to whitelist the URL), the correct provider is `ethereum`
-        // but if we're using a different kind of wallet (like a Ledger) the user supplied provider should be ok.
-        provider = ethereum!
+      const eth = Eth.fromCurrentProvider()
+      if (!eth) {
+        // this could happen if metamask is not installed
+        throw new Error('Could not connect to Ethereum')
       }
-
-      const walletData: BaseWallet = yield select(getData)
-
-      yield call(() =>
-        connectEthereumWallet({
-          address: walletData.address,
-          derivationPath: walletData.derivationPath,
-          provider,
-          contracts,
-          eth
-        })
+      const accounts: Address[] = yield call(() => eth.getAccounts())
+      const address = accounts[0]
+      if (!address) {
+        // this could happen if the user reject the metamask prompt
+        throw new Error('Could not get address')
+      }
+      const network = yield call(() => eth.getId())
+      const ethBalance = yield call(() => eth.getBalance(address))
+      const mana = new MANA(eth, Address.fromString(MANA_ADDRESS))
+      const manaBalance = yield call(() =>
+        mana.methods.balanceOf(address).call()
       )
 
-      let address: string = yield call(() => eth.getAddress())
-      address = address.toLowerCase()
-
-      const manaTokenContract = eth.getContract('MANAToken')
-
-      const [network, mana] = yield all([
-        eth.getNetwork(),
-        manaTokenContract.balanceOf(address)
-      ])
-
-      const wallet: BaseWallet = {
-        address,
-        mana,
-        network: network.name,
-        type: eth.wallet.type,
-        derivationPath: eth.wallet.derivationPath
+      const wallet: Wallet = {
+        address: address.toString(),
+        mana: parseFloat(fromWei(manaBalance, 'ether')),
+        eth: parseFloat(fromWei(ethBalance, 'ether')),
+        network
       }
 
       yield put(connectWalletSuccess(wallet))
@@ -77,6 +54,8 @@ export function createWalletSaga({
   }
 
   return function* walletSaga() {
-    yield takeEvery(CONNECT_WALLET_REQUEST, handleConnectWalletRequest)
+    yield all([takeLatest(CONNECT_WALLET_REQUEST, handleConnectWalletRequest)])
   }
 }
+
+export const walletSaga = createWalletSaga()

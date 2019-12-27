@@ -8,9 +8,8 @@ import {
   MapDispatchProps,
   OwnProps
 } from './TranslationProvider.types'
-import { getLocale } from '../../modules/wallet/selectors'
 import { isLoading } from '../../modules/storage/selectors'
-import { getData } from '../../modules/translation/selectors'
+import { getData, getLocale } from '../../modules/translation/selectors'
 import { fetchTranslationsRequest } from '../../modules/translation/actions'
 import { getPreferredLocale } from '../../modules/translation/utils'
 import { RootDispatch } from '../../types'

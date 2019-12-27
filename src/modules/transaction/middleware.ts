@@ -1,8 +1,5 @@
 import { fetchTransactionRequest } from './actions'
-import {
-  isTransactionAction,
-  getTransactionHashFromAction
-} from './utils'
+import { isTransactionAction, getTransactionHashFromAction } from './utils'
 import { getAddress } from '../wallet/selectors'
 import { RootMiddleware } from '../../types'
 

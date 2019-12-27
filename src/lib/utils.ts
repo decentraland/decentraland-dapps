@@ -1,5 +1,5 @@
-import * as dateFnsFormat from 'date-fns/format'
-import * as dateFnsDistanceInWordsToNow from 'date-fns/distance_in_words_to_now'
+import dateFnsFormat from 'date-fns/format'
+import dateFnsDistanceInWordsToNow from 'date-fns/distance_in_words_to_now'
 import { Model, ModelById, DataByKey } from './types'
 import { getCurrentLocale } from '../modules/translation/utils'
 

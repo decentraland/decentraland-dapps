@@ -21,11 +21,14 @@
     "redux-storage-decorator-filter": "^1.1.8",
     "tslint": "^5.7.0",
     "tslint-config-prettier": "^1.10.0",
-    "typesafe-actions": "^2.0.3"
+    "typesafe-actions": "^2.0.3",
+    "web3x-codegen": "^4.0.6",
+    "web3x-es": "^4.0.6"
   },
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "tsc --project tsconfig.json",
+    "contracts": "web3x-codegen",
     "test": "nyc mocha --require ts-node/register src/**/*.spec.ts src/**/**/*.spec.ts",
     "test:watch": "npm test -- --watch --watch-extensions ts",
     "semantic-release": "semantic-release",
@@ -36,7 +39,6 @@
     "@types/mocha": "^5.2.5",
     "chai": "^4.1.2",
     "dcl-tslint-config-standard": "^1.0.1",
-    "decentraland-eth": "^8.16.0",
     "decentraland-ui": "^2.2.0",
     "husky": "^0.14.3",
     "mocha": "^5.2.0",
@@ -56,7 +58,6 @@
     "validate-commit-message": "^3.0.1"
   },
   "peerDependencies": {
-    "decentraland-eth": ">=8.0.0",
     "decentraland-ui": ">=2.0.0",
     "react": "^16.4.1",
     "react-redux": "^5.0.7",

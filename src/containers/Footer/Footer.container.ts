@@ -4,8 +4,7 @@ import { Locale } from 'decentraland-ui'
 import Footer from './Footer'
 import { FooterProps, MapDispatchProps, MapStateProps } from './Footer.types'
 import { RootDispatch } from '../../types'
-import { getLocale } from '../../modules/wallet/selectors'
-import { isEnabled } from '../../modules/translation/selectors'
+import { getLocale, isEnabled } from '../../modules/translation/selectors'
 import {
   changeLocale,
   ChangeLocaleAction

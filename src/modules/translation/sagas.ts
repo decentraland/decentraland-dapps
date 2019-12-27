@@ -1,5 +1,5 @@
 import { takeEvery, put, call, ForkEffect } from 'redux-saga/effects'
-import * as flatten from 'flat'
+import flatten from 'flat'
 import { Translation, TranslationKeys } from './types'
 import {
   fetchTranslationsSuccess,

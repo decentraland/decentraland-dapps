@@ -17,7 +17,7 @@ export default class SignInPage extends React.PureComponent<
     }
   }
 
-  componentWillReceiveProps(nextProps: SignInPageProps) {
+  UNSAFE_componentWillReceiveProps(nextProps: SignInPageProps) {
     if (nextProps.hasError && !this.state.hasError) {
       this.setState({
         hasError: true

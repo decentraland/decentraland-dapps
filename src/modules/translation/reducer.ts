@@ -1,3 +1,5 @@
+import { Locale } from 'decentraland-ui'
+
 import { loadingReducer, LoadingState } from '../loading/reducer'
 import {
   ChangeLocaleAction,
@@ -13,12 +15,14 @@ import { Translation } from './types'
 
 export type TranslationState = {
   data: Translation
+  locale: Locale
   loading: LoadingState
   error: string | null
 }
 
 export const INITIAL_STATE: TranslationState = {
   data: {},
+  locale: 'en',
   loading: [],
   error: null
 }
@@ -37,21 +41,22 @@ export function translationReducer(
     case CHANGE_LOCALE:
       return {
         ...state,
+        locale: action.payload.locale
+      }
+    case FETCH_TRANSLATIONS_REQUEST:
+      return {
+        ...state,
         loading: loadingReducer(state.loading, action),
         data: {
           ...state.data,
           [action.payload.locale]: null
         }
       }
-    case FETCH_TRANSLATIONS_REQUEST:
-      return {
-        ...state,
-        loading: loadingReducer(state.loading, action)
-      }
     case FETCH_TRANSLATIONS_SUCCESS:
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
+        locale: action.payload.locale,
         data: {
           ...state.data,
           [action.payload.locale]: {

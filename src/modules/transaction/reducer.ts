@@ -1,6 +1,4 @@
-import { txUtils } from 'decentraland-eth'
-
-import { Transaction } from './types'
+import { Transaction, TransactionStatus } from './types'
 import { getTransactionFromAction, isPending } from './utils'
 import { loadingReducer, LoadingState } from '../loading/reducer'
 import {
@@ -81,10 +79,9 @@ export function transactionReducer(
       return {
         loading: loadingReducer(state.loading, action),
         error: null,
-        data: state.data.map(
-          (transaction: Transaction) =>
-            // prettier-ignore
-            actionTransaction.hash === transaction.hash
+        data: state.data.map((transaction: Transaction) =>
+          // prettier-ignore
+          actionTransaction.hash === transaction.hash
               ? {
                 ...transaction,
                 ...actionTransaction
@@ -98,10 +95,9 @@ export function transactionReducer(
       return {
         loading: loadingReducer(state.loading, action),
         error: message,
-        data: state.data.map(
-          (transaction: Transaction) =>
-            // prettier-ignore
-            hash === transaction.hash
+        data: state.data.map((transaction: Transaction) =>
+          // prettier-ignore
+          hash === transaction.hash
               ? {
                 ...transaction,
                 status
@@ -114,10 +110,9 @@ export function transactionReducer(
       return {
         loading: loadingReducer(state.loading, action),
         error: null,
-        data: state.data.map(
-          (transaction: Transaction) =>
-            // prettier-ignore
-            action.payload.hash === transaction.hash
+        data: state.data.map((transaction: Transaction) =>
+          // prettier-ignore
+          action.payload.hash === transaction.hash
               ? {
                 ...transaction,
                 status: action.payload.status
@@ -130,13 +125,12 @@ export function transactionReducer(
       return {
         loading: loadingReducer(state.loading, action),
         error: null,
-        data: state.data.map(
-          (transaction: Transaction) =>
-            // prettier-ignore
-            action.payload.hash === transaction.hash
+        data: state.data.map((transaction: Transaction) =>
+          // prettier-ignore
+          action.payload.hash === transaction.hash
               ? {
                 ...transaction,
-                status: txUtils.TRANSACTION_TYPES.confirmed
+                status: TransactionStatus.CONFIRMED
               }
               : transaction
         )
@@ -146,14 +140,13 @@ export function transactionReducer(
       return {
         loading: loadingReducer(state.loading, action),
         error: null,
-        data: state.data.map(
-          (transaction: Transaction) =>
-            action.payload.hash === transaction.hash
-              ? {
-                  ...transaction,
-                  nonce: action.payload.nonce
-                }
-              : transaction
+        data: state.data.map((transaction: Transaction) =>
+          action.payload.hash === transaction.hash
+            ? {
+                ...transaction,
+                nonce: action.payload.nonce
+              }
+            : transaction
         )
       }
     }
@@ -161,15 +154,14 @@ export function transactionReducer(
       return {
         loading: loadingReducer(state.loading, action),
         error: null,
-        data: state.data.map(
-          (transaction: Transaction) =>
-            action.payload.hash === transaction.hash
-              ? {
-                  ...transaction,
-                  status: txUtils.TRANSACTION_TYPES.replaced,
-                  replacedBy: action.payload.replaceBy
-                }
-              : transaction
+        data: state.data.map((transaction: Transaction) =>
+          action.payload.hash === transaction.hash
+            ? {
+                ...transaction,
+                status: TransactionStatus.REVERTED,
+                replacedBy: action.payload.replaceBy
+              }
+            : transaction
         )
       }
     }

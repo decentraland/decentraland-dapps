@@ -9,11 +9,11 @@ import {
 import { Props } from './TranslationProvider.types'
 
 export default class TranslationProvider extends React.PureComponent<Props> {
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     addAvailableLocaleData()
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  UNSAFE_componentWillReceiveProps(nextProps: Props) {
     const { locale, onFetchTranslations } = nextProps
 
     if (locale && this.props.locale !== locale) {

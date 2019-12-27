@@ -6,7 +6,7 @@ import { getNetwork } from '../../modules/wallet/selectors'
 
 const mapState = (state: any): MapStateProps => {
   return {
-    network: getNetwork(state) || ''
+    network: getNetwork(state)
   }
 }
 

@@ -1,13 +1,61 @@
-import { txUtils } from 'decentraland-eth'
+import { TransactionResponse, TransactionReceipt } from 'web3x-es/formatters'
 
-export const FINISHED_TYPES = [
-  txUtils.TRANSACTION_TYPES.confirmed,
-  txUtils.TRANSACTION_TYPES.reverted,
-  txUtils.TRANSACTION_TYPES.dropped,
-  txUtils.TRANSACTION_TYPES.replaced
+export enum TransactionStatus {
+  QUEUED = 'queued',
+  DROPPED = 'dropped',
+  REPLACED = 'replaced',
+  PENDING = 'pending',
+  REVERTED = 'reverted',
+  CONFIRMED = 'confirmed'
+}
+
+export type DroppedTransaction = {
+  status: TransactionStatus.DROPPED
+  hash: string
+  nonce: number
+}
+
+export type ReplacedTransaction = {
+  status: TransactionStatus.REPLACED
+  hash: string
+  nonce: number
+}
+
+export type QueuedTransaction = {
+  status: TransactionStatus.QUEUED
+  hash: string
+  nonce: number
+}
+
+export type PendingTransaction = TransactionResponse & {
+  status: TransactionStatus.PENDING
+}
+
+export type RevertedTransaction = TransactionResponse & {
+  status: TransactionStatus.REVERTED
+}
+
+export type ConfirmedTransaction = TransactionResponse & {
+  status: TransactionStatus.CONFIRMED
+  receipt: TransactionReceipt
+}
+
+export type AnyTransaction =
+  | DroppedTransaction
+  | ReplacedTransaction
+  | QueuedTransaction
+  | PendingTransaction
+  | ConfirmedTransaction
+  | RevertedTransaction
+
+export const FINISHED_STATUS = [
+  TransactionStatus.CONFIRMED,
+  TransactionStatus.REVERTED,
+  TransactionStatus.DROPPED,
+  TransactionStatus.REVERTED
 ]
 
-export interface Transaction {
+export type Transaction = {
   events: string[]
   hash: string
   nonce: number | null
@@ -15,13 +63,13 @@ export interface Transaction {
   timestamp: number
   from: string
   actionType: string
-  status: txUtils.Transaction['type'] | null
+  status: AnyTransaction['status'] | null
   withReceipt?: boolean
-  receipt?: Receipt
+  receipt?: { logs: TransactionReceipt['logs'] }
   payload?: any
 }
 
-export interface TransactionPayload {
+export type TransactionPayload = {
   [hash: string]: {
     hash: string
     payload: any
@@ -37,18 +85,14 @@ export enum NetworkName {
   rinkeby = 'rinkeby'
 }
 
-export interface Arg {
+export type Arg = {
   name: string
   type: string
   value: string
 }
 
-export interface Log {
+export type Log = {
   events: Arg[]
   name: string
   [key: string]: any
-}
-
-export interface Receipt {
-  logs: Log[]
 }

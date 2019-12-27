@@ -7,7 +7,7 @@ export type DefaultProps = {
 export type Props = Partial<DefaultProps> & {
   address: string
   txHash: string
-  network: string
+  network?: number
 }
 
 export type MapStateProps = Pick<Props, 'network'>

@@ -1,4 +1,6 @@
-import { eth, txUtils } from 'decentraland-eth'
+import { Eth } from 'web3x-es/eth'
+import { Address } from 'web3x-es/address'
+import { BlockResponse, TransactionResponse } from 'web3x-es/formatters'
 import {
   call,
   put,
@@ -8,7 +10,7 @@ import {
   fork,
   delay
 } from 'redux-saga/effects'
-import { Transaction } from './types'
+import { Transaction, TransactionStatus, AnyTransaction } from './types'
 import {
   fetchTransactionFailure,
   fetchTransactionSuccess,
@@ -34,12 +36,17 @@ import {
   CONNECT_WALLET_SUCCESS,
   ConnectWalletSuccessAction
 } from '../wallet/actions'
-import { getData, getTransaction, getTransactions } from './selectors'
-import { isPending, buildActionRef } from './utils'
-import { TransactionStatus } from 'decentraland-eth/dist/ethereum/wallets/Wallet'
+import {
+  getData,
+  getTransaction as getTransactionInState,
+  getTransactions
+} from './selectors'
+import {
+  isPending,
+  buildActionRef,
+  getTransaction as getTransactionFromNetwork
+} from './utils'
 import { getAddress } from '../wallet/selectors'
-
-const { TRANSACTION_TYPES } = txUtils
 
 export function* transactionSaga(): IterableIterator<ForkEffect> {
   yield takeEvery(FETCH_TRANSACTION_REQUEST, handleFetchTransactionRequest)
@@ -53,6 +60,7 @@ export function* transactionSaga(): IterableIterator<ForkEffect> {
 const BLOCKS_DEPTH = 100
 const PENDING_TRANSACTION_THRESHOLD = 72 * 60 * 60 * 1000 // 72 hours
 const REVERTED_TRANSACTION_THRESHOLD = 24 * 60 * 60 * 1000 // 24 hours
+const TRANSACTION_FETCH_DELAY = 2 * 1000 // 2 seconds
 
 const isExpired = (transaction: Transaction, threshold: number) =>
   Date.now() - transaction.timestamp > threshold
@@ -67,8 +75,8 @@ const watchDroppedIndex: { [hash: string]: boolean } = {
 
 export class FailedTransactionError extends Error {
   public hash: string
-  public status: txUtils.Transaction['type']
-  constructor(hash: string, status: txUtils.Transaction['type']) {
+  public status: TransactionStatus
+  constructor(hash: string, status: TransactionStatus) {
     super(`[${hash}] ${status}`) // 'Error' breaks prototype chain here
     this.hash = hash
     this.status = status
@@ -80,22 +88,22 @@ function* handleFetchTransactionRequest(action: FetchTransactionRequestAction) {
   const hash = action.payload.hash
   const transactions: Transaction[] = yield select(getData)
   const transaction = transactions.find(tx => tx.hash === hash)
-  if (!transaction) return undefined
+  if (!transaction) return
 
   try {
     watchPendingIndex[hash] = true
 
-    let tx: txUtils.Transaction = yield call(() => txUtils.getTransaction(hash))
+    let tx: AnyTransaction = yield call(() => getTransactionFromNetwork(hash))
     let isUnknown = tx == null
 
     // loop while tx is pending
     while (
       isUnknown ||
-      isPending(tx.type) ||
-      tx.type === TRANSACTION_TYPES.replaced // let replaced transactions be kept in the loop so it can be picked up as dropped
+      isPending(tx.status) ||
+      tx.status === TransactionStatus.REPLACED // let replaced transactions be kept in the loop so it can be picked up as dropped
     ) {
       const txInState: Transaction = yield select(state =>
-        getTransaction(state, hash)
+        getTransactionInState(state, hash)
       )
 
       // update nonce
@@ -108,46 +116,46 @@ function* handleFetchTransactionRequest(action: FetchTransactionRequestAction) {
 
       // update status
       const statusInState = txInState == null ? null : txInState.status
-      const statusInNetwork = isUnknown ? null : tx.type
+      const statusInNetwork = isUnknown ? null : tx.status
 
       const nonce = nonceInState || nonceInNetwork
       if (statusInState !== statusInNetwork && nonce != null) {
         // check if dropped or replaced
         const isDropped = statusInState != null && statusInNetwork == null
-        const isReplaced = statusInNetwork === TRANSACTION_TYPES.replaced
+        const isReplaced = statusInNetwork === TransactionStatus.REPLACED
         if (isDropped || isReplaced) {
           // mark tx as dropped even if it was returned with a 'replaced' status, let the saga find its replacement
           yield put(replaceTransactionRequest(hash, nonce))
-          throw new FailedTransactionError(hash, TRANSACTION_TYPES.dropped)
+          throw new FailedTransactionError(hash, TransactionStatus.DROPPED)
         }
         yield put(updateTransactionStatus(hash, statusInNetwork))
       }
 
       // sleep
-      yield delay(txUtils.TRANSACTION_FETCH_DELAY)
+      yield delay(TRANSACTION_FETCH_DELAY)
 
       // update tx status from network
-      tx = yield call(() => txUtils.getTransaction(hash))
+      tx = yield call(() => getTransactionFromNetwork(hash))
       isUnknown = tx == null
     }
 
     delete watchPendingIndex[hash]
 
-    if (tx.type === TRANSACTION_TYPES.confirmed) {
+    if (tx.status === TransactionStatus.CONFIRMED) {
       yield put(
         fetchTransactionSuccess({
           ...transaction,
-          status: tx.type,
+          status: tx.status,
           receipt: {
             logs: transaction.withReceipt ? tx.receipt.logs : []
           }
         })
       )
     } else {
-      if (tx.type === TRANSACTION_TYPES.reverted) {
+      if (tx.status === TransactionStatus.REVERTED) {
         yield put(watchRevertedTransaction(tx.hash))
       }
-      throw new FailedTransactionError(tx.hash, tx.type)
+      throw new FailedTransactionError(tx.hash, tx.status)
     }
   } catch (error) {
     yield put(fetchTransactionFailure(error.hash, error.status, error.message))
@@ -157,7 +165,18 @@ function* handleFetchTransactionRequest(action: FetchTransactionRequestAction) {
 function* handleReplaceTransactionRequest(
   action: ReplaceTransactionRequestAction
 ) {
-  const account = eth.getAccount()
+  const eth = Eth.fromCurrentProvider()
+  if (!eth) {
+    console.warn('Could not connect to ethereum')
+    return
+  }
+
+  const accounts: Address[] = yield call(() => eth.getAccounts())
+  if (accounts.length === 0) {
+    console.warn('Could not get accounts')
+    return
+  }
+  const account = accounts[0].toString()
   const { hash, nonce } = action.payload
 
   watchDroppedIndex[hash] = true
@@ -166,12 +185,10 @@ function* handleReplaceTransactionRequest(
 
   while (true) {
     // check if tx has status, this is to recover from a tx that is dropped momentarily
-    const tx: txUtils.Transaction = yield call(() =>
-      txUtils.getTransaction(hash)
-    )
+    const tx: AnyTransaction = yield call(() => getTransactionFromNetwork(hash))
     if (tx != null) {
       const txInState: Transaction = yield select(state =>
-        getTransaction(state, hash)
+        getTransactionInState(state, hash)
       )
       yield put(
         fetchTransactionRequest(account, hash, buildActionRef(txInState))
@@ -180,7 +197,7 @@ function* handleReplaceTransactionRequest(
     }
 
     // get latest block
-    const blockNumber = yield call(() => eth.getBlockNumber())
+    const blockNumber: number = yield call(() => eth.getBlockNumber())
 
     let highestNonce = 0
     let replacedBy = null
@@ -189,19 +206,21 @@ function* handleReplaceTransactionRequest(
     const startBlock = blockNumber
     const endBlock = checkpoint || blockNumber - BLOCKS_DEPTH
     for (let i = startBlock; i > endBlock; i--) {
-      let block = yield call(() => eth.getBlock(i, true))
-      const transactions: TransactionStatus[] =
+      let block: BlockResponse<TransactionResponse> = yield call(() =>
+        eth.getBlock(i, true)
+      )
+      const transactions: TransactionResponse[] =
         block != null && block.transactions != null ? block.transactions : []
 
       // look for a replacement tx, if so break the loop
       replacedBy = transactions.find(
-        tx => tx.nonce === nonce && tx.from === account
+        tx => tx.nonce === nonce && tx.from.toString() === account
       )
       if (replacedBy) break
 
       // if no replacement is found, keep track of the highest nonce for the account
       highestNonce = transactions
-        .filter(tx => tx.from === account)
+        .filter(tx => tx.from.toString() === account)
         .reduce((max, tx) => Math.max(max, tx.nonce), highestNonce)
     }
 
@@ -214,7 +233,7 @@ function* handleReplaceTransactionRequest(
       // it will be sent back to the pending tx saga that will mark it as confirmed/reverted
       if (hash === replacedBy.hash) {
         const txInState: Transaction = yield select(state =>
-          getTransaction(state, hash)
+          getTransactionInState(state, hash)
         )
         yield put(
           fetchTransactionRequest(account, hash, buildActionRef(txInState))
@@ -229,13 +248,13 @@ function* handleReplaceTransactionRequest(
     // if there was nonce higher to than the one in the tx, we can mark it as replaced (altough we don't know which tx replaced it)
     if (highestNonce >= nonce) {
       yield put(
-        updateTransactionStatus(action.payload.hash, TRANSACTION_TYPES.replaced)
+        updateTransactionStatus(action.payload.hash, TransactionStatus.REPLACED)
       )
       break
     }
 
     // sleep
-    yield delay(txUtils.TRANSACTION_FETCH_DELAY)
+    yield delay(TRANSACTION_FETCH_DELAY)
   }
 
   delete watchDroppedIndex[action.payload.hash]
@@ -257,7 +276,7 @@ function* handleWatchPendingTransactions() {
         )
       } else {
         // mark it as dropped if it's too old
-        yield put(updateTransactionStatus(tx.hash, TRANSACTION_TYPES.dropped))
+        yield put(updateTransactionStatus(tx.hash, TransactionStatus.DROPPED))
       }
     }
   }
@@ -267,7 +286,7 @@ function* handleWatchDroppedTransactions() {
   const transactions: Transaction[] = yield select(getData)
   const droppedTransactions = transactions.filter(
     transaction =>
-      transaction.status === TRANSACTION_TYPES.dropped &&
+      transaction.status === TransactionStatus.DROPPED &&
       transaction.nonce != null
   )
 
@@ -287,17 +306,17 @@ function* handleWatchRevertedTransaction(
   const { hash } = action.payload
 
   const txInState: Transaction = yield select(state =>
-    getTransaction(state, hash)
+    getTransactionInState(state, hash)
   )
 
   do {
-    yield delay(txUtils.TRANSACTION_FETCH_DELAY)
-    const tx: txUtils.Transaction | null = yield call(() =>
-      txUtils.getTransaction(hash)
+    yield delay(TRANSACTION_FETCH_DELAY)
+    const tx: AnyTransaction | null = yield call(() =>
+      getTransactionFromNetwork(hash)
     )
-    if (tx != null && tx.type === TRANSACTION_TYPES.confirmed) {
+    if (tx != null && tx.status === TransactionStatus.CONFIRMED) {
       yield put(fixRevertedTransaction(hash))
-      return undefined
+      return
     }
   } while (!isExpired(txInState, REVERTED_TRANSACTION_THRESHOLD))
 }
@@ -313,7 +332,7 @@ function* handleConnectWalletSuccess(_: ConnectWalletSuccessAction) {
   )
   const revertedTransactions = transactions.filter(
     transaction =>
-      transaction.status === TRANSACTION_TYPES.reverted &&
+      transaction.status === TransactionStatus.REVERTED &&
       !isExpired(transaction, REVERTED_TRANSACTION_THRESHOLD)
   )
   for (const transaction of revertedTransactions) {

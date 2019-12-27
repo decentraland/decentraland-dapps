@@ -1,6 +1,5 @@
-import { Transaction } from './types'
+import { Transaction, TransactionStatus } from './types'
 import { TransactionState } from './reducer'
-import { txUtils } from 'decentraland-eth'
 import { isPending } from './utils'
 
 const sortByTimestamp = (a: Transaction, b: Transaction) =>
@@ -21,7 +20,7 @@ export const getTransaction = (
 export const getTransactionsByStatus = (
   state: any,
   address: string,
-  status: txUtils.Transaction['type']
+  status: TransactionStatus
 ): Transaction[] =>
   getData(state)
     .filter(tx => tx.from === address && tx.status === status)
