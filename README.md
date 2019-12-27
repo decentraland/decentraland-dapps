@@ -13,7 +13,6 @@ Common modules for our dApps
   - [Translation](https://github.com/decentraland/decentraland-dapps#translation)
   - [Analytics](https://github.com/decentraland/decentraland-dapps#analytics)
   - [Loading](https://github.com/decentraland/decentraland-dapps#loading)
-  - [Location](https://github.com/decentraland/decentraland-dapps#location)
   - [Modal](https://github.com/decentraland/decentraland-dapps#modal)
 - [Lib](https://github.com/decentraland/decentraland-dapps#lib)
   - [API](https://github.com/decentraland/decentraland-dapps#api)
@@ -90,13 +89,13 @@ In order to install this module you will need to add a provider, a reducer and a
 
 **Provider**:
 
-Add the `<WalletProvider>` as a child of your `redux` provider. If you use `react-router-redux` make sure the `<ConnectedRouter>` is a child of the `<WalletProvider>` and not the other way around, like this:
+Add the `<WalletProvider>` as a child of your `redux` provider. If you use `react-router-redux` or `connected-react-router` make sure the `<ConnectedRouter>` is a child of the `<WalletProvider>` and not the other way around, like this:
 
 ```tsx
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
-import { ConnectedRouter } from 'react-router-redux'
+import { ConnectedRouter } from 'connected-react-router'
 import WalletProvider from 'decentraland-dapps/dist/providers/WalletProvider'
 import { store, history } from './store'
 
@@ -130,16 +129,7 @@ You will need to create a `walletSaga` and add it to your `rootSaga`:
 
 ```ts
 import { all } from 'redux-saga/effects'
-import { eth, contracts } from 'decentraland-eth'
-import { createWalletSaga } from 'decentraland-dapps/dist/modules/wallet/sagas'
-
-const MANAToken = new contracts.MANAToken('0xdeadbeeffaceb00c') // contract address here
-
-const walletSaga = createWalletSaga({
-  provider: 'https://mainnet.infura.io', // this param is required to have Ledger support
-  contracts: [MANAToken], // add all the contracts you will use here, but MANAToken is required!
-  eth // you have to pass the `eth` instance because it's a singleton
-})
+import { walletSaga } from 'decentraland-dapps/dist/modules/wallet/sagas'
 
 export function* rootSaga() {
   yield all([
@@ -151,144 +141,26 @@ export function* rootSaga() {
 
 ### Advanced Usage
 
-You can extend the wallet module if you need to.
+You can change the address of the MANA token contract (ie. if you want to use it from Ropsten)
 
 <details><summary>Learn More</summary>
 <p>
 
-Say you want to add the amount of `land` as a property of the wallet, you can create a `wallet` module in your dApp and add the following files:
-
-**Types**:
-
-```ts
-// modules/wallet/types.ts
-import { BaseWallet } from 'decentraland-dapps/dist/modules/wallet/types'
-
-export interface Wallet extends BaseWallet {
-  land: number | null
-}
-```
-
-**Actions**:
-
-```ts
-// modules/wallet/actions.ts
-import { action } from 'typesafe-actions'
-
-export const FETCH_LAND_AMOUNT_REQUEST = '[Request] Fetch LAND Amount'
-export const FETCH_LAND_AMOUNT_SUCCESS = '[Success] Fetch LAND Amount'
-export const FETCH_LAND_AMOUNT_FAILURE = '[Failure] Fetch LAND Amount'
-
-export const fetchLandAmountRequest = (address: string) =>
-  action(FETCH_LAND_AMOUNT_REQUEST, { address })
-export const fetchLandAmountSuccess = (address: string, land: number) =>
-  action(FETCH_LAND_AMOUNT_SUCCESS, { address, land })
-export const fetchLandAmountFailure = (error: string) =>
-  action(FETCH_LAND_AMOUNT_FAILURE, { error })
-
-export type FetchLandAmountRequestAction = ReturnType<
-  typeof fetchLandAmountRequest
->
-export type FetchLandAmountSuccessAction = ReturnType<
-  typeof fetchLandAmountSuccess
->
-export type FetchLandAmountFailureAction = ReturnType<
-  typeof fetchLandAmountFailure
->
-```
-
-**Reducer**:
-
-```ts
-// modules/wallet/reducer.ts
-import { AnyAction } from 'redux'
-import {
-  walletReducer as baseWallerReducer,
-  INITIAL_STATE as BASE_INITIAL_STATE,
-  WalletState as BaseWalletState,
-  WalletReducerAction as BaseWalletReducerAction
-} from 'decentraland-dapps/dist/modules/wallet/reducer'
-import { FETCH_WALLET_LAND_AMOUNT_SUCCESS } from './actions'
-import { Wallet } from './types'
-
-export interface WalletState extends BaseWalletState {
-  data: Partial<Wallet>
-}
-
-const INITIAL_STATE: WalletState = {
-  ...BASE_INITIAL_STATE,
-  data: {
-    ...BASE_INITIAL_STATE.data,
-    land: null
-  }
-}
-
-export function walletReducer(state = INITIAL_STATE, action: AnyAction) {
-  switch (action.type) {
-    case FETCH_WALLET_LAND_AMOUNT_SUCCESS: {
-      const { land } = action.payload
-      return {
-        ...state,
-        data: {
-          ...state.data,
-          land
-        }
-      }
-    }
-    default:
-      return baseWallerReducer(state, action as BaseWalletReducerAction)
-  }
-}
-```
+Instead of importing `walletSaga`, use `createWalletSaga`:
 
 **Saga**:
 
 ```ts
-import { call, select, takeEvery, put, all } from 'redux-saga/effects'
-import { eth, contracts } from 'decentraland-eth'
+import { all } from 'redux-saga/effects'
 import { createWalletSaga } from 'decentraland-dapps/dist/modules/wallet/sagas'
-import {
-  ConnectWalletSuccessAction,
-  CONNECT_WALLET_SUCCESS
-} from 'decentraland-dapps/dist/modules/wallet/actions'
-import {
-  FETCH_LAND_AMOUNT_REQUEST,
-  FetchLandAmountRequestAction,
-  fetchLandAmountSuccess,
-  fetchLandAmountFailure
-} from './actions'
 
-const MANAToken = new contracts.MANAToken('0x...')
-const LANDRegistry = new contracts.LANDRegistry('0x...')
+const walletSaga = createWalletSaga({ MANA_ADDRESS: process.env.MANA_ADDRESS })
 
-const baseWalletSaga = createWalletSaga({
-  provider: 'https://{network}.infura.io',
-  contracts: [MANAToken, LANDRegistry],
-  eth
-})
-
-export function* walletSaga() {
-  yield all([baseWalletSaga(), landAmountSaga()])
-}
-
-function* landAmountSaga() {
-  yield takeEvery(CONNECT_WALLET_SUCCESS, handleConnectWalletSuccess)
-  yield takeEvery(FETCH_LAND_AMOUNT_REQUEST, handleFetchLandAmountRequest)
-}
-
-function* handleConnectWalletSuccess(action: ConnectWalletSuccessAction) {
-  const { wallet } = action.payload
-  yield put(fetchLandAmountRequest(wallet.address))
-}
-
-function* handleFetchLandAmountRequest(action: FetchLandAmountRequestAction) {
-  try {
-    const { address } = action.payload
-    const land = yield call(() => LANDRegistry.balanceOf(address))
-    yield put(fetchLandAmountSuccess(address, land))
-  } catch (error) {
-    yield put(fetchLandAmountFailure(error.message))
-  }
+export function* rootSaga() {
+  yield all([
+    walletSaga()
+    // your other sagas here
+  ])
 }
 ```
 
@@ -668,13 +540,13 @@ You will need to add a provider, a reducer and a saga to use this module
 
 **Provider**:
 
-Add the `<TranslationProvider>` as a child of your `redux` provider, passing the `locales` that you want to support. If you use `react-router-redux` make sure the `<ConnectedRouter>` is a child of the `<TranslationProvider>` and not the other way around, like this:
+Add the `<TranslationProvider>` as a child of your `redux` provider, passing the `locales` that you want to support. If you use `react-router-redux` or `connected-react-router` make sure the `<ConnectedRouter>` is a child of the `<TranslationProvider>` and not the other way around, like this:
 
 ```tsx
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
-import { ConnectedRouter } from 'react-router-redux'
+import { ConnectedRouter } from 'connected-react-router'
 import TranslationProvider from 'decentraland-dapps/dist/providers/TranslationProvider'
 import { store, history } from './store'
 
@@ -807,8 +679,6 @@ The analytics module let's integrate Segment into your dApp.
 
 You need to have the `Wallet` module installed in order to send `identify` events.
 
-You need to use `react-router-redux` in order to send `page` events.
-
 To send `track` events, add an `analytics.ts` file and require it from your entry point, and use the `add()` helper to add actions that you want to track:
 
 ```ts
@@ -857,6 +727,24 @@ const store = createStore(rootReducer, enhancer)
 ```ts
 import { all } from 'redux-saga/effects'
 import { analyticsSaga } from 'decentraland-dapps/dist/modules/analytics/sagas'
+
+export function* rootSaga() {
+  yield all([
+    analyticsSaga()
+    // your other sagas
+  ])
+}
+```
+
+This uses by defualt the `'@@router/LOCATION_CHANGE'` action type to track page changes. If you need to use a different action type, you can do the following:
+
+```ts
+import { all } from 'redux-saga/effects'
+import { createAnalyticsSaga } from 'decentraland-dapps/dist/modules/analytics/sagas'
+
+const analyticsSaga = createAnalyticsSaga({
+  LOCATION_CHANGE: 'custom action type'
+})
 
 export function* rootSaga() {
   yield all([
@@ -958,77 +846,6 @@ Now we can for example use the selector `isLoadingType(state.invite.loading, FET
 
 Also, all the pending actions are stored in an array in `state.invite.loading` so we can use that information in the UI if needed (i.e. disable a button)
 
-## Location
-
-The location module provides the `navigateTo`, `navigateToSignIn` and `navigateToRoot` actions that wrap `react-router-redux`'s `push` action. It also provides some helpful selectors:
-
-```ts
-getLocation(state)
-getPathname(state)
-getPathAction(state) // returns the final part of a url (after the last slash)
-isSignIn(state)
-isRoot(state)
-```
-
-### Installation
-
-In order to use this module you need to add a reducer and a saga.
-
-**Reducer**:
-
-Add the `locationReducer` as `location` to your `rootReducer`:
-
-```ts
-import { combineReducers } from 'redux'
-import { locationReducer as location } from 'decentraland-dapps/dist/modules/location/reducer'
-
-export const rootReducer = combineReducers({
-  location
-  // your other reducers
-})
-```
-
-**Saga**:
-
-```ts
-import { all } from 'redux-saga/effects'
-import { locationSaga } from 'decentraland-dapps/modules/location/sagas'
-
-export function* rootSaga() {
-  yield all([
-    locationSaga()
-    // your other sagas
-  ])
-}
-```
-
-### Advanced Usage
-
-You can use different paths for default locations by creating a location reducer
-
-<details><summary>Learn More</summary>
-<p>
-
-```ts
-import { combineReducers } from 'redux'
-import { createLocationReducer } from 'decentraland-dapps/dist/modules/location/reducer'
-
-const location = createLocationReducer({
-  root: '/',
-  signIn: '/sign-in'
-})
-
-export const rootReducer = combineReducers({
-  location
-  // your other reducers
-})
-```
-
-This way you can change the default locations to use different ones. This will be used by the selectors like `isSignIn` and `isRoot`. which impacts the behaviour of several containers like `Navbar` and `SignInPage`
-
-</p>
-</details>
-
 ## Modal
 
 Leverages redux state and provides actions to open and close each modal by name. It provides a few simple actions:
@@ -1058,7 +875,7 @@ Add the `<ModalProvider>` as a parent of your routes. It takes an object of `{ {
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
-import { ConnectedRouter } from 'react-router-redux'
+import { ConnectedRouter } from 'connected-react-router'
 import ModalProvider from 'decentraland-dapps/dist/providers/ModalProvider'
 import * as modals from 'components/Modals'
 import { store, history } from './store'
@@ -1185,7 +1002,7 @@ The `<Navbar>` container can be used in the same way as the `<Navbar>` component
 
 ### Dependencies
 
-This container requires you to install the [Wallet](https://github.com/decentraland/decentraland-dapps#wallet) and the [Location](https://github.com/decentraland/decentraland-dapps#location) modules. It also has support for i18n out of the box if you include the [Translation](https://github.com/decentraland/decentraland-dapps#translation) module.
+This container requires you to install the [Wallet](https://github.com/decentraland/decentraland-dapps#wallet). It also has support for i18n out of the box if you include the [Translation](https://github.com/decentraland/decentraland-dapps#translation) module.
 
 ### Usage
 
@@ -1339,7 +1156,7 @@ The `<SignInPage>` container can be used in the same way as the `<SignIn>` compo
 
 ### Dependencies
 
-This container requires you to install the [Wallet](https://github.com/decentraland/decentraland-dapps#wallet) and the [Location](https://github.com/decentraland/decentraland-dapps#location) modules. It also has support for i18n out of the box if you include the [Translation](https://github.com/decentraland/decentraland-dapps#translation) module.
+This container requires you to install the [Wallet](https://github.com/decentraland/decentraland-dapps#wallet). It also has support for i18n out of the box if you include the [Translation](https://github.com/decentraland/decentraland-dapps#translation) module.
 
 ### Usage
 
@@ -1393,69 +1210,6 @@ Say you want to override some translations in English, just include any or all o
 
 </p>
 </details>
-
-## App
-
-The `<App>` container is the easiest way to bootstrap your dApp. Internally it will use a `<Navbar>`, `<Page>` and `<Footer>` components, and connect them all to the redux store. It takes all the props from `NavbarProps`, `PageProps` and `FooterProps` and if you provide any of them it will override the connected props.
-
-It also has a `hero` and a `heroHeight` props that can be used to easily include a hero for the homepage (optional).
-
-### Dependencies
-
-This container requires you to install the [Wallet](https://github.com/decentraland/decentraland-dapps#wallet) and the [Location](https://github.com/decentraland/decentraland-dapps#location) modules. It also has support for i18n out of the box if you include the [Translation](https://github.com/decentraland/decentraland-dapps#translation) module.
-
-### Usage
-
-You just need to use the `<App>` component to wrapp your dApp:
-
-```tsx
-import App from 'decentraland-dapps/dist/containers/App'
-
-export default class MyApp extends React.Component {
-  render() {
-    return <App>{/* your dApp here */}</App>
-  }
-}
-```
-
-You can pass any `NavbarProps`, `FooterProps` or `PageProps` and they will be passed down to the corresponding component:
-
-```tsx
-import App from 'decentraland-dapps/dist/containers/App'
-
-export default class MyApp extends React.Component {
-  render() {
-    return (
-      <App activePage="marketplace" locales={['en', 'es']}>
-        {/* your dApp here */}
-      </App>
-    )
-  }
-}
-```
-
-You can also pass a `hero` and it will be used in the homepage, and adjust the height of the hero with the prop `heroHeight` (default height is `302` pixels)
-
-```tsx
-import App from 'decentraland-dapps/dist/containers/App'
-
-import Hero from '../components/Hero'
-
-export default class MyApp extends React.Component {
-  render() {
-    return (
-      <App
-        hero={<Hero />}
-        heroHeight={302}
-        activePage="marketplace"
-        locales={['en', 'es']}
-      >
-        {/* your dApp here */}
-      </App>
-    )
-  }
-}
-```
 
 ## Modal
 
