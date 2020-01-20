@@ -97,5 +97,5 @@ export function isPending(status: TransactionStatus | null): boolean {
 }
 
 export function hasFailed(status: TransactionStatus | null): boolean {
-  return !(FAILED_STATUS as any[]).includes(status)
+  return (FAILED_STATUS as any[]).includes(status)
 }
