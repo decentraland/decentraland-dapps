@@ -52,6 +52,11 @@ export const FINISHED_STATUS = [
   TransactionStatus.CONFIRMED,
   TransactionStatus.REVERTED,
   TransactionStatus.DROPPED,
+  TransactionStatus.REPLACED
+]
+
+export const FAILED_STATUS = [
+  TransactionStatus.DROPPED,
   TransactionStatus.REVERTED
 ]
 

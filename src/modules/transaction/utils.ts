@@ -3,7 +3,8 @@ import {
   Transaction,
   TransactionPayload,
   FINISHED_STATUS,
-  TransactionStatus
+  TransactionStatus,
+  FAILED_STATUS
 } from './types'
 
 // Special flag used to determine transaction hashes to be monitored
@@ -93,4 +94,8 @@ export function getEtherscanOrigin(network: number = 1) {
 
 export function isPending(status: TransactionStatus | null): boolean {
   return !(FINISHED_STATUS as any[]).includes(status)
+}
+
+export function hasFailed(status: TransactionStatus | null): boolean {
+  return (FAILED_STATUS as any[]).includes(status)
 }
