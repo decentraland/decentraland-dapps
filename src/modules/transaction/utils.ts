@@ -4,7 +4,8 @@ import {
   TransactionPayload,
   FINISHED_STATUS,
   TransactionStatus,
-  FAILED_STATUS
+  FAILED_STATUS,
+  SUCCESS_STATUS
 } from './types'
 
 // Special flag used to determine transaction hashes to be monitored
@@ -98,4 +99,8 @@ export function isPending(status: TransactionStatus | null): boolean {
 
 export function hasFailed(status: TransactionStatus | null): boolean {
   return (FAILED_STATUS as any[]).includes(status)
+}
+
+export function hasSucceeded(status: TransactionStatus | null): boolean {
+  return (SUCCESS_STATUS as any[]).includes(status)
 }

@@ -60,6 +60,11 @@ export const FAILED_STATUS = [
   TransactionStatus.REVERTED
 ]
 
+export const SUCCESS_STATUS = [
+  TransactionStatus.REPLACED,
+  TransactionStatus.CONFIRMED
+]
+
 export type Transaction = {
   events: string[]
   hash: string
