@@ -1,4 +1,6 @@
 import { Eth } from 'web3x-es/eth'
+import { TransactionResponse } from 'web3x-es/formatters'
+import { Address } from 'web3x-es/address'
 import {
   ReplacedTransaction,
   TransactionStatus,
@@ -15,20 +17,33 @@ export async function getTransaction(
   const eth = Eth.fromCurrentProvider()
   if (!eth) return null
 
-  const accounts = await eth.getAccounts()
+  let accounts: Address[] = []
+  try {
+    accounts = await eth.getAccounts()
+  } catch (error) {
+    console.warn(`Could not get accounts`, error.message)
+  }
 
   if (accounts.length === 0) {
     return null
   }
 
-  let currentNonce: number | null
+  let currentNonce: number | null = null
   try {
     currentNonce = await eth.getTransactionCount(accounts[0])
   } catch (error) {
-    currentNonce = null
+    console.warn(
+      `Could not get current nonce for account "${accounts[0]}"`,
+      error.message
+    )
   }
 
-  const response = await eth.getTransaction(hash)
+  let response: TransactionResponse | null = null
+  try {
+    response = await eth.getTransaction(hash)
+  } catch (error) {
+    console.warn(`Could not get transaction for hash "${hash}"`, error.message)
+  }
 
   // not found
   if (response == null) {
