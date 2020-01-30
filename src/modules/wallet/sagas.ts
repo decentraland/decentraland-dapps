@@ -27,12 +27,15 @@ export function createWalletSaga(
         // this could happen if metamask is not installed
         throw new Error('Could not connect to Ethereum')
       }
-      const accounts: Address[] = yield call(() => eth.getAccounts())
-      const address = accounts[0]
-      if (!address) {
-        // this could happen if the user reject the metamask prompt
-        throw new Error('Could not get address')
+      let accounts: Address[] = yield call(() => eth.getAccounts())
+      if (accounts.length < 1) {
+        yield call(() => (window as any).ethereum.enable())
+        accounts = yield call(() => eth.getAccounts())
+        if (accounts.length < 1) {
+          throw new Error('Could not enable wallet')
+        }
       }
+      const address = accounts[0]
       const network = yield call(() => eth.getId())
       const ethBalance = yield call(() => eth.getBalance(address))
       const mana = new MANA(eth, Address.fromString(MANA_ADDRESS))

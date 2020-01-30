@@ -1,6 +1,6 @@
 {
   "name": "decentraland-dapps",
-  "version": "0.0.0-development",
+  "version": "6.2.3-rc",
   "main": "dist",
   "dependencies": {
     "@types/flat": "0.0.28",
