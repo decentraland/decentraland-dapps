@@ -1,14 +1,21 @@
 import { Eth } from 'web3x-es/eth'
 import { Address } from 'web3x-es/address'
-import { put, call, takeLatest, all } from 'redux-saga/effects'
+import { fromWei } from 'web3x-es/utils'
+import { put, call, all, takeEvery } from 'redux-saga/effects'
 import {
   connectWalletSuccess,
   connectWalletFailure,
-  CONNECT_WALLET_REQUEST
+  CONNECT_WALLET_REQUEST,
+  EnableWalletRequestAction,
+  enableWalletFailure,
+  enableWalletSuccess,
+  EnableWalletSuccessAction,
+  connectWalletRequest,
+  ENABLE_WALLET_REQUEST,
+  ENABLE_WALLET_SUCCESS
 } from './actions'
 import { MANA } from '../../contracts/MANA'
 import { Wallet } from './types'
-import { fromWei } from 'web3x-es/utils'
 
 export type WalletSagaOptions = {
   MANA_ADDRESS: string
@@ -28,12 +35,9 @@ export function createWalletSaga(
         throw new Error('Could not connect to Ethereum')
       }
       let accounts: Address[] = yield call(() => eth.getAccounts())
-      if (accounts.length < 1) {
-        yield call(() => (window as any).ethereum.enable())
-        accounts = yield call(() => eth.getAccounts())
-        if (accounts.length < 1) {
-          throw new Error('Could not enable wallet')
-        }
+      if (accounts.length === 0) {
+        // This could happen if metamask was not enabled
+        throw new Error('Could not get address')
       }
       const address = accounts[0]
       const network = yield call(() => eth.getId())
@@ -56,8 +60,35 @@ export function createWalletSaga(
     }
   }
 
+  function* handleEnableWalletRequest(_action: EnableWalletRequestAction) {
+    try {
+      const accounts: string[] = yield call(() => {
+        const provider = (window as any).ethereum
+        if (provider && provider.enable) {
+          return provider.enable()
+        }
+        console.warn('Provider not found')
+        return []
+      })
+      if (accounts.length === 0) {
+        throw new Error('Enable did not return any accounts')
+      }
+      yield put(enableWalletSuccess())
+    } catch (error) {
+      yield put(enableWalletFailure(error.message))
+    }
+  }
+
+  function* handleEnableWalletSuccess(_action: EnableWalletSuccessAction) {
+    yield put(connectWalletRequest())
+  }
+
   return function* walletSaga() {
-    yield all([takeLatest(CONNECT_WALLET_REQUEST, handleConnectWalletRequest)])
+    yield all([
+      takeEvery(CONNECT_WALLET_REQUEST, handleConnectWalletRequest),
+      takeEvery(ENABLE_WALLET_REQUEST, handleEnableWalletRequest),
+      takeEvery(ENABLE_WALLET_SUCCESS, handleEnableWalletSuccess)
+    ])
   }
 }
 

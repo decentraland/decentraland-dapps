@@ -9,7 +9,7 @@ import {
 } from './SignInPage.types'
 import { RootDispatch } from '../../types'
 import { isEnabled } from '../../modules/translation/selectors'
-import { connectWalletRequest } from '../../modules/wallet/actions'
+import { enableWalletRequest } from '../../modules/wallet/actions'
 import {
   isConnecting,
   isConnected,
@@ -24,7 +24,7 @@ const mapState = (state: any): MapStateProps => ({
 })
 
 const mapDispatch = (dispatch: RootDispatch): MapDispatchProps => ({
-  onConnect: () => dispatch(connectWalletRequest())
+  onConnect: () => dispatch(enableWalletRequest())
 })
 
 export default connect<
