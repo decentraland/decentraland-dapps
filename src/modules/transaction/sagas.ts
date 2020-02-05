@@ -308,11 +308,17 @@ function* handleWatchRevertedTransaction(
 
   do {
     yield delay(TRANSACTION_FETCH_DELAY)
-    const tx: AnyTransaction | null = yield call(() =>
+    const txInNetwork: AnyTransaction | null = yield call(() =>
       getTransactionFromNetwork(hash)
     )
-    if (tx != null && tx.status === TransactionStatus.CONFIRMED) {
+    if (
+      txInNetwork != null &&
+      txInNetwork.status === TransactionStatus.CONFIRMED
+    ) {
       yield put(fixRevertedTransaction(hash))
+      return
+    } else if (txInNetwork == null && txInState.nonce) {
+      yield put(replaceTransactionRequest(hash, txInState.nonce))
       return
     }
   } while (!isExpired(txInState, REVERTED_TRANSACTION_THRESHOLD))

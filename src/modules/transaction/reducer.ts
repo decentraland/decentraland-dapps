@@ -158,7 +158,7 @@ export function transactionReducer(
           action.payload.hash === transaction.hash
             ? {
                 ...transaction,
-                status: TransactionStatus.REVERTED,
+                status: TransactionStatus.REPLACED,
                 replacedBy: action.payload.replaceBy
               }
             : transaction
