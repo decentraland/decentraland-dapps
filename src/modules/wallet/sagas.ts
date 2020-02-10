@@ -48,7 +48,7 @@ export function createWalletSaga(
         manaBalance = yield call(() => mana.methods.balanceOf(address).call())
       } catch (e) {
         // Temporary fix. We should detect that the user should change the network
-        manaBalance = 0
+        manaBalance = '0'
       }
 
       const wallet: Wallet = {
