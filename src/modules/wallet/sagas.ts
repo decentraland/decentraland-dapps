@@ -43,9 +43,13 @@ export function createWalletSaga(
       const network = yield call(() => eth.getId())
       const ethBalance = yield call(() => eth.getBalance(address))
       const mana = new MANA(eth, Address.fromString(MANA_ADDRESS))
-      const manaBalance = yield call(() =>
-        mana.methods.balanceOf(address).call()
-      )
+      let manaBalance
+      try {
+        manaBalance = yield call(() => mana.methods.balanceOf(address).call())
+      } catch (e) {
+        // Temporary fix. We should detect that the user should change the network
+        manaBalance = 0
+      }
 
       const wallet: Wallet = {
         address: address.toString(),
