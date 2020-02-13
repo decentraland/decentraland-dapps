@@ -14,6 +14,7 @@ import {
   ENABLE_WALLET_REQUEST,
   ENABLE_WALLET_SUCCESS
 } from './actions'
+import { isMobile } from '../../lib/utils'
 import { MANA } from '../../contracts/MANA'
 import { Wallet } from './types'
 
@@ -29,6 +30,12 @@ export function createWalletSaga(
   const { MANA_ADDRESS } = options
   function* handleConnectWalletRequest() {
     try {
+      // Hack for old providers and mobile providers which does not have a hack to convert send to sendAsync
+      const provider = (window as any).ethereum
+      if (isMobile() && provider && typeof provider.sendAsync === 'function') {
+        provider.send = provider.sendAsync
+      }
+
       const eth = Eth.fromCurrentProvider()
       if (!eth) {
         // this could happen if metamask is not installed
