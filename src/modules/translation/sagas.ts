@@ -5,6 +5,7 @@ import {
   fetchTranslationsSuccess,
   fetchTranslationsFailure,
   FETCH_TRANSLATIONS_REQUEST,
+  CHANGE_LOCALE,
   FetchTranslationsRequestAction
 } from './actions'
 import { setCurrentLocale, mergeTranslations } from './utils'
@@ -46,7 +47,13 @@ export function createTranslationSaga({
       yield put(fetchTranslationsFailure(error.message))
     }
   }
+
+  function handleChangeLocale() {
+    window.location.reload()
+  }
+
   return function* translationSaga() {
     yield takeEvery(FETCH_TRANSLATIONS_REQUEST, handleFetchTranslationsRequest)
+    yield takeEvery(CHANGE_LOCALE, handleChangeLocale)
   }
 }
