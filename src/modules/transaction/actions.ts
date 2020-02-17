@@ -25,12 +25,14 @@ export const fetchTransactionSuccess = (transaction: Transaction) =>
 export const fetchTransactionFailure = (
   hash: string,
   status: AnyTransaction['status'],
-  message: string
+  message: string,
+  transaction: Transaction
 ) =>
   action(FETCH_TRANSACTION_FAILURE, {
     hash,
     status,
-    message
+    message,
+    transaction
   })
 
 export type FetchTransactionRequestAction = ReturnType<

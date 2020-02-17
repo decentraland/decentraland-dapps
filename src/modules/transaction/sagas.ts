@@ -155,7 +155,14 @@ function* handleFetchTransactionRequest(action: FetchTransactionRequestAction) {
       throw new FailedTransactionError(tx.hash, tx.status)
     }
   } catch (error) {
-    yield put(fetchTransactionFailure(error.hash, error.status, error.message))
+    yield put(
+      fetchTransactionFailure(
+        error.hash,
+        error.status,
+        error.message,
+        transaction
+      )
+    )
   }
 }
 
