@@ -5,6 +5,7 @@ import {
   fetchTranslationsSuccess,
   fetchTranslationsFailure,
   FETCH_TRANSLATIONS_REQUEST,
+  CHANGE_LOCALE,
   FetchTranslationsRequestAction
 } from './actions'
 import { setCurrentLocale, mergeTranslations } from './utils'
@@ -33,20 +34,26 @@ export function createTranslationSaga({
         throw new Error('You must provide `translations` or `getTranslations`')
       }
 
-      setCurrentLocale(locale)
-
       // merge translations and defaults
       result = mergeTranslations<TranslationKeys>(
         flatten(defaultTranslations[locale]),
         result
       )
 
+      setCurrentLocale(locale, result)
+
       yield put(fetchTranslationsSuccess(locale, result))
     } catch (error) {
       yield put(fetchTranslationsFailure(error.message))
     }
   }
+
+  function handleChangeLocale() {
+    window.location.reload()
+  }
+
   return function* translationSaga() {
     yield takeEvery(FETCH_TRANSLATIONS_REQUEST, handleFetchTranslationsRequest)
+    yield takeEvery(CHANGE_LOCALE, handleChangeLocale)
   }
 }
