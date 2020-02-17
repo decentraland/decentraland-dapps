@@ -21,7 +21,7 @@ export default class TranslationProvider extends React.PureComponent<Props> {
     const { children, locale, translations } = this.props
 
     return translations && locale ? (
-      <I18nProvider locale={locale} messages={translations}>
+      <I18nProvider key={locale} locale={locale} messages={translations}>
         {children}
       </I18nProvider>
     ) : (
