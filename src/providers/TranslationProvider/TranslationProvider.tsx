@@ -1,18 +1,10 @@
 import * as React from 'react'
 
 import { Loader } from 'decentraland-ui'
-import TranslationSetup from './TranslationSetup'
-import {
-  I18nProvider,
-  addAvailableLocaleData
-} from '../../modules/translation/utils'
+import { I18nProvider } from '../../modules/translation/utils'
 import { Props } from './TranslationProvider.types'
 
 export default class TranslationProvider extends React.PureComponent<Props> {
-  UNSAFE_componentWillMount() {
-    addAvailableLocaleData()
-  }
-
   UNSAFE_componentWillReceiveProps(nextProps: Props) {
     const { locale, onFetchTranslations } = nextProps
 
@@ -28,12 +20,9 @@ export default class TranslationProvider extends React.PureComponent<Props> {
   render() {
     const { children, locale, translations } = this.props
 
-    return translations ? (
+    return translations && locale ? (
       <I18nProvider locale={locale} messages={translations}>
-        <>
-          <TranslationSetup />
-          {children}
-        </>
+        {children}
       </I18nProvider>
     ) : (
       this.renderLoading()

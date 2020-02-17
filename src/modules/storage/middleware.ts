@@ -48,6 +48,7 @@ export function createStorageMiddleware<T>(options: StorageMiddleware<T>) {
   }
 
   const storageEngine = filter(createStorageEngine(storageKey), [
+    ['translation', 'locale'],
     'transaction',
     ['storage', 'version'],
     ...paths

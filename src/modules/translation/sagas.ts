@@ -33,13 +33,13 @@ export function createTranslationSaga({
         throw new Error('You must provide `translations` or `getTranslations`')
       }
 
-      setCurrentLocale(locale)
-
       // merge translations and defaults
       result = mergeTranslations<TranslationKeys>(
         flatten(defaultTranslations[locale]),
         result
       )
+
+      setCurrentLocale(locale, result)
 
       yield put(fetchTranslationsSuccess(locale, result))
     } catch (error) {
