@@ -27,3 +27,17 @@ export const enableWalletFailure = (error: string) =>
 export type EnableWalletRequestAction = ReturnType<typeof enableWalletRequest>
 export type EnableWalletSuccessAction = ReturnType<typeof enableWalletSuccess>
 export type EnableWalletFailureAction = ReturnType<typeof enableWalletFailure>
+
+export const CHANGE_ACCOUNT = 'Change Account'
+export const changeAccount = (address: string) =>
+  action(CHANGE_ACCOUNT, { address })
+export type ChangeAccountAction = ReturnType<typeof changeAccount>
+
+export const CHANGE_NETWORK = 'Change Network'
+export const changeNetwork = (network: number) =>
+  action(CHANGE_NETWORK, { network })
+export type ChangeNetworkAction = ReturnType<typeof changeNetwork>
+
+export const DISCONNECT_WALLET = 'Disconnect'
+export const disconnectWallet = () => action(DISCONNECT_WALLET)
+export type DisconnectWalletAction = ReturnType<typeof disconnectWallet>

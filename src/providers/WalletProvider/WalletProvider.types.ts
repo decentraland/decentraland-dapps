@@ -1,17 +1,27 @@
+import { Dispatch } from 'redux'
 import {
   connectWalletRequest,
-  ConnectWalletRequestAction
+  ConnectWalletRequestAction,
+  changeAccount,
+  changeNetwork,
+  ChangeAccountAction,
+  ChangeNetworkAction
 } from '../../modules/wallet/actions'
-import { Dispatch } from 'redux'
 
-export type DefaultProps = {
+export type Props = {
+  address?: string
+  network?: number
   children: React.ReactNode | null
-}
-
-export type Props = DefaultProps & {
   onConnect: typeof connectWalletRequest
+  onChangeAccount: typeof changeAccount
+  onChangeNetwork: typeof changeNetwork
 }
 
-export type MapStateProps = {}
-export type MapDispatchProps = Pick<Props, 'onConnect'>
-export type MapDispatch = Dispatch<ConnectWalletRequestAction>
+export type MapStateProps = Pick<Props, 'address' | 'network'>
+export type MapDispatchProps = Pick<
+  Props,
+  'address' | 'network' | 'onConnect' | 'onChangeAccount' | 'onChangeNetwork'
+>
+export type MapDispatch = Dispatch<
+  ConnectWalletRequestAction | ChangeAccountAction | ChangeNetworkAction
+>

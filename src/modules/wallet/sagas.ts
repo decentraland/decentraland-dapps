@@ -12,7 +12,11 @@ import {
   EnableWalletSuccessAction,
   connectWalletRequest,
   ENABLE_WALLET_REQUEST,
-  ENABLE_WALLET_SUCCESS
+  ENABLE_WALLET_SUCCESS,
+  ChangeAccountAction,
+  ChangeNetworkAction,
+  CHANGE_ACCOUNT,
+  CHANGE_NETWORK
 } from './actions'
 import { isMobile } from '../../lib/utils'
 import { MANA } from '../../contracts/MANA'
@@ -32,7 +36,12 @@ export function createWalletSaga(
     try {
       // Hack for old providers and mobile providers which does not have a hack to convert send to sendAsync
       const provider = (window as any).ethereum
-      if (isMobile() && provider && typeof provider.sendAsync === 'function') {
+      if (
+        isMobile() &&
+        provider &&
+        typeof provider.sendAsync === 'function' &&
+        provider.send !== provider.sendAsync
+      ) {
         provider.send = provider.sendAsync
       }
 
@@ -55,6 +64,9 @@ export function createWalletSaga(
         manaBalance = yield call(() => mana.methods.balanceOf(address).call())
       } catch (e) {
         // Temporary fix. We should detect that the user should change the network
+        console.warn(
+          'Could not get MANA balance. Are you in the right network?'
+        )
         manaBalance = '0'
       }
 
@@ -94,11 +106,21 @@ export function createWalletSaga(
     yield put(connectWalletRequest())
   }
 
+  function* handleChangeAccount(_action: ChangeAccountAction) {
+    yield put(connectWalletRequest())
+  }
+
+  function* handleChangeNetwork(_action: ChangeNetworkAction) {
+    yield put(connectWalletRequest())
+  }
+
   return function* walletSaga() {
     yield all([
       takeEvery(CONNECT_WALLET_REQUEST, handleConnectWalletRequest),
       takeEvery(ENABLE_WALLET_REQUEST, handleEnableWalletRequest),
-      takeEvery(ENABLE_WALLET_SUCCESS, handleEnableWalletSuccess)
+      takeEvery(ENABLE_WALLET_SUCCESS, handleEnableWalletSuccess),
+      takeEvery(CHANGE_ACCOUNT, handleChangeAccount),
+      takeEvery(CHANGE_NETWORK, handleChangeNetwork)
     ])
   }
 }

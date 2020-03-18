@@ -1,14 +1,73 @@
-import * as React from 'react'
-import { DefaultProps, Props } from './WalletProvider.types'
+import React from 'react'
+import { Eth } from 'web3x-es/eth'
+import { EthereumProvider } from 'web3x-es/providers/ethereum-provider'
+import { Props } from './WalletProvider.types'
 
 export default class WalletProvider extends React.PureComponent<Props> {
-  static defaultProps: DefaultProps = {
-    children: null
+  eth = Eth.fromCurrentProvider()
+
+  // handle account change
+  handleChangeAccount = async () => {
+    if (!this.eth) return
+    const { onChangeAccount } = this.props
+    const accounts = await this.eth.getAccounts()
+    if (accounts.length > 0) {
+      const address = accounts[0].toString()
+      onChangeAccount(address)
+    }
   }
 
-  async UNSAFE_componentWillMount() {
+  // handle network change
+  handleChangeNetwork = async () => {
+    if (!this.eth) return
+    const { onChangeNetwork } = this.props
+    const network = await this.eth.getId()
+    onChangeNetwork(network)
+  }
+
+  handle(
+    action: 'on' | 'removeListener',
+    type: 'accountsChanged' | 'networkChanged',
+    handler: Function
+  ) {
+    // try to use web3x abstraction
+    if (this.eth) {
+      try {
+        this.eth.provider[action](type as any, handler as any)
+        return // all good, early return
+      } catch (error) {
+        // it fails if legacy provider (ie. metamask)
+      }
+    }
+    // fallback using web3 (this works with metamask)
+    const provider = (window as any).ethereum as (EthereumProvider | undefined)
+    if (provider) {
+      provider[action](type as any, handler as any)
+    }
+  }
+
+  on(type: 'accountsChanged' | 'networkChanged', handler: Function) {
+    this.handle('on', type, handler)
+  }
+
+  off(type: 'accountsChanged' | 'networkChanged', handler: Function) {
+    this.handle('removeListener', type, handler)
+  }
+
+  UNSAFE_componentWillMount() {
+    // try to connect wallet
     const { onConnect } = this.props
     onConnect()
+
+    // add listeners
+    this.on('accountsChanged', this.handleChangeAccount)
+    this.on('networkChanged', this.handleChangeNetwork)
+  }
+
+  UNSAFE_componentWillUnmount() {
+    // remove listeners
+    this.off('accountsChanged', this.handleChangeAccount)
+    this.off('networkChanged', this.handleChangeNetwork)
   }
 
   render() {
