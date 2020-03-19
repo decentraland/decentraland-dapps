@@ -1,28 +1,30 @@
 import React from 'react'
 import { Eth } from 'web3x-es/eth'
 import { EthereumProvider } from 'web3x-es/providers/ethereum-provider'
+import { getWallet } from '../../modules/wallet/utils'
 import { Props } from './WalletProvider.types'
 
 export default class WalletProvider extends React.PureComponent<Props> {
   eth = Eth.fromCurrentProvider()
 
-  // handle account change
   handleChangeAccount = async () => {
-    if (!this.eth) return
     const { onChangeAccount } = this.props
-    const accounts = await this.eth.getAccounts()
-    if (accounts.length > 0) {
-      const address = accounts[0].toString()
-      onChangeAccount(address)
+    try {
+      const wallet = await getWallet()
+      onChangeAccount(wallet)
+    } catch (error) {
+      // nada
     }
   }
 
-  // handle network change
   handleChangeNetwork = async () => {
-    if (!this.eth) return
     const { onChangeNetwork } = this.props
-    const network = await this.eth.getId()
-    onChangeNetwork(network)
+    try {
+      const wallet = await getWallet()
+      onChangeNetwork(wallet)
+    } catch (error) {
+      // nada
+    }
   }
 
   handle(

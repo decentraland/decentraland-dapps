@@ -9,7 +9,11 @@ import {
   CONNECT_WALLET_SUCCESS,
   CONNECT_WALLET_FAILURE,
   DisconnectWalletAction,
-  DISCONNECT_WALLET
+  DISCONNECT_WALLET,
+  ChangeAccountAction,
+  ChangeNetworkAction,
+  CHANGE_ACCOUNT,
+  CHANGE_NETWORK
 } from './actions'
 
 export type WalletState = {
@@ -29,6 +33,8 @@ export type WalletReducerAction =
   | ConnectWalletSuccessAction
   | ConnectWalletFailureAction
   | DisconnectWalletAction
+  | ChangeAccountAction
+  | ChangeNetworkAction
 
 export function walletReducer(
   state: WalletState = INITIAL_STATE,
@@ -40,6 +46,8 @@ export function walletReducer(
         ...state,
         loading: loadingReducer(state.loading, action)
       }
+    case CHANGE_ACCOUNT:
+    case CHANGE_NETWORK:
     case CONNECT_WALLET_SUCCESS:
       return {
         loading: loadingReducer(state.loading, action),
