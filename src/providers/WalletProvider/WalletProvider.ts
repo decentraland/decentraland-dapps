@@ -28,23 +28,32 @@ export default class WalletProvider extends React.PureComponent<Props> {
   }
 
   handle(
-    action: 'on' | 'removeListener',
+    method: 'on' | 'removeListener',
     type: 'accountsChanged' | 'networkChanged',
     handler: Function
   ) {
     // try to use web3x abstraction
     if (this.eth) {
       try {
-        this.eth.provider[action](type as any, handler as any)
+        this.eth.provider[method](type as any, handler as any)
         return // all good, early return
       } catch (error) {
-        // it fails if legacy provider (ie. metamask)
+        // it fails if legacy provider (ie. metamask legacy provider)
       }
     }
     // fallback using web3 (this works with metamask)
     const provider = (window as any).ethereum as (EthereumProvider | undefined)
     if (provider) {
-      provider[action](type as any, handler as any)
+      try {
+        provider[method](type as any, handler as any)
+      } catch (error) {
+        // it fails if provider is not standard (ie. dapper legacy provider)
+        console.warn(
+          `Could not use method "${method}" on provider`,
+          provider,
+          `Error: ${error.message}`
+        )
+      }
     }
   }
 
