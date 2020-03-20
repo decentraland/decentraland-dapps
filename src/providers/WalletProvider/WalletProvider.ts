@@ -13,7 +13,7 @@ export default class WalletProvider extends React.PureComponent<Props> {
       const wallet = await getWallet()
       onChangeAccount(wallet)
     } catch (error) {
-      // nada
+      // do nothing
     }
   }
 
@@ -23,7 +23,7 @@ export default class WalletProvider extends React.PureComponent<Props> {
       const wallet = await getWallet()
       onChangeNetwork(wallet)
     } catch (error) {
-      // nada
+      // do nothing
     }
   }
 
