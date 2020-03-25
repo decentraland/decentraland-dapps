@@ -139,34 +139,6 @@ export function* rootSaga() {
 }
 ```
 
-### Advanced Usage
-
-You can change the address of the MANA token contract (ie. if you want to use it from Ropsten)
-
-<details><summary>Learn More</summary>
-<p>
-
-Instead of importing `walletSaga`, use `createWalletSaga`:
-
-**Saga**:
-
-```ts
-import { all } from 'redux-saga/effects'
-import { createWalletSaga } from 'decentraland-dapps/dist/modules/wallet/sagas'
-
-const walletSaga = createWalletSaga({ MANA_ADDRESS: process.env.MANA_ADDRESS })
-
-export function* rootSaga() {
-  yield all([
-    walletSaga()
-    // your other sagas here
-  ])
-}
-```
-
-</p>
-</details>
-
 ## Storage
 
 The storage module allows you to save parts of the redux store in localStorage to make them persistent and migrate it from different versions without loosing it.
