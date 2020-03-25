@@ -1,3 +1,4 @@
+import { EthereumProvider } from 'web3x-es/providers/ethereum-provider'
 import { Dispatch } from 'redux'
 import {
   connectWalletRequest,
@@ -25,3 +26,10 @@ export type MapDispatchProps = Pick<
 export type MapDispatch = Dispatch<
   ConnectWalletRequestAction | ChangeAccountAction | ChangeNetworkAction
 >
+
+export type EventType = 'accountsChanged' | 'networkChanged'
+export type EmitterMethod = 'on' | 'removeListener'
+export type AccountsChangedHandler = (accounts: string[]) => void
+export type NetworkChangedHandler = (network: string) => void
+export type Handler = AccountsChangedHandler | NetworkChangedHandler
+export type ProviderWindow = Window & { ethereum?: EthereumProvider }
