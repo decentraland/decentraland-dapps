@@ -1,6 +1,6 @@
 import { isLoadingType } from '../loading/selectors'
 
-import { CONNECT_WALLET_REQUEST } from './actions'
+import { CONNECT_WALLET_REQUEST, ENABLE_WALLET_REQUEST } from './actions'
 import { WalletState } from './reducer'
 
 export const getState: (state: any) => WalletState = state => state.wallet
@@ -11,6 +11,8 @@ export const getError = (state: any) => getState(state).error
 export const isConnected = (state: any) => getData(state) !== null
 export const isConnecting = (state: any) =>
   isLoadingType(getLoading(state), CONNECT_WALLET_REQUEST)
+export const isEnabling = (state: any) =>
+  isLoadingType(getLoading(state), ENABLE_WALLET_REQUEST)
 
 export const getNetwork = (state: any) =>
   isConnected(state) ? getData(state)!.network : undefined
