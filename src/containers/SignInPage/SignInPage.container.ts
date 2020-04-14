@@ -4,8 +4,7 @@ import SignInPage from './SignInPage'
 import {
   MapDispatchProps,
   MapStateProps,
-  SignInPageProps,
-  SignInPageState
+  SignInPageProps
 } from './SignInPage.types'
 import { RootDispatch } from '../../types'
 import { isEnabled } from '../../modules/translation/selectors'
@@ -27,12 +26,18 @@ const mapDispatch = (dispatch: RootDispatch): MapDispatchProps => ({
   onConnect: () => dispatch(enableWalletRequest())
 })
 
-export default connect<
-  MapStateProps,
-  MapDispatchProps,
-  SignInPageProps,
-  SignInPageState
->(
+const mergeProps = (
+  stateProps: MapStateProps,
+  dispatchProps: MapDispatchProps,
+  ownProps: SignInPageProps
+): SignInPageProps => ({
+  ...stateProps,
+  ...dispatchProps,
+  ...ownProps
+})
+
+export default connect(
   mapState,
-  mapDispatch
+  mapDispatch,
+  mergeProps
 )(SignInPage) as any
