@@ -28,7 +28,9 @@
         "blog": "Blog",
         "docs": "Docs",
         "marketplace": "Marketplace",
-        "builder": "Builder"
+        "builder": "Builder",
+        "events": "Events",
+        "dao": "DAO"
       }
     },
     "sign_in": {

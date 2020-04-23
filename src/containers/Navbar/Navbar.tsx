@@ -14,7 +14,9 @@ export default class Navbar extends React.PureComponent<NavbarProps> {
       menu: {
         avatars: <T id="@dapps.navbar.menu.avatars" />,
         marketplace: <T id="@dapps.navbar.menu.marketplace" />,
+        events: <T id="@dapps.navbar.menu.dao" />,
         agora: <T id="@dapps.navbar.menu.agora" />,
+        dao: <T id="@dapps.navbar.menu.dao" />,
         docs: <T id="@dapps.navbar.menu.docs" />,
         blog: <T id="@dapps.navbar.menu.blog" />,
         builder: <T id="@dapps.navbar.menu.builder" />
