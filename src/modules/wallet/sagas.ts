@@ -14,17 +14,28 @@ import {
 } from './actions'
 import { getWallet } from './utils'
 
+function patchProvider(provider?: any) {
+  // Hack for old providers and mobile providers which do not have a hack to convert send to sendAsync
+  if (
+    provider &&
+    typeof provider.sendAsync === 'function' &&
+    provider.send !== provider.sendAsync
+  ) {
+    provider.send = provider.sendAsync
+  }
+}
+
 function* handleConnectWalletRequest() {
   try {
-    // Hack for old providers and mobile providers which do not have a hack to convert send to sendAsync
     const provider = (window as any).ethereum
-    if (
-      isMobile() &&
-      provider &&
-      typeof provider.sendAsync === 'function' &&
-      provider.send !== provider.sendAsync
-    ) {
-      provider.send = provider.sendAsync
+
+    if (isMobile()) {
+      patchProvider(provider)
+      const web3 = (window as any).web3
+      if (web3) {
+        patchProvider(web3.currentProvider)
+        patchProvider(web3.ethereumProvider)
+      }
     }
 
     // prevent metamask from auto refreshing the page
@@ -43,8 +54,12 @@ function* handleEnableWalletRequest(_action: EnableWalletRequestAction) {
   try {
     const accounts: string[] = yield call(() => {
       const provider = (window as any).ethereum
-      if (provider && provider.enable) {
-        return provider.enable()
+      try {
+        if (provider && provider.enable) {
+          return provider.enable()
+        }
+      } catch (e) {
+        return provider.send('eth_requestAccounts')
       }
       console.warn('Provider not found')
       return []
