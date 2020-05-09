@@ -14,6 +14,9 @@ import {
 } from './actions'
 import { getWallet } from './utils'
 
+// @TODO: temporal hack for testing purpose
+let _send: any = null
+
 function patchProvider(provider?: any) {
   // Hack for old providers and mobile providers which do not have a hack to convert send to sendAsync
   if (
@@ -21,6 +24,7 @@ function patchProvider(provider?: any) {
     typeof provider.sendAsync === 'function' &&
     provider.send !== provider.sendAsync
   ) {
+    _send = Object.assign({}, provider.send)
     provider.send = provider.sendAsync
   }
 }
@@ -52,14 +56,15 @@ function* handleConnectWalletRequest() {
 
 function* handleEnableWalletRequest(_action: EnableWalletRequestAction) {
   try {
-    const accounts: string[] = yield call(() => {
+    const accounts: string[] = yield call(async () => {
       const provider = (window as any).ethereum
       try {
         if (provider && provider.enable) {
-          return provider.enable()
+          const res = await provider.enable()
+          return res
         }
       } catch (e) {
-        return provider.send('eth_requestAccounts')
+        return _send('eth_requestAccounts')
       }
       console.warn('Provider not found')
       return []
