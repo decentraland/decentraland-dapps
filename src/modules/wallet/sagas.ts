@@ -14,8 +14,19 @@ import {
 } from './actions'
 import { getWallet } from './utils'
 
-// @TODO: temporal hack for testing purpose
-let _send: any = null
+// Hack for Samsung Cucumber provider
+const provider = (window as any).ethereum
+let send = provider.send
+if (isMobile() && provider && provider.isCucumber) {
+  const _send = provider.send
+  send = (...args: any[]) => {
+    try {
+      return Promise.resolve(_send.apply(provider, args))
+    } catch (err) {
+      return Promise.reject(err)
+    }
+  }
+}
 
 function patchProvider(provider?: any) {
   // Hack for old providers and mobile providers which do not have a hack to convert send to sendAsync
@@ -24,7 +35,6 @@ function patchProvider(provider?: any) {
     typeof provider.sendAsync === 'function' &&
     provider.send !== provider.sendAsync
   ) {
-    _send = Object.assign({}, provider.send)
     provider.send = provider.sendAsync
   }
 }
@@ -58,17 +68,20 @@ function* handleEnableWalletRequest(_action: EnableWalletRequestAction) {
   try {
     const accounts: string[] = yield call(async () => {
       const provider = (window as any).ethereum
-      try {
-        if (provider && provider.enable) {
-          const res = await provider.enable()
-          return res
-        }
-      } catch (e) {
-        return _send('eth_requestAccounts')
+      // Hack for Samsung Cucumber provider
+      if (provider && provider.isCucumber) {
+        return send('eth_requestAccounts')
       }
+
+      if (provider && provider.enable) {
+        const res = await provider.enable()
+        return res
+      }
+
       console.warn('Provider not found')
       return []
     })
+
     if (accounts.length === 0) {
       throw new Error('Enable did not return any accounts')
     }
