@@ -66,7 +66,7 @@ function* handleConnectWalletRequest() {
 
 function* handleEnableWalletRequest(_action: EnableWalletRequestAction) {
   try {
-    const accounts: string[] = yield call(async () => {
+    const accounts: string[] = yield call(() => {
       const provider = (window as any).ethereum
       // Hack for Samsung Cucumber provider
       if (provider && provider.isCucumber) {
@@ -74,8 +74,7 @@ function* handleEnableWalletRequest(_action: EnableWalletRequestAction) {
       }
 
       if (provider && provider.enable) {
-        const res = await provider.enable()
-        return res
+        return provider.enable()
       }
 
       console.warn('Provider not found')
