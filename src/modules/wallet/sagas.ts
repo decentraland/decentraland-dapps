@@ -19,7 +19,7 @@ const provider = (window as any).ethereum
 const isCucumberProvider: boolean =
   isMobile() && provider && provider.isCucumber
 
-let send = provider.send
+let send: any
 if (isCucumberProvider) {
   const _send = provider.send
   send = (...args: any[]) => {
