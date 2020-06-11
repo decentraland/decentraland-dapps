@@ -19,10 +19,10 @@ const provider = (window as any).ethereum
 const isCucumberProvider: boolean =
   isMobile() && provider && provider.isCucumber
 
-let send: any
+let cucumberProviderSend: Function
 if (isCucumberProvider) {
   const _send = provider.send
-  send = (...args: any[]) => {
+  cucumberProviderSend = (...args: any[]) => {
     try {
       return Promise.resolve(_send.apply(provider, args))
     } catch (err) {
@@ -72,7 +72,7 @@ function* handleEnableWalletRequest(_action: EnableWalletRequestAction) {
     const accounts: string[] = yield call(() => {
       const provider = (window as any).ethereum
       if (isCucumberProvider) {
-        return send('eth_requestAccounts')
+        return cucumberProviderSend('eth_requestAccounts')
       }
 
       if (provider && provider.enable) {
