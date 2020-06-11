@@ -14,10 +14,13 @@ import {
 } from './actions'
 import { getWallet } from './utils'
 
-// Hack for Samsung Cucumber provider
+// Patch Samsung's Cucumber provider send to support promises
 const provider = (window as any).ethereum
+const isCucumberProvider: boolean =
+  isMobile() && provider && provider.isCucumber
+
 let send = provider.send
-if (isMobile() && provider && provider.isCucumber) {
+if (isCucumberProvider) {
   const _send = provider.send
   send = (...args: any[]) => {
     try {
@@ -29,7 +32,7 @@ if (isMobile() && provider && provider.isCucumber) {
 }
 
 function patchProvider(provider?: any) {
-  // Hack for old providers and mobile providers which do not have a hack to convert send to sendAsync
+  // Patch for old providers and mobile providers which do not use promises at send as sendAsync
   if (
     provider &&
     typeof provider.sendAsync === 'function' &&
@@ -52,7 +55,7 @@ function* handleConnectWalletRequest() {
       }
     }
 
-    // prevent metamask from auto refreshing the page
+    // Prevent metamask from auto refreshing the page
     if (provider) {
       provider.autoRefreshOnNetworkChange = false
     }
@@ -68,8 +71,7 @@ function* handleEnableWalletRequest(_action: EnableWalletRequestAction) {
   try {
     const accounts: string[] = yield call(() => {
       const provider = (window as any).ethereum
-      // Hack for Samsung Cucumber provider
-      if (provider && provider.isCucumber) {
+      if (isCucumberProvider) {
         return send('eth_requestAccounts')
       }
 
