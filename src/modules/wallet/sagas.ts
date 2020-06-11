@@ -14,20 +14,48 @@ import {
 } from './actions'
 import { getWallet } from './utils'
 
+// Patch Samsung's Cucumber provider send to support promises
+const provider = (window as any).ethereum
+const isCucumberProvider: boolean =
+  isMobile() && provider && provider.isCucumber
+
+let send = provider.send
+if (isCucumberProvider) {
+  const _send = provider.send
+  send = (...args: any[]) => {
+    try {
+      return Promise.resolve(_send.apply(provider, args))
+    } catch (err) {
+      return Promise.reject(err)
+    }
+  }
+}
+
+function patchProvider(provider?: any) {
+  // Patch for old providers and mobile providers which do not use promises at send as sendAsync
+  if (
+    provider &&
+    typeof provider.sendAsync === 'function' &&
+    provider.send !== provider.sendAsync
+  ) {
+    provider.send = provider.sendAsync
+  }
+}
+
 function* handleConnectWalletRequest() {
   try {
-    // Hack for old providers and mobile providers which do not have a hack to convert send to sendAsync
     const provider = (window as any).ethereum
-    if (
-      isMobile() &&
-      provider &&
-      typeof provider.sendAsync === 'function' &&
-      provider.send !== provider.sendAsync
-    ) {
-      provider.send = provider.sendAsync
+
+    if (isMobile()) {
+      patchProvider(provider)
+      const web3 = (window as any).web3
+      if (web3) {
+        patchProvider(web3.currentProvider)
+        patchProvider(web3.ethereumProvider)
+      }
     }
 
-    // prevent metamask from auto refreshing the page
+    // Prevent metamask from auto refreshing the page
     if (provider) {
       provider.autoRefreshOnNetworkChange = false
     }
@@ -43,12 +71,18 @@ function* handleEnableWalletRequest(_action: EnableWalletRequestAction) {
   try {
     const accounts: string[] = yield call(() => {
       const provider = (window as any).ethereum
+      if (isCucumberProvider) {
+        return send('eth_requestAccounts')
+      }
+
       if (provider && provider.enable) {
         return provider.enable()
       }
+
       console.warn('Provider not found')
       return []
     })
+
     if (accounts.length === 0) {
       throw new Error('Enable did not return any accounts')
     }
