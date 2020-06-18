@@ -36,13 +36,10 @@ export class BaseAPI {
 
     return httpClient
       .request(options)
-      .then((response: AxiosResponse<Response>) => {
-        const data = response.data
-        const result = data.data // One for axios data, another for the servers data
+      .then((axiosResponse: AxiosResponse) => {
+        const { ok, data, error } = this.parseResponse(axiosResponse)
 
-        const error = this.getResponseError(data)
-
-        return error ? Promise.reject({ message: error, data: result }) : result
+        return !ok || error ? Promise.reject({ message: error, data }) : data
       })
       .catch((error: AxiosError) => {
         console.warn(`[API] HTTP request failed: ${error.message || ''}`, error)
@@ -54,10 +51,13 @@ export class BaseAPI {
     return `${this.url}${path}`
   }
 
-  getResponseError(data: any): string | undefined {
-    if (data && !data.ok) {
-      return data.error
+  private parseResponse(axiosResponse: AxiosResponse): Response {
+    const response = axiosResponse.data
+
+    if (typeof response.ok === 'boolean') {
+      return response
     }
-    return undefined
+
+    return { ok: true, data: response, error: '' }
   }
 }
