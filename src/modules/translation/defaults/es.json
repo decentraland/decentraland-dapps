@@ -42,7 +42,7 @@
       "options": {
         "desktop": "Puedes usar la extensión {metamask_link} o una billetera de hardware como {ledger_nano_link}.",
         "mobile": "Puedes utilizar navegadores móviles como {coinbase_link} o {imtoken_link}.",
-        "samsung": "Puedes utilizar Samsung Blockchain Wallet."
+        "samsung": "Puedes utilizar {samsung_link}."
       }
     }
   }

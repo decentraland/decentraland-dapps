@@ -42,7 +42,18 @@ export default class SignInPage extends React.PureComponent<
       connected: <T id="@dapps.sign_in.connected" />,
       message: isCucumberProvider() ?
         <T
-          id="@dapps.sign_in.options.samsung" />
+          id="@dapps.sign_in.options.samsung" values={{
+            samsung_link: (
+              <a
+                href="https://www.samsung.com/global/galaxy/apps/samsung-blockchain/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Samsung Blockchain Wallet
+              </a>
+            )
+          }}
+        />
         : isMobile() ? (
           <T
             id="@dapps.sign_in.options.mobile"
