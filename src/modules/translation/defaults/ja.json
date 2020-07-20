@@ -42,7 +42,7 @@
       "options": {
         "desktop": "{metamask_link}拡張や{ledger_nano_link}のようなハードウェアウォレットを使用できます。",
         "mobile": "{coinbase_link}や{imtoken_link}などのモバイルブラウザを使用できます。",
-        "samsung": "You can use {samsung_link}."
+        "samsung": "{samsung_link}を使用できます。"
       }
     }
   }
