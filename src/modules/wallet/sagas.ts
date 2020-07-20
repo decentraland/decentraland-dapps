@@ -1,5 +1,5 @@
 import { put, call, all, takeEvery } from 'redux-saga/effects'
-import { isMobile } from '../../lib/utils'
+import { isMobile, isCucumberProvider } from '../../lib/utils'
 import {
   connectWalletSuccess,
   connectWalletFailure,
@@ -16,11 +16,9 @@ import { getWallet } from './utils'
 
 // Patch Samsung's Cucumber provider send to support promises
 const provider = (window as any).ethereum
-const isCucumberProvider: boolean =
-  isMobile() && provider && provider.isCucumber
 
 let cucumberProviderSend: Function
-if (isCucumberProvider) {
+if (isCucumberProvider()) {
   const _send = provider.send
   cucumberProviderSend = (...args: any[]) => {
     try {

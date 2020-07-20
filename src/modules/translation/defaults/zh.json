@@ -41,7 +41,8 @@
       "get_started": "开始",
       "options": {
         "desktop": "您可以使用 {metamask_link} 扩展程序或硬件钱包，如 {ledger_nano_link}。",
-        "mobile": "您可以使用移动浏览器，如 {coinbase_link} 或 {imtoken_link}。"
+        "mobile": "您可以使用移动浏览器，如 {coinbase_link} 或 {imtoken_link}。",
+        "samsung": "You can use Samsung Blockchain Wallet."
       }
     }
   }

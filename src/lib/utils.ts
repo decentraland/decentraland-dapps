@@ -14,6 +14,11 @@ export function isMobile() {
   )
 }
 
+export function isCucumberProvider() {
+  const provider = (window as any).ethereum
+  return isMobile() && provider && provider.isCucumber
+}
+
 export function insertScript({
   type = 'text/javascript',
   async = true,
