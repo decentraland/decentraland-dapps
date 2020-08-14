@@ -16,20 +16,24 @@ export default class WalletProvider extends React.PureComponent<Props> {
   eth = Eth.fromCurrentProvider()
 
   handleChangeAccount = async () => {
-    const { onChangeAccount } = this.props
+    const { address, onChangeAccount } = this.props
     try {
       const wallet = await getWallet()
-      onChangeAccount(wallet)
+      if (wallet.address !== address) {
+        onChangeAccount(wallet)
+      }
     } catch (error) {
       // do nothing
     }
   }
 
   handleChangeNetwork = async () => {
-    const { onChangeNetwork } = this.props
+    const { network, onChangeNetwork } = this.props
     try {
       const wallet = await getWallet()
-      onChangeNetwork(wallet)
+      if (wallet.network !== network) {
+        onChangeNetwork(wallet)
+      }
     } catch (error) {
       // do nothing
     }
