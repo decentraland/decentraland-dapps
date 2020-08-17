@@ -12,13 +12,18 @@ import {
 export type Props = {
   address?: string
   network?: number
+  isConnected: boolean
+  isConnecting: boolean
   children: React.ReactNode | null
   onConnect: typeof connectWalletRequest
   onChangeAccount: typeof changeAccount
   onChangeNetwork: typeof changeNetwork
 }
 
-export type MapStateProps = Pick<Props, 'address' | 'network'>
+export type MapStateProps = Pick<
+  Props,
+  'address' | 'network' | 'isConnected' | 'isConnecting'
+>
 export type MapDispatchProps = Pick<
   Props,
   'address' | 'network' | 'onConnect' | 'onChangeAccount' | 'onChangeNetwork'
