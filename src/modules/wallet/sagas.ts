@@ -69,7 +69,7 @@ function* handleEnableWalletRequest(_action: EnableWalletRequestAction) {
   try {
     const accounts: string[] = yield call(() => {
       const provider = (window as any).ethereum
-      if (isCucumberProvider) {
+      if (isCucumberProvider()) {
         return cucumberProviderSend('eth_requestAccounts')
       }
 
