@@ -16,10 +16,10 @@ export default class WalletProvider extends React.PureComponent<Props> {
   eth = Eth.fromCurrentProvider()
 
   handleChangeAccount = async () => {
-    const { address, onChangeAccount } = this.props
+    const { isConnected, isConnecting, address, onChangeAccount } = this.props
     try {
       const wallet = await getWallet()
-      if (this.isWalletAvailable() && wallet.address !== address) {
+      if (isConnected && !isConnecting && wallet.address !== address) {
         onChangeAccount(wallet)
       }
     } catch (error) {
@@ -28,10 +28,10 @@ export default class WalletProvider extends React.PureComponent<Props> {
   }
 
   handleChangeNetwork = async () => {
-    const { network, onChangeNetwork } = this.props
+    const { isConnected, isConnecting, network, onChangeNetwork } = this.props
     try {
       const wallet = await getWallet()
-      if (this.isWalletAvailable() && wallet.network !== network) {
+      if (isConnected && !isConnecting && wallet.network !== network) {
         onChangeNetwork(wallet)
       }
     } catch (error) {
@@ -89,11 +89,6 @@ export default class WalletProvider extends React.PureComponent<Props> {
 
   off(type: EventType, handler: Handler) {
     this.handle('removeListener', type, handler)
-  }
-
-  isWalletAvailable() {
-    const { isConnected, isConnecting } = this.props
-    return isConnected && !isConnecting
   }
 
   UNSAFE_componentWillMount() {
