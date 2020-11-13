@@ -12,10 +12,10 @@ export type EthereumWindow = Window & {
 
 export async function getProvider(): Promise<Provider | null> {
   const { ethereum } = window as EthereumWindow
-  return ethereum ? new LegacyProviderAdapter(ethereum as any) : null
+  return ethereum ? ethereum : null
 }
 
 export async function createEth() {
   const provider = await getProvider()
-  return provider ? new Eth(provider) : null
+  return provider ? new Eth(new LegacyProviderAdapter(provider as any)) : null
 }
