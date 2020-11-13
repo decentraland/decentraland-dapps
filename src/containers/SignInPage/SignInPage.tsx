@@ -9,7 +9,7 @@ import { isMobile, isCucumberProvider } from '../../lib/utils'
 export default class SignInPage extends React.PureComponent<
   SignInPageProps,
   SignInPageState
-  > {
+> {
   constructor(props: SignInPageProps) {
     super(props)
     this.state = {
@@ -40,9 +40,10 @@ export default class SignInPage extends React.PureComponent<
       connect: <T id="@dapps.sign_in.connect" />,
       connecting: <T id="@dapps.sign_in.connecting" />,
       connected: <T id="@dapps.sign_in.connected" />,
-      message: isCucumberProvider() ?
+      message: isCucumberProvider() ? (
         <T
-          id="@dapps.sign_in.options.samsung" values={{
+          id="@dapps.sign_in.options.samsung"
+          values={{
             samsung_link: (
               <a
                 href="https://www.samsung.com/global/galaxy/apps/samsung-blockchain/"
@@ -54,55 +55,55 @@ export default class SignInPage extends React.PureComponent<
             )
           }}
         />
-        : isMobile() ? (
-          <T
-            id="@dapps.sign_in.options.mobile"
-            values={{
-              coinbase_link: (
-                <a
-                  href="https://wallet.coinbase.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Coinbase Wallet
-                </a>
-              ),
-              imtoken_link: (
-                <a
-                  href="https://token.im"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  imToken
-                </a>
-              )
-            }}
-          />
-        ) : (
-            <T
-              id="@dapps.sign_in.options.desktop"
-              values={{
-                metamask_link: (
-                  <a
-                    href="https://metamask.io"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    MetaMask
-                  </a>
-                ),
-                ledger_nano_link: (
-                  <a
-                    href="https://www.ledger.com/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Ledger Nano S
-                  </a>
-                )
-              }}
-            />
-          )
+      ) : isMobile() ? (
+        <T
+          id="@dapps.sign_in.options.mobile"
+          values={{
+            coinbase_link: (
+              <a
+                href="https://wallet.coinbase.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Coinbase Wallet
+              </a>
+            ),
+            imtoken_link: (
+              <a
+                href="https://token.im"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                imToken
+              </a>
+            )
+          }}
+        />
+      ) : (
+        <T
+          id="@dapps.sign_in.options.desktop"
+          values={{
+            metamask_link: (
+              <a
+                href="https://metamask.io"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                MetaMask
+              </a>
+            ),
+            ledger_nano_link: (
+              <a
+                href="https://www.ledger.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Ledger Nano S
+              </a>
+            )
+          }}
+        />
+      )
     }
   }
 

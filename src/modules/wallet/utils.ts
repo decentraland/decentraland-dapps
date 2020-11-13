@@ -1,8 +1,8 @@
-import { Eth } from 'web3x-es/eth'
 import { Address } from 'web3x-es/address'
 import { fromWei } from 'web3x-es/utils'
 import { MANA } from '../../contracts/MANA'
 import { Wallet } from './types'
+import { createEth } from '../../lib/eth'
 
 const MANA_ADDRESS_BY_NETWORK = {
   // Mainnet
@@ -16,7 +16,7 @@ const MANA_ADDRESS_BY_NETWORK = {
 }
 
 export async function getWallet() {
-  const eth = Eth.fromCurrentProvider()
+  const eth = await createEth()
   if (!eth) {
     // this could happen if metamask is not installed
     throw new Error('Could not connect to Ethereum')

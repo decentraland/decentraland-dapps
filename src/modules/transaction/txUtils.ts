@@ -1,4 +1,3 @@
-import { Eth } from 'web3x-es/eth'
 import { TransactionResponse } from 'web3x-es/formatters'
 import { Address } from 'web3x-es/address'
 import {
@@ -10,11 +9,12 @@ import {
   RevertedTransaction,
   ConfirmedTransaction
 } from './types'
+import { createEth } from '../../lib/eth'
 
 export async function getTransaction(
   hash: string
 ): Promise<AnyTransaction | null> {
-  const eth = Eth.fromCurrentProvider()
+  const eth = await createEth()
   if (!eth) return null
 
   let accounts: Address[] = []

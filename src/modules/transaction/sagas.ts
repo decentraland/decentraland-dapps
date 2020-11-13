@@ -1,4 +1,3 @@
-import { Eth } from 'web3x-es/eth'
 import { Address } from 'web3x-es/address'
 import { BlockResponse, TransactionResponse } from 'web3x-es/formatters'
 import {
@@ -44,6 +43,7 @@ import {
 import { isPending, buildActionRef } from './utils'
 import { getTransaction as getTransactionFromNetwork } from './txUtils'
 import { getAddress } from '../wallet/selectors'
+import { createEth } from '../../lib/eth'
 
 export function* transactionSaga(): IterableIterator<ForkEffect> {
   yield takeEvery(FETCH_TRANSACTION_REQUEST, handleFetchTransactionRequest)
@@ -169,7 +169,7 @@ function* handleFetchTransactionRequest(action: FetchTransactionRequestAction) {
 function* handleReplaceTransactionRequest(
   action: ReplaceTransactionRequestAction
 ) {
-  const eth = Eth.fromCurrentProvider()
+  const eth = yield call(createEth)
   if (!eth) {
     console.warn('Could not connect to ethereum')
     return
