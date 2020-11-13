@@ -1,3 +1,4 @@
+import { EthereumProvider } from 'web3x-es/providers'
 import { put, call, all, takeEvery } from 'redux-saga/effects'
 import { isMobile, isCucumberProvider } from '../../lib/utils'
 import {
@@ -13,6 +14,7 @@ import {
   ENABLE_WALLET_SUCCESS
 } from './actions'
 import { getWallet } from './utils'
+import { getProvider } from '../../lib/eth'
 
 // Patch Samsung's Cucumber provider send to support promises
 const provider = (window as any).ethereum
@@ -67,18 +69,28 @@ function* handleConnectWalletRequest() {
 
 function* handleEnableWalletRequest(_action: EnableWalletRequestAction) {
   try {
-    const accounts: string[] = yield call(() => {
-      const provider = (window as any).ethereum
+    const accounts: string[] = yield call(async () => {
+      const provider:
+        | EthereumProvider & { enable?: () => Promise<string[]> }
+        | null = await getProvider()
       if (isCucumberProvider()) {
         return cucumberProviderSend('eth_requestAccounts')
       }
 
-      if (provider && provider.enable) {
-        return provider.enable()
+      let result: string[] = []
+      if (provider) {
+        if (provider.enable) {
+          result = await provider.enable()
+        }
+
+        // sometimes the provder.enable() returns an empty list. this happens when you login, then logout, and then login again. so we have to request accounts at this point.
+        if (result.length === 0) {
+          result = await provider.send('eth_requestAccounts')
+        }
       }
 
       console.warn('Provider not found')
-      return []
+      return result
     })
 
     if (accounts.length === 0) {

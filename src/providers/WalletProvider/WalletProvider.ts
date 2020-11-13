@@ -1,5 +1,4 @@
 import React from 'react'
-import { Eth } from 'web3x-es/eth'
 import { EthereumProvider } from 'web3x-es/providers/ethereum-provider'
 import { getWallet } from '../../modules/wallet/utils'
 import {
@@ -10,11 +9,9 @@ import {
   AccountsChangedHandler,
   NetworkChangedHandler
 } from './WalletProvider.types'
-import { getInjectedProvider } from './utils'
+import { createEth, getProvider } from '../../lib/eth'
 
 export default class WalletProvider extends React.PureComponent<Props> {
-  eth = Eth.fromCurrentProvider()
-
   handleChangeAccount = async () => {
     const { isConnected, isConnecting, address, onChangeAccount } = this.props
     try {
@@ -57,18 +54,19 @@ export default class WalletProvider extends React.PureComponent<Props> {
     }
   }
 
-  handle(method: EmitterMethod, type: EventType, handler: Handler) {
+  async handle(method: EmitterMethod, type: EventType, handler: Handler) {
     // try to use web3x abstraction
-    if (this.eth) {
+    const eth = await createEth()
+    if (eth) {
       try {
-        this.call(this.eth.provider, method, type, handler)
+        this.call(eth.provider, method, type, handler)
         return // all good, early return
       } catch (error) {
         // it fails if legacy provider (ie. metamask legacy provider)
       }
     }
     // fallback using web3 (this works with metamask)
-    const provider = getInjectedProvider()
+    const provider = await getProvider()
     if (provider) {
       try {
         this.call(provider, method, type, handler)
@@ -84,11 +82,15 @@ export default class WalletProvider extends React.PureComponent<Props> {
   }
 
   on(type: EventType, handler: Handler) {
-    this.handle('on', type, handler)
+    this.handle('on', type, handler).catch(error =>
+      console.error(error.message)
+    )
   }
 
   off(type: EventType, handler: Handler) {
-    this.handle('removeListener', type, handler)
+    this.handle('removeListener', type, handler).catch(error =>
+      console.error(error.message)
+    )
   }
 
   UNSAFE_componentWillMount() {
