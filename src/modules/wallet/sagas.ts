@@ -1,4 +1,4 @@
-import { EthereumProvider } from 'web3x-es/providers'
+import { LegacyProvider } from 'web3x-es/providers'
 import { put, call, all, takeEvery } from 'redux-saga/effects'
 import { isMobile, isCucumberProvider } from '../../lib/utils'
 import {
@@ -17,7 +17,7 @@ import { getWallet } from './utils'
 import { getProvider } from '../../lib/eth'
 
 // Patch Samsung's Cucumber provider send to support promises
-const provider = (window as any).ethereum
+const provider = (window as any).ethereum as LegacyProvider
 
 let cucumberProviderSend: Function
 if (isCucumberProvider()) {
@@ -70,9 +70,7 @@ function* handleConnectWalletRequest() {
 function* handleEnableWalletRequest(_action: EnableWalletRequestAction) {
   try {
     const accounts: string[] = yield call(async () => {
-      const provider:
-        | EthereumProvider & { enable?: () => Promise<string[]> }
-        | null = await getProvider()
+      const provider = await getProvider()
       if (isCucumberProvider()) {
         return cucumberProviderSend('eth_requestAccounts')
       }

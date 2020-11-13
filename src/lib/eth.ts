@@ -1,13 +1,18 @@
 import { Eth } from 'web3x-es/eth'
-import {
-  LegacyProviderAdapter,
-  LegacyProvider,
-  EthereumProvider
-} from 'web3x-es/providers'
+import { LegacyProviderAdapter, EthereumProvider } from 'web3x-es/providers'
 
-export async function getProvider(): Promise<EthereumProvider | null> {
-  const { ethereum } = window as Window & { ethereum?: LegacyProvider }
-  return ethereum ? new LegacyProviderAdapter(ethereum) : null
+export type Provider = EthereumProvider & {
+  enable?: () => Promise<string[]>
+  isCucumber?: boolean
+}
+
+export type EthereumWindow = Window & {
+  ethereum?: Provider
+}
+
+export async function getProvider(): Promise<Provider | null> {
+  const { ethereum } = window as EthereumWindow
+  return ethereum ? new LegacyProviderAdapter(ethereum as any) : null
 }
 
 export async function createEth() {
