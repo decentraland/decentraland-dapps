@@ -1,7 +1,9 @@
 import { takeLatest, put, call, takeEvery } from 'redux-saga/effects'
 import {
   ConnectWalletSuccessAction,
-  CONNECT_WALLET_SUCCESS
+  CONNECT_WALLET_SUCCESS,
+  CHANGE_ACCOUNT,
+  ChangeAccountAction
 } from '../wallet/actions'
 import {
   LOAD_PROFILE_REQUEST,
@@ -12,10 +14,6 @@ import {
 } from './actions'
 import { Profile } from './types'
 import { PeerAPI } from '../../lib/peer'
-import {
-  CHANGE_ACCOUNT,
-  ChangeAccountAction
-} from 'dist/modules/wallet/actions'
 
 type CreateProfileSagaOptions = {
   peerUrl: string
