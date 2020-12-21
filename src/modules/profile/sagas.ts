@@ -12,6 +12,10 @@ import {
 } from './actions'
 import { Profile } from './types'
 import { PeerAPI } from '../../lib/peer'
+import {
+  CHANGE_ACCOUNT,
+  ChangeAccountAction
+} from 'dist/modules/wallet/actions'
 
 type CreateProfileSagaOptions = {
   peerUrl: string
@@ -21,7 +25,8 @@ export function createProfileSaga({ peerUrl }: CreateProfileSagaOptions) {
   const peerApi = new PeerAPI(peerUrl)
   function* profileSaga() {
     yield takeEvery(LOAD_PROFILE_REQUEST, handleLoadProfileRequest)
-    yield takeLatest(CONNECT_WALLET_SUCCESS, handleConnectWalletSuccess)
+    yield takeLatest(CONNECT_WALLET_SUCCESS, handleWallet)
+    yield takeLatest(CHANGE_ACCOUNT, handleWallet)
   }
 
   function* handleLoadProfileRequest(action: LoadProfileRequestAction) {
@@ -34,7 +39,9 @@ export function createProfileSaga({ peerUrl }: CreateProfileSagaOptions) {
     }
   }
 
-  function* handleConnectWalletSuccess(action: ConnectWalletSuccessAction) {
+  function* handleWallet(
+    action: ConnectWalletSuccessAction | ChangeAccountAction
+  ) {
     yield put(loadProfileRequest(action.payload.wallet.address))
   }
 
