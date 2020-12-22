@@ -6,6 +6,7 @@ import {
 import { Dispatch } from 'redux'
 
 export type Props = ProfileProps & {
+  debounce?: number
   onLoadProfile: typeof loadProfileRequest
 }
 

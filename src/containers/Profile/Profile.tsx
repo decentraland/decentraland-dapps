@@ -7,6 +7,8 @@ export default class Profile extends React.PureComponent<Props> {
     inline: true
   }
 
+  timeout: NodeJS.Timeout | null = null
+
   componentWillMount() {
     this.fetchProfile(this.props)
   }
@@ -18,9 +20,19 @@ export default class Profile extends React.PureComponent<Props> {
   }
 
   fetchProfile(props: Props) {
-    const { address, avatar, onLoadProfile } = props
+    const { address, avatar, debounce, onLoadProfile } = props
     if (!avatar) {
-      onLoadProfile(address)
+      if (debounce) {
+        if (this.timeout) {
+          clearTimeout(this.timeout)
+        }
+        this.timeout = setTimeout(() => {
+          onLoadProfile(address)
+          this.timeout = null
+        }, debounce)
+      } else {
+        onLoadProfile(address)
+      }
     }
   }
 
