@@ -43,6 +43,15 @@
         "desktop": "You can use the {metamask_link} extension or a hardware wallet like {ledger_nano_link}.",
         "mobile": "You can use mobile browsers such as {coinbase_link} or {imtoken_link}.",
         "samsung": "You can use {samsung_link}."
+      },
+      "modal": {
+        "title": "Sign In",
+        "subtitle": "Choose a method to connect",
+        "using": {
+          "browser_extension": "Using a browser extension",
+          "email": "Using your email",
+          "mobile": "Using your mobile wallet"
+        }
       }
     }
   }
