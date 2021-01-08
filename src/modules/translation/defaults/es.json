@@ -45,13 +45,16 @@
         "samsung": "Puedes utilizar {samsung_link}."
       }
     },
-    "modal": {
-      "title": "Conectar",
-      "subtitle": "Elige un método para conectar",
-      "using": {
-        "browser_extension": "Usando una extensión del navegador",
-        "email": "Usando tu email",
-        "mobile": "Usando tu billetera móvil"
+    "login": {
+      "modal": {
+        "title": "Conectar",
+        "subtitle": "Elige como quieres conectarte.",
+        "error": "No se pudo conectar a la billetera.",
+      },
+      "option": {
+        "browser_extension": "Usando una Browser extension",
+        "email": "Usando tu cuenta de email",
+        "mobile": "Usando un navegador móvil"
       }
     }
   }

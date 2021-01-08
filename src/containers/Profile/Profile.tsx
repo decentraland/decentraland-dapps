@@ -13,9 +13,9 @@ export default class Profile extends React.PureComponent<Props> {
     this.fetchProfile(this.props)
   }
 
-  componentWillReceiveProps(nextProps: Props) {
-    if (nextProps.address !== this.props.address) {
-      this.fetchProfile(nextProps)
+  componentDidUpdate(prevProps: Props) {
+    if (prevProps.address !== this.props.address) {
+      this.fetchProfile(this.props)
     }
   }
 

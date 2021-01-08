@@ -2,7 +2,6 @@ import dateFnsFormat from 'date-fns/format'
 import dateFnsDistanceInWordsToNow from 'date-fns/distance_in_words_to_now'
 import { Model, ModelById, DataByKey } from './types'
 import { getCurrentLocale } from '../modules/translation/utils'
-import { EthereumWindow } from './eth'
 
 export function isMobile() {
   // WARN: Super naive mobile device check.
@@ -13,11 +12,6 @@ export function isMobile() {
   return (
     /Mobi/i.test(navigator.userAgent) || /Android/i.test(navigator.userAgent)
   )
-}
-
-export function isCucumberProvider() {
-  const provider = (window as EthereumWindow).ethereum
-  return isMobile() && !!provider && !!provider.isCucumber
 }
 
 export function insertScript({

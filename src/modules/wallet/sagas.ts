@@ -1,6 +1,7 @@
 import { LegacyProvider } from 'web3x-es/providers'
 import { put, call, all, takeEvery } from 'redux-saga/effects'
-import { isMobile, isCucumberProvider } from '../../lib/utils'
+import { connection, ChainId } from 'decentraland-connect'
+import { isCucumberProvider, isValidChainId } from '../../lib/eth'
 import {
   connectWalletSuccess,
   connectWalletFailure,
@@ -11,10 +12,13 @@ import {
   EnableWalletSuccessAction,
   connectWalletRequest,
   ENABLE_WALLET_REQUEST,
-  ENABLE_WALLET_SUCCESS
+  ENABLE_WALLET_SUCCESS,
+  DisconnectWalletAction,
+  disconnectWallet,
+  DISCONNECT_WALLET
 } from './actions'
 import { getWallet } from './utils'
-import { getProvider } from '../../lib/eth'
+import { CreateWalletOptions } from './types'
 
 // Patch Samsung's Cucumber provider send to support promises
 const provider = (window as any).ethereum as LegacyProvider
@@ -31,71 +35,38 @@ if (isCucumberProvider()) {
   }
 }
 
-function patchProvider(provider?: any) {
-  // Patch for old providers and mobile providers which do not use promises at send as sendAsync
-  if (
-    provider &&
-    typeof provider.sendAsync === 'function' &&
-    provider.send !== provider.sendAsync
-  ) {
-    provider.send = provider.sendAsync
-  }
-}
+// Can be set on createWalletSaga
+let CHAIN_ID: ChainId = ChainId.MAINNET
 
 function* handleConnectWalletRequest() {
   try {
-    const provider = (window as any).ethereum
-
-    if (isMobile()) {
-      patchProvider(provider)
-      const web3 = (window as any).web3
-      if (web3) {
-        patchProvider(web3.currentProvider)
-        patchProvider(web3.ethereumProvider)
-      }
-    }
-
-    // Prevent metamask from auto refreshing the page
-    if (provider) {
-      provider.autoRefreshOnNetworkChange = false
-    }
-
     const wallet = yield call(() => getWallet())
     yield put(connectWalletSuccess(wallet))
   } catch (error) {
+    yield put(disconnectWallet())
     yield put(connectWalletFailure(error.message))
   }
 }
 
-function* handleEnableWalletRequest(_action: EnableWalletRequestAction) {
+function* handleEnableWalletRequest(action: EnableWalletRequestAction) {
+  const { providerType } = action.payload
   try {
-    const accounts: string[] = yield call(async () => {
-      const provider = await getProvider()
+    const account: string = yield call(async () => {
       if (isCucumberProvider()) {
-        return cucumberProviderSend('eth_requestAccounts')
+        const accounts = cucumberProviderSend('eth_requestAccounts')
+        return accounts[0]
       }
 
-      let result: string[] = []
-      if (provider) {
-        if (provider.enable) {
-          result = await provider.enable()
-        }
-
-        // sometimes the provder.enable() returns an empty list. this happens when you login, then logout, and then login again. so we have to request accounts at this point.
-        if (result.length === 0) {
-          result = await provider.send('eth_requestAccounts')
-        }
-      }
-
-      console.warn('Provider not found')
-      return result
+      const { account } = await connection.connect(providerType, CHAIN_ID)
+      return account
     })
 
-    if (accounts.length === 0) {
+    if (!account) {
       throw new Error('Enable did not return any accounts')
     }
-    yield put(enableWalletSuccess())
+    yield put(enableWalletSuccess(providerType))
   } catch (error) {
+    yield put(disconnectWallet())
     yield put(enableWalletFailure(error.message))
   }
 }
@@ -104,20 +75,40 @@ function* handleEnableWalletSuccess(_action: EnableWalletSuccessAction) {
   yield put(connectWalletRequest())
 }
 
+function* handleDisconnectWallet(_action: DisconnectWalletAction) {
+  try {
+    yield call(() => connection.disconnect())
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 export function* walletSaga() {
   yield all([
     takeEvery(CONNECT_WALLET_REQUEST, handleConnectWalletRequest),
     takeEvery(ENABLE_WALLET_REQUEST, handleEnableWalletRequest),
-    takeEvery(ENABLE_WALLET_SUCCESS, handleEnableWalletSuccess)
+    takeEvery(ENABLE_WALLET_SUCCESS, handleEnableWalletSuccess),
+    takeEvery(DISCONNECT_WALLET, handleDisconnectWallet)
   ])
 }
 
-export function createWalletSaga(
-  // @ts-ignore
-  options?: { MANA_ADDRESS: string }
-) {
-  console.warn(
-    'Deprecated notice: `createWalletSaga` has been deprecated and will be removed in future version, use `walletSaga` instead.'
-  )
+export function createWalletSaga(options?: CreateWalletOptions) {
+  if (options) {
+    if (options.MANA_ADDRESS) {
+      console.warn(
+        'Deprecated notice: the MANA_ADDRESS option on `createWalletSaga` has been deprecated and will be removed in future version.'
+      )
+    }
+
+    if (options.CHAIN_ID) {
+      if (isValidChainId(options.CHAIN_ID)) {
+        CHAIN_ID = Number(options.CHAIN_ID)
+      } else {
+        console.warn(
+          `Invalid Chain id ${options.CHAIN_ID}, defaulting to ${CHAIN_ID}`
+        )
+      }
+    }
+  }
   return walletSaga
 }

@@ -2,9 +2,11 @@ import * as React from 'react'
 
 import { SignIn, SignInI18N } from 'decentraland-ui'
 
-import { SignInPageProps, SignInPageState } from './SignInPage.types'
 import { T } from '../../modules/translation/utils'
-import { isMobile, isCucumberProvider } from '../../lib/utils'
+import { isMobile } from '../../lib/utils'
+import { isCucumberProvider } from '../../lib/eth'
+import { SignInPageProps, SignInPageState } from './SignInPage.types'
+import LoginModal from '../LoginModal'
 
 export default class SignInPage extends React.PureComponent<
   SignInPageProps,
@@ -13,20 +15,12 @@ export default class SignInPage extends React.PureComponent<
   constructor(props: SignInPageProps) {
     super(props)
     this.state = {
-      hasError: false
+      isLoginModalOpen: false
     }
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps: SignInPageProps) {
-    if (nextProps.hasError && !this.state.hasError) {
-      this.setState({
-        hasError: true
-      })
-    } else if (!nextProps.hasError && this.state.hasError) {
-      this.setState({
-        hasError: false
-      })
-    }
+  handleToggleLoginModal = () => {
+    this.setState({ isLoginModalOpen: !this.state.isLoginModalOpen })
   }
 
   getTranslations = (): SignInI18N | undefined => {
@@ -108,12 +102,20 @@ export default class SignInPage extends React.PureComponent<
   }
 
   render() {
+    const { isLoginModalOpen } = this.state
     return (
-      <SignIn
-        {...this.props}
-        hasError={this.state.hasError}
-        i18n={this.getTranslations()}
-      />
+      <>
+        <SignIn
+          {...this.props}
+          onConnect={this.handleToggleLoginModal}
+          i18n={this.getTranslations()}
+        />
+        <LoginModal
+          {...(this.props as any)}
+          open={isLoginModalOpen}
+          onClose={this.handleToggleLoginModal}
+        />
+      </>
     )
   }
 }

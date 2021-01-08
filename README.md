@@ -139,6 +139,34 @@ export function* rootSaga() {
 }
 ```
 
+### Advanced Usage
+
+You can to supply in which chain you're going to work, it'll default to `mainnet` by default. It won't affect wallets like Metamask, where you can choose which network to use on the wallet itself, but's necesary for things like email/phone based wallets.
+Remember that the chain id is the number that represents a particular network, 1 being `mainnet`, 3 being `ropsten`, etc.
+
+<details><summary>Learn More</summary>
+<p>
+
+Instead of importing `walletSaga`, use `createWalletSaga`:
+
+**Saga**:
+
+```ts
+import { all } from 'redux-saga/effects'
+import { createWalletSaga } from 'decentraland-dapps/dist/modules/wallet/sagas'
+const walletSaga = createWalletSaga({ CHAIN_ID: process.env.chainId })
+export function* rootSaga() {
+  yield all([
+    walletSaga()
+    // your other sagas here
+  ])
+}
+```
+
+</p>
+</details>
+
+
 ## Storage
 
 The storage module allows you to save parts of the redux store in localStorage to make them persistent and migrate it from different versions without loosing it.

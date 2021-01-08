@@ -1,5 +1,6 @@
 import React from 'react'
 import { EthereumProvider } from 'web3x-es/providers/ethereum-provider'
+import { createEth } from '../../lib/eth'
 import { getWallet } from '../../modules/wallet/utils'
 import {
   Props,
@@ -9,7 +10,6 @@ import {
   AccountsChangedHandler,
   NetworkChangedHandler
 } from './WalletProvider.types'
-import { createEth, getProvider } from '../../lib/eth'
 
 export default class WalletProvider extends React.PureComponent<Props> {
   handleChangeAccount = async () => {
@@ -62,21 +62,7 @@ export default class WalletProvider extends React.PureComponent<Props> {
         this.call(eth.provider, method, type, handler)
         return // all good, early return
       } catch (error) {
-        // it fails if legacy provider (ie. metamask legacy provider)
-      }
-    }
-    // fallback using web3 (this works with metamask)
-    const provider = await getProvider()
-    if (provider) {
-      try {
-        this.call(provider, method, type, handler)
-      } catch (error) {
-        // it fails if provider is not standard (ie. dapper legacy provider)
-        console.warn(
-          `Could not use method "${method}" on provider`,
-          provider,
-          `Error: ${error.message}`
-        )
+        // it fails if there's legacy provider (ie. metamask legacy provider) but it shouldn't happen
       }
     }
   }
@@ -93,7 +79,7 @@ export default class WalletProvider extends React.PureComponent<Props> {
     )
   }
 
-  UNSAFE_componentWillMount() {
+  componentDidMount() {
     // try to connect wallet
     const { onConnect } = this.props
     onConnect()
@@ -103,7 +89,7 @@ export default class WalletProvider extends React.PureComponent<Props> {
     this.on('networkChanged', this.handleChangeNetwork)
   }
 
-  UNSAFE_componentWillUnmount() {
+  componentWillUnmount() {
     // remove listeners
     this.off('accountsChanged', this.handleChangeAccount)
     this.off('networkChanged', this.handleChangeNetwork)

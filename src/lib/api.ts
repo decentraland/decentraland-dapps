@@ -2,9 +2,11 @@ import axios, { AxiosResponse, AxiosError, AxiosRequestConfig } from 'axios'
 
 const httpClient = axios.create()
 
+export type APIMethod = AxiosRequestConfig['method']
 export interface APIParam {
   [key: string]: any
 }
+
 interface Response {
   ok: boolean
   data: any
@@ -15,7 +17,7 @@ export class BaseAPI {
   constructor(public url: string) {}
 
   request(
-    method: AxiosRequestConfig['method'],
+    method: APIMethod,
     path: string,
     params: APIParam | null = null,
     axiosRequestConfig: AxiosRequestConfig = {}

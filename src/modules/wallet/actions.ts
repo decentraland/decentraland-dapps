@@ -1,4 +1,5 @@
 import { action } from 'typesafe-actions'
+import { ProviderType } from 'decentraland-connect'
 import { Wallet } from './types'
 
 export const CONNECT_WALLET_REQUEST = '[Request] Connect Wallet'
@@ -19,8 +20,10 @@ export const ENABLE_WALLET_REQUEST = '[Request] Enable Wallet'
 export const ENABLE_WALLET_SUCCESS = '[Success] Enable Wallet'
 export const ENABLE_WALLET_FAILURE = '[Failure] Enable Wallet'
 
-export const enableWalletRequest = () => action(ENABLE_WALLET_REQUEST)
-export const enableWalletSuccess = () => action(ENABLE_WALLET_SUCCESS)
+export const enableWalletRequest = (providerType: ProviderType) =>
+  action(ENABLE_WALLET_REQUEST, { providerType })
+export const enableWalletSuccess = (providerType: ProviderType) =>
+  action(ENABLE_WALLET_SUCCESS, { providerType })
 export const enableWalletFailure = (error: string) =>
   action(ENABLE_WALLET_FAILURE, { error })
 
