@@ -40,7 +40,7 @@
       "error": "No se pudo conectar a la billetera.",
       "get_started": "Comenzar",
       "options": {
-        "desktop": "Puedes usar la extensión {metamask_link} o una billetera de hardware como {ledger_nano_link}.",
+        "desktop": "Puedes usar la extensión {metamask_link} o tu cuenta de mail.",
         "mobile": "Puedes utilizar navegadores móviles como {coinbase_link} o {imtoken_link}.",
         "samsung": "Puedes utilizar {samsung_link}."
       }
