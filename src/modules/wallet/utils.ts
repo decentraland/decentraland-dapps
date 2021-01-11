@@ -1,8 +1,8 @@
 import { Address } from 'web3x-es/address'
 import { fromWei } from 'web3x-es/utils'
 import { MANA } from '../../contracts/MANA'
-import { Wallet } from './types'
 import { createEth } from '../../lib/eth'
+import { Wallet } from './types'
 
 const MANA_ADDRESS_BY_NETWORK = {
   // Mainnet

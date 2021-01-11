@@ -40,9 +40,18 @@
       "error": "无法连接到钱包。",
       "get_started": "开始",
       "options": {
-        "desktop": "您可以使用 {metamask_link} 扩展程序或硬件钱包，如 {ledger_nano_link}。",
+        "desktop": "您可以使用{metamask_link}扩展名或您的电子邮件帐户",
         "mobile": "您可以使用移动浏览器，如 {coinbase_link} 或 {imtoken_link}。",
         "samsung": "您可使用{samsung_link}。"
+      },
+      "modal": {
+        "title": "登入",
+        "subtitle": "选择一种连接方式",
+        "using": {
+          "browser_extension": "使用浏览器扩展",
+          "email": "使用您的电子邮件",
+          "mobile": "使用您的手机钱包"
+        }
       }
     }
   }

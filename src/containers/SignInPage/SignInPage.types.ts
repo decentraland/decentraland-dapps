@@ -5,12 +5,12 @@ export type SignInPageProps = SignInProps & {
 }
 
 export type SignInPageState = {
-  hasError: boolean
+  isLoginModalOpen: boolean
 }
 
 export type MapStateProps = Pick<
   SignInPageProps,
-  'isConnecting' | 'isConnected' | 'hasError' | 'hasTranslations'
+  'isConnecting' | 'isConnected' | 'hasTranslations'
 >
 
 export type MapDispatchProps = Pick<SignInPageProps, 'onConnect'>

@@ -4,3 +4,8 @@ export interface Wallet {
   mana: number
   eth: number
 }
+
+export interface CreateWalletOptions {
+  MANA_ADDRESS?: string
+  CHAIN_ID?: string | number
+}

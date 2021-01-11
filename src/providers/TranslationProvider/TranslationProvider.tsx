@@ -5,10 +5,10 @@ import { I18nProvider } from '../../modules/translation/utils'
 import { Props } from './TranslationProvider.types'
 
 export default class TranslationProvider extends React.PureComponent<Props> {
-  UNSAFE_componentWillReceiveProps(nextProps: Props) {
-    const { locale, onFetchTranslations } = nextProps
+  componentDidUpdate(prevProps: Props) {
+    const { locale, onFetchTranslations } = this.props
 
-    if (locale && this.props.locale !== locale) {
+    if (locale && prevProps.locale !== locale) {
       onFetchTranslations(locale)
     }
   }

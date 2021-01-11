@@ -43,6 +43,15 @@
         "desktop": "Vous pouvez utiliser l'extension {metamask_link} ou un portefeuille matériel comme {ledger_nano_link}.",
         "mobile": "Vous pouvez utiliser des navigateurs mobiles tels que {coinbase_link} ou {imtoken_link}.",
         "samsung": "Vous pouvez utiliser {samsung_link}."
+      },
+      "modal": {
+        "title": "Se connecter",
+        "subtitle": "Choisissez une méthode de connexion",
+        "using": {
+          "browser_extension": "Utiliser une extension de navigateur",
+          "email": "Utiliser votre email",
+          "mobile": "Utiliser votre portefeuille mobile"
+        }
       }
     }
   }
