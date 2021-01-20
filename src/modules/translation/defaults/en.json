@@ -40,6 +40,7 @@
       "error": "Could not connect to wallet.",
       "get_started": "Get Started",
       "options": {
+        "connected": "You're already connected!",
         "desktop": "You can use the {metamask_link} extension or your email account",
         "mobile": "You can use mobile browsers such as {coinbase_link} or {imtoken_link}.",
         "samsung": "You can use {samsung_link}."

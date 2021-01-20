@@ -8,7 +8,6 @@ import {
 export type Props = LoginModalProps & {
   hasTranslations?: boolean
   isLoading: boolean
-  isConnected: boolean
   isConnecting: boolean
   onConnect: typeof enableWalletRequest
 }
@@ -19,7 +18,7 @@ export type State = {
 
 export type MapStateProps = Pick<
   Props,
-  'hasTranslations' | 'isLoading' | 'isConnected' | 'isConnecting' | 'hasError'
+  'hasTranslations' | 'isLoading' | 'hasError'
 >
 export type MapDispatchProps = Pick<Props, 'onConnect'>
 export type MapDispatch = Dispatch<EnableWalletRequestAction>
