@@ -40,6 +40,7 @@
       "error": "No se pudo conectar a la billetera.",
       "get_started": "Comenzar",
       "options": {
+        "connected": "Conectado correctamente!",
         "desktop": "Puedes usar la extensión {metamask_link} o tu cuenta de mail.",
         "mobile": "Puedes utilizar navegadores móviles como {coinbase_link} o {imtoken_link}.",
         "samsung": "Puedes utilizar {samsung_link}."

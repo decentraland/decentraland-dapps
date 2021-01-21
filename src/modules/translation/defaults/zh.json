@@ -40,6 +40,7 @@
       "error": "无法连接到钱包。",
       "get_started": "开始",
       "options": {
+        "connected": "您已经连接！",
         "desktop": "您可以使用{metamask_link}扩展名或您的电子邮件帐户",
         "mobile": "您可以使用移动浏览器，如 {coinbase_link} 或 {imtoken_link}。",
         "samsung": "您可使用{samsung_link}。"

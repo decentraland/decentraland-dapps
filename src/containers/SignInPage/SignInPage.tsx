@@ -24,7 +24,8 @@ export default class SignInPage extends React.PureComponent<
   }
 
   getTranslations = (): SignInI18N | undefined => {
-    if (!this.props.hasTranslations) {
+    const { hasTranslations, isConnected } = this.props
+    if (!hasTranslations) {
       return undefined
     }
 
@@ -34,7 +35,9 @@ export default class SignInPage extends React.PureComponent<
       connect: <T id="@dapps.sign_in.connect" />,
       connecting: <T id="@dapps.sign_in.connecting" />,
       connected: <T id="@dapps.sign_in.connected" />,
-      message: isCucumberProvider() ? (
+      message: isConnected ? (
+        <T id="@dapps.sign_in.options.connected" />
+      ) : isCucumberProvider() ? (
         <T
           id="@dapps.sign_in.options.samsung"
           values={{
