@@ -163,6 +163,33 @@ export function* rootSaga() {
 }
 ```
 
+
+**Actions**:
+
+If you want to hook a callback to connect the wallet, there're two things to keep in mind. The process of connecting a wallet consists in two steps, first `enabling` it and then properly connecting it. The set of actions to keep in mind are the following (all from `decentraland-dapps/dist/modules/wallet/actions`):
+
+```tsx
+enableWalletRequest
+enableWalletSuccess
+enableWalletFailure
+```
+
+With it's corresponding actions and types from the same file:
+
+```tsx
+ENABLE_WALLET_REQUEST
+ENABLE_WALLET_SUCCESS
+ENABLE_WALLET_FAILURE
+
+EnableWalletRequestAction
+EnableWalletSuccessAction
+EnableWalletFailureAction
+```
+
+The wallet saga will listen for `ENABLE_WALLET_SUCCESS` and automatically call `CONNECT_WALLET_REQUEST`. If you use `connect wallet` without enabling first it will only work if you enabled first and it'll stop working once the user disconnects the wallet from the site (if she ever does).
+
+All of this is handled by [SignInPage](#signinpage) behind the scenes, so you can just use that instead. Remember to add [<WalletProvider />](#installation).
+
 </p>
 </details>
 
