@@ -163,7 +163,6 @@ export function* rootSaga() {
 }
 ```
 
-
 **Actions**:
 
 If you want to hook a callback to connect the wallet, there're two things to keep in mind. The process of connecting a wallet consists in two steps, first `enabling` it and then properly connecting it. The set of actions to keep in mind are the following (all from `decentraland-dapps/dist/modules/wallet/actions`):
@@ -192,7 +191,6 @@ All of this is handled by [SignInPage](#signinpage) behind the scenes, so you ca
 
 </p>
 </details>
-
 
 ## Storage
 
@@ -1018,6 +1016,46 @@ export class API extends BaseAPI {
 
 export const api = new API(URL)
 ```
+
+## ETH
+
+Ethereum helpers
+
+### Pristine Provider
+
+Get user's connected provider without being wrapped by any library
+
+```ts
+import { getProvider } from 'decentraland-dapps/dist/lib/eth'
+
+async function wrapProviderToEthers() {
+  const provider = await getProvider()
+  if (provider) {
+    return new etheres.providers.Web3Provider(provider)
+  }
+}
+```
+
+### Web3x Eth instance
+
+Get web3x Eth instance as a legacy provider
+
+```ts
+import { createETH } from 'decentraland-dapps/dist/lib/eth'
+
+async function doSomething() {
+  const eth = await createETH()
+  if (eth) {
+    // Do something
+  }
+}
+```
+
+### Helpers
+
+- `isCucumberProvider`: Check if the provider is a `cucumberProvider`.
+- `isDapperProvider`: Check if the provider is a _dapper's_ provider.
+- `isValidChainId`: Check if the chain id is valid.
 
 # Containers
 
