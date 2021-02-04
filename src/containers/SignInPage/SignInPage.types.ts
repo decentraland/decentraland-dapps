@@ -1,6 +1,13 @@
+// import { Dispatch } from 'redux'
+import { ProviderType } from 'decentraland-connect'
 import { SignInProps } from 'decentraland-ui'
+// import {
+//   enableWalletRequest,
+//   EnableWalletRequestAction
+// } from '../../modules/wallet/actions'
 
-export type SignInPageProps = SignInProps & {
+export type SignInPageProps = Omit<SignInProps, 'onConnect'> & {
+  onConnect: (providerType: ProviderType) => any
   hasTranslations?: boolean
 }
 
@@ -10,7 +17,7 @@ export type SignInPageState = {
 
 export type MapStateProps = Pick<
   SignInPageProps,
-  'isConnecting' | 'isConnected' | 'hasTranslations'
+  'isConnecting' | 'isConnected' | 'hasTranslations' | 'hasError'
 >
-
-export type MapDispatchProps = Pick<SignInPageProps, 'onConnect'>
+export type MapDispatchProps = {}
+export type MapDispatch = {}
