@@ -1,10 +1,5 @@
-// import { Dispatch } from 'redux'
 import { ProviderType } from 'decentraland-connect'
 import { SignInProps } from 'decentraland-ui'
-// import {
-//   enableWalletRequest,
-//   EnableWalletRequestAction
-// } from '../../modules/wallet/actions'
 
 export type SignInPageProps = Omit<SignInProps, 'onConnect'> & {
   onConnect: (providerType: ProviderType) => any
