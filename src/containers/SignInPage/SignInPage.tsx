@@ -20,7 +20,8 @@ export default class SignInPage extends React.PureComponent<
   }
 
   handleToggleLoginModal = () => {
-    this.setState({ isLoginModalOpen: !this.state.isLoginModalOpen })
+    const isLoginModalOpen = !this.state.isLoginModalOpen
+    this.setState({ isLoginModalOpen })
   }
 
   getTranslations = (): SignInI18N | undefined => {
@@ -105,17 +106,28 @@ export default class SignInPage extends React.PureComponent<
   }
 
   render() {
+    const {
+      center,
+      isConnected,
+      isConnecting,
+      hasError,
+      onConnect
+    } = this.props
     const { isLoginModalOpen } = this.state
+
     return (
       <>
         <SignIn
-          {...this.props}
+          center={center}
+          isConnected={isConnected}
+          isConnecting={isConnecting}
+          hasError={hasError}
           onConnect={this.handleToggleLoginModal}
           i18n={this.getTranslations()}
         />
         <LoginModal
-          {...(this.props as any)}
           open={isLoginModalOpen}
+          onConnect={onConnect}
           onClose={this.handleToggleLoginModal}
         />
       </>

@@ -1,24 +1,27 @@
 import { connect } from 'react-redux'
 
-import SignInPage from './SignInPage'
+import { isEnabled } from '../../modules/translation/selectors'
+import {
+  isConnecting,
+  isConnected,
+  getError
+} from '../../modules/wallet/selectors'
 import {
   MapDispatchProps,
   MapStateProps,
+  MapDispatch,
   SignInPageProps
 } from './SignInPage.types'
-import { RootDispatch } from '../../types'
-import { isEnabled } from '../../modules/translation/selectors'
-import { isConnecting, isConnected } from '../../modules/wallet/selectors'
+import SignInPage from './SignInPage'
 
 const mapState = (state: any): MapStateProps => ({
   isConnecting: isConnecting(state),
   isConnected: isConnected(state),
+  hasError: !!getError(state),
   hasTranslations: isEnabled(state)
 })
 
-const mapDispatch = (_dispatch: RootDispatch): MapDispatchProps => ({
-  onConnect: () => {}
-})
+const mapDispatch = (_dispatch: MapDispatch): MapDispatchProps => ({})
 
 const mergeProps = (
   stateProps: MapStateProps,

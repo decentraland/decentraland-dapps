@@ -1,16 +1,15 @@
 import { Dispatch } from 'redux'
 import { LoginModalProps } from 'decentraland-ui'
-import {
-  enableWalletRequest,
-  EnableWalletRequestAction
-} from '../../modules/wallet/actions'
+import { ProviderType } from 'decentraland-connect'
+import { EnableWalletRequestAction } from '../../modules/wallet/actions'
 
-export type Props = LoginModalProps & {
-  hasTranslations?: boolean
-  isLoading: boolean
-  isConnecting: boolean
-  onConnect: typeof enableWalletRequest
-}
+export type DefaultProps = { isLoading: boolean }
+
+export type Props = DefaultProps &
+  LoginModalProps & {
+    hasTranslations?: boolean
+    onConnect: (providerType: ProviderType) => any
+  }
 
 export type State = {
   hasError: boolean

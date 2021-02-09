@@ -8,11 +8,15 @@ import {
 import { ProviderType, connection } from 'decentraland-connect'
 import { T } from '../../modules/translation/utils'
 import { isDapperProvider } from '../../lib/eth'
-import { Props, State } from './LoginModal.types'
+import { DefaultProps, Props, State } from './LoginModal.types'
 
 const { METAMASK, DAPPER, FORTMATIC, WALLET_CONNECT } = LoginModalOptionType
 
 export default class LoginModal extends React.PureComponent<Props, State> {
+  static defaultProps: DefaultProps = {
+    isLoading: false
+  }
+
   constructor(props: Props) {
     super(props)
     this.state = {
