@@ -6,6 +6,7 @@ import {
   isConnected,
   getError
 } from '../../modules/wallet/selectors'
+import { enableWalletRequest } from '../../modules/wallet/actions'
 import {
   MapDispatchProps,
   MapStateProps,
@@ -21,7 +22,9 @@ const mapState = (state: any): MapStateProps => ({
   hasTranslations: isEnabled(state)
 })
 
-const mapDispatch = (_dispatch: MapDispatch): MapDispatchProps => ({})
+const mapDispatch = (dispatch: MapDispatch): MapDispatchProps => ({
+  onConnect: providerType => dispatch(enableWalletRequest(providerType))
+})
 
 const mergeProps = (
   stateProps: MapStateProps,
