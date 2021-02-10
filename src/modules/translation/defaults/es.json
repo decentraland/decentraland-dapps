@@ -50,13 +50,19 @@
       "modal": {
         "title": "Conectar",
         "subtitle": "Elige como quieres conectarte.",
-        "error": "No se pudo conectar a la billetera.",
+        "error": "No se pudo conectar a la billetera."
       },
       "option": {
         "browser_extension": "Usando una Browser extension",
         "email": "Usando tu cuenta de email",
         "mobile": "Usando un navegador móvil"
       }
+    },
+    "user_menu": {
+      "sign_in": "Conectar",
+      "sign_out": "Desconectar",
+      "guest": "Invitado",
+      "settings": "Configuración"
     }
   }
 }

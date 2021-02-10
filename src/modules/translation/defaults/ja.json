@@ -53,6 +53,12 @@
           "mobile": "モバイルウォレットの使用"
         }
       }
+    },
+    "user_menu": {
+      "sign_in": "ログイン",
+      "sign_out": "サインアウト",
+      "guest": "ゲスト",
+      "settings": "設定"
     }
   }
 }

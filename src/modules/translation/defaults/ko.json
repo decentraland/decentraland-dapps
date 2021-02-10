@@ -53,6 +53,12 @@
           "mobile": "모바일 지갑 사용"
         }
       }
+    },
+    "user_menu": {
+      "sign_in": "로그인",
+      "sign_out": "로그 아웃",
+      "guest": "손님",
+      "settings": "설정"
     }
   }
 }

@@ -20,5 +20,7 @@ export const getAddress = (state: any) =>
   isConnected(state) ? getData(state)!.address : undefined
 export const getMana = (state: any) =>
   isConnected(state) ? getData(state)!.mana : undefined
+export const getManaL2 = (state: any) =>
+  isConnected(state) ? getData(state)!.manaL2 : undefined
 export const getEth = (state: any) =>
   isConnected(state) ? getData(state)!.eth : undefined
