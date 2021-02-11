@@ -18,7 +18,7 @@ export type MapStateProps = Pick<
   | 'hasActivity'
   | 'hasTranslations'
 >
-export type MapDispatchProps = Pick<Props, 'onSignIn' | 'onSignOut'>
+export type MapDispatchProps = Pick<Props, 'onSignOut'>
 export type MapDispatch = Dispatch<
   ConnectWalletRequestAction | DisconnectWalletAction
 >

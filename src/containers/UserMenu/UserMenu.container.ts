@@ -7,10 +7,7 @@ import {
   isConnecting,
   getManaL2
 } from '../../modules/wallet/selectors'
-import {
-  connectWalletRequest,
-  disconnectWallet
-} from '../../modules/wallet/actions'
+import { disconnectWallet } from '../../modules/wallet/actions'
 import { getData as getProfiles } from '../../modules/profile/selectors'
 import { isEnabled } from '../../modules/translation/selectors'
 import { getTransactions } from '../../modules/transaction/selectors'
@@ -40,8 +37,7 @@ const mapState = (state: any): MapStateProps => {
 }
 
 const mapDispatch = (dispatch: MapDispatch): MapDispatchProps => ({
-  onSignIn: () => dispatch(disconnectWallet()),
-  onSignOut: () => dispatch(connectWalletRequest())
+  onSignOut: () => dispatch(disconnectWallet())
 })
 
 const mergeProps = (
