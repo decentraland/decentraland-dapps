@@ -106,15 +106,17 @@ export default class LoginModal extends React.PureComponent<Props, State> {
   }
 
   render() {
-    const { isLoading } = this.props
+    const { open, className, isLoading, onClose } = this.props
     const { hasError } = this.state
 
     return (
       <BaseLoginModal
-        {...this.props}
+        open={open}
+        className={className}
         i18n={this.getModalTranslations()}
         loading={isLoading}
         hasError={hasError}
+        onClose={onClose}
       >
         {connection.getAvailableProviders().map(this.renderLoginModalOption)}
       </BaseLoginModal>
