@@ -3,6 +3,7 @@ import { LegacyProviderAdapter, EthereumProvider } from 'web3x-es/providers'
 import {
   connection,
   ChainId,
+  ProviderType,
   Provider as ConnectedProvider
 } from 'decentraland-connect'
 import { isMobile } from './utils'
@@ -33,6 +34,11 @@ export async function getProvider(): Promise<ConnectedProvider | null> {
   } catch (error) {
     return null
   }
+}
+
+export function getProviderType(): ProviderType | null {
+  const connectionData = connection.getConnectionData()
+  return connectionData ? connectionData.providerType : null
 }
 
 export function isCucumberProvider() {
