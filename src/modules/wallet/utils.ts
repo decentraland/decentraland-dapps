@@ -12,9 +12,9 @@ export const MANA_GRAPH_BY_NETWORK = {
   // Goerli
   5: 'https://api.thegraph.com/subgraphs/name/decentraland/mana-goerli',
   // Matic Mainnet
-  137: 'https://api.staging.thegraph.com/subgraphs/name/decentraland/mana-matic', // TODO: change to Matic Mainnet graph once available
+  137: 'https://api.staging.thegraph.com/subgraphs/name/decentraland/mana-matic',
   // Matic Mumbai
-  80001: 'https://graph-play.decentraland.io/subgraphs/name/mana-mumbai'
+  80001: 'https://api.staging.thegraph.com/subgraphs/name/decentraland/mana-mumbai'
 }
 
 export const MANA_L2_BY_L1_CHAIN_ID = {
