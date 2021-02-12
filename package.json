@@ -13,7 +13,7 @@
     "@types/uuid": "^3.4.3",
     "axios": "^0.21.1",
     "date-fns": "^1.29.0",
-    "decentraland-connect": "^1.8.0",
+    "decentraland-connect": "^2.0.0",
     "decentraland-ui": "^2.29.0",
     "flat": "^4.1.0",
     "react-intl": "^3.12.0",
