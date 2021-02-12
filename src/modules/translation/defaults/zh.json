@@ -54,6 +54,12 @@
           "mobile": "使用您的手机钱包"
         }
       }
+    },
+    "user_menu": {
+      "sign_in": "登入",
+      "sign_out": "登出",
+      "guest": "来宾",
+      "settings": "设定值"
     }
   }
 }

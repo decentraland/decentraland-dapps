@@ -2,6 +2,7 @@ export interface Wallet {
   address: string
   network: number
   mana: number
+  manaL2: number
   eth: number
 }
 

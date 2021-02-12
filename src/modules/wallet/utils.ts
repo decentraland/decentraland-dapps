@@ -1,18 +1,52 @@
 import { Address } from 'web3x-es/address'
 import { fromWei } from 'web3x-es/utils'
-import { MANA } from '../../contracts/MANA'
 import { createEth } from '../../lib/eth'
 import { Wallet } from './types'
+import { graphql } from '../../lib/graph'
 
-const MANA_ADDRESS_BY_NETWORK = {
+export const MANA_GRAPH_BY_NETWORK = {
   // Mainnet
-  1: '0x0f5d2fb29fb7d3cfee444a200298f468908cc942',
+  1: 'https://api.thegraph.com/subgraphs/name/decentraland/mana',
   // Ropsten
-  3: '0x2a8fd99c19271f4f04b1b7b9c4f7cf264b626edb',
-  // Rinkeby
-  4: '0x28bce5263f5d7f4eb7e8c6d5d78275ca455bac63',
-  // Kovan
-  42: '0x230fc362413d9e862326c2c7084610a5a2fdf78a'
+  3: 'https://api.thegraph.com/subgraphs/name/decentraland/mana-ropsten',
+  // Goerli
+  5: 'https://api.thegraph.com/subgraphs/name/decentraland/mana-goerli',
+  // Matic Mainnet
+  137: 'https://api.staging.thegraph.com/subgraphs/name/decentraland/mana-matic', // TODO: change to Matic Mainnet graph once available
+  // Matic Mumbai
+  80001: 'https://graph-play.decentraland.io/subgraphs/name/mana-mumbai'
+}
+
+export const MANA_L2_BY_L1_CHAIN_ID = {
+  1: 137,
+  3: 80001,
+  5: 80001
+}
+
+export const getManaBalanceQuery = (address: string) => `query {
+  accounts(where:{ id: "${address.toLowerCase()}" }) {
+    id
+    mana
+  }
+}`
+
+export async function fetchManaBalance(graphUrl: string, address: string) {
+  try {
+    const { accounts } = await graphql<{
+      accounts: { id: string; mana: string }[]
+    }>(graphUrl, getManaBalanceQuery(address))
+
+    if (accounts.length === 0) {
+      throw new Error(
+        `No results for Graph URL "${graphUrl}" and address "${address}"`
+      )
+    }
+
+    return parseFloat(fromWei(accounts[0].mana, 'ether'))
+  } catch (error) {
+    console.log(`Error fetching MANA balance:`, error)
+    return 0
+  }
 }
 
 export async function getWallet() {
@@ -29,21 +63,19 @@ export async function getWallet() {
   const address = accounts[0]
   const network = await eth.getId()
   const ethBalance = await eth.getBalance(address)
-  let manaBalance = '0'
-  try {
-    const mana = new MANA(
-      eth,
-      Address.fromString(MANA_ADDRESS_BY_NETWORK[network])
-    )
-    manaBalance = await mana.methods.balanceOf(address).call()
-  } catch (e) {
-    // Temporary fix. We should detect that the user should change the network
-    console.warn('Could not get MANA balance')
-  }
+  const mana = await fetchManaBalance(
+    MANA_GRAPH_BY_NETWORK[network],
+    address.toString()
+  )
+  const manaL2 = await fetchManaBalance(
+    MANA_GRAPH_BY_NETWORK[MANA_L2_BY_L1_CHAIN_ID[network]],
+    address.toString()
+  )
 
   const wallet: Wallet = {
     address: address.toString(),
-    mana: parseFloat(fromWei(manaBalance, 'ether')),
+    mana,
+    manaL2,
     eth: parseFloat(fromWei(ethBalance, 'ether')),
     network
   }
