@@ -1,6 +1,6 @@
 import { Address } from 'web3x-es/address'
 import { fromWei } from 'web3x-es/utils'
-import { createEth } from '../../lib/eth'
+import { createEth, getProviderType } from '../../lib/eth'
 import { Wallet } from './types'
 import { graphql } from '../../lib/graph'
 
@@ -52,7 +52,7 @@ export async function fetchManaBalance(graphUrl: string, address: string) {
 export async function getWallet() {
   const eth = await createEth()
   if (!eth) {
-    // this could happen if metamask is not installed
+    // This could happen if metamask is not installed
     throw new Error('Could not connect to Ethereum')
   }
   let accounts: Address[] = await eth.getAccounts()
@@ -71,13 +71,15 @@ export async function getWallet() {
     MANA_GRAPH_BY_NETWORK[MANA_L2_BY_L1_CHAIN_ID[network]],
     address.toString()
   )
+  const providerType = getProviderType()!
 
   const wallet: Wallet = {
     address: address.toString(),
     mana,
     manaL2,
     eth: parseFloat(fromWei(ethBalance, 'ether')),
-    network
+    network,
+    providerType
   }
 
   return wallet
