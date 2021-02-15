@@ -63,14 +63,9 @@ export async function getWallet() {
   const address = accounts[0]
   const network = await eth.getId()
   const ethBalance = await eth.getBalance(address)
-  const mana = await fetchManaBalance(
-    MANA_GRAPH_BY_NETWORK[network],
-    address.toString()
-  )
-  const manaL2 = await fetchManaBalance(
-    MANA_GRAPH_BY_NETWORK[MANA_L2_BY_L1_CHAIN_ID[network]],
-    address.toString()
-  )
+
+  const { mana, manaL2 } = await getMana(address.toString(), network)
+
   const providerType = getProviderType()!
 
   const wallet: Wallet = {
@@ -83,4 +78,16 @@ export async function getWallet() {
   }
 
   return wallet
+}
+
+async function getMana(address: string, network: number) {
+  const manaGraph = MANA_GRAPH_BY_NETWORK[network]
+  const manaL2Graph = MANA_GRAPH_BY_NETWORK[MANA_L2_BY_L1_CHAIN_ID[network]]
+
+  const [mana, manaL2] = await Promise.all([
+    manaGraph ? fetchManaBalance(manaGraph, address) : 0,
+    manaL2Graph ? fetchManaBalance(manaL2Graph, address) : 0
+  ])
+
+  return { mana, manaL2 }
 }
