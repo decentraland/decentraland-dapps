@@ -14,7 +14,7 @@ export const MANA_GRAPH_BY_NETWORK = {
   // Matic Mainnet
   137: 'https://api.thegraph.com/subgraphs/name/decentraland/mana-matic-mainnet',
   // Matic Mumbai
-  80001: 'https://api.thegraph.com/subgraphs/name/decentraland/mana-matic-mainnet'
+  80001: 'https://api.thegraph.com/subgraphs/name/decentraland/mana-matic-mumbai'
 }
 
 export const MANA_L2_BY_L1_CHAIN_ID = {
