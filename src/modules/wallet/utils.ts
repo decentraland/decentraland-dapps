@@ -5,16 +5,16 @@ import { Wallet } from './types'
 import { graphql } from '../../lib/graph'
 
 export const MANA_GRAPH_BY_NETWORK = {
-  // Mainnet
-  1: 'https://api.thegraph.com/subgraphs/name/decentraland/mana',
-  // Ropsten
-  3: 'https://api.thegraph.com/subgraphs/name/decentraland/mana-ropsten',
-  // Goerli
-  5: 'https://api.thegraph.com/subgraphs/name/decentraland/mana-goerli',
+  // Ethereum Mainnet
+  1: 'https://api.thegraph.com/subgraphs/name/decentraland/mana-ethereum-mainnet',
+  // Ethereum Ropsten
+  3: 'https://api.thegraph.com/subgraphs/name/decentraland/mana-ethereum-ropsten',
+  // Ethereum Goerli
+  5: 'https://api.thegraph.com/subgraphs/name/decentraland/mana-ethereum-goerli',
   // Matic Mainnet
-  137: 'https://api.staging.thegraph.com/subgraphs/name/decentraland/mana-matic',
+  137: 'https://api.thegraph.com/subgraphs/name/decentraland/mana-matic-mainnet',
   // Matic Mumbai
-  80001: 'https://api.staging.thegraph.com/subgraphs/name/decentraland/mana-mumbai'
+  80001: 'https://api.thegraph.com/subgraphs/name/decentraland/mana-matic-mumbai'
 }
 
 export const MANA_L2_BY_L1_CHAIN_ID = {
