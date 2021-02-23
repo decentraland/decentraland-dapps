@@ -14,7 +14,7 @@
     "axios": "^0.21.1",
     "date-fns": "^1.29.0",
     "decentraland-connect": "^2.0.0",
-    "decentraland-ui": "^2.29.0",
+    "decentraland-ui": "^2.30.0",
     "flat": "^4.1.0",
     "react-intl": "^3.12.0",
     "redux-persistence": "^1.2.0",
@@ -57,7 +57,7 @@
     "validate-commit-message": "^3.0.1"
   },
   "peerDependencies": {
-    "decentraland-ui": ">=2.0.0",
+    "decentraland-ui": ">=2.30.0",
     "react": "^16.4.1",
     "react-redux": "^5.0.7",
     "redux": "^3.7.2",
