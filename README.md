@@ -1036,18 +1036,23 @@ async function wrapProviderToEthers() {
 }
 ```
 
-### Web3x Eth instance
+### Eth instance
 
-Get web3x Eth instance as a legacy provider
+Get an Eth instance with your lib of choice
 
 ```ts
-import { createETH } from 'decentraland-dapps/dist/lib/eth'
+import { Eth } from 'web3x-es/eth'
+import { getProvider } from 'decentraland-dapps/dist/lib/eth'
 
 async function doSomething() {
-  const eth = await createETH()
-  if (eth) {
-    // Do something
-  }
+  const provider = await getProvider()
+  if (!provider) throw new Error()
+
+  // web3x
+  const eth = new Eth(provider) // or new Eth(new LegacyProviderAdapter(provider))
+
+  // ethers
+  const eth = new ethers.providers.Web3Provider(provider)
 }
 ```
 

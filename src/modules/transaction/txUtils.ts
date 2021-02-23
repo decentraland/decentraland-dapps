@@ -1,5 +1,8 @@
+import { Eth } from 'web3x-es/eth'
 import { TransactionResponse } from 'web3x-es/formatters'
 import { Address } from 'web3x-es/address'
+import { ChainId } from '@dcl/schemas'
+import { connection, ProviderType } from 'decentraland-connect'
 import {
   ReplacedTransaction,
   TransactionStatus,
@@ -9,13 +12,18 @@ import {
   RevertedTransaction,
   ConfirmedTransaction
 } from './types'
-import { createEth } from '../../lib/eth'
 
 export async function getTransaction(
+  chainId: ChainId,
   hash: string
 ): Promise<AnyTransaction | null> {
-  const eth = await createEth()
-  if (!eth) return null
+  const provider = await connection.createProvider(
+    ProviderType.NETWORK,
+    chainId
+  )
+  if (!provider) return null
+
+  const eth = new Eth(provider)
 
   let accounts: Address[] = []
   try {

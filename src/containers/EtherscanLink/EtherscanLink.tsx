@@ -19,9 +19,9 @@ export default class EtherscanLink extends React.PureComponent<Props> {
       return null
     }
 
-    const { network, className, target, text, children } = this.props
+    const { chainId, className, target, text, children } = this.props
 
-    const href = getEtherscanHref({ address, txHash }, network)
+    const href = getEtherscanHref({ address, txHash }, chainId)
 
     return (
       <a className={className} href={href} target={target}>

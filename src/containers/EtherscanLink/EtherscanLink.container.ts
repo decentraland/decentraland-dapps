@@ -1,14 +1,11 @@
 import { connect } from 'react-redux'
-
-import EtherscanLink from './EtherscanLink'
+import { getChainId } from '../../modules/wallet/selectors'
 import { MapStateProps, MapDispatchProps } from './EtherscanLink.types'
-import { getNetwork } from '../../modules/wallet/selectors'
+import EtherscanLink from './EtherscanLink'
 
-const mapState = (state: any): MapStateProps => {
-  return {
-    network: getNetwork(state)
-  }
-}
+const mapState = (state: any): MapStateProps => ({
+  chainId: getChainId(state)
+})
 
 const mapDispatch = (_: any): MapDispatchProps => ({})
 

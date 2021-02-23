@@ -1,3 +1,5 @@
+import { ChainId } from '@dcl/schemas'
+
 export type DefaultProps = {
   className: string
   target: string
@@ -7,8 +9,8 @@ export type DefaultProps = {
 export type Props = Partial<DefaultProps> & {
   address: string
   txHash: string
-  network?: number
+  chainId?: ChainId
 }
 
-export type MapStateProps = Pick<Props, 'network'>
+export type MapStateProps = Pick<Props, 'chainId'>
 export type MapDispatchProps = {}

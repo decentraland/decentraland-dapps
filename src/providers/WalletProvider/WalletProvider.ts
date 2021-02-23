@@ -1,6 +1,5 @@
 import React from 'react'
-import { EthereumProvider } from 'web3x-es/providers/ethereum-provider'
-import { createEth } from '../../lib/eth'
+import { getProvider } from '../../lib/eth'
 import { getWallet } from '../../modules/wallet/utils'
 import {
   Props,
@@ -25,10 +24,10 @@ export default class WalletProvider extends React.PureComponent<Props> {
   }
 
   handleChangeNetwork = async () => {
-    const { isConnected, isConnecting, network, onChangeNetwork } = this.props
+    const { isConnected, isConnecting, chainId, onChangeNetwork } = this.props
     try {
       const wallet = await getWallet()
-      if (isConnected && !isConnecting && wallet.network !== network) {
+      if (isConnected && !isConnecting && wallet.chainId !== chainId) {
         onChangeNetwork(wallet)
       }
     } catch (error) {
@@ -36,30 +35,22 @@ export default class WalletProvider extends React.PureComponent<Props> {
     }
   }
 
-  call(
-    provider: EthereumProvider,
-    method: EmitterMethod,
-    type: EventType,
-    handler: Handler
-  ) {
-    switch (type) {
-      case 'accountsChanged':
-        provider[method](type, handler as AccountsChangedHandler)
-        break
-      case 'networkChanged':
-        provider[method](type, handler as NetworkChangedHandler)
-        break
-      default:
-      // do nothing
-    }
-  }
-
   async handle(method: EmitterMethod, type: EventType, handler: Handler) {
     // try to use web3x abstraction
-    const eth = await createEth()
-    if (eth) {
+    const provider = await getProvider()
+    if (provider) {
       try {
-        this.call(eth.provider, method, type, handler)
+        switch (type) {
+          case 'accountsChanged':
+            provider[method](type, handler as AccountsChangedHandler)
+            break
+          case 'networkChanged':
+            provider[method](type, handler as NetworkChangedHandler)
+            break
+          default:
+            // do nothing
+            break
+        }
         return // all good, early return
       } catch (error) {
         // it fails if there's legacy provider (ie. metamask legacy provider) but it shouldn't happen

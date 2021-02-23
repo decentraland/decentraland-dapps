@@ -1,5 +1,6 @@
 import { EthereumProvider } from 'web3x-es/providers/ethereum-provider'
 import { Dispatch } from 'redux'
+import { ChainId } from '@dcl/schemas'
 import {
   connectWalletRequest,
   ConnectWalletRequestAction,
@@ -11,7 +12,7 @@ import {
 
 export type Props = {
   address?: string
-  network?: number
+  chainId?: ChainId
   isConnected: boolean
   isConnecting: boolean
   children: React.ReactNode | null
@@ -22,11 +23,11 @@ export type Props = {
 
 export type MapStateProps = Pick<
   Props,
-  'address' | 'network' | 'isConnected' | 'isConnecting'
+  'address' | 'chainId' | 'isConnected' | 'isConnecting'
 >
 export type MapDispatchProps = Pick<
   Props,
-  'address' | 'network' | 'onConnect' | 'onChangeAccount' | 'onChangeNetwork'
+  'address' | 'chainId' | 'onConnect' | 'onChangeAccount' | 'onChangeNetwork'
 >
 export type MapDispatch = Dispatch<
   ConnectWalletRequestAction | ChangeAccountAction | ChangeNetworkAction
@@ -35,6 +36,6 @@ export type MapDispatch = Dispatch<
 export type EventType = 'accountsChanged' | 'networkChanged'
 export type EmitterMethod = 'on' | 'removeListener'
 export type AccountsChangedHandler = (accounts: string[]) => void
-export type NetworkChangedHandler = (network: string) => void
+export type NetworkChangedHandler = (chainId: string) => void
 export type Handler = AccountsChangedHandler | NetworkChangedHandler
 export type ProviderWindow = Window & { ethereum?: EthereumProvider }

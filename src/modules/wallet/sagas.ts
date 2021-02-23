@@ -1,6 +1,7 @@
 import { LegacyProvider } from 'web3x-es/providers'
 import { put, call, all, takeEvery } from 'redux-saga/effects'
-import { connection, ChainId } from 'decentraland-connect'
+import { ChainId } from '@dcl/schemas'
+import { connection } from 'decentraland-connect'
 import { isCucumberProvider, isValidChainId } from '../../lib/eth'
 import {
   connectWalletSuccess,
@@ -36,13 +37,16 @@ if (isCucumberProvider()) {
 }
 
 // Can be set on createWalletSaga
-let CHAIN_ID: ChainId = ChainId.MAINNET
+let CHAIN_ID: ChainId = ChainId.ETHEREUM_MAINNET
 
 function* handleConnectWalletRequest() {
   try {
     const wallet = yield call(() => getWallet())
     yield put(connectWalletSuccess(wallet))
   } catch (error) {
+    console.log('*********************************************')
+    console.log(error)
+    console.log('*********************************************')
     yield put(disconnectWallet())
     yield put(connectWalletFailure(error.message))
   }

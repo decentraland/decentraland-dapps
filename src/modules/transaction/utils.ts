@@ -1,4 +1,5 @@
 import { AnyAction } from 'redux'
+import { ChainId } from '@dcl/schemas'
 import {
   Transaction,
   TransactionPayload,
@@ -12,12 +13,13 @@ import {
 export const TRANSACTION_ACTION_FLAG = '_watch_tx'
 
 export function buildActionRef(transaction: Transaction) {
-  const { actionType, events, withReceipt, payload } = transaction
+  const { actionType, withReceipt, payload } = transaction
+  const buildFunction = withReceipt
+    ? buildTransactionWithReceiptPayload
+    : buildTransactionPayload
   return {
     type: actionType,
-    payload: (withReceipt
-      ? buildTransactionWithReceiptPayload
-      : buildTransactionPayload)(transaction.hash, payload, events)
+    payload: buildFunction(transaction.chainId, transaction.hash, payload)
   }
 }
 
@@ -36,25 +38,25 @@ export function getTransactionHashFromAction(
 }
 
 export function buildTransactionPayload(
+  chainId: ChainId,
   hash: string,
-  payload = {},
-  events: string[] = []
+  payload = {}
 ): TransactionPayload {
   return {
     [TRANSACTION_ACTION_FLAG]: {
+      chainId,
       hash,
-      payload,
-      events
+      payload
     }
   }
 }
 
 export function buildTransactionWithReceiptPayload(
+  chainId: ChainId,
   hash: string,
-  payload = {},
-  events: string[] = []
+  payload = {}
 ): TransactionPayload {
-  const txPayload = buildTransactionPayload(hash, payload, events)
+  const txPayload = buildTransactionPayload(chainId, hash, payload)
 
   txPayload[TRANSACTION_ACTION_FLAG].withReceipt = true
 
@@ -80,13 +82,13 @@ export function getEtherscanHref(
   return `${getEtherscanOrigin(network)}${pathname}`
 }
 
-export function getEtherscanOrigin(network: number = 1) {
-  switch (network) {
-    case 3:
+export function getEtherscanOrigin(chainId: number = ChainId.ETHEREUM_MAINNET) {
+  switch (chainId) {
+    case ChainId.ETHEREUM_ROPSTEN:
       return 'https://ropsten.etherscan.io'
-    case 4:
+    case ChainId.ETHEREUM_RINKEBY:
       return 'https://rinkeby.etherscan.io'
-    case 5:
+    case ChainId.ETHEREUM_GOERLI:
       return 'https://goerli.etherscan.io'
     default:
       return 'https://etherscan.io'
