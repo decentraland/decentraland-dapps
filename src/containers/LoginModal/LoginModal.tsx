@@ -7,10 +7,10 @@ import {
 } from 'decentraland-ui'
 import { ProviderType } from 'decentraland-connect'
 import { T } from '../../modules/translation/utils'
-import { isDapperProvider } from '../../lib/eth'
+import { isCucumberProvider, isDapperProvider } from '../../lib/eth'
 import { DefaultProps, Props, State } from './LoginModal.types'
 
-const { METAMASK, DAPPER, FORTMATIC, WALLET_CONNECT } = LoginModalOptionType
+const { METAMASK, DAPPER, SAMSUNG, FORTMATIC, WALLET_CONNECT } = LoginModalOptionType
 
 export default class LoginModal extends React.PureComponent<Props, State> {
   static defaultProps: DefaultProps = {
@@ -41,6 +41,7 @@ export default class LoginModal extends React.PureComponent<Props, State> {
     switch (loginType) {
       case METAMASK:
       case DAPPER:
+      case SAMSUNG:
         providerType = ProviderType.INJECTED
         break
       case FORTMATIC:
@@ -83,7 +84,13 @@ export default class LoginModal extends React.PureComponent<Props, State> {
 
     switch (providerType) {
       case ProviderType.INJECTED:
-        loginType = isDapperProvider() ? DAPPER : METAMASK
+        if (isCucumberProvider()) {
+          loginType = SAMSUNG
+        } else if (isDapperProvider()) {
+          loginType = DAPPER
+        } else {
+          loginType = METAMASK
+        }
         break
       case ProviderType.FORTMATIC:
         loginType = FORTMATIC
