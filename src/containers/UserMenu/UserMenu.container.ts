@@ -28,9 +28,12 @@ const mapState = (state: any): MapStateProps => {
 
   const manaBalances: Props['manaBalances'] = {}
   if (isSignedIn) {
-    for (const key of Object.keys(Network)) {
-      const network = Network[key]
-      manaBalances[network] = networks![network].mana
+    const networkList = Object.values(Network) as Network[]
+    for (const network of networkList) {
+      const networkData = networks![network]
+      if (networkData) {
+        manaBalances[network] = networks![network].mana
+      }
     }
   }
 

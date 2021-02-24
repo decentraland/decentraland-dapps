@@ -1,6 +1,6 @@
 import React from 'react'
 import { getProvider } from '../../lib/eth'
-import { getWallet } from '../../modules/wallet/utils'
+import { buildWallet } from '../../modules/wallet/utils'
 import {
   Props,
   EventType,
@@ -14,7 +14,7 @@ export default class WalletProvider extends React.PureComponent<Props> {
   handleChangeAccount = async () => {
     const { isConnected, isConnecting, address, onChangeAccount } = this.props
     try {
-      const wallet = await getWallet()
+      const wallet = await buildWallet()
       if (isConnected && !isConnecting && wallet.address !== address) {
         onChangeAccount(wallet)
       }
@@ -26,7 +26,7 @@ export default class WalletProvider extends React.PureComponent<Props> {
   handleChangeNetwork = async () => {
     const { isConnected, isConnecting, chainId, onChangeNetwork } = this.props
     try {
-      const wallet = await getWallet()
+      const wallet = await buildWallet()
       if (isConnected && !isConnecting && wallet.chainId !== chainId) {
         onChangeNetwork(wallet)
       }

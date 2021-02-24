@@ -22,5 +22,17 @@ export const getChainId = (state: any) =>
 export const getProviderType = (state: any) =>
   isConnected(state) ? getData(state)!.providerType : undefined
 
+export const getNetwork = (state: any) =>
+  isConnected(state) ? getData(state)!.network : undefined
+
 export const getNetworks = (state: any) =>
   isConnected(state) ? getData(state)!.networks : undefined
+
+export const getMana = (state: any) => {
+  if (!isConnected(state)) {
+    return undefined
+  }
+  const network = getNetwork(state)!
+  const networks = getNetworks(state)!
+  return networks[network].mana
+}

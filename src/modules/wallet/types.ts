@@ -13,6 +13,7 @@ export type Networks = Record<Network, NetworkData>
 export interface Wallet {
   address: string
   networks: Networks
+  network: Network
   chainId: ChainId
   providerType: ProviderType
 }

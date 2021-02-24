@@ -18,7 +18,7 @@ import {
   disconnectWallet,
   DISCONNECT_WALLET
 } from './actions'
-import { getWallet } from './utils'
+import { buildWallet } from './utils'
 import { CreateWalletOptions } from './types'
 
 // Patch Samsung's Cucumber provider send to support promises
@@ -41,12 +41,9 @@ let CHAIN_ID: ChainId = ChainId.ETHEREUM_MAINNET
 
 function* handleConnectWalletRequest() {
   try {
-    const wallet = yield call(() => getWallet())
+    const wallet = yield call(() => buildWallet())
     yield put(connectWalletSuccess(wallet))
   } catch (error) {
-    console.log('*********************************************')
-    console.log(error)
-    console.log('*********************************************')
     yield put(disconnectWallet())
     yield put(connectWalletFailure(error.message))
   }

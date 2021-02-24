@@ -1,5 +1,5 @@
 import { Eth } from 'web3x-es/eth'
-import { HttpProvider } from 'web3x-es/providers'
+import { connection, ProviderType } from 'decentraland-connect'
 import { Address } from 'web3x-es/address'
 import { fromWei } from 'web3x-es/utils'
 import { ChainId } from '@dcl/schemas'
@@ -29,17 +29,18 @@ export async function fetchManaBalance(graphUrl: string, address: string) {
 
     return parseFloat(fromWei(accounts[0].mana, 'ether'))
   } catch (error) {
-    console.log(`Error fetching MANA balance:`, error)
     return 0
   }
 }
 
-export async function getWallet(): Promise<Wallet> {
+export async function buildWallet(): Promise<Wallet> {
   const provider = await getProvider()
+
   if (!provider) {
     // This could happen if metamask is not installed
     throw new Error('Could not connect to Ethereum')
   }
+
   const eth = new Eth(provider)
 
   const accounts: Address[] = await eth.getAccounts()
@@ -50,40 +51,35 @@ export async function getWallet(): Promise<Wallet> {
 
   const address = accounts[0]
   const chainId = (await eth.getId()) as ChainId
-  const { networkMapping } = getChainConfiguration(chainId)
+  const config = getChainConfiguration(chainId)
   const networks: Partial<Networks> = {}
 
-  for (const mapping of Object.values(networkMapping)) {
-    for (const network of Object.keys(mapping)) {
-      const networkChainId = mapping[network]
-      const networkConfiguration = getChainConfiguration(networkChainId)
-      const networkRPC = networkConfiguration.rpcURL
+  for (const network of Object.keys(config.networkMapping)) {
+    const networkChainId = config.networkMapping[network]
+    const networkConfiguration = getChainConfiguration(networkChainId)
 
-      const networkEth = new Eth(new HttpProvider(networkRPC))
-      const [balance, mana] = await Promise.all([
-        networkEth.getBalance(address),
-        fetchManaBalance(networkConfiguration.manaGraphURL, address.toString())
-      ])
+    const provider = await connection.createProvider(
+      ProviderType.NETWORK,
+      networkChainId
+    )
+    const networkEth = new Eth(provider)
+    const [balance, mana] = await Promise.all([
+      networkEth.getBalance(address),
+      fetchManaBalance(networkConfiguration.manaGraphURL, address.toString())
+    ])
 
-      networks[network] = {
-        chainId: networkChainId,
-        balance,
-        mana
-      }
+    networks[network] = {
+      chainId: networkChainId,
+      balance,
+      mana
     }
   }
-
-  console.log('WALLET BIATCH', {
-    address: address.toString(),
-    providerType: getProviderType()!,
-    networks: networks as Networks,
-    chainId
-  })
 
   return {
     address: address.toString(),
     providerType: getProviderType()!,
     networks: networks as Networks,
+    network: config.network,
     chainId
   }
 }
