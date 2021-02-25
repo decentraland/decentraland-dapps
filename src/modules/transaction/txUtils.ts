@@ -1,5 +1,6 @@
 import { Eth } from 'web3x-es/eth'
 import { TransactionResponse } from 'web3x-es/formatters'
+import { LegacyProviderAdapter } from 'web3x-es/providers'
 import { Address } from 'web3x-es/address'
 import { ChainId } from '@dcl/schemas'
 import { connection, ProviderType } from 'decentraland-connect'
@@ -14,6 +15,7 @@ import {
 } from './types'
 
 export async function getTransaction(
+  address: string,
   chainId: ChainId,
   hash: string
 ): Promise<AnyTransaction | null> {
@@ -23,25 +25,18 @@ export async function getTransaction(
   )
   if (!provider) return null
 
-  const eth = new Eth(provider)
+  const eth = new Eth(new LegacyProviderAdapter(provider as any))
 
-  let accounts: Address[] = []
-  try {
-    accounts = await eth.getAccounts()
-  } catch (error) {
-    console.warn(`Could not get accounts`, error.message)
-  }
-
-  if (accounts.length === 0) {
+  if (!address) {
     return null
   }
 
   let currentNonce: number | null = null
   try {
-    currentNonce = await eth.getTransactionCount(accounts[0])
+    currentNonce = await eth.getTransactionCount(Address.fromString(address))
   } catch (error) {
     console.warn(
-      `Could not get current nonce for account "${accounts[0]}"`,
+      `Could not get current nonce for account "${address}"`,
       error.message
     )
   }

@@ -93,10 +93,11 @@ function* handleFetchTransactionRequest(action: FetchTransactionRequestAction) {
   }
 
   try {
+    const address: string = yield select(state => getAddress(state))
     watchPendingIndex[hash] = true
 
     let tx: AnyTransaction = yield call(() =>
-      getTransactionFromChain(transaction.chainId, hash)
+      getTransactionFromChain(address, transaction.chainId, hash)
     )
     let isUnknown = tx == null
 
@@ -139,7 +140,9 @@ function* handleFetchTransactionRequest(action: FetchTransactionRequestAction) {
       yield delay(TRANSACTION_FETCH_DELAY)
 
       // update tx status from network
-      tx = yield call(() => getTransactionFromChain(transaction.chainId, hash))
+      tx = yield call(() =>
+        getTransactionFromChain(address, transaction.chainId, hash)
+      )
       isUnknown = tx == null
     }
 
@@ -205,7 +208,7 @@ function* handleReplaceTransactionRequest(
   while (true) {
     // check if tx has status, this is to recover from a tx that is dropped momentarily
     const tx: AnyTransaction = yield call(() =>
-      getTransactionFromChain(transaction.chainId, hash)
+      getTransactionFromChain(account, transaction.chainId, hash)
     )
     if (tx != null) {
       const txInState: Transaction = yield select(state =>
@@ -329,11 +332,12 @@ function* handleWatchRevertedTransaction(
   const txInState: Transaction = yield select(state =>
     getTransactionInState(state, hash)
   )
+  const address: string = yield select(state => getAddress(state))
 
   do {
     yield delay(TRANSACTION_FETCH_DELAY)
     const txInNetwork: AnyTransaction | null = yield call(() =>
-      getTransactionFromChain(txInState.chainId, hash)
+      getTransactionFromChain(address, txInState.chainId, hash)
     )
     if (
       txInNetwork != null &&
