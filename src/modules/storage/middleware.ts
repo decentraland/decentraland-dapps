@@ -54,7 +54,7 @@ export function createStorageMiddleware<T>(options: StorageMiddleware<T>) {
     ...paths
   ])
 
-  const whitelist = [
+  const whitelist = new Set([
     CHANGE_LOCALE,
     FETCH_TRANSLATIONS_SUCCESS,
     FETCH_TRANSACTION_REQUEST,
@@ -67,10 +67,10 @@ export function createStorageMiddleware<T>(options: StorageMiddleware<T>) {
     CLEAR_TRANSACTIONS,
     CLEAR_TRANSACTION,
     ...actions
-  ]
+  ])
 
   const storageMiddleware: any = storage.createMiddleware(storageEngine, {
-    filterAction: (action: any) => whitelist.includes(action.type),
+    filterAction: (action: any) => whitelist.has(action.type),
     transform: options.transform,
     onError: options.onError
   })
