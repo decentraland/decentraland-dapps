@@ -3,7 +3,8 @@ import { TransactionResponse } from 'web3x-es/formatters'
 import { LegacyProviderAdapter } from 'web3x-es/providers'
 import { Address } from 'web3x-es/address'
 import { ChainId } from '@dcl/schemas'
-import { connection, ProviderType } from 'decentraland-connect'
+import { ProviderType } from 'decentraland-connect'
+import { createProvider } from '../../lib/eth'
 import {
   ReplacedTransaction,
   TransactionStatus,
@@ -19,10 +20,7 @@ export async function getTransaction(
   chainId: ChainId,
   hash: string
 ): Promise<AnyTransaction | null> {
-  const provider = await connection.createProvider(
-    ProviderType.NETWORK,
-    chainId
-  )
+  const provider = await createProvider(ProviderType.NETWORK, chainId)
   if (!provider) return null
 
   const eth = new Eth(new LegacyProviderAdapter(provider as any))

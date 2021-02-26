@@ -1,10 +1,14 @@
 import { Eth } from 'web3x-es/eth'
-import { connection, ProviderType } from 'decentraland-connect'
+import { ProviderType } from 'decentraland-connect'
 import { Address } from 'web3x-es/address'
 import { fromWei } from 'web3x-es/utils'
 import { LegacyProviderAdapter } from 'web3x-es/providers'
 import { ChainId } from '@dcl/schemas'
-import { getConnectedProvider, getConnectedProviderType } from '../../lib/eth'
+import {
+  createProvider,
+  getConnectedProvider,
+  getConnectedProviderType
+} from '../../lib/eth'
 import { graphql } from '../../lib/graph'
 import { getChainConfiguration } from '../../lib/chainConfiguration'
 import { Networks, Wallet } from './types'
@@ -59,10 +63,7 @@ export async function buildWallet(): Promise<Wallet> {
     const networkChainId = config.networkMapping[network]
     const networkConfiguration = getChainConfiguration(networkChainId)
 
-    const provider = await connection.createProvider(
-      ProviderType.NETWORK,
-      networkChainId
-    )
+    const provider = await createProvider(ProviderType.NETWORK, networkChainId)
     const networkEth = new Eth(provider)
 
     const [balance, mana] = await Promise.all([
