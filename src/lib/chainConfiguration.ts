@@ -3,15 +3,15 @@ import { RPC_URLS } from 'decentraland-connect'
 
 export const MANA_GRAPH_BY_CHAIN_ID = {
   [ChainId.ETHEREUM_MAINNET]:
-    'https://api.thegraph.com/subgraphs/name/decentraland/mana',
+    'https://api.thegraph.com/subgraphs/name/decentraland/mana-ethereum-mainnet',
   [ChainId.ETHEREUM_ROPSTEN]:
-    'https://api.thegraph.com/subgraphs/name/decentraland/mana-ropsten',
+    'https://api.thegraph.com/subgraphs/name/decentraland/mana-ethereum-ropsten',
   [ChainId.ETHEREUM_GOERLI]:
-    'https://api.thegraph.com/subgraphs/name/decentraland/mana-goerli',
+    'https://api.thegraph.com/subgraphs/name/decentraland/mana-ethereum-goerli',
   [ChainId.MATIC_MAINNET]:
-    'https://api.staging.thegraph.com/subgraphs/name/decentraland/mana-matic',
+    'https://api.thegraph.com/subgraphs/name/decentraland/mana-matic-mainnet',
   [ChainId.MATIC_MUMBAI]:
-    'https://api.staging.thegraph.com/subgraphs/name/decentraland/mana-mumbai'
+    'https://api.thegraph.com/subgraphs/name/decentraland/mana-matic-mumbai'
 }
 
 const NETWORK_MAPPING_BY_CHAIN_ID = {
