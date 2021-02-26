@@ -22,7 +22,7 @@ Common modules for our dApps
   - [Footer](https://github.com/decentraland/decentraland-dapps#footer)
   - [SignInPage](https://github.com/decentraland/decentraland-dapps#signinpage)
   - [Modal](https://github.com/decentraland/decentraland-dapps#modal)
-  - [EtherscanLink](https://github.com/decentraland/decentraland-dapps#etherscanlink)
+  - [TransactionLink](https://github.com/decentraland/decentraland-dapps#transactionlink)
 - [Components](https://github.com/decentraland/decentraland-dapps#components)
   - [Intercom](https://github.com/decentraland/decentraland-dapps#intercom)
 
@@ -1026,28 +1026,33 @@ Ethereum helpers
 Get user's connected provider without being wrapped by any library
 
 ```ts
-import { getProvider } from 'decentraland-dapps/dist/lib/eth'
+import { getConnectedProvider } from 'decentraland-dapps/dist/lib/eth'
 
 async function wrapProviderToEthers() {
-  const provider = await getProvider()
+  const provider = await getConnectedProvider()
   if (provider) {
     return new etheres.providers.Web3Provider(provider)
   }
 }
 ```
 
-### Web3x Eth instance
+### Eth instance
 
-Get web3x Eth instance as a legacy provider
+Get an Eth instance with your lib of choice
 
 ```ts
-import { createETH } from 'decentraland-dapps/dist/lib/eth'
+import { Eth } from 'web3x-es/eth'
+import { getConnectedProvider } from 'decentraland-dapps/dist/lib/eth'
 
 async function doSomething() {
-  const eth = await createETH()
-  if (eth) {
-    // Do something
-  }
+  const provider = await getConnectedProvider()
+  if (!provider) throw new Error()
+
+  // web3x
+  const eth = new Eth(provider) // or new Eth(new LegacyProviderAdapter(provider))
+
+  // ethers
+  const eth = new ethers.providers.Web3Provider(provider)
 }
 ```
 
@@ -1311,9 +1316,9 @@ size="small"
 onClose={/*close the modal by name*/}
 ```
 
-## EtherscanLink
+## TransactionLink
 
-The `<EtherscanLink>` can be used to link a transaction hash to Etherscan.io, and it connects to the redux store to know on which network the user is on.
+The `<TransactionLink>` can be used to link a transaction hash to Etherscan.io, and it connects to the redux store to know on which network the user is on.
 
 ### Dependencies
 
@@ -1323,13 +1328,13 @@ This container requires you to install the [Wallet](https://github.com/decentral
 
 ```tsx
 import * as React from 'react'
-import EtherscanLink from 'decentraland-dapps/dist/containers/EtherscanLink'
+import TransactionLink from 'decentraland-dapps/dist/containers/TransactionLink'
 
 export default class MyComponent extends React.PureComponent {
   render() {
     return (
       <p>
-        You sent an <EtherscanLink txHash={'0x...'}>invite</EtherscanLink>
+        You sent an <TransactionLink txHash={'0x...'}>invite</TransactionLink>
       </p>
     )
   }

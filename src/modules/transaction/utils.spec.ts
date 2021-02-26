@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import { ChainId } from '@dcl/schemas'
 import {
   TRANSACTION_ACTION_FLAG,
   buildTransactionPayload,
@@ -13,17 +14,17 @@ describe('modules', function() {
     describe('utils', function() {
       const hash = '0xdeadbeef'
       const payload = { some: 'data' }
-      const events = ['Some', 'Event']
+      const chainId = ChainId.ETHEREUM_MAINNET
 
-      const tx = { hash, payload, events }
-      const txWithReceipt = { hash, payload, events, withReceipt: true }
+      const tx = { hash, payload }
+      const txWithReceipt = { hash, payload, withReceipt: true }
 
       describe('buildTransactionPayload', function() {
         it('should return a new object with the transaction flag an the action inside', function() {
           const txPayload = buildTransactionPayload(
+            chainId,
             tx.hash,
-            tx.payload,
-            tx.events
+            tx.payload
           )
 
           expect(txPayload).to.deep.equal({
@@ -32,13 +33,12 @@ describe('modules', function() {
         })
         it('should support only supplying the transaction hash', function() {
           const tx = { hash }
-          const txPayload = buildTransactionPayload(tx.hash)
+          const txPayload = buildTransactionPayload(chainId, tx.hash)
 
           expect(txPayload).to.deep.equal({
             [TRANSACTION_ACTION_FLAG]: {
               ...tx,
-              payload: {},
-              events: []
+              payload: {}
             }
           })
         })
@@ -47,9 +47,9 @@ describe('modules', function() {
       describe('buildTransactionWithReceiptPayload', function() {
         it('should return a new object with the transaction flag an the action inside', function() {
           const txPayload = buildTransactionWithReceiptPayload(
+            chainId,
             tx.hash,
-            tx.payload,
-            tx.events
+            tx.payload
           )
 
           expect(txPayload).to.deep.equal({
@@ -58,13 +58,12 @@ describe('modules', function() {
         })
         it('should support only supplying the transaction hash', function() {
           const tx = { hash }
-          const txPayload = buildTransactionWithReceiptPayload(tx.hash)
+          const txPayload = buildTransactionWithReceiptPayload(chainId, tx.hash)
 
           expect(txPayload).to.deep.equal({
             [TRANSACTION_ACTION_FLAG]: {
               ...txWithReceipt,
-              payload: {},
-              events: []
+              payload: {}
             }
           })
         })
@@ -73,9 +72,9 @@ describe('modules', function() {
       describe('isTransactionAction', function() {
         it('should return true if the action was built with buildTransactionPayload', function() {
           const txPayload = buildTransactionPayload(
+            chainId,
             tx.hash,
-            tx.payload,
-            tx.events
+            tx.payload
           )
           const action = {
             type: '[Success] Transaction action',
@@ -87,9 +86,9 @@ describe('modules', function() {
 
         it('should return true if the action was built with buildTransactionWithReceiptPayload', function() {
           const txPayload = buildTransactionWithReceiptPayload(
+            chainId,
             tx.hash,
-            tx.payload,
-            tx.events
+            tx.payload
           )
           const action = {
             type: '[Success] Transaction action',
@@ -120,9 +119,9 @@ describe('modules', function() {
       describe('getTransactionFromAction', function() {
         it('should return the transaction from a built transaction action with buildTransactionPayload', function() {
           const txPayload = buildTransactionWithReceiptPayload(
+            chainId,
             tx.hash,
-            tx.payload,
-            tx.events
+            tx.payload
           )
           const action = {
             type: '[Success] Transaction action',
@@ -139,9 +138,9 @@ describe('modules', function() {
 
         it('should return the transaction from a built transaction action with buildTransactionWithReceiptPayload', function() {
           const txPayload = buildTransactionPayload(
+            chainId,
             tx.hash,
-            tx.payload,
-            tx.events
+            tx.payload
           )
           const action = {
             type: '[Success] Transaction action',
@@ -169,9 +168,9 @@ describe('modules', function() {
       describe('getTransactionHashFromAction', function() {
         it('should return the transaction hash from a built transaction action with buildTransactionPayload', function() {
           const txPayload = buildTransactionPayload(
+            chainId,
             tx.hash,
-            tx.payload,
-            tx.events
+            tx.payload
           )
           const action = {
             type: '[Success] Transaction action',
@@ -183,9 +182,9 @@ describe('modules', function() {
 
         it('should return the transaction hash from a built transaction action with buildTransactionWithReceiptPayload', function() {
           const txPayload = buildTransactionWithReceiptPayload(
+            chainId,
             tx.hash,
-            tx.payload,
-            tx.events
+            tx.payload
           )
           const action = {
             type: '[Success] Transaction action',

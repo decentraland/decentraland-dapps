@@ -1,25 +1,22 @@
 import { connect } from 'react-redux'
-
-import Navbar from './Navbar'
-import { NavbarProps, MapStateProps, MapDispatchProps } from './Navbar.types'
 import {
   isConnected,
   isConnecting,
-  getMana,
-  getAddress
+  getAddress,
+  getMana
 } from '../../modules/wallet/selectors'
 import { isEnabled } from '../../modules/translation/selectors'
 import { RootDispatch } from '../../types'
+import { NavbarProps, MapStateProps, MapDispatchProps } from './Navbar.types'
+import Navbar from './Navbar'
 
-const mapState = (state: any): MapStateProps => {
-  return {
-    mana: getMana(state),
-    address: getAddress(state),
-    isConnected: isConnected(state),
-    isConnecting: isConnecting(state),
-    hasTranslations: isEnabled(state)
-  }
-}
+const mapState = (state: any): MapStateProps => ({
+  mana: getMana(state),
+  address: getAddress(state),
+  isConnected: isConnected(state),
+  isConnecting: isConnecting(state),
+  hasTranslations: isEnabled(state)
+})
 
 const mapDispatch = (_dispatch: RootDispatch): MapDispatchProps => ({})
 

@@ -2,7 +2,7 @@ import { isMobile, insertScript } from '../../lib/utils'
 
 import { IntercomWindow, IntercomSettings } from './Intercom.types'
 
-const intercomWindow = window as IntercomWindow
+const intercomWindow = (window as unknown) as IntercomWindow
 
 export class IntercomWidget {
   private _appId: string
@@ -47,7 +47,7 @@ export class IntercomWidget {
   }
 
   inject() {
-    return new Promise(resolve => {
+    return new Promise<void>(resolve => {
       if (this.isInjected()) {
         return resolve()
       }
@@ -55,7 +55,7 @@ export class IntercomWidget {
       const script = insertScript({
         src: `https://widget.intercom.io/widget/${this._appId}`
       })
-      script.addEventListener('load', resolve, true)
+      script.addEventListener('load', () => resolve(), true)
     }).then(() => {
       this.client = getWindowClient(this._appId)
     })

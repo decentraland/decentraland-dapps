@@ -13,8 +13,7 @@ export type MapStateProps = Pick<
   | 'isSigningIn'
   | 'address'
   | 'avatar'
-  | 'mana'
-  | 'manaL2'
+  | 'manaBalances'
   | 'hasActivity'
   | 'hasTranslations'
 >

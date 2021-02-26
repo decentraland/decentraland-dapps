@@ -1,4 +1,5 @@
 import { TransactionResponse, TransactionReceipt } from 'web3x-es/formatters'
+import { ChainId } from '@dcl/schemas'
 
 export enum TransactionStatus {
   QUEUED = 'queued',
@@ -77,22 +78,16 @@ export type Transaction = {
   withReceipt?: boolean
   receipt?: { logs: TransactionReceipt['logs'] }
   payload?: any
+  chainId: ChainId
 }
 
 export type TransactionPayload = {
   [hash: string]: {
+    chainId: ChainId
     hash: string
     payload: any
-    events: string[]
     withReceipt?: boolean
   }
-}
-
-export enum NetworkName {
-  mainnet = 'mainnet',
-  ropsten = 'ropsten',
-  kovan = 'kovan',
-  rinkeby = 'rinkeby'
 }
 
 export type Arg = {

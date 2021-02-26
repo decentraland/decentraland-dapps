@@ -1,8 +1,7 @@
-import { Eth } from 'web3x-es/eth'
-import { LegacyProviderAdapter, EthereumProvider } from 'web3x-es/providers'
+import { EthereumProvider } from 'web3x-es/providers'
+import { ChainId } from '@dcl/schemas'
 import {
   connection,
-  ChainId,
   ProviderType,
   Provider as ConnectedProvider
 } from 'decentraland-connect'
@@ -18,16 +17,14 @@ export type EthereumWindow = Window & {
   ethereum?: Provider
 }
 
-export async function createEth() {
-  try {
-    const provider = await getProvider()
-    return provider ? new Eth(new LegacyProviderAdapter(provider as any)) : null
-  } catch (error) {
-    return null
-  }
+export async function createProvider(
+  providerType: ProviderType,
+  chainId: ChainId
+): Promise<ConnectedProvider> {
+  return connection.createProvider(providerType, chainId)
 }
 
-export async function getProvider(): Promise<ConnectedProvider | null> {
+export async function getConnectedProvider(): Promise<ConnectedProvider | null> {
   try {
     const { provider } = await connection.tryPreviousConnection()
     return provider ? provider : null
@@ -36,7 +33,7 @@ export async function getProvider(): Promise<ConnectedProvider | null> {
   }
 }
 
-export function getProviderType(): ProviderType | null {
+export function getConnectedProviderType(): ProviderType | null {
   const connectionData = connection.getConnectionData()
   return connectionData ? connectionData.providerType : null
 }

@@ -1,11 +1,11 @@
 import { connect } from 'react-redux'
+import { Network } from '@dcl/schemas'
 import { isPending } from '../../modules/transaction/utils'
 import {
   getAddress,
-  getMana,
+  getNetworks,
   isConnected,
-  isConnecting,
-  getManaL2
+  isConnecting
 } from '../../modules/wallet/selectors'
 import { disconnectWallet } from '../../modules/wallet/actions'
 import { getData as getProfiles } from '../../modules/profile/selectors'
@@ -15,19 +15,33 @@ import {
   MapStateProps,
   MapDispatch,
   MapDispatchProps,
+  Props,
   OwnProps
 } from './UserMenu.types'
 import UserMenu from './UserMenu'
 
 const mapState = (state: any): MapStateProps => {
+  const isSignedIn = isConnected(state)
   const address = getAddress(state)
   const profile = getProfiles(state)[address!]
+  const networks = getNetworks(state)
+
+  const manaBalances: Props['manaBalances'] = {}
+  if (isSignedIn) {
+    const networkList = Object.values(Network) as Network[]
+    for (const network of networkList) {
+      const networkData = networks![network]
+      if (networkData) {
+        manaBalances[network] = networks![network].mana
+      }
+    }
+  }
+
   return {
     address,
-    mana: getMana(state),
-    manaL2: getManaL2(state),
+    manaBalances,
     avatar: profile ? profile.avatars[0] : undefined,
-    isSignedIn: isConnected(state),
+    isSignedIn,
     isSigningIn: isConnecting(state),
     hasActivity: getTransactions(state, address || '').some(tx =>
       isPending(tx.status)

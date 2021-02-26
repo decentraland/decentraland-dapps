@@ -1,6 +1,7 @@
 import { LegacyProvider } from 'web3x-es/providers'
 import { put, call, all, takeEvery } from 'redux-saga/effects'
-import { connection, ChainId } from 'decentraland-connect'
+import { ChainId } from '@dcl/schemas'
+import { connection } from 'decentraland-connect'
 import { isCucumberProvider, isValidChainId } from '../../lib/eth'
 import {
   connectWalletSuccess,
@@ -17,7 +18,7 @@ import {
   disconnectWallet,
   DISCONNECT_WALLET
 } from './actions'
-import { getWallet } from './utils'
+import { buildWallet } from './utils'
 import { CreateWalletOptions } from './types'
 
 // Patch Samsung's Cucumber provider send to support promises
@@ -36,11 +37,11 @@ if (isCucumberProvider()) {
 }
 
 // Can be set on createWalletSaga
-let CHAIN_ID: ChainId = ChainId.MAINNET
+let CHAIN_ID: ChainId = ChainId.ETHEREUM_MAINNET
 
 function* handleConnectWalletRequest() {
   try {
-    const wallet = yield call(() => getWallet())
+    const wallet = yield call(() => buildWallet())
     yield put(connectWalletSuccess(wallet))
   } catch (error) {
     yield put(disconnectWallet())

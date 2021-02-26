@@ -1,7 +1,7 @@
 import { connect } from 'react-redux'
 import {
   getAddress,
-  getNetwork,
+  getChainId,
   isConnected,
   isConnecting
 } from '../../modules/wallet/selectors'
@@ -19,7 +19,7 @@ import WalletProvider from './WalletProvider'
 
 const mapState = (state: any): MapStateProps => ({
   address: getAddress(state),
-  network: getNetwork(state),
+  chainId: getChainId(state),
   isConnected: isConnected(state),
   isConnecting: isConnecting(state)
 })

@@ -1,3 +1,4 @@
+import { Eth } from 'web3x-es/eth'
 import { Address } from 'web3x-es/address'
 import { BlockResponse, TransactionResponse } from 'web3x-es/formatters'
 import {
@@ -41,9 +42,9 @@ import {
   getTransactions
 } from './selectors'
 import { isPending, buildActionRef } from './utils'
-import { getTransaction as getTransactionFromNetwork } from './txUtils'
+import { getTransaction as getTransactionFromChain } from './txUtils'
 import { getAddress } from '../wallet/selectors'
-import { createEth } from '../../lib/eth'
+import { getConnectedProvider } from '../../lib/eth'
 
 export function* transactionSaga(): IterableIterator<ForkEffect> {
   yield takeEvery(FETCH_TRANSACTION_REQUEST, handleFetchTransactionRequest)
@@ -82,15 +83,22 @@ export class FailedTransactionError extends Error {
 }
 
 function* handleFetchTransactionRequest(action: FetchTransactionRequestAction) {
-  const hash = action.payload.hash
-  const transactions: Transaction[] = yield select(getData)
-  const transaction = transactions.find(tx => tx.hash === hash)
-  if (!transaction) return
+  const { hash } = action.payload
+  const transaction: Transaction = yield select(state =>
+    getTransactionInState(state, hash)
+  )
+  if (!transaction) {
+    console.warn(`Could not find a valid transaction for hash ${hash}`)
+    return
+  }
 
   try {
+    const address: string = yield select(state => getAddress(state))
     watchPendingIndex[hash] = true
 
-    let tx: AnyTransaction = yield call(() => getTransactionFromNetwork(hash))
+    let tx: AnyTransaction = yield call(() =>
+      getTransactionFromChain(address, transaction.chainId, hash)
+    )
     let isUnknown = tx == null
 
     // loop while tx is pending
@@ -132,7 +140,9 @@ function* handleFetchTransactionRequest(action: FetchTransactionRequestAction) {
       yield delay(TRANSACTION_FETCH_DELAY)
 
       // update tx status from network
-      tx = yield call(() => getTransactionFromNetwork(hash))
+      tx = yield call(() =>
+        getTransactionFromChain(address, transaction.chainId, hash)
+      )
       isUnknown = tx == null
     }
 
@@ -169,11 +179,21 @@ function* handleFetchTransactionRequest(action: FetchTransactionRequestAction) {
 function* handleReplaceTransactionRequest(
   action: ReplaceTransactionRequestAction
 ) {
-  const eth = yield call(createEth)
-  if (!eth) {
+  const { hash, nonce } = action.payload
+  const transaction: Transaction = yield select(state =>
+    getTransactionInState(state, hash)
+  )
+  if (!transaction) {
+    console.warn(`Could not find a valid transaction for hash ${hash}`)
+    return
+  }
+
+  const provider = yield call(() => getConnectedProvider())
+  if (!provider) {
     console.warn('Could not connect to ethereum')
     return
   }
+  const eth = new Eth(provider)
 
   const accounts: Address[] = yield call(() => eth.getAccounts())
   if (accounts.length === 0) {
@@ -181,15 +201,15 @@ function* handleReplaceTransactionRequest(
     return
   }
   const account = accounts[0].toString()
-  const { hash, nonce } = action.payload
+  let checkpoint = null
 
   watchDroppedIndex[hash] = true
 
-  let checkpoint = null
-
   while (true) {
     // check if tx has status, this is to recover from a tx that is dropped momentarily
-    const tx: AnyTransaction = yield call(() => getTransactionFromNetwork(hash))
+    const tx: AnyTransaction = yield call(() =>
+      getTransactionFromChain(account, transaction.chainId, hash)
+    )
     if (tx != null) {
       const txInState: Transaction = yield select(state =>
         getTransactionInState(state, hash)
@@ -312,11 +332,12 @@ function* handleWatchRevertedTransaction(
   const txInState: Transaction = yield select(state =>
     getTransactionInState(state, hash)
   )
+  const address: string = yield select(state => getAddress(state))
 
   do {
     yield delay(TRANSACTION_FETCH_DELAY)
     const txInNetwork: AnyTransaction | null = yield call(() =>
-      getTransactionFromNetwork(hash)
+      getTransactionFromChain(address, txInState.chainId, hash)
     )
     if (
       txInNetwork != null &&
