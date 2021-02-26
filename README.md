@@ -1026,10 +1026,10 @@ Ethereum helpers
 Get user's connected provider without being wrapped by any library
 
 ```ts
-import { getProvider } from 'decentraland-dapps/dist/lib/eth'
+import { getConnectedProvider } from 'decentraland-dapps/dist/lib/eth'
 
 async function wrapProviderToEthers() {
-  const provider = await getProvider()
+  const provider = await getConnectedProvider()
   if (provider) {
     return new etheres.providers.Web3Provider(provider)
   }
@@ -1042,10 +1042,10 @@ Get an Eth instance with your lib of choice
 
 ```ts
 import { Eth } from 'web3x-es/eth'
-import { getProvider } from 'decentraland-dapps/dist/lib/eth'
+import { getConnectedProvider } from 'decentraland-dapps/dist/lib/eth'
 
 async function doSomething() {
-  const provider = await getProvider()
+  const provider = await getConnectedProvider()
   if (!provider) throw new Error()
 
   // web3x

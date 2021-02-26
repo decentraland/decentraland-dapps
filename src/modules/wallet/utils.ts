@@ -4,7 +4,7 @@ import { Address } from 'web3x-es/address'
 import { fromWei } from 'web3x-es/utils'
 import { LegacyProviderAdapter } from 'web3x-es/providers'
 import { ChainId } from '@dcl/schemas'
-import { getProvider, getProviderType } from '../../lib/eth'
+import { getConnectedProvider, getConnectedProviderType } from '../../lib/eth'
 import { graphql } from '../../lib/graph'
 import { getChainConfiguration } from '../../lib/chainConfiguration'
 import { Networks, Wallet } from './types'
@@ -35,7 +35,7 @@ export async function fetchManaBalance(graphUrl: string, address: string) {
 }
 
 export async function buildWallet(): Promise<Wallet> {
-  const provider = await getProvider()
+  const provider = await getConnectedProvider()
 
   if (!provider) {
     // This could happen if metamask is not installed
@@ -79,7 +79,7 @@ export async function buildWallet(): Promise<Wallet> {
 
   return {
     address: address.toString(),
-    providerType: getProviderType()!,
+    providerType: getConnectedProviderType()!,
     networks: networks as Networks,
     network: config.network,
     chainId

@@ -44,7 +44,7 @@ import {
 import { isPending, buildActionRef } from './utils'
 import { getTransaction as getTransactionFromChain } from './txUtils'
 import { getAddress } from '../wallet/selectors'
-import { getProvider } from '../../lib/eth'
+import { getConnectedProvider } from '../../lib/eth'
 
 export function* transactionSaga(): IterableIterator<ForkEffect> {
   yield takeEvery(FETCH_TRANSACTION_REQUEST, handleFetchTransactionRequest)
@@ -188,7 +188,7 @@ function* handleReplaceTransactionRequest(
     return
   }
 
-  const provider = yield call(() => getProvider())
+  const provider = yield call(() => getConnectedProvider())
   if (!provider) {
     console.warn('Could not connect to ethereum')
     return

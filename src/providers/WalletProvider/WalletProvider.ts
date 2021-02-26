@@ -1,5 +1,5 @@
 import React from 'react'
-import { getProvider } from '../../lib/eth'
+import { getConnectedProvider } from '../../lib/eth'
 import { buildWallet } from '../../modules/wallet/utils'
 import {
   Props,
@@ -37,7 +37,7 @@ export default class WalletProvider extends React.PureComponent<Props> {
 
   async handle(method: EmitterMethod, type: EventType, handler: Handler) {
     // try to use web3x abstraction
-    const provider = await getProvider()
+    const provider = await getConnectedProvider()
     if (provider) {
       try {
         switch (type) {

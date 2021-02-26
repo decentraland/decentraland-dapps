@@ -17,26 +17,23 @@ export type EthereumWindow = Window & {
   ethereum?: Provider
 }
 
-export async function getProvider(
-  chainId?: ChainId
-): Promise<ConnectedProvider | null> {
+export async function createProvider(
+  providerType: ProviderType,
+  chainId: ChainId
+): Promise<ConnectedProvider> {
+  return connection.createProvider(providerType, chainId)
+}
+
+export async function getConnectedProvider(): Promise<ConnectedProvider | null> {
   try {
-    let provider: ConnectedProvider | null
-
-    if (chainId) {
-      provider = await connection.createProvider(ProviderType.NETWORK, chainId)
-    } else {
-      const previousConnection = await connection.tryPreviousConnection()
-      provider = previousConnection.provider
-    }
-
-    return provider
+    const { provider } = await connection.tryPreviousConnection()
+    return provider ? provider : null
   } catch (error) {
     return null
   }
 }
 
-export function getProviderType(): ProviderType | null {
+export function getConnectedProviderType(): ProviderType | null {
   const connectionData = connection.getConnectionData()
   return connectionData ? connectionData.providerType : null
 }
