@@ -1,8 +1,8 @@
 import * as React from 'react'
-import { getEtherscanHref } from '../../modules/transaction/utils'
-import { Props, DefaultProps } from './EtherscanLink.types'
+import { getTransactionHref } from '../../modules/transaction/utils'
+import { Props, DefaultProps } from './TransactionLink.types'
 
-export default class EtherscanLink extends React.PureComponent<Props> {
+export default class TransactionLink extends React.PureComponent<Props> {
   static defaultProps: DefaultProps = {
     className: 'etherscan-link',
     target: '_blank',
@@ -14,14 +14,14 @@ export default class EtherscanLink extends React.PureComponent<Props> {
 
     if (!address && !txHash) {
       console.warn(
-        'Tried to render an EtherscanLink without either an address or tx hash. Please supply one of those'
+        'Tried to render an TransactionLink without either an address or tx hash. Please supply one of those'
       )
       return null
     }
 
     const { chainId, className, target, text, children } = this.props
 
-    const href = getEtherscanHref({ address, txHash }, chainId)
+    const href = getTransactionHref({ address, txHash }, chainId)
 
     return (
       <a className={className} href={href} target={target}>

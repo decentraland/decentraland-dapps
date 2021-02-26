@@ -63,14 +63,14 @@ export function buildTransactionWithReceiptPayload(
   return txPayload
 }
 
-export type EtherscanHrefOptions = {
+export type TransactionHrefOptions = {
   txHash?: string
   address?: string
   blockNumber?: number
 }
 
-export function getEtherscanHref(
-  { txHash, address, blockNumber }: EtherscanHrefOptions,
+export function getTransactionHref(
+  { txHash, address, blockNumber }: TransactionHrefOptions,
   network?: number
 ) {
   const pathname = address
@@ -79,10 +79,12 @@ export function getEtherscanHref(
     ? `/block/${blockNumber}`
     : `/tx/${txHash}`
 
-  return `${getEtherscanOrigin(network)}${pathname}`
+  return `${getTransactionOrigin(network)}${pathname}`
 }
 
-export function getEtherscanOrigin(chainId: number = ChainId.ETHEREUM_MAINNET) {
+export function getTransactionOrigin(
+  chainId: number = ChainId.ETHEREUM_MAINNET
+) {
   switch (chainId) {
     case ChainId.ETHEREUM_ROPSTEN:
       return 'https://ropsten.etherscan.io'
@@ -90,6 +92,10 @@ export function getEtherscanOrigin(chainId: number = ChainId.ETHEREUM_MAINNET) {
       return 'https://rinkeby.etherscan.io'
     case ChainId.ETHEREUM_GOERLI:
       return 'https://goerli.etherscan.io'
+    case ChainId.MATIC_MAINNET:
+      return 'https://explorer-mainnet.maticvigil.com'
+    case ChainId.MATIC_MUMBAI:
+      return 'https://explorer-mumbai.maticvigil.com'
     default:
       return 'https://etherscan.io'
   }

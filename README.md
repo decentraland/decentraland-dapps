@@ -22,7 +22,7 @@ Common modules for our dApps
   - [Footer](https://github.com/decentraland/decentraland-dapps#footer)
   - [SignInPage](https://github.com/decentraland/decentraland-dapps#signinpage)
   - [Modal](https://github.com/decentraland/decentraland-dapps#modal)
-  - [EtherscanLink](https://github.com/decentraland/decentraland-dapps#etherscanlink)
+  - [TransactionLink](https://github.com/decentraland/decentraland-dapps#transactionlink)
 - [Components](https://github.com/decentraland/decentraland-dapps#components)
   - [Intercom](https://github.com/decentraland/decentraland-dapps#intercom)
 
@@ -1316,9 +1316,9 @@ size="small"
 onClose={/*close the modal by name*/}
 ```
 
-## EtherscanLink
+## TransactionLink
 
-The `<EtherscanLink>` can be used to link a transaction hash to Etherscan.io, and it connects to the redux store to know on which network the user is on.
+The `<TransactionLink>` can be used to link a transaction hash to Etherscan.io, and it connects to the redux store to know on which network the user is on.
 
 ### Dependencies
 
@@ -1328,13 +1328,13 @@ This container requires you to install the [Wallet](https://github.com/decentral
 
 ```tsx
 import * as React from 'react'
-import EtherscanLink from 'decentraland-dapps/dist/containers/EtherscanLink'
+import TransactionLink from 'decentraland-dapps/dist/containers/TransactionLink'
 
 export default class MyComponent extends React.PureComponent {
   render() {
     return (
       <p>
-        You sent an <EtherscanLink txHash={'0x...'}>invite</EtherscanLink>
+        You sent an <TransactionLink txHash={'0x...'}>invite</TransactionLink>
       </p>
     )
   }
