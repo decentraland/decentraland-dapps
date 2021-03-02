@@ -8,6 +8,8 @@ export const MANA_GRAPH_BY_CHAIN_ID = {
     'https://api.thegraph.com/subgraphs/name/decentraland/mana-ethereum-ropsten',
   [ChainId.ETHEREUM_GOERLI]:
     'https://api.thegraph.com/subgraphs/name/decentraland/mana-ethereum-goerli',
+  [ChainId.ETHEREUM_RINKEBY]:
+    'https://api.thegraph.com/subgraphs/name/decentraland/mana-ethereum-rinkeby',
   [ChainId.MATIC_MAINNET]:
     'https://api.thegraph.com/subgraphs/name/decentraland/mana-matic-mainnet',
   [ChainId.MATIC_MUMBAI]:
@@ -25,6 +27,10 @@ const NETWORK_MAPPING_BY_CHAIN_ID = {
   },
   [ChainId.ETHEREUM_GOERLI]: {
     [Network.ETHEREUM]: ChainId.ETHEREUM_GOERLI,
+    [Network.MATIC]: ChainId.MATIC_MUMBAI
+  },
+  [ChainId.ETHEREUM_RINKEBY]: {
+    [Network.ETHEREUM]: ChainId.ETHEREUM_RINKEBY,
     [Network.MATIC]: ChainId.MATIC_MUMBAI
   },
   [ChainId.MATIC_MAINNET]: {
