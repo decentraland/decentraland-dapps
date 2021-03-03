@@ -32,7 +32,7 @@ export async function fetchManaBalance(graphUrl: string, address: string) {
       )
     }
 
-    return parseFloat(fromWei(accounts[0].mana, 'ether'))
+    return fromWeiToFloat(accounts[0].mana)
   } catch (error) {
     return 0
   }
@@ -73,7 +73,7 @@ export async function buildWallet(): Promise<Wallet> {
 
     networks[network] = {
       chainId: networkChainId,
-      balance,
+      balance: fromWeiToFloat(balance),
       mana
     }
   }
@@ -85,4 +85,8 @@ export async function buildWallet(): Promise<Wallet> {
     network: config.network,
     chainId
   }
+}
+
+function fromWeiToFloat(wei: string): number {
+  return parseFloat(fromWei(wei, 'ether'))
 }
