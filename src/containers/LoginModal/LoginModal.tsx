@@ -5,7 +5,7 @@ import {
   LoginModalOptionI18N,
   LoginModalOptionType
 } from 'decentraland-ui'
-import { ProviderType } from 'decentraland-connect'
+import { ProviderType, connection } from 'decentraland-connect'
 import { T } from '../../modules/translation/utils'
 import { isDapperProvider } from '../../lib/eth'
 import { DefaultProps, Props, State } from './LoginModal.types'
@@ -118,8 +118,7 @@ export default class LoginModal extends React.PureComponent<Props, State> {
         hasError={hasError}
         onClose={onClose}
       >
-        {/* TODO: We're choosing to only use injected wallets for now. We can later change this to: `connection.getAvailableProviders().map(this.renderLoginModalOption)` */}
-        {this.renderLoginModalOption(ProviderType.INJECTED)}
+        {connection.getAvailableProviders().map(this.renderLoginModalOption)}
       </BaseLoginModal>
     )
   }
