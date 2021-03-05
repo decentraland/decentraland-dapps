@@ -1,4 +1,3 @@
-import { ChainId } from '@dcl/schemas'
 import { LoadingState, loadingReducer } from '../loading/reducer'
 import {
   FetchTransactionSuccessAction,

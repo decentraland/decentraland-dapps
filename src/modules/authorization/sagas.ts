@@ -1,12 +1,10 @@
-import { Eth, SendTx } from 'web3x-es/eth'
+import { Eth } from 'web3x-es/eth'
 import { Address } from 'web3x-es/address'
 import { Provider, ProviderType } from 'decentraland-connect'
-import { all, put, call, select, takeEvery } from 'redux-saga/effects'
+import { put, call, takeEvery } from 'redux-saga/effects'
 import { createProvider } from '../../lib/eth'
-import { ERC20, ERC20TransactionReceipt } from '../../contracts/ERC20'
-import { ERC721, ERC721TransactionReceipt } from '../../contracts/ERC721'
-import { getData as getWallet } from '../wallet/selectors'
-import { Wallet } from '../wallet/types'
+import { ERC20 } from '../../contracts/ERC20'
+import { ERC721 } from '../../contracts/ERC721'
 import { getTokenAmountToApprove, isValidType } from './utils'
 import {
   fetchAuthorizationsSuccess,
