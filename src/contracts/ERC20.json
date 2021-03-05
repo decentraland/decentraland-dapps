@@ -1,5 +1,4 @@
-import { ContractAbi} from 'web3x-es/contract';
-export default new ContractAbi([
+[
   {
     "constant": true,
     "inputs": [],
@@ -11,6 +10,7 @@ export default new ContractAbi([
       }
     ],
     "payable": false,
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -24,6 +24,7 @@ export default new ContractAbi([
       }
     ],
     "payable": false,
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -46,6 +47,7 @@ export default new ContractAbi([
       }
     ],
     "payable": false,
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -59,6 +61,7 @@ export default new ContractAbi([
       }
     ],
     "payable": false,
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -85,6 +88,7 @@ export default new ContractAbi([
       }
     ],
     "payable": false,
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -98,6 +102,7 @@ export default new ContractAbi([
       }
     ],
     "payable": false,
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -111,6 +116,7 @@ export default new ContractAbi([
       }
     ],
     "payable": false,
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -133,6 +139,7 @@ export default new ContractAbi([
       }
     ],
     "payable": false,
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -146,6 +153,7 @@ export default new ContractAbi([
     "name": "burn",
     "outputs": [],
     "payable": false,
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -159,6 +167,7 @@ export default new ContractAbi([
       }
     ],
     "payable": false,
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -177,6 +186,7 @@ export default new ContractAbi([
       }
     ],
     "payable": false,
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -190,6 +200,7 @@ export default new ContractAbi([
       }
     ],
     "payable": false,
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -203,6 +214,7 @@ export default new ContractAbi([
       }
     ],
     "payable": false,
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -216,6 +228,7 @@ export default new ContractAbi([
       }
     ],
     "payable": false,
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -229,6 +242,7 @@ export default new ContractAbi([
       }
     ],
     "payable": false,
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -251,6 +265,7 @@ export default new ContractAbi([
       }
     ],
     "payable": false,
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -273,6 +288,25 @@ export default new ContractAbi([
       }
     ],
     "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "setBalance",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -286,6 +320,7 @@ export default new ContractAbi([
     "name": "transferOwnership",
     "outputs": [],
     "payable": false,
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -384,4 +419,4 @@ export default new ContractAbi([
     "name": "Transfer",
     "type": "event"
   }
-]);
+]
