@@ -1,5 +1,14 @@
 import { LegacyProvider } from 'web3x-es/providers'
-import { put, call, all, takeEvery } from 'redux-saga/effects'
+import {
+  put,
+  call,
+  all,
+  takeEvery,
+  race,
+  take,
+  delay,
+  select
+} from 'redux-saga/effects'
 import { ChainId } from '@dcl/schemas'
 import { connection } from 'decentraland-connect'
 import { isCucumberProvider, isValidChainId } from '../../lib/eth'
@@ -16,10 +25,21 @@ import {
   ENABLE_WALLET_SUCCESS,
   DisconnectWalletAction,
   disconnectWallet,
-  DISCONNECT_WALLET
+  DISCONNECT_WALLET,
+  FETCH_WALLET_REQUEST,
+  FetchWalletRequestAction,
+  fetchWalletSuccess,
+  fetchWalletFailure,
+  fetchWalletRequest,
+  FETCH_WALLET_SUCCESS,
+  FETCH_WALLET_FAILURE,
+  FetchWalletSuccessAction,
+  FetchWalletFailureAction,
+  CONNECT_WALLET_SUCCESS
 } from './actions'
 import { buildWallet } from './utils'
-import { CreateWalletOptions } from './types'
+import { CreateWalletOptions, Wallet } from './types'
+import { isConnected } from './selectors'
 
 // Patch Samsung's Cucumber provider send to support promises
 const provider = (window as any).ethereum as LegacyProvider
@@ -38,11 +58,38 @@ if (isCucumberProvider()) {
 
 // Can be set on createWalletSaga
 let CHAIN_ID: ChainId = ChainId.ETHEREUM_MAINNET
+let POLL_INTERVAL = 60 * 1000 // 60 seconds
+let polling = false
+
+export function* walletSaga() {
+  yield all([
+    takeEvery(CONNECT_WALLET_REQUEST, handleConnectWalletRequest),
+    takeEvery(ENABLE_WALLET_REQUEST, handleEnableWalletRequest),
+    takeEvery(ENABLE_WALLET_SUCCESS, handleEnableWalletSuccess),
+    takeEvery(FETCH_WALLET_REQUEST, handleFetchWalletRequest),
+    takeEvery(DISCONNECT_WALLET, handleDisconnectWallet),
+    takeEvery(CONNECT_WALLET_SUCCESS, handleConnectWalletSuccess)
+  ])
+}
 
 function* handleConnectWalletRequest() {
   try {
-    const wallet = yield call(() => buildWallet())
-    yield put(connectWalletSuccess(wallet))
+    yield put(fetchWalletRequest())
+    const {
+      success,
+      failure
+    }: {
+      success: FetchWalletSuccessAction | null
+      failure: FetchWalletFailureAction | null
+    } = yield race({
+      success: take(FETCH_WALLET_SUCCESS),
+      failure: take(FETCH_WALLET_FAILURE)
+    })
+    if (success) {
+      yield put(connectWalletSuccess(success.payload.wallet))
+    } else {
+      throw new Error(failure!.payload.error)
+    }
   } catch (error) {
     yield put(disconnectWallet())
     yield put(connectWalletFailure(error.message))
@@ -82,15 +129,30 @@ function* handleDisconnectWallet(_action: DisconnectWalletAction) {
   } catch (error) {
     console.error(error)
   }
+  // stop polling wallet balances
+  polling = false
 }
 
-export function* walletSaga() {
-  yield all([
-    takeEvery(CONNECT_WALLET_REQUEST, handleConnectWalletRequest),
-    takeEvery(ENABLE_WALLET_REQUEST, handleEnableWalletRequest),
-    takeEvery(ENABLE_WALLET_SUCCESS, handleEnableWalletSuccess),
-    takeEvery(DISCONNECT_WALLET, handleDisconnectWallet)
-  ])
+function* handleFetchWalletRequest(_action: FetchWalletRequestAction) {
+  try {
+    const wallet: Wallet = yield call(buildWallet)
+    yield put(fetchWalletSuccess(wallet))
+  } catch (error) {
+    yield put(fetchWalletFailure(error.message))
+  }
+}
+
+function* handleConnectWalletSuccess() {
+  // poll wallet balances
+  if (!polling) {
+    polling = true
+    while (polling) {
+      yield delay(POLL_INTERVAL)
+      if (yield select(isConnected)) {
+        yield put(fetchWalletRequest())
+      }
+    }
+  }
 }
 
 export function createWalletSaga(options?: CreateWalletOptions) {
@@ -109,6 +171,10 @@ export function createWalletSaga(options?: CreateWalletOptions) {
           `Invalid Chain id ${options.CHAIN_ID}, defaulting to ${CHAIN_ID}`
         )
       }
+    }
+
+    if (options.POLL_INTERVAL) {
+      POLL_INTERVAL = options.POLL_INTERVAL
     }
   }
   return walletSaga

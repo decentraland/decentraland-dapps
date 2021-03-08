@@ -4,7 +4,6 @@ import { ProviderType } from 'decentraland-connect'
 export { ProviderType }
 
 export type NetworkData = {
-  balance: number
   mana: number
   chainId: ChainId
 }
@@ -21,4 +20,5 @@ export interface Wallet {
 export interface CreateWalletOptions {
   MANA_ADDRESS?: string
   CHAIN_ID?: string | number
+  POLL_INTERVAL?: number
 }

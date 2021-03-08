@@ -44,3 +44,17 @@ export type ChangeNetworkAction = ReturnType<typeof changeNetwork>
 export const DISCONNECT_WALLET = 'Disconnect'
 export const disconnectWallet = () => action(DISCONNECT_WALLET)
 export type DisconnectWalletAction = ReturnType<typeof disconnectWallet>
+
+export const FETCH_WALLET_REQUEST = '[Request] Fetch Wallet'
+export const FETCH_WALLET_SUCCESS = '[Success] Fetch Wallet'
+export const FETCH_WALLET_FAILURE = '[Failure] Fetch Wallet'
+
+export const fetchWalletRequest = () => action(FETCH_WALLET_REQUEST)
+export const fetchWalletSuccess = (wallet: Wallet) =>
+  action(FETCH_WALLET_SUCCESS, { wallet })
+export const fetchWalletFailure = (error: string) =>
+  action(FETCH_WALLET_FAILURE, { error })
+
+export type FetchWalletRequestAction = ReturnType<typeof fetchWalletRequest>
+export type FetchWalletSuccessAction = ReturnType<typeof fetchWalletSuccess>
+export type FetchWalletFailureAction = ReturnType<typeof fetchWalletFailure>

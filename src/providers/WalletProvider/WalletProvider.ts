@@ -44,7 +44,7 @@ export default class WalletProvider extends React.PureComponent<Props> {
           case 'accountsChanged':
             provider[method](type, handler as AccountsChangedHandler)
             break
-          case 'networkChanged':
+          case 'chainChanged':
             provider[method](type, handler as NetworkChangedHandler)
             break
           default:
@@ -77,13 +77,13 @@ export default class WalletProvider extends React.PureComponent<Props> {
 
     // add listeners
     this.on('accountsChanged', this.handleChangeAccount)
-    this.on('networkChanged', this.handleChangeNetwork)
+    this.on('chainChanged', this.handleChangeNetwork)
   }
 
   componentWillUnmount() {
     // remove listeners
     this.off('accountsChanged', this.handleChangeAccount)
-    this.off('networkChanged', this.handleChangeNetwork)
+    this.off('chainChanged', this.handleChangeNetwork)
   }
 
   render() {

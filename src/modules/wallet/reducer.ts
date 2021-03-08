@@ -19,7 +19,13 @@ import {
   EnableWalletFailureAction,
   ENABLE_WALLET_REQUEST,
   ENABLE_WALLET_SUCCESS,
-  ENABLE_WALLET_FAILURE
+  ENABLE_WALLET_FAILURE,
+  FETCH_WALLET_REQUEST,
+  FetchWalletRequestAction,
+  FetchWalletSuccessAction,
+  FetchWalletFailureAction,
+  FETCH_WALLET_SUCCESS,
+  FETCH_WALLET_FAILURE
 } from './actions'
 
 export type WalletState = {
@@ -44,46 +50,58 @@ export type WalletReducerAction =
   | DisconnectWalletAction
   | ChangeAccountAction
   | ChangeNetworkAction
+  | FetchWalletRequestAction
+  | FetchWalletSuccessAction
+  | FetchWalletFailureAction
 
 export function walletReducer(
   state: WalletState = INITIAL_STATE,
   action: WalletReducerAction
 ): WalletState {
   switch (action.type) {
-    case CONNECT_WALLET_REQUEST:
+    case FETCH_WALLET_REQUEST:
+    case ENABLE_WALLET_REQUEST:
+    case CONNECT_WALLET_REQUEST: {
       return {
         ...state,
         loading: loadingReducer(state.loading, action)
       }
-    case CONNECT_WALLET_SUCCESS:
+    }
+
+    case FETCH_WALLET_SUCCESS:
+    case CONNECT_WALLET_SUCCESS: {
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
         error: null,
         data: action.payload.wallet
       }
-    case CONNECT_WALLET_FAILURE:
+    }
+
+    case FETCH_WALLET_FAILURE:
+    case CONNECT_WALLET_FAILURE: {
       return {
         ...state,
         loading: loadingReducer(state.loading, action)
       }
-    case ENABLE_WALLET_REQUEST:
-      return {
-        ...state,
-        loading: loadingReducer(state.loading, action)
-      }
-    case ENABLE_WALLET_SUCCESS:
+    }
+
+    case ENABLE_WALLET_SUCCESS: {
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
         error: null
       }
-    case ENABLE_WALLET_FAILURE:
+    }
+
+    case ENABLE_WALLET_FAILURE: {
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
         error: action.payload.error
       }
+    }
+
     case CHANGE_ACCOUNT:
     case CHANGE_NETWORK: {
       return {
@@ -92,12 +110,15 @@ export function walletReducer(
         data: action.payload.wallet
       }
     }
+
     case DISCONNECT_WALLET: {
       return {
         ...state,
+        error: null,
         data: null
       }
     }
+
     default:
       return state
   }
