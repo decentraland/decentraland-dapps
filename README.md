@@ -839,7 +839,7 @@ export function* rootSaga() {
 }
 ```
 
-This uses by defualt the `'@@router/LOCATION_CHANGE'` action type to track page changes. If you need to use a different action type, you can do the following:
+This uses by default the `'@@router/LOCATION_CHANGE'` action type to track page changes. If you need to use a different action type, you can do the following:
 
 ```ts
 import { all } from 'redux-saga/effects'

@@ -1,10 +1,17 @@
 import { Eth } from 'web3x-es/eth'
 import { Address } from 'web3x-es/address'
-import { Provider, ProviderType } from 'decentraland-connect'
 import { put, call, takeEvery } from 'redux-saga/effects'
-import { createProvider } from '../../lib/eth'
-import { ERC20 } from '../../contracts/ERC20'
-import { ERC721 } from '../../contracts/ERC721'
+import { Network } from '@dcl/schemas'
+import { Provider, ProviderType } from 'decentraland-connect'
+import {
+  ContractName,
+  getContract,
+  sendMetaTransaction
+} from 'decentraland-transactions'
+import { createProvider, getConnectedProvider } from '../../lib/eth'
+import { getChainConfiguration } from '../../lib/chainConfiguration'
+import { ERC20, ERC20TransactionReceipt } from '../../contracts/ERC20'
+import { ERC721, ERC721TransactionReceipt } from '../../contracts/ERC721'
 import { getTokenAmountToApprove, isValidType } from './utils'
 import {
   fetchAuthorizationsSuccess,
@@ -21,6 +28,7 @@ import {
   REVOKE_TOKEN_REQUEST
 } from './actions'
 import { Authorization, AuthorizationAction, AuthorizationType } from './types'
+import { TxSend } from 'web3x-es/contract'
 
 export function* authorizationSaga() {
   yield takeEvery(
@@ -112,41 +120,61 @@ async function changeAuthorization(
   authorization: Authorization,
   action: AuthorizationAction
 ): Promise<string> {
-  const provider: Provider | null = await createProvider(
-    ProviderType.NETWORK,
-    authorization.chainId
-  )
-  if (!provider) {
-    throw new Error('Could not connect to Ethereum')
-  }
-  const eth: Eth = new Eth(provider)
-
-  const from = Address.fromString(authorization.address)
-  const tokenAddress = Address.fromString(authorization.tokenAddress)
-  const authorizedAddress = Address.fromString(authorization.authorizedAddress)
-
   if (!isValidType(authorization.type)) {
     throw new Error(`Invalid authorization type ${authorization.type}`)
   }
 
-  let txHash = ''
+  const provider: Provider | null = await getConnectedProvider()
+  if (!provider) {
+    throw new Error('Could not connect to Ethereum')
+  }
+
+  const eth: Eth = new Eth(provider)
+  const { network } = getChainConfiguration(authorization.chainId)
+
+  const from = Address.fromString(authorization.address)
+  const tokenAddress = Address.fromString(authorization.tokenAddress)
+  const authorizedAddress = Address.fromString(authorization.authorizedAddress)
+  const chainId = authorization.chainId
+
+  let method: TxSend<ERC20TransactionReceipt | ERC721TransactionReceipt>
+  let contractName: ContractName
+
   switch (authorization.type) {
     case AuthorizationType.ALLOWANCE:
       const amount =
         action === AuthorizationAction.GRANT ? getTokenAmountToApprove() : 0
-      txHash = await new ERC20(eth, tokenAddress).methods
-        .approve(authorizedAddress, amount)
-        .send({ from })
-        .getTxHash()
+
+      method = new ERC20(eth, tokenAddress).methods.approve(
+        authorizedAddress,
+        amount
+      )
+      contractName = ContractName.ERC20
       break
     case AuthorizationType.APPROVAL:
       const isApproved = action === AuthorizationAction.GRANT
-      txHash = await new ERC721(eth, tokenAddress).methods
-        .setApprovalForAll(authorizedAddress, isApproved)
-        .send({ from })
-        .getTxHash()
+
+      method = new ERC721(eth, tokenAddress).methods.setApprovalForAll(
+        authorizedAddress,
+        isApproved
+      )
+      contractName = ContractName.ERC721
       break
   }
 
-  return txHash
+  switch (network) {
+    case Network.ETHEREUM:
+      return method.send({ from }).getTxHash()
+    case Network.MATIC:
+      const payload = method.getSendRequestPayload({ from })
+      const txData = payload.params[0].data
+      const metaTxProvider = await createProvider(ProviderType.NETWORK, chainId)
+
+      return sendMetaTransaction(
+        provider,
+        metaTxProvider,
+        txData,
+        getContract(contractName, chainId)
+      )
+  }
 }

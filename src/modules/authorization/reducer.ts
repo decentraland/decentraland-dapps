@@ -9,7 +9,7 @@ import {
   FetchAuthorizationsFailureAction,
   GrantTokenRequestAction,
   GrantTokenSuccessAction,
-  GrantTokenFailureeAction,
+  GrantTokenFailureAction,
   RevokeTokenRequestAction,
   RevokeTokenSuccessAction,
   RevokeTokenFailureAction,
@@ -44,7 +44,7 @@ type AuthorizationReducerAction =
   | FetchAuthorizationsFailureAction
   | GrantTokenRequestAction
   | GrantTokenSuccessAction
-  | GrantTokenFailureeAction
+  | GrantTokenFailureAction
   | RevokeTokenRequestAction
   | RevokeTokenSuccessAction
   | RevokeTokenFailureAction
