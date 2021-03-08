@@ -10,6 +10,8 @@ export type EthereumWindow = Window & {
   }
 }
 
+export { Provider }
+
 export async function createProvider(
   providerType: ProviderType,
   chainId: ChainId

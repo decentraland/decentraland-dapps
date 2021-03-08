@@ -7,13 +7,21 @@ import {
   FetchAuthorizationsRequestAction,
   FetchAuthorizationsSuccessAction,
   FetchAuthorizationsFailureAction,
+  GrantTokenRequestAction,
   GrantTokenSuccessAction,
+  GrantTokenFailureeAction,
+  RevokeTokenRequestAction,
   RevokeTokenSuccessAction,
+  RevokeTokenFailureAction,
   FETCH_AUTHORIZATIONS_REQUEST,
   FETCH_AUTHORIZATIONS_SUCCESS,
   FETCH_AUTHORIZATIONS_FAILURE,
+  GRANT_TOKEN_REQUEST,
   GRANT_TOKEN_SUCCESS,
-  REVOKE_TOKEN_SUCCESS
+  GRANT_TOKEN_FAILURE,
+  REVOKE_TOKEN_REQUEST,
+  REVOKE_TOKEN_SUCCESS,
+  REVOKE_TOKEN_FAILURE
 } from './actions'
 import { Authorization } from './types'
 import { areEqual } from './utils'
@@ -34,8 +42,12 @@ type AuthorizationReducerAction =
   | FetchAuthorizationsRequestAction
   | FetchAuthorizationsSuccessAction
   | FetchAuthorizationsFailureAction
+  | GrantTokenRequestAction
   | GrantTokenSuccessAction
+  | GrantTokenFailureeAction
+  | RevokeTokenRequestAction
   | RevokeTokenSuccessAction
+  | RevokeTokenFailureAction
   | FetchTransactionSuccessAction
 
 export function authorizationReducer(
@@ -43,6 +55,10 @@ export function authorizationReducer(
   action: AuthorizationReducerAction
 ) {
   switch (action.type) {
+    case GRANT_TOKEN_REQUEST:
+    case REVOKE_TOKEN_REQUEST:
+    case GRANT_TOKEN_SUCCESS:
+    case REVOKE_TOKEN_SUCCESS:
     case FETCH_AUTHORIZATIONS_REQUEST: {
       return {
         ...state,
@@ -58,6 +74,8 @@ export function authorizationReducer(
         data: [...state.data, ...authorizations]
       }
     }
+    case GRANT_TOKEN_FAILURE:
+    case REVOKE_TOKEN_FAILURE:
     case FETCH_AUTHORIZATIONS_FAILURE: {
       return {
         ...state,
