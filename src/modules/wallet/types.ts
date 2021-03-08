@@ -4,7 +4,6 @@ import { ProviderType } from 'decentraland-connect'
 export { ProviderType }
 
 export type NetworkData = {
-  balance: number
   mana: number
   chainId: ChainId
 }
