@@ -2,7 +2,6 @@ import { Eth } from 'web3x-es/eth'
 import { ProviderType } from 'decentraland-connect'
 import { Address } from 'web3x-es/address'
 import { fromWei } from 'web3x-es/utils'
-import { LegacyProviderAdapter } from 'web3x-es/providers'
 import { ChainId } from '@dcl/schemas'
 import {
   createProvider,
@@ -46,7 +45,7 @@ export async function buildWallet(): Promise<Wallet> {
     throw new Error('Could not connect to Ethereum')
   }
 
-  const eth = new Eth(new LegacyProviderAdapter(provider as any))
+  const eth = new Eth(provider)
 
   const accounts: Address[] = await eth.getAccounts()
   if (accounts.length === 0) {
@@ -67,7 +66,9 @@ export async function buildWallet(): Promise<Wallet> {
     const networkEth = new Eth(provider)
 
     const [balance, mana] = await Promise.all([
-      networkEth.getBalance(address),
+      networkEth
+        .getBalance(address)
+        .then(balance => parseFloat(fromWei(balance, 'ether'))),
       fetchManaBalance(networkConfiguration.manaGraphURL, address.toString())
     ])
 

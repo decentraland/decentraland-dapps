@@ -19,7 +19,13 @@ import {
   EnableWalletFailureAction,
   ENABLE_WALLET_REQUEST,
   ENABLE_WALLET_SUCCESS,
-  ENABLE_WALLET_FAILURE
+  ENABLE_WALLET_FAILURE,
+  FETCH_WALLET_REQUEST,
+  FetchWalletRequestAction,
+  FetchWalletSuccessAction,
+  FetchWalletFailureAction,
+  FETCH_WALLET_SUCCESS,
+  FETCH_WALLET_FAILURE
 } from './actions'
 
 export type WalletState = {
@@ -44,6 +50,9 @@ export type WalletReducerAction =
   | DisconnectWalletAction
   | ChangeAccountAction
   | ChangeNetworkAction
+  | FetchWalletRequestAction
+  | FetchWalletSuccessAction
+  | FetchWalletFailureAction
 
 export function walletReducer(
   state: WalletState = INITIAL_STATE,
@@ -96,6 +105,25 @@ export function walletReducer(
       return {
         ...state,
         data: null
+      }
+    }
+    case FETCH_WALLET_REQUEST: {
+      return {
+        ...state,
+        loading: loadingReducer(state.loading, action)
+      }
+    }
+    case FETCH_WALLET_SUCCESS: {
+      return {
+        ...state,
+        loading: loadingReducer(state.loading, action),
+        data: action.payload.wallet
+      }
+    }
+    case FETCH_WALLET_FAILURE: {
+      return {
+        ...state,
+        loading: loadingReducer(state.loading, action)
       }
     }
     default:
