@@ -6,6 +6,7 @@ import {
   isConnecting
 } from '../../modules/wallet/selectors'
 import { enableWalletRequest } from '../../modules/wallet/actions'
+import { isEnabled } from '../../modules/translation/selectors'
 import {
   MapStateProps,
   MapDispatch,
@@ -15,7 +16,8 @@ import LoginModal from './LoginModal'
 
 const mapState = (state: any): MapStateProps => ({
   hasError: !!getError(state),
-  isLoading: isEnabling(state) || isConnecting(state)
+  isLoading: isEnabling(state) || isConnecting(state),
+  hasTranslations: isEnabled(state)
 })
 
 const mapDispatch = (dispatch: MapDispatch): MapDispatchProps => ({
