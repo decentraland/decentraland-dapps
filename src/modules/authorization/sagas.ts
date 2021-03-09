@@ -4,8 +4,8 @@ import { put, call, takeEvery } from 'redux-saga/effects'
 import { Network } from '@dcl/schemas'
 import { Provider, ProviderType } from 'decentraland-connect'
 import {
-  ContractName,
   getContract,
+  getContractName,
   sendMetaTransaction
 } from 'decentraland-transactions'
 import { createProvider, getConnectedProvider } from '../../lib/eth'
@@ -100,6 +100,7 @@ function* handleGrantTokenRequest(action: GrantTokenRequestAction) {
     )
     yield put(grantTokenSuccess(authorization, authorization.chainId, txHash))
   } catch (error) {
+    console.log(error)
     yield put(grantTokenFailure(error.message))
   }
 }
@@ -138,7 +139,6 @@ async function changeAuthorization(
   const chainId = authorization.chainId
 
   let method: TxSend<ERC20TransactionReceipt | ERC721TransactionReceipt>
-  let contractName: ContractName
 
   switch (authorization.type) {
     case AuthorizationType.ALLOWANCE:
@@ -149,7 +149,6 @@ async function changeAuthorization(
         authorizedAddress,
         amount
       )
-      contractName = ContractName.ERC20
       break
     case AuthorizationType.APPROVAL:
       const isApproved = action === AuthorizationAction.GRANT
@@ -158,7 +157,6 @@ async function changeAuthorization(
         authorizedAddress,
         isApproved
       )
-      contractName = ContractName.ERC721
       break
   }
 
@@ -169,11 +167,12 @@ async function changeAuthorization(
       const payload = method.getSendRequestPayload({ from })
       const txData = payload.params[0].data
       const metaTxProvider = await createProvider(ProviderType.NETWORK, chainId)
-      const contract = {
-        ...getContract(contractName, chainId),
-        address: tokenAddress.toString()
-      }
 
-      return sendMetaTransaction(provider, metaTxProvider, txData, contract)
+      return sendMetaTransaction(
+        provider,
+        metaTxProvider,
+        txData,
+        getContract(getContractName(tokenAddress.toString()), chainId)
+      )
   }
 }
