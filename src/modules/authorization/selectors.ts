@@ -11,22 +11,17 @@ export const getLoading = (state: any) => getState(state).loading
 export const isLoading = (state: any) => getLoading(state).length > 0
 export const getError = (state: any) => getState(state).error
 
+export const getTransactions = (state: any) =>
+  getTransactionsByType(state, getAddress(state) || '', GRANT_TOKEN_SUCCESS)
+
 export const getAllowTransactions = (state: any) =>
-  getTransactionsByType(
-    state,
-    getAddress(state) || '',
-    GRANT_TOKEN_SUCCESS
-  ).filter(
+  getTransactions(state).filter(
     transaction =>
       transaction.payload.authorization.type === AuthorizationType.ALLOWANCE
   )
 
 export const getApproveTransactions = (state: any) =>
-  getTransactionsByType(
-    state,
-    getAddress(state) || '',
-    GRANT_TOKEN_SUCCESS
-  ).filter(
+  getTransactions(state).filter(
     transaction =>
       transaction.payload.authorization.type === AuthorizationType.APPROVAL
   )
