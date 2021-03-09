@@ -101,8 +101,9 @@ export function authorizationReducer(
           return {
             ...state,
             data: [
-              ...state.data.filter(stateAuthorization =>
-                areEqual(stateAuthorization, authorization)
+              ...state.data.filter(
+                stateAuthorization =>
+                  !areEqual(stateAuthorization, authorization)
               )
             ]
           }
