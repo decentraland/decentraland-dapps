@@ -515,7 +515,7 @@ export function invitesReducer(
 
 ## Authorization
 
-This module allows you to grant/revoke permissions to a token. It works for both allowance and approval for all.
+This module allows you to grant/revoke approvals to a token. It works for both allowance and approval for all.
 
 ### Dependencies
 
