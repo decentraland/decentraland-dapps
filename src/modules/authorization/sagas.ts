@@ -100,7 +100,6 @@ function* handleGrantTokenRequest(action: GrantTokenRequestAction) {
     )
     yield put(grantTokenSuccess(authorization, authorization.chainId, txHash))
   } catch (error) {
-    console.log(error)
     yield put(grantTokenFailure(error.message))
   }
 }
