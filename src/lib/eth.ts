@@ -1,30 +1,23 @@
-import { EthereumProvider } from 'web3x-es/providers'
 import { ChainId } from '@dcl/schemas'
-import {
-  connection,
-  ProviderType,
-  Provider as ConnectedProvider
-} from 'decentraland-connect'
+import { connection, ProviderType, Provider } from 'decentraland-connect'
 import { isMobile } from './utils'
 
-export type Provider = EthereumProvider & {
-  enable?: () => Promise<string[]>
-  isCucumber?: boolean
-  isDapper?: boolean
-}
-
 export type EthereumWindow = Window & {
-  ethereum?: Provider
+  ethereum?: Provider & {
+    enable?: () => Promise<string[]>
+    isCucumber?: boolean
+    isDapper?: boolean
+  }
 }
 
 export async function createProvider(
   providerType: ProviderType,
   chainId: ChainId
-): Promise<ConnectedProvider> {
+): Promise<Provider> {
   return connection.createProvider(providerType, chainId)
 }
 
-export async function getConnectedProvider(): Promise<ConnectedProvider | null> {
+export async function getConnectedProvider(): Promise<Provider | null> {
   try {
     const { provider } = await connection.tryPreviousConnection()
     return provider ? provider : null

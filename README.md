@@ -10,6 +10,7 @@ Common modules for our dApps
   - [Wallet](https://github.com/decentraland/decentraland-dapps#wallet)
   - [Storage](https://github.com/decentraland/decentraland-dapps#storage)
   - [Transaction](https://github.com/decentraland/decentraland-dapps#transaction)
+  - [Authorization](https://github.com/decentraland/decentraland-dapps#authorization)
   - [Translation](https://github.com/decentraland/decentraland-dapps#translation)
   - [Analytics](https://github.com/decentraland/decentraland-dapps#analytics)
   - [Loading](https://github.com/decentraland/decentraland-dapps#loading)
@@ -512,6 +513,83 @@ export function invitesReducer(
 </p>
 </details>
 
+## Authorization
+
+This module allows you to grant/revoke approvals to a token. It works for both allowance and approval for all.
+
+### Dependencies
+
+This module depends on the [transactions](#transactions) module
+
+### Usage
+
+After [installing](#installing-3) the module, you'll need to initialize the authorizations you want to query using the following action:
+
+```ts
+fetchAuthorizationsRequest(authorizations: Authorization[])
+```
+
+That action will query the blockchain for each authorization and update the state so you can check it later. You can hook to:
+
+```ts
+FETCH_AUTHORIZATIONS_REQUEST
+FETCH_AUTHORIZATIONS_SUCCESS
+FETCH_AUTHORIZATIONS_FAILURE
+```
+
+Once you have this hooked up, you can either grant or revoke a token by using:
+
+```ts
+grantTokenRequest(authorization: Authorization)
+revokeTokenRequest(authorization: Authorization)
+```
+
+You can hook to the following actions:
+
+```ts
+GRANT_TOKEN_REQUEST
+GRANT_TOKEN_SUCCESS
+GRANT_TOKEN_FAILURE
+
+REVOKE_TOKEN_REQUEST
+REVOKE_TOKEN_SUCCESS
+REVOKE_TOKEN_FAILURE
+```
+
+Keep in mind that each of these actions send a transaction, so if you wan't to check if they're done, check the action type of the `FETCH_TRANSACTION_SUCCESS` action. More info on the [transactions](#transactions) module
+
+### Installation
+
+**Reducer**
+
+Add the `authorizationReducer` as `authorization` to your `rootReducer`:
+
+```ts
+import { combineReducers } from 'redux'
+import { authorizationReducer as authorization } from 'decentraland-dapps/dist/modules/authorization/reducer'
+
+export const rootReducer = combineReducers({
+  authorization
+  // your other reducers
+})
+```
+
+**Sagas**
+
+Add the `authorizationSaga` to the `rootSaga`:
+
+```ts
+import { all } from 'redux-saga/effects'
+import { authorizationSaga } from 'decentraland-dapps/dist/modules/authorization/sagas'
+
+export function* rootSaga() {
+  yield all([
+    authorizationSaga()
+    // your other sagas
+  ])
+}
+```
+
 ## Translation
 
 This module allows you to do i18n.
@@ -761,7 +839,7 @@ export function* rootSaga() {
 }
 ```
 
-This uses by defualt the `'@@router/LOCATION_CHANGE'` action type to track page changes. If you need to use a different action type, you can do the following:
+This uses by default the `'@@router/LOCATION_CHANGE'` action type to track page changes. If you need to use a different action type, you can do the following:
 
 ```ts
 import { all } from 'redux-saga/effects'

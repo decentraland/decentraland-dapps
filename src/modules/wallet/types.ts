@@ -1,7 +1,7 @@
 import { ChainId, Network } from '@dcl/schemas'
-import { ProviderType } from 'decentraland-connect'
+import { Provider, ProviderType } from 'decentraland-connect'
 
-export { ProviderType }
+export { Provider, ProviderType }
 
 export type NetworkData = {
   mana: number

@@ -1,10 +1,13 @@
 {
   "outputPath": "./src/contracts",
   "contracts": {
-    "MANA": {
-      "source": "etherscan",
-      "net": "mainnet",
-      "address": "0x0f5d2fb29fb7d3cfee444a200298f468908cc942"
+    "ERC20": {
+      "source": "files",
+      "abiFile": "./src/contracts/ERC20.json"
+    },
+    "ERC721": {
+      "source": "files",
+      "abiFile": "./src/contracts/ERC721.json"
     }
   }
 }
