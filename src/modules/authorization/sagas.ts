@@ -169,12 +169,11 @@ async function changeAuthorization(
       const payload = method.getSendRequestPayload({ from })
       const txData = payload.params[0].data
       const metaTxProvider = await createProvider(ProviderType.NETWORK, chainId)
+      const contract = {
+        ...getContract(contractName, chainId),
+        address: tokenAddress.toString()
+      }
 
-      return sendMetaTransaction(
-        provider,
-        metaTxProvider,
-        txData,
-        getContract(contractName, chainId)
-      )
+      return sendMetaTransaction(provider, metaTxProvider, txData, contract)
   }
 }
