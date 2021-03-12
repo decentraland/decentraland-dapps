@@ -2,13 +2,13 @@ import { Eth } from 'web3x-es/eth'
 import { Address } from 'web3x-es/address'
 import { put, call, takeEvery } from 'redux-saga/effects'
 import { Network } from '@dcl/schemas'
-import { Provider, ProviderType } from 'decentraland-connect'
+import { Provider } from 'decentraland-connect'
 import {
   getContract,
   getContractName,
   sendMetaTransaction
 } from 'decentraland-transactions'
-import { createProvider, getConnectedProvider } from '../../lib/eth'
+import { getNetworkProvider, getConnectedProvider } from '../../lib/eth'
 import { getChainConfiguration } from '../../lib/chainConfiguration'
 import { ERC20, ERC20TransactionReceipt } from '../../contracts/ERC20'
 import { ERC721, ERC721TransactionReceipt } from '../../contracts/ERC721'
@@ -57,9 +57,7 @@ function* handleFetchAuthorizationsRequest(
         authorization.authorizedAddress
       )
 
-      const provider: Provider = yield call(() =>
-        createProvider(ProviderType.NETWORK, chainId)
-      )
+      const provider: Provider = yield call(() => getNetworkProvider(chainId))
       const eth: Eth = new Eth(provider)
 
       switch (authorization.type) {
@@ -165,7 +163,7 @@ async function changeAuthorization(
     case Network.MATIC:
       const payload = method.getSendRequestPayload({ from })
       const txData = payload.params[0].data
-      const metaTxProvider = await createProvider(ProviderType.NETWORK, chainId)
+      const metaTxProvider = await getNetworkProvider(chainId)
 
       return sendMetaTransaction(
         provider,
