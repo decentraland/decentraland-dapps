@@ -10,11 +10,18 @@ export type EthereumWindow = Window & {
   }
 }
 
-export async function createProvider(
-  providerType: ProviderType,
-  chainId: ChainId
-): Promise<Provider> {
-  return connection.createProvider(providerType, chainId)
+export async function getNetworkProvider(chainId: ChainId): Promise<Provider> {
+  /*
+    We check if the connected provider is from the same chainId, if so we return that one instead of creating one.
+    This is to avoid using our own RPCs that much, and use the ones provided by the provider when possible.
+  */
+  if (getConnectedProviderChainId() === chainId) {
+    const connectedProvider = await getConnectedProvider()
+    if (connectedProvider) {
+      return connectedProvider
+    }
+  }
+  return connection.createProvider(ProviderType.NETWORK, chainId)
 }
 
 export async function getConnectedProvider(): Promise<Provider | null> {
@@ -29,6 +36,11 @@ export async function getConnectedProvider(): Promise<Provider | null> {
 export function getConnectedProviderType(): ProviderType | null {
   const connectionData = connection.getConnectionData()
   return connectionData ? connectionData.providerType : null
+}
+
+export function getConnectedProviderChainId(): ChainId | null {
+  const connectionData = connection.getConnectionData()
+  return connectionData ? connectionData.chainId : null
 }
 
 export function isCucumberProvider() {
