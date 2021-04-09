@@ -25,6 +25,15 @@ export default class Navbar extends React.PureComponent<NavbarProps> {
       account: {
         connecting: <T id="@dapps.navbar.account.connecting" />,
         signIn: <T id="@dapps.navbar.account.signIn" />
+      },
+      wrongNetwork: {
+        header: <T id="@dapps.navbar.wrongNetwork.header" />,
+        message: (
+          <T
+            id="@dapps.navbar.wrongNetwork.message"
+            values={{ currentChainName: '', expectedChainName: '' }}
+          />
+        )
       }
     }
   }
@@ -42,11 +51,11 @@ export default class Navbar extends React.PureComponent<NavbarProps> {
         {chainId && chainId !== expectedChainId ? (
           <Modal open={true} size="tiny">
             <Modal.Header>
-              <T id="@dapps.navbar.wrong-network.header" />
+              <T id="@dapps.navbar.wrongNetwork.header" />
             </Modal.Header>
             <Modal.Content>
               <T
-                id="@dapps.navbar.wrong-network.message"
+                id="@dapps.navbar.wrongNetwork.message"
                 values={{
                   currentChainName: <b>{currentChainName} </b>,
                   expectedChainName: <b>{expectedChainName} </b>

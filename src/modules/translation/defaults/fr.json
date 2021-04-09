@@ -32,7 +32,7 @@
         "events": "Events",
         "dao": "DAO"
       },
-      "wrong-network": {
+      "wrongNetwork": {
         "header": "Mauvais réseau",
         "message": "Vous devez être connecté au réseau {expectedChainName} pour utiliser cette application, mais vous êtes actuellement connecté au réseau {currentChainName}."
       }
