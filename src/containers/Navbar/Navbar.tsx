@@ -3,10 +3,9 @@ import * as React from 'react'
 import { Navbar as NavbarComponent, NavbarI18N } from 'decentraland-ui'
 import { getChainName } from '@dcl/schemas'
 import { getConnectedProviderChainId } from '../../lib/eth'
-
-import { NavbarProps } from './Navbar.types'
 import { T } from '../../modules/translation/utils'
 import Modal from '../../containers/Modal'
+import { NavbarProps } from './Navbar.types'
 
 export default class Navbar extends React.PureComponent<NavbarProps> {
   getTranslations = (): NavbarI18N | undefined => {
