@@ -1,12 +1,12 @@
 import * as React from 'react'
 
 import { Navbar as NavbarComponent, NavbarI18N } from 'decentraland-ui'
+import { getChainName } from '@dcl/schemas'
 import { getConnectedProviderChainId } from '../../lib/eth'
 
 import { NavbarProps } from './Navbar.types'
 import { T } from '../../modules/translation/utils'
 import Modal from '../../containers/Modal'
-import { getChainName } from '@dcl/schemas'
 
 export default class Navbar extends React.PureComponent<NavbarProps> {
   getTranslations = (): NavbarI18N | undefined => {
@@ -37,7 +37,6 @@ export default class Navbar extends React.PureComponent<NavbarProps> {
       ? getChainName(expectedChainId)
       : ''
     const currentChainName = chainId ? getChainName(chainId) : ''
-    console.log({ chainId, expectedChainId, relase: 1 })
     return (
       <>
         <NavbarComponent {...this.props} i18n={this.getTranslations()} />
