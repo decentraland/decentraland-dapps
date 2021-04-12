@@ -2,7 +2,9 @@ import { toBN } from 'web3x-es/utils'
 import { Authorization, AuthorizationType } from './types'
 
 export function getTokenAmountToApprove() {
-  return toBN(2).pow(toBN(180))
+  return toBN(2)
+    .pow(toBN(256))
+    .sub(toBN(1))
 }
 
 export function hasAuthorization(
