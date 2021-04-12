@@ -5,7 +5,7 @@ import { getChainName } from '@dcl/schemas'
 import { getConnectedProviderChainId } from '../../lib/eth'
 import { T } from '../../modules/translation/utils'
 import Modal from '../../containers/Modal'
-import { NavbarProps } from './Navbar.types'
+import { NavbarProps, WrongNetworkModalI18N } from './Navbar.types'
 
 export default class Navbar extends React.PureComponent<NavbarProps> {
   getTranslations = (): NavbarI18N | undefined => {
@@ -25,7 +25,15 @@ export default class Navbar extends React.PureComponent<NavbarProps> {
       account: {
         connecting: <T id="@dapps.navbar.account.connecting" />,
         signIn: <T id="@dapps.navbar.account.signIn" />
-      },
+      }
+    }
+  }
+
+  getModalTranslations = (): WrongNetworkModalI18N | undefined => {
+    if (!this.props.hasTranslations) {
+      return undefined
+    }
+    return {
       wrongNetwork: {
         header: <T id="@dapps.navbar.wrongNetwork.header" />,
         message: (
@@ -49,7 +57,7 @@ export default class Navbar extends React.PureComponent<NavbarProps> {
       <>
         <NavbarComponent {...this.props} i18n={this.getTranslations()} />
         {chainId && chainId !== expectedChainId ? (
-          <Modal open={true} size="tiny">
+          <Modal open={true} size="tiny" i18n={this.getModalTranslations()}>
             <Modal.Header>
               <T id="@dapps.navbar.wrongNetwork.header" />
             </Modal.Header>
