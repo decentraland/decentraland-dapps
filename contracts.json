@@ -8,6 +8,22 @@
     "ERC721": {
       "source": "files",
       "abiFile": "./src/contracts/ERC721.json"
+    },
+    "ENS": {
+      "source": "files",
+      "abiFile": "./src/contracts/ENS.json"
+    },
+    "ENSResolver": {
+      "source": "files",
+      "abiFile": "./src/contracts/ENSResolver.json"
+    },
+    "DCLController": {
+      "source": "files",
+      "abiFile": "./src/contracts/DCLController.json"
+    },
+    "DCLRegistrar": {
+      "source": "files",
+      "abiFile": "./src/contracts/DCLRegistrar.json"
     }
   }
 }

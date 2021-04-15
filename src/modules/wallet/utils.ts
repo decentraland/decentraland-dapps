@@ -74,3 +74,7 @@ export async function buildWallet(): Promise<Wallet> {
     chainId
   }
 }
+
+export function isEqual(addr1: string, addr2: string) {
+  return addr1.toLowerCase() === addr2.toLowerCase()
+}
