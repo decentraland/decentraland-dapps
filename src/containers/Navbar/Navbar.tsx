@@ -1,6 +1,10 @@
 import * as React from 'react'
 
-import { Navbar as NavbarComponent, NavbarI18N } from 'decentraland-ui'
+import {
+  ModalNavigation,
+  Navbar as NavbarComponent,
+  NavbarI18N
+} from 'decentraland-ui'
 import { getChainName } from '@dcl/schemas'
 import { getConnectedProviderChainId } from '../../lib/eth'
 import { T } from '../../modules/translation/utils'
@@ -59,7 +63,9 @@ export default class Navbar extends React.PureComponent<NavbarProps> {
         {chainId && chainId !== expectedChainId ? (
           <Modal open={true} size="tiny" i18n={this.getModalTranslations()}>
             <Modal.Header>
-              <T id="@dapps.navbar.wrongNetwork.header" />
+              <ModalNavigation
+                title={<T id="@dapps.navbar.wrongNetwork.header" />}
+              />
             </Modal.Header>
             <Modal.Content>
               <T
