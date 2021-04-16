@@ -2,9 +2,8 @@ import { createSelector } from 'reselect'
 import { LoadingState } from '../loading/reducer'
 import { Transaction } from '../transaction/types'
 import { getAddress } from '../wallet/selectors'
-import { getPendingTransactions } from '../transaction/selectors'
+import { getPendingTransactions as getPendingTransactionsByWallet } from '../transaction/selectors'
 import { isEqual } from '../wallet/utils'
-import { getName } from 'modules/profile/selectors'
 import {
   SET_ENS_RESOLVER_SUCCESS,
   SET_ENS_CONTENT_REQUEST,
@@ -14,7 +13,6 @@ import {
 } from './actions'
 import { Authorization, ENS } from './types'
 import { ENSState } from './reducer'
-import { getDomainFromName } from './utils'
 
 export const getState = (state: any) => state.ens
 export const getData = (state: any) => getState(state).data
@@ -24,7 +22,7 @@ export const getLoading = (state: any) => getState(state).loading
 
 export const getENSList = createSelector<any, ENSState['data'], ENS[]>(
   getData,
-  ensData => Object.values(ensData)
+  (ensData: any) => Object.values(ensData)
 )
 
 export const getENSByWallet = createSelector<
@@ -35,8 +33,8 @@ export const getENSByWallet = createSelector<
 >(
   getENSList,
   getAddress,
-  (ensList, address = '') =>
-    ensList.filter(ens => isEqual(ens.address, address))
+  (ensList: any, address = '') =>
+    ensList.filter((ens: any) => isEqual(ens.address, address))
 )
 
 export const getAuthorizationByWallet = createSelector<
@@ -47,46 +45,32 @@ export const getAuthorizationByWallet = createSelector<
 >(
   getAuthorizations,
   getAddress,
-  (authorizations, address = '') => authorizations[address]
-)
-
-export const getAliases = createSelector<
-  any,
-  ENS[],
-  string | undefined,
-  string | null,
-  ENS[]
->(
-  getENSList,
-  getAddress,
-  getName,
-  (ensList, address = '', name = '') =>
-    ensList.filter(
-      ens =>
-        isEqual(ens.address, address) &&
-        name &&
-        ens.subdomain === getDomainFromName(name)
-    )
+  (authorizations: any, address = '') => authorizations[address]
 )
 
 export const getENSForLand = (state: any, landId: string) => {
   const ensList = getENSList(state)
-  return ensList.filter(ens => ens.landId === landId)
+  return ensList.filter((ens: any) => ens.landId === landId)
+}
+
+const getPendingTransactions = (state: any) => {
+  const address = getAddress(state)
+  return address ? getPendingTransactionsByWallet(state, address) : []
 }
 
 export const isWaitingTxClaimName = createSelector<any, Transaction[], boolean>(
   getPendingTransactions,
-  transactions =>
+  (transactions: any) =>
     transactions.some(
-      transaction => CLAIM_NAME_SUCCESS === transaction.actionType
+      (transaction: any) => CLAIM_NAME_SUCCESS === transaction.actionType
     )
 )
 
 export const isWaitingTxAllowMana = createSelector<any, Transaction[], boolean>(
   getPendingTransactions,
-  transactions =>
+  (transactions: any) =>
     transactions.some(
-      transaction => ALLOW_CLAIM_MANA_SUCCESS === transaction.actionType
+      (transaction: any) => ALLOW_CLAIM_MANA_SUCCESS === transaction.actionType
     )
 )
 
@@ -96,9 +80,9 @@ export const isWaitingTxSetResolver = createSelector<
   boolean
 >(
   getPendingTransactions,
-  transactions =>
+  (transactions: any) =>
     transactions.some(
-      transaction => SET_ENS_RESOLVER_SUCCESS === transaction.actionType
+      (transaction: any) => SET_ENS_RESOLVER_SUCCESS === transaction.actionType
     )
 )
 
@@ -117,12 +101,12 @@ export const isLoadingContentBySubdomain = createSelector<
 >(
   getENSList,
   getLoading,
-  (ensList, loading) =>
+  (ensList: any, loading: any) =>
     ensList.reduce(
-      (obj, ens) => ({
+      (obj: any, ens: any) => ({
         ...obj,
         [ens.subdomain]: loading.some(
-          action =>
+          (action: any) =>
             action.type === SET_ENS_CONTENT_REQUEST &&
             action.payload.ens.subdomain === ens.subdomain
         )
@@ -139,12 +123,12 @@ export const isPendingContentBySubdomain = createSelector<
 >(
   getENSList,
   getPendingTransactions,
-  (ensList, transactions) =>
+  (ensList: any, transactions: any) =>
     ensList.reduce(
-      (obj, ens) => ({
+      (obj: any, ens: any) => ({
         ...obj,
         [ens.subdomain]: transactions.some(
-          transaction =>
+          (transaction: any) =>
             SET_ENS_CONTENT_SUCCESS === transaction.actionType &&
             transaction.payload.ens.subdomain === ens.subdomain
         )

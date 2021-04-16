@@ -1,5 +1,8 @@
-import { LoadingState, loadingReducer } from 'decentraland-dapps/dist/modules/loading/reducer'
-import { FetchTransactionSuccessAction, FETCH_TRANSACTION_SUCCESS } from 'decentraland-dapps/dist/modules/transaction/actions'
+import { LoadingState, loadingReducer } from '../loading/reducer'
+import {
+  FetchTransactionSuccessAction,
+  FETCH_TRANSACTION_SUCCESS
+} from '../transaction/actions'
 import {
   FetchENSListRequestAction,
   FetchENSListSuccessAction,
@@ -93,7 +96,10 @@ export type ENSReducerAction =
   | AllowClaimManaSuccessAction
   | AllowClaimManaFailureAction
 
-export function ensReducer(state: ENSState = INITIAL_STATE, action: ENSReducerAction): ENSState {
+export function ensReducer(
+  state: ENSState = INITIAL_STATE,
+  action: ENSReducerAction
+): ENSState {
   switch (action.type) {
     case CLAIM_NAME_REQUEST:
     case SET_ALIAS_REQUEST:
