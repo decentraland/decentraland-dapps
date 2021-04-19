@@ -1,5 +1,4 @@
 import { LambdasClient } from 'dcl-catalyst-client'
-import { env } from 'decentraland-commons'
 import { BaseAPI } from './api'
 import { Profile } from '../modules/profile/types'
 
@@ -46,6 +45,3 @@ export class PeerAPI extends BaseAPI {
     return res as ContentServiceScene
   }
 }
-
-export const PEER_URL = env.get('REACT_APP_PEER_URL', '')
-export const content = new PeerAPI(PEER_URL)

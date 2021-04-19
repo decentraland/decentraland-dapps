@@ -7,7 +7,6 @@ import { call, put, select, takeEvery, takeLatest } from 'redux-saga/effects'
 import * as contentHash from 'content-hash'
 import { CatalystClient, DeploymentBuilder } from 'dcl-catalyst-client'
 import { Entity, EntityType } from 'dcl-catalyst-commons'
-import { Avatar } from 'decentraland-ui'
 import { Authenticator } from 'dcl-crypto'
 
 import { ENS as ENSContract } from '../../contracts/ENS'
@@ -15,9 +14,8 @@ import { ENSResolver } from '../../contracts/ENSResolver'
 import { DCLController } from '../../contracts/DCLController'
 import { ERC20 as MANAToken } from '../../contracts/ERC20'
 
-import { marketplace } from '../../lib/marketplace'
-import { ipfs } from '../../lib/ipfs'
-import { PEER_URL } from '../../lib/peer'
+import { MarketplaceAPI } from '../../lib/marketplace'
+import { IpfsAPI } from '../../lib/ipfs'
 
 import { Profile } from '../profile/types'
 import { changeProfile } from '../profile/actions'
@@ -80,7 +78,9 @@ export function createEnsSaga({
   manaContractAddress,
   registrarContractAddress,
   peerUrl,
-  getLands
+  marketplaceUrl,
+  ipfsUrl,
+  landPosition
 }: {
   ensControllerContractAdress: string
   ensContractAddress: string
@@ -88,8 +88,13 @@ export function createEnsSaga({
   manaContractAddress: string
   registrarContractAddress: string
   peerUrl: string
-  getLands: any
+  marketplaceUrl: string
+  ipfsUrl: string
+  landPosition: string
 }) {
+  const marketplace = new MarketplaceAPI(marketplaceUrl)
+  const ipfs = new IpfsAPI(ipfsUrl, landPosition)
+
   function* ensSaga() {
     yield takeLatest(SET_ALIAS_REQUEST, handleSetAlias)
     yield takeEvery(FETCH_ENS_REQUEST, handleFetchENSRequest)
@@ -112,7 +117,7 @@ export function createEnsSaga({
   function* handleSetAlias(action: SetAliasRequestAction) {
     const { address, name } = action.payload
     try {
-      const client = new CatalystClient(PEER_URL, 'builder')
+      const client = new CatalystClient(peerUrl, 'builder')
       const entities: Entity[] = yield call(() =>
         client.fetchEntitiesByPointers(EntityType.PROFILE, [
           address.toLowerCase()
@@ -126,7 +131,7 @@ export function createEnsSaga({
       }
 
       const avatar = entity && entity.metadata && entity.metadata.avatars[0]
-      const newAvatar: Avatar = {
+      const newAvatar = {
         ...avatar,
         hasClaimedName: true,
         version: avatar.version + 1,
@@ -274,7 +279,7 @@ export function createEnsSaga({
         Address.fromString(ensContractAddress)
       )
 
-      const txHash = yield call(() =>
+      const txHash: string = yield call(() =>
         ensContract.methods
           .setResolver(nodehash, Address.fromString(ensResolverContractAddress))
           .send({ from })
@@ -308,7 +313,9 @@ export function createEnsSaga({
       let content = ''
 
       if (land) {
-        const ipfsHash = yield call(() => ipfs.uploadRedirectionFile(land))
+        const ipfsHash: string = yield call(() =>
+          ipfs.uploadRedirectionFile(land)
+        )
         content = `0x${contentHash.fromIpfs(ipfsHash)}`
       } else {
         content = Address.ZERO.toString()
@@ -320,7 +327,7 @@ export function createEnsSaga({
         Address.fromString(ensResolverContractAddress)
       )
 
-      const txHash = yield call(() =>
+      const txHash: string = yield call(() =>
         resolverContract.methods
           .setContenthash(nodehash, content)
           .send({ from })
@@ -374,14 +381,6 @@ export function createEnsSaga({
 
   function* handleFetchENSListRequest(_action: FetchENSListRequestAction) {
     try {
-      const landHashes: { id: string; hash: string }[] = []
-      const lands = yield select(getLands)
-
-      for (let land of lands) {
-        const landHash = yield call(() => ipfs.computeLandHash(land))
-        landHashes.push({ hash: `0x${landHash}`, id: land.id })
-      }
-
       const [wallet, eth]: [Wallet, Eth] = yield getWallet()
       const address = wallet.address
       const ensContract = new ENSContract(
@@ -397,7 +396,6 @@ export function createEnsSaga({
           domains.map(async data => {
             const name = data
             const subdomain = `${data.toLowerCase()}.dcl.eth`
-            let landId: string | undefined = undefined
             let content: string = ''
 
             const nodehash = namehash(subdomain)
@@ -411,11 +409,6 @@ export function createEnsSaga({
               content = await resolverContract.methods
                 .contenthash(nodehash)
                 .call()
-
-              const land = landHashes.find(lh => lh.hash === content)
-              if (land) {
-                landId = land.id
-              }
             }
 
             const ens: ENS = {
@@ -423,8 +416,7 @@ export function createEnsSaga({
               name,
               subdomain,
               resolver,
-              content,
-              landId
+              content
             }
 
             return ens

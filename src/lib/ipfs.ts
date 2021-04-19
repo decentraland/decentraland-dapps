@@ -5,11 +5,7 @@ const Importer = require('ipfs-unixfs-engine').Importer
 import toBuffer from 'blob-to-buffer'
 import CID from 'cids'
 
-import { env } from 'decentraland-commons'
 import { t } from '../modules/translation/utils'
-
-export const IPFS_URL = env.get('REACT_APP_IPFS_URL', '')
-export const LAND_POSITION_URL = env.get('REACT_APP_LAND_POSITION_URL', '')
 
 const INDEX_FILE_PATH = 'index.html'
 
@@ -97,6 +93,14 @@ const getSelection = (land: any) =>
     : land.parcels.map((parcel: any) => ({ x: parcel.x, y: parcel.y }))
 
 export class IpfsAPI {
+  landPosition: string
+  ipfsUrl: string
+
+  constructor(landPosition: string, ipfsUrl: string) {
+    this.landPosition = landPosition
+    this.ipfsUrl = ipfsUrl
+  }
+
   generateRedirectionFile = (land: any): Blob => {
     const selection = getSelection(land)
     const [x, y] = getCenter(selection)
@@ -105,13 +109,13 @@ export class IpfsAPI {
     <head>
       <meta
         http-equiv="refresh"
-        content="0; URL=${LAND_POSITION_URL}${coordsToId(x, y)}"
+        content="0; URL=${this.landPosition}${coordsToId(x, y)}"
       />
     </head>
     <body>
       <p>
         ${t('ipfs_api.not_redirected')}
-        <a href="${LAND_POSITION_URL}${coordsToId(x, y)}">
+        <a href="${this.landPosition}${coordsToId(x, y)}">
           ${t('global.click_here')}
         </a>.
       </p>
@@ -125,7 +129,7 @@ export class IpfsAPI {
     const formData = new FormData()
     const blob = this.generateRedirectionFile(land)
     formData.append('blob', blob, INDEX_FILE_PATH)
-    const result = await fetch(IPFS_URL, {
+    const result = await fetch(this.ipfsUrl, {
       method: 'POST',
       body: formData
     })
@@ -140,5 +144,3 @@ export class IpfsAPI {
     return hash
   }
 }
-
-export const ipfs = new IpfsAPI()

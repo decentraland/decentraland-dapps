@@ -1,9 +1,5 @@
 import { gql } from 'apollo-boost'
-import { env } from 'decentraland-commons'
 import { createClient } from './graph'
-
-export const MARKETPLACE_URL = env.get('REACT_APP_MARKETPLACE_GRAPH_URL', '')
-const graphClient = createClient(MARKETPLACE_URL)
 
 const BATCH_SIZE = 1000
 
@@ -28,17 +24,27 @@ type SubdomainQueryResult = {
 }
 
 export class MarketplaceAPI {
+  graphClient
+
+  constructor(url: string) {
+    this.graphClient = createClient(url)
+  }
+
   fetchENSList = async (address: string | undefined): Promise<string[]> => {
     if (!address) {
       return []
     }
+    if (this.graphClient === undefined) {
+      return []
+    }
+
     const owner = address.toLowerCase()
     let results: string[] = []
     let page: string[] = []
     let offset = 0
     let nextPage = true
     while (nextPage) {
-      const { data } = await graphClient.query<SubdomainQueryResult>({
+      const { data } = await this.graphClient.query<SubdomainQueryResult>({
         query: getSubdomainQuery(),
         variables: { owner, offset }
       })
@@ -53,5 +59,3 @@ export class MarketplaceAPI {
     return results
   }
 }
-
-export const marketplace = new MarketplaceAPI()
