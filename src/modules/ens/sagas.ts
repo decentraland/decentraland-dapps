@@ -118,8 +118,8 @@ function* handleSetAlias(action: SetAliasRequestAction) {
 
 function* handleFetchENSListRequest(_action: FetchENSListRequestAction): any {
   try {
-    const [wallet, _eth] = yield getWallet()
-    const address = wallet.address
+    const data = yield getWallet()
+    const address = data.wallet.address
     const domains: string[] = yield call(() =>
       marketplace.fetchENSList(address)
     )
