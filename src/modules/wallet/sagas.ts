@@ -50,6 +50,7 @@ if (isCucumberProvider()) {
   cucumberProviderSend = (...args: any[]) => {
     try {
       return Promise.resolve(_send.apply(provider, args))
+        .then(accounts => accounts?.result || [])
     } catch (err) {
       return Promise.reject(err)
     }
