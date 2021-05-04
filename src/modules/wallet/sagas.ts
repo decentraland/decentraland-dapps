@@ -44,7 +44,7 @@ import { isConnected } from './selectors'
 // Patch Samsung's Cucumber provider send to support promises
 const provider = (window as any).ethereum as LegacyProvider
 
-let cucumberProviderSend: Function
+let cucumberProviderSend: (...args: any[]) => Promise<string[]>
 if (isCucumberProvider()) {
   const _send = provider.send
   cucumberProviderSend = (...args: any[]) => {
@@ -101,7 +101,7 @@ function* handleEnableWalletRequest(action: EnableWalletRequestAction) {
   try {
     const account: string = yield call(async () => {
       if (isCucumberProvider()) {
-        const accounts = cucumberProviderSend('eth_requestAccounts')
+        const accounts = await cucumberProviderSend('eth_requestAccounts')
         return accounts[0]
       }
 
