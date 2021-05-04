@@ -102,8 +102,7 @@ function* handleEnableWalletRequest(action: EnableWalletRequestAction) {
   try {
     const account: string = yield call(async () => {
       if (isCucumberProvider()) {
-        const accounts = await cucumberProviderSend('eth_requestAccounts')
-        return accounts[0]
+        await cucumberProviderSend('eth_requestAccounts')
       }
 
       const { account } = await connection.connect(providerType, CHAIN_ID)
