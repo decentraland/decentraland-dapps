@@ -31,6 +31,10 @@
         "builder": "Builder",
         "events": "Events",
         "dao": "DAO"
+      },
+      "wrongNetwork": {
+        "header": "間違ったネットワーク",
+        "message": "このアプリを使用するには、{expectedChainName}ネットワークに接続する必要がありますが、現在は{currentChainName}ネットワークに接続しています。"
       }
     },
     "sign_in": {

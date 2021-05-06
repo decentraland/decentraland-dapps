@@ -31,6 +31,10 @@
         "builder": "Builder",
         "events": "Events",
         "dao": "DAO"
+      },
+      "wrongNetwork": {
+        "header": "网络错误",
+        "message": "您需要连接到{expectedChainName}网络才能使用此应用，但您当前已连接到{currentChainName}网络。"
       }
     },
     "sign_in": {

@@ -31,6 +31,10 @@
         "builder": "Builder",
         "events": "Events",
         "dao": "DAO"
+      },
+      "wrongNetwork": {
+        "header": "Red incorrecta",
+        "message": "Necesita conectarse a la Red {expectedChainName} para usar esta app, pero actualmente esta conectado a la Red {currentChainName}."
       }
     },
     "sign_in": {

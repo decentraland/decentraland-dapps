@@ -3,7 +3,8 @@ import {
   isConnected,
   isConnecting,
   getAddress,
-  getMana
+  getMana,
+  getChainId
 } from '../../modules/wallet/selectors'
 import { isEnabled } from '../../modules/translation/selectors'
 import { RootDispatch } from '../../types'
@@ -11,6 +12,7 @@ import { NavbarProps, MapStateProps, MapDispatchProps } from './Navbar.types'
 import Navbar from './Navbar'
 
 const mapState = (state: any): MapStateProps => ({
+  chainId: getChainId(state),
   mana: getMana(state),
   address: getAddress(state),
   isConnected: isConnected(state),
