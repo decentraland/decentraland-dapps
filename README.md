@@ -142,7 +142,9 @@ export function* rootSaga() {
 
 ### Advanced Usage
 
-You can to supply in which chain you're going to work, it'll default to `mainnet` by default. It won't affect wallets like Metamask, where you can choose which network to use on the wallet itself, but's necesary for things like email/phone based wallets.
+You can to supply in which chain you're going to work, it'll default to `mainnet`. It won't affect wallets like Metamask, where you can choose which network to use on the wallet itself, but's necesary for things like email/phone based wallets.
+If you're using the [Navbar](#Navbar) container, this chain will determine in which chain the user **must be**. If they're on the incorrect chain (using a network picker with Metamask for example), a modal will pop up blocking the dapp until the state changes.
+
 Remember that the chain id is the number that represents a particular network, 1 being `mainnet`, 3 being `ropsten`, etc.
 
 <details><summary>Learn More</summary>
