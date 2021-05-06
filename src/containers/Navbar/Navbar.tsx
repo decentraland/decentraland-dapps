@@ -5,7 +5,7 @@ import {
   Navbar as NavbarComponent,
   NavbarI18N
 } from 'decentraland-ui'
-import { getChainName } from '@dcl/schemas'
+import { ChainId, getChainName } from '@dcl/schemas'
 import { getConnectedProviderChainId } from '../../lib/eth'
 import { T } from '../../modules/translation/utils'
 import Modal from '../../containers/Modal'
@@ -50,29 +50,30 @@ export default class Navbar extends React.PureComponent<NavbarProps> {
     }
   }
 
+  isValidChainId(
+    currentChainId: ChainId,
+    expectedChainId: ChainId | null
+  ): expectedChainId is ChainId {
+    return !!expectedChainId && currentChainId !== expectedChainId
+  }
+
   render() {
     const { chainId } = this.props
     const expectedChainId = getConnectedProviderChainId()
-    const expectedChainName = expectedChainId
-      ? getChainName(expectedChainId)
-      : ''
-    const currentChainName = chainId ? getChainName(chainId) : ''
     return (
       <>
         <NavbarComponent {...this.props} i18n={this.getTranslations()} />
-        {chainId && chainId !== expectedChainId ? (
+        {chainId && this.isValidChainId(chainId, expectedChainId) ? (
           <Modal open={true} size="tiny" i18n={this.getModalTranslations()}>
-            <Modal.Header>
-              <ModalNavigation
-                title={<T id="@dapps.navbar.wrongNetwork.header" />}
-              />
-            </Modal.Header>
+            <ModalNavigation
+              title={<T id="@dapps.navbar.wrongNetwork.header" />}
+            />
             <Modal.Content>
               <T
                 id="@dapps.navbar.wrongNetwork.message"
                 values={{
-                  currentChainName: <b>{currentChainName} </b>,
-                  expectedChainName: <b>{expectedChainName} </b>
+                  currentChainName: <b>{getChainName(chainId)}</b>,
+                  expectedChainName: <b>{getChainName(expectedChainId)}</b>
                 }}
               />
             </Modal.Content>

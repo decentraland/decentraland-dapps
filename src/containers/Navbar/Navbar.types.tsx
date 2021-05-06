@@ -1,7 +1,7 @@
 import { ChainId } from '@dcl/schemas'
 import { NavbarProps as NavbarComponentProps } from 'decentraland-ui'
 
-export declare type WrongNetworkModalI18N = {
+export type WrongNetworkModalI18N = {
   wrongNetwork: {
     header: React.ReactNode
     message: React.ReactNode
@@ -9,7 +9,7 @@ export declare type WrongNetworkModalI18N = {
 }
 
 export type NavbarProps = NavbarComponentProps & {
-  chainId: ChainId | undefined
+  chainId?: ChainId
   hasTranslations?: boolean
 }
 

@@ -33,7 +33,7 @@ export type MapDispatch = Dispatch<
   ConnectWalletRequestAction | ChangeAccountAction | ChangeNetworkAction
 >
 
-export type EventType = 'accountsChanged' | 'chainChanged'
+export type EventType = 'accountsChanged' | 'chainChanged' | 'networkChanged'
 export type EmitterMethod = 'on' | 'removeListener'
 export type AccountsChangedHandler = (accounts: string[]) => void
 export type NetworkChangedHandler = (chainId: string) => void
