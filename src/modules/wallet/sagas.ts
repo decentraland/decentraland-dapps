@@ -58,7 +58,7 @@ if (isCucumberProvider()) {
 }
 
 // Can be set on createWalletSaga
-let CHAIN_ID: ChainId = ChainId.ETHEREUM_MAINNET
+let CHAIN_ID: ChainId
 let POLL_INTERVAL = 60 * 1000 // 60 seconds
 let polling = false
 
@@ -155,27 +155,24 @@ function* handleConnectWalletSuccess() {
   }
 }
 
-export function createWalletSaga(options?: CreateWalletOptions) {
-  if (options) {
-    if (options.MANA_ADDRESS) {
-      console.warn(
-        'Deprecated notice: the MANA_ADDRESS option on `createWalletSaga` has been deprecated and will be removed in future version.'
-      )
-    }
-
-    if (options.CHAIN_ID) {
-      if (isValidChainId(options.CHAIN_ID)) {
-        CHAIN_ID = Number(options.CHAIN_ID)
-      } else {
-        console.warn(
-          `Invalid Chain id ${options.CHAIN_ID}, defaulting to ${CHAIN_ID}`
-        )
-      }
-    }
-
-    if (options.POLL_INTERVAL) {
-      POLL_INTERVAL = options.POLL_INTERVAL
-    }
+export function createWalletSaga(options: CreateWalletOptions) {
+  if (isValidChainId(options.CHAIN_ID)) {
+    CHAIN_ID = Number(options.CHAIN_ID)
+  } else {
+    throw new Error(
+      `Invalid Chain id ${options.CHAIN_ID}. Valid options are ${Object.values(ChainId)}`
+    )
   }
+
+  if (options.MANA_ADDRESS) {
+    console.warn(
+      'Deprecated notice: the MANA_ADDRESS option on `createWalletSaga` has been deprecated and will be removed in future version.'
+    )
+  }
+
+  if (options.POLL_INTERVAL) {
+    POLL_INTERVAL = options.POLL_INTERVAL
+  }
+
   return walletSaga
 }
