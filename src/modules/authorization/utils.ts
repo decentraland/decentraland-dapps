@@ -20,7 +20,7 @@ export function areEqual(left: Authorization, right: Authorization) {
   return (
     left.type === right.type &&
     left.authorizedAddress === right.authorizedAddress &&
-    left.tokenAddress === right.tokenAddress &&
+    left.contractAddress === right.contractAddress &&
     left.chainId === right.chainId
   )
 }

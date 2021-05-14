@@ -1,4 +1,5 @@
 import { ChainId } from '@dcl/schemas'
+import { ContractName } from 'decentraland-transactions'
 
 export enum AuthorizationType {
   ALLOWANCE = 'allowance',
@@ -13,7 +14,8 @@ export enum AuthorizationAction {
 export type Authorization = {
   type: AuthorizationType
   address: string
-  tokenAddress: string
+  contractAddress: string
   authorizedAddress: string
+  contractName: ContractName
   chainId: ChainId
 }
