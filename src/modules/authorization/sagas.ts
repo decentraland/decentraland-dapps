@@ -1,11 +1,12 @@
 import { Eth } from 'web3x-es/eth'
+import { TxSend } from 'web3x-es/contract'
 import { Address } from 'web3x-es/address'
 import { put, call, takeEvery } from 'redux-saga/effects'
 import { Network } from '@dcl/schemas'
 import { Provider } from 'decentraland-connect'
 import {
+  ContractData,
   getContract,
-  getContractName,
   sendMetaTransaction
 } from 'decentraland-transactions'
 import { getNetworkProvider, getConnectedProvider } from '../../lib/eth'
@@ -28,7 +29,6 @@ import {
   REVOKE_TOKEN_REQUEST
 } from './actions'
 import { Authorization, AuthorizationAction, AuthorizationType } from './types'
-import { TxSend } from 'web3x-es/contract'
 
 export function* authorizationSaga() {
   yield takeEvery(
@@ -52,7 +52,7 @@ function* handleFetchAuthorizationsRequest(
       }
       const { chainId } = authorization
       const address = Address.fromString(authorization.address)
-      const tokenAddress = Address.fromString(authorization.tokenAddress)
+      const contractAddress = Address.fromString(authorization.contractAddress)
       const authorizedAddress = Address.fromString(
         authorization.authorizedAddress
       )
@@ -63,7 +63,7 @@ function* handleFetchAuthorizationsRequest(
       switch (authorization.type) {
         case AuthorizationType.ALLOWANCE:
           const allowance: string = yield call(() =>
-            new ERC20(eth, tokenAddress).methods
+            new ERC20(eth, contractAddress).methods
               .allowance(address, authorizedAddress)
               .call()
           )
@@ -73,7 +73,7 @@ function* handleFetchAuthorizationsRequest(
           break
         case AuthorizationType.APPROVAL:
           const isApproved: boolean = yield call(() =>
-            new ERC721(eth, tokenAddress).methods
+            new ERC721(eth, contractAddress).methods
               .isApprovedForAll(address, authorizedAddress)
               .call()
           )
@@ -131,9 +131,9 @@ async function changeAuthorization(
   const { network } = getChainConfiguration(authorization.chainId)
 
   const from = Address.fromString(authorization.address)
-  const tokenAddress = Address.fromString(authorization.tokenAddress)
+  const contractAddress = Address.fromString(authorization.contractAddress)
   const authorizedAddress = Address.fromString(authorization.authorizedAddress)
-  const chainId = authorization.chainId
+  const { contractName, chainId } = authorization
 
   let method: TxSend<ERC20TransactionReceipt | ERC721TransactionReceipt>
 
@@ -142,7 +142,7 @@ async function changeAuthorization(
       const amount =
         action === AuthorizationAction.GRANT ? getTokenAmountToApprove() : 0
 
-      method = new ERC20(eth, tokenAddress).methods.approve(
+      method = new ERC20(eth, contractAddress).methods.approve(
         authorizedAddress,
         amount
       )
@@ -150,7 +150,7 @@ async function changeAuthorization(
     case AuthorizationType.APPROVAL:
       const isApproved = action === AuthorizationAction.GRANT
 
-      method = new ERC721(eth, tokenAddress).methods.setApprovalForAll(
+      method = new ERC721(eth, contractAddress).methods.setApprovalForAll(
         authorizedAddress,
         isApproved
       )
@@ -164,12 +164,11 @@ async function changeAuthorization(
       const payload = method.getSendRequestPayload({ from })
       const txData = payload.params[0].data
       const metaTxProvider = await getNetworkProvider(chainId)
+      const contract: ContractData = {
+        ...getContract(contractName, chainId),
+        address: contractAddress.toString()
+      }
 
-      return sendMetaTransaction(
-        provider,
-        metaTxProvider,
-        txData,
-        getContract(getContractName(tokenAddress.toString()), chainId)
-      )
+      return sendMetaTransaction(provider, metaTxProvider, txData, contract)
   }
 }
