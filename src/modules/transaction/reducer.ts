@@ -64,7 +64,7 @@ export function transactionReducer(
           {
             ...transaction,
             timestamp: Date.now(),
-            from: action.payload.address,
+            from: action.payload.address.toLowerCase(),
             actionType: actionRef.type,
             // these always start as null, and they get updated by the saga
             status: null,
@@ -170,7 +170,8 @@ export function transactionReducer(
         ...state,
         data: state.data.filter(
           transaction =>
-            transaction.from !== action.payload.address &&
+            transaction.from.toLowerCase() !==
+              action.payload.address.toLowerCase() &&
             (action.payload.clearPendings || !isPending(transaction.status))
         )
       }

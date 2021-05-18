@@ -48,7 +48,7 @@ export async function buildWallet(): Promise<Wallet> {
     throw new Error('Could not get address')
   }
 
-  const address = accounts[0]
+  const address = accounts[0].toString()
   const chainId = (await eth.getId()) as ChainId
   const config = getChainConfiguration(chainId)
   const networks: Partial<Networks> = {}
@@ -59,15 +59,12 @@ export async function buildWallet(): Promise<Wallet> {
 
     networks[network] = {
       chainId: networkChainId,
-      mana: await fetchManaBalance(
-        networkConfiguration.manaGraphURL,
-        address.toString()
-      )
+      mana: await fetchManaBalance(networkConfiguration.manaGraphURL, address)
     }
   }
 
   return {
-    address: address.toString(),
+    address: address.toLowerCase(),
     providerType: getConnectedProviderType()!,
     networks: networks as Networks,
     network: config.network,
