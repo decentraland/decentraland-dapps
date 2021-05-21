@@ -16,8 +16,8 @@ describe('modules', function() {
       const payload = { some: 'data' }
       const chainId = ChainId.ETHEREUM_MAINNET
 
-      const tx = { hash, payload }
-      const txWithReceipt = { hash, payload, withReceipt: true }
+      const tx = { hash, payload, chainId }
+      const txWithReceipt = { hash, payload, chainId, withReceipt: true }
 
       describe('buildTransactionPayload', function() {
         it('should return a new object with the transaction flag an the action inside', function() {
@@ -38,6 +38,7 @@ describe('modules', function() {
           expect(txPayload).to.deep.equal({
             [TRANSACTION_ACTION_FLAG]: {
               ...tx,
+              chainId,
               payload: {}
             }
           })
