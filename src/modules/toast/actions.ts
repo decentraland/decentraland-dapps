@@ -1,5 +1,11 @@
 import { action } from 'typesafe-actions'
 
+export let modals: { [key: string]: any } = {}
+
+// Open Modal
+
+export const OPEN_MODAL = 'Open modal'
+
 export const getModalActions = <T>() => ({
   openModal: function(name: T, metadata: any = null) {
     return action(OPEN_MODAL, { name, metadata })
@@ -13,10 +19,6 @@ export const getModalActions = <T>() => ({
 })
 
 const { openModal, closeModal, toggleModal } = getModalActions<string>()
-
-// Open Modal
-
-export const OPEN_MODAL = 'Open modal'
 
 export { openModal }
 
