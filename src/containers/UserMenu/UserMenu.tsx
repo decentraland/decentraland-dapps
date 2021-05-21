@@ -12,7 +12,8 @@ export default class UserMenu extends React.Component<Props> {
       signIn: <T id="@dapps.user_menu.sign_in" />,
       signOut: <T id="@dapps.user_menu.sign_out" />,
       guest: <T id="@dapps.user_menu.guest" />,
-      settings: <T id="@dapps.user_menu.settings" />
+      settings: <T id="@dapps.user_menu.settings" />,
+      account: <T id="@dapps.user_menu.account" />
     }
   }
 

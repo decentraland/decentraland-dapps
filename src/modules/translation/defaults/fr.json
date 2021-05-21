@@ -62,7 +62,8 @@
       "sign_in": "Se Connecter",
       "sign_out": "Se Déconnecter",
       "guest": "Invité",
-      "settings": "Paramètres"
+      "settings": "Paramètres",
+      "account": "Compte"
     }
   }
 }

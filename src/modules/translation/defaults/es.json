@@ -66,7 +66,8 @@
       "sign_in": "Conectar",
       "sign_out": "Desconectar",
       "guest": "Invitado",
-      "settings": "Configuración"
+      "settings": "Configuración",
+      "account": "Mi Cuenta"
     }
   }
 }
