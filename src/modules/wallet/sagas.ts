@@ -49,8 +49,9 @@ if (isCucumberProvider()) {
   const _send = provider.send
   cucumberProviderSend = (...args: any[]) => {
     try {
-      return Promise.resolve(_send.apply(provider, args))
-        .then(accounts => accounts?.result || [])
+      return Promise.resolve(_send.apply(provider, args)).then(
+        accounts => accounts?.result || []
+      )
     } catch (err) {
       return Promise.reject(err)
     }
@@ -148,7 +149,8 @@ function* handleConnectWalletSuccess() {
     polling = true
     while (polling) {
       yield delay(POLL_INTERVAL)
-      if (yield select(isConnected)) {
+      const isWalletConnected: boolean = yield select(isConnected)
+      if (isWalletConnected) {
         yield put(fetchWalletRequest())
       }
     }
@@ -160,7 +162,9 @@ export function createWalletSaga(options: CreateWalletOptions) {
     CHAIN_ID = Number(options.CHAIN_ID)
   } else {
     throw new Error(
-      `Invalid Chain id ${options.CHAIN_ID}. Valid options are ${Object.values(ChainId)}`
+      `Invalid Chain id ${options.CHAIN_ID}. Valid options are ${Object.values(
+        ChainId
+      )}`
     )
   }
 

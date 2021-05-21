@@ -10,6 +10,7 @@ import {
   fork,
   delay
 } from 'redux-saga/effects'
+import { Provider } from 'decentraland-connect'
 import { Transaction, TransactionStatus, AnyTransaction } from './types'
 import {
   fetchTransactionFailure,
@@ -188,7 +189,7 @@ function* handleReplaceTransactionRequest(
     return
   }
 
-  const provider = yield call(() => getConnectedProvider())
+  const provider: Provider | null = yield call(() => getConnectedProvider())
   if (!provider) {
     console.warn('Could not connect to ethereum')
     return

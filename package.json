@@ -17,6 +17,7 @@
     "dcl-catalyst-client": "^4.0.6",
     "decentraland-connect": "^2.17.0",
     "decentraland-transactions": "^1.8.0",
+    "decentraland-ui": "^3.3.0",
     "flat": "^4.1.0",
     "react-intl": "^3.12.0",
     "redux-persistence": "^1.2.0",
@@ -27,8 +28,7 @@
     "typesafe-actions": "^2.0.3",
     "typescript": "^4.1.5",
     "web3x-codegen": "^4.0.6",
-    "web3x-es": "^4.0.6",
-    "decentraland-ui": "^3.3.0"
+    "web3x-es": "^4.0.6"
   },
   "scripts": {
     "prebuild": "rimraf dist",
@@ -61,7 +61,6 @@
   },
   "peerDependencies": {
     "@dcl/schemas": ">=1.1.0",
-    "decentraland-ui": "^3.3.0",
     "react": "^17.0.2",
     "react-redux": "^7.2.4",
     "redux": "^4.1.0",

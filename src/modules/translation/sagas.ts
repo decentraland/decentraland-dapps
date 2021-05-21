@@ -24,7 +24,7 @@ export function createTranslationSaga({
   ) {
     try {
       const { locale } = action.payload
-      let result
+      let result: Translation
       if (getTranslation) {
         result = yield call(() => getTranslation(locale))
       } else if (translations) {
@@ -34,14 +34,14 @@ export function createTranslationSaga({
       }
 
       // merge translations and defaults
-      result = mergeTranslations<TranslationKeys>(
+      const allTransalations = mergeTranslations<TranslationKeys>(
         flatten(defaultTranslations[locale]),
         flatten(result)
       )
 
-      setCurrentLocale(locale, result)
+      setCurrentLocale(locale, allTransalations)
 
-      yield put(fetchTranslationsSuccess(locale, result))
+      yield put(fetchTranslationsSuccess(locale, allTransalations))
     } catch (error) {
       yield put(fetchTranslationsFailure(error.message))
     }
