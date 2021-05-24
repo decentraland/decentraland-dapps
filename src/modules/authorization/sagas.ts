@@ -141,8 +141,8 @@ async function changeAuthorization(
     case AuthorizationType.ALLOWANCE:
       const amount =
         action === AuthorizationAction.GRANT
-          ? getTokenAmountToApprove().toNumber()
-          : 0
+          ? getTokenAmountToApprove().toString()
+          : '0'
 
       method = new ERC20(eth, contractAddress).methods.approve(
         authorizedAddress,
