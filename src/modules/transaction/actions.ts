@@ -125,8 +125,8 @@ export const replaceTransactionRequest = (hash: string, nonce: number) =>
     nonce
   })
 
-export const replaceTransactionSuccess = (hash: string, replaceBy: string) =>
-  action(REPLACE_TRANSACTION_SUCCESS, { hash, replaceBy })
+export const replaceTransactionSuccess = (hash: string, replacedBy: string) =>
+  action(REPLACE_TRANSACTION_SUCCESS, { hash, replacedBy })
 
 export const replaceTransactionFailure = (hash: string, error: string) =>
   action(REPLACE_TRANSACTION_FAILURE, {
