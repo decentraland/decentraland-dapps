@@ -1,3 +1,4 @@
+import { isSameAddress } from '../wallet/utils'
 import { Transaction, TransactionStatus } from './types'
 import { TransactionState } from './reducer'
 import { isPending } from './utils'
@@ -23,12 +24,12 @@ export const getTransactionsByStatus = (
   status: TransactionStatus
 ): Transaction[] =>
   getData(state)
-    .filter(tx => tx.from === address && tx.status === status)
+    .filter(tx => isSameAddress(tx.from, address) && tx.status === status)
     .sort(sortByTimestamp)
 
 export const getTransactions = (state: any, address: string): Transaction[] =>
   getData(state)
-    .filter(tx => tx.from === address)
+    .filter(tx => isSameAddress(tx.from, address))
     .sort(sortByTimestamp)
 
 export const getPendingTransactions = (
@@ -36,7 +37,7 @@ export const getPendingTransactions = (
   address: string
 ): Transaction[] =>
   getData(state)
-    .filter(tx => tx.from === address && isPending(tx.status))
+    .filter(tx => isSameAddress(tx.from, address) && isPending(tx.status))
     .sort(sortByTimestamp)
 
 export const getTransactionHistory = (
@@ -44,7 +45,7 @@ export const getTransactionHistory = (
   address: string
 ): Transaction[] =>
   getData(state)
-    .filter(tx => tx.from === address && !isPending(tx.status))
+    .filter(tx => isSameAddress(tx.from, address) && !isPending(tx.status))
     .sort(sortByTimestamp)
 
 export const getTransactionsByType = (
@@ -53,5 +54,5 @@ export const getTransactionsByType = (
   type: string
 ): Transaction[] =>
   getData(state)
-    .filter(tx => tx.from === address && tx.actionType === type)
+    .filter(tx => isSameAddress(tx.from, address) && tx.actionType === type)
     .sort(sortByTimestamp)

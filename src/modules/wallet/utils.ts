@@ -71,3 +71,10 @@ export async function buildWallet(): Promise<Wallet> {
     chainId
   }
 }
+
+export function isSameAddress(
+  address1: Address | string,
+  address2: Address | string
+) {
+  return address1.toString().toLowerCase() === address2.toString().toLowerCase()
+}

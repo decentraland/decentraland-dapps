@@ -38,7 +38,7 @@ const INITIAL_STATE = {
   error: null
 }
 
-type AuthorizationReducerAction =
+export type AuthorizationReducerAction =
   | FetchAuthorizationsRequestAction
   | FetchAuthorizationsSuccessAction
   | FetchAuthorizationsFailureAction

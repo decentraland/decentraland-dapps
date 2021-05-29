@@ -14,7 +14,7 @@ export const isEnabling = (state: any) =>
   isLoadingType(getLoading(state), ENABLE_WALLET_REQUEST)
 
 export const getAddress = (state: any) =>
-  isConnected(state) ? getData(state)!.address : undefined
+  isConnected(state) ? getData(state)!.address.toLowerCase() : undefined
 
 export const getChainId = (state: any) =>
   isConnected(state) ? getData(state)!.chainId : undefined

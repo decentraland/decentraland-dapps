@@ -51,7 +51,7 @@ export function transactionReducer(
 ): TransactionState {
   switch (action.type) {
     case FETCH_TRANSACTION_REQUEST: {
-      const actionRef = action.payload.action
+      const { address, action: actionRef } = action.payload
       const transaction = getTransactionFromAction(actionRef)
       const otherTransactions = state.data.filter(
         otherTransaction => otherTransaction.hash !== transaction.hash
@@ -64,7 +64,7 @@ export function transactionReducer(
           {
             ...transaction,
             timestamp: Date.now(),
-            from: action.payload.address.toLowerCase(),
+            from: address,
             actionType: actionRef.type,
             // these always start as null, and they get updated by the saga
             status: null,
@@ -75,18 +75,14 @@ export function transactionReducer(
       }
     }
     case FETCH_TRANSACTION_SUCCESS: {
-      const actionTransaction = action.payload.transaction
+      const { transaction } = action.payload
       return {
         loading: loadingReducer(state.loading, action),
         error: null,
-        data: state.data.map((transaction: Transaction) =>
-          // prettier-ignore
-          actionTransaction.hash === transaction.hash
-              ? {
-                ...transaction,
-                ...actionTransaction
-              }
-              : transaction
+        data: state.data.map((stateTransaction: Transaction) =>
+          transaction.hash === stateTransaction.hash
+            ? { ...stateTransaction, ...transaction }
+            : stateTransaction
         )
       }
     }
@@ -96,92 +92,70 @@ export function transactionReducer(
         loading: loadingReducer(state.loading, action),
         error: message,
         data: state.data.map((transaction: Transaction) =>
-          // prettier-ignore
-          hash === transaction.hash
-              ? {
-                ...transaction,
-                status
-              }
-              : transaction
+          hash === transaction.hash ? { ...transaction, status } : transaction
         )
       }
     }
     case UPDATE_TRANSACTION_STATUS: {
+      const { hash, status } = action.payload
       return {
         loading: loadingReducer(state.loading, action),
         error: null,
         data: state.data.map((transaction: Transaction) =>
-          // prettier-ignore
-          action.payload.hash === transaction.hash
-              ? {
-                ...transaction,
-                status: action.payload.status
-              }
-              : transaction
+          hash === transaction.hash ? { ...transaction, status } : transaction
         )
       }
     }
     case FIX_REVERTED_TRANSACTION: {
+      const { hash } = action.payload
       return {
         loading: loadingReducer(state.loading, action),
         error: null,
         data: state.data.map((transaction: Transaction) =>
-          // prettier-ignore
-          action.payload.hash === transaction.hash
-              ? {
-                ...transaction,
-                status: TransactionStatus.CONFIRMED
-              }
-              : transaction
-        )
-      }
-    }
-    case UPDATE_TRANSACTION_NONCE: {
-      return {
-        loading: loadingReducer(state.loading, action),
-        error: null,
-        data: state.data.map((transaction: Transaction) =>
-          action.payload.hash === transaction.hash
-            ? {
-                ...transaction,
-                nonce: action.payload.nonce
-              }
+          hash === transaction.hash
+            ? { ...transaction, status: TransactionStatus.CONFIRMED }
             : transaction
         )
       }
     }
-    case REPLACE_TRANSACTION_SUCCESS: {
+    case UPDATE_TRANSACTION_NONCE: {
+      const { hash, nonce } = action.payload
       return {
         loading: loadingReducer(state.loading, action),
         error: null,
         data: state.data.map((transaction: Transaction) =>
-          action.payload.hash === transaction.hash
-            ? {
-                ...transaction,
-                status: TransactionStatus.REPLACED,
-                replacedBy: action.payload.replaceBy
-              }
+          hash === transaction.hash ? { ...transaction, nonce } : transaction
+        )
+      }
+    }
+    case REPLACE_TRANSACTION_SUCCESS: {
+      const { hash, replacedBy } = action.payload
+      return {
+        loading: loadingReducer(state.loading, action),
+        error: null,
+        data: state.data.map((transaction: Transaction) =>
+          hash === transaction.hash
+            ? { ...transaction, status: TransactionStatus.REPLACED, replacedBy }
             : transaction
         )
       }
     }
     case CLEAR_TRANSACTIONS: {
+      const { address, clearPendings } = action.payload
       return {
         ...state,
         data: state.data.filter(
           transaction =>
-            transaction.from.toLowerCase() !==
-              action.payload.address.toLowerCase() &&
-            (action.payload.clearPendings || !isPending(transaction.status))
+            transaction.from.toLowerCase() !== address.toLowerCase() &&
+            (clearPendings || !isPending(transaction.status))
         )
       }
     }
     case CLEAR_TRANSACTION: {
+      const { hash } = action.payload
       return {
         ...state,
-        data: state.data.filter(
-          transaction => transaction.hash !== action.payload.hash
-        )
+        data: state.data.filter(transaction => transaction.hash !== hash)
       }
     }
     default:

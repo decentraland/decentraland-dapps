@@ -45,6 +45,7 @@ import {
 import { isPending, buildActionRef } from './utils'
 import { getTransaction as getTransactionFromChain } from './txUtils'
 import { getAddress } from '../wallet/selectors'
+import { isSameAddress } from '../wallet/utils'
 import { getConnectedProvider } from '../../lib/eth'
 
 export function* transactionSaga(): IterableIterator<ForkEffect> {
@@ -239,13 +240,13 @@ function* handleReplaceTransactionRequest(
 
       // look for a replacement tx, if so break the loop
       replacedBy = transactions.find(
-        tx => tx.nonce === nonce && tx.from.toString() === account
+        tx => tx.nonce === nonce && isSameAddress(tx.from, account)
       )
       if (replacedBy) break
 
       // if no replacement is found, keep track of the highest nonce for the account
       highestNonce = transactions
-        .filter(tx => tx.from.toString() === account)
+        .filter(tx => isSameAddress(tx.from, account))
         .reduce((max, tx) => Math.max(max, tx.nonce), highestNonce)
     }
 

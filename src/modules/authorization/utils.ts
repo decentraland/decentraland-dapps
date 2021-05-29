@@ -1,4 +1,5 @@
 import { toBN } from 'web3x-es/utils'
+import { isSameAddress } from '../wallet/utils'
 import { Authorization, AuthorizationType } from './types'
 
 export function getTokenAmountToApprove(): ReturnType<typeof toBN> {
@@ -19,9 +20,9 @@ export function hasAuthorization(
 export function areEqual(left: Authorization, right: Authorization) {
   return (
     left.type === right.type &&
-    left.authorizedAddress === right.authorizedAddress &&
-    left.contractAddress === right.contractAddress &&
-    left.chainId === right.chainId
+    left.chainId === right.chainId &&
+    isSameAddress(left.authorizedAddress, right.authorizedAddress) &&
+    isSameAddress(left.contractAddress, right.contractAddress)
   )
 }
 
