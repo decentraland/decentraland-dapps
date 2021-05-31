@@ -1072,6 +1072,82 @@ export { openModal, closeModal, toggleModal }
 </p>
 </details>
 
+## Toasts
+
+Leverages redux state and provides actions to show and hide toasts. It provides a few simple actions:
+
+```ts
+showToast(toast: Omit<Toast, 'id'>)
+hideToast(id: number)
+```
+
+You can check the properties a toast has [here](/src/modules/toast/types.ts). It extends the props already defined on [decentraland-ui's toast](https://github.com/decentraland/ui/blob/master/src/components/Toast/Toast.tsx)
+
+It also provides a selector to get the open toasts:
+
+```
+getToasts(state): Toast[]
+```
+
+### Installation
+
+In order to use this module you need to add a reducer, a provider and a saga.
+
+**Provider**:
+
+Add the `<ToastProvider>` as a parent of your routes. It takes an optional `position` param to set where you want the toasts to appear. It'll default to `top left`
+
+```tsx
+import * as React from 'react'
+import * as ReactDOM from 'react-dom'
+import { Provider } from 'react-redux'
+import { ConnectedRouter } from 'connected-react-router'
+import ToastProvider from 'decentraland-dapps/dist/providers/ToastProvider'
+import * as modals from 'components/Modals'
+import { store, history } from './store'
+
+ReactDOM.render(
+  <Provider store={store}>
+    <ToastProvider position="bottom right">
+      <ConnectedRouter history={history}>{/* Your App */}</ConnectedRouter>
+    </ToastProvider>
+  </Provider>,
+  document.getElementById('root')
+)
+```
+
+**Reducer**:
+
+Add the `toastReducer` as `toast` to your `rootReducer`:
+
+```ts
+import { combineReducers } from 'redux'
+import { toastReducer as toast } from 'decentraland-dapps/dist/modules/toast/reducer'
+
+export const rootReducer = combineReducers({
+  toast
+  // your other reducers
+})
+```
+
+**Saga**:
+
+You will need to create a `toastSaga` and add it to your `rootSaga`:
+
+```ts
+import { all } from 'redux-saga/effects'
+import { toastSaga } from 'decentraland-dapps/dist/modules/wallet/sagas'
+
+export function* rootSaga() {
+  yield all([
+    toastSaga()
+    // your other sagas here
+  ])
+}
+```
+
+Toasts themselves do not do any async action, but this is needed to render each toast properly, without overloading the redux state with unnecesary information.
+
 # Lib
 
 Common libraries for dApps
@@ -1390,10 +1466,12 @@ export default class MyComponent extends React.PureComponent {
 Behind the scenes Modal is setting the following properties:
 
 ```js
-open={true}
-className={name}
-size="small"
-onClose={/*close the modal by name*/}
+open = { true }
+className = { name }
+size = 'small'
+onClose = {
+  /*close the modal by name*/
+}
 ```
 
 ## TransactionLink
