@@ -14,3 +14,4 @@ export type Props = Partial<DefaultProps> & {
 
 export type MapStateProps = Pick<Props, 'chainId'>
 export type MapDispatchProps = {}
+export type OwnProps = Pick<Props, 'chainId'>
