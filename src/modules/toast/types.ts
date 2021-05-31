@@ -1,4 +1,3 @@
-import { Props as ToastProps } from 'decentraland-ui/dist/components/Toast/Toast.types'
+import { ToastProps } from 'decentraland-ui'
 
-export { ToastType } from 'decentraland-ui/dist/components/Toast/Toast.types'
 export type Toast = { id: number } & ToastProps
