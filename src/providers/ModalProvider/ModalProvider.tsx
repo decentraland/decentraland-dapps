@@ -7,7 +7,7 @@ export default class ModalProvider extends React.PureComponent<Props> {
     children: null
   }
 
-  getCloseHandler(name: string) {
+  getCloseHandler = (name: string) => {
     return () => this.props.onClose(name)
   }
 
