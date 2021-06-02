@@ -48,8 +48,8 @@ export function createAuthorizationSaga(options?: AuthorizationSagaOptions) {
   function* handleFetchAuthorizationsRequest(
     action: FetchAuthorizationsRequestAction
   ) {
+    const { authorizations } = action.payload
     try {
-      const { authorizations } = action.payload
       const authorizationsToStore: Authorization[] = []
 
       for (const authorization of authorizations) {
@@ -94,25 +94,25 @@ export function createAuthorizationSaga(options?: AuthorizationSagaOptions) {
 
       yield put(fetchAuthorizationsSuccess(authorizationsToStore))
     } catch (error) {
-      yield put(fetchAuthorizationsFailure(error.message))
+      yield put(fetchAuthorizationsFailure(authorizations, error.message))
     }
   }
 
   function* handleGrantTokenRequest(action: GrantTokenRequestAction) {
+    const { authorization } = action.payload
     try {
-      const { authorization } = action.payload
       const txHash: string = yield call(() =>
         changeAuthorization(authorization, AuthorizationAction.GRANT)
       )
       yield put(grantTokenSuccess(authorization, authorization.chainId, txHash))
     } catch (error) {
-      yield put(grantTokenFailure(error.message))
+      yield put(grantTokenFailure(authorization, error.message))
     }
   }
 
   function* handleRevokeTokenRequest(action: RevokeTokenRequestAction) {
+    const { authorization } = action.payload
     try {
-      const { authorization } = action.payload
       const txHash: string = yield call(() =>
         changeAuthorization(authorization, AuthorizationAction.REVOKE)
       )
@@ -120,7 +120,7 @@ export function createAuthorizationSaga(options?: AuthorizationSagaOptions) {
         revokeTokenSuccess(authorization, authorization.chainId, txHash)
       )
     } catch (error) {
-      yield put(revokeTokenFailure(error.message))
+      yield put(revokeTokenFailure(authorization, error.message))
     }
   }
 

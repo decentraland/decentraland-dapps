@@ -15,8 +15,10 @@ export const fetchAuthorizationsRequest = (authorizations: Authorization[]) =>
 export const fetchAuthorizationsSuccess = (authorizations: Authorization[]) =>
   action(FETCH_AUTHORIZATIONS_SUCCESS, { authorizations })
 
-export const fetchAuthorizationsFailure = (error: string) =>
-  action(FETCH_AUTHORIZATIONS_FAILURE, { error })
+export const fetchAuthorizationsFailure = (
+  authorizations: Authorization[],
+  error: string
+) => action(FETCH_AUTHORIZATIONS_FAILURE, { authorizations, error })
 
 export type FetchAuthorizationsRequestAction = ReturnType<
   typeof fetchAuthorizationsRequest
@@ -51,8 +53,10 @@ export const grantTokenSuccess = (
     authorization
   })
 
-export const grantTokenFailure = (error: string) =>
-  action(GRANT_TOKEN_FAILURE, { error })
+export const grantTokenFailure = (
+  authorization: Authorization,
+  error: string
+) => action(GRANT_TOKEN_FAILURE, { authorization, error })
 
 export type GrantTokenRequestAction = ReturnType<typeof grantTokenRequest>
 export type GrantTokenSuccessAction = ReturnType<typeof grantTokenSuccess>
@@ -81,8 +85,10 @@ export const revokeTokenSuccess = (
     authorization
   })
 
-export const revokeTokenFailure = (error: string) =>
-  action(REVOKE_TOKEN_FAILURE, { error })
+export const revokeTokenFailure = (
+  authorization: Authorization,
+  error: string
+) => action(REVOKE_TOKEN_FAILURE, { authorization, error })
 
 export type RevokeTokenRequestAction = ReturnType<typeof revokeTokenRequest>
 export type RevokeTokenSuccessAction = ReturnType<typeof revokeTokenSuccess>
