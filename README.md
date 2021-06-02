@@ -578,11 +578,16 @@ export const rootReducer = combineReducers({
 
 **Sagas**
 
-Add the `authorizationSaga` to the `rootSaga`:
+Use `createAuthorizationSaga` and add the returned saga to the `rootSaga`:
 
 ```ts
 import { all } from 'redux-saga/effects'
-import { authorizationSaga } from 'decentraland-dapps/dist/modules/authorization/sagas'
+import { createAuthorizationSaga } from 'decentraland-dapps/dist/modules/authorization/sagas'
+
+// if you are not going to use meta transactions you can skip the options or just import `authorizationSaga`
+const authorizationSaga = createAuthorizationSaga({
+  metaTransactionServerUrl: 'https://transactions-api.decentraland.io'
+})
 
 export function* rootSaga() {
   yield all([
