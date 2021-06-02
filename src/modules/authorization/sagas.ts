@@ -28,11 +28,12 @@ import {
   RevokeTokenRequestAction,
   REVOKE_TOKEN_REQUEST
 } from './actions'
-import { Authorization, AuthorizationAction, AuthorizationType } from './types'
-
-export type AuthorizationSagaOptions = {
-  metaTransactionServerUrl?: string
-}
+import {
+  Authorization,
+  AuthorizationAction,
+  AuthorizationSagaOptions,
+  AuthorizationType
+} from './types'
 
 export function createAuthorizationSaga(options?: AuthorizationSagaOptions) {
   return function* authorizationSaga() {

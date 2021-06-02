@@ -1,6 +1,6 @@
 import { takeEvery, put, call, ForkEffect } from 'redux-saga/effects'
 import flatten from 'flat'
-import { Translation, TranslationKeys } from './types'
+import { Translation, TranslationKeys, TranslationSagaOptions } from './types'
 import {
   fetchTranslationsSuccess,
   fetchTranslationsFailure,
@@ -9,11 +9,6 @@ import {
 } from './actions'
 import { setCurrentLocale, mergeTranslations } from './utils'
 import * as defaultTranslations from './defaults'
-
-export type TranslationSagaOptions = {
-  getTranslation?: (locale: string) => Promise<Translation>
-  translations?: { [locale: string]: Translation }
-}
 
 export function createTranslationSaga({
   getTranslation,

@@ -19,3 +19,7 @@ export type Authorization = {
   contractName: ContractName
   chainId: ChainId
 }
+
+export type AuthorizationSagaOptions = {
+  metaTransactionServerUrl?: string
+}

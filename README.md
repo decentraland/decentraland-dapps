@@ -578,7 +578,7 @@ export const rootReducer = combineReducers({
 
 **Sagas**
 
-Use `createAuthorizationSaga` and add the returned saga to the `rootSaga`:
+Use `createAuthorizationSaga` and add the returned saga to the `rootSaga`. Alternatively, if you are just going to use this module on Ethereum (which means you won't need meta-transactions) you can just import `authorizationSaga`:
 
 ```ts
 import { all } from 'redux-saga/effects'
