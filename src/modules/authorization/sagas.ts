@@ -86,6 +86,10 @@ export function createAuthorizationSaga(options?: AuthorizationSagaOptions) {
                 .then<Authorization | null>((allowance: BigNumber) =>
                   allowance.gt(0) ? authorization : null
                 )
+                .catch((error: Error) => {
+                  console.warn(`Error fetching allowance`, authorization, error)
+                  return null
+                })
             )
             break
           case AuthorizationType.APPROVAL:
@@ -106,6 +110,10 @@ export function createAuthorizationSaga(options?: AuthorizationSagaOptions) {
                 .then<Authorization | null>((isApproved: boolean) =>
                   isApproved ? authorization : null
                 )
+                .catch((error: Error) => {
+                  console.warn(`Error fetching approval`, authorization, error)
+                  return null
+                })
             )
             break
         }
@@ -113,7 +121,7 @@ export function createAuthorizationSaga(options?: AuthorizationSagaOptions) {
 
       const authorizationsToStore: Authorization[] = yield call(async () => {
         const results = await Promise.all(promises)
-        return results.filter(result => result !== null) // filter nulls
+        return results.filter(result => !!result) // filter nulls, or undefineds due to caughted promises
       })
 
       yield put(fetchAuthorizationsSuccess(authorizationsToStore))
