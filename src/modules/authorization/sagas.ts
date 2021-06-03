@@ -121,7 +121,7 @@ export function createAuthorizationSaga(options?: AuthorizationSagaOptions) {
 
       const authorizationsToStore: Authorization[] = yield call(async () => {
         const results = await Promise.all(promises)
-        return results.filter(result => !!result) // filter nulls, or undefineds due to caughted promises
+        return results.filter(result => !!result) // filter nulls, or undefineds due to caught promises
       })
 
       yield put(fetchAuthorizationsSuccess(authorizationsToStore))
