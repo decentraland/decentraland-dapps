@@ -1,7 +1,9 @@
+import { put, call, takeEvery } from 'redux-saga/effects'
+import { providers } from '@0xsequence/multicall'
+import { providers as ethersProviders, Contract, BigNumber } from 'ethers'
 import { Eth } from 'web3x-es/eth'
 import { TxSend } from 'web3x-es/contract'
 import { Address } from 'web3x-es/address'
-import { put, call, takeEvery } from 'redux-saga/effects'
 import { Network } from '@dcl/schemas'
 import { Provider } from 'decentraland-connect'
 import {
@@ -50,47 +52,69 @@ export function createAuthorizationSaga(options?: AuthorizationSagaOptions) {
   ) {
     const { authorizations } = action.payload
     try {
-      const authorizationsToStore: Authorization[] = []
+      const promises: Promise<Authorization | null>[] = []
 
       for (const authorization of authorizations) {
         if (!isValidType(authorization.type)) {
           throw new Error(`Invalid authorization type ${authorization.type}`)
         }
         const { chainId } = authorization
-        const address = Address.fromString(authorization.address)
-        const contractAddress = Address.fromString(
-          authorization.contractAddress
-        )
-        const authorizedAddress = Address.fromString(
-          authorization.authorizedAddress
-        )
 
+        // provider party 🎉
         const provider: Provider = yield call(() => getNetworkProvider(chainId))
-        const eth: Eth = new Eth(provider)
+        const ethersProvider = new ethersProviders.Web3Provider(provider)
+        const multicallProvider = new providers.MulticallProvider(
+          ethersProvider
+        )
 
         switch (authorization.type) {
           case AuthorizationType.ALLOWANCE:
-            const allowance: string = yield call(() =>
-              new ERC20(eth, contractAddress).methods
-                .allowance(address, authorizedAddress)
-                .call()
+            const erc20 = new Contract(
+              authorization.contractAddress,
+              [
+                'function allowance(address owner, address spender) view returns (uint256)'
+              ],
+              multicallProvider
             )
-            if (parseInt(allowance, 10) > 0) {
-              authorizationsToStore.push(authorization)
-            }
+            promises.push(
+              // @ts-ignore
+              erc20
+                .allowance(
+                  authorization.address,
+                  authorization.authorizedAddress
+                )
+                .then<Authorization | null>((allowance: BigNumber) =>
+                  allowance.gt(0) ? authorization : null
+                )
+            )
             break
           case AuthorizationType.APPROVAL:
-            const isApproved: boolean = yield call(() =>
-              new ERC721(eth, contractAddress).methods
-                .isApprovedForAll(address, authorizedAddress)
-                .call()
+            const erc721 = new Contract(
+              authorization.contractAddress,
+              [
+                'function isApprovedForAll(address owner, address operator) view returns (bool)'
+              ],
+              multicallProvider
             )
-            if (isApproved) {
-              authorizationsToStore.push(authorization)
-            }
+            promises.push(
+              // @ts-ignore
+              erc721
+                .isApprovedForAll(
+                  authorization.address,
+                  authorization.authorizedAddress
+                )
+                .then<Authorization | null>((isApproved: boolean) =>
+                  isApproved ? authorization : null
+                )
+            )
             break
         }
       }
+
+      const authorizationsToStore: Authorization[] = yield call(async () => {
+        const results = await Promise.all(promises)
+        return results.filter(result => result !== null) // filter nulls
+      })
 
       yield put(fetchAuthorizationsSuccess(authorizationsToStore))
     } catch (error) {
