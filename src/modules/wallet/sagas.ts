@@ -60,7 +60,7 @@ if (isCucumberProvider()) {
 
 // Can be set on createWalletSaga
 let CHAIN_ID: ChainId
-let POLL_INTERVAL = 60 * 1000 // 60 seconds
+let POLL_INTERVAL = 5 * 60 * 1000 // 60 seconds
 let polling = false
 
 export function* walletSaga() {

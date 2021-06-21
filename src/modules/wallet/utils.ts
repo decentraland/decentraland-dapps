@@ -1,32 +1,27 @@
 import { Eth } from 'web3x-es/eth'
-import { Address } from 'web3x-es/address'
-import { fromWei } from 'web3x-es/utils'
 import { ChainId } from '@dcl/schemas'
-import { getConnectedProvider, getConnectedProviderType } from '../../lib/eth'
-import { graphql } from '../../lib/graph'
+import { Address } from 'web3x-es/address'
+import { ContractName, getContract } from 'decentraland-transactions'
+import { Contract, providers, utils } from 'ethers'
+import {
+  getConnectedProvider,
+  getConnectedProviderType,
+  getNetworkProvider
+} from '../../lib/eth'
 import { getChainConfiguration } from '../../lib/chainConfiguration'
 import { Networks, Wallet } from './types'
 
-export const getManaBalanceQuery = (address: string) => `query {
-  accounts(where:{ id: "${address.toLowerCase()}" }) {
-    id
-    mana
-  }
-}`
-
-export async function fetchManaBalance(graphUrl: string, address: string) {
+export async function fetchManaBalance(chainId: ChainId, address: string) {
   try {
-    const { accounts } = await graphql<{
-      accounts: { id: string; mana: string }[]
-    }>(graphUrl, getManaBalanceQuery(address))
-
-    if (accounts.length === 0) {
-      throw new Error(
-        `No results for Graph URL "${graphUrl}" and address "${address}"`
-      )
-    }
-
-    return parseFloat(fromWei(accounts[0].mana, 'ether'))
+    const provider = await getNetworkProvider(chainId)
+    const contract = getContract(ContractName.MANAToken, chainId)
+    const mana = new Contract(
+      contract.address,
+      contract.abi,
+      new providers.Web3Provider(provider)
+    )
+    const balance = await mana.balanceOf(address)
+    return utils.formatEther(balance)
   } catch (error) {
     return 0
   }
@@ -55,11 +50,9 @@ export async function buildWallet(): Promise<Wallet> {
 
   for (const network of Object.keys(config.networkMapping)) {
     const networkChainId = config.networkMapping[network]
-    const networkConfiguration = getChainConfiguration(networkChainId)
-
     networks[network] = {
       chainId: networkChainId,
-      mana: await fetchManaBalance(networkConfiguration.manaGraphURL, address)
+      mana: await fetchManaBalance(networkChainId, address)
     }
   }
 
