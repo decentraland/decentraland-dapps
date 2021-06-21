@@ -21,7 +21,7 @@ export async function fetchManaBalance(chainId: ChainId, address: string) {
       new providers.Web3Provider(provider)
     )
     const balance = await mana.balanceOf(address)
-    return utils.formatEther(balance)
+    return parseFloat(utils.formatEther(balance))
   } catch (error) {
     return 0
   }
