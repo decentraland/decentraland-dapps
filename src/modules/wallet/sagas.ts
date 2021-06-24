@@ -145,7 +145,7 @@ function* handleFetchWalletRequest(_action: FetchWalletRequestAction) {
 
 function* handleConnectWalletSuccess() {
   // poll wallet balances
-  if (!polling) {
+  if (!polling && POLL_INTERVAL > 0) {
     polling = true
     while (polling) {
       yield delay(POLL_INTERVAL)
