@@ -53,6 +53,7 @@ export function createAuthorizationSaga(options?: AuthorizationSagaOptions) {
     const { authorizations } = action.payload
     try {
       const promises: Promise<Authorization | null>[] = []
+      const multicallProviders = {}
 
       for (const authorization of authorizations) {
         if (!isValidType(authorization.type)) {
@@ -60,12 +61,17 @@ export function createAuthorizationSaga(options?: AuthorizationSagaOptions) {
         }
         const { chainId } = authorization
 
-        // provider party 🎉
-        const provider: Provider = yield call(() => getNetworkProvider(chainId))
-        const ethersProvider = new ethersProviders.Web3Provider(provider)
-        const multicallProvider = new providers.MulticallProvider(
-          ethersProvider
-        )
+        if (!multicallProviders[chainId]) {
+          // provider party 🎉
+          const provider: Provider = yield call(() =>
+            getNetworkProvider(chainId)
+          )
+          const ethersProvider = new ethersProviders.Web3Provider(provider)
+          const multicallProvider = new providers.MulticallProvider(
+            ethersProvider
+          )
+          multicallProviders[chainId] = multicallProvider
+        }
 
         switch (authorization.type) {
           case AuthorizationType.ALLOWANCE:
@@ -74,7 +80,7 @@ export function createAuthorizationSaga(options?: AuthorizationSagaOptions) {
               [
                 'function allowance(address owner, address spender) view returns (uint256)'
               ],
-              multicallProvider
+              multicallProviders[chainId]
             )
             promises.push(
               // @ts-ignore
@@ -98,7 +104,7 @@ export function createAuthorizationSaga(options?: AuthorizationSagaOptions) {
               [
                 'function isApprovedForAll(address owner, address operator) view returns (bool)'
               ],
-              multicallProvider
+              multicallProviders[chainId]
             )
             promises.push(
               // @ts-ignore
