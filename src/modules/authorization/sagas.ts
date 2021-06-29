@@ -53,7 +53,7 @@ export function createAuthorizationSaga(options?: AuthorizationSagaOptions) {
     const { authorizations } = action.payload
     try {
       const promises: Promise<Authorization | null>[] = []
-      const multicallProviders = {}
+      const multicallProviders: Record<string, providers.MulticallProvider> = {}
 
       for (const authorization of authorizations) {
         if (!isValidType(authorization.type)) {
