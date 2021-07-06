@@ -55,7 +55,7 @@
         "title": "Sign In",
         "subtitle": "Choose how you want to connect to Ethereum.",
         "error": "Could not connect to wallet.",
-        "supported_wallets": "Contract and Trezor wallets are not supported for interacting with Polygon.{br}Read more about the Trezor integration {trezor_link}",
+        "supported_wallets": "Contract and Trezor wallets cannot interact Polygon.{br}Read more about the Trezor integration {trezor_link}",
         "trezor_link": "here"
       },
       "option": {
