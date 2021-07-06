@@ -54,7 +54,9 @@
       "modal": {
         "title": "Conectar",
         "subtitle": "Elige como quieres conectarte.",
-        "error": "No se pudo conectar a la billetera."
+        "error": "No se pudo conectar a la billetera.",
+        "supported_wallets": "Las billeteras de contratos y Trezor no están soportadas para interactuar con Polygon.{br}Lea más sobre la intregración con Trezor {trezor_link}",
+        "trezor_link": "aquí"
       },
       "option": {
         "browser_extension": "Usando una Browser extension",

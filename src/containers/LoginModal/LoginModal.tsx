@@ -6,7 +6,7 @@ import {
   LoginModalOptionType
 } from 'decentraland-ui'
 import { ProviderType, connection } from 'decentraland-connect'
-import { T } from '../../modules/translation/utils'
+import { T, t } from '../../modules/translation/utils'
 import { isCucumberProvider, isDapperProvider } from '../../lib/eth'
 import { DefaultProps, Props, State } from './LoginModal.types'
 
@@ -127,6 +127,23 @@ export default class LoginModal extends React.PureComponent<Props, State> {
         open={open}
         className={className}
         i18n={this.getModalTranslations()}
+        message={
+          <T
+            id="@dapps.login.modal.supported_wallets"
+            values={{
+              br: <br />,
+              trezor_link: (
+                <a
+                  href="https://github.com/trezor/trezor-firmware/pull/1568"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {t('@dapps.login.modal.trezor_link')}
+                </a>
+              )
+            }}
+          />
+        }
         loading={isLoading}
         hasError={hasError}
         onClose={onClose}

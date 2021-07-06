@@ -19,7 +19,7 @@
     "dcl-catalyst-client": "^4.0.6",
     "decentraland-connect": "^2.17.0",
     "decentraland-transactions": "^1.12.1",
-    "decentraland-ui": "^3.5.2",
+    "decentraland-ui": "^3.6.0",
     "flat": "^4.1.0",
     "react-intl": "^3.12.0",
     "redux-persistence": "^1.2.0",
