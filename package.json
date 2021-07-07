@@ -3,8 +3,8 @@
   "version": "0.0.0-development",
   "main": "dist",
   "dependencies": {
-    "@0xsequence/multicall": "^0.21.5",
-    "@0xsequence/relayer": "^0.21.5",
+    "@0xsequence/multicall": "^0.25.1",
+    "@0xsequence/relayer": "^0.25.1",
     "@dcl/schemas": ">=1.1.0",
     "@types/flat": "0.0.28",
     "@types/node": "^10.1.2",
