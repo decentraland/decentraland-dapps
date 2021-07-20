@@ -1,5 +1,7 @@
 import { ChainId } from '@dcl/schemas'
 import { connection, ProviderType, Provider } from 'decentraland-connect'
+import { Eth } from 'web3x-es/eth'
+import { LegacyProviderAdapter } from 'web3x-es/providers'
 import { isMobile } from './utils'
 
 export type EthereumWindow = Window & {
@@ -8,6 +10,15 @@ export type EthereumWindow = Window & {
     isCucumber?: boolean
     isDapper?: boolean
   }
+}
+
+export async function getEthereumProvider(): Promise<Eth> {
+  const provider: Provider | null = await getConnectedProvider()
+  if (!provider) {
+    throw new Error('Could not get a valid connected Wallet')
+  }
+
+  return new Eth(new LegacyProviderAdapter(provider as any))
 }
 
 export async function getNetworkProvider(chainId: ChainId): Promise<Provider> {

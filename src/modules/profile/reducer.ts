@@ -8,7 +8,13 @@ import {
   LOAD_PROFILE_SUCCESS,
   LOAD_PROFILE_FAILURE,
   CHANGE_PROFILE,
-  ChangeProfileAction
+  ChangeProfileAction,
+  SET_PROFILE_DESCRIPTION_REQUEST,
+  SET_PROFILE_DESCRIPTION_SUCCESS,
+  SetProfileDescriptionRequestAction,
+  SetProfileDescriptionSuccessAction,
+  SetProfileDescriptionFailureAction,
+  SET_PROFILE_DESCRIPTION_FAILURE
 } from './actions'
 
 export type ProfileState = {
@@ -17,7 +23,7 @@ export type ProfileState = {
   error: Record<string, string>
 }
 
-const INITIAL_STATE: ProfileState = {
+export const INITIAL_STATE: ProfileState = {
   data: {},
   loading: [],
   error: {}
@@ -28,12 +34,17 @@ export type ProfileReducerAction =
   | LoadProfileSuccessAction
   | LoadProfileFailureAction
   | ChangeProfileAction
+  | SetProfileDescriptionRequestAction
+  | SetProfileDescriptionSuccessAction
+  | SetProfileDescriptionFailureAction
 
 export const profileReducer = (
   state = INITIAL_STATE,
   action: ProfileReducerAction
 ): ProfileState => {
   switch (action.type) {
+    case SET_PROFILE_DESCRIPTION_REQUEST:
+    case SET_PROFILE_DESCRIPTION_FAILURE:
     case LOAD_PROFILE_REQUEST:
     case LOAD_PROFILE_FAILURE: {
       return {
@@ -41,6 +52,7 @@ export const profileReducer = (
         loading: loadingReducer(state.loading, action)
       }
     }
+    case SET_PROFILE_DESCRIPTION_SUCCESS:
     case LOAD_PROFILE_SUCCESS: {
       const { address, profile } = action.payload
       return {
@@ -52,6 +64,8 @@ export const profileReducer = (
         loading: loadingReducer(state.loading, action)
       }
     }
+    // TODO: the profile only has an array of avatars, will it have more things than that?
+    // This will go over the array of avatars, without doing a deep merge
     case CHANGE_PROFILE: {
       const { address, profile } = action.payload
       return {
@@ -62,6 +76,7 @@ export const profileReducer = (
         }
       }
     }
+
     default:
       return state
   }

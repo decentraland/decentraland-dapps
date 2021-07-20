@@ -1,5 +1,13 @@
+import { Avatar } from 'decentraland-ui'
+import { Entity } from 'dcl-catalyst-commons'
+
 declare module 'react-intl'
 
+export type ProfileEntity = Entity & {
+  metadata: {
+    avatar: Avatar
+  }
+}
 export interface DataByKey<T> {
   [key: string]: T
 }
