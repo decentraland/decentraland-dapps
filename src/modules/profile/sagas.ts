@@ -1,28 +1,27 @@
-import { takeLatest, put, call, takeEvery, select } from 'redux-saga/effects'
+import { takeLatest, put, call, takeEvery } from 'redux-saga/effects'
 import { Avatar } from 'decentraland-ui'
 import { Entity, EntityType } from 'dcl-catalyst-commons'
+import { PeerAPI } from '../../lib/peer'
+import { EntitesOperator } from '../../lib/entities'
+import { ProfileEntity } from '../../lib/types'
 import {
   ConnectWalletSuccessAction,
   CONNECT_WALLET_SUCCESS,
   CHANGE_ACCOUNT,
   ChangeAccountAction
 } from '../wallet/actions'
-import { PeerAPI } from '../../lib/peer'
-import { EntitesOperations } from '../../lib/entities'
-import { ProfileEntity } from '../../lib/types'
 import {
   LOAD_PROFILE_REQUEST,
   LoadProfileRequestAction,
   loadProfileSuccess,
   loadProfileFailure,
   loadProfileRequest,
-  SetProfileDescriptionRequestAction,
-  setProfileDescriptionSuccess,
-  setProfileDescriptionFailure,
-  SET_PROFILE_DESCRIPTION_REQUEST
+  SetProfileAvatarDescriptionRequestAction,
+  setProfileAvatarDescriptionSuccess,
+  setProfileAvatarDescriptionFailure,
+  SET_PROFILE_AVATAR_DESCRIPTION_REQUEST
 } from './actions'
 import { Profile } from './types'
-import { getProfileOfAddress } from './selectors'
 
 type CreateProfileSagaOptions = {
   peerUrl: string
@@ -30,12 +29,12 @@ type CreateProfileSagaOptions = {
 
 export function createProfileSaga({ peerUrl }: CreateProfileSagaOptions) {
   const peerApi = new PeerAPI(peerUrl)
-  const entities = new EntitesOperations(peerUrl)
+  const entities = new EntitesOperator(peerUrl)
 
   function* profileSaga() {
     yield takeEvery(LOAD_PROFILE_REQUEST, handleLoadProfileRequest)
     yield takeEvery(
-      SET_PROFILE_DESCRIPTION_REQUEST,
+      SET_PROFILE_AVATAR_DESCRIPTION_REQUEST,
       handleSetProfileDescription
     )
     yield takeLatest(CONNECT_WALLET_SUCCESS, handleWallet)
@@ -45,7 +44,7 @@ export function createProfileSaga({ peerUrl }: CreateProfileSagaOptions) {
   function* handleLoadProfileRequest(action: LoadProfileRequestAction) {
     const { address } = action.payload
     try {
-      const profile: Profile = yield call(() => peerApi.fetchProfile(address))
+      const profile: Profile = yield call(peerApi.fetchProfile, address)
       yield put(loadProfileSuccess(address, profile))
     } catch (error) {
       yield put(loadProfileFailure(address, error.message))
@@ -60,38 +59,30 @@ export function createProfileSaga({ peerUrl }: CreateProfileSagaOptions) {
 
   /**
    * Handles the action to set the description of a user's profile.
+   * This handler gets the first profile entity of a given address
+   * and then rebuilds it with the specified description to deploy it
+   * again.
    *
-   * @param {SetProfileDescriptionRequestAction} action - The action that triggered the handler.
+   * @param action - The action that triggered the handler.
    */
   function* handleSetProfileDescription(
-    action: SetProfileDescriptionRequestAction
+    action: SetProfileAvatarDescriptionRequestAction
   ) {
     try {
       const { address, description } = action.payload
 
-      const profile: Profile | undefined = yield call(() =>
-        select(getProfileOfAddress, address)
-      )
-
-      if (!profile) {
-        throw new Error(
-          "Profile not found while setting its avatar's description"
-        )
-      }
-
-      const entity: ProfileEntity = yield call(() =>
-        entities.getProfileEntity(address)
+      const entity: ProfileEntity = yield call(
+        entities.getProfileEntity,
+        address
       )
 
       // Does a profile always have an avatar?
-
       const newAvatar: Avatar = {
-        ...profile.avatars[0],
-        version: profile.avatars[0].version + 1,
+        ...entity.metadata.avatars[0],
+        version: entity.metadata.avatars[0].version + 1,
         description: description
       }
 
-      // Builds the entity object with the new avatar
       const newEntity: Entity = {
         ...entity,
         metadata: {
@@ -100,20 +91,25 @@ export function createProfileSaga({ peerUrl }: CreateProfileSagaOptions) {
         }
       }
 
-      yield call(() =>
-        entities.deployEntity(
-          newEntity,
-          EntityType.PROFILE,
-          action.payload.address
-        )
+      yield call(
+        entities.deployEntityWithoutNewFiles,
+        newEntity,
+        EntityType.PROFILE,
+        action.payload.address
       )
 
       yield put(
-        setProfileDescriptionSuccess(action.payload.address, newEntity.metadata)
+        setProfileAvatarDescriptionSuccess(
+          action.payload.address,
+          newEntity.metadata
+        )
       )
     } catch (error) {
       yield put(
-        setProfileDescriptionFailure(action.payload.address, error.message)
+        setProfileAvatarDescriptionFailure(
+          action.payload.address,
+          error.message
+        )
       )
     }
   }

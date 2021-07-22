@@ -1,3 +1,5 @@
+import { isLoadingType } from '../loading/selectors'
+import { SET_PROFILE_AVATAR_DESCRIPTION_REQUEST } from './actions'
 import { ProfileState } from './reducer'
 import { Profile } from './types'
 
@@ -15,3 +17,9 @@ export const getProfileOfAddress = (
   state: any,
   address: string
 ): Profile | undefined => getData(state)[address]
+
+export const isLoadingSetProfileAvatarDescription = (state: any) =>
+  isLoadingType(getLoading(state), SET_PROFILE_AVATAR_DESCRIPTION_REQUEST)
+
+export const getProfileError = (state: any): string | null =>
+  getState(state).error

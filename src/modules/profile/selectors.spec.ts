@@ -1,12 +1,15 @@
 import { expect } from 'chai'
 import { profile } from '../../tests/profileMocks'
+import { setProfileAvatarDescriptionRequest } from './actions'
 import { INITIAL_STATE } from './reducer'
 import {
   getData,
   getState,
   getError,
   getLoading,
-  getProfileOfAddress
+  getProfileOfAddress,
+  isLoadingSetProfileAvatarDescription,
+  getProfileError
 } from './selectors'
 
 let profileState: any
@@ -19,6 +22,42 @@ describe('Profile selectors', () => {
   describe("when getting the profile's state", () => {
     it('should return the state', () => {
       expect(getState(profileState)).equals(profileState.profile)
+    })
+  })
+
+  describe('when getting if the set profile avatar description request is on going', () => {
+    describe('when it is on going', () => {
+      beforeEach(() => {
+        profileState = {
+          ...profileState,
+          profile: {
+            ...profileState.profile,
+            loading: [
+              setProfileAvatarDescriptionRequest('anAddress', 'aDescription')
+            ]
+          }
+        }
+      })
+
+      it('should return true', () => {
+        expect(isLoadingSetProfileAvatarDescription(profileState)).is.true
+      })
+    })
+
+    describe("when it isn't on going", () => {
+      beforeEach(() => {
+        profileState = {
+          ...profileState,
+          profile: {
+            ...profileState.profile,
+            loading: []
+          }
+        }
+      })
+
+      it('should return false', () => {
+        expect(isLoadingSetProfileAvatarDescription(profileState)).is.false
+      })
     })
   })
 
@@ -74,6 +113,22 @@ describe('Profile selectors', () => {
       it('should return undefined', () => {
         expect(getProfileOfAddress(profileState, 'anAddress')).is.undefined
       })
+    })
+  })
+
+  describe('when getting the profile error', () => {
+    beforeEach(() => {
+      profileState = {
+        ...profileState,
+        profile: {
+          ...profileState.profile,
+          error: 'aMessage'
+        }
+      }
+    })
+
+    it('should return the error', () => {
+      expect(getProfileError(profileState)).equals(profileState.profile.error)
     })
   })
 })

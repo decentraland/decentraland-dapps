@@ -12,7 +12,7 @@ import { getEthereumProvider } from './eth'
 import { ProfileEntity } from './types'
 import { PeerAPI } from './peer'
 
-export class EntitesOperations {
+export class EntitesOperator {
   private readonly catalystClient: CatalystClient
   private readonly peerAPI: PeerAPI
 
@@ -22,13 +22,15 @@ export class EntitesOperations {
   }
 
   /**
-   * Builds the entity deployment preparation data.
+   * Builds the entity deployment preparation data by preparing
+   * the contents of an entity that doesn't need new files to be
+   * added.
    *
-   * @param {Entity} entity - The entity that will be pre-processed prior to its deployment.
-   * @param {EntityType} type - The entity type that will be prepared to be deployed.
-   * @param {string} address - The address of the owner of the entity to be deployed.
+   * @param entity - The entity that will be pre-processed prior to its deployment.
+   * @param type - The entity type that will be prepared to be deployed.
+   * @param address - The address of the owner of the entity to be deployed.
    */
-  private async buildDeployPreparationData(
+  private async buildDeployPreparationDataWithoutFiles(
     entity: Entity,
     type: EntityType,
     address: string
@@ -49,8 +51,8 @@ export class EntitesOperations {
    * Uses the provider to request the user for a signature to
    * deploy an entity.
    *
-   * @param {string} address - The address of the deployer of the entity.
-   * @param {string} entityId - The entity id that it's going to be deployed.
+   * @param address - The address of the deployer of the entity.
+   * @param entityId - The entity id that it's going to be deployed.
    */
   private async authenticateEntityDeployment(
     address: string,
@@ -64,7 +66,7 @@ export class EntitesOperations {
       Address.fromString(address),
       ''
     )
-    // Create an auth chain
+
     return Authenticator.createSimpleAuthChain(entityId, address, signature)
   }
 
@@ -72,7 +74,7 @@ export class EntitesOperations {
    * Gets the first {@link ProfileEntity} out of multiple possible profile entities or
    * returns the last one in case the given address has no profile entities.
    *
-   * @param {string} address - The address that owns the profile entity being retrieved.
+   * @param address - The address that owns the profile entity being retrieved.
    */
   async getProfileEntity(address: string): Promise<ProfileEntity> {
     const entities: Entity[] = await this.catalystClient.fetchEntitiesByPointers(
@@ -93,16 +95,16 @@ export class EntitesOperations {
    * the entity and will prompt the user for their signature before
    * doing a deployment.
    *
-   * @param {Entity} entity - The title of the book.
-   * @param {EntityType} entityType - The type of the entity.
-   * @param {string} address - The owner / soon to be owner of the entity.
+   * @param entity - The title of the book.
+   * @param entityType - The type of the entity.
+   * @param address - The owner / soon to be owner of the entity.
    */
-  async deployEntity(
+  async deployEntityWithoutNewFiles(
     entity: Entity,
     entityType: EntityType,
     address: string
   ): Promise<any> {
-    const deployPreparationData: DeploymentPreparationData = await this.buildDeployPreparationData(
+    const deployPreparationData: DeploymentPreparationData = await this.buildDeployPreparationDataWithoutFiles(
       entity,
       entityType,
       address

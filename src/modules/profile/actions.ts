@@ -20,33 +20,43 @@ export type LoadProfileFailureAction = ReturnType<typeof loadProfileFailure>
 
 // Set profile description
 
-export const SET_PROFILE_DESCRIPTION_REQUEST =
-  '[Request] Set profile description'
-export const SET_PROFILE_DESCRIPTION_SUCCESS =
-  '[Success] Set profile description'
-export const SET_PROFILE_DESCRIPTION_FAILURE =
-  '[Failure] Set profile description'
+export const SET_PROFILE_AVATAR_DESCRIPTION_REQUEST =
+  '[Request] Set profile avatar description'
+export const SET_PROFILE_AVATAR_DESCRIPTION_SUCCESS =
+  '[Success] Set profile avatar description'
+export const SET_PROFILE_AVATAR_DESCRIPTION_FAILURE =
+  '[Failure] Set profile avatar description'
 
-export const setProfileDescriptionRequest = (
+export const setProfileAvatarDescriptionRequest = (
   address: string,
   description: string
-) => action(SET_PROFILE_DESCRIPTION_REQUEST, { address, description })
-export const setProfileDescriptionSuccess = (
+) => action(SET_PROFILE_AVATAR_DESCRIPTION_REQUEST, { address, description })
+export const setProfileAvatarDescriptionSuccess = (
   address: string,
   profile: Profile
-) => action(SET_PROFILE_DESCRIPTION_SUCCESS, { address, profile })
-export const setProfileDescriptionFailure = (address: string, error: string) =>
-  action(SET_PROFILE_DESCRIPTION_FAILURE, { address, error })
+) => action(SET_PROFILE_AVATAR_DESCRIPTION_SUCCESS, { address, profile })
+export const setProfileAvatarDescriptionFailure = (
+  address: string,
+  error: string
+) => action(SET_PROFILE_AVATAR_DESCRIPTION_FAILURE, { address, error })
 
-export type SetProfileDescriptionRequestAction = ReturnType<
-  typeof setProfileDescriptionRequest
+export type SetProfileAvatarDescriptionRequestAction = ReturnType<
+  typeof setProfileAvatarDescriptionRequest
 >
-export type SetProfileDescriptionSuccessAction = ReturnType<
-  typeof setProfileDescriptionSuccess
+export type SetProfileAvatarDescriptionSuccessAction = ReturnType<
+  typeof setProfileAvatarDescriptionSuccess
 >
-export type SetProfileDescriptionFailureAction = ReturnType<
-  typeof setProfileDescriptionFailure
+export type SetProfileAvatarDescriptionFailureAction = ReturnType<
+  typeof setProfileAvatarDescriptionFailure
 >
+
+// Errors
+
+export const CLEAR_PROFILE_ERROR = '[Clear] Clear profile error'
+
+export const clearProfileError = () => action(CLEAR_PROFILE_ERROR)
+
+export type ClearProfileErrorAction = ReturnType<typeof clearProfileError>
 
 // Change Profile
 

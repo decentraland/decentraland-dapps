@@ -1,22 +1,34 @@
 import { expect } from 'chai'
 import { profile } from '../../tests/profileMocks'
 import {
+  clearProfileError,
   loadProfileFailure,
   loadProfileRequest,
   loadProfileSuccess,
+  CLEAR_PROFILE_ERROR,
   LOAD_PROFILE_FAILURE,
   LOAD_PROFILE_REQUEST,
   LOAD_PROFILE_SUCCESS,
-  setProfileDescriptionFailure,
-  setProfileDescriptionRequest,
-  setProfileDescriptionSuccess,
-  SET_PROFILE_DESCRIPTION_FAILURE,
-  SET_PROFILE_DESCRIPTION_REQUEST,
-  SET_PROFILE_DESCRIPTION_SUCCESS
+  setProfileAvatarDescriptionFailure,
+  setProfileAvatarDescriptionRequest,
+  setProfileAvatarDescriptionSuccess,
+  SET_PROFILE_AVATAR_DESCRIPTION_FAILURE,
+  SET_PROFILE_AVATAR_DESCRIPTION_REQUEST,
+  SET_PROFILE_AVATAR_DESCRIPTION_SUCCESS
 } from './actions'
 
 const address = 'anAddress'
 const error = 'anErrorMessage'
+
+describe('when creating the action to clear the profile error', () => {
+  it('should return an object representing the action', () => {
+    expect(clearProfileError()).deep.equals({
+      type: CLEAR_PROFILE_ERROR,
+      meta: undefined,
+      payload: undefined
+    })
+  })
+})
 
 describe('when creating the action to signal the start of the profile request', () => {
   it('should return an object representing the action', () => {
@@ -52,8 +64,10 @@ describe("when creating the action to signal the start of the request to set the
   it('should return an object representing the action', () => {
     const description = 'aDescription'
 
-    expect(setProfileDescriptionRequest(address, description)).deep.equals({
-      type: SET_PROFILE_DESCRIPTION_REQUEST,
+    expect(
+      setProfileAvatarDescriptionRequest(address, description)
+    ).deep.equals({
+      type: SET_PROFILE_AVATAR_DESCRIPTION_REQUEST,
       meta: undefined,
       payload: { address, description }
     })
@@ -62,8 +76,8 @@ describe("when creating the action to signal the start of the request to set the
 
 describe("when creating the action to signal a failure in the request to set the description of a profile's avatar", () => {
   it('should return an object representing the action', () => {
-    expect(setProfileDescriptionFailure(address, error)).deep.equals({
-      type: SET_PROFILE_DESCRIPTION_FAILURE,
+    expect(setProfileAvatarDescriptionFailure(address, error)).deep.equals({
+      type: SET_PROFILE_AVATAR_DESCRIPTION_FAILURE,
       meta: undefined,
       payload: { address, error }
     })
@@ -72,8 +86,8 @@ describe("when creating the action to signal a failure in the request to set the
 
 describe("when creating the action to signal a successful request to set the description of a profile's avatar", () => {
   it('should return an object representing the action', () => {
-    expect(setProfileDescriptionSuccess(address, profile)).deep.equals({
-      type: SET_PROFILE_DESCRIPTION_SUCCESS,
+    expect(setProfileAvatarDescriptionSuccess(address, profile)).deep.equals({
+      type: SET_PROFILE_AVATAR_DESCRIPTION_SUCCESS,
       meta: undefined,
       payload: { address, profile }
     })

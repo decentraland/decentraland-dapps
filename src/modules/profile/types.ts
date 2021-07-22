@@ -1,5 +1,4 @@
 import { Avatar } from 'decentraland-ui'
-import { ProfileState } from './reducer'
 
 export type Profile = {
   avatars: Avatar[]

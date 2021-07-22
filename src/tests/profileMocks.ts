@@ -1,4 +1,6 @@
 import { Avatar } from 'decentraland-ui'
+import { EntityType } from 'dcl-catalyst-commons'
+import { ProfileEntity } from '../lib/types'
 import { Profile } from '../modules/profile/types'
 
 export const avatar: Avatar = {
@@ -33,4 +35,13 @@ export const avatar: Avatar = {
 
 export const profile: Profile = {
   avatars: [avatar]
+}
+
+export const profileEntity: ProfileEntity = {
+  id: 'anId',
+  type: EntityType.PROFILE,
+  pointers: [],
+  timestamp: 343243242,
+  content: [],
+  metadata: profile
 }
