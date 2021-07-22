@@ -74,8 +74,6 @@ export const profileReducer = (
         loading: loadingReducer(state.loading, action)
       }
     }
-    // TODO: the profile only has an array of avatars, will it have more things than that?
-    // This will go over the array of avatars, without doing a deep merge
     case CHANGE_PROFILE: {
       const { address, profile } = action.payload
       return {
