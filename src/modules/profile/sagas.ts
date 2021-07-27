@@ -44,7 +44,7 @@ export function createProfileSaga({ peerUrl }: CreateProfileSagaOptions) {
   function* handleLoadProfileRequest(action: LoadProfileRequestAction) {
     const { address } = action.payload
     try {
-      const profile: Profile = yield call(peerApi.fetchProfile, address)
+      const profile: Profile = yield call([peerApi, 'fetchProfile'], address)
       yield put(loadProfileSuccess(address, profile))
     } catch (error) {
       yield put(loadProfileFailure(address, error.message))
@@ -72,7 +72,7 @@ export function createProfileSaga({ peerUrl }: CreateProfileSagaOptions) {
       const { address, description } = action.payload
 
       const entity: ProfileEntity = yield call(
-        entities.getProfileEntity,
+        [entities, 'getProfileEntity'],
         address
       )
 
@@ -92,7 +92,7 @@ export function createProfileSaga({ peerUrl }: CreateProfileSagaOptions) {
       }
 
       yield call(
-        entities.deployEntityWithoutNewFiles,
+        [entities, 'deployEntityWithoutNewFiles'],
         newEntity,
         EntityType.PROFILE,
         action.payload.address
