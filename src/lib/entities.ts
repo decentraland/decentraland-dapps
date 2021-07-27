@@ -8,7 +8,7 @@ import {
   DeploymentPreparationData
 } from 'dcl-catalyst-client'
 import { Entity, EntityType } from 'dcl-catalyst-commons'
-import { getEthereumProvider } from './eth'
+import { getConnectedProvider } from './eth'
 import { ProfileEntity } from './types'
 import { PeerAPI } from './peer'
 
@@ -58,7 +58,12 @@ export class EntitesOperator {
     address: string,
     entityId: string
   ): Promise<AuthChain> {
-    const eth: Eth = await getEthereumProvider()
+    const provider = await getConnectedProvider()
+    if (!provider)
+      throw new Error(
+        "The provider couldn't be retrieved when creating the auth chain"
+      )
+    const eth = new Eth(provider)
 
     const personal = new Personal(eth.provider)
     const signature = await personal.sign(
