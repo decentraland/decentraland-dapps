@@ -25,7 +25,7 @@ export class PeerAPI extends BaseAPI {
 
     this.cache[address] = this.lambdasClient
       .fetchProfiles([address.toLowerCase()])
-      .then()
+      .then(profiles => profiles[0])
 
     return this.cache[address]
   }
