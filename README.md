@@ -15,8 +15,12 @@ Common modules for our dApps
   - [Analytics](https://github.com/decentraland/decentraland-dapps#analytics)
   - [Loading](https://github.com/decentraland/decentraland-dapps#loading)
   - [Modal](https://github.com/decentraland/decentraland-dapps#modal)
+  - [Toasts](https://github.com/decentraland/decentraland-dapps#toasts)
+  - [Profile](https://github.com/decentraland/decentraland-dapps#profile)
 - [Lib](https://github.com/decentraland/decentraland-dapps#lib)
   - [API](https://github.com/decentraland/decentraland-dapps#api)
+  - [ETH](https://github.com/decentraland/decentraland-dapps#eth)
+  - [Entities](https://github.com/decentraland/decentraland-dapps#entities)
 - [Containers](https://github.com/decentraland/decentraland-dapps#containers)
   - [App](https://github.com/decentraland/decentraland-dapps#app)
   - [Navbar](https://github.com/decentraland/decentraland-dapps#navbar)
@@ -1153,6 +1157,36 @@ export function* rootSaga() {
 
 Toasts themselves do not do any async action, but this is needed to render each toast properly, without overloading the redux state with unnecesary information.
 
+## Profile
+
+Leverages the redux state and provides actions and selectors to work with profiles.
+
+### Actions
+
+The module exposes the following actions:
+
+The `loadProfileRequest` action will trigger a profile fetch through the profile sagas that will result, if successful, in the profile metadata being loaded. The success and failure actions of the request action are also included and will be used to signal a successful or a failing request.
+
+The `setProfileAvatarDescriptionRequest` action will trigger a change in the first avatar of the user's profile, that will result in a new entity being deployed for that profile, with the description of the avatar changed for the one specified in the action. The success and failure actions of the request action are also included and will be used to signal a successful or a failing request.
+
+The `clearProfileError` action will clear any profile request errors from the store.
+
+### Installation
+
+To install the profile module, just import it and add it to the store by combining the existing reducers with the one provided in the profile module.
+
+```ts
+import { profileReducer as profile } from 'decentraland-dapps/dist/modules/profile/reducer'
+
+export const createRootReducer = (history: History) =>
+  combineReducers({
+    profile,
+    otherReducer
+  })
+
+export type RootState = ReturnType<ReturnType<typeof createRootReducer>>
+```
+
 # Lib
 
 Common libraries for dApps
@@ -1222,6 +1256,39 @@ async function doSomething() {
 - `isCucumberProvider`: Check if the provider is a `cucumberProvider`.
 - `isDapperProvider`: Check if the provider is a _dapper's_ provider.
 - `isValidChainId`: Check if the chain id is valid.
+
+## Entities
+
+The entities library provides a set of methods to retrieve or deploy entities.
+
+### Usage
+
+The `deployEntity` method does everything needed to deploy an entity that doesn't have new files. It pre-procceses the entity to prepare it for the deployment, it creates the auth chain and asks the user to sign the deployment of the entity and then deploys it.
+
+```ts
+// lib/entities
+import { EntitesOperator } from 'decentraland-dapps/dist/lib/entities'
+
+const URL = 'http://localhost/api'
+const profileEntity = { ... }
+const entitiesOperator = new EntitesOperator(URL)
+await entitiesOperator.deployEntityWithoutNewFiles(
+  entity,
+  EntityTypes.PROFILE,
+  anAddress
+)
+```
+
+The `getProfileEntity` gets the first profile of all the profiles an address has.
+
+```ts
+// lib/entities
+import { EntitesOperator } from 'decentraland-dapps/dist/lib/entities'
+
+const URL = 'http://localhost/api'
+const entitiesOperator = new EntitesOperator(URL)
+await entitiesOperator.getProfile(anAddress)
+```
 
 # Containers
 
