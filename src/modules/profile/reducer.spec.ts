@@ -15,6 +15,8 @@ import { loadingReducer } from '../loading/reducer'
 
 const address = 'anAddress'
 const error = 'anError'
+const description = 'aDescription'
+const version = 1234
 
 const requestActions = [
   setProfileAvatarDescriptionRequest(address, 'aDescription'),
@@ -68,33 +70,62 @@ failureActions.forEach(action => {
   })
 })
 
-const successActions = [
-  {
-    request: setProfileAvatarDescriptionRequest(address, 'aDescription'),
-    success: setProfileAvatarDescriptionSuccess(address, profile)
-  },
-  {
-    request: loadProfileRequest(address),
-    success: loadProfileSuccess(address, profile)
-  }
-]
+describe('when reducing the action that signals a successful profile load', () => {
+  it('should return a state with the profile set and the loading state cleared', () => {
+    const request = loadProfileRequest(address)
+    const success = loadProfileSuccess(address, profile)
+    const initialState = {
+      ...INITIAL_STATE,
+      loading: loadingReducer([], request)
+    }
 
-successActions.forEach(action => {
-  describe(`when reducing the "${action.success.type}" action`, () => {
-    it('should return a state with the profile set and the loading state cleared', () => {
-      const initialState = {
-        ...INITIAL_STATE,
-        loading: loadingReducer([], action.request)
+    expect(profileReducer(initialState, success)).deep.equals({
+      ...INITIAL_STATE,
+      loading: [],
+      data: {
+        ...initialState.data,
+        [address]: profile
       }
+    })
+  })
+})
 
-      expect(profileReducer(initialState, action.success)).deep.equals({
-        ...INITIAL_STATE,
-        loading: [],
-        data: {
-          ...initialState.data,
-          [address]: profile
+describe('when reducing the action that signals a successful profile avatar description change', () => {
+  it('should return a state with the avatar description and version changed and the loading state cleared', () => {
+    const request = setProfileAvatarDescriptionRequest(address, description)
+    const success = setProfileAvatarDescriptionSuccess(
+      address,
+      description,
+      version
+    )
+    const initialState = {
+      ...INITIAL_STATE,
+      data: {
+        ...INITIAL_STATE.data,
+        [address]: profile
+      },
+      loading: loadingReducer([], request)
+    }
+
+    const expectedAvatar = {
+      ...initialState.data[address].avatars[0],
+      version,
+      description
+    }
+
+    expect(profileReducer(initialState, success)).deep.equals({
+      ...initialState,
+      loading: [],
+      data: {
+        ...initialState.data,
+        [address]: {
+          ...profile,
+          avatars: [
+            expectedAvatar,
+            ...initialState.data[address].avatars.slice(1)
+          ]
         }
-      })
+      }
     })
   })
 })

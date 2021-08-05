@@ -62,7 +62,26 @@ export const profileReducer = (
         error: action.payload.error
       }
     }
-    case SET_PROFILE_AVATAR_DESCRIPTION_SUCCESS:
+    case SET_PROFILE_AVATAR_DESCRIPTION_SUCCESS: {
+      const { address, description, version } = action.payload
+      const newAvatar = {
+        ...state.data[address].avatars[0],
+        description,
+        version
+      }
+
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          [address]: {
+            ...state.data[address],
+            avatars: [newAvatar, ...state.data[address].avatars.slice(1)]
+          }
+        },
+        loading: loadingReducer(state.loading, action)
+      }
+    }
     case LOAD_PROFILE_SUCCESS: {
       const { address, profile } = action.payload
       return {

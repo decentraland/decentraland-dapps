@@ -19,6 +19,8 @@ import {
 
 const address = 'anAddress'
 const error = 'anErrorMessage'
+const description = 'aDescription'
+const version = 1234
 
 describe('when creating the action to clear the profile error', () => {
   it('should return an object representing the action', () => {
@@ -86,10 +88,12 @@ describe("when creating the action to signal a failure in the request to set the
 
 describe("when creating the action to signal a successful request to set the description of a profile's avatar", () => {
   it('should return an object representing the action', () => {
-    expect(setProfileAvatarDescriptionSuccess(address, profile)).deep.equals({
+    expect(
+      setProfileAvatarDescriptionSuccess(address, description, version)
+    ).deep.equals({
       type: SET_PROFILE_AVATAR_DESCRIPTION_SUCCESS,
       meta: undefined,
-      payload: { address, profile }
+      payload: { address, description, version }
     })
   })
 })

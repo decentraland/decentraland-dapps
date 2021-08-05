@@ -1,15 +1,15 @@
 import { expectSaga } from 'redux-saga-test-plan'
-import { call } from 'redux-saga/effects'
 import * as matchers from 'redux-saga-test-plan/matchers'
 import { EntityType } from 'dcl-catalyst-commons'
 import { EntitesOperator } from '../../lib/entities'
+import { profileEntity } from '../../tests/profileMocks'
+import { dynamicDeepParametersEquality } from '../../tests/sagas'
 import { createProfileSaga } from './sagas'
 import {
   setProfileAvatarDescriptionFailure,
   setProfileAvatarDescriptionRequest,
   setProfileAvatarDescriptionSuccess
 } from './actions'
-import { profileEntity } from '../../tests/profileMocks'
 
 const profileSagas = createProfileSaga({ peerUrl: 'aURL' })
 const address = 'anAddress'
@@ -54,7 +54,7 @@ describe('when handling the action to set the profile avatar description', () =>
   })
 
   describe('when the deployment is successful', () => {
-    it('should deploy the new entity with the decription and the version changed', () => {
+    it.only('should deploy the new entity with the decription and the version changed', () => {
       const newAvatar = {
         ...profileEntity.metadata.avatars[0],
         version: profileEntity.metadata.avatars[0].version + 1,
@@ -74,20 +74,29 @@ describe('when handling the action to set the profile avatar description', () =>
       return expectSaga(profileSagas)
         .provide([
           [
-            call(EntitesOperator.prototype.getProfileEntity, address),
-            Promise.resolve(profileEntity)
+            matchers.call.fn(EntitesOperator.prototype.getProfileEntity),
+            dynamicDeepParametersEquality(
+              [address],
+              Promise.resolve(profileEntity)
+            )
           ],
           [
-            call(
-              EntitesOperator.prototype.deployEntityWithoutNewFiles,
-              newEntity,
-              EntityType.PROFILE,
-              address
+            matchers.call.fn(
+              EntitesOperator.prototype.deployEntityWithoutNewFiles
             ),
-            Promise.resolve(undefined)
+            dynamicDeepParametersEquality(
+              [newEntity, EntityType.PROFILE, address],
+              Promise.resolve(undefined)
+            )
           ]
         ])
-        .put(setProfileAvatarDescriptionSuccess(address, newProfileMetadata))
+        .put(
+          setProfileAvatarDescriptionSuccess(
+            address,
+            description,
+            newAvatar.version
+          )
+        )
         .dispatch(setProfileAvatarDescriptionRequest(address, description))
         .run()
     })
