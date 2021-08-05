@@ -54,7 +54,7 @@ describe('when handling the action to set the profile avatar description', () =>
   })
 
   describe('when the deployment is successful', () => {
-    it.only('should deploy the new entity with the decription and the version changed', () => {
+    it('should deploy the new entity with the decription and the version changed', () => {
       const newAvatar = {
         ...profileEntity.metadata.avatars[0],
         version: profileEntity.metadata.avatars[0].version + 1,
