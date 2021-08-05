@@ -90,7 +90,6 @@ export function createProfileSaga({ peerUrl }: CreateProfileSagaOptions) {
           avatars: [newAvatar, ...entity.metadata.avatars.slice(1)]
         }
       }
-
       yield call(
         [entities, 'deployEntityWithoutNewFiles'],
         newEntity,
@@ -101,7 +100,8 @@ export function createProfileSaga({ peerUrl }: CreateProfileSagaOptions) {
       yield put(
         setProfileAvatarDescriptionSuccess(
           action.payload.address,
-          newEntity.metadata
+          newAvatar.description,
+          newAvatar.version
         )
       )
     } catch (error) {

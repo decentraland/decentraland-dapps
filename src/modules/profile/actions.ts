@@ -33,8 +33,14 @@ export const setProfileAvatarDescriptionRequest = (
 ) => action(SET_PROFILE_AVATAR_DESCRIPTION_REQUEST, { address, description })
 export const setProfileAvatarDescriptionSuccess = (
   address: string,
-  profile: Profile
-) => action(SET_PROFILE_AVATAR_DESCRIPTION_SUCCESS, { address, profile })
+  description: string,
+  version: number
+) =>
+  action(SET_PROFILE_AVATAR_DESCRIPTION_SUCCESS, {
+    address,
+    description,
+    version
+  })
 export const setProfileAvatarDescriptionFailure = (
   address: string,
   error: string
