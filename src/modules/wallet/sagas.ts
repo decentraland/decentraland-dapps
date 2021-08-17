@@ -37,7 +37,11 @@ import {
   FetchWalletFailureAction,
   CONNECT_WALLET_SUCCESS
 } from './actions'
-import { buildWallet } from './utils'
+import {
+  buildWallet,
+  getTransactionsApiUrl,
+  setTransactionsApiUrl
+} from './utils'
 import { CreateWalletOptions, Wallet } from './types'
 import { isConnected } from './selectors'
 
@@ -176,6 +180,14 @@ export function createWalletSaga(options: CreateWalletOptions) {
 
   if (options.POLL_INTERVAL) {
     POLL_INTERVAL = options.POLL_INTERVAL
+  }
+
+  if (options.TRANSACTIONS_API_URL) {
+    setTransactionsApiUrl(options.TRANSACTIONS_API_URL)
+  } else {
+    console.warn(
+      `"TRANSACTIONS_API_URL" not provided on createWalletSaga, using default value "${getTransactionsApiUrl()}".`
+    )
   }
 
   return walletSaga

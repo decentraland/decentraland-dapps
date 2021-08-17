@@ -5,13 +5,21 @@ import {
   Navbar as NavbarComponent,
   NavbarI18N
 } from 'decentraland-ui'
-import { ChainId, getChainName } from '@dcl/schemas'
+import { getChainName } from '@dcl/schemas'
 import { getConnectedProviderChainId } from '../../lib/eth'
+import { getChainConfiguration } from '../../lib/chainConfiguration'
 import { T } from '../../modules/translation/utils'
 import Modal from '../../containers/Modal'
-import { NavbarProps, WrongNetworkModalI18N } from './Navbar.types'
+import { NavbarProps, NavbarState } from './Navbar.types'
 
-export default class Navbar extends React.PureComponent<NavbarProps> {
+export default class Navbar extends React.PureComponent<
+  NavbarProps,
+  NavbarState
+> {
+  state: NavbarState = {
+    isPartialSupportModalOpen: true
+  }
+
   getTranslations = (): NavbarI18N | undefined => {
     if (!this.props.hasTranslations) {
       return undefined
@@ -33,47 +41,64 @@ export default class Navbar extends React.PureComponent<NavbarProps> {
     }
   }
 
-  getModalTranslations = (): WrongNetworkModalI18N | undefined => {
-    if (!this.props.hasTranslations) {
-      return undefined
-    }
-    return {
-      wrongNetwork: {
-        header: <T id="@dapps.navbar.wrongNetwork.header" />,
-        message: (
-          <T
-            id="@dapps.navbar.wrongNetwork.message"
-            values={{ currentChainName: '', expectedChainName: '' }}
-          />
-        )
-      }
-    }
-  }
-
-  isValidChainId(
-    currentChainId: ChainId,
-    expectedChainId: ChainId | null
-  ): expectedChainId is ChainId {
-    return !!expectedChainId && currentChainId !== expectedChainId
+  handleClosePartialSupportModal = () => {
+    this.setState({ isPartialSupportModalOpen: false })
   }
 
   render() {
     const { chainId } = this.props
     const expectedChainId = getConnectedProviderChainId()
+
+    const isSupportedNetwork = chainId === expectedChainId
+    const config = expectedChainId && getChainConfiguration(expectedChainId)
+
+    const isPartiallySupportedNetwork =
+      !!chainId &&
+      !isSupportedNetwork &&
+      !!config &&
+      Object.values(config.networkMapping).some(
+        mappedChainId => mappedChainId === chainId
+      )
+
+    const isWrongNetwork =
+      !!chainId && !isSupportedNetwork && !isPartiallySupportedNetwork
+
     return (
       <>
         <NavbarComponent {...this.props} i18n={this.getTranslations()} />
-        {chainId && this.isValidChainId(chainId, expectedChainId) ? (
-          <Modal open={true} size="tiny" i18n={this.getModalTranslations()}>
+        {isWrongNetwork ? (
+          <Modal open size="tiny">
             <ModalNavigation
-              title={<T id="@dapps.navbar.wrongNetwork.header" />}
+              title={<T id="@dapps.navbar.wrong_network.header" />}
             />
             <Modal.Content>
               <T
-                id="@dapps.navbar.wrongNetwork.message"
+                id="@dapps.navbar.wrong_network.message"
                 values={{
-                  currentChainName: <b>{getChainName(chainId)}</b>,
-                  expectedChainName: <b>{getChainName(expectedChainId)}</b>
+                  currentChainName: <b>{getChainName(chainId!)}</b>,
+                  expectedChainName: <b>{getChainName(expectedChainId!)}</b>
+                }}
+              />
+            </Modal.Content>
+          </Modal>
+        ) : isPartiallySupportedNetwork ? (
+          <Modal
+            open={this.state.isPartialSupportModalOpen}
+            onClose={this.handleClosePartialSupportModal}
+            size="tiny"
+          >
+            <ModalNavigation
+              title={
+                <T id="@dapps.navbar.partially_supported_network.header" />
+              }
+              onClose={this.handleClosePartialSupportModal}
+            />
+            <Modal.Content>
+              <T
+                id="@dapps.navbar.partially_supported_network.message"
+                values={{
+                  currentChainName: <b>{getChainName(chainId!)}</b>,
+                  expectedChainName: <b>{getChainName(expectedChainId!)}</b>
                 }}
               />
             </Modal.Content>

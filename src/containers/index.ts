@@ -1,5 +1,7 @@
+export { default as ChainButton } from './ChainButton'
 export { default as Footer } from './Footer'
 export { default as LoginModal } from './LoginModal'
+export { default as Modal } from './Modal'
 export { default as Navbar } from './Navbar'
 export { default as Profile } from './Profile'
 export { default as SignInPage } from './SignInPage'

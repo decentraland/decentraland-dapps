@@ -8,7 +8,7 @@ type ExtendedModal = typeof BaseModal & {
   Header: typeof ModalComponent.Header
 }
 
-const Modal = BaseModal as ExtendedModal
+const Modal: ExtendedModal = BaseModal
 Modal.Actions = ModalComponent.Actions
 Modal.Content = ModalComponent.Content
 Modal.Description = ModalComponent.Description
