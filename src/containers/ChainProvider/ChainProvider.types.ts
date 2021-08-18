@@ -11,7 +11,7 @@ export type ChainData = {
 }
 
 export type Props = ChainData & {
-  children: (data: ChainData) => React.ReactNode | null
+  children: (data: ChainData) => React.ReactNode
 }
 
 export type MapStateProps = Pick<
