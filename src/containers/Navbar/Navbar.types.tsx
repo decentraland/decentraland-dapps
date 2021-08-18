@@ -1,9 +1,15 @@
+import { Dispatch } from 'redux'
 import { ChainId } from '@dcl/schemas'
 import { NavbarProps as NavbarComponentProps } from 'decentraland-ui'
+import {
+  switchNetworkRequest,
+  SwitchNetworkRequestAction
+} from '../../modules/wallet/actions'
 
 export type NavbarProps = NavbarComponentProps & {
   chainId?: ChainId
   hasTranslations?: boolean
+  onSwitchNetwork: typeof switchNetworkRequest
 }
 
 export type NavbarState = {
@@ -20,4 +26,5 @@ export type MapStateProps = Pick<
   | 'chainId'
 >
 
-export type MapDispatchProps = {}
+export type MapDispatchProps = Pick<NavbarProps, 'onSwitchNetwork'>
+export type MapDispatch = Dispatch<SwitchNetworkRequestAction>

@@ -10,8 +10,12 @@ import {
   select
 } from 'redux-saga/effects'
 import { ChainId } from '@dcl/schemas'
-import { connection } from 'decentraland-connect'
-import { isCucumberProvider, isValidChainId } from '../../lib/eth'
+import { connection, Provider } from 'decentraland-connect'
+import {
+  getConnectedProvider,
+  isCucumberProvider,
+  isValidChainId
+} from '../../lib/eth'
 import {
   connectWalletSuccess,
   connectWalletFailure,
@@ -35,10 +39,15 @@ import {
   FETCH_WALLET_FAILURE,
   FetchWalletSuccessAction,
   FetchWalletFailureAction,
-  CONNECT_WALLET_SUCCESS
+  CONNECT_WALLET_SUCCESS,
+  SWITCH_NETWORK_REQUEST,
+  SwitchNetworkRequestAction,
+  switchNetworkSuccess,
+  switchNetworkFailure
 } from './actions'
 import {
   buildWallet,
+  getAddEthereumChainParameters,
   getTransactionsApiUrl,
   setTransactionsApiUrl
 } from './utils'
@@ -74,7 +83,8 @@ export function* walletSaga() {
     takeEvery(ENABLE_WALLET_SUCCESS, handleEnableWalletSuccess),
     takeEvery(FETCH_WALLET_REQUEST, handleFetchWalletRequest),
     takeEvery(DISCONNECT_WALLET, handleDisconnectWallet),
-    takeEvery(CONNECT_WALLET_SUCCESS, handleConnectWalletSuccess)
+    takeEvery(CONNECT_WALLET_SUCCESS, handleConnectWalletSuccess),
+    takeEvery(SWITCH_NETWORK_REQUEST, handleSwitchNetworkRequest)
   ])
 }
 
@@ -158,6 +168,49 @@ function* handleConnectWalletSuccess() {
         yield put(fetchWalletRequest())
       }
     }
+  }
+}
+
+function* handleSwitchNetworkRequest(action: SwitchNetworkRequestAction) {
+  const { chainId } = action.payload
+  const provider: Provider | null = yield call(getConnectedProvider)
+  try {
+    if (!provider) {
+      throw new Error('Could not get provider')
+    }
+    const value: null = yield call([provider, 'request'], {
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: '0x' + chainId.toString(16) }]
+    })
+    console.log('switch value', value)
+    yield put(switchNetworkSuccess(chainId))
+  } catch (switchError) {
+    // This error code indicates that the chain has not been added to MetaMask.
+    if (provider && switchError.code === 4902) {
+      try {
+        const value: null = yield call([provider, 'request'], {
+          method: 'wallet_addEthereumChain',
+          params: [getAddEthereumChainParameters(chainId)]
+        })
+        console.log('add value', value)
+        yield put(switchNetworkSuccess(chainId))
+        return
+      } catch (addError) {
+        yield put(
+          switchNetworkFailure(
+            chainId,
+            `Error adding network: ${addError.message}`
+          )
+        )
+        return
+      }
+    }
+    yield put(
+      switchNetworkFailure(
+        chainId,
+        `Error switching network: ${switchError.message}`
+      )
+    )
   }
 }
 

@@ -41,7 +41,9 @@
       },
       "partially_supported_network": {
         "header": "Réseau partiellement pris en charge",
-        "message": "Vous devez être connecté à {expectedChainName} pour utiliser toutes les fonctionnalités de cette application. De cette façon, toutes les transactions qui devraient se produire sur d'autres réseaux seraient envoyées en tant que méta-transactions. Étant donné que vous êtes actuellement connecté à {currentChainName}, vous ne pourrez utiliser que les fonctionnalités de cette application qui interagissent avec ce réseau particulier, et vous devrez payer les coûts de gaz de ces transactions."
+        "message": "Vous devez être connecté à {expectedChainName} pour utiliser toutes les fonctionnalités de cette application. De cette façon, toutes les transactions qui devraient se produire sur d'autres réseaux seraient envoyées en tant que méta-transactions. Étant donné que vous êtes actuellement connecté à {currentChainName}, vous ne pourrez utiliser que les fonctionnalités de cette application qui interagissent avec ce réseau particulier, et vous devrez payer les coûts de gaz de ces transactions.",
+        "switch_button": "Passer à {chainName}",
+        "continue_button": "Continuer sur {chainName}"
       }
     },
     "sign_in": {

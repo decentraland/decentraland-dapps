@@ -37,7 +37,9 @@
       },
       "wrong_network": {
         "header": "間違ったネットワーク",
-        "message": "このアプリを使用するには、{expectedChainName}ネットワークに接続する必要がありますが、現在は{currentChainName}ネットワークに接続しています。"
+        "message": "このアプリを使用するには、{expectedChainName}ネットワークに接続する必要がありますが、現在は{currentChainName}ネットワークに接続しています。",
+        "switch_button": "{chainName}に切り替えます",
+        "continue_button": "{chainName}に進みます"
       },
       "partially_supported_network": {
         "header": "部分的にサポートされているネットワーク",
