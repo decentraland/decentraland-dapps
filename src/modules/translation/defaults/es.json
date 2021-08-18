@@ -38,12 +38,12 @@
       "wrong_network": {
         "header": "Red incorrecta",
         "message": "Necesita conectarse a la Red {expectedChainName} para usar esta app, pero actualmente esta conectado a la Red {currentChainName}.",
-        "switch_button": "Cambiar a {chainName}",
-        "continue_button": "Continuar en {chainName}"
+        "switch_button": "Cambiar a {chainName}"
       },
       "partially_supported_network": {
         "header": "Partially Supported Network",
-        "message": "You need to be connected to {expectedChainName} to use all the features of this app. That way, all the transactions that should happen on other networks would be sent as meta-transactions. Since you are currently connected to {currentChainName}, you will only be able to use the features of this app that interact with that particular network, and you will need to pay for the gas costs of those transactions."
+        "message": "You need to be connected to {expectedChainName} to use all the features of this app. That way, all the transactions that should happen on other networks would be sent as meta-transactions. Since you are currently connected to {currentChainName}, you will only be able to use the features of this app that interact with that particular network, and you will need to pay for the gas costs of those transactions.",
+        "continue_button": "Continuar en {chainName}"
       }
     },
     "sign_in": {

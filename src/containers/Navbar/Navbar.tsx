@@ -112,7 +112,7 @@ export default class Navbar extends React.PureComponent<
                     onClick={this.handleClosePartialSupportModal}
                   >
                     <T
-                      id="@dapps.navbar.wrong_network.continue_button"
+                      id="@dapps.navbar.partially_supported_network.continue_button"
                       values={{
                         chainName: <b>{getChainName(chainId!)}</b>
                       }}

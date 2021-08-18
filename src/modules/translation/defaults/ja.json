@@ -38,12 +38,12 @@
       "wrong_network": {
         "header": "間違ったネットワーク",
         "message": "このアプリを使用するには、{expectedChainName}ネットワークに接続する必要がありますが、現在は{currentChainName}ネットワークに接続しています。",
-        "switch_button": "{chainName}に切り替えます",
-        "continue_button": "{chainName}に進みます"
+        "switch_button": "{chainName}に切り替えます"
       },
       "partially_supported_network": {
         "header": "部分的にサポートされているネットワーク",
-        "message": "このアプリのすべての機能を使用するには、{expectedChainName}に接続する必要があります。そうすれば、他のネットワークで発生するはずのすべてのトランザクションがメタトランザクションとして送信されます。現在{currentChainName}に接続しているため、このアプリの特定のネットワークとやり取りする機能のみを使用でき、これらのトランザクションのガス代を支払う必要があります。"
+        "message": "このアプリのすべての機能を使用するには、{expectedChainName}に接続する必要があります。そうすれば、他のネットワークで発生するはずのすべてのトランザクションがメタトランザクションとして送信されます。現在{currentChainName}に接続しているため、このアプリの特定のネットワークとやり取りする機能のみを使用でき、これらのトランザクションのガス代を支払う必要があります。",
+        "continue_button": "{chainName}に進みます"
       }
     },
     "sign_in": {
