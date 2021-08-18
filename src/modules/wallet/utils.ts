@@ -58,12 +58,14 @@ export async function buildWallet(): Promise<Wallet> {
   }
 
   const address = accounts[0].toString()
-  const chainId = getConnectedProviderChainId()!
-  const config = getChainConfiguration(chainId)
+  const chainId = await eth.getId()
+  const chainConfig = getChainConfiguration(chainId)
+  const expectedChainId = getConnectedProviderChainId()!
+  const expectedChainConfig = getChainConfiguration(expectedChainId)
   const networks: Partial<Networks> = {}
 
-  for (const network of Object.keys(config.networkMapping)) {
-    const networkChainId = config.networkMapping[network]
+  for (const network of Object.keys(expectedChainConfig.networkMapping)) {
+    const networkChainId = expectedChainConfig.networkMapping[network]
     networks[network] = {
       chainId: networkChainId,
       mana: await fetchManaBalance(networkChainId, address)
@@ -74,7 +76,7 @@ export async function buildWallet(): Promise<Wallet> {
     address: address.toLowerCase(),
     providerType: getConnectedProviderType()!,
     networks: networks as Networks,
-    network: config.network,
+    network: chainConfig.network,
     chainId
   }
 }

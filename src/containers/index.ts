@@ -1,4 +1,6 @@
 export { default as ChainButton } from './ChainButton'
+export { default as ChainCheck } from './ChainCheck'
+export { default as ChainProvider } from './ChainProvider'
 export { default as Footer } from './Footer'
 export { default as LoginModal } from './LoginModal'
 export { default as Modal } from './Modal'

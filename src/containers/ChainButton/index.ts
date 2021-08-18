@@ -1,2 +1,2 @@
-import ChainButton from './ChainButton.container'
+import ChainButton from './ChainButton'
 export default ChainButton

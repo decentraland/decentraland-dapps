@@ -1,33 +1,20 @@
 import React from 'react'
-import { Button as ButtonComponent, Popup } from 'decentraland-ui'
-import { T } from '../../modules/translation/utils'
-import { getConnectedProviderChainId } from '../../lib/eth'
-import { ChainButtonProps } from './ChainButton.types'
-import { getChainName } from '@dcl/schemas'
+import { Button as ButtonComponent } from 'decentraland-ui'
+import { Props } from './ChainButton.types'
+import ChainCheck from '../ChainCheck'
 
-export default class Button extends React.PureComponent<ChainButtonProps> {
+const disabledStyle = { opacity: 0.5, cursor: 'not-allowed', transform: 'none' }
+
+export default class ChainButton extends React.PureComponent<Props> {
   render() {
-    const { chainId, connectedChainId, onClick, ...rest } = this.props
-    const expectedChainId = getConnectedProviderChainId()
-    const isSupportedNetwork =
-      chainId === connectedChainId || connectedChainId === expectedChainId
-    const props = isSupportedNetwork
-      ? { onClick }
-      : { style: { opacity: 0.5, cursor: 'not-allowed', transform: 'none' } }
+    const { chainId, onClick, ...rest } = this.props
     return (
-      <Popup
-        disabled={isSupportedNetwork}
-        position="top center"
-        content={
-          <T
-            id="@dapps.button.network_not_supported"
-            values={{
-              expectedChainName: <b>{getChainName(expectedChainId!)}</b>
-            }}
-          />
-        }
-        trigger={<ButtonComponent {...rest} {...props} />}
-      />
+      <ChainCheck chainId={chainId}>
+        {isEnabled => {
+          const props = isEnabled ? { onClick } : { style: disabledStyle }
+          return <ButtonComponent {...rest} {...props} />
+        }}
+      </ChainCheck>
     )
   }
 }
