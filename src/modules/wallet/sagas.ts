@@ -178,21 +178,19 @@ function* handleSwitchNetworkRequest(action: SwitchNetworkRequestAction) {
     if (!provider) {
       throw new Error('Could not get provider')
     }
-    const value: null = yield call([provider, 'request'], {
+    yield call([provider, 'request'], {
       method: 'wallet_switchEthereumChain',
       params: [{ chainId: '0x' + chainId.toString(16) }]
     })
-    console.log('switch value', value)
     yield put(switchNetworkSuccess(chainId))
   } catch (switchError) {
     // This error code indicates that the chain has not been added to MetaMask.
     if (provider && switchError.code === 4902) {
       try {
-        const value: null = yield call([provider, 'request'], {
+        yield call([provider, 'request'], {
           method: 'wallet_addEthereumChain',
           params: [getAddEthereumChainParameters(chainId)]
         })
-        console.log('add value', value)
         yield put(switchNetworkSuccess(chainId))
         return
       } catch (addError) {
