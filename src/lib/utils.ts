@@ -10,7 +10,8 @@ export function isMobile() {
   const navigator = window.navigator
 
   return (
-    /Mobi/i.test(navigator.userAgent) || /Android/i.test(navigator.userAgent)
+    !!navigator &&
+    (/Mobi/i.test(navigator.userAgent) || /Android/i.test(navigator.userAgent))
   )
 }
 
