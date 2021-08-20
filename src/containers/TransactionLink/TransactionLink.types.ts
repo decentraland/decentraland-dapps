@@ -1,3 +1,4 @@
+import React from 'react'
 import { ChainId } from '@dcl/schemas'
 
 export type DefaultProps = {
@@ -10,6 +11,7 @@ export type Props = Partial<DefaultProps> & {
   address: string
   txHash: string
   chainId?: ChainId
+  children: React.ReactNode
 }
 
 export type MapStateProps = Pick<Props, 'chainId'>
