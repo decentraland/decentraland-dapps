@@ -15,7 +15,7 @@ export type Props = {
   chainId?: ChainId
   isConnected: boolean
   isConnecting: boolean
-  children: React.ReactNode | null
+  children: React.ReactNode
   onConnect: typeof connectWalletRequest
   onChangeAccount: typeof changeAccount
   onChangeNetwork: typeof changeNetwork

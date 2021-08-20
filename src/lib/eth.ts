@@ -1,5 +1,7 @@
-import { ChainId } from '@dcl/schemas'
+import { ChainId, Network } from '@dcl/schemas'
+import { providers } from 'ethers'
 import { connection, ProviderType, Provider } from 'decentraland-connect'
+import { getChainConfiguration } from './chainConfiguration'
 import { isMobile } from './utils'
 
 export type EthereumWindow = Window & {
@@ -15,9 +17,12 @@ export async function getNetworkProvider(chainId: ChainId): Promise<Provider> {
     We check if the connected provider is from the same chainId, if so we return that one instead of creating one.
     This is to avoid using our own RPCs that much, and use the ones provided by the provider when possible.
   */
-  if (getConnectedProviderChainId() === chainId) {
-    const connectedProvider = await getConnectedProvider()
-    if (connectedProvider) {
+  const connectedProvider = await getConnectedProvider()
+  if (connectedProvider) {
+    const connectedChainId = await new providers.Web3Provider(connectedProvider)
+      .getSigner()
+      .getChainId()
+    if (chainId === connectedChainId) {
       return connectedProvider
     }
   }
@@ -55,4 +60,13 @@ export function isDapperProvider() {
 
 export function isValidChainId(chainId: string | number) {
   return Object.values(ChainId).includes(Number(chainId))
+}
+
+export function getChainIdByNetwork(network: Network) {
+  const connectedChainId = getConnectedProviderChainId()
+  if (!connectedChainId) {
+    throw new Error('Could not get connected provider chain id')
+  }
+  const config = getChainConfiguration(connectedChainId)
+  return config.networkMapping[network]
 }

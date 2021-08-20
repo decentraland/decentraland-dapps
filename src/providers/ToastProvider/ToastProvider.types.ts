@@ -5,7 +5,7 @@ import { hideToast } from '../../modules/toast/actions'
 
 export type DefaultProps = {
   position?: ToastPosition
-  children: React.ReactNode | null
+  children: React.ReactNode
 }
 
 export type Props = DefaultProps & {

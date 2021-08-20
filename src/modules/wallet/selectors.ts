@@ -1,3 +1,4 @@
+import { Network } from '@dcl/schemas'
 import { isLoadingType } from '../loading/selectors'
 import { CONNECT_WALLET_REQUEST, ENABLE_WALLET_REQUEST } from './actions'
 import { WalletState } from './reducer'
@@ -28,11 +29,13 @@ export const getNetwork = (state: any) =>
 export const getNetworks = (state: any) =>
   isConnected(state) ? getData(state)!.networks : undefined
 
+/**
+ * @deprecated This method is deprecated, it only returns the MANA balance on Ethereum, use getNetworks() to get the MANA balances on all the networks.
+ */
 export const getMana = (state: any) => {
   if (!isConnected(state)) {
     return undefined
   }
-  const network = getNetwork(state)!
   const networks = getNetworks(state)!
-  return networks[network].mana
+  return networks[Network.ETHEREUM].mana
 }

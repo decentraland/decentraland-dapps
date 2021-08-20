@@ -1,17 +1,26 @@
 import * as React from 'react'
 
 import {
+  Button,
   ModalNavigation,
   Navbar as NavbarComponent,
   NavbarI18N
 } from 'decentraland-ui'
-import { ChainId, getChainName } from '@dcl/schemas'
+import { getChainName } from '@dcl/schemas'
 import { getConnectedProviderChainId } from '../../lib/eth'
 import { T } from '../../modules/translation/utils'
 import Modal from '../../containers/Modal'
-import { NavbarProps, WrongNetworkModalI18N } from './Navbar.types'
+import { NavbarProps, NavbarState } from './Navbar.types'
+import ChainProvider from '../ChainProvider'
 
-export default class Navbar extends React.PureComponent<NavbarProps> {
+export default class Navbar extends React.PureComponent<
+  NavbarProps,
+  NavbarState
+> {
+  state: NavbarState = {
+    isPartialSupportModalOpen: true
+  }
+
   getTranslations = (): NavbarI18N | undefined => {
     if (!this.props.hasTranslations) {
       return undefined
@@ -33,52 +42,87 @@ export default class Navbar extends React.PureComponent<NavbarProps> {
     }
   }
 
-  getModalTranslations = (): WrongNetworkModalI18N | undefined => {
-    if (!this.props.hasTranslations) {
-      return undefined
-    }
-    return {
-      wrongNetwork: {
-        header: <T id="@dapps.navbar.wrongNetwork.header" />,
-        message: (
-          <T
-            id="@dapps.navbar.wrongNetwork.message"
-            values={{ currentChainName: '', expectedChainName: '' }}
-          />
-        )
-      }
-    }
+  handleClosePartialSupportModal = () => {
+    this.setState({ isPartialSupportModalOpen: false })
   }
 
-  isValidChainId(
-    currentChainId: ChainId,
-    expectedChainId: ChainId | null
-  ): expectedChainId is ChainId {
-    return !!expectedChainId && currentChainId !== expectedChainId
+  handleSwitchNetwork = () => {
+    this.props.onSwitchNetwork(getConnectedProviderChainId()!)
   }
 
   render() {
-    const { chainId } = this.props
-    const expectedChainId = getConnectedProviderChainId()
+    const expectedChainName = getChainName(getConnectedProviderChainId()!)
     return (
       <>
         <NavbarComponent {...this.props} i18n={this.getTranslations()} />
-        {chainId && this.isValidChainId(chainId, expectedChainId) ? (
-          <Modal open={true} size="tiny" i18n={this.getModalTranslations()}>
-            <ModalNavigation
-              title={<T id="@dapps.navbar.wrongNetwork.header" />}
-            />
-            <Modal.Content>
-              <T
-                id="@dapps.navbar.wrongNetwork.message"
-                values={{
-                  currentChainName: <b>{getChainName(chainId)}</b>,
-                  expectedChainName: <b>{getChainName(expectedChainId)}</b>
-                }}
-              />
-            </Modal.Content>
-          </Modal>
-        ) : null}
+        <ChainProvider>
+          {({ chainId, isUnsupported, isPartiallySupported }) =>
+            isUnsupported ? (
+              <Modal open size="tiny">
+                <ModalNavigation
+                  title={<T id="@dapps.navbar.wrong_network.header" />}
+                />
+                <Modal.Content>
+                  <T
+                    id="@dapps.navbar.wrong_network.message"
+                    values={{
+                      currentChainName: <b>{getChainName(chainId!)}</b>,
+                      expectedChainName: <b>{expectedChainName}</b>
+                    }}
+                  />
+                </Modal.Content>
+                <Modal.Actions>
+                  <Button primary onClick={this.handleSwitchNetwork}>
+                    <T
+                      id="@dapps.navbar.wrong_network.switch_button"
+                      values={{
+                        chainName: <b>{expectedChainName}</b>
+                      }}
+                    />
+                  </Button>
+                </Modal.Actions>
+              </Modal>
+            ) : isPartiallySupported ? (
+              <Modal open={this.state.isPartialSupportModalOpen} size="tiny">
+                <ModalNavigation
+                  title={
+                    <T id="@dapps.navbar.partially_supported_network.header" />
+                  }
+                />
+                <Modal.Content>
+                  <T
+                    id="@dapps.navbar.partially_supported_network.message"
+                    values={{
+                      currentChainName: <b>{getChainName(chainId!)}</b>,
+                      expectedChainName: <b>{expectedChainName}</b>
+                    }}
+                  />
+                </Modal.Content>
+                <Modal.Actions>
+                  <Button primary onClick={this.handleSwitchNetwork}>
+                    <T
+                      id="@dapps.navbar.wrong_network.switch_button"
+                      values={{
+                        chainName: <b>{expectedChainName}</b>
+                      }}
+                    />
+                  </Button>
+                  <Button
+                    secondary
+                    onClick={this.handleClosePartialSupportModal}
+                  >
+                    <T
+                      id="@dapps.navbar.partially_supported_network.continue_button"
+                      values={{
+                        chainName: <b>{getChainName(chainId!)}</b>
+                      }}
+                    />
+                  </Button>
+                </Modal.Actions>
+              </Modal>
+            ) : null
+          }
+        </ChainProvider>
       </>
     )
   }

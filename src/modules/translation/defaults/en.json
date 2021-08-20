@@ -1,5 +1,8 @@
 {
   "@dapps": {
+    "button": {
+      "network_not_supported": "You need to be connected to {expectedChainName} to perform this action"
+    },
     "footer": {
       "dropdown": {
         "en": "English",
@@ -32,9 +35,15 @@
         "events": "Events",
         "dao": "DAO"
       },
-      "wrongNetwork": {
+      "wrong_network": {
         "header": "Wrong Network",
-        "message": "You need to be connected to {expectedChainName} to use this app, but you are currently connected to {currentChainName}."
+        "message": "You need to be connected to {expectedChainName} to use this app, but you are currently connected to {currentChainName}.",
+        "switch_button": "Switch to {chainName}"
+      },
+      "partially_supported_network": {
+        "header": "Partially Supported Network",
+        "message": "You need to be connected to {expectedChainName} to use all the features of this app. That way, all the transactions that should happen on other networks would be sent as meta-transactions. Since you are currently connected to {currentChainName}, you will only be able to use the features of this app that interact with that particular network, and you will need to pay for the gas costs of those transactions.",
+        "continue_button": "Continue on {chainName}"
       }
     },
     "sign_in": {
@@ -55,7 +64,7 @@
         "title": "Sign In",
         "subtitle": "Choose how you want to connect to Ethereum.",
         "error": "Could not connect to wallet.",
-        "supported_wallets": "Contract and Trezor wallets cannot interact Polygon.{br}Read more about the Trezor integration {trezor_link}",
+        "supported_wallets": "Trezor and smart contract wallets (like Dapper or Argent) cannot interact Polygon. Read more about the Trezor support status {trezor_link}",
         "trezor_link": "here"
       },
       "option": {

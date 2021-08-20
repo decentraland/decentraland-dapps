@@ -7,6 +7,7 @@ import {
   getChainId
 } from '../../modules/wallet/selectors'
 import { isEnabled } from '../../modules/translation/selectors'
+import { switchNetworkRequest } from '../../modules/wallet/actions'
 import { RootDispatch } from '../../types'
 import { NavbarProps, MapStateProps, MapDispatchProps } from './Navbar.types'
 import Navbar from './Navbar'
@@ -20,7 +21,9 @@ const mapState = (state: any): MapStateProps => ({
   hasTranslations: isEnabled(state)
 })
 
-const mapDispatch = (_dispatch: RootDispatch): MapDispatchProps => ({})
+const mapDispatch = (dispatch: RootDispatch): MapDispatchProps => ({
+  onSwitchNetwork: chainId => dispatch(switchNetworkRequest(chainId))
+})
 
 const mergeProps = (
   stateProps: MapStateProps,
@@ -32,8 +35,4 @@ const mergeProps = (
   ...ownProps
 })
 
-export default connect(
-  mapState,
-  mapDispatch,
-  mergeProps
-)(Navbar) as any
+export default connect(mapState, mapDispatch, mergeProps)(Navbar) as any

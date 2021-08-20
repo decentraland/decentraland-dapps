@@ -1,5 +1,8 @@
 {
   "@dapps": {
+    "button": {
+      "network_not_supported": "Debes conectarte a {expectedChainName} para realizar esta acción"
+    },
     "footer": {
       "dropdown": {
         "en": "Inglés",
@@ -32,9 +35,15 @@
         "events": "Events",
         "dao": "DAO"
       },
-      "wrongNetwork": {
+      "wrong_network": {
         "header": "Red incorrecta",
-        "message": "Necesita conectarse a la Red {expectedChainName} para usar esta app, pero actualmente esta conectado a la Red {currentChainName}."
+        "message": "Necesita conectarse a la Red {expectedChainName} para usar esta app, pero actualmente esta conectado a la Red {currentChainName}.",
+        "switch_button": "Cambiar a {chainName}"
+      },
+      "partially_supported_network": {
+        "header": "Partially Supported Network",
+        "message": "You need to be connected to {expectedChainName} to use all the features of this app. That way, all the transactions that should happen on other networks would be sent as meta-transactions. Since you are currently connected to {currentChainName}, you will only be able to use the features of this app that interact with that particular network, and you will need to pay for the gas costs of those transactions.",
+        "continue_button": "Continuar en {chainName}"
       }
     },
     "sign_in": {
@@ -55,7 +64,7 @@
         "title": "Conectar",
         "subtitle": "Elige como quieres conectarte.",
         "error": "No se pudo conectar a la billetera.",
-        "supported_wallets": "Las billeteras de contratos y Trezor no están soportadas para interactuar con Polygon.{br}Lea más sobre la intregración con Trezor {trezor_link}",
+        "supported_wallets": "Los Trezor y billeteras basadas en smart contracts (como Dapper o Argent) no pueden interactuar con Polygon.{br}Lea más sobre el soporte de Trezor {trezor_link}",
         "trezor_link": "aquí"
       },
       "option": {

@@ -9,7 +9,7 @@ export type ModalProps = {
 export type ModalComponent = React.ComponentType<ModalProps>
 
 export type DefaultProps = {
-  children: React.ReactNode | null
+  children: React.ReactNode
 }
 
 export type Props = DefaultProps & {

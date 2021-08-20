@@ -1,5 +1,8 @@
 {
   "@dapps": {
+    "button": {
+      "network_not_supported": "您需要连接到 {expectedChainName} 才能执行此操作"
+    },
     "footer": {
       "dropdown": {
         "en": "英语",
@@ -32,9 +35,15 @@
         "events": "Events",
         "dao": "DAO"
       },
-      "wrongNetwork": {
+      "wrong_network": {
         "header": "网络错误",
-        "message": "您需要连接到{expectedChainName}网络才能使用此应用，但您当前已连接到{currentChainName}网络。"
+        "message": "您需要连接到{expectedChainName}网络才能使用此应用，但您当前已连接到{currentChainName}网络。",
+        "switch_button": "切换到 {chainName}"
+      },
+      "partially_supported_network": {
+        "header": "部分支持的网络",
+        "message": "您需要连接到 {expectedChainName} 才能使用此应用的所有功能。这样，所有应该在其他网络上发生的交易都将作为元交易发送。由于您当前连接到 {currentChainName}，您将只能使用此应用程序与该特定网络交互的功能，并且您需要支付这些交易的 gas 费用。",
+        "continue_button": "继续 {chainName}"
       }
     },
     "sign_in": {

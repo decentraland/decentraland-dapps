@@ -10,8 +10,12 @@ import {
   select
 } from 'redux-saga/effects'
 import { ChainId } from '@dcl/schemas'
-import { connection } from 'decentraland-connect'
-import { isCucumberProvider, isValidChainId } from '../../lib/eth'
+import { connection, Provider } from 'decentraland-connect'
+import {
+  getConnectedProvider,
+  isCucumberProvider,
+  isValidChainId
+} from '../../lib/eth'
 import {
   connectWalletSuccess,
   connectWalletFailure,
@@ -35,9 +39,20 @@ import {
   FETCH_WALLET_FAILURE,
   FetchWalletSuccessAction,
   FetchWalletFailureAction,
-  CONNECT_WALLET_SUCCESS
+  CONNECT_WALLET_SUCCESS,
+  SWITCH_NETWORK_REQUEST,
+  SwitchNetworkRequestAction,
+  switchNetworkSuccess,
+  switchNetworkFailure,
+  SWITCH_NETWORK_SUCCESS,
+  SwitchNetworkSuccessAction
 } from './actions'
-import { buildWallet } from './utils'
+import {
+  buildWallet,
+  getAddEthereumChainParameters,
+  getTransactionsApiUrl,
+  setTransactionsApiUrl
+} from './utils'
 import { CreateWalletOptions, Wallet } from './types'
 import { isConnected } from './selectors'
 
@@ -70,7 +85,9 @@ export function* walletSaga() {
     takeEvery(ENABLE_WALLET_SUCCESS, handleEnableWalletSuccess),
     takeEvery(FETCH_WALLET_REQUEST, handleFetchWalletRequest),
     takeEvery(DISCONNECT_WALLET, handleDisconnectWallet),
-    takeEvery(CONNECT_WALLET_SUCCESS, handleConnectWalletSuccess)
+    takeEvery(CONNECT_WALLET_SUCCESS, handleConnectWalletSuccess),
+    takeEvery(SWITCH_NETWORK_REQUEST, handleSwitchNetworkRequest),
+    takeEvery(SWITCH_NETWORK_SUCCESS, handleSwitchNetworkSucces)
   ])
 }
 
@@ -157,6 +174,58 @@ function* handleConnectWalletSuccess() {
   }
 }
 
+function* handleSwitchNetworkRequest(action: SwitchNetworkRequestAction) {
+  const { chainId } = action.payload
+  const provider: Provider | null = yield call(getConnectedProvider)
+  try {
+    if (!provider) {
+      throw new Error('Could not get provider')
+    }
+    yield call([provider, 'request'], {
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: '0x' + chainId.toString(16) }]
+    })
+    yield put(switchNetworkSuccess(chainId))
+  } catch (switchError) {
+    // This error code indicates that the chain has not been added to MetaMask.
+    if (provider && switchError.code === 4902) {
+      try {
+        yield call([provider, 'request'], {
+          method: 'wallet_addEthereumChain',
+          params: [getAddEthereumChainParameters(chainId)]
+        })
+        const newChainId: string = yield call([provider, 'request'], {
+          method: 'eth_chainId',
+          params: []
+        })
+        if (chainId !== parseInt(newChainId, 16)) {
+          throw new Error('chainId did not change after adding network')
+        }
+        yield put(switchNetworkSuccess(chainId))
+        return
+      } catch (addError) {
+        yield put(
+          switchNetworkFailure(
+            chainId,
+            `Error adding network: ${addError.message}`
+          )
+        )
+        return
+      }
+    }
+    yield put(
+      switchNetworkFailure(
+        chainId,
+        `Error switching network: ${switchError.message}`
+      )
+    )
+  }
+}
+
+function* handleSwitchNetworkSucces(_action: SwitchNetworkSuccessAction) {
+  yield put(fetchWalletRequest())
+}
+
 export function createWalletSaga(options: CreateWalletOptions) {
   if (isValidChainId(options.CHAIN_ID)) {
     CHAIN_ID = Number(options.CHAIN_ID)
@@ -176,6 +245,14 @@ export function createWalletSaga(options: CreateWalletOptions) {
 
   if (options.POLL_INTERVAL) {
     POLL_INTERVAL = options.POLL_INTERVAL
+  }
+
+  if (options.TRANSACTIONS_API_URL) {
+    setTransactionsApiUrl(options.TRANSACTIONS_API_URL)
+  } else {
+    console.warn(
+      `"TRANSACTIONS_API_URL" not provided on createWalletSaga, using default value "${getTransactionsApiUrl()}".`
+    )
   }
 
   return walletSaga

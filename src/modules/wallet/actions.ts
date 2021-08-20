@@ -1,5 +1,6 @@
 import { action } from 'typesafe-actions'
 import { ProviderType } from 'decentraland-connect'
+import { ChainId } from '@dcl/schemas'
 import { Wallet } from './types'
 
 export const CONNECT_WALLET_REQUEST = '[Request] Connect Wallet'
@@ -58,3 +59,18 @@ export const fetchWalletFailure = (error: string) =>
 export type FetchWalletRequestAction = ReturnType<typeof fetchWalletRequest>
 export type FetchWalletSuccessAction = ReturnType<typeof fetchWalletSuccess>
 export type FetchWalletFailureAction = ReturnType<typeof fetchWalletFailure>
+
+export const SWITCH_NETWORK_REQUEST = '[Request] Switch Network'
+export const SWITCH_NETWORK_SUCCESS = '[Success] Switch Network'
+export const SWITCH_NETWORK_FAILURE = '[Failure] Switch Network'
+
+export const switchNetworkRequest = (chainId: ChainId) =>
+  action(SWITCH_NETWORK_REQUEST, { chainId })
+export const switchNetworkSuccess = (chainId: ChainId) =>
+  action(SWITCH_NETWORK_SUCCESS, { chainId })
+export const switchNetworkFailure = (chainId: ChainId, error: string) =>
+  action(SWITCH_NETWORK_FAILURE, { chainId, error })
+
+export type SwitchNetworkRequestAction = ReturnType<typeof switchNetworkRequest>
+export type SwitchNetworkSuccessAction = ReturnType<typeof switchNetworkSuccess>
+export type SwitchNetworkFailureAction = ReturnType<typeof switchNetworkFailure>

@@ -20,5 +20,19 @@ export interface Wallet {
 export interface CreateWalletOptions {
   MANA_ADDRESS?: string
   CHAIN_ID: string | number
+  TRANSACTIONS_API_URL?: string
   POLL_INTERVAL?: number
+}
+
+export type AddEthereumChainParameters = {
+  chainId: string // A 0x-prefixed hexadecimal string
+  chainName: string
+  nativeCurrency: {
+    name: string
+    symbol: string // 2-6 characters long
+    decimals: 18
+  }
+  rpcUrls: string[]
+  blockExplorerUrls?: string[]
+  iconUrls?: string[] // Currently ignored.
 }
