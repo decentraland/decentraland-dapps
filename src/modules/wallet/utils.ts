@@ -81,7 +81,7 @@ export async function buildWallet(): Promise<Wallet> {
   }
 }
 
-async function getTargetNetworkProvider(chainId: ChainId) {
+export async function getTargetNetworkProvider(chainId: ChainId) {
   const networkProvider = await getNetworkProvider(chainId)
   return new providers.Web3Provider(networkProvider)
 }
