@@ -1,6 +1,6 @@
 {
   "name": "decentraland-dapps",
-  "version": "0.0.0-development",
+  "version": "12.18.0-rc31",
   "dependencies": {
     "@0xsequence/multicall": "^0.25.1",
     "@0xsequence/relayer": "^0.25.1",
