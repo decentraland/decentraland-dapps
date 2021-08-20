@@ -82,9 +82,60 @@ describe('Wallet sagas', async () => {
                   ]
                 }),
                 Promise.resolve()
+              ],
+              [
+                call([mockProvider, 'request'], {
+                  method: 'eth_chainId',
+                  params: []
+                }),
+                Promise.resolve('0x1')
               ]
             ])
             .put(switchNetworkSuccess(ChainId.ETHEREUM_MAINNET))
+            .dispatch(switchNetworkRequest(ChainId.ETHEREUM_MAINNET))
+            .run({ silenceTimeout: true })
+        })
+        it('should should fail if after using wallet_addEthereumChain the chainId did not change', () => {
+          const switchError = new Error('Could not switch') as Error & {
+            code: number
+          }
+          switchError.code = 4902
+          return expectSaga(walletSaga)
+            .provide([
+              [
+                matchers.call.fn(getConnectedProvider),
+                Promise.resolve(mockProvider)
+              ],
+              [
+                call([mockProvider, 'request'], {
+                  method: 'wallet_switchEthereumChain',
+                  params: [{ chainId: '0x1' }]
+                }),
+                Promise.reject(switchError)
+              ],
+              [
+                call([mockProvider, 'request'], {
+                  method: 'wallet_addEthereumChain',
+                  params: [
+                    getAddEthereumChainParameters(ChainId.ETHEREUM_MAINNET)
+                  ]
+                }),
+                Promise.resolve()
+              ],
+              [
+                call([mockProvider, 'request'], {
+                  method: 'eth_chainId',
+                  params: []
+                }),
+                Promise.resolve('0x2')
+              ]
+            ])
+            .put(
+              switchNetworkFailure(
+                ChainId.ETHEREUM_MAINNET,
+                'Error adding network: chainId did not change after adding network'
+              )
+            )
             .dispatch(switchNetworkRequest(ChainId.ETHEREUM_MAINNET))
             .run({ silenceTimeout: true })
         })

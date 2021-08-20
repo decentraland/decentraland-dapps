@@ -43,7 +43,9 @@ import {
   SWITCH_NETWORK_REQUEST,
   SwitchNetworkRequestAction,
   switchNetworkSuccess,
-  switchNetworkFailure
+  switchNetworkFailure,
+  SWITCH_NETWORK_SUCCESS,
+  SwitchNetworkSuccessAction
 } from './actions'
 import {
   buildWallet,
@@ -84,7 +86,8 @@ export function* walletSaga() {
     takeEvery(FETCH_WALLET_REQUEST, handleFetchWalletRequest),
     takeEvery(DISCONNECT_WALLET, handleDisconnectWallet),
     takeEvery(CONNECT_WALLET_SUCCESS, handleConnectWalletSuccess),
-    takeEvery(SWITCH_NETWORK_REQUEST, handleSwitchNetworkRequest)
+    takeEvery(SWITCH_NETWORK_REQUEST, handleSwitchNetworkRequest),
+    takeEvery(SWITCH_NETWORK_SUCCESS, handleSwitchNetworkSucces)
   ])
 }
 
@@ -191,6 +194,13 @@ function* handleSwitchNetworkRequest(action: SwitchNetworkRequestAction) {
           method: 'wallet_addEthereumChain',
           params: [getAddEthereumChainParameters(chainId)]
         })
+        const newChainId: string = yield call([provider, 'request'], {
+          method: 'eth_chainId',
+          params: []
+        })
+        if (chainId !== parseInt(newChainId, 16)) {
+          throw new Error('chainId did not change after adding network')
+        }
         yield put(switchNetworkSuccess(chainId))
         return
       } catch (addError) {
@@ -210,6 +220,10 @@ function* handleSwitchNetworkRequest(action: SwitchNetworkRequestAction) {
       )
     )
   }
+}
+
+function* handleSwitchNetworkSucces(_action: SwitchNetworkSuccessAction) {
+  yield put(fetchWalletRequest())
 }
 
 export function createWalletSaga(options: CreateWalletOptions) {
