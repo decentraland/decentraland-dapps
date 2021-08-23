@@ -38,6 +38,7 @@
       "wrong_network": {
         "header": "网络错误",
         "message": "您需要连接到{expectedChainName}网络才能使用此应用，但您当前已连接到{currentChainName}网络。",
+        "message_unknown_network": "您需要连接到 {expectedChainName} 才能使用此应用，请切换您的网络以继续。",
         "switch_button": "切换到 {chainName}"
       },
       "partially_supported_network": {

@@ -63,13 +63,22 @@ export default class Navbar extends React.PureComponent<
                   title={<T id="@dapps.navbar.wrong_network.header" />}
                 />
                 <Modal.Content>
-                  <T
-                    id="@dapps.navbar.wrong_network.message"
-                    values={{
-                      currentChainName: <b>{getChainName(chainId!)}</b>,
-                      expectedChainName: <b>{expectedChainName}</b>
-                    }}
-                  />
+                  {!getChainName(chainId!) ? (
+                    <T
+                      id="@dapps.navbar.wrong_network.message_unknown_network"
+                      values={{
+                        expectedChainName: <b>{expectedChainName}</b>
+                      }}
+                    />
+                  ) : (
+                    <T
+                      id="@dapps.navbar.wrong_network.message"
+                      values={{
+                        currentChainName: <b>{getChainName(chainId!)}</b>,
+                        expectedChainName: <b>{expectedChainName}</b>
+                      }}
+                    />
+                  )}
                 </Modal.Content>
                 <Modal.Actions>
                   <Button primary onClick={this.handleSwitchNetwork}>

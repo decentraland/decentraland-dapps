@@ -38,6 +38,7 @@
       "wrong_network": {
         "header": "Wrong Network",
         "message": "You need to be connected to {expectedChainName} to use this app, but you are currently connected to {currentChainName}.",
+        "message_unknown_network": "You need to be connected to {expectedChainName} to use this app, please switch your network to continue.",
         "switch_button": "Switch to {chainName}"
       },
       "partially_supported_network": {
