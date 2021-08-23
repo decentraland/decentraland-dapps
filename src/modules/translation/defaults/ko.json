@@ -38,6 +38,7 @@
       "wrong_network": {
         "header": "잘못된 네트워크",
         "message": "이 앱을 사용하려면 {expectedChainName} 네트워크에 연결되어 있어야하지만 현재 {currentChainName} 네트워크에 연결되어 있습니다.",
+        "message_unknown_network": "이 앱을 사용하려면 {expectedChainName}에 연결해야 합니다. 계속하려면 네트워크를 전환하세요.",
         "switch_button": "{chainName}(으)로 전환"
       },
       "partially_supported_network": {

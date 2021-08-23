@@ -38,6 +38,7 @@
       "wrong_network": {
         "header": "Red incorrecta",
         "message": "Necesita conectarse a la Red {expectedChainName} para usar esta app, pero actualmente esta conectado a la Red {currentChainName}.",
+        "message_unknown_network": "Debes estar conectado a {expectedChainName} para usar esta aplicación, cambia tu red para continuar.",
         "switch_button": "Cambiar a {chainName}"
       },
       "partially_supported_network": {
