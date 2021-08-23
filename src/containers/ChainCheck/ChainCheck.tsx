@@ -1,9 +1,11 @@
 import React from 'react'
 import { Popup } from 'decentraland-ui'
 import { T } from '../../modules/translation/utils'
-import { getConnectedProviderChainId } from '../../lib/eth'
+import {
+  getConnectedProviderChainId,
+  getNetworkNameByChainId
+} from '../../lib/eth'
 import { Props } from './ChainCheck.types'
-import { getChainName } from '@dcl/schemas'
 import ChainProvider from '../ChainProvider'
 
 export default class ChainCheck extends React.PureComponent<Props> {
@@ -22,7 +24,11 @@ export default class ChainCheck extends React.PureComponent<Props> {
                   id="@dapps.button.network_not_supported"
                   values={{
                     expectedChainName: (
-                      <b>{getChainName(getConnectedProviderChainId()!)}</b>
+                      <b>
+                        {getNetworkNameByChainId(
+                          getConnectedProviderChainId()!
+                        )}
+                      </b>
                     )
                   }}
                 />

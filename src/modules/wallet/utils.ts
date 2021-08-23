@@ -8,12 +8,13 @@ import {
   sendMetaTransaction
 } from 'decentraland-transactions'
 import { Provider } from 'decentraland-connect'
-import { ChainId, getChainName } from '@dcl/schemas'
+import { ChainId } from '@dcl/schemas'
 import { PopulatedTransaction, Contract, providers, utils } from 'ethers'
 import {
   getConnectedProvider,
   getConnectedProviderChainId,
   getConnectedProviderType,
+  getNetworkNameByChainId,
   getNetworkProvider
 } from '../../lib/eth'
 import { getChainConfiguration } from '../../lib/chainConfiguration'
@@ -152,7 +153,7 @@ export function getAddEthereumChainParameters(
   chainId: ChainId
 ): AddEthereumChainParameters {
   const hexChainId = '0x' + chainId.toString(16)
-  const chainName = getChainName(chainId)!
+  const chainName = getNetworkNameByChainId(chainId)
   const config = getChainConfiguration(chainId)
   switch (chainId) {
     case ChainId.MATIC_MAINNET:

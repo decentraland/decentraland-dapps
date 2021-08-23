@@ -6,8 +6,10 @@ import {
   Navbar as NavbarComponent,
   NavbarI18N
 } from 'decentraland-ui'
-import { getChainName } from '@dcl/schemas'
-import { getConnectedProviderChainId } from '../../lib/eth'
+import {
+  getConnectedProviderChainId,
+  getNetworkNameByChainId
+} from '../../lib/eth'
 import { T } from '../../modules/translation/utils'
 import Modal from '../../containers/Modal'
 import { NavbarProps, NavbarState } from './Navbar.types'
@@ -51,7 +53,9 @@ export default class Navbar extends React.PureComponent<
   }
 
   render() {
-    const expectedChainName = getChainName(getConnectedProviderChainId()!)
+    const expectedChainName = getNetworkNameByChainId(
+      getConnectedProviderChainId()!
+    )
     return (
       <>
         <NavbarComponent {...this.props} i18n={this.getTranslations()} />
@@ -66,7 +70,9 @@ export default class Navbar extends React.PureComponent<
                   <T
                     id="@dapps.navbar.wrong_network.message"
                     values={{
-                      currentChainName: <b>{getChainName(chainId!)}</b>,
+                      currentChainName: (
+                        <b>{getNetworkNameByChainId(chainId!)}</b>
+                      ),
                       expectedChainName: <b>{expectedChainName}</b>
                     }}
                   />
@@ -93,7 +99,9 @@ export default class Navbar extends React.PureComponent<
                   <T
                     id="@dapps.navbar.partially_supported_network.message"
                     values={{
-                      currentChainName: <b>{getChainName(chainId!)}</b>,
+                      currentChainName: (
+                        <b>{getNetworkNameByChainId(chainId!)}</b>
+                      ),
                       expectedChainName: <b>{expectedChainName}</b>
                     }}
                   />
@@ -114,7 +122,7 @@ export default class Navbar extends React.PureComponent<
                     <T
                       id="@dapps.navbar.partially_supported_network.continue_button"
                       values={{
-                        chainName: <b>{getChainName(chainId!)}</b>
+                        chainName: <b>{getNetworkNameByChainId(chainId!)}</b>
                       }}
                     />
                   </Button>

@@ -1,4 +1,4 @@
-import { ChainId, Network } from '@dcl/schemas'
+import { ChainId, getChainName, Network } from '@dcl/schemas'
 import { providers } from 'ethers'
 import { connection, ProviderType, Provider } from 'decentraland-connect'
 import { getChainConfiguration } from './chainConfiguration'
@@ -69,4 +69,14 @@ export function getChainIdByNetwork(network: Network) {
   }
   const config = getChainConfiguration(connectedChainId)
   return config.networkMapping[network]
+}
+
+export function getNetworkName(network: Network) {
+  const chainId = getChainIdByNetwork(network)
+  return getNetworkNameByChainId(chainId)
+}
+
+export function getNetworkNameByChainId(chainId: ChainId) {
+  const name = getChainName(chainId)
+  return name || `Unknown Network (chainId=${chainId})`
 }
