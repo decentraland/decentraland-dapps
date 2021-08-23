@@ -4,7 +4,6 @@
   "dependencies": {
     "@0xsequence/multicall": "^0.25.1",
     "@0xsequence/relayer": "^0.25.1",
-    "@dcl/schemas": ">=1.1.0",
     "@types/flat": "0.0.28",
     "@types/segment-analytics": "0.0.28",
     "@types/uuid": "^3.4.3",
@@ -23,7 +22,8 @@
     "tslint-config-prettier": "^1.10.0",
     "typesafe-actions": "^2.0.3",
     "web3x-codegen": "^4.0.6",
-    "web3x-es": "^4.0.6"
+    "web3x-es": "^4.0.6",
+    "@dcl/schemas": "^1.6.0"
   },
   "scripts": {
     "prebuild": "rimraf dist",
@@ -64,7 +64,7 @@
     "validate-commit-message": "^3.0.1"
   },
   "peerDependencies": {
-    "@dcl/schemas": ">=1.1.0",
+    "@dcl/schemas": "^1.6.0",
     "react": "^17.0.2",
     "react-redux": "^7.2.4",
     "redux": "^4.1.0",
