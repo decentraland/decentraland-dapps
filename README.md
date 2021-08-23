@@ -1454,7 +1454,7 @@ The `<SignInPage>` container can be used in the same way as the `<SignIn>` compo
 
 ### Dependencies
 
-This container requires you to install the [Wallet](https://github.com/decentraland/decentraland-dapps#wallet). It also has support for i18n out of the box if you include the [Translation](https://github.com/decentraland/decentraland-dapps#translation) module. 
+This container requires you to install the [Wallet](https://github.com/decentraland/decentraland-dapps#wallet). It also has support for i18n out of the box if you include the [Translation](https://github.com/decentraland/decentraland-dapps#translation) module.
 
 ### Usage
 
@@ -1577,7 +1577,7 @@ Common Components for dApps
 
 ## Intercom
 
-The `<Intercom>` will add an [intercom](https://www.intercom.com/) widget to your app
+The `<Intercom>` will add an [intercom](https://www.intercom.com/) widget to your app.
 
 ### Usage
 
