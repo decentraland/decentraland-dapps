@@ -102,6 +102,7 @@ export default class LoginModal extends React.PureComponent<Props, State> {
         loginType = FORTMATIC
         break
       case ProviderType.WALLET_CONNECT:
+        loginType = WALLET_CONNECT
         break
       default:
         console.warn(`Invalid provider type ${providerType}`)
