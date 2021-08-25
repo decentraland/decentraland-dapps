@@ -7,7 +7,6 @@ import {
   getContract,
   sendMetaTransaction
 } from 'decentraland-transactions'
-import { Provider } from 'decentraland-connect'
 import { ChainId, getChainName } from '@dcl/schemas'
 import { PopulatedTransaction, Contract, providers, utils } from 'ethers'
 import {
@@ -18,7 +17,7 @@ import {
 } from '../../lib/eth'
 import { getChainConfiguration } from '../../lib/chainConfiguration'
 import { AddEthereumChainParameters, Networks, Wallet } from './types'
-import { getAddress, getChainId } from './selectors'
+import { getChainId } from './selectors'
 
 let TRANSACTIONS_API_URL = 'https://transactions-api.decentraland.co/v1'
 export const getTransactionsApiUrl = () => TRANSACTIONS_API_URL
@@ -86,29 +85,21 @@ export async function getTargetNetworkProvider(chainId: ChainId) {
   return new providers.Web3Provider(networkProvider)
 }
 
-export function* sendWalletTransaction(
+export async function sendTransaction(
+  chainId: ChainId,
   contract: ContractData,
   getPopulatedTransaction: (
     populateTransaction: Contract['populateTransaction']
   ) => Promise<PopulatedTransaction>
 ) {
-  // get connected address
-  const from: string | undefined = yield select(getAddress)
-  if (!from) {
-    throw new Error('Invalid address')
-  }
-
   // get connected provider
-  const connectedProvider: Provider = yield call(getConnectedProvider)
+  const connectedProvider = await getConnectedProvider()
   if (!connectedProvider) {
     throw new Error('Provider not connected')
   }
 
   // get a provider for the target network
-  const targetNetworkProvider: providers.Web3Provider = yield call(
-    getTargetNetworkProvider,
-    contract.chainId
-  )
+  const targetNetworkProvider = await getTargetNetworkProvider(contract.chainId)
 
   // intantiate the contract
   const contractInstance = new Contract(
@@ -118,24 +109,20 @@ export function* sendWalletTransaction(
   )
 
   // populate the transaction data
-  const unsignedTx: PopulatedTransaction = yield call(
-    getPopulatedTransaction,
+  const unsignedTx = await getPopulatedTransaction(
     contractInstance.populateTransaction
   )
 
   // if the connected provider is in the target network, use it to sign and send the tx
-  const currentChainId: ChainId = yield select(getChainId)
-  if (currentChainId === contract.chainId) {
+  if (chainId === contract.chainId) {
     const signer = targetNetworkProvider.getSigner()
-    const tx: providers.TransactionResponse = yield call(
-      [signer, 'sendTransaction'],
+    const tx: providers.TransactionResponse = await signer.sendTransaction(
       unsignedTx
     )
     return tx.hash
   } else {
     // otherwise, send it as a meta tx
-    const hash: string = yield call(
-      sendMetaTransaction,
+    const hash: string = await sendMetaTransaction(
       connectedProvider,
       targetNetworkProvider,
       unsignedTx.data!,
@@ -146,6 +133,27 @@ export function* sendWalletTransaction(
     )
     return hash
   }
+}
+
+export function* sendWalletTransaction(
+  contract: ContractData,
+  getPopulatedTransaction: (
+    populateTransaction: Contract['populateTransaction']
+  ) => Promise<PopulatedTransaction>
+) {
+  const chainId: ChainId | undefined = yield select(getChainId)
+  if (!chainId) {
+    throw new Error('Invalid chain id')
+  }
+
+  const hash: string = yield call(
+    sendTransaction,
+    chainId,
+    contract,
+    getPopulatedTransaction
+  )
+
+  return hash
 }
 
 export function getAddEthereumChainParameters(
