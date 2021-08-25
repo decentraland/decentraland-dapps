@@ -10,7 +10,7 @@
     "axios": "^0.21.1",
     "date-fns": "^1.29.0",
     "dcl-catalyst-client": "^4.0.6",
-    "decentraland-connect": "^2.18.0",
+    "decentraland-connect": "^2.19.0",
     "decentraland-transactions": "^1.22.2",
     "decentraland-ui": "^3.6.0",
     "flat": "^4.1.0",
