@@ -120,13 +120,11 @@ export async function sendTransaction(
   // if the connected provider is in the target network, use it to sign and send the tx
   if (chainId === contract.chainId) {
     const signer = targetNetworkProvider.getSigner()
-    const tx: providers.TransactionResponse = await signer.sendTransaction(
-      unsignedTx
-    )
+    const tx = await signer.sendTransaction(unsignedTx)
     return tx.hash
   } else {
     // otherwise, send it as a meta tx
-    const hash: string = await sendMetaTransaction(
+    const hash = await sendMetaTransaction(
       connectedProvider,
       targetNetworkProvider,
       unsignedTx.data!,
