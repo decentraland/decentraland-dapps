@@ -22,6 +22,7 @@
     "tslint": "^5.7.0",
     "tslint-config-prettier": "^1.10.0",
     "typesafe-actions": "^2.0.3",
+    "web3x": "^4.0.6",
     "web3x-codegen": "^4.0.6",
     "web3x-es": "^4.0.6"
   },
@@ -59,8 +60,7 @@
     "tslint-language-service": "^0.9.9",
     "tslint-plugin-prettier": "^1.3.0",
     "typescript": "^4.3.5",
-    "validate-commit-message": "^3.0.1",
-    "web3x": "^4.0.6"
+    "validate-commit-message": "^3.0.1"
   },
   "peerDependencies": {
     "@dcl/schemas": "^1.6.0",
