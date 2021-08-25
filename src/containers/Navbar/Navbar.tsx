@@ -10,15 +10,16 @@ import { getChainName } from '@dcl/schemas'
 import { getConnectedProviderChainId } from '../../lib/eth'
 import { T } from '../../modules/translation/utils'
 import Modal from '../../containers/Modal'
-import { NavbarProps, NavbarState } from './Navbar.types'
 import ChainProvider from '../ChainProvider'
+import { NavbarProps, NavbarState } from './Navbar.types'
+import { acceptPartialSupport, isPartialSupportAccepted } from './utils'
 
 export default class Navbar extends React.PureComponent<
   NavbarProps,
   NavbarState
 > {
   state: NavbarState = {
-    isPartialSupportModalOpen: true
+    isPartialSupportModalOpen: !isPartialSupportAccepted()
   }
 
   getTranslations = (): NavbarI18N | undefined => {
@@ -44,6 +45,7 @@ export default class Navbar extends React.PureComponent<
 
   handleClosePartialSupportModal = () => {
     this.setState({ isPartialSupportModalOpen: false })
+    acceptPartialSupport()
   }
 
   handleSwitchNetwork = () => {
