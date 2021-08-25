@@ -1,4 +1,3 @@
-import { call, select } from 'redux-saga/effects'
 import { Eth } from 'web3x-es/eth'
 import { Address } from 'web3x-es/address'
 import {
@@ -17,7 +16,6 @@ import {
 } from '../../lib/eth'
 import { getChainConfiguration } from '../../lib/chainConfiguration'
 import { AddEthereumChainParameters, Networks, Wallet } from './types'
-import { getChainId } from './selectors'
 
 let TRANSACTIONS_API_URL = 'https://transactions-api.decentraland.co/v1'
 export const getTransactionsApiUrl = () => TRANSACTIONS_API_URL
@@ -86,7 +84,6 @@ export async function getTargetNetworkProvider(chainId: ChainId) {
 }
 
 export async function sendTransaction(
-  chainId: ChainId,
   contract: ContractData,
   getPopulatedTransaction: (
     populateTransaction: Contract['populateTransaction']
@@ -97,6 +94,13 @@ export async function sendTransaction(
   if (!connectedProvider) {
     throw new Error('Provider not connected')
   }
+
+  // get current chain id
+  const chainIdHex = await connectedProvider.request({
+    method: 'eth_chainId',
+    params: []
+  })
+  const chainId = parseInt(chainIdHex as string, 16)
 
   // get a provider for the target network
   const targetNetworkProvider = await getTargetNetworkProvider(contract.chainId)
@@ -133,27 +137,6 @@ export async function sendTransaction(
     )
     return hash
   }
-}
-
-export function* sendWalletTransaction(
-  contract: ContractData,
-  getPopulatedTransaction: (
-    populateTransaction: Contract['populateTransaction']
-  ) => Promise<PopulatedTransaction>
-) {
-  const chainId: ChainId | undefined = yield select(getChainId)
-  if (!chainId) {
-    throw new Error('Invalid chain id')
-  }
-
-  const hash: string = yield call(
-    sendTransaction,
-    chainId,
-    contract,
-    getPopulatedTransaction
-  )
-
-  return hash
 }
 
 export function getAddEthereumChainParameters(
