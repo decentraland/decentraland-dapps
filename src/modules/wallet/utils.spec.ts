@@ -41,7 +41,7 @@ describe('sendWalletTransaction', () => {
     it('should throw an error', () => {
       return expectSaga(sendWalletTransaction, contract, populate)
         .provide([[select(getAddress), undefined]])
-        .throws(Error('Invalid address'))
+        .throws(new Error('Invalid address'))
         .silentRun()
     })
   })
@@ -52,7 +52,7 @@ describe('sendWalletTransaction', () => {
           [select(getAddress), address],
           [matchers.call.fn(getConnectedProvider), Promise.resolve(null)]
         ])
-        .throws(Error('Provider not connected'))
+        .throws(new Error('Provider not connected'))
         .silentRun()
     })
   })
