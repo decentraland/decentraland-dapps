@@ -29,6 +29,9 @@ export const getNetwork = (state: any) =>
 export const getNetworks = (state: any) =>
   isConnected(state) ? getData(state)!.networks : undefined
 
+export const hasAcceptedNetworkPartialSupport = (state: any) =>
+  getState(state).hasAcceptedNetworkPartialSupport
+
 /**
  * @deprecated This method is deprecated, it only returns the MANA balance on Ethereum, use getNetworks() to get the MANA balances on all the networks.
  */

@@ -74,3 +74,10 @@ export const switchNetworkFailure = (chainId: ChainId, error: string) =>
 export type SwitchNetworkRequestAction = ReturnType<typeof switchNetworkRequest>
 export type SwitchNetworkSuccessAction = ReturnType<typeof switchNetworkSuccess>
 export type SwitchNetworkFailureAction = ReturnType<typeof switchNetworkFailure>
+
+export const ACCEPT_NETWORK_PARTIAL_SUPPORT = 'Accept network partial support'
+export const acceptNetworkPartialSupport = () =>
+  action(ACCEPT_NETWORK_PARTIAL_SUPPORT)
+export type AcceptNetworkPartialSupportAction = ReturnType<
+  typeof acceptNetworkPartialSupport
+>

@@ -4,10 +4,14 @@ import {
   isConnecting,
   getAddress,
   getMana,
-  getChainId
+  getChainId,
+  hasAcceptedNetworkPartialSupport
 } from '../../modules/wallet/selectors'
 import { isEnabled } from '../../modules/translation/selectors'
-import { switchNetworkRequest } from '../../modules/wallet/actions'
+import {
+  acceptNetworkPartialSupport,
+  switchNetworkRequest
+} from '../../modules/wallet/actions'
 import { RootDispatch } from '../../types'
 import { NavbarProps, MapStateProps, MapDispatchProps } from './Navbar.types'
 import Navbar from './Navbar'
@@ -18,11 +22,13 @@ const mapState = (state: any): MapStateProps => ({
   address: getAddress(state),
   isConnected: isConnected(state),
   isConnecting: isConnecting(state),
-  hasTranslations: isEnabled(state)
+  hasTranslations: isEnabled(state),
+  hasAcceptedNetworkPartialSupport: hasAcceptedNetworkPartialSupport(state)
 })
 
 const mapDispatch = (dispatch: RootDispatch): MapDispatchProps => ({
-  onSwitchNetwork: chainId => dispatch(switchNetworkRequest(chainId))
+  onSwitchNetwork: chainId => dispatch(switchNetworkRequest(chainId)),
+  onAcceptNetworkPartialSupport: () => dispatch(acceptNetworkPartialSupport())
 })
 
 const mergeProps = (
