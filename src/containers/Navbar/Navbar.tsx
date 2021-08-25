@@ -10,17 +10,10 @@ import { getChainName } from '@dcl/schemas'
 import { getConnectedProviderChainId } from '../../lib/eth'
 import { T } from '../../modules/translation/utils'
 import Modal from '../../containers/Modal'
-import { NavbarProps, NavbarState } from './Navbar.types'
 import ChainProvider from '../ChainProvider'
+import { NavbarProps } from './Navbar.types'
 
-export default class Navbar extends React.PureComponent<
-  NavbarProps,
-  NavbarState
-> {
-  state: NavbarState = {
-    isPartialSupportModalOpen: true
-  }
-
+export default class Navbar extends React.PureComponent<NavbarProps> {
   getTranslations = (): NavbarI18N | undefined => {
     if (!this.props.hasTranslations) {
       return undefined
@@ -42,15 +35,15 @@ export default class Navbar extends React.PureComponent<
     }
   }
 
-  handleClosePartialSupportModal = () => {
-    this.setState({ isPartialSupportModalOpen: false })
-  }
-
   handleSwitchNetwork = () => {
     this.props.onSwitchNetwork(getConnectedProviderChainId()!)
   }
 
   render() {
+    const {
+      hasAcceptedNetworkPartialSupport,
+      onAcceptNetworkPartialSupport
+    } = this.props
     const expectedChainName = getChainName(getConnectedProviderChainId()!)
     return (
       <>
@@ -92,7 +85,7 @@ export default class Navbar extends React.PureComponent<
                 </Modal.Actions>
               </Modal>
             ) : isPartiallySupported ? (
-              <Modal open={this.state.isPartialSupportModalOpen} size="tiny">
+              <Modal open={!hasAcceptedNetworkPartialSupport} size="tiny">
                 <ModalNavigation
                   title={
                     <T id="@dapps.navbar.partially_supported_network.header" />
@@ -116,10 +109,7 @@ export default class Navbar extends React.PureComponent<
                       }}
                     />
                   </Button>
-                  <Button
-                    secondary
-                    onClick={this.handleClosePartialSupportModal}
-                  >
+                  <Button secondary onClick={onAcceptNetworkPartialSupport}>
                     <T
                       id="@dapps.navbar.partially_supported_network.continue_button"
                       values={{

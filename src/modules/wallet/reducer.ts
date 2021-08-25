@@ -25,19 +25,23 @@ import {
   FetchWalletSuccessAction,
   FetchWalletFailureAction,
   FETCH_WALLET_SUCCESS,
-  FETCH_WALLET_FAILURE
+  FETCH_WALLET_FAILURE,
+  AcceptNetworkPartialSupportAction,
+  ACCEPT_NETWORK_PARTIAL_SUPPORT
 } from './actions'
 
 export type WalletState = {
   data: Wallet | null
   loading: LoadingState
   error: string | null
+  hasAcceptedNetworkPartialSupport: boolean
 }
 
 export const INITIAL_STATE: WalletState = {
   data: null,
   loading: [],
-  error: null
+  error: null,
+  hasAcceptedNetworkPartialSupport: false
 }
 
 export type WalletReducerAction =
@@ -53,6 +57,7 @@ export type WalletReducerAction =
   | FetchWalletRequestAction
   | FetchWalletSuccessAction
   | FetchWalletFailureAction
+  | AcceptNetworkPartialSupportAction
 
 export function walletReducer(
   state: WalletState = INITIAL_STATE,
@@ -90,7 +95,8 @@ export function walletReducer(
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
-        error: null
+        error: null,
+        hasAcceptedNetworkPartialSupport: false
       }
     }
 
@@ -102,12 +108,20 @@ export function walletReducer(
       }
     }
 
-    case CHANGE_ACCOUNT:
-    case CHANGE_NETWORK: {
+    case CHANGE_ACCOUNT: {
       return {
         ...state,
         error: null,
         data: action.payload.wallet
+      }
+    }
+
+    case CHANGE_NETWORK: {
+      return {
+        ...state,
+        error: null,
+        data: action.payload.wallet,
+        hasAcceptedNetworkPartialSupport: false
       }
     }
 
@@ -116,6 +130,13 @@ export function walletReducer(
         ...state,
         error: null,
         data: null
+      }
+    }
+
+    case ACCEPT_NETWORK_PARTIAL_SUPPORT: {
+      return {
+        ...state,
+        hasAcceptedNetworkPartialSupport: true
       }
     }
 
