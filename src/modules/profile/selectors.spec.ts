@@ -1,4 +1,3 @@
-import { expect } from 'chai'
 import { profile } from '../../tests/profileMocks'
 import { setProfileAvatarDescriptionRequest } from './actions'
 import { INITIAL_STATE } from './reducer'
@@ -21,7 +20,7 @@ describe('Profile selectors', () => {
 
   describe("when getting the profile's state", () => {
     it('should return the state', () => {
-      expect(getState(profileState)).equals(profileState.profile)
+      expect(getState(profileState)).toEqual(profileState.profile)
     })
   })
 
@@ -40,7 +39,7 @@ describe('Profile selectors', () => {
       })
 
       it('should return true', () => {
-        expect(isLoadingSetProfileAvatarDescription(profileState)).is.true
+        expect(isLoadingSetProfileAvatarDescription(profileState)).toBe(true)
       })
     })
 
@@ -56,7 +55,7 @@ describe('Profile selectors', () => {
       })
 
       it('should return false', () => {
-        expect(isLoadingSetProfileAvatarDescription(profileState)).is.false
+        expect(isLoadingSetProfileAvatarDescription(profileState)).toBe(false)
       })
     })
   })
@@ -70,19 +69,19 @@ describe('Profile selectors', () => {
     })
 
     it("should return the profile's state data", () => {
-      expect(getData(profileState)).equals(profileState.profile.data)
+      expect(getData(profileState)).toEqual(profileState.profile.data)
     })
   })
 
   describe('when getting the error state of the profile', () => {
     it("should return the profile state's errors", () => {
-      expect(getError(profileState)).equals(profileState.profile.error)
+      expect(getError(profileState)).toEqual(profileState.profile.error)
     })
   })
 
   describe('when getting the loading state of the profile', () => {
     it("should return the profile's state loading data", () => {
-      expect(getLoading(profileState)).equals(profileState.profile.loading)
+      expect(getLoading(profileState)).toEqual(profileState.profile.loading)
     })
   })
 
@@ -96,7 +95,7 @@ describe('Profile selectors', () => {
       })
 
       it('should return the profile associated with the address', () => {
-        expect(getProfileOfAddress(profileState, 'anAddress')).equals(
+        expect(getProfileOfAddress(profileState, 'anAddress')).toEqual(
           profileState.profile.data['anAddress']
         )
       })
@@ -111,7 +110,7 @@ describe('Profile selectors', () => {
       })
 
       it('should return undefined', () => {
-        expect(getProfileOfAddress(profileState, 'anAddress')).is.undefined
+        expect(getProfileOfAddress(profileState, 'anAddress')).toBeUndefined()
       })
     })
   })
@@ -128,7 +127,7 @@ describe('Profile selectors', () => {
     })
 
     it('should return the error', () => {
-      expect(getProfileError(profileState)).equals(profileState.profile.error)
+      expect(getProfileError(profileState)).toEqual(profileState.profile.error)
     })
   })
 })

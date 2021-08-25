@@ -1,4 +1,3 @@
-import { expect } from 'chai'
 import { Migrations } from './types'
 import {
   hasLocalStorage,
@@ -26,10 +25,10 @@ describe('localStorage', function() {
   describe('hasLocalStorage', function() {
     it('should return false if localStorage is not available', function() {
       delete global.window['localStorage']
-      expect(hasLocalStorage()).to.equal(false)
+      expect(hasLocalStorage()).toBe(false)
     })
     it('should return true if localStorage is available', function() {
-      expect(hasLocalStorage()).to.equal(true)
+      expect(hasLocalStorage()).toBe(true)
     })
   })
 
@@ -39,8 +38,8 @@ describe('localStorage', function() {
       const localStorage = getLocalStorage()
       localStorage.setItem(key, JSON.stringify('{}'))
       const data = migrateStorage(key, migrations)
-      expect(data.storage.version).to.equal(2)
-      expect(data.data).to.equal('new version')
+      expect(data.storage.version).toBe(2)
+      expect(data.data).toBe('new version')
     })
 
     it('should set corrent version', function() {
@@ -49,7 +48,7 @@ describe('localStorage', function() {
 
       localStorage.setItem(key, JSON.stringify('{ storage: { version: null }}'))
       const data = migrateStorage(key, migrations)
-      expect(data.storage.version).to.equal(2)
+      expect(data.storage.version).toBe(2)
     })
 
     it('should not migrate if there is no migrations left', function() {
@@ -57,12 +56,12 @@ describe('localStorage', function() {
       const localStorage = getLocalStorage()
       localStorage.setItem(key, JSON.stringify('{}'))
       let data = migrateStorage(key, migrations)
-      expect(data.storage.version).to.equal(2)
+      expect(data.storage.version).toBe(2)
 
       localStorage.setItem(key, JSON.stringify(data))
 
       data = migrateStorage(key, migrations)
-      expect(data.storage.version).to.equal(2)
+      expect(data.storage.version).toBe(2)
     })
   })
 })

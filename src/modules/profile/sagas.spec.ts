@@ -28,7 +28,7 @@ describe('when handling the action to set the profile avatar description', () =>
         ])
         .put(setProfileAvatarDescriptionFailure(address, errorMessage))
         .dispatch(setProfileAvatarDescriptionRequest(address, description))
-        .run()
+        .silentRun()
     })
   })
 
@@ -49,7 +49,7 @@ describe('when handling the action to set the profile avatar description', () =>
         ])
         .put(setProfileAvatarDescriptionFailure(address, errorMessage))
         .dispatch(setProfileAvatarDescriptionRequest(address, description))
-        .run()
+        .silentRun()
     })
   })
 
@@ -98,7 +98,7 @@ describe('when handling the action to set the profile avatar description', () =>
           )
         )
         .dispatch(setProfileAvatarDescriptionRequest(address, description))
-        .run()
+        .silentRun()
     })
   })
 })

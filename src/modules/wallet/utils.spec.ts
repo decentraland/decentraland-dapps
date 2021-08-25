@@ -1,5 +1,6 @@
 import { ChainId } from '@dcl/schemas'
 import { providers, ContractFunction, PopulatedTransaction } from 'ethers'
+import { Provider } from 'decentraland-connect'
 import * as matchers from 'redux-saga-test-plan/matchers'
 import { expectSaga } from 'redux-saga-test-plan'
 import { call, select } from 'redux-saga/effects'
@@ -28,15 +29,19 @@ const unsignedTx = { from: address, data: '0xda7a' }
 
 const tx = { hash: '0x00000000000000000000000000000000010b57e6' }
 
-describe('sendWalletTransaction', async () => {
-  const mockProvider = await getNetworkProvider(ChainId.ETHEREUM_MAINNET)
-  const mockTargetProvider = new providers.Web3Provider(mockProvider)
+describe('sendWalletTransaction', () => {
+  let mockProvider: Provider
+  let mockTargetProvider: providers.Web3Provider
+  beforeAll(async () => {
+    mockProvider = await getNetworkProvider(ChainId.ETHEREUM_MAINNET)
+    mockTargetProvider = new providers.Web3Provider(mockProvider)
+  })
 
   describe('when getting the connected address fails', () => {
     it('should throw an error', () => {
       return expectSaga(sendWalletTransaction, contract, populate)
         .provide([[select(getAddress), undefined]])
-        .throws(new Error('Invalid address'))
+        .throws(Error('Invalid address'))
         .silentRun()
     })
   })
@@ -47,7 +52,7 @@ describe('sendWalletTransaction', async () => {
           [select(getAddress), address],
           [matchers.call.fn(getConnectedProvider), Promise.resolve(null)]
         ])
-        .throws(new Error('Provider not connected'))
+        .throws(Error('Provider not connected'))
         .silentRun()
     })
   })
