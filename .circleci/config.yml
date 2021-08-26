@@ -2,7 +2,7 @@ version: 2
 jobs:
   test:
     docker:
-      - image: cimg/node:14
+      - image: cimg/node:14.17.4
 
     working_directory: /tmp/decentraland-dapps
 
@@ -24,7 +24,7 @@ jobs:
 
   build:
     docker:
-      - image: cimg/node:14
+      - image: cimg/node:14.17.4
 
     working_directory: /tmp/decentraland-dapps
 
@@ -46,7 +46,7 @@ jobs:
 
   release:
     docker:
-      - image: cimg/node:14
+      - image: cimg/node:14.17.4
 
     working_directory: /tmp/decentraland-dapps
 
