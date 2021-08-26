@@ -1,20 +1,9 @@
 import { put, call, takeEvery } from 'redux-saga/effects'
 import { providers } from '@0xsequence/multicall'
 import { providers as ethersProviders, Contract, BigNumber } from 'ethers'
-import { Eth } from 'web3x-es/eth'
-import { TxSend } from 'web3x-es/contract'
-import { Address } from 'web3x-es/address'
-import { Network } from '@dcl/schemas'
 import { Provider } from 'decentraland-connect'
-import {
-  ContractData,
-  getContract,
-  sendMetaTransaction
-} from 'decentraland-transactions'
-import { getNetworkProvider, getConnectedProvider } from '../../lib/eth'
-import { getChainConfiguration } from '../../lib/chainConfiguration'
-import { ERC20, ERC20TransactionReceipt } from '../../contracts/ERC20'
-import { ERC721, ERC721TransactionReceipt } from '../../contracts/ERC721'
+import { ContractData, getContract } from 'decentraland-transactions'
+import { getNetworkProvider } from '../../lib/eth'
 import { getTokenAmountToApprove, isValidType } from './utils'
 import {
   fetchAuthorizationsSuccess,
@@ -30,14 +19,10 @@ import {
   RevokeTokenRequestAction,
   REVOKE_TOKEN_REQUEST
 } from './actions'
-import {
-  Authorization,
-  AuthorizationAction,
-  AuthorizationSagaOptions,
-  AuthorizationType
-} from './types'
+import { Authorization, AuthorizationAction, AuthorizationType } from './types'
+import { sendTransaction } from '../wallet/utils'
 
-export function createAuthorizationSaga(options?: AuthorizationSagaOptions) {
+export function createAuthorizationSaga() {
   return function* authorizationSaga() {
     yield takeEvery(
       FETCH_AUTHORIZATIONS_REQUEST,
@@ -170,22 +155,10 @@ export function createAuthorizationSaga(options?: AuthorizationSagaOptions) {
       throw new Error(`Invalid authorization type ${authorization.type}`)
     }
 
-    const provider: Provider | null = await getConnectedProvider()
-    if (!provider) {
-      throw new Error('Could not connect to Ethereum')
+    const contract: ContractData = {
+      ...getContract(authorization.contractName, authorization.chainId),
+      address: authorization.contractAddress
     }
-
-    const eth: Eth = new Eth(provider)
-    const { network } = getChainConfiguration(authorization.chainId)
-
-    const from = Address.fromString(authorization.address)
-    const contractAddress = Address.fromString(authorization.contractAddress)
-    const authorizedAddress = Address.fromString(
-      authorization.authorizedAddress
-    )
-    const { contractName, chainId } = authorization
-
-    let method: TxSend<ERC20TransactionReceipt | ERC721TransactionReceipt>
 
     switch (authorization.type) {
       case AuthorizationType.ALLOWANCE:
@@ -193,37 +166,14 @@ export function createAuthorizationSaga(options?: AuthorizationSagaOptions) {
           action === AuthorizationAction.GRANT
             ? getTokenAmountToApprove().toString()
             : '0'
-
-        method = new ERC20(eth, contractAddress).methods.approve(
-          authorizedAddress,
-          amount
+        return sendTransaction(contract, erc20 =>
+          erc20.approve(authorization.authorizedAddress, amount)
         )
-        break
       case AuthorizationType.APPROVAL:
         const isApproved = action === AuthorizationAction.GRANT
-
-        method = new ERC721(eth, contractAddress).methods.setApprovalForAll(
-          authorizedAddress,
-          isApproved
+        return sendTransaction(contract, erc712 =>
+          erc712.setApprovalForAll(authorization.authorizedAddress, isApproved)
         )
-        break
-    }
-
-    switch (network) {
-      case Network.ETHEREUM:
-        return method.send({ from }).getTxHash()
-      case Network.MATIC:
-        const payload = method.getSendRequestPayload({ from })
-        const txData = payload.params[0].data
-        const metaTxProvider = await getNetworkProvider(chainId)
-        const contract: ContractData = {
-          ...getContract(contractName, chainId),
-          address: contractAddress.toString()
-        }
-
-        return sendMetaTransaction(provider, metaTxProvider, txData, contract, {
-          serverURL: options?.metaTransactionServerUrl
-        })
     }
   }
 }
