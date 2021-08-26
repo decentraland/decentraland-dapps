@@ -2,7 +2,7 @@ version: 2
 jobs:
   test:
     docker:
-      - image: circleci/node:14
+      - image: cimg/node:14
 
     working_directory: /tmp/decentraland-dapps
 
@@ -24,7 +24,7 @@ jobs:
 
   build:
     docker:
-      - image: circleci/node:14
+      - image: cimg/node:14
 
     working_directory: /tmp/decentraland-dapps
 
@@ -46,7 +46,7 @@ jobs:
 
   release:
     docker:
-      - image: circleci/node:14
+      - image: cimg/node:14
 
     working_directory: /tmp/decentraland-dapps
 
