@@ -1,4 +1,4 @@
-import { LegacyProvider } from 'web3x-es/providers'
+import { LegacyProvider } from 'web3x/providers'
 import {
   put,
   call,

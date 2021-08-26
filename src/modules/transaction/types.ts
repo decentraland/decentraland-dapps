@@ -1,4 +1,4 @@
-import { TransactionResponse, TransactionReceipt } from 'web3x-es/formatters'
+import { TransactionResponse, TransactionReceipt } from 'web3x/formatters'
 import { ChainId } from '@dcl/schemas'
 
 export enum TransactionStatus {

@@ -1,9 +1,9 @@
 import { put, call, takeEvery } from 'redux-saga/effects'
 import { providers } from '@0xsequence/multicall'
 import { providers as ethersProviders, Contract, BigNumber } from 'ethers'
-import { Eth } from 'web3x-es/eth'
-import { TxSend } from 'web3x-es/contract'
-import { Address } from 'web3x-es/address'
+import { Eth } from 'web3x/eth'
+import { TxSend } from 'web3x/contract'
+import { Address } from 'web3x/address'
 import { Network } from '@dcl/schemas'
 import { Provider } from 'decentraland-connect'
 import {

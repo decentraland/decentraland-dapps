@@ -1,4 +1,4 @@
-import { EthereumProvider } from 'web3x-es/providers/ethereum-provider'
+import { EthereumProvider } from 'web3x/providers/ethereum-provider'
 import { Dispatch } from 'redux'
 import { ChainId } from '@dcl/schemas'
 import {

@@ -1,6 +1,6 @@
 import { call, select } from 'redux-saga/effects'
-import { Eth } from 'web3x-es/eth'
-import { Address } from 'web3x-es/address'
+import { Eth } from 'web3x/eth'
+import { Address } from 'web3x/address'
 import {
   ContractData,
   ContractName,

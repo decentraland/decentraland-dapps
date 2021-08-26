@@ -1,6 +1,6 @@
-import { Eth } from 'web3x-es/eth'
-import { Address } from 'web3x-es/address'
-import { BlockResponse, TransactionResponse } from 'web3x-es/formatters'
+import { Eth } from 'web3x/eth'
+import { Address } from 'web3x/address'
+import { BlockResponse, TransactionResponse } from 'web3x/formatters'
 import {
   call,
   put,
