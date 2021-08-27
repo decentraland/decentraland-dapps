@@ -10,7 +10,7 @@ jobs:
       - checkout
       - run:
           name: Update NPM
-          command: sudo npm i -g npm
+          command: sudo npm i -g npm@^7
       - run:
           name: Install node dependencies
           command: npm ci
@@ -32,7 +32,7 @@ jobs:
       - checkout
       - run:
           name: Update NPM
-          command: sudo npm i -g npm
+          command: sudo npm i -g npm@^7
       - run:
           name: Install node dependencies
           command: npm ci
@@ -54,7 +54,7 @@ jobs:
       - checkout
       - run:
           name: Update NPM
-          command: sudo npm i -g npm
+          command: sudo npm i -g npm@^7
       - run:
           name: Install node dependencies
           command: npm ci
