@@ -73,19 +73,8 @@
     "singleQuote": true,
     "semi": false
   },
-  "nyc": {
-    "all": true,
-    "include": [
-      "src/**/*.ts"
-    ],
-    "extension": [
-      ".ts"
-    ],
-    "reporter": [
-      "text-summary"
-    ],
-    "sourceMap": true,
-    "instrument": true
+  "engines": {
+    "npm": "^7.0.0"
   },
   "repository": {
     "type": "git",
