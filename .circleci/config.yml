@@ -17,10 +17,6 @@ jobs:
       - run:
           name: Run tests
           command: npm run test:coverage
-      - save_cache:
-          paths:
-            - node_modules
-          key: dependencies-{{ checksum "package-lock.json" }}
 
   build:
     docker:
@@ -39,10 +35,6 @@ jobs:
       - run:
           name: Build library
           command: npm run build
-      - save_cache:
-          paths:
-            - dist
-          key: dist-{{ .Branch }}-{{ .Revision }}
 
   release:
     docker:
