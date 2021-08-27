@@ -525,7 +525,7 @@ This module allows you to grant/revoke approvals to a token. It works for both a
 
 ### Dependencies
 
-This module depends on the [transactions](#transactions) module
+This module depends on the [wallet](#wallet) and the [transactions](#transactions) module
 
 ### Usage
 
@@ -582,16 +582,11 @@ export const rootReducer = combineReducers({
 
 **Sagas**
 
-Use `createAuthorizationSaga` and add the returned saga to the `rootSaga`. Alternatively, if you are just going to use this module on Ethereum (which means you won't need meta-transactions) you can just import `authorizationSaga`:
+Add the `authorizationSaga` to the `rootSaga`:
 
 ```ts
 import { all } from 'redux-saga/effects'
-import { createAuthorizationSaga } from 'decentraland-dapps/dist/modules/authorization/sagas'
-
-// if you are not going to use meta transactions you can skip the options or just import `authorizationSaga`
-const authorizationSaga = createAuthorizationSaga({
-  metaTransactionServerUrl: 'https://transactions-api.decentraland.io'
-})
+import { authorizationSaga } from 'decentraland-dapps/dist/modules/authorization/sagas'
 
 export function* rootSaga() {
   yield all([
