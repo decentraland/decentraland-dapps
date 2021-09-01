@@ -66,7 +66,7 @@
         "title": "Conectar",
         "subtitle": "Elige como quieres conectarte.",
         "error": "No se pudo conectar a la billetera.",
-        "supported_wallets": "Los Trezor y billeteras basadas en smart contracts (como Dapper o Argent) no pueden interactuar con Polygon.{br}Lea más sobre el soporte de Trezor {trezor_link}",
+        "supported_wallets": "Los Trezor y billeteras basadas en smart contracts (como Dapper o Argent) no pueden interactuar con Polygon. Lea más sobre el soporte de Trezor {trezor_link}",
         "trezor_link": "aquí"
       },
       "option": {
