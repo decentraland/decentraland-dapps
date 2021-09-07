@@ -1,7 +1,7 @@
 import { Authenticator, AuthChain } from 'dcl-crypto'
-import { Personal } from 'web3x-es/personal'
-import { Eth } from 'web3x-es/eth'
-import { Address } from 'web3x-es/address'
+import { Personal } from 'web3x/personal'
+import { Eth } from 'web3x/eth'
+import { Address } from 'web3x/address'
 import {
   CatalystClient,
   DeploymentBuilder,

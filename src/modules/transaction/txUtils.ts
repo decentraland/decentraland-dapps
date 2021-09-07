@@ -1,6 +1,6 @@
-import { Eth } from 'web3x-es/eth'
-import { TransactionResponse } from 'web3x-es/formatters'
-import { Address } from 'web3x-es/address'
+import { Eth } from 'web3x/eth'
+import { TransactionResponse } from 'web3x/formatters'
+import { Address } from 'web3x/address'
 import { ChainId } from '@dcl/schemas'
 import { getNetworkProvider } from '../../lib/eth'
 import {

@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "outDir": "dist",
     "module": "commonjs",
     "target": "es6",
@@ -8,7 +7,6 @@
     "sourceMap": true,
     "jsx": "react",
     "moduleResolution": "node",
-    "rootDir": "src",
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
@@ -23,13 +21,11 @@
     "resolveJsonModule": true,
     "esModuleInterop": true
   },
+  "include": ["src"],
   "exclude": [
     "node_modules",
-    "build",
+    "dist",
     "scripts",
-    "acceptance-tests",
-    "webpack",
-    "jest",
     "src/setupTests.ts",
     "src/tests",
     "src/**/*.spec.ts"

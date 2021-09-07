@@ -1,4 +1,3 @@
-import { expect } from 'chai'
 import {
   changeProfile,
   clearProfileError,
@@ -32,7 +31,7 @@ requestActions.forEach(action => {
         loading: []
       }
 
-      expect(profileReducer(initialState, action)).deep.equals({
+      expect(profileReducer(initialState, action)).toEqual({
         ...INITIAL_STATE,
         error: null,
         loading: loadingReducer(initialState.loading, action)
@@ -61,7 +60,7 @@ failureActions.forEach(action => {
         loading: loadingReducer([], action.request)
       }
 
-      expect(profileReducer(initialState, action.failure)).deep.equals({
+      expect(profileReducer(initialState, action.failure)).toEqual({
         ...INITIAL_STATE,
         error,
         loading: []
@@ -79,7 +78,7 @@ describe('when reducing the action that signals a successful profile load', () =
       loading: loadingReducer([], request)
     }
 
-    expect(profileReducer(initialState, success)).deep.equals({
+    expect(profileReducer(initialState, success)).toEqual({
       ...INITIAL_STATE,
       loading: [],
       data: {
@@ -113,7 +112,7 @@ describe('when reducing the action that signals a successful profile avatar desc
       description
     }
 
-    expect(profileReducer(initialState, success)).deep.equals({
+    expect(profileReducer(initialState, success)).toEqual({
       ...initialState,
       loading: [],
       data: {
@@ -134,7 +133,7 @@ describe('when reducing the action to clear the profile error', () => {
   it('should return a state with the profile error as null', () => {
     const initialState = { ...INITIAL_STATE, error: 'someError' }
 
-    expect(profileReducer(initialState, clearProfileError())).to.deep.equal({
+    expect(profileReducer(initialState, clearProfileError())).toEqual({
       ...INITIAL_STATE,
       error: null
     })
@@ -146,7 +145,7 @@ describe('when reducing the action to change the profile', () => {
     it('should return a state with a stored profile for the given address', () => {
       expect(
         profileReducer(INITIAL_STATE, changeProfile(address, profile))
-      ).to.deep.equal({
+      ).toEqual({
         ...INITIAL_STATE,
         data: {
           [address]: profile

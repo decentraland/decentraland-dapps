@@ -1,4 +1,3 @@
-import { expect } from 'chai'
 import { ChainId } from '@dcl/schemas'
 import {
   TRANSACTION_ACTION_FLAG,
@@ -27,7 +26,7 @@ describe('modules', function() {
             tx.payload
           )
 
-          expect(txPayload).to.deep.equal({
+          expect(txPayload).toEqual({
             [TRANSACTION_ACTION_FLAG]: tx
           })
         })
@@ -35,7 +34,7 @@ describe('modules', function() {
           const tx = { hash }
           const txPayload = buildTransactionPayload(chainId, tx.hash)
 
-          expect(txPayload).to.deep.equal({
+          expect(txPayload).toEqual({
             [TRANSACTION_ACTION_FLAG]: {
               ...tx,
               chainId,
@@ -53,7 +52,7 @@ describe('modules', function() {
             tx.payload
           )
 
-          expect(txPayload).to.deep.equal({
+          expect(txPayload).toEqual({
             [TRANSACTION_ACTION_FLAG]: txWithReceipt
           })
         })
@@ -61,7 +60,7 @@ describe('modules', function() {
           const tx = { hash }
           const txPayload = buildTransactionWithReceiptPayload(chainId, tx.hash)
 
-          expect(txPayload).to.deep.equal({
+          expect(txPayload).toEqual({
             [TRANSACTION_ACTION_FLAG]: {
               ...txWithReceipt,
               payload: {}
@@ -82,7 +81,7 @@ describe('modules', function() {
             payload: txPayload
           }
 
-          expect(isTransactionAction(action)).to.equal(true)
+          expect(isTransactionAction(action)).toBe(true)
         })
 
         it('should return true if the action was built with buildTransactionWithReceiptPayload', function() {
@@ -96,7 +95,7 @@ describe('modules', function() {
             payload: txPayload
           }
 
-          expect(isTransactionAction(action)).to.equal(true)
+          expect(isTransactionAction(action)).toBe(true)
         })
 
         it('should return false for normal actions', function() {
@@ -104,7 +103,7 @@ describe('modules', function() {
             isTransactionAction({
               type: '[Success] Some success action'
             })
-          ).to.equal(false)
+          ).toBe(false)
 
           expect(
             isTransactionAction({
@@ -113,7 +112,7 @@ describe('modules', function() {
                 mock_transaction_flag: tx
               }
             })
-          ).to.equal(false)
+          ).toBe(false)
         })
       })
 
@@ -134,7 +133,7 @@ describe('modules', function() {
             }
           }
 
-          expect(getTransactionFromAction(action)).to.deep.equal(txWithReceipt)
+          expect(getTransactionFromAction(action)).toEqual(txWithReceipt)
         })
 
         it('should return the transaction from a built transaction action with buildTransactionWithReceiptPayload', function() {
@@ -153,7 +152,7 @@ describe('modules', function() {
             }
           }
 
-          expect(getTransactionFromAction(action)).to.deep.equal(tx)
+          expect(getTransactionFromAction(action)).toEqual(tx)
         })
 
         it('should return undefined for a normal action', function() {
@@ -162,7 +161,7 @@ describe('modules', function() {
             payload: { this: 'is', more: 2, data: ['a', 3] }
           }
 
-          expect(getTransactionFromAction(action)).to.equal(undefined)
+          expect(getTransactionFromAction(action)).toBe(undefined)
         })
       })
 
@@ -178,7 +177,7 @@ describe('modules', function() {
             payload: { data: ['a', 3], ...txPayload }
           }
 
-          expect(getTransactionHashFromAction(action)).to.deep.equal(tx.hash)
+          expect(getTransactionHashFromAction(action)).toEqual(tx.hash)
         })
 
         it('should return the transaction hash from a built transaction action with buildTransactionWithReceiptPayload', function() {
@@ -192,7 +191,7 @@ describe('modules', function() {
             payload: { data: ['a', 3], ...txPayload }
           }
 
-          expect(getTransactionHashFromAction(action)).to.deep.equal(tx.hash)
+          expect(getTransactionHashFromAction(action)).toEqual(tx.hash)
         })
 
         it('should throw for a normal action (use isTransactionAction to avoid it)', function() {
@@ -201,7 +200,7 @@ describe('modules', function() {
             payload: { more: 2 }
           }
 
-          expect(() => getTransactionHashFromAction(action)).to.throw(
+          expect(() => getTransactionHashFromAction(action)).toThrowError(
             "Cannot read property 'hash' of undefined"
           )
         })
