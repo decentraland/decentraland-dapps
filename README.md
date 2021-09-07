@@ -1231,7 +1231,7 @@ async function wrapProviderToEthers() {
 Get an Eth instance with your lib of choice
 
 ```ts
-import { Eth } from 'web3x-es/eth'
+import { Eth } from 'web3x/eth'
 import { getConnectedProvider } from 'decentraland-dapps/dist/lib/eth'
 
 async function doSomething() {

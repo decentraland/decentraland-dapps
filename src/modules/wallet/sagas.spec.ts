@@ -2,6 +2,7 @@ import { expectSaga } from 'redux-saga-test-plan'
 import * as matchers from 'redux-saga-test-plan/matchers'
 import { call } from 'redux-saga/effects'
 import { ChainId } from '@dcl/schemas'
+import { Provider } from 'decentraland-connect'
 import { createWalletSaga } from './sagas'
 import {
   switchNetworkFailure,
@@ -13,8 +14,11 @@ import { getAddEthereumChainParameters } from './utils'
 
 const walletSaga = createWalletSaga({ CHAIN_ID: 1 })
 
-describe('Wallet sagas', async () => {
-  const mockProvider = await getNetworkProvider(ChainId.ETHEREUM_MAINNET)
+describe('Wallet sagas', () => {
+  let mockProvider: Provider
+  beforeAll(async () => {
+    mockProvider = await getNetworkProvider(ChainId.ETHEREUM_MAINNET)
+  })
 
   describe('when handling the action to switch networks', () => {
     describe('when getting the connected provider fails', () => {

@@ -1,4 +1,3 @@
-import { expect } from 'chai'
 import { removeLast, getType, getStatus } from './utils'
 
 describe('modules', function() {
@@ -21,7 +20,7 @@ describe('modules', function() {
             elements,
             element => element.type === 'B'
           )
-          expect(newElements).to.deep.equal([
+          expect(newElements).toEqual([
             { type: 'A' },
             { type: 'B' },
             { type: 'C' },
@@ -34,7 +33,7 @@ describe('modules', function() {
             elements,
             element => element.type === 'C'
           )
-          expect(newElements).to.deep.equal([
+          expect(newElements).toEqual([
             { type: 'A' },
             { type: 'B' },
             { type: 'B' },
@@ -47,7 +46,7 @@ describe('modules', function() {
             elements,
             element => element.type === 'A'
           )
-          expect(newElements).to.deep.equal([
+          expect(newElements).toEqual([
             { type: 'A' },
             { type: 'B' },
             { type: 'C' },
@@ -60,7 +59,7 @@ describe('modules', function() {
             elements,
             element => element.type === 'D'
           )
-          expect(newElements).to.deep.equal([
+          expect(newElements).toEqual([
             { type: 'A' },
             { type: 'B' },
             { type: 'C' },
@@ -73,34 +72,34 @@ describe('modules', function() {
       describe('getType', function() {
         it('should return the action type of a success action', function() {
           const actionType = getType(successAction)
-          expect(actionType).to.be.equal('Some Action')
+          expect(actionType).toBe('Some Action')
         })
 
         it('should return the action type of a failure action', function() {
           const actionType = getType(failureAction)
-          expect(actionType).to.be.equal('Some Action')
+          expect(actionType).toBe('Some Action')
         })
 
         it('should return the action type of a request action', function() {
           const actionType = getType(requestAction)
-          expect(actionType).to.be.equal('Some Action')
+          expect(actionType).toBe('Some Action')
         })
       })
 
       describe('getStatus', function() {
         it('should return "SUCCESS" status', function() {
           const actionType = getStatus(successAction)
-          expect(actionType).to.be.equal('SUCCESS')
+          expect(actionType).toBe('SUCCESS')
         })
 
         it('should return "FAILURE" status', function() {
           const actionType = getStatus(failureAction)
-          expect(actionType).to.be.equal('FAILURE')
+          expect(actionType).toBe('FAILURE')
         })
 
         it('should return "REQUEST" status', function() {
           const actionType = getStatus(requestAction)
-          expect(actionType).to.be.equal('REQUEST')
+          expect(actionType).toBe('REQUEST')
         })
       })
     })

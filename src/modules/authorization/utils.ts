@@ -1,4 +1,4 @@
-import { toBN } from 'web3x-es/utils'
+import { toBN } from 'web3x/utils'
 import { Authorization, AuthorizationType } from './types'
 
 export function getTokenAmountToApprove(): ReturnType<typeof toBN> {

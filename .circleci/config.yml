@@ -2,62 +2,54 @@ version: 2
 jobs:
   test:
     docker:
-      - image: circleci/node:10
+      - image: cimg/node:14.17.4
 
     working_directory: /tmp/decentraland-dapps
 
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - dependencies-{{ checksum "package-lock.json" }}
+      - run:
+          name: Update NPM
+          command: sudo npm i -g npm@^7
       - run:
           name: Install node dependencies
           command: npm ci
-      - save_cache:
-          paths:
-            - node_modules
-          key: dependencies-{{ checksum "package-lock.json" }}
+      - run:
+          name: Run tests
+          command: npm run test:coverage
 
   build:
     docker:
-      - image: circleci/node:10
+      - image: cimg/node:14.17.4
 
     working_directory: /tmp/decentraland-dapps
 
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - dependencies-{{ checksum "package-lock.json" }}
+      - run:
+          name: Update NPM
+          command: sudo npm i -g npm@^7
       - run:
           name: Install node dependencies
-          command: npm install
+          command: npm ci
       - run:
           name: Build library
           command: npm run build
-      - save_cache:
-          paths:
-            - dist
-          key: dist-{{ .Branch }}-{{ .Revision }}
 
   release:
     docker:
-      - image: circleci/node:10
+      - image: cimg/node:14.17.4
 
     working_directory: /tmp/decentraland-dapps
 
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - dist-{{ .Branch }}-{{ .Revision }}
-      - restore_cache:
-          keys:
-            - dependencies-{{ checksum "package-lock.json" }}
+      - run:
+          name: Update NPM
+          command: sudo npm i -g npm@^7
       - run:
           name: Install node dependencies
-          command: npm install
+          command: npm ci
       - run:
           name: Semantic release
           command: npm run semantic-release
