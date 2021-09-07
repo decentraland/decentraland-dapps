@@ -10,6 +10,7 @@ import {
 import { isEnabled } from '../../modules/translation/selectors'
 import {
   acceptNetworkPartialSupport,
+  disconnectWallet,
   switchNetworkRequest
 } from '../../modules/wallet/actions'
 import { RootDispatch } from '../../types'
@@ -28,6 +29,7 @@ const mapState = (state: any): MapStateProps => ({
 
 const mapDispatch = (dispatch: RootDispatch): MapDispatchProps => ({
   onSwitchNetwork: chainId => dispatch(switchNetworkRequest(chainId)),
+  onSignOut: () => dispatch(disconnectWallet()),
   onAcceptNetworkPartialSupport: () => dispatch(acceptNetworkPartialSupport())
 })
 

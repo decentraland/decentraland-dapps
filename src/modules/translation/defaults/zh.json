@@ -39,7 +39,8 @@
         "header": "网络错误",
         "message": "您需要连接到{expectedChainName}网络才能使用此应用，但您当前已连接到{currentChainName}网络。",
         "message_unknown_network": "您需要连接到 {expectedChainName} 才能使用此应用，请切换您的网络以继续。",
-        "switch_button": "切换到 {chainName}"
+        "switch_button": "切换到 {chainName}",
+        "sign_out": "登出"
       },
       "partially_supported_network": {
         "header": "部分支持的网络",
@@ -65,7 +66,7 @@
         "title": "登入",
         "subtitle": "选择一种连接方式",
         "error": "无法连接到钱包。",
-        "supported_wallets": "不支持 Contract 和 Trezor 钱包与 Polygon 交互。{br}阅读有关 Trezor 集成的更多信息 {trezor_link}",
+        "supported_wallets": "不支持 Contract 和 Trezor 钱包与 Polygon 交互。阅读有关 Trezor 集成的更多信息 {trezor_link}",
         "trezor_link": "这里"
       },
       "option": {

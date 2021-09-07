@@ -39,7 +39,8 @@
         "header": "Red incorrecta",
         "message": "Necesita conectarse a la Red {expectedChainName} para usar esta app, pero actualmente esta conectado a la Red {currentChainName}.",
         "message_unknown_network": "Debes estar conectado a {expectedChainName} para usar esta aplicación, cambia tu red para continuar.",
-        "switch_button": "Cambiar a {chainName}"
+        "switch_button": "Cambiar a {chainName}",
+        "sign_out": "Desconectar"
       },
       "partially_supported_network": {
         "header": "Partially Supported Network",
@@ -65,7 +66,7 @@
         "title": "Conectar",
         "subtitle": "Elige como quieres conectarte.",
         "error": "No se pudo conectar a la billetera.",
-        "supported_wallets": "Los Trezor y billeteras basadas en smart contracts (como Dapper o Argent) no pueden interactuar con Polygon.{br}Lea más sobre el soporte de Trezor {trezor_link}",
+        "supported_wallets": "Los Trezor y billeteras basadas en smart contracts (como Dapper o Argent) no pueden interactuar con Polygon. Lea más sobre el soporte de Trezor {trezor_link}",
         "trezor_link": "aquí"
       },
       "option": {

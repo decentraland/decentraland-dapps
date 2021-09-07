@@ -39,7 +39,8 @@
         "header": "Wrong Network",
         "message": "You need to be connected to {expectedChainName} to use this app, but you are currently connected to {currentChainName}.",
         "message_unknown_network": "You need to be connected to {expectedChainName} to use this app, please switch your network to continue.",
-        "switch_button": "Switch to {chainName}"
+        "switch_button": "Switch to {chainName}",
+        "sign_out": "Sign Out"
       },
       "partially_supported_network": {
         "header": "Partially Supported Network",
@@ -65,7 +66,7 @@
         "title": "Sign In",
         "subtitle": "Choose how you want to connect to Ethereum.",
         "error": "Could not connect to wallet.",
-        "supported_wallets": "Trezor and smart contract wallets (like Dapper or Argent) cannot interact Polygon. Read more about the Trezor support status {trezor_link}",
+        "supported_wallets": "Trezor and smart contract wallets like Dapper, Argent or Gnosis safe, do not work with Polygon. Read more about the Trezor support status {trezor_link}",
         "trezor_link": "here"
       },
       "option": {
