@@ -35,3 +35,9 @@ export interface LocalStorage {
   setItem: (key?: string, value?: string) => void | null
   removeItem: (key?: string) => void | null
 }
+
+export type StorageOwnData = {
+  storage: {
+    version: number
+  }
+}

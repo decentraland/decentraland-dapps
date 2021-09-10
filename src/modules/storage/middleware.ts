@@ -4,6 +4,7 @@ import createStorageEngine from 'redux-persistence-engine-localstorage'
 import filter from 'redux-storage-decorator-filter'
 import { hasLocalStorage, migrateStorage } from '../../lib/localStorage'
 import { disabledMiddleware } from '../../lib/disabledMiddleware'
+import { StorageOwnData } from '../../lib/types'
 import { STORAGE_LOAD } from './actions'
 import { StorageMiddleware } from './types'
 import {
@@ -25,7 +26,9 @@ import {
 const disabledLoad = (store: any) =>
   setTimeout(() => store.dispatch({ type: STORAGE_LOAD, payload: {} }))
 
-export function createStorageMiddleware<T>(options: StorageMiddleware<T>) {
+export function createStorageMiddleware<T extends StorageOwnData>(
+  options: StorageMiddleware<T>
+) {
   const { storageKey, migrations = {}, paths = [], actions = [] } = options
 
   if (!hasLocalStorage()) {
@@ -38,13 +41,11 @@ export function createStorageMiddleware<T>(options: StorageMiddleware<T>) {
   const localStorageState = migrateStorage(storageKey, migrations)
   let setItemFailure = false
 
-  if (localStorageState) {
-    try {
-      localStorage.setItem(storageKey, JSON.stringify(localStorageState))
-    } catch (e) {
-      setItemFailure = true
-      console.warn(e.message)
-    }
+  try {
+    localStorage.setItem(storageKey, JSON.stringify(localStorageState))
+  } catch (e) {
+    setItemFailure = true
+    console.warn(e.message)
   }
 
   const storageEngine = filter(createStorageEngine(storageKey), [

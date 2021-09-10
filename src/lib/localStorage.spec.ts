@@ -2,7 +2,8 @@ import { Migrations } from './types'
 import {
   hasLocalStorage,
   migrateStorage,
-  getLocalStorage
+  getLocalStorage,
+  getDefaultState
 } from './localStorage'
 declare var global: any
 let fakeStore = {}
@@ -62,6 +63,28 @@ describe('localStorage', function() {
 
       data = migrateStorage(key, migrations)
       expect(data.storage.version).toBe(2)
+    })
+  })
+
+  describe('getDefaultState', function() {
+    it('should return 1 when no migrations are provided', function() {
+      const state = getDefaultState({})
+      expect(state).toEqual({ storage: { version: 1 } })
+    })
+
+    it('should return the migration key as version if there is only one', function() {
+      const state = getDefaultState({ '2': () => {} })
+      expect(state).toEqual({ storage: { version: 2 } })
+    })
+
+    it('should return the highest migration version if there is more than one', function() {
+      const state = getDefaultState({ '2': () => {}, '3': () => {} })
+      expect(state).toEqual({ storage: { version: 3 } })
+    })
+
+    it('should ignore migrations with keys that are not numbers', function() {
+      const state = getDefaultState({ '2': () => {}, foo: () => {} })
+      expect(state).toEqual({ storage: { version: 2 } })
     })
   })
 })
