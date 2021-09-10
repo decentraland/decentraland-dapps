@@ -100,7 +100,7 @@ export default class Navbar extends React.PureComponent<NavbarProps> {
                 </Modal.Actions>
               </Modal>
             ) : isPartiallySupported ? (
-              <Modal open={!hasAcceptedNetworkPartialSupport} size="tiny">
+              <Modal open={!hasAcceptedNetworkPartialSupport} size="small">
                 <ModalNavigation
                   title={
                     <T id="@dapps.navbar.partially_supported_network.header" />
