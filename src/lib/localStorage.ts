@@ -23,7 +23,7 @@ export function getLocalStorage(): LocalStorage {
       }
 }
 
-function getDefaultState<T>(migrations: Migrations<T>) {
+export function getDefaultState<T>(migrations: Migrations<T>) {
   const keys = Object.keys(migrations)
 
   const version =
@@ -32,7 +32,7 @@ function getDefaultState<T>(migrations: Migrations<T>) {
       : Object.keys(migrations)
           .map(Number)
           .filter(num => !isNaN(num))
-          .sort((a, b) => (b - a ? 1 : 0))[0]
+          .sort((a, b) => b - a)[0]
 
   return { storage: { version } }
 }
