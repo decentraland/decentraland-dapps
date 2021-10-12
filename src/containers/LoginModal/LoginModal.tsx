@@ -4,19 +4,11 @@ import {
   LoginModalI18N,
   LoginModalOptionI18N,
   LoginModalOptionType
-} from 'decentraland-ui'
+} from 'decentraland-ui/dist/components/LoginModal/LoginModal'
 import { ProviderType, connection } from 'decentraland-connect'
 import { T, t } from '../../modules/translation/utils'
-import { isCucumberProvider, isDapperProvider } from '../../lib/eth'
 import { DefaultProps, Props, State } from './LoginModal.types'
-
-const {
-  METAMASK,
-  DAPPER,
-  SAMSUNG,
-  FORTMATIC,
-  WALLET_CONNECT
-} = LoginModalOptionType
+import { toModalOptionType, toProviderType } from './utils'
 
 export default class LoginModal extends React.PureComponent<Props, State> {
   static defaultProps: DefaultProps = {
@@ -43,23 +35,7 @@ export default class LoginModal extends React.PureComponent<Props, State> {
   }
 
   handleOnConnect = (loginType: LoginModalOptionType) => {
-    let providerType: ProviderType
-    switch (loginType) {
-      case METAMASK:
-      case DAPPER:
-      case SAMSUNG:
-        providerType = ProviderType.INJECTED
-        break
-      case FORTMATIC:
-        providerType = ProviderType.FORTMATIC
-        break
-      case WALLET_CONNECT:
-        providerType = ProviderType.WALLET_CONNECT
-        break
-      default:
-        throw new Error(`Invalid login type ${loginType}`)
-    }
-
+    let providerType: ProviderType = toProviderType(loginType)
     this.props.onConnect(providerType)
   }
 
@@ -86,28 +62,7 @@ export default class LoginModal extends React.PureComponent<Props, State> {
   }
 
   renderLoginModalOption = (providerType: ProviderType) => {
-    let loginType: LoginModalOptionType | undefined
-
-    switch (providerType) {
-      case ProviderType.INJECTED:
-        if (isCucumberProvider()) {
-          loginType = SAMSUNG
-        } else if (isDapperProvider()) {
-          loginType = DAPPER
-        } else {
-          loginType = METAMASK
-        }
-        break
-      case ProviderType.FORTMATIC:
-        loginType = FORTMATIC
-        break
-      case ProviderType.WALLET_CONNECT:
-        loginType = WALLET_CONNECT
-        break
-      default:
-        console.warn(`Invalid provider type ${providerType}`)
-        break
-    }
+    const loginType = toModalOptionType(providerType)
 
     return loginType ? (
       <BaseLoginModal.Option
