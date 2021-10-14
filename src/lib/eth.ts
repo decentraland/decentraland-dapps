@@ -9,6 +9,7 @@ export type EthereumWindow = Window & {
     enable?: () => Promise<string[]>
     isCucumber?: boolean
     isDapper?: boolean
+    isToshi?: boolean
   }
 }
 
@@ -56,6 +57,11 @@ export function isCucumberProvider() {
 export function isDapperProvider() {
   const provider = (window as EthereumWindow).ethereum
   return !!provider && !!provider.isDapper
+}
+
+export function isCoinbaseProvider() {
+  const provider = (window as EthereumWindow).ethereum
+  return !!provider && !!provider.isToshi
 }
 
 export function isValidChainId(chainId: string | number) {
