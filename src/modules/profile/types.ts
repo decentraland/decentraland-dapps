@@ -1,4 +1,4 @@
-import { Avatar } from 'decentraland-ui'
+import { Avatar } from '@wiicamp/decentraland-ui'
 
 export type Profile = {
   avatars: Avatar[]

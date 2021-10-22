@@ -1,6 +1,6 @@
 import { Dispatch } from 'redux'
 import { ProviderType } from 'decentraland-connect'
-import { SignInProps } from 'decentraland-ui'
+import { SignInProps } from '@wiicamp/decentraland-ui'
 import { EnableWalletRequestAction } from '../../modules/wallet/actions'
 
 export type SignInPageProps = Omit<SignInProps, 'onConnect'> & {

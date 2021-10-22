@@ -1,5 +1,5 @@
 import { takeLatest, put, call, takeEvery } from 'redux-saga/effects'
-import { Avatar } from 'decentraland-ui'
+import { Avatar } from '@wiicamp/decentraland-ui'
 import { Entity, EntityType } from 'dcl-catalyst-commons'
 import { PeerAPI } from '../../lib/peer'
 import { EntitesOperator } from '../../lib/entities'

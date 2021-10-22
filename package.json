@@ -1,6 +1,6 @@
 {
-  "name": "decentraland-dapps",
-  "version": "0.0.0-development",
+  "name": "@wiicamp/decentraland-dapps",
+  "version": "0.0.2-development",
   "dependencies": {
     "@0xsequence/multicall": "^0.25.1",
     "@0xsequence/relayer": "^0.25.1",
@@ -13,12 +13,12 @@
     "@types/redux-storage-engine-localstorage": "^1.1.0",
     "@types/segment-analytics": "0.0.28",
     "@types/uuid": "^3.4.3",
+    "@wiicamp/decentraland-transactions": "^0.0.2-development",
+    "@wiicamp/decentraland-ui": "^0.0.0-development",
     "axios": "^0.21.1",
     "date-fns": "^1.29.0",
     "dcl-catalyst-client": "^4.0.6",
     "decentraland-connect": "^2.18.0",
-    "decentraland-transactions": "^1.22.2",
-    "decentraland-ui": "^3.6.0",
     "flat": "^4.1.0",
     "react-intl": "^3.12.0",
     "redux-persistence": "^1.2.0",

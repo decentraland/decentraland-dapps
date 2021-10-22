@@ -1,4 +1,4 @@
-import { Locale } from 'decentraland-ui'
+import { Locale } from '@wiicamp/decentraland-ui'
 
 import { fetchTranslationsRequest } from '../../modules/translation/actions'
 import { TranslationKeys } from '../../modules/translation/types'

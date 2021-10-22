@@ -1,5 +1,5 @@
 import { ChainId } from '@dcl/schemas'
-import { ContractName } from 'decentraland-transactions'
+import { ContractName } from '@wiicamp/decentraland-transactions'
 
 export enum AuthorizationType {
   ALLOWANCE = 'allowance',

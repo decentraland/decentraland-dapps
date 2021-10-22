@@ -4,7 +4,7 @@ import {
   createIntlCache,
   FormattedMessage
 } from 'react-intl'
-import { Locale } from 'decentraland-ui'
+import { Locale } from '@wiicamp/decentraland-ui'
 
 const cache = createIntlCache()
 let currentLocale: ReturnType<typeof createIntl>

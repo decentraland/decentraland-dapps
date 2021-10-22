@@ -10,7 +10,7 @@ import {
   ContractData,
   getContract,
   sendMetaTransaction
-} from 'decentraland-transactions'
+} from '@wiicamp/decentraland-transactions'
 import { getNetworkProvider, getConnectedProvider } from '../../lib/eth'
 import { getChainConfiguration } from '../../lib/chainConfiguration'
 import { ERC20, ERC20TransactionReceipt } from '../../contracts/ERC20'

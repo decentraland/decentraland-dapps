@@ -1,4 +1,4 @@
-import { Avatar } from 'decentraland-ui'
+import { Avatar } from '@wiicamp/decentraland-ui'
 import { Entity } from 'dcl-catalyst-commons'
 
 declare module 'react-intl'

@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import { LoginModalProps } from 'decentraland-ui'
+import { LoginModalProps } from '@wiicamp/decentraland-ui'
 import {
   getError,
   isEnabling,

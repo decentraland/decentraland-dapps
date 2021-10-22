@@ -1,4 +1,4 @@
-import { FooterProps as FooterComponentProps } from 'decentraland-ui'
+import { FooterProps as FooterComponentProps } from '@wiicamp/decentraland-ui'
 
 export type FooterProps = FooterComponentProps & {
   hasTranslations?: boolean

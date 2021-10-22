@@ -1,5 +1,5 @@
 import { action } from 'typesafe-actions'
-import { Locale } from 'decentraland-ui'
+import { Locale } from '@wiicamp/decentraland-ui'
 import { TranslationKeys } from './types'
 
 // Fetch translations

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Toasts, Toast } from 'decentraland-ui'
+import { Toasts, Toast } from '@wiicamp/decentraland-ui'
 
 import { DefaultProps, Props } from './ToastProvider.types'
 

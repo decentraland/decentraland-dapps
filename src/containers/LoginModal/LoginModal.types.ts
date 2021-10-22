@@ -1,5 +1,5 @@
 import { Dispatch } from 'redux'
-import { LoginModalProps } from 'decentraland-ui'
+import { LoginModalProps } from '@wiicamp/decentraland-ui'
 import { ProviderType } from 'decentraland-connect'
 import { EnableWalletRequestAction } from '../../modules/wallet/actions'
 

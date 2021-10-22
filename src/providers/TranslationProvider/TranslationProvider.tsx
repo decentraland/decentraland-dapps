@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { Loader } from 'decentraland-ui'
+import { Loader } from '@wiicamp/decentraland-ui'
 import { I18nProvider } from '../../modules/translation/utils'
 import { Props } from './TranslationProvider.types'
 

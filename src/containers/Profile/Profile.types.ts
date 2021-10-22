@@ -1,4 +1,4 @@
-import { ProfileProps } from 'decentraland-ui'
+import { ProfileProps } from '@wiicamp/decentraland-ui'
 import {
   loadProfileRequest,
   LoadProfileRequestAction

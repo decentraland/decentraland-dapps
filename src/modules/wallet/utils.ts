@@ -1,7 +1,7 @@
 import { Eth } from 'web3x-es/eth'
 import { ChainId } from '@dcl/schemas'
 import { Address } from 'web3x-es/address'
-import { ContractName, getContract } from 'decentraland-transactions'
+import { ContractName, getContract } from '@wiicamp/decentraland-transactions'
 import { Contract, providers, utils } from 'ethers'
 import {
   getConnectedProvider,

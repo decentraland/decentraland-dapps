@@ -4,7 +4,7 @@ import {
   ModalNavigation,
   Navbar as NavbarComponent,
   NavbarI18N
-} from 'decentraland-ui'
+} from '@wiicamp/decentraland-ui'
 import { ChainId, getChainName } from '@dcl/schemas'
 import { getConnectedProviderChainId } from '../../lib/eth'
 import { T } from '../../modules/translation/utils'

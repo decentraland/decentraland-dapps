@@ -1,5 +1,5 @@
 import { ChainId } from '@dcl/schemas'
-import { NavbarProps as NavbarComponentProps } from 'decentraland-ui'
+import { NavbarProps as NavbarComponentProps } from '@wiicamp/decentraland-ui'
 
 export type WrongNetworkModalI18N = {
   wrongNetwork: {

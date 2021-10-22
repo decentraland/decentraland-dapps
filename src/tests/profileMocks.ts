@@ -1,4 +1,4 @@
-import { Avatar } from 'decentraland-ui'
+import { Avatar } from '@wiicamp/decentraland-ui'
 import { EntityType } from 'dcl-catalyst-commons'
 import { ProfileEntity } from '../lib/types'
 import { Profile } from '../modules/profile/types'
