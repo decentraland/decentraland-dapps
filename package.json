@@ -1,6 +1,6 @@
 {
   "name": "@wiicamp/decentraland-dapps",
-  "version": "0.0.5-development",
+  "version": "0.0.6-development",
   "dependencies": {
     "@0xsequence/multicall": "^0.25.1",
     "@0xsequence/relayer": "^0.25.1",
@@ -14,7 +14,7 @@
     "@types/segment-analytics": "0.0.28",
     "@types/uuid": "^3.4.3",
     "@wiicamp/decentraland-transactions": "^0.0.2-development",
-    "@wiicamp/decentraland-ui": "^0.0.3-development",
+    "@wiicamp/decentraland-ui": "^0.0.5-development",
     "axios": "^0.21.1",
     "date-fns": "^1.29.0",
     "dcl-catalyst-client": "^4.0.6",
