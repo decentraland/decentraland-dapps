@@ -17,6 +17,10 @@ jobs:
       - run:
           name: Run tests
           command: npm run test:coverage
+      - save_cache:
+          paths:
+            - node_modules
+          key: dependencies-{{ checksum "package-lock.json" }}
 
   build:
     docker:
@@ -26,15 +30,16 @@ jobs:
 
     steps:
       - checkout
-      - run:
-          name: Update NPM
-          command: sudo npm i -g npm@^7
-      - run:
-          name: Install node dependencies
-          command: npm ci
+      - restore_cache:
+          keys:
+            - dependencies-{{ checksum "package-lock.json" }}
       - run:
           name: Build library
           command: npm run build
+      - save_cache:
+          paths:
+            - dist
+          key: dist-{{ .Branch }}-{{ .Revision }}
 
   release:
     docker:
@@ -44,12 +49,12 @@ jobs:
 
     steps:
       - checkout
-      - run:
-          name: Update NPM
-          command: sudo npm i -g npm@^7
-      - run:
-          name: Install node dependencies
-          command: npm ci
+      - restore_cache:
+          keys:
+            - dist-{{ .Branch }}-{{ .Revision }}
+      - restore_cache:
+          keys:
+            - dependencies-{{ checksum "package-lock.json" }}
       - run:
           name: Semantic release
           command: npm run semantic-release

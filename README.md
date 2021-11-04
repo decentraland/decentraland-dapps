@@ -1249,6 +1249,7 @@ async function doSomething() {
 ### Helpers
 
 - `isCucumberProvider`: Check if the provider is a `cucumberProvider`.
+- `isCoinbaseProvider`: Check if the provider is a `coinbaseProvider`.
 - `isDapperProvider`: Check if the provider is a _dapper's_ provider.
 - `isValidChainId`: Check if the chain id is valid.
 
@@ -1594,3 +1595,5 @@ export default class MyComponent extends React.PureComponent {
   }
 }
 ```
+
+.
