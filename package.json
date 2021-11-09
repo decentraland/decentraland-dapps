@@ -74,7 +74,7 @@
     "semi": false
   },
   "engines": {
-    "npm": "^7.0.0"
+    "npm": ">=7.0.0"
   },
   "repository": {
     "type": "git",
