@@ -12,7 +12,7 @@
     "date-fns": "^1.29.0",
     "dcl-catalyst-client": "^4.0.6",
     "decentraland-connect": "^2.20.1",
-    "decentraland-transactions": "^1.25.0",
+    "decentraland-transactions": "^1.26.0",
     "decentraland-ui": "^3.12.0",
     "flat": "^4.1.0",
     "react-intl": "^5.20.7",
