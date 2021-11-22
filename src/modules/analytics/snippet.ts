@@ -68,7 +68,6 @@
     first.parentNode.insertBefore(script, first)
     analytics._loadOptions = options
   }
-  analytics._writeKey = 'YOUR_WRITE_KEY'
   // Add a version to keep track of what's in the wild.
   analytics.SNIPPET_VERSION = '4.15.2'
 })()
