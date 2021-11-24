@@ -788,6 +788,8 @@ The analytics module let's integrate Segment into your dApp.
 
 You need to have the `Wallet` module installed in order to send `identify` events.
 
+This module will import the segment snippet into your dApp. Be aware that the middleware must be loaded before using segment methods.
+
 To send `track` events, add an `analytics.ts` file and require it from your entry point, and use the `add()` helper to add actions that you want to track:
 
 ```ts
