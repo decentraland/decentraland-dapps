@@ -1,6 +1,7 @@
 import { AnyAction } from 'redux'
 import { RootMiddleware } from '../../types'
 import { getAnalytics, track } from './utils'
+import './snippet'
 
 const disabledMiddleware: RootMiddleware = _ => next => action => {
   next(action)
