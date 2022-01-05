@@ -1,4 +1,4 @@
-import { FooterProps as FooterComponentProps } from 'decentraland-ui'
+import { FooterProps as FooterComponentProps } from 'decentraland-ui/dist/components/Footer/Footer'
 
 export type FooterProps = FooterComponentProps & {
   hasTranslations?: boolean

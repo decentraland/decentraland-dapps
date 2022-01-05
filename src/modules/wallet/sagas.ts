@@ -9,7 +9,7 @@ import {
   delay,
   select
 } from 'redux-saga/effects'
-import { ChainId } from '@dcl/schemas'
+import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { connection, Provider } from 'decentraland-connect'
 import {
   getConnectedProvider,

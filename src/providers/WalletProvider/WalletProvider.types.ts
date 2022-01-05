@@ -1,6 +1,6 @@
 import { EthereumProvider } from 'web3x/providers/ethereum-provider'
 import { Dispatch } from 'redux'
-import { ChainId } from '@dcl/schemas'
+import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import {
   connectWalletRequest,
   ConnectWalletRequestAction,

@@ -1,4 +1,4 @@
-import { Modal as ModalComponent } from 'decentraland-ui'
+import { Modal as ModalComponent } from 'decentraland-ui/dist/components/Modal/Modal'
 import BaseModal from './Modal.container'
 
 type ExtendedModal = typeof BaseModal & {

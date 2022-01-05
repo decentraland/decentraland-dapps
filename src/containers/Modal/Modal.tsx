@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Modal as ModalComponent } from 'decentraland-ui'
+import { Modal as ModalComponent } from 'decentraland-ui/dist/components/Modal/Modal'
 
 import { ModalProps } from './Modal.types'
 

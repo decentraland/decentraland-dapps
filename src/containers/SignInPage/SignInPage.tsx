@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { SignIn, SignInI18N } from 'decentraland-ui'
+import { SignIn, SignInI18N } from 'decentraland-ui/dist/components/SignIn/SignIn'
 
 import { T } from '../../modules/translation/utils'
 import { isMobile } from '../../lib/utils'

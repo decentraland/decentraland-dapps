@@ -6,7 +6,7 @@ import {
   getContract,
   sendMetaTransaction
 } from 'decentraland-transactions'
-import { ChainId, getChainName } from '@dcl/schemas'
+import { ChainId, getChainName } from '@dcl/schemas/dist/dapps/chain-id'
 import { PopulatedTransaction, Contract, providers, utils } from 'ethers'
 import {
   getConnectedProvider,

@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import { Locale } from 'decentraland-ui'
+import { Locale } from 'decentraland-ui/dist/components/Language/Language'
 
 import Footer from './Footer'
 import { FooterProps, MapDispatchProps, MapStateProps } from './Footer.types'

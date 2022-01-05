@@ -1,6 +1,6 @@
 import { takeLatest, put, call, takeEvery } from 'redux-saga/effects'
-import { Avatar } from 'decentraland-ui'
-import { Entity, EntityType } from 'dcl-catalyst-commons'
+import { Avatar } from 'decentraland-ui/dist/types/avatar'
+import { Entity, EntityType } from 'dcl-catalyst-commons/dist/types'
 import { PeerAPI } from '../../lib/peer'
 import { EntitesOperator } from '../../lib/entities'
 import { ProfileEntity } from '../../lib/types'

@@ -1,4 +1,4 @@
-import { ProviderType } from "decentraland-connect/dist/types";
+import { ProviderType } from '@dcl/schemas/dist/dapps/provider-type'
 import { LoginModalOptionType } from "decentraland-ui/dist/components/LoginModal/LoginModal";
 import { isCoinbaseProvider, isCucumberProvider, isDapperProvider } from "../../lib/eth";
 

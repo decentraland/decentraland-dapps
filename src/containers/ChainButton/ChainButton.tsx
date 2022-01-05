@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button as ButtonComponent } from 'decentraland-ui'
+import { Button as ButtonComponent } from 'decentraland-ui/dist/components/Button/Button'
 import { Props } from './ChainButton.types'
 import ChainCheck from '../ChainCheck'
 

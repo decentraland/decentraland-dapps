@@ -1,5 +1,6 @@
 import { Dispatch } from 'redux'
-import { ChainId, Network } from '@dcl/schemas'
+import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
+import { Network } from '@dcl/schemas/dist/dapps/network'
 
 export type ChainData = {
   chainId: ChainId | null

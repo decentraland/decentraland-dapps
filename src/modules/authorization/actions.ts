@@ -1,4 +1,4 @@
-import { ChainId } from '@dcl/schemas'
+import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { action } from 'typesafe-actions'
 import { buildTransactionPayload } from '../transaction/utils'
 import { Authorization } from './types'

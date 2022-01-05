@@ -1,4 +1,4 @@
-import { ProfileProps } from 'decentraland-ui'
+import { ProfileProps } from 'decentraland-ui/dist/components/Profile/Profile'
 import {
   loadProfileRequest,
   LoadProfileRequestAction

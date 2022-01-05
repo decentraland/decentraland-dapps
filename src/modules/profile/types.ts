@@ -1,4 +1,4 @@
-import { Avatar } from 'decentraland-ui'
+import { Avatar } from 'decentraland-ui/dist/types/avatar'
 
 export type Profile = {
   avatars: Avatar[]

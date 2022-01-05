@@ -1,5 +1,5 @@
 import { AnyAction } from 'redux'
-import { ChainId } from '@dcl/schemas'
+import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import {
   Transaction,
   TransactionPayload,
@@ -76,8 +76,8 @@ export function getTransactionHref(
   const pathname = address
     ? `/address/${address}`
     : blockNumber
-    ? `/block/${blockNumber}`
-    : `/tx/${txHash}`
+      ? `/block/${blockNumber}`
+      : `/tx/${txHash}`
 
   return `${getTransactionOrigin(network)}${pathname}`
 }
