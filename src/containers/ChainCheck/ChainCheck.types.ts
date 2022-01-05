@@ -1,4 +1,4 @@
-import { ChainId } from '@dcl/schemas'
+import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 
 export type Props = {
   chainId: ChainId

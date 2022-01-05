@@ -1,5 +1,5 @@
 import { TranslationState } from './reducer'
-import { Locale } from 'decentraland-ui'
+import { Locale } from 'decentraland-ui/dist/components/Language/Language'
 
 export const getState: (state: any) => TranslationState = state =>
   state.translation

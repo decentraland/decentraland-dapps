@@ -1,5 +1,5 @@
 import { TransactionResponse, TransactionReceipt } from 'web3x/formatters'
-import { ChainId } from '@dcl/schemas'
+import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 
 export enum TransactionStatus {
   QUEUED = 'queued',

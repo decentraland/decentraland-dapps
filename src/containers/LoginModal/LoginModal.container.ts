@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import { LoginModalProps } from 'decentraland-ui'
+import { LoginModalProps } from 'decentraland-ui/dist/components/LoginModal/LoginModal'
 import {
   getError,
   isEnabling,

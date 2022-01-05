@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import { ProviderType } from 'decentraland-connect'
+import { ProviderType } from '@dcl/schemas/dist/dapps/provider-type'
 import { getChainId } from '../../modules/wallet/selectors'
 import { getChainConfiguration } from '../../lib/chainConfiguration'
 import {

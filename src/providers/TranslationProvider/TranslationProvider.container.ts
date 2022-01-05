@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 
-import { Locale } from 'decentraland-ui'
+import { Locale } from 'decentraland-ui/dist/components/Language/Language'
 
 import TranslationProvider from './TranslationProvider'
 import {

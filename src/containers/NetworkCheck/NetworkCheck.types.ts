@@ -1,4 +1,4 @@
-import { Network } from '@dcl/schemas'
+import { Network } from '@dcl/schemas/dist/dapps/network'
 
 export type Props = {
   network: Network

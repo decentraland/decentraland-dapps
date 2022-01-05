@@ -1,4 +1,4 @@
-import { ChainId } from '@dcl/schemas'
+import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { ContractName } from 'decentraland-transactions'
 
 export enum AuthorizationType {

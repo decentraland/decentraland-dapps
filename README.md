@@ -1012,7 +1012,7 @@ export { default as HelpModal } from './HelpModal'
 Each modal will receive the properties defined on the `ModalComponent` type, found on `modules/modal/types`, so for example:
 
 ```tsx
-import { Modal } from 'decentraland-ui'
+import { Modal } from 'decentraland-ui/dist/components/Modal/Modal'
 import { ModalProps } from 'decentraland-dapps/dist/modules/modal/types'
 
 type HelpModalProps = ModalProps & {
@@ -1307,7 +1307,7 @@ This is an example of a `SomePage` component that uses the `<Navbar>` container:
 ```tsx
 import * as React from 'react'
 
-import { Container } from 'decentraland-ui'
+import { Container } from 'decentraland-ui/dist/components/Container/Container'
 import Navbar from 'decentraland-dapps/dist/containers/Navbar'
 
 import './SomePage.css'
@@ -1384,7 +1384,7 @@ This is an example of a `SomePage` component that uses the `<Footer>` container:
 ```tsx
 import * as React from 'react'
 
-import { Container } from 'decentraland-ui'
+import { Container } from 'decentraland-ui/dist/components/Container/Container'
 import Navbar from 'decentraland-dapps/dist/containers/Navbar'
 
 import './SomePage.css'

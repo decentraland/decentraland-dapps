@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { UserMenu as UserMenuComponent, UserMenuI18N } from 'decentraland-ui'
+import { UserMenu as UserMenuComponent, UserMenuI18N } from 'decentraland-ui/dist/components/UserMenu/UserMenu'
 import { T } from '../../modules/translation/utils'
 import { Props } from './UserMenu.types'
 

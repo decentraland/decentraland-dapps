@@ -1,4 +1,4 @@
-import { Locale } from 'decentraland-ui'
+import { Locale } from 'decentraland-ui/dist/components/Language/Language'
 
 import { loadingReducer, LoadingState } from '../loading/reducer'
 import {

@@ -1,5 +1,5 @@
 import { Dispatch } from 'redux'
-import { UserMenuProps } from 'decentraland-ui'
+import { UserMenuProps } from 'decentraland-ui/dist/components/UserMenu/UserMenu'
 import {
   ConnectWalletRequestAction,
   DisconnectWalletAction

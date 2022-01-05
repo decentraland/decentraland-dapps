@@ -1,5 +1,5 @@
 import React from 'react'
-import { ChainId } from '@dcl/schemas'
+import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 
 export type DefaultProps = {
   className: string

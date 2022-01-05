@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { Footer as FooterComponent, FooterI18N } from 'decentraland-ui'
+import { Footer as FooterComponent, FooterI18N } from 'decentraland-ui/dist/components/Footer/Footer'
 
 import { FooterProps } from './Footer.types'
 import { T } from '../../modules/translation/utils'

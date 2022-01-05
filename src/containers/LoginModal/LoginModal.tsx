@@ -1,11 +1,12 @@
 import * as React from 'react'
+import { connection } from 'decentraland-connect'
 import {
   LoginModal as BaseLoginModal,
   LoginModalI18N,
   LoginModalOptionI18N,
   LoginModalOptionType
 } from 'decentraland-ui/dist/components/LoginModal/LoginModal'
-import { ProviderType, connection } from 'decentraland-connect'
+import { ProviderType } from '@dcl/schemas/dist/dapps/provider-type'
 import { T, t } from '../../modules/translation/utils'
 import { DefaultProps, Props, State } from './LoginModal.types'
 import { toModalOptionType, toProviderType } from './utils'

@@ -1,5 +1,5 @@
-import { Avatar } from 'decentraland-ui'
-import { EntityType } from 'dcl-catalyst-commons'
+import { Avatar } from 'decentraland-ui/dist/types/avatar'
+import { EntityType } from 'dcl-catalyst-commons/dist/types'
 import { ProfileEntity } from '../lib/types'
 import { Profile } from '../modules/profile/types'
 
