@@ -14,7 +14,7 @@ export type AddressProviderResult = {
 }
 
 export type Props = {
-  input?: string
+  input: string
   children: (result: AddressProviderResult) => React.ReactNode | null
   chainId: ChainId
 }
