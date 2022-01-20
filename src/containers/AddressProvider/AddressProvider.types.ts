@@ -8,8 +8,9 @@ export enum AddressError {
 
 export type AddressProviderResult = {
   address: string | null
-  error?: AddressError
+  ens: string | null
   isLoading: boolean
+  error?: AddressError
 }
 
 export type Props = {

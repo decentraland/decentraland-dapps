@@ -38,7 +38,9 @@ const AddressProvider = (props: Props) => {
     }
   }, [isENS, input])
 
-  return <>{children({ address, isLoading, error })}</>
+  return (
+    <>{children({ address, ens: isENS ? input : null, isLoading, error })}</>
+  )
 }
 
 export default React.memo(AddressProvider)
