@@ -7,7 +7,8 @@ import {
   race,
   take,
   delay,
-  select
+  select,
+  fork
 } from 'redux-saga/effects'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { connection, Provider } from 'decentraland-connect'
@@ -45,7 +46,8 @@ import {
   switchNetworkSuccess,
   switchNetworkFailure,
   SWITCH_NETWORK_SUCCESS,
-  SwitchNetworkSuccessAction
+  SwitchNetworkSuccessAction,
+  setAppChainId
 } from './actions'
 import {
   buildWallet,
@@ -79,6 +81,7 @@ let POLL_INTERVAL = 5 * 60 * 1000 // 60 seconds
 let polling = false
 
 export function* walletSaga() {
+  yield fork(initializeAppChainId)
   yield all([
     takeEvery(CONNECT_WALLET_REQUEST, handleConnectWalletRequest),
     takeEvery(ENABLE_WALLET_REQUEST, handleEnableWalletRequest),
@@ -89,6 +92,10 @@ export function* walletSaga() {
     takeEvery(SWITCH_NETWORK_REQUEST, handleSwitchNetworkRequest),
     takeEvery(SWITCH_NETWORK_SUCCESS, handleSwitchNetworkSucces)
   ])
+}
+
+function* initializeAppChainId() {
+  yield put(setAppChainId(CHAIN_ID))
 }
 
 function* handleConnectWalletRequest() {
