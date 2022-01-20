@@ -81,3 +81,8 @@ export const acceptNetworkPartialSupport = () =>
 export type AcceptNetworkPartialSupportAction = ReturnType<
   typeof acceptNetworkPartialSupport
 >
+
+export const SET_APP_CHAIN_ID = 'Set App ChainId'
+export const setAppChainId = (chainId: ChainId) =>
+  action(SET_APP_CHAIN_ID, { chainId })
+export type SetAppChainIdAction = ReturnType<typeof setAppChainId>

@@ -1,3 +1,4 @@
+import { ChainId } from '@dcl/schemas'
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { isLoadingType } from '../loading/selectors'
 import { CONNECT_WALLET_REQUEST, ENABLE_WALLET_REQUEST } from './actions'
@@ -31,6 +32,10 @@ export const getNetworks = (state: any) =>
 
 export const hasAcceptedNetworkPartialSupport = (state: any) =>
   getState(state).hasAcceptedNetworkPartialSupport
+
+// Casting as ChainId since it will be initialized at the beginning
+export const getAppChainId = (state: any) =>
+  getState(state).appChainId as ChainId
 
 /**
  * @deprecated This method is deprecated, it only returns the MANA balance on Ethereum, use getNetworks() to get the MANA balances on all the networks.

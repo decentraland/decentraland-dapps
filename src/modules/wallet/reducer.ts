@@ -1,5 +1,5 @@
 import { loadingReducer, LoadingState } from '../loading/reducer'
-
+import { ChainId } from '@dcl/schemas'
 import { Wallet } from './types'
 import {
   ConnectWalletRequestAction,
@@ -27,7 +27,9 @@ import {
   FETCH_WALLET_SUCCESS,
   FETCH_WALLET_FAILURE,
   AcceptNetworkPartialSupportAction,
-  ACCEPT_NETWORK_PARTIAL_SUPPORT
+  ACCEPT_NETWORK_PARTIAL_SUPPORT,
+  SetAppChainIdAction,
+  SET_APP_CHAIN_ID
 } from './actions'
 
 export type WalletState = {
@@ -35,13 +37,15 @@ export type WalletState = {
   loading: LoadingState
   error: string | null
   hasAcceptedNetworkPartialSupport: boolean
+  appChainId: ChainId | null
 }
 
 export const INITIAL_STATE: WalletState = {
   data: null,
   loading: [],
   error: null,
-  hasAcceptedNetworkPartialSupport: false
+  hasAcceptedNetworkPartialSupport: false,
+  appChainId: null
 }
 
 export type WalletReducerAction =
@@ -58,6 +62,7 @@ export type WalletReducerAction =
   | FetchWalletSuccessAction
   | FetchWalletFailureAction
   | AcceptNetworkPartialSupportAction
+  | SetAppChainIdAction
 
 export function walletReducer(
   state: WalletState = INITIAL_STATE,
@@ -137,6 +142,13 @@ export function walletReducer(
       return {
         ...state,
         hasAcceptedNetworkPartialSupport: true
+      }
+    }
+
+    case SET_APP_CHAIN_ID: {
+      return {
+        ...state,
+        appChainId: action.payload.chainId
       }
     }
 
