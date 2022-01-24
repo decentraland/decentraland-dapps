@@ -74,6 +74,24 @@
       "guest": "Invité",
       "settings": "Paramètres",
       "account": "Compte"
+    },
+    "toasts": {
+      "meta_transactions": {
+        "contract_account_error": {
+          "title": "Portefeuille non pris en charge",
+          "body": "Les portefeuilles de contrats intelligents ne sont pas pris en charge pour les méta-transations. Vous pouvez basculer votre réseau vers Polygon et envoyer une transaction régulière."
+        },
+        "invalid_address_error": {
+          "title": "Adresse invalide",
+          "body": "L'adresse du contrat n'est pas disponible pour les méta-transactions. Vous pouvez basculer votre réseau vers Polygon et envoyer une transaction régulière."
+        },
+        "unknown_error": {
+          "title": "Quelque chose s'est mal passé",
+          "body": "Une erreur inattendue s'est produite lors de l'envoi de la méta-transaction. Vous pouvez basculer votre réseau vers Polygon et essayer d'envoyer une transaction normale."
+        }
+      },
+      "switch_network": "Passer à {network}",
+      "learn_more": "En savoir plus"
     }
   }
 }

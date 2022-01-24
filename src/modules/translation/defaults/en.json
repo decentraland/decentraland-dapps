@@ -81,6 +81,24 @@
       "guest": "Guest",
       "settings": "Settings",
       "account": "Account"
+    },
+    "toasts": {
+      "meta_transactions": {
+        "contract_account_error": {
+          "title": "Wallet not supported",
+          "body": "Smart contract wallets are not supported for meta-transations. You can switch your network to Polygon and send a regular transaction."
+        },
+        "invalid_address_error": {
+          "title": "Invalid address",
+          "body": "The contract address is not available for meta-transactions. You can switch your network to Polygon and send a regular transaction."
+        },
+        "unknown_error": {
+          "title": "Something went wrong",
+          "body": "There was an unexpected error sending the meta-transaction. You can switch your network to Polygon and try sending a regular transaction."
+        }
+      },
+      "switch_network": "Switch to {network}",
+      "learn_more": "Learn more"
     }
   }
 }

@@ -81,6 +81,24 @@
       "guest": "来宾",
       "settings": "设定值",
       "account": "帐户"
+    },
+    "toasts": {
+      "meta_transactions": {
+        "contract_account_error": {
+          "title": "不支持钱包",
+          "body": "元交易不支持智能合约钱包。您可以将网络切换到 Polygon 并发送常规交易。"
+        },
+        "invalid_address_error": {
+          "title": "无效地址",
+          "body": "合约地址不可用于元交易。您可以将您的网络切换到 Polygon 并发送常规交易。"
+        },
+        "unknown_error": {
+          "title": "出了点问题",
+          "body": "发送元交易时出现意外错误。您可以将网络切换到 Polygon 并尝试发送常规交易。"
+        }
+      },
+      "switch_network": "切换到 {network}",
+      "learn_more": "了解更多"
     }
   }
 }

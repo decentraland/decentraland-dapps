@@ -81,6 +81,24 @@
       "guest": "Invitado",
       "settings": "Configuración",
       "account": "Mi Cuenta"
+    },
+    "toasts": {
+      "meta_transactions": {
+        "contract_account_error": {
+          "title": "Billetera no soportada",
+          "body": "Las billeteras basadas en smart contracts no están soportadas para hacer meta-transacciones. Puedes cambiar la red a Polygon y enviar una transacción común."
+        },
+        "invalid_address_error": {
+          "title": "Dirección inválida",
+          "body": "La dirección del contrato no está soportada para hacer meta-transacciones. Puedes cambiar la red a Polygon y enviar una transacción común."
+        },
+        "unknown_error": {
+          "title": "Ha ocurrido un error",
+          "body": "Algo salio mal enviando la meta-transacción. Puedes cambiar la red a Polygon e intentar mandar una transacción común."
+        }
+      },
+      "switch_network": "Cambiar a {network}",
+      "learn_more": "Mas información"
     }
   }
 }

@@ -1,3 +1,5 @@
+import { EventEmitter } from 'events'
+import { PopulatedTransaction, Contract, providers, utils } from 'ethers'
 import { Eth } from 'web3x/eth'
 import { Address } from 'web3x/address'
 import {
@@ -7,7 +9,6 @@ import {
   sendMetaTransaction
 } from 'decentraland-transactions'
 import { ChainId, getChainName } from '@dcl/schemas/dist/dapps/chain-id'
-import { PopulatedTransaction, Contract, providers, utils } from 'ethers'
 import {
   getConnectedProvider,
   getConnectedProviderChainId,
@@ -83,57 +84,85 @@ export async function getTargetNetworkProvider(chainId: ChainId) {
   return new providers.Web3Provider(networkProvider)
 }
 
+export enum TransactionEventType {
+  ERROR = 'error',
+  SUCCESS = 'success'
+}
+
+export type TransactionEventData<T extends TransactionEventType> = {
+  type: T
+} & (T extends TransactionEventType.ERROR
+  ? { error: Error }
+  : T extends TransactionEventType.SUCCESS
+  ? { txHash: string }
+  : {})
+
+export const transactionEvents = new EventEmitter()
+
 export async function sendTransaction(
   contract: ContractData,
   getPopulatedTransaction: (
     populateTransaction: Contract['populateTransaction']
   ) => Promise<PopulatedTransaction>
 ) {
-  // get connected provider
-  const connectedProvider = await getConnectedProvider()
-  if (!connectedProvider) {
-    throw new Error('Provider not connected')
-  }
+  try {
+    // get connected provider
+    const connectedProvider = await getConnectedProvider()
+    if (!connectedProvider) {
+      throw new Error('Provider not connected')
+    }
 
-  // get current chain id
-  const chainIdHex = await connectedProvider.request({
-    method: 'eth_chainId',
-    params: []
-  })
-  const chainId = parseInt(chainIdHex as string, 16)
+    // get current chain id
+    const chainIdHex = await connectedProvider.request({
+      method: 'eth_chainId',
+      params: []
+    })
+    const chainId = parseInt(chainIdHex as string, 16)
 
-  // get a provider for the target network
-  const targetNetworkProvider = await getTargetNetworkProvider(contract.chainId)
-
-  // intantiate the contract
-  const contractInstance = new Contract(
-    contract.address,
-    contract.abi,
-    targetNetworkProvider
-  )
-
-  // populate the transaction data
-  const unsignedTx = await getPopulatedTransaction(
-    contractInstance.populateTransaction
-  )
-
-  // if the connected provider is in the target network, use it to sign and send the tx
-  if (chainId === contract.chainId) {
-    const signer = targetNetworkProvider.getSigner()
-    const tx = await signer.sendTransaction(unsignedTx)
-    return tx.hash
-  } else {
-    // otherwise, send it as a meta tx
-    const hash = await sendMetaTransaction(
-      connectedProvider,
-      targetNetworkProvider,
-      unsignedTx.data!,
-      contract,
-      {
-        serverURL: getTransactionsApiUrl()
-      }
+    // get a provider for the target network
+    const targetNetworkProvider = await getTargetNetworkProvider(
+      contract.chainId
     )
-    return hash
+
+    // intantiate the contract
+    const contractInstance = new Contract(
+      contract.address,
+      contract.abi,
+      targetNetworkProvider
+    )
+
+    // populate the transaction data
+    const unsignedTx = await getPopulatedTransaction(
+      contractInstance.populateTransaction
+    )
+
+    // if the connected provider is in the target network, use it to sign and send the tx
+    if (chainId === contract.chainId) {
+      const signer = targetNetworkProvider.getSigner()
+      const tx = await signer.sendTransaction(unsignedTx)
+      transactionEvents.emit(TransactionEventType.SUCCESS, { txHash: tx.hash })
+      return tx.hash
+    } else {
+      // otherwise, send it as a meta tx
+      const txHash = await sendMetaTransaction(
+        connectedProvider,
+        targetNetworkProvider,
+        unsignedTx.data!,
+        contract,
+        {
+          serverURL: getTransactionsApiUrl()
+        }
+      )
+      transactionEvents.emit(TransactionEventType.SUCCESS, { txHash })
+      return txHash
+    }
+  } catch (error) {
+    const data: TransactionEventData<TransactionEventType.ERROR> = {
+      type: TransactionEventType.ERROR,
+      error: error as Error
+    }
+    transactionEvents.emit(TransactionEventType.ERROR, data)
+    throw error
   }
 }
 

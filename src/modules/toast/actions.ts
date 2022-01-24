@@ -25,3 +25,11 @@ export const HIDE_TOAST = 'Hide toast'
 export const hideToast = (id: number) => action(HIDE_TOAST, { id })
 
 export type HideToastAction = ReturnType<typeof hideToast>
+
+// Hide All Toasts
+
+export const HIDE_ALL_TOASTS = 'Hide all toasts'
+
+export const hideAllToasts = () => action(HIDE_ALL_TOASTS)
+
+export type HideAllToastsAction = ReturnType<typeof hideAllToasts>
