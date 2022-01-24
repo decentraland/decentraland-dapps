@@ -1,3 +1,4 @@
+import { EventChannel, eventChannel } from 'redux-saga'
 import { call, fork, put, select, take, takeEvery } from 'redux-saga/effects'
 import { ErrorCode, MetaTransactionError } from 'decentraland-transactions'
 import {
@@ -7,30 +8,26 @@ import {
   HIDE_TOAST,
   HideToastAction,
   showToast,
-  HIDE_ALL_TOASTS,
-  hideToast,
   hideAllToasts
 } from './actions'
-import { getState, getToasts } from './selectors'
+import { getState } from './selectors'
 import * as cache from './cache'
-import { EventChannel, eventChannel } from 'redux-saga'
 import {
   TransactionEventData,
   TransactionEventType,
   transactionEvents
 } from '../wallet/utils'
+import { SWITCH_NETWORK_SUCCESS } from '../wallet/actions'
 import {
   getContractAccountErrorToast,
   getInvalidAddressErrorToast,
   getUnknownErrorToast
 } from './toasts/meta-transactions'
-import { SWITCH_NETWORK_SUCCESS } from '../wallet/actions'
 
 export function* toastSaga() {
   yield fork(watchMetaTransactionErrors)
   yield takeEvery(SHOW_TOAST, handleShowToast)
   yield takeEvery(HIDE_TOAST, handleHideToast)
-  yield takeEvery(HIDE_ALL_TOASTS, handleHideAllToasts)
   yield takeEvery(SWITCH_NETWORK_SUCCESS, handleSwitchNetworkSuccess)
 }
 
@@ -49,13 +46,6 @@ function* handleShowToast(action: ShowToastAction) {
 function* handleHideToast(action: HideToastAction) {
   const { id } = action.payload
   cache.remove(id)
-}
-
-function* handleHideAllToasts() {
-  const toasts: ReturnType<typeof getToasts> = yield select(getToasts)
-  for (const toast of toasts) {
-    yield put(hideToast(toast.id))
-  }
 }
 
 export function createMetaTransactionsErrorChannel() {

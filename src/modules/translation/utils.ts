@@ -51,7 +51,7 @@ export function getCurrentLocale() {
 }
 
 export function t(id: string, values?: any) {
-  return currentLocale ? currentLocale.formatMessage({ id }, values) : ''
+  return currentLocale.formatMessage({ id }, values)
 }
 
 export const T = FormattedMessage

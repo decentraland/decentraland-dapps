@@ -16,31 +16,7 @@ import {
   watchMetaTransactionErrors
 } from './sagas'
 import { getToasts } from './selectors'
-import { hideAllToasts, hideToast, showToast } from './actions'
-import { Toast } from './types'
-
-describe('when handling the HIDE_ALL_TOASTS action', () => {
-  it('should dispatch a HIDE_TOAST action for each open Toast', () => {
-    const toasts: Toast[] = [
-      {
-        id: 0,
-        title: 'A title',
-        body: 'A body'
-      },
-      {
-        id: 1,
-        title: 'Another title',
-        body: 'Another body'
-      }
-    ]
-    return expectSaga(toastSaga)
-      .provide([[select(getToasts), toasts]])
-      .put(hideToast(1))
-      .put(hideToast(0))
-      .dispatch(hideAllToasts())
-      .silentRun()
-  })
-})
+import { hideAllToasts, showToast } from './actions'
 
 describe('when handling a SWITCH_NETWORK_SUCCESS action', () => {
   it('should dispatch a HIDE_ALL_TOASTS action', () => {
