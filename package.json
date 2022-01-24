@@ -7,7 +7,7 @@
     "@dcl/schemas": "^3.1.1",
     "@types/flat": "0.0.28",
     "@types/uuid": "^3.4.3",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "date-fns": "^1.29.0",
     "dcl-catalyst-client": "^4.0.6",
     "decentraland-connect": "^3.0.0",
