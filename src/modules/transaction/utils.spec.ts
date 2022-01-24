@@ -200,7 +200,7 @@ describe('modules', function() {
             payload: { more: 2 }
           }
 
-          expect(() => getTransactionHashFromAction(action)).toThrow
+          expect(() => getTransactionHashFromAction(action)).toThrow()
         })
       })
     })
