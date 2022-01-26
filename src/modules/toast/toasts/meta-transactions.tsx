@@ -4,6 +4,9 @@ import MetaTransactionError from '../../../containers/MetaTransactionError'
 import { T, t } from '../../translation/utils'
 import { Toast } from '../types'
 
+const transactionsInPolygonDocs =
+  'https://docs.decentraland.org/blockchain-integration/transactions-in-polygon/'
+
 export function getContractAccountErrorToast(): Omit<Toast, 'id'> {
   return {
     type: ToastType.ERROR,
@@ -11,6 +14,7 @@ export function getContractAccountErrorToast(): Omit<Toast, 'id'> {
     body: (
       <MetaTransactionError
         text={t('@dapps.toasts.meta_transactions.contract_account_error.body')}
+        learnMoreLink={transactionsInPolygonDocs}
       />
     ),
     closable: true,
@@ -27,6 +31,7 @@ export function getInvalidAddressErrorToast(): Omit<Toast, 'id'> {
         text={
           <T id="@dapps.toasts.meta_transactions.invalid_address_error.body" />
         }
+        learnMoreLink={transactionsInPolygonDocs}
       />
     ),
     closable: true,
@@ -41,6 +46,7 @@ export function getUnknownErrorToast(): Omit<Toast, 'id'> {
     body: (
       <MetaTransactionError
         text={t('@dapps.toasts.meta_transactions.unknown_error.body')}
+        learnMoreLink={transactionsInPolygonDocs}
       />
     ),
     closable: true,
