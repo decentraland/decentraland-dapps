@@ -161,6 +161,7 @@ Instead of importing `walletSaga`, use `createWalletSaga`:
 ```ts
 import { all } from 'redux-saga/effects'
 import { createWalletSaga } from 'decentraland-dapps/dist/modules/wallet/sagas'
+
 const walletSaga = createWalletSaga({ CHAIN_ID: process.env.chainId })
 export function* rootSaga() {
   yield all([

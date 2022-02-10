@@ -8,9 +8,9 @@ import {
   getTransactionHashFromAction
 } from './utils'
 
-describe('modules', function () {
-  describe('transaction', function () {
-    describe('utils', function () {
+describe('modules', function() {
+  describe('transaction', function() {
+    describe('utils', function() {
       const hash = '0xdeadbeef'
       const payload = { some: 'data' }
       const chainId = ChainId.ETHEREUM_MAINNET
@@ -18,8 +18,8 @@ describe('modules', function () {
       const tx = { hash, payload, chainId }
       const txWithReceipt = { hash, payload, chainId, withReceipt: true }
 
-      describe('buildTransactionPayload', function () {
-        it('should return a new object with the transaction flag an the action inside', function () {
+      describe('buildTransactionPayload', function() {
+        it('should return a new object with the transaction flag an the action inside', function() {
           const txPayload = buildTransactionPayload(
             chainId,
             tx.hash,
@@ -30,7 +30,7 @@ describe('modules', function () {
             [TRANSACTION_ACTION_FLAG]: tx
           })
         })
-        it('should support only supplying the transaction hash', function () {
+        it('should support only supplying the transaction hash', function() {
           const tx = { hash }
           const txPayload = buildTransactionPayload(chainId, tx.hash)
 
@@ -44,8 +44,8 @@ describe('modules', function () {
         })
       })
 
-      describe('buildTransactionWithReceiptPayload', function () {
-        it('should return a new object with the transaction flag an the action inside', function () {
+      describe('buildTransactionWithReceiptPayload', function() {
+        it('should return a new object with the transaction flag an the action inside', function() {
           const txPayload = buildTransactionWithReceiptPayload(
             chainId,
             tx.hash,
@@ -56,7 +56,7 @@ describe('modules', function () {
             [TRANSACTION_ACTION_FLAG]: txWithReceipt
           })
         })
-        it('should support only supplying the transaction hash', function () {
+        it('should support only supplying the transaction hash', function() {
           const tx = { hash }
           const txPayload = buildTransactionWithReceiptPayload(chainId, tx.hash)
 
@@ -69,8 +69,8 @@ describe('modules', function () {
         })
       })
 
-      describe('isTransactionAction', function () {
-        it('should return true if the action was built with buildTransactionPayload', function () {
+      describe('isTransactionAction', function() {
+        it('should return true if the action was built with buildTransactionPayload', function() {
           const txPayload = buildTransactionPayload(
             chainId,
             tx.hash,
@@ -84,7 +84,7 @@ describe('modules', function () {
           expect(isTransactionAction(action)).toBe(true)
         })
 
-        it('should return true if the action was built with buildTransactionWithReceiptPayload', function () {
+        it('should return true if the action was built with buildTransactionWithReceiptPayload', function() {
           const txPayload = buildTransactionWithReceiptPayload(
             chainId,
             tx.hash,
@@ -98,7 +98,7 @@ describe('modules', function () {
           expect(isTransactionAction(action)).toBe(true)
         })
 
-        it('should return false for normal actions', function () {
+        it('should return false for normal actions', function() {
           expect(
             isTransactionAction({
               type: '[Success] Some success action'
@@ -116,8 +116,8 @@ describe('modules', function () {
         })
       })
 
-      describe('getTransactionFromAction', function () {
-        it('should return the transaction from a built transaction action with buildTransactionPayload', function () {
+      describe('getTransactionFromAction', function() {
+        it('should return the transaction from a built transaction action with buildTransactionPayload', function() {
           const txPayload = buildTransactionWithReceiptPayload(
             chainId,
             tx.hash,
@@ -136,7 +136,7 @@ describe('modules', function () {
           expect(getTransactionFromAction(action)).toEqual(txWithReceipt)
         })
 
-        it('should return the transaction from a built transaction action with buildTransactionWithReceiptPayload', function () {
+        it('should return the transaction from a built transaction action with buildTransactionWithReceiptPayload', function() {
           const txPayload = buildTransactionPayload(
             chainId,
             tx.hash,
@@ -155,7 +155,7 @@ describe('modules', function () {
           expect(getTransactionFromAction(action)).toEqual(tx)
         })
 
-        it('should return undefined for a normal action', function () {
+        it('should return undefined for a normal action', function() {
           const action = {
             type: '[Success] Transaction action',
             payload: { this: 'is', more: 2, data: ['a', 3] }
@@ -165,8 +165,8 @@ describe('modules', function () {
         })
       })
 
-      describe('getTransactionHashFromAction', function () {
-        it('should return the transaction hash from a built transaction action with buildTransactionPayload', function () {
+      describe('getTransactionHashFromAction', function() {
+        it('should return the transaction hash from a built transaction action with buildTransactionPayload', function() {
           const txPayload = buildTransactionPayload(
             chainId,
             tx.hash,
@@ -180,7 +180,7 @@ describe('modules', function () {
           expect(getTransactionHashFromAction(action)).toEqual(tx.hash)
         })
 
-        it('should return the transaction hash from a built transaction action with buildTransactionWithReceiptPayload', function () {
+        it('should return the transaction hash from a built transaction action with buildTransactionWithReceiptPayload', function() {
           const txPayload = buildTransactionWithReceiptPayload(
             chainId,
             tx.hash,
@@ -194,15 +194,13 @@ describe('modules', function () {
           expect(getTransactionHashFromAction(action)).toEqual(tx.hash)
         })
 
-        it('should throw for a normal action (use isTransactionAction to avoid it)', function () {
+        it('should throw for a normal action (use isTransactionAction to avoid it)', function() {
           const action = {
             type: '[Success] Transaction action',
             payload: { more: 2 }
           }
 
-          expect(() => getTransactionHashFromAction(action)).toThrowError(
-            "Cannot read property 'hash' of undefined"
-          )
+          expect(() => getTransactionHashFromAction(action)).toThrow()
         })
       })
     })
