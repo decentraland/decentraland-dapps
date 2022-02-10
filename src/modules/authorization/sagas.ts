@@ -166,13 +166,19 @@ export function createAuthorizationSaga() {
           action === AuthorizationAction.GRANT
             ? getTokenAmountToApprove().toString()
             : '0'
-        return sendTransaction(contract, erc20 =>
-          erc20.approve(authorization.authorizedAddress, amount)
+        return sendTransaction(
+          contract,
+          'approve',
+          authorization.authorizedAddress,
+          amount
         )
       case AuthorizationType.APPROVAL:
         const isApproved = action === AuthorizationAction.GRANT
-        return sendTransaction(contract, erc712 =>
-          erc712.setApprovalForAll(authorization.authorizedAddress, isApproved)
+        return sendTransaction(
+          contract,
+          'setApprovalForAll',
+          authorization.authorizedAddress,
+          isApproved
         )
     }
   }
