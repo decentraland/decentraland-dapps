@@ -101,10 +101,22 @@ export const transactionEvents = new EventEmitter()
 
 export async function sendTransaction(
   contract: ContractData,
+  contractMethodName: string,
+  ...contractArguments: any[]
+): Promise<string>
+
+export async function sendTransaction(
+  contract: ContractData,
   getPopulatedTransaction: (
     populateTransaction: Contract['populateTransaction']
   ) => Promise<PopulatedTransaction>
-) {
+): Promise<string>
+
+export async function sendTransaction(...args: any[]) {
+  const contract: ContractData = args[0]
+  const contractMethodNameOrGetPopulatedTransaction: string | Function = args[1]
+  const contractArguments: any[] = args[2] ?? []
+
   try {
     // get connected provider
     const connectedProvider = await getConnectedProvider()
@@ -132,9 +144,14 @@ export async function sendTransaction(
     )
 
     // populate the transaction data
-    const unsignedTx = await getPopulatedTransaction(
-      contractInstance.populateTransaction
-    )
+    const unsignedTx = await (typeof contractMethodNameOrGetPopulatedTransaction ===
+    'function'
+      ? contractMethodNameOrGetPopulatedTransaction(
+          contractInstance.populateTransaction
+        )
+      : contractInstance.populateTransaction[
+          contractMethodNameOrGetPopulatedTransaction
+        ](...contractArguments))
 
     // if the connected provider is in the target network, use it to sign and send the tx
     if (chainId === contract.chainId) {
