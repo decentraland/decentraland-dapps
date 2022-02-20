@@ -99,12 +99,28 @@ export type TransactionEventData<T extends TransactionEventType> = {
 
 export const transactionEvents = new EventEmitter()
 
+/**
+ * Sends a transaction either as a meta transaction or as a regular transaction.
+ * - If the contract chain id differs from the current provider chain id, a meta transaction will be sent.
+ * - If the contract chain id is the same as the current provider chain id, a regular transaction will be sent.
+ * @param contract - The contract to send the transaction to.
+ * @param contractMethodName - The name of the contract method to call.
+ * @param contractMethodArgs - The arguments to pass to the contract method.
+ */
 export async function sendTransaction(
   contract: ContractData,
   contractMethodName: string,
   ...contractArguments: any[]
 ): Promise<string>
 
+/**
+ * @deprecated
+ * Sends a transaction either as a meta transaction or as a regular transaction.
+ * - If the contract chain id differs from the current provider chain id, a meta transaction will be sent.
+ * - If the contract chain id is the same as the current provider chain id, a regular transaction will be sent.
+ * @param contract - The contract to send the transaction to.
+ * @param getPopulatedTransaction - A function that returns a populated transaction.
+ */
 export async function sendTransaction(
   contract: ContractData,
   getPopulatedTransaction: (
