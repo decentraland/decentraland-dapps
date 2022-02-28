@@ -1,4 +1,4 @@
-import { Avatar } from 'decentraland-ui/dist/types/avatar'
+import { Avatar } from '@dcl/schemas'
 import { Entity } from 'dcl-catalyst-commons/dist/types'
 
 declare module 'react-intl'
