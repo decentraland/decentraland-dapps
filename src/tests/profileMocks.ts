@@ -1,7 +1,7 @@
-import { Avatar } from 'decentraland-ui/dist/types/avatar'
 import { EntityType } from 'dcl-catalyst-commons/dist/types'
 import { ProfileEntity } from '../lib/types'
 import { Profile } from '../modules/profile/types'
+import { Avatar } from '@dcl/schemas'
 
 export const avatar: Avatar = {
   userId: 'userId',
@@ -14,7 +14,7 @@ export const avatar: Avatar = {
   avatar: {
     bodyShape: 'aShape',
     snapshots: {
-      face: 'aFace',
+      face256: 'aFace',
       body: 'aBody'
     },
     eyes: {
@@ -26,10 +26,8 @@ export const avatar: Avatar = {
     skin: {
       color: { r: 255, g: 255, b: 255 }
     },
-    wearables: [],
-    version: 1
+    wearables: []
   },
-  inventory: [],
   tutorialStep: 1
 }
 
