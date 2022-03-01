@@ -63,6 +63,13 @@ export default class LoginModal extends React.PureComponent<Props, State> {
   }
 
   renderLoginModalOption = (providerType: ProviderType) => {
+    // Both "Profiles not rendering" and "Wallet link" were shipped on the same
+    // release. Not rendering wallet link option now will allow us to release only the fix
+    // and ship wallet link when required.
+    if (providerType === ProviderType.WALLET_LINK) {
+      return null
+    }
+
     const loginType = toModalOptionType(providerType)
 
     return loginType ? (
