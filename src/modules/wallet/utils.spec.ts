@@ -40,7 +40,13 @@ describe('when sending a transaction', () => {
 
     it('should throw an error signaling that the provider is not connected', () => {
       return expect(
-        sendTransaction(contract, 'totalSupply')
+        sendTransaction(
+          contract,
+          'transferFrom',
+          '0xeDaE96F7739aF8A7fB16E2a888C1E578E1328299',
+          '0x7DbBDF7C7c4c4d408cd43660D9a1f86B53109F5f',
+          20
+        )
       ).rejects.toThrowError(error.message)
     })
   })
@@ -55,7 +61,13 @@ describe('when sending a transaction', () => {
 
     it('should throw an error signaling that it was not able to get the chain id', () => {
       return expect(
-        sendTransaction(contract, 'totalSupply')
+        sendTransaction(
+          contract,
+          'transferFrom',
+          '0xeDaE96F7739aF8A7fB16E2a888C1E578E1328299',
+          '0x7DbBDF7C7c4c4d408cd43660D9a1f86B53109F5f',
+          20
+        )
       ).rejects.toThrowError(error.message)
     })
   })
@@ -72,7 +84,13 @@ describe('when sending a transaction', () => {
 
     it('should throw an error signaling that it was not able to get the network provider', () => {
       return expect(
-        sendTransaction(contract, 'totalSupply')
+        sendTransaction(
+          contract,
+          'transferFrom',
+          '0xeDaE96F7739aF8A7fB16E2a888C1E578E1328299',
+          '0x7DbBDF7C7c4c4d408cd43660D9a1f86B53109F5f',
+          20
+        )
       ).rejects.toThrowError(error.message)
     })
   })
@@ -111,9 +129,15 @@ describe('when sending a transaction', () => {
       })
 
       it('should throw an error signaling that it was not able to send the transaction', () => {
-        return expect(sendTransaction(contract, 'totalSupply')).rejects.toThrow(
-          error.message
-        )
+        return expect(
+          sendTransaction(
+            contract,
+            'transferFrom',
+            '0xeDaE96F7739aF8A7fB16E2a888C1E578E1328299',
+            '0x7DbBDF7C7c4c4d408cd43660D9a1f86B53109F5f',
+            20
+          )
+        ).rejects.toThrow(error.message)
       })
     })
 
@@ -137,12 +161,25 @@ describe('when sending a transaction', () => {
 
       it('should resolve with the transaction hash', () => {
         return expect(
-          sendTransaction(contract, 'totalSupply')
+          sendTransaction(
+            contract,
+            'transferFrom',
+            '0xeDaE96F7739aF8A7fB16E2a888C1E578E1328299',
+            '0x7DbBDF7C7c4c4d408cd43660D9a1f86B53109F5f',
+            20
+          )
         ).resolves.toEqual(transactionHash)
       })
 
       it('should have sent the transaction with the populated data', async () => {
-        await sendTransaction(contract, 'totalSupply')
+        await sendTransaction(
+          contract,
+          'transferFrom',
+          '0xeDaE96F7739aF8A7fB16E2a888C1E578E1328299',
+          '0x7DbBDF7C7c4c4d408cd43660D9a1f86B53109F5f',
+          20
+        )
+
         expect(networkProvider.request).toHaveBeenCalledWith({
           method: 'eth_sendTransaction',
           params: [
@@ -150,7 +187,8 @@ describe('when sending a transaction', () => {
               gas: '0x5208',
               from: '0x7309f0134f3e51e8cbe29dd86068e0f264f6c946',
               to: mockedContract.address,
-              data: '0x18160ddd'
+              data:
+                '0x23b872dd000000000000000000000000edae96f7739af8a7fb16e2a888c1e578e13282990000000000000000000000007dbbdf7c7c4c4d408cd43660d9a1f86b53109f5f0000000000000000000000000000000000000000000000000000000000000014'
             }
           ]
         })
@@ -175,9 +213,15 @@ describe('when sending a transaction', () => {
       })
 
       it('should throw an error signaling the failure of the meta transaction', () => {
-        return expect(sendTransaction(contract, 'totalSupply')).rejects.toThrow(
-          error.message
-        )
+        return expect(
+          sendTransaction(
+            contract,
+            'transferFrom',
+            '0xeDaE96F7739aF8A7fB16E2a888C1E578E1328299',
+            '0x7DbBDF7C7c4c4d408cd43660D9a1f86B53109F5f',
+            20
+          )
+        ).rejects.toThrow(error.message)
       })
     })
 
@@ -202,16 +246,69 @@ describe('when sending a transaction', () => {
 
       it('should resolve with the transaction hash', () => {
         return expect(
-          sendTransaction(contract, 'totalSupply')
+          sendTransaction(
+            contract,
+            'transferFrom',
+            '0xeDaE96F7739aF8A7fB16E2a888C1E578E1328299',
+            '0x7DbBDF7C7c4c4d408cd43660D9a1f86B53109F5f',
+            20
+          )
         ).resolves.toEqual(transactionHash)
       })
 
       it('should have sent the meta transaction with all the required parameters', async () => {
-        await sendTransaction(contract, 'totalSupply')
+        await sendTransaction(
+          contract,
+          'transferFrom',
+          '0xeDaE96F7739aF8A7fB16E2a888C1E578E1328299',
+          '0x7DbBDF7C7c4c4d408cd43660D9a1f86B53109F5f',
+          20
+        )
         expect(sendMetaTransaction).toHaveBeenCalledWith(
           connectedNetworkProvider,
           expect.any(providers.Web3Provider),
-          '0x18160ddd',
+          '0x23b872dd000000000000000000000000edae96f7739af8a7fb16e2a888c1e578e13282990000000000000000000000007dbbdf7c7c4c4d408cd43660d9a1f86b53109f5f0000000000000000000000000000000000000000000000000000000000000014',
+          mockedContract,
+          {
+            serverURL: getTransactionsApiUrl()
+          }
+        )
+      })
+    })
+  })
+
+  describe("and the transaction to be executed doesn't have parameters", () => {
+    describe('and the meta transaction is sent successfully', () => {
+      let networkProvider: MockedProvider
+      let connectedNetworkProvider: MockedProvider
+
+      beforeEach(() => {
+        networkProvider = buildMockedNetworkProvider()
+        connectedNetworkProvider = buildMockedNetworkProvider({
+          ethChainId: Promise.resolve('0x89')
+        })
+
+        mockedGetNetworkProvider.mockResolvedValue(networkProvider as never)
+        mockedGetConnectedProvider.mockResolvedValue(
+          connectedNetworkProvider as never
+        )
+        mockedSendMetaTransaction.mockResolvedValueOnce(
+          transactionHash as never
+        )
+      })
+
+      it('should resolve with the transaction hash', () => {
+        return expect(sendTransaction(contract, 'approve')).resolves.toEqual(
+          transactionHash
+        )
+      })
+
+      it('should have sent the meta transaction with all the required parameters', async () => {
+        await sendTransaction(contract, 'approve')
+        expect(sendMetaTransaction).toHaveBeenCalledWith(
+          connectedNetworkProvider,
+          expect.any(providers.Web3Provider),
+          '0x12424e3f',
           mockedContract,
           {
             serverURL: getTransactionsApiUrl()

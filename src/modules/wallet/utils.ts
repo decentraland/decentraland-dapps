@@ -129,9 +129,11 @@ export async function sendTransaction(
 ): Promise<string>
 
 export async function sendTransaction(...args: any[]) {
-  const contract: ContractData = args[0]
-  const contractMethodNameOrGetPopulatedTransaction: string | Function = args[1]
-  const contractArguments: any[] = args[2] ?? []
+  const [
+    contract,
+    contractMethodNameOrGetPopulatedTransaction,
+    ...contractArguments
+  ] = args as [ContractData, string | Function, any[]]
 
   try {
     // get connected provider

@@ -6,15 +6,15 @@ export const mockedContract = {
       constant: false,
       inputs: [
         {
-          name: '_from',
+          name: 'from',
           type: 'address'
         },
         {
-          name: '_to',
+          name: 'to',
           type: 'address'
         },
         {
-          name: '_value',
+          name: 'value',
           type: 'uint256'
         }
       ],
@@ -30,17 +30,12 @@ export const mockedContract = {
       type: 'function'
     },
     {
-      constant: true,
+      constant: false,
       inputs: [],
-      name: 'totalSupply',
-      outputs: [
-        {
-          name: '',
-          type: 'uint256'
-        }
-      ],
+      name: 'approve',
+      outputs: [],
       payable: false,
-      stateMutability: 'view',
+      stateMutability: 'nonpayable',
       type: 'function'
     }
   ],
