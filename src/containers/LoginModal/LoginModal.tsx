@@ -5,7 +5,7 @@ import {
   LoginModalOptionI18N,
   LoginModalOptionType
 } from '@wiicamp/decentraland-ui'
-import { ProviderType, connection } from 'decentraland-connect'
+import { ProviderType, connection } from '@wiicamp/decentraland-connect'
 import { T, t } from '../../modules/translation/utils'
 import { isCucumberProvider, isDapperProvider } from '../../lib/eth'
 import { DefaultProps, Props, State } from './LoginModal.types'

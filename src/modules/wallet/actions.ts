@@ -1,5 +1,5 @@
 import { action } from 'typesafe-actions'
-import { ProviderType } from 'decentraland-connect'
+import { ProviderType } from '@wiicamp/decentraland-connect'
 import { Wallet } from './types'
 
 export const CONNECT_WALLET_REQUEST = '[Request] Connect Wallet'

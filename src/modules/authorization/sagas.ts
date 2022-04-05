@@ -5,7 +5,7 @@ import { Eth } from 'web3x-es/eth'
 import { TxSend } from 'web3x-es/contract'
 import { Address } from 'web3x-es/address'
 import { Network } from '@dcl/schemas'
-import { Provider } from 'decentraland-connect'
+import { Provider } from '@wiicamp/decentraland-connect'
 import {
   ContractData,
   getContract,

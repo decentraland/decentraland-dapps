@@ -1,5 +1,5 @@
 import { ChainId, Network } from '@dcl/schemas'
-import { Provider, ProviderType } from 'decentraland-connect'
+import { Provider, ProviderType } from '@wiicamp/decentraland-connect'
 
 export { Provider, ProviderType }
 

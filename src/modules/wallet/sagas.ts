@@ -10,7 +10,7 @@ import {
   select
 } from 'redux-saga/effects'
 import { ChainId } from '@dcl/schemas'
-import { connection } from 'decentraland-connect'
+import { connection } from '@wiicamp/decentraland-connect'
 import { isCucumberProvider, isValidChainId } from '../../lib/eth'
 import {
   connectWalletSuccess,

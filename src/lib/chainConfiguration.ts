@@ -1,5 +1,5 @@
 import { ChainId, Network } from '@dcl/schemas'
-import { RPC_URLS } from 'decentraland-connect'
+import { RPC_URLS } from '@wiicamp/decentraland-connect'
 
 export const MANA_GRAPH_BY_CHAIN_ID = {
   [ChainId.ETHEREUM_MAINNET]:
