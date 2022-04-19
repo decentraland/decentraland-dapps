@@ -1,7 +1,7 @@
 import { expectSaga } from 'redux-saga-test-plan'
 import * as matchers from 'redux-saga-test-plan/matchers'
 import { EntityType } from 'dcl-catalyst-commons'
-import { EntitesOperator } from '../../lib/entities'
+import { EntitiesOperator } from '../../lib/entities'
 import { profileEntity } from '../../tests/profileMocks'
 import { dynamicDeepParametersEquality } from '../../tests/sagas'
 import { createProfileSaga } from './sagas'
@@ -22,7 +22,7 @@ describe('when handling the action to set the profile avatar description', () =>
       return expectSaga(profileSagas)
         .provide([
           [
-            matchers.call.fn(EntitesOperator.prototype.getProfileEntity),
+            matchers.call.fn(EntitiesOperator.prototype.getProfileEntity),
             Promise.reject(new Error(errorMessage))
           ]
         ])
@@ -37,12 +37,12 @@ describe('when handling the action to set the profile avatar description', () =>
       return expectSaga(profileSagas)
         .provide([
           [
-            matchers.call.fn(EntitesOperator.prototype.getProfileEntity),
+            matchers.call.fn(EntitiesOperator.prototype.getProfileEntity),
             Promise.resolve(profileEntity)
           ],
           [
             matchers.call.fn(
-              EntitesOperator.prototype.deployEntityWithoutNewFiles
+              EntitiesOperator.prototype.deployEntityWithoutNewFiles
             ),
             Promise.reject(new Error(errorMessage))
           ]
@@ -54,7 +54,7 @@ describe('when handling the action to set the profile avatar description', () =>
   })
 
   describe('when the deployment is successful', () => {
-    it('should deploy the new entity with the decription and the version changed', () => {
+    it('should deploy the new entity with the description and the version changed', () => {
       const newAvatar = {
         ...profileEntity.metadata.avatars[0],
         version: profileEntity.metadata.avatars[0].version + 1,
@@ -74,7 +74,7 @@ describe('when handling the action to set the profile avatar description', () =>
       return expectSaga(profileSagas)
         .provide([
           [
-            matchers.call.fn(EntitesOperator.prototype.getProfileEntity),
+            matchers.call.fn(EntitiesOperator.prototype.getProfileEntity),
             dynamicDeepParametersEquality(
               [address],
               Promise.resolve(profileEntity)
@@ -82,7 +82,7 @@ describe('when handling the action to set the profile avatar description', () =>
           ],
           [
             matchers.call.fn(
-              EntitesOperator.prototype.deployEntityWithoutNewFiles
+              EntitiesOperator.prototype.deployEntityWithoutNewFiles
             ),
             dynamicDeepParametersEquality(
               [newEntity, EntityType.PROFILE, address],

@@ -1,8 +1,8 @@
 import { takeLatest, put, call, takeEvery } from 'redux-saga/effects'
 import { Avatar } from '@dcl/schemas'
-import { Entity, EntityType } from 'dcl-catalyst-commons/dist/types'
+import { EntityType } from 'dcl-catalyst-commons/dist/types'
 import { PeerAPI } from '../../lib/peer'
-import { EntitesOperator } from '../../lib/entities'
+import { EntitiesOperator } from '../../lib/entities'
 import { ProfileEntity } from '../../lib/types'
 import {
   ConnectWalletSuccessAction,
@@ -29,7 +29,7 @@ type CreateProfileSagaOptions = {
 
 export function createProfileSaga({ peerUrl }: CreateProfileSagaOptions) {
   const peerApi = new PeerAPI(peerUrl)
-  const entities = new EntitesOperator(peerUrl)
+  const entities = new EntitiesOperator(peerUrl)
 
   function* profileSaga() {
     yield takeEvery(LOAD_PROFILE_REQUEST, handleLoadProfileRequest)
@@ -76,23 +76,25 @@ export function createProfileSaga({ peerUrl }: CreateProfileSagaOptions) {
         address
       )
 
-      // Does a profile always have an avatar?
       const newAvatar: Avatar = {
         ...entity.metadata.avatars[0],
         version: entity.metadata.avatars[0].version + 1,
         description: description
       }
 
-      const newEntity: Entity = {
-        ...entity,
-        metadata: {
-          ...entity.metadata,
-          avatars: [newAvatar, ...entity.metadata.avatars.slice(1)]
-        }
+      const profileMetadata: Profile = {
+        ...entity.metadata,
+        avatars: [newAvatar, ...entity.metadata.avatars.slice(1)]
       }
+
+      const newProfileEntity: ProfileEntity = {
+        ...entity,
+        metadata: profileMetadata
+      }
+
       yield call(
         [entities, 'deployEntityWithoutNewFiles'],
-        newEntity,
+        newProfileEntity,
         EntityType.PROFILE,
         action.payload.address
       )

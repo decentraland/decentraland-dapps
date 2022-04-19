@@ -4,47 +4,20 @@ import { Eth } from 'web3x/eth'
 import { Address } from 'web3x/address'
 import {
   CatalystClient,
-  DeploymentBuilder,
-  DeploymentPreparationData
+  BuildEntityWithoutFilesOptions
 } from 'dcl-catalyst-client'
 import { Entity, EntityType } from 'dcl-catalyst-commons'
 import { getConnectedProvider } from './eth'
 import { ProfileEntity } from './types'
 import { PeerAPI } from './peer'
 
-export class EntitesOperator {
+export class EntitiesOperator {
   private readonly catalystClient: CatalystClient
   private readonly peerAPI: PeerAPI
 
   constructor(peerUrl: string) {
-    this.catalystClient = new CatalystClient(peerUrl, 'builder')
+    this.catalystClient = new CatalystClient({ catalystUrl: peerUrl })
     this.peerAPI = new PeerAPI(peerUrl)
-  }
-
-  /**
-   * Builds the entity deployment preparation data by preparing
-   * the contents of an entity that doesn't need new files to be
-   * added.
-   *
-   * @param entity - The entity that will be pre-processed prior to its deployment.
-   * @param type - The entity type that will be prepared to be deployed.
-   * @param address - The address of the owner of the entity to be deployed.
-   */
-  private async buildDeployPreparationDataWithoutFiles(
-    entity: Entity,
-    type: EntityType,
-    address: string
-  ): Promise<DeploymentPreparationData> {
-    const content: Map<string, string> = new Map(
-      (entity.content || []).map(({ file, hash }) => [file, hash])
-    )
-
-    return DeploymentBuilder.buildEntityWithoutNewFiles(
-      type,
-      [address],
-      content,
-      entity.metadata
-    )
   }
 
   /**
@@ -109,19 +82,24 @@ export class EntitesOperator {
     entityType: EntityType,
     address: string
   ): Promise<any> {
-    const deployPreparationData: DeploymentPreparationData = await this.buildDeployPreparationDataWithoutFiles(
-      entity,
-      entityType,
-      address
+    const options: BuildEntityWithoutFilesOptions = {
+      type: entityType,
+      pointers: [address],
+      metadata: entity.metadata,
+      timestamp: Date.now()
+    }
+
+    const entityToDeploy = await this.catalystClient.buildEntityWithoutNewFiles(
+      options
     )
 
     const authChain: AuthChain = await this.authenticateEntityDeployment(
       address,
-      deployPreparationData.entityId
+      entityToDeploy.entityId
     )
 
     return this.catalystClient.deployEntity({
-      ...deployPreparationData,
+      ...entityToDeploy,
       authChain
     })
   }

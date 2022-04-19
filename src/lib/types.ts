@@ -1,12 +1,10 @@
-import { Avatar } from '@dcl/schemas'
+import { Profile } from '@dcl/schemas'
 import { Entity } from 'dcl-catalyst-commons/dist/types'
 
 declare module 'react-intl'
 
 export type ProfileEntity = Omit<Entity, 'metadata'> & {
-  metadata: {
-    avatars: Avatar[]
-  }
+  metadata: Profile
 }
 
 export interface DataByKey<T> {
