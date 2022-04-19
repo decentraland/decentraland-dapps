@@ -9,7 +9,7 @@ export class PeerAPI extends BaseAPI {
 
   constructor(url: string) {
     super(url)
-    this.lambdasClient = new LambdasClient(`${url}/lambdas`)
+    this.lambdasClient = new LambdasClient({ lambdasUrl: `${url}/lambdas` })
   }
 
   /**
