@@ -1,5 +1,8 @@
 import { profile } from '../../tests/profileMocks'
-import { setProfileAvatarDescriptionRequest } from './actions'
+import {
+  setProfileAvatarAliasRequest,
+  setProfileAvatarDescriptionRequest
+} from './actions'
 import { INITIAL_STATE } from './reducer'
 import {
   getData,
@@ -8,7 +11,8 @@ import {
   getLoading,
   getProfileOfAddress,
   isLoadingSetProfileAvatarDescription,
-  getProfileError
+  getProfileError,
+  isLoadingSetProfileAvatarAlias
 } from './selectors'
 
 let profileState: any
@@ -56,6 +60,40 @@ describe('Profile selectors', () => {
 
       it('should return false', () => {
         expect(isLoadingSetProfileAvatarDescription(profileState)).toBe(false)
+      })
+    })
+  })
+
+  describe('when getting if the set profile avatar alias request is on going', () => {
+    describe('when it is on going', () => {
+      beforeEach(() => {
+        profileState = {
+          ...profileState,
+          profile: {
+            ...profileState.profile,
+            loading: [setProfileAvatarAliasRequest('anAlias', 'aDescription')]
+          }
+        }
+      })
+
+      it('should return true', () => {
+        expect(isLoadingSetProfileAvatarAlias(profileState)).toBe(true)
+      })
+    })
+
+    describe("when it isn't on going", () => {
+      beforeEach(() => {
+        profileState = {
+          ...profileState,
+          profile: {
+            ...profileState.profile,
+            loading: []
+          }
+        }
+      })
+
+      it('should return false', () => {
+        expect(isLoadingSetProfileAvatarAlias(profileState)).toBe(false)
       })
     })
   })
