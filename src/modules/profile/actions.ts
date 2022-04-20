@@ -18,6 +18,40 @@ export type LoadProfileRequestAction = ReturnType<typeof loadProfileRequest>
 export type LoadProfileSuccessAction = ReturnType<typeof loadProfileSuccess>
 export type LoadProfileFailureAction = ReturnType<typeof loadProfileFailure>
 
+// Set profile alias
+
+export const SET_PROFILE_AVATAR_ALIAS_REQUEST =
+  '[Request] Set profile avatar alias'
+export const SET_PROFILE_AVATAR_ALIAS_SUCCESS =
+  '[Success] Set profile avatar alias'
+export const SET_PROFILE_AVATAR_ALIAS_FAILURE =
+  '[Failure] Set profile avatar alias'
+
+export const setProfileAvatarAliasRequest = (address: string, alias: string) =>
+  action(SET_PROFILE_AVATAR_ALIAS_REQUEST, { address, alias })
+export const setProfileAvatarAliasSuccess = (
+  address: string,
+  alias: string,
+  version: number
+) =>
+  action(SET_PROFILE_AVATAR_ALIAS_SUCCESS, {
+    address,
+    alias,
+    version
+  })
+export const setProfileAvatarAliasFailure = (address: string, error: string) =>
+  action(SET_PROFILE_AVATAR_ALIAS_FAILURE, { address, error })
+
+export type SetProfileAvatarAliasRequestAction = ReturnType<
+  typeof setProfileAvatarAliasRequest
+>
+export type SetProfileAvatarAliasSuccessAction = ReturnType<
+  typeof setProfileAvatarAliasSuccess
+>
+export type SetProfileAvatarAliasFailureAction = ReturnType<
+  typeof setProfileAvatarAliasFailure
+>
+
 // Set profile description
 
 export const SET_PROFILE_AVATAR_DESCRIPTION_REQUEST =

@@ -19,7 +19,11 @@ import {
   SetProfileAvatarDescriptionRequestAction,
   setProfileAvatarDescriptionSuccess,
   setProfileAvatarDescriptionFailure,
-  SET_PROFILE_AVATAR_DESCRIPTION_REQUEST
+  SET_PROFILE_AVATAR_DESCRIPTION_REQUEST,
+  SetProfileAvatarAliasRequestAction,
+  SET_PROFILE_AVATAR_ALIAS_REQUEST,
+  setProfileAvatarAliasFailure,
+  setProfileAvatarAliasSuccess
 } from './actions'
 import { Profile } from './types'
 
@@ -37,6 +41,7 @@ export function createProfileSaga({ peerUrl }: CreateProfileSagaOptions) {
       SET_PROFILE_AVATAR_DESCRIPTION_REQUEST,
       handleSetProfileDescription
     )
+    yield takeEvery(SET_PROFILE_AVATAR_ALIAS_REQUEST, handleSetAlias)
     yield takeLatest(CONNECT_WALLET_SUCCESS, handleWallet)
     yield takeLatest(CHANGE_ACCOUNT, handleWallet)
   }
@@ -57,6 +62,20 @@ export function createProfileSaga({ peerUrl }: CreateProfileSagaOptions) {
     yield put(loadProfileRequest(action.payload.wallet.address))
   }
 
+  function* handleSetAlias(action: SetProfileAvatarAliasRequestAction) {
+    const { address, alias } = action.payload
+    try {
+      const newAvatar: Avatar = yield updateProfileAvatarWithoutNewFiles(
+        address,
+        { hasClaimedName: true, name: alias }
+      )
+
+      yield put(setProfileAvatarAliasSuccess(address, alias, newAvatar.version))
+    } catch (error) {
+      yield put(setProfileAvatarAliasFailure(address, error.message))
+    }
+  }
+
   /**
    * Handles the action to set the description of a user's profile.
    * This handler gets the first profile entity of a given address
@@ -71,32 +90,9 @@ export function createProfileSaga({ peerUrl }: CreateProfileSagaOptions) {
     try {
       const { address, description } = action.payload
 
-      const entity: ProfileEntity = yield call(
-        [entities, 'getProfileEntity'],
-        address
-      )
-
-      const newAvatar: Avatar = {
-        ...entity.metadata.avatars[0],
-        version: entity.metadata.avatars[0].version + 1,
-        description: description
-      }
-
-      const profileMetadata: Profile = {
-        ...entity.metadata,
-        avatars: [newAvatar, ...entity.metadata.avatars.slice(1)]
-      }
-
-      const newProfileEntity: ProfileEntity = {
-        ...entity,
-        metadata: profileMetadata
-      }
-
-      yield call(
-        [entities, 'deployEntityWithoutNewFiles'],
-        newProfileEntity,
-        EntityType.PROFILE,
-        action.payload.address
+      const newAvatar: Avatar = yield updateProfileAvatarWithoutNewFiles(
+        address,
+        { description: description }
       )
 
       yield put(
@@ -114,6 +110,42 @@ export function createProfileSaga({ peerUrl }: CreateProfileSagaOptions) {
         )
       )
     }
+  }
+
+  function* updateProfileAvatarWithoutNewFiles(
+    address: string,
+    changes: Partial<Avatar>
+  ) {
+    const entity: ProfileEntity = yield call(
+      [entities, entities.getProfileEntity],
+      address
+    )
+
+    const newAvatar: Avatar = {
+      ...entity.metadata.avatars[0],
+      ...changes,
+      version: entity.metadata.avatars[0].version + 1
+    }
+
+    const profileMetadata: Profile = {
+      ...entity.metadata,
+      avatars: [newAvatar, ...entity.metadata.avatars.slice(1)]
+    }
+
+    const newProfileEntity: ProfileEntity = {
+      ...entity,
+      metadata: profileMetadata
+    }
+
+    yield call(
+      [entities, 'deployEntityWithoutNewFiles'],
+      newProfileEntity,
+      EntityType.PROFILE,
+      address,
+      address
+    )
+
+    return newAvatar
   }
 
   return profileSaga

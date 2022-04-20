@@ -80,11 +80,12 @@ export class EntitiesOperator {
   async deployEntityWithoutNewFiles(
     entity: Entity,
     entityType: EntityType,
+    pointer: string,
     address: string
   ): Promise<any> {
     const options: BuildEntityWithoutFilesOptions = {
       type: entityType,
-      pointers: [address],
+      pointers: [pointer],
       metadata: entity.metadata,
       timestamp: Date.now()
     }
