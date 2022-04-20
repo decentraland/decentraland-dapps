@@ -1,17 +1,22 @@
+import { Avatar } from '@dcl/schemas'
+import { profile } from '../../tests/profileMocks'
+import { loadingReducer } from '../loading/reducer'
 import {
   changeProfile,
   clearProfileError,
   loadProfileFailure,
   loadProfileRequest,
   loadProfileSuccess,
+  setProfileAvatarAliasFailure,
+  setProfileAvatarAliasRequest,
+  setProfileAvatarAliasSuccess,
   setProfileAvatarDescriptionFailure,
   setProfileAvatarDescriptionRequest,
   setProfileAvatarDescriptionSuccess
 } from './actions'
-import { INITIAL_STATE, profileReducer } from './reducer'
-import { profile } from '../../tests/profileMocks'
-import { loadingReducer } from '../loading/reducer'
+import { INITIAL_STATE, profileReducer, ProfileState } from './reducer'
 
+const alias = 'anAlias'
 const address = 'anAddress'
 const error = 'anError'
 const description = 'aDescription'
@@ -19,6 +24,7 @@ const version = 1234
 
 const requestActions = [
   setProfileAvatarDescriptionRequest(address, 'aDescription'),
+  setProfileAvatarAliasRequest(address, alias),
   loadProfileRequest(address)
 ]
 
@@ -44,6 +50,10 @@ const failureActions = [
   {
     request: setProfileAvatarDescriptionRequest(address, 'aDescription'),
     failure: setProfileAvatarDescriptionFailure(address, error)
+  },
+  {
+    request: setProfileAvatarAliasRequest(address, alias),
+    failure: setProfileAvatarAliasFailure(address, error)
   },
   {
     request: loadProfileRequest(address),
@@ -97,7 +107,7 @@ describe('when reducing the action that signals a successful profile avatar desc
       description,
       version
     )
-    const initialState = {
+    const initialState: ProfileState = {
       ...INITIAL_STATE,
       data: {
         ...INITIAL_STATE.data,
@@ -106,10 +116,47 @@ describe('when reducing the action that signals a successful profile avatar desc
       loading: loadingReducer([], request)
     }
 
-    const expectedAvatar = {
+    const expectedAvatar: Avatar = {
       ...initialState.data[address].avatars[0],
       version,
       description
+    }
+
+    expect(profileReducer(initialState, success)).toEqual({
+      ...initialState,
+      loading: [],
+      data: {
+        ...initialState.data,
+        [address]: {
+          ...profile,
+          avatars: [
+            expectedAvatar,
+            ...initialState.data[address].avatars.slice(1)
+          ]
+        }
+      }
+    })
+  })
+})
+
+describe('when reducing the action that signals a successful profile avatar alias change', () => {
+  it('should return a state with the avatar description and version changed and the loading state cleared', () => {
+    const request = setProfileAvatarAliasRequest(address, alias)
+    const success = setProfileAvatarAliasSuccess(address, alias, version)
+    const initialState: ProfileState = {
+      ...INITIAL_STATE,
+      data: {
+        ...INITIAL_STATE.data,
+        [address]: profile
+      },
+      loading: loadingReducer([], request)
+    }
+
+    const expectedAvatar: Avatar = {
+      ...initialState.data[address].avatars[0],
+      version,
+      hasClaimedName: true,
+      name: alias
     }
 
     expect(profileReducer(initialState, success)).toEqual({

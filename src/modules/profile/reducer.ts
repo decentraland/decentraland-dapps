@@ -16,7 +16,13 @@ import {
   SetProfileAvatarDescriptionFailureAction,
   SET_PROFILE_AVATAR_DESCRIPTION_FAILURE,
   CLEAR_PROFILE_ERROR,
-  ClearProfileErrorAction
+  ClearProfileErrorAction,
+  SET_PROFILE_AVATAR_ALIAS_SUCCESS,
+  SET_PROFILE_AVATAR_ALIAS_FAILURE,
+  SET_PROFILE_AVATAR_ALIAS_REQUEST,
+  SetProfileAvatarAliasFailureAction,
+  SetProfileAvatarAliasRequestAction,
+  SetProfileAvatarAliasSuccessAction
 } from './actions'
 
 export type ProfileState = {
@@ -40,6 +46,9 @@ export type ProfileReducerAction =
   | SetProfileAvatarDescriptionSuccessAction
   | SetProfileAvatarDescriptionFailureAction
   | ClearProfileErrorAction
+  | SetProfileAvatarAliasRequestAction
+  | SetProfileAvatarAliasSuccessAction
+  | SetProfileAvatarAliasFailureAction
 
 export const profileReducer = (
   state = INITIAL_STATE,
@@ -47,6 +56,7 @@ export const profileReducer = (
 ): ProfileState => {
   switch (action.type) {
     case SET_PROFILE_AVATAR_DESCRIPTION_REQUEST:
+    case SET_PROFILE_AVATAR_ALIAS_REQUEST:
     case LOAD_PROFILE_REQUEST: {
       return {
         ...state,
@@ -55,11 +65,33 @@ export const profileReducer = (
       }
     }
     case SET_PROFILE_AVATAR_DESCRIPTION_FAILURE:
+    case SET_PROFILE_AVATAR_ALIAS_FAILURE:
     case LOAD_PROFILE_FAILURE: {
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
         error: action.payload.error
+      }
+    }
+    case SET_PROFILE_AVATAR_ALIAS_SUCCESS: {
+      const { address, alias, version } = action.payload
+      const newAvatar = {
+        ...state.data[address].avatars[0],
+        hasClaimedName: true,
+        version,
+        name: alias
+      }
+
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          [address]: {
+            ...state.data[address],
+            avatars: [newAvatar, ...state.data[address].avatars.slice(1)]
+          }
+        },
+        loading: loadingReducer(state.loading, action)
       }
     }
     case SET_PROFILE_AVATAR_DESCRIPTION_SUCCESS: {
