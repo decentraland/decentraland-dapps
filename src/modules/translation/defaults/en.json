@@ -92,6 +92,10 @@
           "title": "Invalid address",
           "body": "The contract address is not available for meta-transactions. You can switch your network to Polygon and send a regular transaction."
         },
+        "sale_price_too_low_error": {
+          "title": "Price too low",
+          "body": "The price is too low for this meta-transaction. You can switch your network to Polygon and send a regular transaction."
+        },
         "unknown_error": {
           "title": "Something went wrong",
           "body": "There was an unexpected error sending the meta-transaction. You can switch your network to Polygon and try sending a regular transaction."

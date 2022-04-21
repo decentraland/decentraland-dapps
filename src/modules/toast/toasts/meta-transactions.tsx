@@ -38,6 +38,22 @@ export function getInvalidAddressErrorToast(): Omit<Toast, 'id'> {
     timeout: 30000
   }
 }
+export function getSalePriceTooLowErrorToast(): Omit<Toast, 'id'> {
+  return {
+    type: ToastType.ERROR,
+    title: t('@dapps.toasts.meta_transactions.sale_price_too_low_error.title'),
+    body: (
+      <MetaTransactionError
+        text={
+          <T id="@dapps.toasts.meta_transactions.sale_price_too_low_error.body" />
+        }
+        learnMoreLink={transactionsInPolygonDocs}
+      />
+    ),
+    closable: true,
+    timeout: 30000
+  }
+}
 
 export function getUnknownErrorToast(): Omit<Toast, 'id'> {
   return {

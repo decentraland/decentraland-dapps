@@ -85,6 +85,10 @@
           "title": "Adresse invalide",
           "body": "L'adresse du contrat n'est pas disponible pour les méta-transactions. Vous pouvez basculer votre réseau vers Polygon et envoyer une transaction régulière."
         },
+        "sale_price_too_low_error": {
+          "title": "Prix trop bas",
+          "body": "Le prix est trop bas pour cette méta-transaction. Vous pouvez basculer votre réseau vers Polygon et envoyer une transaction régulière."
+        },
         "unknown_error": {
           "title": "Quelque chose s'est mal passé",
           "body": "Une erreur inattendue s'est produite lors de l'envoi de la méta-transaction. Vous pouvez basculer votre réseau vers Polygon et essayer d'envoyer une transaction normale."
