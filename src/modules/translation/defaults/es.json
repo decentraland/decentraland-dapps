@@ -92,6 +92,10 @@
           "title": "Dirección inválida",
           "body": "La dirección del contrato no está soportada para hacer meta-transacciones. Puedes cambiar la red a Polygon y enviar una transacción común."
         },
+        "sale_price_too_low_error": {
+          "title": "Precio muy bajo",
+          "body": "El precio es demasiado bajo para esta meta-transacción. Puedes cambiar la red a Polygon y enviar una transacción común."
+        },
         "unknown_error": {
           "title": "Ha ocurrido un error",
           "body": "Algo salio mal enviando la meta-transacción. Puedes cambiar la red a Polygon e intentar mandar una transacción común."

@@ -7,6 +7,7 @@ import { switchNetworkSuccess } from '../wallet/actions'
 import {
   getContractAccountErrorToast,
   getInvalidAddressErrorToast,
+  getSalePriceTooLowErrorToast,
   getUnknownErrorToast
 } from './toasts/meta-transactions'
 import {
@@ -62,6 +63,7 @@ describe('when handling a meta-transaction error', () => {
         .silentRun()
     })
   })
+
   describe('when the error code is INVALID_ADDRESS', () => {
     it('should show an invalid address error toast', () => {
       return expectSaga(handleMetaTransactionError, ErrorCode.INVALID_ADDRESS)
@@ -69,6 +71,7 @@ describe('when handling a meta-transaction error', () => {
         .silentRun()
     })
   })
+
   describe('when the error code is USER_DENIED', () => {
     it('should not show a toast', () => {
       return expectSaga(
@@ -77,6 +80,18 @@ describe('when handling a meta-transaction error', () => {
       ).silentRun()
     })
   })
+
+  describe('when the error code is SALE_PRICE_TOO_LOW', () => {
+    it('should show a sales price too low error toast', () => {
+      return expectSaga(
+        handleMetaTransactionError,
+        (ErrorCode as any).SALE_PRICE_TOO_LOW
+      )
+        .put(showToast(getSalePriceTooLowErrorToast()))
+        .silentRun()
+    })
+  })
+
   describe('when the error code is UNKNOWN', () => {
     it('should show an unknown error toast', () => {
       return expectSaga(handleMetaTransactionError, ErrorCode.UNKNOWN)

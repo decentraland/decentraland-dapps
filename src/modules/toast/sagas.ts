@@ -21,6 +21,7 @@ import { SWITCH_NETWORK_SUCCESS } from '../wallet/actions'
 import {
   getContractAccountErrorToast,
   getInvalidAddressErrorToast,
+  getSalePriceTooLowErrorToast,
   getUnknownErrorToast
 } from './toasts/meta-transactions'
 
@@ -81,6 +82,10 @@ export function* handleMetaTransactionError(code: ErrorCode) {
     }
     case ErrorCode.INVALID_ADDRESS: {
       yield put(showToast(getInvalidAddressErrorToast()))
+      break
+    }
+    case ErrorCode.SALE_PRICE_TOO_LOW: {
+      yield put(showToast(getSalePriceTooLowErrorToast()))
       break
     }
     case ErrorCode.USER_DENIED: {

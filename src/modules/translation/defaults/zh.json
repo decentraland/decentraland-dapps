@@ -92,6 +92,10 @@
           "title": "无效地址",
           "body": "合约地址不可用于元交易。您可以将您的网络切换到 Polygon 并发送常规交易。"
         },
+        "sale_price_too_low_error": {
+          "title": "价格太低了",
+          "body": "这个元交易的价格太低了。您可以将您的网络切换到 Polygon 并发送常规交易。"
+        },
         "unknown_error": {
           "title": "出了点问题",
           "body": "发送元交易时出现意外错误。您可以将网络切换到 Polygon 并尝试发送常规交易。"
