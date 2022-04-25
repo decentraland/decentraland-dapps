@@ -4,7 +4,7 @@
   "dependencies": {
     "@0xsequence/multicall": "^0.25.1",
     "@0xsequence/relayer": "^0.25.1",
-    "@dcl/schemas": "^4.3.0",
+    "@dcl/schemas": "^4.6.0",
     "@types/flat": "0.0.28",
     "@types/uuid": "^3.4.3",
     "axios": "^0.21.1",
@@ -64,7 +64,7 @@
     "validate-commit-message": "^3.0.1"
   },
   "peerDependencies": {
-    "@dcl/schemas": "^3.1.1",
+    "@dcl/schemas": "^4.6.0",
     "react": "^17.0.2",
     "react-redux": "^7.2.4",
     "redux": "^4.1.0",
