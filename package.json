@@ -12,7 +12,7 @@
     "dcl-catalyst-client": "^11.3.0",
     "dcl-catalyst-commons": "^8.2.0",
     "decentraland-connect": "^3.1.2",
-    "decentraland-transactions": "^1.34.0",
+    "decentraland-transactions": "^1.35.0",
     "decentraland-ui": "^3.29.0",
     "events": "^3.3.0",
     "flat": "^4.1.0",
