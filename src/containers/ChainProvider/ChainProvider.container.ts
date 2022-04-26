@@ -1,11 +1,7 @@
 import { connect } from 'react-redux'
-import { ProviderType } from '@dcl/schemas/dist/dapps/provider-type'
 import { getChainId } from '../../modules/wallet/selectors'
 import { getChainConfiguration } from '../../lib/chainConfiguration'
-import {
-  getConnectedProviderChainId,
-  getConnectedProviderType
-} from '../../lib/eth'
+import { getConnectedProviderChainId } from '../../lib/eth'
 import {
   MapStateProps,
   MapDispatchProps,
@@ -17,14 +13,12 @@ const mapState = (state: any): MapStateProps => {
   const chainId = getChainId(state) || null
   const network = chainId && getChainConfiguration(chainId).network
   const expectedChainId = getConnectedProviderChainId()
-  const providerType = getConnectedProviderType()
   const config = expectedChainId && getChainConfiguration(expectedChainId)
   const isConnected = !!chainId && !!config
   const isSupported = isConnected && chainId === expectedChainId
   const isPartiallySupported =
     isConnected &&
     !isSupported &&
-    providerType !== ProviderType.WALLET_CONNECT &&
     Object.values(config!.networkMapping).some(
       mappedChainId => mappedChainId === chainId
     )

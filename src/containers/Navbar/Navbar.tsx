@@ -2,14 +2,13 @@ import * as React from 'react'
 
 import { Button } from 'decentraland-ui/dist/components/Button/Button'
 import { ModalNavigation } from 'decentraland-ui/dist/components/ModalNavigation/ModalNavigation'
-import { Navbar as NavbarComponent, NavbarI18N } from 'decentraland-ui/dist/components/Navbar/Navbar'
-import { ProviderType } from '@dcl/schemas/dist/dapps/provider-type'
-import { getChainName } from '@dcl/schemas/dist/dapps/chain-id'
 import {
-  getConnectedProviderChainId,
-  getConnectedProviderType
-} from '../../lib/eth'
-import { T, t } from '../../modules/translation/utils'
+  Navbar as NavbarComponent,
+  NavbarI18N
+} from 'decentraland-ui/dist/components/Navbar/Navbar'
+import { getChainName } from '@dcl/schemas/dist/dapps/chain-id'
+import { getConnectedProviderChainId } from '../../lib/eth'
+import { T } from '../../modules/translation/utils'
 import Modal from '../../containers/Modal'
 import ChainProvider from '../ChainProvider'
 import { NavbarProps } from './Navbar.types'
@@ -50,7 +49,6 @@ export default class Navbar extends React.PureComponent<NavbarProps> {
       onAcceptNetworkPartialSupport
     } = this.props
     const expectedChainName = getChainName(getConnectedProviderChainId()!)
-    const providerType = getConnectedProviderType()
     return (
       <>
         <NavbarComponent {...this.props} i18n={this.getTranslations()} />
@@ -80,20 +78,14 @@ export default class Navbar extends React.PureComponent<NavbarProps> {
                   )}
                 </Modal.Content>
                 <Modal.Actions>
-                  {providerType === ProviderType.WALLET_CONNECT ? (
-                    <Button primary onClick={this.handleSignOut}>
-                      {t('@dapps.navbar.wrong_network.sign_out')}
-                    </Button>
-                  ) : (
-                    <Button primary onClick={this.handleSwitchNetwork}>
-                      <T
-                        id="@dapps.navbar.wrong_network.switch_button"
-                        values={{
-                          chainName: <b>{expectedChainName}</b>
-                        }}
-                      />
-                    </Button>
-                  )}
+                  <Button primary onClick={this.handleSwitchNetwork}>
+                    <T
+                      id="@dapps.navbar.wrong_network.switch_button"
+                      values={{
+                        chainName: <b>{expectedChainName}</b>
+                      }}
+                    />
+                  </Button>
                 </Modal.Actions>
               </Modal>
             ) : isPartiallySupported ? (
