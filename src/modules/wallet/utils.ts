@@ -143,11 +143,18 @@ export async function sendTransaction(...args: any[]) {
     }
 
     // get current chain id
-    const chainIdHex = await connectedProvider.request({
+    const providerChainId = (await connectedProvider.request({
       method: 'eth_chainId',
       params: []
-    })
-    const chainId = parseInt(chainIdHex as string, 16)
+    })) as string | number
+
+    let chainId: number
+
+    if (typeof providerChainId === 'string') {
+      chainId = parseInt(providerChainId as string, 16)
+    } else {
+      chainId = providerChainId
+    }
 
     // get a provider for the target network
     const targetNetworkProvider = await getTargetNetworkProvider(
