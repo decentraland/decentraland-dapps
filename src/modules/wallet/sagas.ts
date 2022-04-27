@@ -52,6 +52,7 @@ import {
 import {
   buildWallet,
   getAddEthereumChainParameters,
+  getProviderChainId,
   getTransactionsApiUrl,
   setTransactionsApiUrl
 } from './utils'
@@ -201,10 +202,7 @@ function* handleSwitchNetworkRequest(action: SwitchNetworkRequestAction) {
           method: 'wallet_addEthereumChain',
           params: [getAddEthereumChainParameters(chainId)]
         })
-        const newChainId: string = yield call([provider, 'request'], {
-          method: 'eth_chainId',
-          params: []
-        })
+        const newChainId: string = yield call(getProviderChainId, provider)
         if (chainId !== parseInt(newChainId, 16)) {
           throw new Error('chainId did not change after adding network')
         }

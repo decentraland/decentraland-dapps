@@ -17,6 +17,7 @@ import {
 } from '../../lib/eth'
 import { getChainConfiguration } from '../../lib/chainConfiguration'
 import { AddEthereumChainParameters, Networks, Wallet } from './types'
+import { Provider } from 'decentraland-connect/dist'
 
 let TRANSACTIONS_API_URL = 'https://transactions-api.decentraland.co/v1'
 export const getTransactionsApiUrl = () => TRANSACTIONS_API_URL
@@ -142,19 +143,7 @@ export async function sendTransaction(...args: any[]) {
       throw new Error('Provider not connected')
     }
 
-    // get current chain id
-    const providerChainId = (await connectedProvider.request({
-      method: 'eth_chainId',
-      params: []
-    })) as string | number
-
-    let chainId: number
-
-    if (typeof providerChainId === 'string') {
-      chainId = parseInt(providerChainId as string, 16)
-    } else {
-      chainId = providerChainId
-    }
+    const chainId = await getProviderChainId(connectedProvider)
 
     // get a provider for the target network
     const targetNetworkProvider = await getTargetNetworkProvider(
@@ -256,4 +245,21 @@ export function getAddEthereumChainParameters(
         blockExplorerUrls: ['https://etherscan.io']
       }
   }
+}
+
+export async function getProviderChainId(provider: Provider) {
+  const providerChainId = (await provider.request({
+    method: 'eth_chainId',
+    params: []
+  })) as string | number
+
+  let chainId: number
+
+  if (typeof providerChainId === 'string') {
+    chainId = parseInt(providerChainId as string, 16)
+  } else {
+    chainId = providerChainId
+  }
+
+  return chainId
 }

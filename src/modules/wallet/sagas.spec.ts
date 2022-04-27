@@ -10,7 +10,7 @@ import {
   switchNetworkSuccess
 } from './actions'
 import { getConnectedProvider, getNetworkProvider } from '../../lib/eth'
-import { getAddEthereumChainParameters } from './utils'
+import { getAddEthereumChainParameters, getProviderChainId } from './utils'
 
 const walletSaga = createWalletSaga({ CHAIN_ID: 1 })
 
@@ -87,13 +87,7 @@ describe('Wallet sagas', () => {
                 }),
                 Promise.resolve()
               ],
-              [
-                call([mockProvider, 'request'], {
-                  method: 'eth_chainId',
-                  params: []
-                }),
-                Promise.resolve('0x1')
-              ]
+              [call(getProviderChainId, mockProvider), Promise.resolve('0x1')]
             ])
             .put(switchNetworkSuccess(ChainId.ETHEREUM_MAINNET))
             .dispatch(switchNetworkRequest(ChainId.ETHEREUM_MAINNET))
@@ -126,13 +120,7 @@ describe('Wallet sagas', () => {
                 }),
                 Promise.resolve()
               ],
-              [
-                call([mockProvider, 'request'], {
-                  method: 'eth_chainId',
-                  params: []
-                }),
-                Promise.resolve('0x2')
-              ]
+              [call(getProviderChainId, mockProvider), Promise.resolve('0x2')]
             ])
             .put(
               switchNetworkFailure(
