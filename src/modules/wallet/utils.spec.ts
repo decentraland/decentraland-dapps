@@ -5,7 +5,11 @@ import {
   mockedContract,
   buildMockedNetworkProvider
 } from '../../tests/transactions'
-import { getTransactionsApiUrl, sendTransaction } from './utils'
+import {
+  getProviderChainId,
+  getTransactionsApiUrl,
+  sendTransaction
+} from './utils'
 
 jest.mock('../../lib/eth')
 jest.mock('decentraland-transactions')
@@ -315,6 +319,26 @@ describe('when sending a transaction', () => {
           }
         )
       })
+    })
+  })
+})
+
+describe('when getting the chain id from a provider', () => {
+  describe('when the provider returns a string', () => {
+    it('should parse the string (assuming its a hex) to a number', async () => {
+      const provider = buildMockedNetworkProvider({
+        ethChainId: Promise.resolve('0x13881')
+      })
+      expect(await getProviderChainId(provider as any)).toBe(80001)
+    })
+  })
+
+  describe('when the provider returns a number', () => {
+    it('should return the number', async () => {
+      const provider = buildMockedNetworkProvider({
+        ethChainId: Promise.resolve(80001)
+      })
+      expect(await getProviderChainId(provider as any)).toBe(80001)
     })
   })
 })
