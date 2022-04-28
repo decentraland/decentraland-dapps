@@ -17,7 +17,7 @@ import {
 } from '../../lib/eth'
 import { getChainConfiguration } from '../../lib/chainConfiguration'
 import { AddEthereumChainParameters, Networks, Wallet } from './types'
-import { Provider } from 'decentraland-connect/dist'
+import { Provider } from 'decentraland-connect'
 
 let TRANSACTIONS_API_URL = 'https://transactions-api.decentraland.co/v1'
 export const getTransactionsApiUrl = () => TRANSACTIONS_API_URL
