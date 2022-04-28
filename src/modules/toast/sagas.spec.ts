@@ -85,7 +85,7 @@ describe('when handling a meta-transaction error', () => {
     it('should show a sales price too low error toast', () => {
       return expectSaga(
         handleMetaTransactionError,
-        (ErrorCode as any).SALE_PRICE_TOO_LOW
+        ErrorCode.SALE_PRICE_TOO_LOW
       )
         .put(showToast(getSalePriceTooLowErrorToast()))
         .silentRun()
