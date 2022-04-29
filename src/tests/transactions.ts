@@ -46,7 +46,7 @@ export const mockedContract = {
 }
 
 type buildNetworkProviderOptions = {
-  ethChainId?: Promise<string>
+  ethChainId?: Promise<string | number>
   ethAccounts?: Promise<string[]>
   ethEstimateGas?: Promise<string>
   ethSendTransaction?: Promise<string>
