@@ -3,7 +3,7 @@
 export const MAXIMUM_FRACTION_DIGITS = 2
 
 /**
- * Gets value and tries to parse it with the supplied amount of decimals.
+ * Parses the mana value with the supplied amount of decimals. It uses MAXIMUM_FRACTION_DIGITS as a default (recommended).
  * It'll return the value as is if it's an invalid number or it doesn't have more than decimals than the upper limit.
  */
 export function toFixedMANAValue(
