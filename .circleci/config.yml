@@ -16,7 +16,7 @@ jobs:
           command: npm ci
       - run:
           name: Run tests
-          command: npm run test:coverage
+          command: npm run test
       - save_cache:
           paths:
             - node_modules
