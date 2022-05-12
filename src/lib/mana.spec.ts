@@ -1,7 +1,7 @@
 import { toFixedMANAValue } from './mana'
 
-describe.skip('when formatting the price', () => {
-  describe('when formatting alphanumeric text', () => {
+describe('when formatting the price', () => {
+  describe.skip('when formatting alphanumeric text', () => {
     it('should return the supplied value', () => {
       expect(toFixedMANAValue('abc')).toBe('abc')
     })
