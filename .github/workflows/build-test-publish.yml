@@ -1,0 +1,22 @@
+name: build-test-publish
+
+on: [push]
+
+jobs:
+  build-test-publish:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Test
+        run: npm test
+      - name: Publish
+        if: github.ref == 'refs/heads/master'
+        run: npm run semantic-release

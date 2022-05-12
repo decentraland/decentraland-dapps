@@ -1,75 +1,16 @@
-version: 2
+version: 2.1
+# Deprecated, usign github actions instead.
+# Using example from https://circleci.com/docs/2.0/hello-world/#echo-hello-world-on-linux as a stub
 jobs:
-  test:
+  stub:
     docker:
-      - image: cimg/node:14.17.4
-
-    working_directory: /tmp/decentraland-dapps
-
+      - image: cimg/node:17.2.0
     steps:
       - checkout
-      - run:
-          name: Update NPM
-          command: sudo npm i -g npm@^7
-      - run:
-          name: Install node dependencies
-          command: npm ci
-      - run:
-          name: Run tests
-          command: npm run test
-      - save_cache:
-          paths:
-            - node_modules
-          key: dependencies-{{ checksum "package-lock.json" }}
-
-  build:
-    docker:
-      - image: cimg/node:14.17.4
-
-    working_directory: /tmp/decentraland-dapps
-
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - dependencies-{{ checksum "package-lock.json" }}
-      - run:
-          name: Build library
-          command: npm run build
-      - save_cache:
-          paths:
-            - dist
-          key: dist-{{ .Branch }}-{{ .Revision }}
-
-  release:
-    docker:
-      - image: cimg/node:14.17.4
-
-    working_directory: /tmp/decentraland-dapps
-
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - dist-{{ .Branch }}-{{ .Revision }}
-      - restore_cache:
-          keys:
-            - dependencies-{{ checksum "package-lock.json" }}
-      - run:
-          name: Semantic release
-          command: npm run semantic-release
+      - run: echo "hello world"
 
 workflows:
-  version: 2
-  test-build-release:
+  version: 2.1
+  stub:
     jobs:
-      - test
-      - build:
-          requires:
-            - test
-      - release:
-          requires:
-            - build
-          filters:
-            branches:
-              only: master
+      - stub
