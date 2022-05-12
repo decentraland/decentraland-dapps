@@ -1,25 +1,25 @@
 import { toFixedMANAValue } from './mana'
 
-describe('when formatting the price', () => {
-  describe.skip('when formatting alphanumeric text', () => {
+describe.skip('when formatting the price', () => {
+  describe('when formatting alphanumeric text', () => {
     it('should return the supplied value', () => {
       expect(toFixedMANAValue('abc')).toBe('abc')
     })
   })
 
-  describe.skip('when formatting an invalid number', () => {
+  describe('when formatting an invalid number', () => {
     it('should return the supplied value', () => {
       expect(toFixedMANAValue('1.bc')).toBe('1.bc')
     })
   })
 
-  describe.skip('when formatting a valid integer number', () => {
+  describe('when formatting a valid integer number', () => {
     it('should return the supplied value', () => {
       expect(toFixedMANAValue('1')).toBe('1')
     })
   })
 
-  describe.skip('when formatting a valid float number', () => {
+  describe('when formatting a valid float number', () => {
     describe('when the number has 2 or less decimal places', () => {
       it('should return the supplied value', () => {
         expect(toFixedMANAValue('51.3')).toBe('51.3')
