@@ -18,5 +18,5 @@ jobs:
       - name: Test
         run: npm test
       - name: Publish
-        if: github.ref == 'refs/heads/feat/gh-actions'
+        if: github.ref == 'refs/heads/master'
         run: echo "Atahualpa Yupanqui"
