@@ -1,5 +1,5 @@
 import { takeLatest, takeEvery, ForkEffect } from 'redux-saga/effects'
-import { getAnalytics } from './utils'
+import { getAnalytics, trackConnectWallet } from './utils'
 import {
   CONNECT_WALLET_SUCCESS,
   ConnectWalletSuccessAction
@@ -32,8 +32,8 @@ function handleConnectWalletSuccess(action: ConnectWalletSuccessAction) {
     // Track useful connection data.
     // Not using the add function from utils to track the action automatically because
     // the analytics middleware will call this before the identify.
-    analytics.track('Connect Wallet', {
-      nework: wallet.network,
+    trackConnectWallet({
+      network: wallet.network,
       chainId: wallet.chainId,
       providerType: wallet.providerType
     })
