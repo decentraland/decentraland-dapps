@@ -21,7 +21,7 @@ const address = 'anAddress'
 const description = 'aDescription'
 const errorMessage = 'anError'
 
-describe.skip('when handling the action to set the profile avatar description', () => {
+describe('when handling the action to set the profile avatar description', () => {
   describe('when getting the profile entity fails', () => {
     it('should dispatch an action to signal that the request failed', () => {
       return expectSaga(profileSagas)
