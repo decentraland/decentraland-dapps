@@ -18,7 +18,7 @@ jobs:
       - name: Test
         run: npm test
       - name: Publish
-        if: github.ref == 'refs/heads/fix/github-actions'
+        if: github.ref == 'refs/heads/master'
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
