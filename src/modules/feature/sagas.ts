@@ -15,7 +15,7 @@ import { fetchFeatures, fetchFeaturesDelay } from './utils'
  * live without the need of refreshing the browser.
  * @param config.applications - Feature flags of all applications provided will be fetched.
  */
-export function* featureSagas(config: FeatureSagasConfig) {
+export function* featureSaga(config: FeatureSagasConfig) {
   yield takeEvery(FETCH_FEATURES_REQUEST, handleFetchFeaturesRequest)
   yield spawn(fetchFeaturesInLoop)
 
