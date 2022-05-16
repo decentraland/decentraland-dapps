@@ -7,17 +7,19 @@ import {
   FETCH_FEATURES_REQUEST
 } from './actions'
 import { Applications, Feature, FeatureSagasConfig } from './types'
-import { fetchFeatures, fetchFeaturesDelay } from './utils'
+import { fetchFeatures } from './utils'
 
 /**
  * Adding this to your sagas will constantly query feature flags for provided applications.
  * Results will be stored in redux and the implementing app will be able to react to this changes
  * live without the need of refreshing the browser.
- * @param config.applications - Feature flags of all applications provided will be fetched.
+ * @param config Object with information useful to the saga.
+ * @param config.applications Feature flags of all applications provided will be fetched.
+ * @param config.fetchDelay Time in millis between each poll to the feature flag service.
  */
 export function* featureSaga(config: FeatureSagasConfig) {
   yield takeEvery(FETCH_FEATURES_REQUEST, handleFetchFeaturesRequest)
-  yield spawn(fetchFeaturesInLoop)
+  yield spawn(fetchFeaturesInterval)
 
   function* handleFetchFeaturesRequest(action: FetchFeaturesRequestAction) {
     const { applications } = action.payload
@@ -34,11 +36,11 @@ export function* featureSaga(config: FeatureSagasConfig) {
     }
   }
 
-  function* fetchFeaturesInLoop() {
+  function* fetchFeaturesInterval() {
     while (true) {
-      const { applications } = config
+      const { applications, fetchDelay } = config
       yield put(fetchFeaturesRequest(applications))
-      yield delay(fetchFeaturesDelay)
+      yield delay(fetchDelay)
     }
   }
 }

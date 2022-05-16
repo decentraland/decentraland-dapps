@@ -28,4 +28,5 @@ export enum Applications {
 
 export type FeatureSagasConfig = {
   applications: Applications[]
+  fetchDelay: number
 }
