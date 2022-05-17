@@ -1,4 +1,5 @@
 import { AnyAction } from 'redux'
+import { Wallet } from '../wallet/types'
 import {
   AnalyticsAction,
   ActionType,
@@ -69,5 +70,17 @@ export function getAnalytics() {
 export function configure(params: { transformPayload?: TransformPayload }) {
   if (params.transformPayload) {
     transformPayload = params.transformPayload
+  }
+}
+
+/**
+ * Useful function for when you are not integrating the analytics module into your project
+ * and want to manually track this event the same way as if the saga was integrated.
+ */
+export function trackConnectWallet(props: Pick<Wallet, 'providerType'>) {
+  const analytics = getAnalytics()
+
+  if (analytics) {
+    analytics.track('Connect Wallet', props)
   }
 }
