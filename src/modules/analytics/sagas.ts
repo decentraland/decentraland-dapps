@@ -33,6 +33,7 @@ function handleConnectWalletSuccess(action: ConnectWalletSuccessAction) {
     // Not using the add function from utils to track the action automatically because
     // the analytics middleware will call this before the identify.
     trackConnectWallet({
+      address: wallet.address,
       providerType: wallet.providerType
     })
   }

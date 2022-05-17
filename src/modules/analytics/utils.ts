@@ -77,7 +77,9 @@ export function configure(params: { transformPayload?: TransformPayload }) {
  * Useful function for when you are not integrating the analytics module into your project
  * and want to manually track this event the same way as if the saga was integrated.
  */
-export function trackConnectWallet(props: Pick<Wallet, 'providerType'>) {
+export function trackConnectWallet(
+  props: Pick<Wallet, 'address' | 'providerType'>
+) {
   const analytics = getAnalytics()
 
   if (analytics) {
