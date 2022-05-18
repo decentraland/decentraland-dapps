@@ -9,7 +9,7 @@ export const getLoading = (state: any): LoadingState => getState(state).loading
 export const getError = (state: any): string | null => getState(state).error
 
 /**
- * Helper to get if a feature flag is whether enabled or disabled.
+ * Helper to get whether a feature flag is enabled or disabled.
  * It will first look into your env file for the feature flag, if it is not defined there,
  * it will look it in the requested and stored features data.
  * The env key will be determined from the application and the flag. For example, if the
