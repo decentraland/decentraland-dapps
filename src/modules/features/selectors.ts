@@ -48,13 +48,13 @@ export const getIsFeatureEnabled = (
     const appFeatures: ApplicationFeatures | undefined = features[app]
 
     if (!appFeatures) {
-      throw new Error(`Feature not found for application ${app}`)
+      throw new Error(`Application "${app}" not found`)
     }
 
     const flag: boolean | undefined = appFeatures.flags[`${app}-${feature}`]
 
     if (flag === undefined) {
-      throw new Error(`Flag ${feature} not found for application ${app}`)
+      throw new Error(`Feature "${feature}" not found for application "${app}"`)
     }
 
     return flag

@@ -13,11 +13,11 @@ export const getMockApplicationFeaturesRecord = () =>
     [ApplicationName.ACCOUNT]: {
       name: ApplicationName.ACCOUNT,
       flags: {
-        flag1: true,
-        flag2: false
+        [`${ApplicationName.ACCOUNT}-flag1`]: true,
+        [`${ApplicationName.ACCOUNT}-flag2`]: false
       },
       variants: {
-        flag1: {
+        [`${ApplicationName.ACCOUNT}-flag1`]: {
           enabled: true,
           name: 'name',
           payload: {
@@ -25,7 +25,7 @@ export const getMockApplicationFeaturesRecord = () =>
             value: 'value'
           }
         },
-        flag2: {
+        [`${ApplicationName.ACCOUNT}-flag2`]: {
           enabled: false,
           name: 'name',
           payload: {
@@ -38,11 +38,11 @@ export const getMockApplicationFeaturesRecord = () =>
     [ApplicationName.BUILDER]: {
       name: ApplicationName.BUILDER,
       flags: {
-        flag1: true,
-        flag2: false
+        [`${ApplicationName.BUILDER}-flag1`]: true,
+        [`${ApplicationName.BUILDER}-flag2`]: false
       },
       variants: {
-        flag1: {
+        [`${ApplicationName.BUILDER}-flag1`]: {
           enabled: true,
           name: 'name',
           payload: {
@@ -50,7 +50,7 @@ export const getMockApplicationFeaturesRecord = () =>
             value: 'value'
           }
         },
-        flag2: {
+        [`${ApplicationName.BUILDER}-flag2`]: {
           enabled: false,
           name: 'name',
           payload: {
