@@ -8,6 +8,60 @@ import {
 } from './actions'
 import { ApplicationFeatures, ApplicationName } from './types'
 
+export const getMockApplicationFeaturesRecord = () =>
+  ({
+    [ApplicationName.ACCOUNT]: {
+      name: ApplicationName.ACCOUNT,
+      flags: {
+        flag1: true,
+        flag2: false
+      },
+      variants: {
+        flag1: {
+          enabled: true,
+          name: 'name',
+          payload: {
+            type: 'type',
+            value: 'value'
+          }
+        },
+        flag2: {
+          enabled: false,
+          name: 'name',
+          payload: {
+            type: 'type',
+            value: 'value'
+          }
+        }
+      }
+    } as ApplicationFeatures,
+    [ApplicationName.BUILDER]: {
+      name: ApplicationName.BUILDER,
+      flags: {
+        flag1: true,
+        flag2: false
+      },
+      variants: {
+        flag1: {
+          enabled: true,
+          name: 'name',
+          payload: {
+            type: 'type',
+            value: 'value'
+          }
+        },
+        flag2: {
+          enabled: false,
+          name: 'name',
+          payload: {
+            type: 'type',
+            value: 'value'
+          }
+        }
+      }
+    } as ApplicationFeatures
+  } as Record<ApplicationName, ApplicationFeatures>)
+
 describe('when fetching application features', () => {
   describe('when calling the request action creator', () => {
     it('should return the request action', () => {
@@ -27,58 +81,7 @@ describe('when fetching application features', () => {
     it('should return the success action', () => {
       const apps = [ApplicationName.ACCOUNT, ApplicationName.BUILDER]
 
-      const features = {
-        [ApplicationName.ACCOUNT]: {
-          name: ApplicationName.ACCOUNT,
-          flags: {
-            flag1: true,
-            flag2: false
-          },
-          variants: {
-            flag1: {
-              enabled: true,
-              name: 'name',
-              payload: {
-                type: 'type',
-                value: 'value'
-              }
-            },
-            flag2: {
-              enabled: false,
-              name: 'name',
-              payload: {
-                type: 'type',
-                value: 'value'
-              }
-            }
-          }
-        } as ApplicationFeatures,
-        [ApplicationName.BUILDER]: {
-          name: ApplicationName.BUILDER,
-          flags: {
-            flag1: true,
-            flag2: false
-          },
-          variants: {
-            flag1: {
-              enabled: true,
-              name: 'name',
-              payload: {
-                type: 'type',
-                value: 'value'
-              }
-            },
-            flag2: {
-              enabled: false,
-              name: 'name',
-              payload: {
-                type: 'type',
-                value: 'value'
-              }
-            }
-          }
-        } as ApplicationFeatures
-      } as any
+      const features = getMockApplicationFeaturesRecord()
 
       const action = fetchApplicationFeaturesSuccess(apps, features)
 
