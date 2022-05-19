@@ -25,9 +25,9 @@ export const fetchApplicationFeaturesSuccess = (
   })
 
 export const fetchApplicationFeaturesFailure = (
-  applications: ApplicationName[],
+  apps: ApplicationName[],
   error: string
-) => action(FETCH_APPLICATION_FEATURES_FAILURE, { applications, error })
+) => action(FETCH_APPLICATION_FEATURES_FAILURE, { apps, error })
 
 export type FetchApplicationFeaturesRequestAction = ReturnType<
   typeof fetchApplicationFeaturesRequest
