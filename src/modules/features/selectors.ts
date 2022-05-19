@@ -3,7 +3,7 @@ import { FeatureState } from './reducer'
 import { ApplicationName, ApplicationFeatures, StateWithFeature } from './types'
 
 export const getState = (state: StateWithFeature): FeatureState =>
-  state.feature!
+  state.features!
 
 export const getData = (
   state: StateWithFeature

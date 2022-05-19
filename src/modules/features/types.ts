@@ -38,5 +38,5 @@ export type FeatureSagasConfig = {
 }
 
 export type StateWithFeature = {
-  feature: FeatureState
+  features: FeatureState
 }

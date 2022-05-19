@@ -8,7 +8,7 @@ describe('when getting the features state data', () => {
     const data = getMockApplicationFeaturesRecord()
 
     const result = getData({
-      feature: {
+      features: {
         data,
         error: null,
         loading: []
@@ -29,7 +29,7 @@ describe('when getting the features state loading', () => {
     ]
 
     const result = getLoading({
-      feature: {
+      features: {
         data: {},
         error: null,
         loading
@@ -45,7 +45,7 @@ describe('when getting the features state error', () => {
     const error = 'error'
 
     const result = getError({
-      feature: {
+      features: {
         data: {},
         error,
         loading: []
@@ -62,7 +62,7 @@ describe('when getting if a feature is enabled', () => {
       const data = getMockApplicationFeaturesRecord()
 
       const state = {
-        feature: {
+        features: {
           data,
           error: null,
           loading: []
@@ -80,7 +80,7 @@ describe('when getting if a feature is enabled', () => {
       const data = getMockApplicationFeaturesRecord()
 
       const state = {
-        feature: {
+        features: {
           data,
           error: null,
           loading: []
@@ -98,7 +98,7 @@ describe('when getting if a feature is enabled', () => {
       const featureName = 'feature-name'
 
       const state = {
-        feature: {
+        features: {
           data: {},
           error: null,
           loading: []
@@ -117,7 +117,7 @@ describe('when getting if a feature is enabled', () => {
       const featureName = 'feature-name'
 
       const state = {
-        feature: {
+        features: {
           data,
           error: null,
           loading: []
@@ -139,7 +139,7 @@ describe('when getting if a feature is enabled', () => {
       process.env = { ...env }
 
       state = {
-        feature: {
+        features: {
           data: {},
           loading: [],
           error: null
