@@ -1,4 +1,4 @@
-import { FeatureState } from './reducer'
+import { FeaturesState } from './reducer'
 
 export type Payload = {
   type: string
@@ -38,5 +38,5 @@ export type FeatureSagasConfig = {
 }
 
 export type StateWithFeature = {
-  features: FeatureState
+  features: FeaturesState
 }

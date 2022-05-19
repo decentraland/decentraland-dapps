@@ -9,27 +9,27 @@ import {
 } from './actions'
 import { ApplicationFeatures } from './types'
 
-export type FeatureState = {
+export type FeaturesState = {
   data: Record<string, ApplicationFeatures>
   loading: LoadingState
   error: string | null
 }
 
-export const INITIAL_STATE: FeatureState = {
+export const INITIAL_STATE: FeaturesState = {
   data: {},
   loading: [],
   error: null
 }
 
-export type FeatureReducerAction =
+export type FeaturesReducerAction =
   | FetchApplicationFeaturesRequestAction
   | FetchApplicationFeaturesSuccessAction
   | FetchApplicationFeaturesFailureAction
 
 export const featuresReducer = (
   state = INITIAL_STATE,
-  action: FeatureReducerAction
-): FeatureState => {
+  action: FeaturesReducerAction
+): FeaturesState => {
   switch (action.type) {
     case FETCH_APPLICATION_FEATURES_REQUEST: {
       return {

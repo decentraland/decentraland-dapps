@@ -1,8 +1,8 @@
 import { LoadingState } from '../loading/reducer'
-import { FeatureState } from './reducer'
+import { FeaturesState } from './reducer'
 import { ApplicationName, ApplicationFeatures, StateWithFeature } from './types'
 
-export const getState = (state: StateWithFeature): FeatureState =>
+export const getState = (state: StateWithFeature): FeaturesState =>
   state.features!
 
 export const getData = (
