@@ -28,9 +28,13 @@ export enum ApplicationName {
   TEST = 'test'
 }
 
-export type FeatureSagasConfig = {
+export type Polling = {
   apps: ApplicationName[]
-  fetchDelay: number
+  delay: number
+}
+
+export type FeatureSagasConfig = {
+  polling?: Polling
 }
 
 export type StateWithFeature = {

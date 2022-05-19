@@ -1,7 +1,7 @@
 import { ApplicationName, ApplicationFeatures } from './types'
 
-export const fetchManyApplicationFeatures = async (apps: ApplicationName[]) => {
-  const promises = apps.map(a => fetchApplicationFeatures(a))
+export const fetchApplicationFeatures = async (apps: ApplicationName[]) => {
+  const promises = apps.map(a => fetchSingleApplicationFeatures(a))
   const features = await Promise.all(promises)
 
   return features.reduce((acc, feature) => {
@@ -10,7 +10,7 @@ export const fetchManyApplicationFeatures = async (apps: ApplicationName[]) => {
   }, {} as Record<ApplicationName, ApplicationFeatures>)
 }
 
-const fetchApplicationFeatures = async (
+const fetchSingleApplicationFeatures = async (
   app: ApplicationName
 ): Promise<ApplicationFeatures> => {
   const url = `https://feature-flags.decentraland.org/${app}.json`

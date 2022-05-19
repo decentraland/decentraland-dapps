@@ -9,48 +9,54 @@ import {
 import {
   ApplicationName,
   ApplicationFeatures,
-  FeatureSagasConfig
+  FeatureSagasConfig,
+  Polling
 } from './types'
-import { fetchManyApplicationFeatures } from './utils'
+import { fetchApplicationFeatures } from './utils'
 
 /**
- * Adding this to your sagas will constantly query feature flags for provided applications.
- * Results will be stored in redux and the implementing app will be able to react to this changes
- * live without the need of refreshing the browser.
- * @param config Object with information useful to the saga.
- * @param config.applications Feature flags of all applications provided will be fetched.
- * @param config.fetchDelay Time in millis between each poll to the feature flag service.
+ * Include this saga to be able to fetch feature flags for different applications.
+ * By providing the polling object in the config, this saga will take care of polling every
+ * certain amount of time the feature flags for the defined applications.
+ * @param config Configuration for the saga
  */
 export function* featuresSaga(config: FeatureSagasConfig) {
+  const { polling } = config
+
   yield takeEvery(
     FETCH_APPLICATION_FEATURES_REQUEST,
     handleFetchApplicationFeaturesRequest
   )
 
-  yield spawn(fetchApplicationFeaturesInterval)
-
-  function* handleFetchApplicationFeaturesRequest(
-    action: FetchApplicationFeaturesRequestAction
-  ) {
-    const { apps } = action.payload
-
-    try {
-      const allApplicationFeatures: Record<
-        ApplicationName,
-        ApplicationFeatures
-      > = yield call(fetchManyApplicationFeatures, apps)
-
-      yield put(fetchApplicationFeaturesSuccess(apps, allApplicationFeatures))
-    } catch (e) {
-      yield put(fetchApplicationFeaturesFailure(apps, e.message))
-    }
+  if (polling) {
+    yield spawn(getFetchApplicationFeaturesIntervalGenerator(polling))
   }
+}
 
-  function* fetchApplicationFeaturesInterval() {
+function* handleFetchApplicationFeaturesRequest(
+  action: FetchApplicationFeaturesRequestAction
+) {
+  const { apps } = action.payload
+
+  try {
+    const features: Record<ApplicationName, ApplicationFeatures> = yield call(
+      fetchApplicationFeatures,
+      apps
+    )
+
+    yield put(fetchApplicationFeaturesSuccess(apps, features))
+  } catch (e) {
+    yield put(fetchApplicationFeaturesFailure(apps, e.message))
+  }
+}
+
+export const getFetchApplicationFeaturesIntervalGenerator = (
+  polling: Polling
+) => {
+  return function*() {
     while (true) {
-      const { apps: applications, fetchDelay } = config
-      yield put(fetchApplicationFeaturesRequest(applications))
-      yield delay(fetchDelay)
+      yield put(fetchApplicationFeaturesRequest(polling.apps))
+      yield delay(polling.delay)
     }
   }
 }

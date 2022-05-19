@@ -24,8 +24,8 @@ export const getError = (state: StateWithFeature): string | null =>
  * for it as REACT_APP_FF_EXPLORER_SOME_CRAZY_FEATURE.
  *
  * @param state App store state.
- * @param application Application containing the flag.
- * @param flag Feature flag identifies.
+ * @param app Application containing the flag.
+ * @param feature Feature flag identifies.
  * @param fallback In case the flag does not exist in the state, this will be
  * the value returned instead of throwing an error.
  *
@@ -33,34 +33,31 @@ export const getError = (state: StateWithFeature): string | null =>
  */
 export const getIsFeatureEnabled = (
   state: StateWithFeature,
-  application: ApplicationName,
-  flag: string,
+  app: ApplicationName,
+  feature: string,
   fallback?: boolean
 ): boolean => {
-  const envValue = getFromEnv(application, flag)
+  const envValue = getFromEnv(app, feature)
 
   if (envValue !== null) {
     return envValue
   }
 
   try {
-    const allApplicationFeatures = getData(state)
+    const features = getData(state)
+    const appFeatures: ApplicationFeatures | undefined = features[app]
 
-    const applicationFeatures: ApplicationFeatures | undefined =
-      allApplicationFeatures[application]
-
-    if (!applicationFeatures) {
-      throw new Error(`Feature not found for application ${application}`)
+    if (!appFeatures) {
+      throw new Error(`Feature not found for application ${app}`)
     }
 
-    const ff: boolean | undefined =
-      applicationFeatures.flags[`${application}-${flag}`]
+    const flag: boolean | undefined = appFeatures.flags[`${app}-${feature}`]
 
-    if (ff === undefined) {
-      throw new Error(`Flag ${flag} not found for application ${application}`)
+    if (flag === undefined) {
+      throw new Error(`Flag ${feature} not found for application ${app}`)
     }
 
-    return ff
+    return flag
   } catch (e) {
     if (fallback !== undefined) {
       return fallback
