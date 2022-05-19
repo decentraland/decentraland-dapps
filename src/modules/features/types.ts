@@ -1,3 +1,5 @@
+import { FeatureState } from './reducer'
+
 export type Payload = {
   type: string
   value: string
@@ -9,13 +11,13 @@ export type Variant = {
   enabled: boolean
 }
 
-export type Feature = {
-  application: Applications
+export type ApplicationFeatures = {
+  name: ApplicationName
   flags: Record<string, boolean>
   variants: Record<string, Variant>
 }
 
-export enum Applications {
+export enum ApplicationName {
   EXPLORER = 'explorer',
   BUILDER = 'builder',
   MARKETPLACE = 'marketplace',
@@ -27,6 +29,10 @@ export enum Applications {
 }
 
 export type FeatureSagasConfig = {
-  applications: Applications[]
+  apps: ApplicationName[]
   fetchDelay: number
+}
+
+export type StateWithFeature = {
+  feature: FeatureState
 }
