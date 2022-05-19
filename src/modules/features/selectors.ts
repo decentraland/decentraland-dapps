@@ -1,18 +1,22 @@
 import { LoadingState } from '../loading/reducer'
 import { FeaturesState } from './reducer'
-import { ApplicationName, ApplicationFeatures, StateWithFeature } from './types'
+import {
+  ApplicationName,
+  ApplicationFeatures,
+  StateWithFeatures
+} from './types'
 
-export const getState = (state: StateWithFeature): FeaturesState =>
+export const getState = (state: StateWithFeatures): FeaturesState =>
   state.features!
 
 export const getData = (
-  state: StateWithFeature
+  state: StateWithFeatures
 ): Record<ApplicationName, ApplicationFeatures> => getState(state).data
 
-export const getLoading = (state: StateWithFeature): LoadingState =>
+export const getLoading = (state: StateWithFeatures): LoadingState =>
   getState(state).loading
 
-export const getError = (state: StateWithFeature): string | null =>
+export const getError = (state: StateWithFeatures): string | null =>
   getState(state).error
 
 /**
@@ -27,16 +31,13 @@ export const getError = (state: StateWithFeature): string | null =>
  * @param app Appplication name.
  * @param feature Feature key without the application name prefix. For example for the "builder-feature".
  * You need to provide only "feature"
- * @param fallback In case the flag does not exist in the state, this will be
- * the value returned instead of throwing an error.
  *
  * @returns Whether the feature is enabled or not.
  */
 export const getIsFeatureEnabled = (
-  state: StateWithFeature,
+  state: StateWithFeatures,
   app: ApplicationName,
-  feature: string,
-  fallback?: boolean
+  feature: string
 ): boolean => {
   const envValue = getFromEnv(app, feature)
 
@@ -44,31 +45,17 @@ export const getIsFeatureEnabled = (
     return envValue
   }
 
-  try {
-    const features = getData(state)
-    const appFeatures: ApplicationFeatures | undefined = features[app]
+  const features = getData(state)
+  const appFeatures: ApplicationFeatures | undefined = features[app]
 
-    if (!appFeatures) {
-      throw new Error(`Application "${app}" not found`)
-    }
-
-    const flag: boolean | undefined = appFeatures.flags[`${app}-${feature}`]
-
-    if (flag === undefined) {
-      throw new Error(`Feature "${feature}" not found for application "${app}"`)
-    }
-
-    return flag
-  } catch (e) {
-    if (fallback !== undefined) {
-      return fallback
-    }
-
-    throw e
+  if (!appFeatures) {
+    throw new Error(`Application "${app}" not found`)
   }
+
+  return !!appFeatures.flags[`${app}-${feature}`]
 }
 
-export const getFromEnv = (
+const getFromEnv = (
   application: ApplicationName,
   flag: string
 ): boolean | null => {

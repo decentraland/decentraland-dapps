@@ -37,6 +37,6 @@ export type FeatureSagasConfig = {
   polling?: Polling
 }
 
-export type StateWithFeature = {
+export type StateWithFeatures = {
   features: FeaturesState
 }

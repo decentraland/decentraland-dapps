@@ -1,7 +1,7 @@
 import { fetchApplicationFeaturesRequest } from './actions'
 import { getMockApplicationFeaturesRecord } from './actions.spec'
 import { getData, getError, getIsFeatureEnabled, getLoading } from './selectors'
-import { ApplicationName, StateWithFeature } from './types'
+import { ApplicationName, StateWithFeatures } from './types'
 
 describe('when getting the features state data', () => {
   it('should return the features data', () => {
@@ -111,28 +111,10 @@ describe('when getting if a feature is enabled', () => {
     })
   })
 
-  describe('when the feature of an application is not found in the state', () => {
-    it('should throw an application not found error', () => {
-      const data = getMockApplicationFeaturesRecord()
-      const featureName = 'feature-name'
-
-      const state = {
-        features: {
-          data,
-          error: null,
-          loading: []
-        }
-      }
-
-      expect(() =>
-        getIsFeatureEnabled(state, ApplicationName.ACCOUNT, featureName)
-      ).toThrow('Feature "feature-name" not found for application "account"')
-    })
-  })
   describe('when the feature is found in the env', () => {
     const env = process.env
 
-    let state: StateWithFeature
+    let state: StateWithFeatures
     let featureName: string
 
     beforeEach(() => {
