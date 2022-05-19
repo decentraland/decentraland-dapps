@@ -23,13 +23,14 @@ export const getError = (state: StateWithFeature): string | null =>
  * application is "explorer" and the flag is "some-crazy-feature", it will look
  * for it as REACT_APP_FF_EXPLORER_SOME_CRAZY_FEATURE.
  *
- * @param state App store state.
- * @param app Application containing the flag.
- * @param feature Feature flag identifies.
+ * @param state Redux state of the application.
+ * @param app Appplication name.
+ * @param feature Feature key without the application name prefix. For example for the "builder-feature".
+ * You need to provide only "feature"
  * @param fallback In case the flag does not exist in the state, this will be
  * the value returned instead of throwing an error.
  *
- * @returns Boolean saying if the flag is enabled or disabled.
+ * @returns Whether the feature is enabled or not.
  */
 export const getIsFeatureEnabled = (
   state: StateWithFeature,
