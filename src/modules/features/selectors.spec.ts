@@ -128,7 +128,7 @@ describe('when getting if a feature is enabled', () => {
         }
       }
 
-      featureName = 'feature-name'
+      featureName = 'crazy-feature-name'
     })
 
     afterEach(() => {
@@ -137,7 +137,7 @@ describe('when getting if a feature is enabled', () => {
 
     describe('when the env is 1', () => {
       it('should return true from the env', () => {
-        process.env.REACT_APP_FF_ACCOUNT_FEATURE_NAME = '1'
+        process.env.REACT_APP_FF_ACCOUNT_CRAZY_FEATURE_NAME = '1'
 
         const result = getIsFeatureEnabled(
           state,
@@ -151,7 +151,7 @@ describe('when getting if a feature is enabled', () => {
 
     describe('when the env is 0', () => {
       it('should return false from the env', () => {
-        process.env.REACT_APP_FF_ACCOUNT_FEATURE_NAME = '0'
+        process.env.REACT_APP_FF_ACCOUNT_CRAZY_FEATURE_NAME = '0'
 
         const result = getIsFeatureEnabled(
           state,
