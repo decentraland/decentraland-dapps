@@ -59,7 +59,7 @@ const getFromEnv = (
   application: ApplicationName,
   flag: string
 ): boolean | null => {
-  const envify = (word: string) => word.toUpperCase().replace('-', '_')
+  const envify = (word: string) => word.toUpperCase().replace(/-/g, '_')
   const key = `REACT_APP_FF_${envify(application)}_${envify(flag)}`
   const value = process.env[key]
 
