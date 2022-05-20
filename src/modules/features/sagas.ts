@@ -1,10 +1,20 @@
-import { call, delay, put, spawn, takeEvery } from 'redux-saga/effects'
+import {
+  call,
+  delay,
+  put,
+  race,
+  spawn,
+  take,
+  takeEvery
+} from 'redux-saga/effects'
 import {
   fetchApplicationFeaturesFailure,
   fetchApplicationFeaturesRequest,
   FetchApplicationFeaturesRequestAction,
   fetchApplicationFeaturesSuccess,
-  FETCH_APPLICATION_FEATURES_REQUEST
+  FETCH_APPLICATION_FEATURES_FAILURE,
+  FETCH_APPLICATION_FEATURES_REQUEST,
+  FETCH_APPLICATION_FEATURES_SUCCESS
 } from './actions'
 import {
   ApplicationName,
@@ -55,7 +65,14 @@ export const getFetchApplicationFeaturesIntervalGenerator = (
 ) => {
   return function*() {
     while (true) {
+      // Fetch application features for the configured applications.
       yield put(fetchApplicationFeaturesRequest(polling.apps))
+      // Wait for the request to finish so there is no request overlap.
+      yield race({
+        success: take(FETCH_APPLICATION_FEATURES_SUCCESS),
+        failure: take(FETCH_APPLICATION_FEATURES_FAILURE)
+      })
+      // Wait for a certain amount of time before making the next request.
       yield delay(polling.delay)
     }
   }

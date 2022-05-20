@@ -7,7 +7,7 @@ import {
 } from './actions'
 import { getMockApplicationFeaturesRecord } from './actions.spec'
 import { featuresSaga } from './sagas'
-import { ApplicationName } from './types'
+import { ApplicationName, FeatureSagasConfig } from './types'
 import { fetchApplicationFeatures } from './utils'
 
 describe('when handling the request for fetching application features', () => {
@@ -42,23 +42,48 @@ describe('when handling the request for fetching application features', () => {
 })
 
 describe('when providing a polling object in the saga configuration', () => {
-  it('should put a fetch features request and a delay', async () => {
-    const apps = [ApplicationName.ACCOUNT, ApplicationName.BUILDER]
-    const delay = 1000
-    const features = getMockApplicationFeaturesRecord()
+  const delay = 1000
 
-    const config = {
+  let apps: ApplicationName[]
+  let config: FeatureSagasConfig
+
+  beforeEach(() => {
+    apps = [ApplicationName.ACCOUNT, ApplicationName.BUILDER]
+
+    config = {
       polling: {
         apps,
         delay
       }
     }
+  })
+
+  it('should put a fetch features request and a delay', async () => {
+    const features = getMockApplicationFeaturesRecord()
 
     await expectSaga(featuresSaga, config)
       .provide([[call(fetchApplicationFeatures, apps), features]])
       .put(fetchApplicationFeaturesRequest(apps))
-      .delay(delay)
       .put(fetchApplicationFeaturesSuccess(apps, features))
+      .delay(delay)
       .silentRun()
+  })
+
+  describe('when fetching the features fails', () => {
+    it('should put a fetching failure action before the delay', async () => {
+      const error = 'error'
+
+      await expectSaga(featuresSaga, config)
+        .provide([
+          [
+            call(fetchApplicationFeatures, apps),
+            Promise.reject(new Error(error))
+          ]
+        ])
+        .put(fetchApplicationFeaturesRequest(apps))
+        .put(fetchApplicationFeaturesFailure(apps, error))
+        .delay(delay)
+        .silentRun()
+    })
   })
 })
