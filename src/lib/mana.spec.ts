@@ -31,5 +31,16 @@ describe('when formatting the price', () => {
         expect(toFixedMANAValue('765.93023')).toBe('765.93')
       })
     })
+
+    describe('when the number has decimal zeros to the right', () => {
+      it('should remove them', () => {
+        expect(toFixedMANAValue('9.5000000')).toBe('9.5')
+      })
+    })
+    describe('when all the decimals are zeros', () => {
+      it('return an integer', () => {
+        expect(toFixedMANAValue('9.000')).toBe('9')
+      })
+    })
   })
 })
