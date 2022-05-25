@@ -15,14 +15,38 @@ export function toFixedMANAValue(
   if (!isNaN(value)) {
     const decimals = value.toString().split('.')[1]
     const decimalsCount = decimals ? decimals.length : 0
-
-    if (decimalsCount >= maximumFractionDigits) {
+    const trailingZeros = getTrailingZeros(strValue)
+    if (trailingZeros + decimalsCount >= maximumFractionDigits) {
       return value.toFixed(maximumFractionDigits)
-    } else if (Number(strValue) === value) {
-      // when the original string was a valid number, return the parsed value to remove trailing zeros
-      return value.toString()
     }
   }
 
   return strValue
+}
+
+/**
+ * Returns the amount of trailing zeros
+ */
+export function getTrailingZeros(strValue: string) {
+  // count zeros
+  let zeros = 0
+  // parse string value to remove trailing zeros
+  const parsed = parseFloat(strValue)
+  // remove parsed value from original string value (ie. string value is "1.0576000" and parsed is "1.0576" the rest would be "000")
+  let rest = strValue.split(parsed.toString()).pop()
+  // if after removing the parsed value there's nothing left, return 0
+  if (!rest) {
+    return 0
+  }
+  // if the first char is a dot, skip it (this would be the case for an integer with decimals, like "1.00")
+  if (rest[0] === '.') {
+    rest = rest.slice(1)
+  }
+  // count zeros
+  while (rest[0] === '0') {
+    zeros++
+    rest = rest.slice(1)
+  }
+  // return amount
+  return zeros
 }
