@@ -18,6 +18,9 @@ export function toFixedMANAValue(
 
     if (decimalsCount >= maximumFractionDigits) {
       return value.toFixed(maximumFractionDigits)
+    } else if (Number(strValue) === value) {
+      // when the original string was a valid number, return the parsed value to remove trailing zeros
+      return value.toString()
     }
   }
 
