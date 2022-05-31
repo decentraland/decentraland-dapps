@@ -1,7 +1,6 @@
-import { EntityType, EntityVersion } from 'dcl-catalyst-commons/dist/types'
+import { Avatar, EntityType } from '@dcl/schemas'
 import { ProfileEntity } from '../lib/types'
 import { Profile } from '../modules/profile/types'
-import { Avatar } from '@dcl/schemas'
 
 export const avatar: Avatar = {
   userId: 'userId',
@@ -37,7 +36,7 @@ export const profile: Profile = {
 
 export const profileEntity: ProfileEntity = {
   id: 'anId',
-  version: EntityVersion.V4,
+  version: 'v4',
   type: EntityType.PROFILE,
   pointers: [],
   timestamp: 343243242,

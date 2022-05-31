@@ -1,6 +1,5 @@
-import { Eth } from 'web3x/eth'
-import { TransactionResponse } from 'web3x/formatters'
-import { Address } from 'web3x/address'
+import { providers } from 'ethers'
+import { TransactionResponse } from '@ethersproject/providers'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { getNetworkProvider } from '../../lib/eth'
 import {
@@ -21,7 +20,7 @@ export async function getTransaction(
   const provider = await getNetworkProvider(chainId)
   if (!provider) return null
 
-  const eth = new Eth(provider)
+  const eth = new providers.Web3Provider(provider)
 
   if (!address) {
     return null
@@ -29,7 +28,7 @@ export async function getTransaction(
 
   let currentNonce: number | null = null
   try {
-    currentNonce = await eth.getTransactionCount(Address.fromString(address))
+    currentNonce = await eth.getTransactionCount(address)
   } catch (error) {
     console.warn(
       `Could not get current nonce for account "${address}"`,

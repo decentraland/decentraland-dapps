@@ -1,7 +1,6 @@
-import { Avatar } from '@dcl/schemas'
+import { Avatar, EntityType } from '@dcl/schemas'
 import { expectSaga } from 'redux-saga-test-plan'
 import * as matchers from 'redux-saga-test-plan/matchers'
-import { EntityType } from 'dcl-catalyst-commons'
 import { EntitiesOperator } from '../../lib/entities'
 import { profileEntity } from '../../tests/profileMocks'
 import { ProfileEntity } from '../../lib/types'

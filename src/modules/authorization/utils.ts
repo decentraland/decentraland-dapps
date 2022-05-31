@@ -1,10 +1,10 @@
-import { toBN } from 'web3x/utils'
+import { BigNumber } from 'ethers'
 import { Authorization, AuthorizationType } from './types'
 
-export function getTokenAmountToApprove(): ReturnType<typeof toBN> {
-  return toBN(2)
-    .pow(toBN(256))
-    .sub(toBN(1))
+export function getTokenAmountToApprove(): BigNumber {
+  return BigNumber.from(2)
+    .pow(BigNumber.from(256))
+    .sub(BigNumber.from(1))
 }
 
 export function hasAuthorization(

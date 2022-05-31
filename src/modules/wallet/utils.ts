@@ -1,7 +1,6 @@
 import { EventEmitter } from 'events'
+import { Provider } from 'decentraland-connect'
 import { PopulatedTransaction, Contract, providers, utils } from 'ethers'
-import { Eth } from 'web3x/eth'
-import { Address } from 'web3x/address'
 import {
   ContractData,
   ContractName,
@@ -17,7 +16,6 @@ import {
 } from '../../lib/eth'
 import { getChainConfiguration } from '../../lib/chainConfiguration'
 import { AddEthereumChainParameters, Networks, Wallet } from './types'
-import { Provider } from 'decentraland-connect'
 
 let TRANSACTIONS_API_URL = 'https://transactions-api.decentraland.co/v1'
 export const getTransactionsApiUrl = () => TRANSACTIONS_API_URL
@@ -48,16 +46,16 @@ export async function buildWallet(): Promise<Wallet> {
     throw new Error('Could not connect to Ethereum')
   }
 
-  const eth = new Eth(provider)
+  const eth = new providers.Web3Provider(provider)
 
-  const accounts: Address[] = await eth.getAccounts()
+  const accounts: string[] = await eth.listAccounts()
   if (accounts.length === 0) {
     // This could happen if metamask was not enabled
     throw new Error('Could not get address')
   }
 
   const address = accounts[0].toString()
-  const chainId = await eth.getId()
+  const { chainId } = await eth.getNetwork()
   const chainConfig = getChainConfiguration(chainId)
   const expectedChainId = getConnectedProviderChainId()!
   const expectedChainConfig = getChainConfiguration(expectedChainId)
