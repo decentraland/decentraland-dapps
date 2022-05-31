@@ -9,8 +9,8 @@
     "@types/uuid": "^3.4.3",
     "axios": "^0.21.1",
     "date-fns": "^1.29.0",
-    "dcl-catalyst-client": "^11.3.2",
-    "dcl-catalyst-commons": "^8.2.0",
+    "dcl-catalyst-client": "^12.0.1",
+    "dcl-catalyst-commons": "^9.0.1",
     "decentraland-connect": "^3.3.0",
     "decentraland-transactions": "^1.35.0",
     "decentraland-ui": "^3.37.0",
@@ -22,14 +22,11 @@
     "redux-storage-decorator-filter": "^1.1.8",
     "tslint": "^5.7.0",
     "tslint-config-prettier": "^1.10.0",
-    "typesafe-actions": "^2.0.3",
-    "web3x": "^4.0.6",
-    "web3x-codegen": "^4.0.6"
+    "typesafe-actions": "^2.0.3"
   },
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "tsc --project tsconfig.json",
-    "contracts": "web3x-codegen",
     "test": "jest",
     "test:coverage": "jest --collectCoverage",
     "test:watch": "jest --watch",
@@ -76,7 +73,7 @@
     "semi": false
   },
   "engines": {
-    "npm": "^7.0.0"
+    "npm": "^8.0.0"
   },
   "repository": {
     "type": "git",
