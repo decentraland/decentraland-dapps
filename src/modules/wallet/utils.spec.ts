@@ -106,6 +106,8 @@ describe('when sending a transaction', () => {
         const networkProvider = {
           request: ({ method }: { method: string }) => {
             switch (method) {
+              case 'eth_blockNumber':
+                return Promise.resolve(200)
               case 'eth_chainId':
                 return Promise.resolve('0x13881')
               case 'eth_accounts':

@@ -135,7 +135,6 @@ export async function sendTransaction(...args: any[]) {
   ] = args as [ContractData, string | Function, any[]]
 
   try {
-    // get connected provider
     const connectedProvider = await getConnectedProvider()
     if (!connectedProvider) {
       throw new Error('Provider not connected')
@@ -143,19 +142,17 @@ export async function sendTransaction(...args: any[]) {
 
     const chainId = await getProviderChainId(connectedProvider)
 
-    // get a provider for the target network
     const targetNetworkProvider = await getTargetNetworkProvider(
       contract.chainId
     )
 
-    // intantiate the contract
     const contractInstance = new Contract(
       contract.address,
       contract.abi,
       targetNetworkProvider
     )
 
-    // populate the transaction data
+    // Populate the transaction data
     const unsignedTx = await (typeof contractMethodNameOrGetPopulatedTransaction ===
     'function'
       ? contractMethodNameOrGetPopulatedTransaction(
@@ -165,7 +162,7 @@ export async function sendTransaction(...args: any[]) {
           contractMethodNameOrGetPopulatedTransaction
         ](...contractArguments))
 
-    // if the connected provider is in the target network, use it to sign and send the tx
+    // If the connected provider is in the target network, use it to sign and send the tx
     if (chainId === contract.chainId) {
       const signer = targetNetworkProvider.getSigner()
       const tx = await signer.sendTransaction(unsignedTx)
