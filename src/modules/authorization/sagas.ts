@@ -53,7 +53,8 @@ export function createAuthorizationSaga() {
           )
           const ethersProvider = new ethersProviders.Web3Provider(provider)
           const multicallProvider = new providers.MulticallProvider(
-            ethersProvider
+            ethersProvider,
+            { batchSize: 500 } // defaults to 50
           )
           multicallProviders[chainId] = multicallProvider
         }
