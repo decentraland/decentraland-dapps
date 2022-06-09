@@ -1,5 +1,4 @@
-import { Profile } from '@dcl/schemas'
-import { Entity } from 'dcl-catalyst-commons/dist/types'
+import { Profile, Entity } from '@dcl/schemas'
 
 declare module 'react-intl'
 

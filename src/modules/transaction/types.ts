@@ -1,4 +1,7 @@
-import { TransactionResponse, TransactionReceipt } from 'web3x/formatters'
+import {
+  TransactionResponse,
+  TransactionReceipt
+} from '@ethersproject/providers'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 
 export enum TransactionStatus {

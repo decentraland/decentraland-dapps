@@ -1,4 +1,4 @@
-import { LegacyProvider } from 'web3x/providers'
+import { ethers } from 'ethers'
 import {
   put,
   call,
@@ -60,7 +60,7 @@ import { CreateWalletOptions, Wallet } from './types'
 import { isConnected } from './selectors'
 
 // Patch Samsung's Cucumber provider send to support promises
-const provider = (window as any).ethereum as LegacyProvider
+const provider = (window as any).ethereum as ethers.providers.Web3Provider
 
 let cucumberProviderSend: (...args: any[]) => Promise<string[]>
 if (isCucumberProvider()) {

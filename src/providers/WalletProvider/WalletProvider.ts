@@ -36,7 +36,7 @@ export default class WalletProvider extends React.PureComponent<Props> {
   }
 
   async handle(method: EmitterMethod, type: EventType, handler: Handler) {
-    // try to use web3x abstraction
+    // try to use ethers abstraction
     const provider = await getConnectedProvider()
     if (provider) {
       try {

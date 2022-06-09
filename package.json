@@ -4,32 +4,28 @@
   "dependencies": {
     "@0xsequence/multicall": "^0.25.1",
     "@0xsequence/relayer": "^0.25.1",
+    "@dcl/crypto": "^3.0.0",
     "@dcl/schemas": "^4.6.0",
     "@types/flat": "0.0.28",
     "@types/uuid": "^3.4.3",
     "axios": "^0.21.1",
     "date-fns": "^1.29.0",
-    "dcl-catalyst-client": "^11.3.2",
-    "dcl-catalyst-commons": "^8.2.0",
+    "dcl-catalyst-client": "^12.0.1",
     "decentraland-connect": "^3.3.0",
     "decentraland-transactions": "^1.35.0",
     "decentraland-ui": "^3.37.0",
+    "ethers": "^5.6.8",
     "events": "^3.3.0",
     "flat": "^4.1.0",
     "react-intl": "^5.20.7",
     "redux-persistence": "^1.2.0",
     "redux-persistence-engine-localstorage": "^1.0.0",
     "redux-storage-decorator-filter": "^1.1.8",
-    "tslint": "^5.7.0",
-    "tslint-config-prettier": "^1.10.0",
-    "typesafe-actions": "^2.0.3",
-    "web3x": "^4.0.6",
-    "web3x-codegen": "^4.0.6"
+    "typesafe-actions": "^2.0.3"
   },
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "tsc --project tsconfig.json",
-    "contracts": "web3x-codegen",
     "test": "jest",
     "test:coverage": "jest --collectCoverage",
     "test:watch": "jest --watch",
@@ -58,6 +54,8 @@
     "semantic-release": "^17.3.9",
     "ts-jest": "^27.0.5",
     "ts-node": "^10.1.0",
+    "tslint": "^5.7.0",
+    "tslint-config-prettier": "^1.10.0",
     "tslint-language-service": "^0.9.9",
     "tslint-plugin-prettier": "^1.3.0",
     "typescript": "^4.3.5",
@@ -76,7 +74,7 @@
     "semi": false
   },
   "engines": {
-    "npm": "^7.0.0"
+    "npm": "^8.0.0"
   },
   "repository": {
     "type": "git",

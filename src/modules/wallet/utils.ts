@@ -1,7 +1,6 @@
 import { EventEmitter } from 'events'
-import { PopulatedTransaction, Contract, providers, utils } from 'ethers'
-import { Eth } from 'web3x/eth'
-import { Address } from 'web3x/address'
+import { ethers } from 'ethers'
+import { Provider } from 'decentraland-connect'
 import {
   ContractData,
   ContractName,
@@ -17,7 +16,6 @@ import {
 } from '../../lib/eth'
 import { getChainConfiguration } from '../../lib/chainConfiguration'
 import { AddEthereumChainParameters, Networks, Wallet } from './types'
-import { Provider } from 'decentraland-connect'
 
 let TRANSACTIONS_API_URL = 'https://transactions-api.decentraland.co/v1'
 export const getTransactionsApiUrl = () => TRANSACTIONS_API_URL
@@ -28,13 +26,13 @@ export async function fetchManaBalance(chainId: ChainId, address: string) {
   try {
     const provider = await getNetworkProvider(chainId)
     const contract = getContract(ContractName.MANAToken, chainId)
-    const mana = new Contract(
+    const mana = new ethers.Contract(
       contract.address,
       contract.abi,
-      new providers.Web3Provider(provider)
+      new ethers.providers.Web3Provider(provider)
     )
     const balance = await mana.balanceOf(address)
-    return parseFloat(utils.formatEther(balance))
+    return parseFloat(ethers.utils.formatEther(balance))
   } catch (error) {
     return 0
   }
@@ -48,16 +46,16 @@ export async function buildWallet(): Promise<Wallet> {
     throw new Error('Could not connect to Ethereum')
   }
 
-  const eth = new Eth(provider)
+  const eth = new ethers.providers.Web3Provider(provider)
 
-  const accounts: Address[] = await eth.getAccounts()
+  const accounts: string[] = await eth.listAccounts()
   if (accounts.length === 0) {
     // This could happen if metamask was not enabled
     throw new Error('Could not get address')
   }
 
   const address = accounts[0].toString()
-  const chainId = await eth.getId()
+  const { chainId } = await eth.getNetwork()
   const chainConfig = getChainConfiguration(chainId)
   const expectedChainId = getConnectedProviderChainId()!
   const expectedChainConfig = getChainConfiguration(expectedChainId)
@@ -82,7 +80,7 @@ export async function buildWallet(): Promise<Wallet> {
 
 export async function getTargetNetworkProvider(chainId: ChainId) {
   const networkProvider = await getNetworkProvider(chainId)
-  return new providers.Web3Provider(networkProvider)
+  return new ethers.providers.Web3Provider(networkProvider)
 }
 
 export enum TransactionEventType {
@@ -125,8 +123,8 @@ export async function sendTransaction(
 export async function sendTransaction(
   contract: ContractData,
   getPopulatedTransaction: (
-    populateTransaction: Contract['populateTransaction']
-  ) => Promise<PopulatedTransaction>
+    populateTransaction: ethers.Contract['populateTransaction']
+  ) => Promise<ethers.PopulatedTransaction>
 ): Promise<string>
 
 export async function sendTransaction(...args: any[]) {
@@ -137,7 +135,6 @@ export async function sendTransaction(...args: any[]) {
   ] = args as [ContractData, string | Function, any[]]
 
   try {
-    // get connected provider
     const connectedProvider = await getConnectedProvider()
     if (!connectedProvider) {
       throw new Error('Provider not connected')
@@ -145,19 +142,17 @@ export async function sendTransaction(...args: any[]) {
 
     const chainId = await getProviderChainId(connectedProvider)
 
-    // get a provider for the target network
     const targetNetworkProvider = await getTargetNetworkProvider(
       contract.chainId
     )
 
-    // intantiate the contract
-    const contractInstance = new Contract(
+    const contractInstance = new ethers.Contract(
       contract.address,
       contract.abi,
       targetNetworkProvider
     )
 
-    // populate the transaction data
+    // Populate the transaction data
     const unsignedTx = await (typeof contractMethodNameOrGetPopulatedTransaction ===
     'function'
       ? contractMethodNameOrGetPopulatedTransaction(
@@ -167,7 +162,7 @@ export async function sendTransaction(...args: any[]) {
           contractMethodNameOrGetPopulatedTransaction
         ](...contractArguments))
 
-    // if the connected provider is in the target network, use it to sign and send the tx
+    // If the connected provider is in the target network, use it to sign and send the tx
     if (chainId === contract.chainId) {
       const signer = targetNetworkProvider.getSigner()
       const tx = await signer.sendTransaction(unsignedTx)

@@ -1,6 +1,3 @@
-import { Eth } from 'web3x/eth'
-import { Address } from 'web3x/address'
-import { BlockResponse, TransactionResponse } from 'web3x/formatters'
 import {
   call,
   put,
@@ -10,6 +7,9 @@ import {
   fork,
   delay
 } from 'redux-saga/effects'
+import { ethers } from 'ethers'
+import { TransactionResponse } from '@ethersproject/providers'
+import { BlockWithTransactions } from '@ethersproject/abstract-provider'
 import { Provider } from 'decentraland-connect/dist/types'
 import { Transaction, TransactionStatus, AnyTransaction } from './types'
 import {
@@ -194,14 +194,14 @@ function* handleReplaceTransactionRequest(
     console.warn('Could not connect to ethereum')
     return
   }
-  const eth = new Eth(provider)
+  const eth = new ethers.providers.Web3Provider(provider)
 
-  const accounts: Address[] = yield call(() => eth.getAccounts())
+  const accounts: string[] = yield call(() => eth.listAccounts())
   if (accounts.length === 0) {
     console.warn('Could not get accounts')
     return
   }
-  const account = accounts[0].toString()
+  const account = accounts[0]
   let checkpoint = null
 
   watchDroppedIndex[hash] = true
@@ -231,8 +231,8 @@ function* handleReplaceTransactionRequest(
     const startBlock = blockNumber
     const endBlock = checkpoint || blockNumber - BLOCKS_DEPTH
     for (let i = startBlock; i > endBlock; i--) {
-      let block: BlockResponse<TransactionResponse> = yield call(() =>
-        eth.getBlock(i, true)
+      let block: BlockWithTransactions = yield call(() =>
+        eth.getBlockWithTransactions(i)
       )
       const transactions: TransactionResponse[] =
         block != null && block.transactions != null ? block.transactions : []

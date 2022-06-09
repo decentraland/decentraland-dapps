@@ -1,10 +1,10 @@
-import { toBN } from 'web3x/utils'
+import { ethers } from 'ethers'
 import { Authorization, AuthorizationType } from './types'
 
-export function getTokenAmountToApprove(): ReturnType<typeof toBN> {
-  return toBN(2)
-    .pow(toBN(256))
-    .sub(toBN(1))
+export function getTokenAmountToApprove(): ethers.BigNumber {
+  return ethers.BigNumber.from(2)
+    .pow(256)
+    .sub(1)
 }
 
 export function hasAuthorization(

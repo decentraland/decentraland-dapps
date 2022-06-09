@@ -1,12 +1,10 @@
-import { Authenticator, AuthChain } from 'dcl-crypto'
-import { Personal } from 'web3x/personal'
-import { Eth } from 'web3x/eth'
-import { Address } from 'web3x/address'
+import { ethers } from 'ethers'
+import { Authenticator, AuthChain } from '@dcl/crypto'
+import { Entity, EntityType } from '@dcl/schemas'
 import {
   CatalystClient,
   BuildEntityWithoutFilesOptions
 } from 'dcl-catalyst-client'
-import { Entity, EntityType } from 'dcl-catalyst-commons'
 import { getConnectedProvider } from './eth'
 import { ProfileEntity } from './types'
 import { PeerAPI } from './peer'
@@ -36,14 +34,10 @@ export class EntitiesOperator {
       throw new Error(
         "The provider couldn't be retrieved when creating the auth chain"
       )
-    const eth = new Eth(provider)
+    const eth = new ethers.providers.Web3Provider(provider)
 
-    const personal = new Personal(eth.provider)
-    const signature = await personal.sign(
-      entityId,
-      Address.fromString(address),
-      ''
-    )
+    const personal = eth.getSigner(address)
+    const signature = await personal.signMessage(entityId)
 
     return Authenticator.createSimpleAuthChain(entityId, address, signature)
   }
