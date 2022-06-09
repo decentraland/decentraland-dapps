@@ -1,3 +1,4 @@
+import { ethers } from 'ethers'
 import { Authenticator, AuthChain } from '@dcl/crypto'
 import { Entity, EntityType } from '@dcl/schemas'
 import {
@@ -7,7 +8,6 @@ import {
 import { getConnectedProvider } from './eth'
 import { ProfileEntity } from './types'
 import { PeerAPI } from './peer'
-import { providers } from 'ethers'
 
 export class EntitiesOperator {
   private readonly catalystClient: CatalystClient
@@ -34,7 +34,7 @@ export class EntitiesOperator {
       throw new Error(
         "The provider couldn't be retrieved when creating the auth chain"
       )
-    const eth = new providers.Web3Provider(provider)
+    const eth = new ethers.providers.Web3Provider(provider)
 
     const personal = eth.getSigner(address)
     const signature = await personal.signMessage(entityId)

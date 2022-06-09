@@ -7,6 +7,7 @@ import {
   fork,
   delay
 } from 'redux-saga/effects'
+import { ethers } from 'ethers'
 import { TransactionResponse } from '@ethersproject/providers'
 import { BlockWithTransactions } from '@ethersproject/abstract-provider'
 import { Provider } from 'decentraland-connect/dist/types'
@@ -45,7 +46,6 @@ import { isPending, buildActionRef } from './utils'
 import { getTransaction as getTransactionFromChain } from './txUtils'
 import { getAddress } from '../wallet/selectors'
 import { getConnectedProvider } from '../../lib/eth'
-import { providers } from 'ethers'
 
 export function* transactionSaga(): IterableIterator<ForkEffect> {
   yield takeEvery(FETCH_TRANSACTION_REQUEST, handleFetchTransactionRequest)
@@ -194,7 +194,7 @@ function* handleReplaceTransactionRequest(
     console.warn('Could not connect to ethereum')
     return
   }
-  const eth = new providers.Web3Provider(provider)
+  const eth = new ethers.providers.Web3Provider(provider)
 
   const accounts: string[] = yield call(() => eth.listAccounts())
   if (accounts.length === 0) {

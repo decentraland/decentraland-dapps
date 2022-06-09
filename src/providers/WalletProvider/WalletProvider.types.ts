@@ -1,4 +1,4 @@
-import { providers } from 'ethers'
+import { ethers } from 'ethers'
 import { Dispatch } from 'redux'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import {
@@ -38,4 +38,6 @@ export type EmitterMethod = 'on' | 'removeListener'
 export type AccountsChangedHandler = (accounts: string[]) => void
 export type NetworkChangedHandler = (chainId: string) => void
 export type Handler = AccountsChangedHandler | NetworkChangedHandler
-export type ProviderWindow = Window & { ethereum?: providers.Web3Provider }
+export type ProviderWindow = Window & {
+  ethereum?: ethers.providers.Web3Provider
+}

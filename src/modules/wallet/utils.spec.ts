@@ -1,5 +1,5 @@
+import { ethers } from 'ethers'
 import { ContractData, sendMetaTransaction } from 'decentraland-transactions'
-import { providers } from 'ethers'
 import { getConnectedProvider, getNetworkProvider } from '../../lib/eth'
 import {
   mockedContract,
@@ -272,7 +272,7 @@ describe('when sending a transaction', () => {
         )
         expect(sendMetaTransaction).toHaveBeenCalledWith(
           connectedNetworkProvider,
-          expect.any(providers.Web3Provider),
+          expect.any(ethers.providers.Web3Provider),
           '0x23b872dd000000000000000000000000edae96f7739af8a7fb16e2a888c1e578e13282990000000000000000000000007dbbdf7c7c4c4d408cd43660d9a1f86b53109f5f0000000000000000000000000000000000000000000000000000000000000014',
           mockedContract,
           {
@@ -313,7 +313,7 @@ describe('when sending a transaction', () => {
         await sendTransaction(contract, 'approve')
         expect(sendMetaTransaction).toHaveBeenCalledWith(
           connectedNetworkProvider,
-          expect.any(providers.Web3Provider),
+          expect.any(ethers.providers.Web3Provider),
           '0x12424e3f',
           mockedContract,
           {

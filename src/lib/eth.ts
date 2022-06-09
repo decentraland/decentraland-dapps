@@ -1,7 +1,7 @@
 import { connection, Provider } from 'decentraland-connect'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { Network } from '@dcl/schemas/dist/dapps/network'
-import { providers } from 'ethers'
+import { ethers } from 'ethers'
 import { ProviderType } from '@dcl/schemas/dist/dapps/provider-type'
 import { getChainConfiguration } from './chainConfiguration'
 import { isMobile } from './utils'
@@ -22,7 +22,9 @@ export async function getNetworkProvider(chainId: ChainId): Promise<Provider> {
   */
   const connectedProvider = await getConnectedProvider()
   if (connectedProvider) {
-    const connectedChainId = await new providers.Web3Provider(connectedProvider)
+    const connectedChainId = await new ethers.providers.Web3Provider(
+      connectedProvider
+    )
       .getSigner()
       .getChainId()
     if (chainId === connectedChainId) {

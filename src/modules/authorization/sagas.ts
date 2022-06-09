@@ -1,6 +1,6 @@
 import { put, call, takeEvery } from 'redux-saga/effects'
 import { providers } from '@0xsequence/multicall'
-import { providers as ethersProviders, Contract, BigNumber } from 'ethers'
+import { ethers } from 'ethers'
 import { Provider } from 'decentraland-connect/dist/types'
 import { ContractData, getContract } from 'decentraland-transactions'
 import { getNetworkProvider } from '../../lib/eth'
@@ -51,7 +51,7 @@ export function createAuthorizationSaga() {
           const provider: Provider = yield call(() =>
             getNetworkProvider(chainId)
           )
-          const ethersProvider = new ethersProviders.Web3Provider(provider)
+          const ethersProvider = new ethers.providers.Web3Provider(provider)
           const multicallProvider = new providers.MulticallProvider(
             ethersProvider
           )
@@ -60,7 +60,7 @@ export function createAuthorizationSaga() {
 
         switch (authorization.type) {
           case AuthorizationType.ALLOWANCE:
-            const erc20 = new Contract(
+            const erc20 = new ethers.Contract(
               authorization.contractAddress,
               [
                 'function allowance(address owner, address spender) view returns (uint256)'
@@ -74,7 +74,7 @@ export function createAuthorizationSaga() {
                   authorization.address,
                   authorization.authorizedAddress
                 )
-                .then<Authorization | null>((allowance: BigNumber) =>
+                .then<Authorization | null>((allowance: ethers.BigNumber) =>
                   allowance.gt(0) ? authorization : null
                 )
                 .catch((error: Error) => {
@@ -84,7 +84,7 @@ export function createAuthorizationSaga() {
             )
             break
           case AuthorizationType.APPROVAL:
-            const erc721 = new Contract(
+            const erc721 = new ethers.Contract(
               authorization.contractAddress,
               [
                 'function isApprovedForAll(address owner, address operator) view returns (bool)'

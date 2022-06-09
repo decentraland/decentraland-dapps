@@ -1,10 +1,10 @@
-import { BigNumber } from 'ethers'
+import { ethers } from 'ethers'
 import { Authorization, AuthorizationType } from './types'
 
-export function getTokenAmountToApprove(): BigNumber {
-  return BigNumber.from(2)
-    .pow(BigNumber.from(256))
-    .sub(BigNumber.from(1))
+export function getTokenAmountToApprove(): ethers.BigNumber {
+  return ethers.BigNumber.from(2)
+    .pow(256)
+    .sub(1)
 }
 
 export function hasAuthorization(
