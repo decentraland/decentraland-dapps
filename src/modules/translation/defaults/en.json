@@ -72,7 +72,8 @@
       "option": {
         "browser_extension": "Using a browser extension",
         "email": "Using your email",
-        "mobile": "Using a mobile wallet"
+        "mobile": "Using a mobile wallet",
+        "mobile_and_browser": "Using your mobile + browser extension"
       }
     },
     "user_menu": {
