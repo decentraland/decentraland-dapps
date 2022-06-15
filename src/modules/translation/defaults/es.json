@@ -70,10 +70,10 @@
         "trezor_link": "aquí"
       },
       "option": {
-        "browser_extension": "Usando una Browser extension",
+        "browser_extension": "Usando una extensión de navegador",
         "email": "Usando tu cuenta de email",
         "mobile": "Usando un navegador móvil",
-        "mobile_and_browser": "Usando tu móvil + Browser extension"
+        "mobile_and_browser": "Usando tu móvil o extensión de navegador"
       }
     },
     "user_menu": {
