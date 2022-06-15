@@ -73,7 +73,7 @@
         "browser_extension": "Usando una Browser extension",
         "email": "Usando tu cuenta de email",
         "mobile": "Usando un navegador móvil",
-        "mobile_and_browser": "Usando tu móvil o navegador"
+        "mobile_and_browser": "Usando tu móvil + Browser extension"
       }
     },
     "user_menu": {
