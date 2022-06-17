@@ -1,12 +1,12 @@
 import React from 'react'
+import { getChainName } from '@dcl/schemas'
 import { Popup } from 'decentraland-ui/dist/components/Popup/Popup'
 import { T } from '../../modules/translation/utils'
 import { getChainIdByNetwork, getConnectedProviderChainId } from '../../lib/eth'
-import { Props } from './NetworkCheck.types'
-import { getChainName } from '@dcl/schemas/dist/dapps/chain-id'
 import ChainProvider from '../ChainProvider'
+import { Props } from './NetworkCheck.types'
 
-export default class ChainCheck extends React.PureComponent<Props> {
+export default class NetworkCheck extends React.PureComponent<Props> {
   getChainId = () => {
     const { network } = this.props
     try {
@@ -20,7 +20,8 @@ export default class ChainCheck extends React.PureComponent<Props> {
     return (
       <ChainProvider>
         {data => {
-          const isEnabled = data.isSupported || data.chainId === this.getChainId()
+          const isEnabled =
+            data.isSupported || data.chainId === this.getChainId()
           return (
             <Popup
               disabled={isEnabled}
