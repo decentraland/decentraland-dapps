@@ -5,7 +5,8 @@ import {
   getAddress,
   getMana,
   getChainId,
-  hasAcceptedNetworkPartialSupport
+  hasAcceptedNetworkPartialSupport,
+  getAppChainId
 } from '../../modules/wallet/selectors'
 import { isEnabled } from '../../modules/translation/selectors'
 import {
@@ -24,6 +25,7 @@ const mapState = (state: any): MapStateProps => ({
   isConnected: isConnected(state),
   isConnecting: isConnecting(state),
   hasTranslations: isEnabled(state),
+  appChainId: getAppChainId(state),
   hasAcceptedNetworkPartialSupport: hasAcceptedNetworkPartialSupport(state)
 })
 

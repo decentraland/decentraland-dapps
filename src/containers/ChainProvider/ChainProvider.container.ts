@@ -1,7 +1,7 @@
 import { connect } from 'react-redux'
-import { getChainId } from '../../modules/wallet/selectors'
+import { getChainName } from '@dcl/schemas'
+import { getAppChainId, getChainId } from '../../modules/wallet/selectors'
 import { getChainConfiguration } from '../../lib/chainConfiguration'
-import { getConnectedProviderChainId } from '../../lib/eth'
 import {
   MapStateProps,
   MapDispatchProps,
@@ -11,21 +11,28 @@ import ChainProvider from './ChainProvider'
 
 const mapState = (state: any): MapStateProps => {
   const chainId = getChainId(state) || null
+  const chainName = chainId ? getChainName(chainId) : null
   const network = chainId && getChainConfiguration(chainId).network
-  const expectedChainId = getConnectedProviderChainId()
-  const config = expectedChainId && getChainConfiguration(expectedChainId)
-  const isConnected = !!chainId && !!config
-  const isSupported = isConnected && chainId === expectedChainId
+  const appChainId = getAppChainId(state)
+  const appConfig = getChainConfiguration(appChainId)
+  const appChainName = getChainName(appChainId)!
+  const appNetwork = appConfig.network
+  const isConnected = !!chainId && !!appConfig
+  const isSupported = isConnected && chainId === appChainId
   const isPartiallySupported =
     isConnected &&
     !isSupported &&
-    Object.values(config!.networkMapping).some(
+    Object.values(appConfig.networkMapping).some(
       mappedChainId => mappedChainId === chainId
     )
   const isUnsupported = isConnected && !isSupported && !isPartiallySupported
   return {
     chainId,
+    chainName,
     network,
+    appChainId,
+    appChainName,
+    appNetwork,
     isConnected,
     isSupported,
     isPartiallySupported,

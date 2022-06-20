@@ -12,9 +12,15 @@ import {
 
 export default class WalletProvider extends React.PureComponent<Props> {
   handleChangeAccount = async () => {
-    const { isConnected, isConnecting, address, onChangeAccount } = this.props
+    const {
+      isConnected,
+      isConnecting,
+      address,
+      onChangeAccount,
+      appChainId
+    } = this.props
     try {
-      const wallet = await buildWallet()
+      const wallet = await buildWallet(appChainId)
       if (isConnected && !isConnecting && wallet.address !== address) {
         onChangeAccount(wallet)
       }
@@ -24,9 +30,15 @@ export default class WalletProvider extends React.PureComponent<Props> {
   }
 
   handleChangeNetwork = async () => {
-    const { isConnected, isConnecting, chainId, onChangeNetwork } = this.props
+    const {
+      isConnected,
+      isConnecting,
+      chainId,
+      onChangeNetwork,
+      appChainId
+    } = this.props
     try {
-      const wallet = await buildWallet()
+      const wallet = await buildWallet(appChainId)
       if (isConnected && !isConnecting && wallet.chainId !== chainId) {
         onChangeNetwork(wallet)
       }

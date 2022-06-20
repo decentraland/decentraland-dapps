@@ -57,7 +57,7 @@ import {
   setTransactionsApiUrl
 } from './utils'
 import { CreateWalletOptions, Wallet } from './types'
-import { isConnected } from './selectors'
+import { getAppChainId, isConnected } from './selectors'
 
 // Patch Samsung's Cucumber provider send to support promises
 const provider = (window as any).ethereum as ethers.providers.Web3Provider
@@ -161,7 +161,8 @@ function* handleDisconnectWallet(_action: DisconnectWalletAction) {
 
 function* handleFetchWalletRequest(_action: FetchWalletRequestAction) {
   try {
-    const wallet: Wallet = yield call(buildWallet)
+    const appChainId: ChainId = yield select(getAppChainId)
+    const wallet: Wallet = yield call(buildWallet, appChainId)
     yield put(fetchWalletSuccess(wallet))
   } catch (error) {
     yield put(fetchWalletFailure(error.message))
