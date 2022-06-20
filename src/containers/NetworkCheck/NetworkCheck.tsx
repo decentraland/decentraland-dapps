@@ -5,7 +5,7 @@ import { getChainIdByNetwork } from '../../lib/eth'
 import { Props } from './NetworkCheck.types'
 import ChainProvider from '../ChainProvider'
 
-export default class ChainCheck extends React.PureComponent<Props> {
+export default class NetworkCheck extends React.PureComponent<Props> {
   getChainId = () => {
     const { network } = this.props
     try {
