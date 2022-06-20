@@ -12,7 +12,7 @@ jobs:
         with:
           node-version: '16'
       - name: Install dependencies
-        run: npm ci --legacy-peer-deps #TODO: remove this flag once we get rig of tslint
+        run: npm ci --legacy-peer-deps #TODO: remove this flag once we get rid of tslint
       - name: Build
         run: npm run build
       - name: Test
