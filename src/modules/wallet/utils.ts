@@ -10,7 +10,6 @@ import {
 import { ChainId, getChainName } from '@dcl/schemas/dist/dapps/chain-id'
 import {
   getConnectedProvider,
-  getConnectedProviderChainId,
   getConnectedProviderType,
   getNetworkProvider
 } from '../../lib/eth'
@@ -38,7 +37,7 @@ export async function fetchManaBalance(chainId: ChainId, address: string) {
   }
 }
 
-export async function buildWallet(): Promise<Wallet> {
+export async function buildWallet(appChainId: ChainId): Promise<Wallet> {
   const provider = await getConnectedProvider()
 
   if (!provider) {
@@ -57,12 +56,11 @@ export async function buildWallet(): Promise<Wallet> {
   const address = accounts[0].toString()
   const { chainId } = await eth.getNetwork()
   const chainConfig = getChainConfiguration(chainId)
-  const expectedChainId = getConnectedProviderChainId()!
-  const expectedChainConfig = getChainConfiguration(expectedChainId)
+  const appChainConfig = getChainConfiguration(appChainId)
   const networks: Partial<Networks> = {}
 
-  for (const network of Object.keys(expectedChainConfig.networkMapping)) {
-    const networkChainId = expectedChainConfig.networkMapping[network]
+  for (const network of Object.keys(appChainConfig.networkMapping)) {
+    const networkChainId = appChainConfig.networkMapping[network]
     networks[network] = {
       chainId: networkChainId,
       mana: await fetchManaBalance(networkChainId, address)

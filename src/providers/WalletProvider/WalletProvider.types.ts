@@ -13,6 +13,7 @@ import {
 export type Props = {
   address?: string
   chainId?: ChainId
+  appChainId: ChainId
   isConnected: boolean
   isConnecting: boolean
   children: React.ReactNode
@@ -23,7 +24,7 @@ export type Props = {
 
 export type MapStateProps = Pick<
   Props,
-  'address' | 'chainId' | 'isConnected' | 'isConnecting'
+  'address' | 'chainId' | 'appChainId' | 'isConnected' | 'isConnecting'
 >
 export type MapDispatchProps = Pick<
   Props,

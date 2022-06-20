@@ -4,7 +4,11 @@ import { Network } from '@dcl/schemas/dist/dapps/network'
 
 export type ChainData = {
   chainId: ChainId | null
+  chainName: string | null
   network: Network | null
+  appChainId: ChainId
+  appChainName: string
+  appNetwork: Network
   isConnected: boolean
   isSupported: boolean
   isPartiallySupported: boolean
@@ -18,7 +22,11 @@ export type Props = ChainData & {
 export type MapStateProps = Pick<
   Props,
   | 'chainId'
+  | 'chainName'
   | 'network'
+  | 'appChainId'
+  | 'appChainName'
+  | 'appNetwork'
   | 'isConnected'
   | 'isSupported'
   | 'isPartiallySupported'

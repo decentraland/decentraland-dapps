@@ -7,7 +7,6 @@ import {
   NavbarI18N
 } from 'decentraland-ui/dist/components/Navbar/Navbar'
 import { getChainName } from '@dcl/schemas/dist/dapps/chain-id'
-import { getConnectedProviderChainId } from '../../lib/eth'
 import { T } from '../../modules/translation/utils'
 import Modal from '../../containers/Modal'
 import ChainProvider from '../ChainProvider'
@@ -36,7 +35,7 @@ export default class Navbar extends React.PureComponent<NavbarProps> {
   }
 
   handleSwitchNetwork = () => {
-    this.props.onSwitchNetwork(getConnectedProviderChainId()!)
+    this.props.onSwitchNetwork(this.props.appChainId)
   }
 
   handleSignOut = () => {
@@ -45,10 +44,11 @@ export default class Navbar extends React.PureComponent<NavbarProps> {
 
   render() {
     const {
+      appChainId,
       hasAcceptedNetworkPartialSupport,
       onAcceptNetworkPartialSupport
     } = this.props
-    const expectedChainName = getChainName(getConnectedProviderChainId()!)
+    const expectedChainName = getChainName(appChainId)
     return (
       <>
         <NavbarComponent {...this.props} i18n={this.getTranslations()} />

@@ -11,6 +11,7 @@ import {
 
 export type NavbarProps = NavbarComponentProps & {
   chainId?: ChainId
+  appChainId: ChainId
   hasTranslations?: boolean
   onSwitchNetwork: typeof switchNetworkRequest
   onSignOut: typeof disconnectWallet
@@ -26,6 +27,7 @@ export type MapStateProps = Pick<
   | 'isConnecting'
   | 'hasTranslations'
   | 'chainId'
+  | 'appChainId'
   | 'hasAcceptedNetworkPartialSupport'
 >
 
