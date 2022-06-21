@@ -13,9 +13,11 @@ import {
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { connection, Provider } from 'decentraland-connect'
 import {
+  _getAppChainId,
   getConnectedProvider,
   isCucumberProvider,
-  isValidChainId
+  isValidChainId,
+  _setAppChainId
 } from '../../lib/eth'
 import {
   connectWalletSuccess,
@@ -77,7 +79,6 @@ if (isCucumberProvider()) {
 }
 
 // Can be set on createWalletSaga
-let CHAIN_ID: ChainId
 let POLL_INTERVAL = 5 * 60 * 1000 // 60 seconds
 let polling = false
 
@@ -96,7 +97,8 @@ export function* walletSaga() {
 }
 
 function* initializeAppChainId() {
-  yield put(setAppChainId(CHAIN_ID))
+  // store the app chain id in redux to use it from selectors or sagas
+  yield put(setAppChainId(_getAppChainId()))
 }
 
 function* handleConnectWalletRequest() {
@@ -131,7 +133,10 @@ function* handleEnableWalletRequest(action: EnableWalletRequestAction) {
         await cucumberProviderSend('eth_requestAccounts')
       }
 
-      const { account } = await connection.connect(providerType, CHAIN_ID)
+      const { account } = await connection.connect(
+        providerType,
+        _getAppChainId()
+      )
       return account
     })
 
@@ -234,7 +239,7 @@ function* handleSwitchNetworkSucces(_action: SwitchNetworkSuccessAction) {
 
 export function createWalletSaga(options: CreateWalletOptions) {
   if (isValidChainId(options.CHAIN_ID)) {
-    CHAIN_ID = Number(options.CHAIN_ID)
+    _setAppChainId(Number(options.CHAIN_ID))
   } else {
     throw new Error(
       `Invalid Chain id ${options.CHAIN_ID}. Valid options are ${Object.values(

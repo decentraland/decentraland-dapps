@@ -15,6 +15,26 @@ export type EthereumWindow = Window & {
   }
 }
 
+/**
+ * Internal getter/setter to store the app chain id
+ */
+let appChainId: ChainId
+
+/**
+ * @internal
+ */
+export function _getAppChainId() {
+  return appChainId
+}
+
+/**
+ * @internal
+ * @param _appChainId
+ */
+export function _setAppChainId(_appChainId: ChainId) {
+  appChainId = _appChainId
+}
+
 export async function getNetworkProvider(chainId: ChainId): Promise<Provider> {
   /*
     We check if the connected provider is from the same chainId, if so we return that one instead of creating one.
@@ -83,10 +103,10 @@ export function isValidChainId(chainId: string | number) {
 }
 
 export function getChainIdByNetwork(network: Network) {
-  const connectedChainId = getConnectedProviderChainId()
-  if (!connectedChainId) {
-    throw new Error('Could not get connected provider chain id')
+  const appChainId = _getAppChainId()
+  if (!appChainId) {
+    throw new Error('Could not get app chain id')
   }
-  const config = getChainConfiguration(connectedChainId)
+  const config = getChainConfiguration(appChainId)
   return config.networkMapping[network]
 }
