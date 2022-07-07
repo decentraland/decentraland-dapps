@@ -14,7 +14,7 @@ const fetchSingleApplicationFeatures = async (
   app: ApplicationName
 ): Promise<ApplicationFeatures> => {
   const url = `https://feature-flags.decentraland.org/${app}.json`
-  const response = await fetch(url)
+  const response = await fetch(url, { credentials: 'include', mode: 'cors' })
   const json = await response.json()
 
   return {
