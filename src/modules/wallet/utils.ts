@@ -284,7 +284,7 @@ export async function switchProviderChainId(
     return chainId
   } catch (switchError) {
     // This error code indicates that the chain has not been added to MetaMask.
-    if (provider && switchError.code === 4902) {
+    if (provider && switchError?.code === 4902) {
       try {
         await provider.request({
           method: 'wallet_addEthereumChain',

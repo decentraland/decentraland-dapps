@@ -190,14 +190,21 @@ function* handleConnectWalletSuccess() {
 function* handleSwitchNetworkRequest(action: SwitchNetworkRequestAction) {
   const { chainId } = action.payload
   const provider: Provider | null = yield call(getConnectedProvider)
-  try {
-    if (!provider) {
-      throw new Error('Could not get provider')
+
+  if (!provider) {
+    yield put(
+      switchNetworkFailure(
+        chainId,
+        'Error switching network: Could not get provider'
+      )
+    )
+  } else {
+    try {
+      yield call(switchProviderChainId, provider, chainId)
+      yield put(switchNetworkSuccess(chainId))
+    } catch (switchError) {
+      yield put(switchNetworkFailure(chainId, switchError.message))
     }
-    yield call(switchProviderChainId, provider, chainId)
-    yield put(switchNetworkSuccess(chainId))
-  } catch (switchError) {
-    yield put(switchNetworkFailure(chainId, switchError.message))
   }
 }
 
