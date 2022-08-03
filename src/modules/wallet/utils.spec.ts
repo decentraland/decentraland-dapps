@@ -387,7 +387,7 @@ describe('when switching the chain id from a provider', () => {
     })
   })
 
-  describe('when wallet_switchEthereumChain fail with know 4902 error and adding the new chain fails', () => {
+  describe('when wallet_switchEthereumChain fails with know 4902 error and adding the new chain fails', () => {
     let provider: MockedProvider
     let switchError: { message: string; code?: number }
     beforeEach(() => {
