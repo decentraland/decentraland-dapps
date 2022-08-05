@@ -52,6 +52,8 @@ type buildNetworkProviderOptions = {
   ethSendTransaction?: Promise<string>
   ethBlockNumber?: Promise<string>
   eth_getTransactionByHash?: Promise<string>
+  walletSwitchEthereumChain?: Promise<null>
+  walletAddEthereumChain?: Promise<null>
 }
 
 export function buildMockedNetworkProvider(
@@ -63,7 +65,9 @@ export function buildMockedNetworkProvider(
     ethEstimateGas,
     ethSendTransaction,
     ethBlockNumber,
-    eth_getTransactionByHash
+    eth_getTransactionByHash,
+    walletSwitchEthereumChain,
+    walletAddEthereumChain
   } = options ?? {}
 
   return {
@@ -114,6 +118,10 @@ export function buildMockedNetworkProvider(
                     '0x4ba69724e8f69de52f0125ad8b3c5c2cef33019bac3249e2c0a2192766d1721c'
                 })
               )
+            case 'wallet_switchEthereumChain':
+              return walletSwitchEthereumChain ?? Promise.resolve(null)
+            case 'wallet_addEthereumChain':
+              return walletAddEthereumChain ?? Promise.resolve(null)
             default:
               throw new Error(`Unsupported method: ${method}`)
           }

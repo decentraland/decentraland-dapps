@@ -8,7 +8,8 @@ import {
 import {
   getProviderChainId,
   getTransactionsApiUrl,
-  sendTransaction
+  sendTransaction,
+  switchProviderChainId
 } from './utils'
 
 jest.mock('../../lib/eth')
@@ -100,7 +101,7 @@ describe('when sending a transaction', () => {
   })
 
   describe("and the current chain id is the same as the contract's chain id", () => {
-    describe('and the transaction fails to be sent', () => {
+    describe('and the transaction  with know 4902 errors to be sent', () => {
       beforeEach(() => {
         error = new Error('Transaction failed to be sent')
         const networkProvider = {
@@ -341,6 +342,84 @@ describe('when getting the chain id from a provider', () => {
         ethChainId: Promise.resolve(80001)
       })
       expect(await getProviderChainId(provider as any)).toBe(80001)
+    })
+  })
+})
+
+describe('when switching the chain id from a provider', () => {
+  let provider: MockedProvider
+
+  describe('when wallet_switchEthereumChain succeeds', () => {
+    beforeEach(() => {
+      provider = buildMockedNetworkProvider({
+        walletSwitchEthereumChain: Promise.resolve(null)
+      })
+    })
+
+    it('should return the chainId in case that the request succeded', () => {
+      return expect(switchProviderChainId(provider as any, 1)).resolves.toBe(1)
+    })
+  })
+
+  describe('when wallet_switchEthereumChain fail with know 4902 error', () => {
+    let switchError: { message: string; code?: number }
+
+    beforeEach(() => {
+      switchError = { code: 4902, message: 'Could not switch' }
+
+      provider = buildMockedNetworkProvider({
+        walletSwitchEthereumChain: Promise.reject(switchError)
+      })
+    })
+
+    it('should try to use wallet_addEthereumChain instead', () => {
+      return expect(
+        switchProviderChainId(provider as any, 80001)
+      ).resolves.toBe(80001)
+    })
+
+    it('should try to use wallet_addEthereumChain and fails comparing chain requested with new chain', () => {
+      return expect(
+        switchProviderChainId(provider as any, 123)
+      ).rejects.toThrow(
+        'Error adding network: chainId did not change after adding network'
+      )
+    })
+  })
+
+  describe('when wallet_switchEthereumChain fails with know 4902 error and adding the new chain fails', () => {
+    let provider: MockedProvider
+    let switchError: { message: string; code?: number }
+    beforeEach(() => {
+      switchError = { code: 4902, message: 'Could not switch' }
+      const error = { message: 'add Ethereum chain' }
+      provider = buildMockedNetworkProvider({
+        walletSwitchEthereumChain: Promise.reject(switchError),
+        walletAddEthereumChain: Promise.reject(error)
+      })
+    })
+
+    it('should throw an Error adding network: add Ethereum chain', () => {
+      return expect(
+        switchProviderChainId(provider as any, 80001)
+      ).rejects.toThrow('Error adding network: add Ethereum chain')
+    })
+  })
+
+  describe('when wallet_switchEthereumChain fail', () => {
+    let provider: MockedProvider
+    const error = new Error('Could not switch')
+
+    beforeEach(() => {
+      provider = buildMockedNetworkProvider({
+        walletSwitchEthereumChain: Promise.reject(error)
+      })
+    })
+
+    it('should should return an error', () => {
+      return expect(switchProviderChainId(provider as any, 1)).rejects.toThrow(
+        'Error switching network: Could not switch'
+      )
     })
   })
 })

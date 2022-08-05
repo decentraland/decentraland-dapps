@@ -10,7 +10,7 @@ import {
   switchNetworkSuccess
 } from './actions'
 import { getConnectedProvider, getNetworkProvider } from '../../lib/eth'
-import { getAddEthereumChainParameters, getProviderChainId } from './utils'
+import { switchProviderChainId } from './utils'
 
 const walletSaga = createWalletSaga({ CHAIN_ID: 1 })
 
@@ -47,10 +47,7 @@ describe('Wallet sagas', () => {
                 Promise.resolve(mockProvider)
               ],
               [
-                call([mockProvider, 'request'], {
-                  method: 'wallet_switchEthereumChain',
-                  params: [{ chainId: '0x1' }]
-                }),
+                call(switchProviderChainId, mockProvider, 1),
                 Promise.resolve(void 0)
               ]
             ])
@@ -72,61 +69,12 @@ describe('Wallet sagas', () => {
                 Promise.resolve(mockProvider)
               ],
               [
-                call([mockProvider, 'request'], {
-                  method: 'wallet_switchEthereumChain',
-                  params: [{ chainId: '0x1' }]
-                }),
+                call(switchProviderChainId, mockProvider, 1),
                 Promise.reject(switchError)
-              ],
-              [
-                call([mockProvider, 'request'], {
-                  method: 'wallet_addEthereumChain',
-                  params: [
-                    getAddEthereumChainParameters(ChainId.ETHEREUM_MAINNET)
-                  ]
-                }),
-                Promise.resolve()
-              ],
-              [call(getProviderChainId, mockProvider), Promise.resolve('0x1')]
-            ])
-            .put(switchNetworkSuccess(ChainId.ETHEREUM_MAINNET))
-            .dispatch(switchNetworkRequest(ChainId.ETHEREUM_MAINNET))
-            .run({ silenceTimeout: true })
-        })
-        it('should should fail if after using wallet_addEthereumChain the chainId did not change', () => {
-          const switchError = new Error('Could not switch') as Error & {
-            code: number
-          }
-          switchError.code = 4902
-          return expectSaga(walletSaga)
-            .provide([
-              [
-                matchers.call.fn(getConnectedProvider),
-                Promise.resolve(mockProvider)
-              ],
-              [
-                call([mockProvider, 'request'], {
-                  method: 'wallet_switchEthereumChain',
-                  params: [{ chainId: '0x1' }]
-                }),
-                Promise.reject(switchError)
-              ],
-              [
-                call([mockProvider, 'request'], {
-                  method: 'wallet_addEthereumChain',
-                  params: [
-                    getAddEthereumChainParameters(ChainId.ETHEREUM_MAINNET)
-                  ]
-                }),
-                Promise.resolve()
-              ],
-              [call(getProviderChainId, mockProvider), Promise.resolve('0x2')]
+              ]
             ])
             .put(
-              switchNetworkFailure(
-                ChainId.ETHEREUM_MAINNET,
-                'Error adding network: chainId did not change after adding network'
-              )
+              switchNetworkFailure(ChainId.ETHEREUM_MAINNET, 'Could not switch')
             )
             .dispatch(switchNetworkRequest(ChainId.ETHEREUM_MAINNET))
             .run({ silenceTimeout: true })

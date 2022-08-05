@@ -53,10 +53,9 @@ import {
 } from './actions'
 import {
   buildWallet,
-  getAddEthereumChainParameters,
-  getProviderChainId,
   getTransactionsApiUrl,
-  setTransactionsApiUrl
+  setTransactionsApiUrl,
+  switchProviderChainId
 } from './utils'
 import { CreateWalletOptions, Wallet } from './types'
 import { getAppChainId, isConnected } from './selectors'
@@ -191,45 +190,21 @@ function* handleConnectWalletSuccess() {
 function* handleSwitchNetworkRequest(action: SwitchNetworkRequestAction) {
   const { chainId } = action.payload
   const provider: Provider | null = yield call(getConnectedProvider)
-  try {
-    if (!provider) {
-      throw new Error('Could not get provider')
-    }
-    yield call([provider, 'request'], {
-      method: 'wallet_switchEthereumChain',
-      params: [{ chainId: '0x' + chainId.toString(16) }]
-    })
-    yield put(switchNetworkSuccess(chainId))
-  } catch (switchError) {
-    // This error code indicates that the chain has not been added to MetaMask.
-    if (provider && switchError.code === 4902) {
-      try {
-        yield call([provider, 'request'], {
-          method: 'wallet_addEthereumChain',
-          params: [getAddEthereumChainParameters(chainId)]
-        })
-        const newChainId: string = yield call(getProviderChainId, provider)
-        if (chainId !== parseInt(newChainId, 16)) {
-          throw new Error('chainId did not change after adding network')
-        }
-        yield put(switchNetworkSuccess(chainId))
-        return
-      } catch (addError) {
-        yield put(
-          switchNetworkFailure(
-            chainId,
-            `Error adding network: ${addError.message}`
-          )
-        )
-        return
-      }
-    }
+
+  if (!provider) {
     yield put(
       switchNetworkFailure(
         chainId,
-        `Error switching network: ${switchError.message}`
+        'Error switching network: Could not get provider'
       )
     )
+  } else {
+    try {
+      yield call(switchProviderChainId, provider, chainId)
+      yield put(switchNetworkSuccess(chainId))
+    } catch (switchError) {
+      yield put(switchNetworkFailure(chainId, switchError.message))
+    }
   }
 }
 
