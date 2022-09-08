@@ -1,5 +1,6 @@
 import { AnyAction } from 'redux'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
+import { race, take } from 'redux-saga/effects'
 import {
   Transaction,
   TransactionPayload,
@@ -8,6 +9,12 @@ import {
   FAILED_STATUS,
   SUCCESS_STATUS
 } from './types'
+import {
+  FetchTransactionFailureAction,
+  FetchTransactionSuccessAction,
+  FETCH_TRANSACTION_FAILURE,
+  FETCH_TRANSACTION_SUCCESS
+} from './actions'
 
 // Special flag used to determine transaction hashes to be monitored
 export const TRANSACTION_ACTION_FLAG = '_watch_tx'
@@ -76,8 +83,8 @@ export function getTransactionHref(
   const pathname = address
     ? `/address/${address}`
     : blockNumber
-      ? `/block/${blockNumber}`
-      : `/tx/${txHash}`
+    ? `/block/${blockNumber}`
+    : `/tx/${txHash}`
 
   return `${getTransactionOrigin(network)}${pathname}`
 }
@@ -111,4 +118,30 @@ export function hasFailed(status: TransactionStatus | null): boolean {
 
 export function hasSucceeded(status: TransactionStatus | null): boolean {
   return (SUCCESS_STATUS as any[]).includes(status)
+}
+
+/**
+ * Waits for a transaction to be completed.
+ *
+ * @param txHash - The hash of the transaction to wait for.
+ */
+export function* waitForTx(txHash: string) {
+  while (true) {
+    const {
+      success,
+      failure
+    }: {
+      success: FetchTransactionSuccessAction | undefined
+      failure: FetchTransactionFailureAction | undefined
+    } = yield race({
+      success: take(FETCH_TRANSACTION_SUCCESS),
+      failure: take(FETCH_TRANSACTION_FAILURE)
+    })
+
+    if (success?.payload.transaction.hash === txHash) {
+      break
+    } else if (failure?.payload.transaction.hash === txHash) {
+      throw new Error(`The transaction ${txHash} failed to be mined.`)
+    }
+  }
 }

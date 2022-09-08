@@ -1,11 +1,15 @@
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
+import { expectSaga } from 'redux-saga-test-plan'
+import { fetchTransactionFailure, fetchTransactionSuccess } from './actions'
+import { Transaction, TransactionStatus } from './types'
 import {
   TRANSACTION_ACTION_FLAG,
   buildTransactionPayload,
   buildTransactionWithReceiptPayload,
   isTransactionAction,
   getTransactionFromAction,
-  getTransactionHashFromAction
+  getTransactionHashFromAction,
+  waitForTx
 } from './utils'
 
 describe('modules', function() {
@@ -203,6 +207,76 @@ describe('modules', function() {
           expect(() => getTransactionHashFromAction(action)).toThrow()
         })
       })
+    })
+  })
+})
+
+describe('when waiting for a transaction to be completed', () => {
+  const txHash =
+    '0x654439c89c379f2b3083b4bdbd28c9cf57a0754d625c1353c800c09e073040c6'
+  const senderAddress = '0xc4445E5BCDE63C318909fd10318734b27906f7b6'
+  const anotherAddress = '0x2Da846e95E22cd84fdF7986dE99db221e6765444'
+  let transaction: Transaction
+  let anotherTransaction: Transaction
+
+  beforeEach(() => {
+    transaction = {
+      events: [],
+      hash: txHash,
+      nonce: 0,
+      replacedBy: null,
+      timestamp: Date.now(),
+      from: senderAddress,
+      actionType: 'anActionType',
+      status: null,
+      chainId: ChainId.ETHEREUM_GOERLI
+    }
+
+    anotherTransaction = {
+      ...transaction,
+      hash: anotherAddress
+    }
+  })
+
+  describe('and the transaction results in a failure', () => {
+    beforeEach(() => {
+      // Mute console error when running the expect saga implementation and throwing
+      jest.spyOn(global.console, 'error').mockImplementation(jest.fn())
+    })
+
+    afterEach(() => {
+      ;((global.console.error as unknown) as jest.SpyInstance).mockRestore()
+    })
+
+    it('should throw an error saying that the transaction was not successful', () => {
+      return expectSaga(waitForTx, txHash)
+        .dispatch(
+          fetchTransactionFailure(
+            anotherAddress,
+            TransactionStatus.REVERTED,
+            'aFailureMessage',
+            anotherTransaction
+          )
+        )
+        .dispatch(
+          fetchTransactionFailure(
+            txHash,
+            TransactionStatus.REVERTED,
+            'aFailureMessage',
+            transaction
+          )
+        )
+        .throws(`The transaction ${txHash} failed to be mined.`)
+        .silentRun()
+    })
+  })
+
+  describe('and the transaction results successful', () => {
+    it("should finish the saga's execution", () => {
+      return expectSaga(waitForTx, txHash)
+        .dispatch(fetchTransactionSuccess(anotherTransaction))
+        .dispatch(fetchTransactionSuccess(transaction))
+        .silentRun()
     })
   })
 })
