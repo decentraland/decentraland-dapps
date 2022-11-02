@@ -1,4 +1,4 @@
-import axios, { AxiosResponse, AxiosError, AxiosRequestConfig } from 'axios'
+import axios, { AxiosResponse, AxiosRequestConfig } from 'axios'
 
 const httpClient = axios.create()
 
@@ -13,20 +13,31 @@ interface Response {
   error: string
 }
 
-export class BaseAPI {
-  constructor(public url: string) {}
+export interface RetryParams {
+  /** Amount of retry attempts for request, default in 0 */
+  attempts: number,
+  delay: number
+}
 
-  request(
+export class BaseAPI {
+  constructor(public url: string, private retry: RetryParams = { attempts: 0, delay: 1000 }) { }
+
+  private sleep = (delay: number) => new Promise((resolve) => {
+    setTimeout(resolve, delay);
+  })
+
+  async request(
     method: APIMethod,
     path: string,
     params: APIParam | null = null,
-    axiosRequestConfig: AxiosRequestConfig = {}
+    axiosRequestConfig: AxiosRequestConfig = {},
   ) {
     let options: AxiosRequestConfig = {
       ...axiosRequestConfig,
       method,
       url: this.getUrl(path)
     }
+
 
     if (params) {
       if (method === 'get') {
@@ -36,17 +47,22 @@ export class BaseAPI {
       }
     }
 
-    return httpClient
-      .request(options)
-      .then((axiosResponse: AxiosResponse) => {
+    let attempts = 0;
+
+    while (true) {
+      try {
+        const axiosResponse = await httpClient
+          .request(options);
         const { ok, data, error } = this.parseResponse(axiosResponse)
 
         return !ok || error ? Promise.reject({ message: error, data }) : data
-      })
-      .catch((error: AxiosError) => {
-        console.warn(`[API] HTTP request failed: ${error.message || ''}`, error)
-        return Promise.reject(error)
-      })
+      } catch (error) {
+        console.error(`[API] HTTP request failed: ${error.message || ''}`, error)
+        if (this.retry.attempts <= attempts) throw error;
+        attempts++;
+      }
+      await this.sleep(this.retry.delay);
+    }
   }
 
   getUrl(path: string) {

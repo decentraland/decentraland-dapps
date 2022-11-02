@@ -43,6 +43,7 @@
     "dcl-tslint-config-standard": "^1.0.1",
     "husky": "^0.14.3",
     "jest": "^27.0.6",
+    "nock": "^13.2.9",
     "prettier": "^1.10.2",
     "ramda": "^0.27.1",
     "react": "^17.0.2",
