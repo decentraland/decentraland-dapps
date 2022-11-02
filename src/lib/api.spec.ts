@@ -10,7 +10,7 @@ const urlTest = 'http://test.com'
 
 nock.disableNetConnect()
 
-describe('when making requests and the requests fails', () => {
+describe('when making requests and the requests fail', () => {
 
   beforeEach(() => {
 
@@ -23,7 +23,7 @@ describe('when making requests and the requests fails', () => {
 
   })
 
-  describe('and there are one attempts left', () => {
+  describe('and there is one attempt left', () => {
     let baseApi: BaseAPI;
     beforeEach(() => {
       const retry: RetryParams = {
@@ -40,7 +40,7 @@ describe('when making requests and the requests fails', () => {
           "Access-Control-Allow-Origin": "*"
         })
     })
-    it('should retry 1 time', async () => {
+    it('should retry 1 time and throw with the response error', async () => {
       await expect(baseApi.request('get', '/test')).rejects.toThrowError("Request failed with status code 500")
       expect(nock.isDone()).toBeTruthy()
     })
@@ -63,7 +63,7 @@ describe('when making requests and the requests fails', () => {
           "Access-Control-Allow-Origin": "*"
         })
     })
-    it('should retry 1 time', async () => {
+    it('should retry 3 times and throw with the response error', async () => {
       await expect(baseApi.request('get', '/test')).rejects.toThrowError("Request failed with status code 500")
       expect(nock.isDone()).toBeTruthy()
     })
@@ -101,14 +101,14 @@ describe('when making requests and the requests fails', () => {
           "Access-Control-Allow-Origin": "*"
         })
     })
-    it('should retry 1 time', async () => {
+    it('should retry 1 time and resolve with the response data', async () => {
       await expect(baseApi.request('get', '/test')).resolves.toEqual('my test data')
 
       expect(nock.isDone()).toBeTruthy()
     })
   })
 
-  describe('when making requests and the requests succeds', () => {
+  describe('when making requests and the requests succeeds', () => {
 
     let baseApi: BaseAPI
 
@@ -130,7 +130,7 @@ describe('when making requests and the requests fails', () => {
         })
     })
 
-    it('should throw an error', async () => {
+    it('should resolve with the response data', async () => {
       await expect(baseApi.request('get', '/test')).resolves.toEqual('my test data')
       expect(nock.isDone()).toBeTruthy()
     })
