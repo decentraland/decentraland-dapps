@@ -33,7 +33,8 @@
         "marketplace": "Marketplace",
         "builder": "Builder",
         "events": "Events",
-        "dao": "DAO"
+        "dao": "DAO",
+        "places": "Places"
       },
       "wrong_network": {
         "header": "Mauvais réseau",
