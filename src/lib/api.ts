@@ -15,22 +15,26 @@ interface Response {
 
 export interface RetryParams {
   /** Amount of retry attempts for request, default in 0 */
-  attempts: number,
+  attempts: number
   delay: number
 }
 
 export class BaseAPI {
-  constructor(public url: string, private retry: RetryParams = { attempts: 0, delay: 1000 }) { }
+  constructor(
+    public url: string,
+    private retry: RetryParams = { attempts: 0, delay: 1000 }
+  ) {}
 
-  private sleep = (delay: number) => new Promise((resolve) => {
-    setTimeout(resolve, delay);
-  })
+  private sleep = (delay: number) =>
+    new Promise(resolve => {
+      setTimeout(resolve, delay)
+    })
 
   async request(
     method: APIMethod,
     path: string,
     params: APIParam | null = null,
-    axiosRequestConfig: AxiosRequestConfig = {},
+    axiosRequestConfig: AxiosRequestConfig = {}
   ) {
     let options: AxiosRequestConfig = {
       ...axiosRequestConfig,
@@ -38,30 +42,31 @@ export class BaseAPI {
       url: this.getUrl(path)
     }
 
-
     if (params) {
-      if (method === 'get') {
+      if (method?.toLowerCase() === 'get') {
         options.params = params
       } else {
         options.data = params
       }
     }
 
-    let attempts = 0;
+    let attempts = 0
 
     while (true) {
       try {
-        const axiosResponse = await httpClient
-          .request(options);
+        const axiosResponse = await httpClient.request(options)
         const { ok, data, error } = this.parseResponse(axiosResponse)
 
         return !ok || error ? Promise.reject({ message: error, data }) : data
       } catch (error) {
-        console.error(`[API] HTTP request failed: ${error.message || ''}`, error)
-        if (this.retry.attempts <= attempts) throw error;
-        attempts++;
+        console.error(
+          `[API] HTTP request failed: ${error.message || ''}`,
+          error
+        )
+        if (this.retry.attempts <= attempts) throw error
+        attempts++
       }
-      await this.sleep(this.retry.delay);
+      await this.sleep(this.retry.delay)
     }
   }
 

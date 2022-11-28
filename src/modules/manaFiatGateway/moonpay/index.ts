@@ -1,0 +1,1 @@
+export { MoonPay } from './MoonPay'
