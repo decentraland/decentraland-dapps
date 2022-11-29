@@ -28,6 +28,7 @@
     'ready',
     'alias',
     'debug',
+    'user',
     'page',
     'once',
     'off',
