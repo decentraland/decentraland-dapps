@@ -86,3 +86,12 @@ export function trackConnectWallet(
     analytics.track('Connect Wallet', props)
   }
 }
+
+export function getAnonymousId() {
+  const analytics = getAnalytics()
+  if (analytics) {
+    return analytics.user().anonymousId()
+  } else {
+    return undefined
+  }
+}
