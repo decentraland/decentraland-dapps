@@ -1,6 +1,12 @@
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { expectSaga } from 'redux-saga-test-plan'
-import { fetchTransactionFailure, fetchTransactionSuccess } from './actions'
+import {
+  fetchTransactionFailure,
+  fetchTransactionRequest,
+  fetchTransactionSuccess,
+  replaceTransactionSuccess,
+  updateTransactionStatus
+} from './actions'
 import { Transaction, TransactionStatus } from './types'
 import {
   TRANSACTION_ACTION_FLAG,
@@ -236,18 +242,16 @@ describe('when waiting for a transaction to be completed', () => {
       ...transaction,
       hash: anotherAddress
     }
+
+    // Mute console error when running the expect saga implementation and throwing
+    jest.spyOn(global.console, 'error').mockImplementation(jest.fn())
   })
 
-  describe('and the transaction results in a failure', () => {
-    beforeEach(() => {
-      // Mute console error when running the expect saga implementation and throwing
-      jest.spyOn(global.console, 'error').mockImplementation(jest.fn())
-    })
+  afterEach(() => {
+    ;((global.console.error as unknown) as jest.SpyInstance).mockRestore()
+  })
 
-    afterEach(() => {
-      ;((global.console.error as unknown) as jest.SpyInstance).mockRestore()
-    })
-
+  describe('and the transaction results in a REVERTED failure', () => {
     it('should throw an error saying that the transaction was not successful', () => {
       return expectSaga(waitForTx, txHash)
         .dispatch(
@@ -266,7 +270,135 @@ describe('when waiting for a transaction to be completed', () => {
             transaction
           )
         )
-        .throws(`The transaction ${txHash} failed to be mined.`)
+        .throws(
+          `The transaction ${txHash} failed to be mined. The status is ${TransactionStatus.REVERTED}.`
+        )
+        .silentRun()
+    })
+  })
+
+  describe('and the transaction results in a DROPPED failure that is later replaced with another one', () => {
+    let newTxHash: string
+
+    beforeEach(() => {
+      newTxHash = 'aNewTransactionHash'
+    })
+
+    describe('and the new transaction is REVERTED', () => {
+      it('should throw an error saying that the transaction was not successful', () => {
+        return expectSaga(waitForTx, txHash)
+          .dispatch(
+            fetchTransactionFailure(
+              txHash,
+              TransactionStatus.DROPPED,
+              'aFailureMessage',
+              transaction
+            )
+          )
+          .dispatch(replaceTransactionSuccess(txHash, newTxHash))
+          .dispatch(
+            fetchTransactionFailure(
+              newTxHash,
+              TransactionStatus.REVERTED,
+              'aFailureMessage',
+              { ...transaction, hash: newTxHash }
+            )
+          )
+          .throws(
+            `The transaction ${newTxHash} failed to be mined. The status is ${TransactionStatus.REVERTED}.`
+          )
+          .silentRun()
+      })
+    })
+
+    describe('and the new transaction is CONFIRMED', () => {
+      it("should finish the saga's execution", () => {
+        return expectSaga(waitForTx, txHash)
+          .dispatch(
+            fetchTransactionFailure(
+              txHash,
+              TransactionStatus.DROPPED,
+              'aFailureMessage',
+              transaction
+            )
+          )
+          .dispatch(replaceTransactionSuccess(txHash, newTxHash))
+          .dispatch(
+            fetchTransactionSuccess({ ...transaction, hash: newTxHash })
+          )
+          .silentRun()
+      })
+    })
+  })
+
+  describe('and the transaction results in a DROPPED failure that is re-fetched', () => {
+    describe('and the new transaction is REVERTED', () => {
+      it('should throw an error saying that the transaction was not successful', () => {
+        return expectSaga(waitForTx, txHash)
+          .dispatch(
+            fetchTransactionFailure(
+              txHash,
+              TransactionStatus.DROPPED,
+              'aFailureMessage',
+              transaction
+            )
+          )
+          .dispatch(
+            fetchTransactionRequest('anAddress', txHash, {
+              type: 'SomeAction',
+              payload: { hash: txHash }
+            })
+          )
+          .dispatch(
+            fetchTransactionFailure(
+              txHash,
+              TransactionStatus.REVERTED,
+              'aFailureMessage',
+              transaction
+            )
+          )
+          .throws(
+            `The transaction ${txHash} failed to be mined. The status is ${TransactionStatus.REVERTED}.`
+          )
+          .silentRun()
+      })
+    })
+
+    describe('and the new transaction is CONFIRMED', () => {
+      it("should finish the saga's execution", () => {
+        return expectSaga(waitForTx, txHash)
+          .dispatch(
+            fetchTransactionFailure(
+              txHash,
+              TransactionStatus.DROPPED,
+              'aFailureMessage',
+              transaction
+            )
+          )
+          .dispatch(
+            fetchTransactionRequest('anAddress', txHash, {
+              type: 'SomeAction',
+              payload: { hash: txHash }
+            })
+          )
+          .dispatch(fetchTransactionSuccess(transaction))
+          .silentRun()
+      })
+    })
+  })
+
+  describe('and the transaction results in a DROPPED failure that results in the transaction updated to REPLACED', () => {
+    it("should finish the saga's execution", () => {
+      return expectSaga(waitForTx, txHash)
+        .dispatch(
+          fetchTransactionFailure(
+            txHash,
+            TransactionStatus.DROPPED,
+            'aFailureMessage',
+            transaction
+          )
+        )
+        .dispatch(updateTransactionStatus(txHash, TransactionStatus.REPLACED))
         .silentRun()
     })
   })
