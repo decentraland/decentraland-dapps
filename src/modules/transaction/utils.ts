@@ -12,8 +12,14 @@ import {
 import {
   FetchTransactionFailureAction,
   FetchTransactionSuccessAction,
+  ReplaceTransactionSuccessAction,
   FETCH_TRANSACTION_FAILURE,
-  FETCH_TRANSACTION_SUCCESS
+  FETCH_TRANSACTION_REQUEST,
+  FETCH_TRANSACTION_SUCCESS,
+  REPLACE_TRANSACTION_SUCCESS,
+  UPDATE_TRANSACTION_STATUS,
+  FetchTransactionRequestAction,
+  UpdateTransactionStatusAction
 } from './actions'
 
 // Special flag used to determine transaction hashes to be monitored
@@ -126,6 +132,8 @@ export function hasSucceeded(status: TransactionStatus | null): boolean {
  * @param txHash - The hash of the transaction to wait for.
  */
 export function* waitForTx(txHash: string) {
+  let txHashToWaitFor = txHash
+
   while (true) {
     const {
       success,
@@ -138,10 +146,60 @@ export function* waitForTx(txHash: string) {
       failure: take(FETCH_TRANSACTION_FAILURE)
     })
 
-    if (success?.payload.transaction.hash === txHash) {
+    if (success?.payload.transaction.hash === txHashToWaitFor) {
       break
-    } else if (failure?.payload.transaction.hash === txHash) {
-      throw new Error(`The transaction ${txHash} failed to be mined.`)
+    } else if (
+      failure &&
+      failure.payload.transaction.hash === txHashToWaitFor
+    ) {
+      if (failure.payload.status === TransactionStatus.DROPPED) {
+        let continueWaiting = true
+        // If the transaction was dropped, follow the procedure to check what to do
+        while (true) {
+          const {
+            replace,
+            fetchAgain,
+            update
+          }: {
+            replace: ReplaceTransactionSuccessAction | undefined
+            fetchAgain: FetchTransactionRequestAction | undefined
+            update: UpdateTransactionStatusAction | undefined
+          } = yield race({
+            replace: take(REPLACE_TRANSACTION_SUCCESS),
+            fetchAgain: take(FETCH_TRANSACTION_REQUEST),
+            update: take(UPDATE_TRANSACTION_STATUS)
+          })
+
+          if (fetchAgain && fetchAgain.payload.hash === txHashToWaitFor) {
+            // Re start the transaction fetching process.
+            txHashToWaitFor = fetchAgain.payload.hash
+            continueWaiting = true
+            break
+          } else if (replace && replace.payload.hash === txHashToWaitFor) {
+            // The transaction hash was replaced for another one, track the other transaction hash.
+            txHashToWaitFor = replace.payload.replaceBy
+            continueWaiting = true
+            break
+          } else if (
+            update &&
+            update.payload.hash === txHashToWaitFor &&
+            update.payload.status === TransactionStatus.REPLACED
+          ) {
+            // A new hash wasn't found, but the transaction was replaced. We should consider the wait finished because we don't know if it failed.
+            continueWaiting = false
+            break
+          }
+        }
+
+        if (continueWaiting) {
+          continue
+        }
+        break
+      } else {
+        throw new Error(
+          `The transaction ${txHash} failed to be mined. The status is ${failure.payload.status}.`
+        )
+      }
     }
   }
 }
