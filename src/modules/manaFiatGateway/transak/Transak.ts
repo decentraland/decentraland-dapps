@@ -4,6 +4,7 @@ import { Purchase, PurchaseStatus } from '../../mana/types'
 import { OrderData, TransakSDK } from './types'
 import { TransakConfig } from '../types'
 import { purchaseEventsChannel } from '../utils'
+import { NetworkGatewayType } from 'decentraland-ui'
 
 const PURCHASE_EVENT = 'Purchase status change'
 
@@ -11,7 +12,7 @@ export class Transak {
   private readonly sdk: TransakSDK
   private readonly address: string
 
-  constructor(config: TransakConfig, address: string) {
+  constructor(config: TransakConfig, address: string, network: Network) {
     this.sdk = new transakSDK({
       apiKey: config.key, // Your API Key
       environment: config.env || 'STAGING', // STAGING/PRODUCTION
@@ -28,13 +29,13 @@ export class Transak {
     }) as TransakSDK
     this.address = address
 
-    this.suscribeToEvents()
+    this.suscribeToEvents(network)
   }
 
   /**
    * Uses the sdk to suscribe to changes in the status of the transaction and dispatch an action depending on each different state.
    */
-  private suscribeToEvents() {
+  private suscribeToEvents(network: Network) {
     const events = {
       [this.sdk.EVENTS.TRANSAK_ORDER_CREATED]: PurchaseStatus.PENDING,
       [this.sdk.EVENTS.TRANSAK_ORDER_SUCCESSFUL]: PurchaseStatus.COMPLETE,
@@ -47,7 +48,7 @@ export class Transak {
       this.sdk.on(event, (orderData: OrderData) =>
         purchaseEventsChannel.put({
           type: PURCHASE_EVENT,
-          purchase: this.createPurchase(orderData, status)
+          purchase: this.createPurchase(orderData, status, network)
         })
       )
     })
@@ -61,41 +62,18 @@ export class Transak {
    */
   private createPurchase(
     orderData: OrderData,
-    status: PurchaseStatus
+    status: PurchaseStatus,
+    network: Network
   ): Purchase {
-    const network = this.getNetwork(orderData.status.network)
-
     return {
       id: orderData.status.id,
       amount: orderData.status.cryptoAmount,
       network,
       timestamp: +new Date(orderData.status.createdAt),
       status,
-      address: orderData.status.walletAddress
+      address: orderData.status.walletAddress,
+      gateway: NetworkGatewayType.TRANSAK
     }
-  }
-
-  /**
-   * Returns the name of the network if it's supported, or throws an exception otherwsie.
-   *
-   * @param networkName - Name of the network that comes from the Transak SDK Order entity.
-   */
-  private getNetwork(networkName: string) {
-    const networks = Object.values(Network).filter(
-      value => typeof value === 'string'
-    ) as Network[]
-
-    for (const network of networks) {
-      if (network.toLowerCase() === networkName.toLowerCase()) {
-        return network
-      }
-    }
-
-    throw new Error(
-      `Invalid network "${networkName}" is not part of the supported networks: ${networks.join(
-        ', '
-      )}`
-    )
   }
 
   /**

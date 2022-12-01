@@ -30,7 +30,10 @@ export function manaFiatGatewayReducer(
     case SET_WIDGET_URL: {
       return {
         ...state,
-        data: action.payload,
+        data: {
+          ...state.data,
+          widgetUrl: action.payload.widgetUrl
+        },
         loading: loadingReducer(state.loading, action)
       }
     }

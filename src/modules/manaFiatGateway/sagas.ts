@@ -23,6 +23,7 @@ import { Transak } from './transak'
 import { ManaFiatGatewaySagasConfig } from './types'
 import { purchaseEventsChannel } from './utils'
 import { Network } from '@dcl/schemas'
+import { MoonPayTransaction } from './moonpay/types'
 
 const DEFAULT_POLLING_DELAY = 3000
 
@@ -52,16 +53,25 @@ function* handleOpenFiatGateway(
 
   switch (gateway) {
     case NetworkGatewayType.TRANSAK:
-      const transak = new Transak(transakConfig, address)
+      const transak = new Transak(transakConfig, address, network)
       transak.openWidget(network)
       break
     case NetworkGatewayType.MOON_PAY:
-      const widgetUrl = new MoonPay(moonPayConfig).widgetUrl(address)
+      const widgetUrl = new MoonPay(moonPayConfig).widgetUrl(address, network)
       yield put(setWidgetUrl(widgetUrl))
       break
     default:
       break
   }
+}
+
+function* upsertPurchase(
+  moonPay: MoonPay,
+  transaction: MoonPayTransaction,
+  network: Network
+) {
+  let purchase: Purchase = moonPay.createPurchase(transaction, network)
+  yield put(setPurchase(purchase))
 }
 
 function* handleFiatGatewayPurchaseCompleted(
@@ -75,33 +85,28 @@ function* handleFiatGatewayPurchaseCompleted(
     switch (gateway) {
       case NetworkGatewayType.MOON_PAY:
         const moonPay = new MoonPay(moonPayConfig)
-        let statusHasChanged: boolean = false
+        let transaction: MoonPayTransaction = yield call(
+          [moonPay, moonPay.getTransaction],
+          transactionId
+        )
 
-        function* createPurchase(transactionId: string, network: Network) {
-          const purchase: Purchase = yield call(
-            [moonPay, moonPay.createPurchase],
-            transactionId,
-            network
-          )
-          yield put(setPurchase(purchase))
-        }
+        yield call(upsertPurchase, moonPay, transaction, network)
 
-        yield call(createPurchase, transactionId, network)
-
+        let statusHasChanged: boolean = status !== transaction.status
         while (!statusHasChanged) {
-          const newStatus: string = yield call(
-            [moonPay, moonPay.getTransactionStatus],
-            transactionId
-          )
+          const { status: newStatus } = transaction
 
           if (newStatus !== status) {
             statusHasChanged = true
-            // TODO (buy mana with fiat): we are making an extra request
-            yield call(createPurchase, transactionId, network)
+            yield call(upsertPurchase, moonPay, transaction, network)
             continue
           }
 
           yield delay(moonPayConfig.pollingDelay || DEFAULT_POLLING_DELAY)
+          transaction = yield call(
+            [moonPay, moonPay.getTransaction],
+            transactionId
+          )
         }
       default:
         break

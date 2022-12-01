@@ -1,4 +1,5 @@
 import { Network } from '@dcl/schemas'
+import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 import { BaseAPI } from '../../../lib/api'
 import { Purchase, PurchaseStatus } from '../../mana/types'
 import { MoonPayConfig } from '../types'
@@ -17,16 +18,6 @@ export class MoonPay {
     this.moonPayAPI = new BaseAPI(apiBaseUrl)
   }
 
-  private async getTransaction(
-    transactionId: string
-  ): Promise<MoonPayTransaction> {
-    return await this.moonPayAPI.request(
-      'GET',
-      `/v1/transactions/${transactionId}`,
-      { apiKey: this.apiKey }
-    )
-  }
-
   private getPurchaseStatus(status: MoonPayTransactionStatus): PurchaseStatus {
     return {
       [MoonPayTransactionStatus.WAITING_PAYMENT]: PurchaseStatus.PENDING,
@@ -38,21 +29,31 @@ export class MoonPay {
   }
 
   /**
-   * Given the transaction id, returns a Promise of an object with the relevant information of the purchase.
+   * Given the transaction id, returns the MoonPay Transaction.
    *
    * @param transactionId - MoonPay Transaction ID.
    */
-  async createPurchase(
-    transactionId: string,
-    network: Network
-  ): Promise<Purchase> {
+  async getTransaction(transactionId: string): Promise<MoonPayTransaction> {
+    return await this.moonPayAPI.request(
+      'GET',
+      `/v1/transactions/${transactionId}`,
+      { apiKey: this.apiKey }
+    )
+  }
+
+  /**
+   * Given the transaction, returns a Promise of an object with the relevant information of the purchase.
+   *
+   * @param transaction - MoonPay Transaction.
+   */
+  createPurchase(transaction: MoonPayTransaction, network: Network): Purchase {
     const {
       id,
       quoteCurrencyAmount,
       createdAt,
       status,
       walletAddress
-    }: MoonPayTransaction = await this.getTransaction(transactionId)
+    } = transaction
 
     return {
       id,
@@ -60,18 +61,17 @@ export class MoonPay {
       network,
       timestamp: +new Date(createdAt),
       status: this.getPurchaseStatus(status),
-      address: walletAddress
+      address: walletAddress,
+      gateway: NetworkGatewayType.MOON_PAY
     }
   }
 
-  getTransactionStatus = async (transactionId: string): Promise<string> => {
-    const { status }: MoonPayTransaction = await this.getTransaction(
-      transactionId
-    )
-    return status
-  }
-
-  widgetUrl(address: string) {
-    return `${this.widgetBaseUrl}?apiKey=${this.apiKey}&currencyCode=MANA&walletAddres=${address}&redirectURL=${window.location.origin}`
+  widgetUrl(address: string, network: Network) {
+    const redirectURL = `${window.location.origin}?network=${network}&gateway=${NetworkGatewayType.MOON_PAY}`
+    return `${this.widgetBaseUrl}?apiKey=${
+      this.apiKey
+    }&currencyCode=MANA&walletAddres=${address}&redirectURL=${encodeURIComponent(
+      redirectURL
+    )}`
   }
 }

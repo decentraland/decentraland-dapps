@@ -77,6 +77,51 @@
         "mobile_and_browser": "Using your mobile or browser extension"
       }
     },
+    "buyManaWithFiat": {
+      "modal": {
+        "title": "Buy MANA",
+        "subtitle": "Select what MANA you want to buy:",
+        "error": "Could not buy MANA."
+      },
+      "network": {
+        "ethereum": {
+          "cta": "Ethereum MANA",
+          "ctaSubtitle": "Use it to buy most wearables and emotes.",
+          "title": "Buy Ethereum MANA",
+          "error": "Could not buy Ethereum MANA",
+          "moonPay": {
+            "title": "Buy Ethereum MANA with MoonPay",
+            "subtitle": "You can buy with debit and credit cards, Apple Pay, Google Pay, or via bank transfer.",
+            "continueButtonText": "Continue with MoonPay",
+            "learnMoreText": "Learn More about MoonPay"
+          },
+          "transak": {
+            "title": "Buy Ethereum MANA with Transak",
+            "subtitle": "You can buy with debit and credit cards, Apple Pay, Google Pay, or via bank transfer.",
+            "continueButtonText": "Continue with Transak",
+            "learnMoreText": "Learn More about Transak"
+          }
+        },
+        "matic": {
+          "cta": "Polygon MANA",
+          "ctaSubtitle": "Use it to buy LAND, names and specific wearables.",
+          "title": "Buy Polygon MANA",
+          "error": "Could not buy Polygon MANA",
+          "moonPay": {
+            "title": "Buy Polygon MANA with MoonPay",
+            "subtitle": "You can buy with debit and credit cards, Apple Pay, Google Pay, or via bank transfer.",
+            "continueButtonText": "Continue with MoonPay",
+            "learnMoreText": "Learn More about MoonPay"
+          },
+          "transak": {
+            "title": "Buy Polygon MANA with Transak",
+            "subtitle": "You can buy with debit and credit cards, Apple Pay, Google Pay, or via bank transfer.",
+            "continueButtonText": "Continue with Transak",
+            "learnMoreText": "Learn More about Transak"
+          }
+        }
+      }
+    },
     "user_menu": {
       "sign_in": "Sign In",
       "sign_out": "Sign Out",

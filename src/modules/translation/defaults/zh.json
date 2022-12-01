@@ -77,6 +77,51 @@
         "mobile_and_browser": "使用您的移动或浏览器扩展程序"
       }
     },
+    "buyManaWithFiat": {
+      "modal": {
+        "title": "购买法力值",
+        "subtitle": "选择您要购买的 MANA：",
+        "error": "无法购买 MANA。"
+      },
+      "network": {
+        "ethereum": {
+          "cta": "以太坊 MANA",
+          "ctaSubtitle": "用它来购买大多数可穿戴设备和表情。",
+          "title": "购买以太坊 MANA",
+          "error": "无法购买以太坊 MANA",
+          "moonPay": {
+            "title": "使用 MoonPay 购买以太坊 MANA",
+            "subtitle": "您可以使用借记卡和信用卡、Apple Pay、Google Pay 或通过银行转帐进行购买。",
+            "continueButtonText": "继续使用 MoonPay",
+            "learnMoreText": "了解有关 MoonPay 的更多信息"
+          },
+          "transak": {
+            "title": "使用 Transak 购买以太坊 MANA",
+            "subtitle": "您可以使用借记卡和信用卡、Apple Pay、Google Pay 或通过银行转帐进行购买。",
+            "continueButtonText": "继续 Transak",
+            "learnMoreText": "了解有关 Transak 的更多信息"
+          }
+        },
+        "matic": {
+          "cta": "多边形 MANA",
+          "ctaSubtitle": "用它来购买 LAND、名称和特定的可穿戴设备。",
+          "title": "购买多边形 MANA",
+          "error": "无法购买多边形 MANA",
+          "moonPay": {
+            "title": "使用 MoonPay 购买 Polygon MANA",
+            "subtitle": "您可以使用借记卡和信用卡、Apple Pay、Google Pay 或通过银行转帐进行购买。",
+            "continueButtonText": "继续使用 MoonPay",
+            "learnMoreText": "了解有关 MoonPay 的更多信息"
+          },
+          "transak": {
+            "title": "使用 Transak 购买 Polygon MANA",
+            "subtitle": "您可以使用借记卡和信用卡、Apple Pay、Google Pay 或通过银行转帐进行购买。",
+            "continueButtonText": "继续 Transak",
+            "learnMoreText": "了解有关 Transak 的更多信息"
+          }
+        }
+      }
+    },
     "user_menu": {
       "sign_in": "登入",
       "sign_out": "登出",

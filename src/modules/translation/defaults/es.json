@@ -77,6 +77,52 @@
         "mobile_and_browser": "Usando tu móvil o extensión de navegador"
       }
     },
+
+    "buyManaWithFiat": {
+      "modal": {
+        "title": "Comprar MANA",
+        "subtitle": "Selecciona que MANA quieres comprar:",
+        "error": "No se pudo comprar MANA."
+      },
+      "network": {
+        "ethereum": {
+          "cta": "Ethereum MANA",
+          "ctaSubtitle": "Úselo para comprar la mayoría de los dispositivos portátiles y emotes.",
+          "title": "Compre Ethereum MANA",
+          "error": "No se pudo realizar la compre de Ethereum MANA",
+          "moonPay": {
+            "title": "Compre Ethereum MANA con MoonPay",
+            "subtitle": "Puedes comprar con tarjetas de débito y crédito, Apple Pay, Google Pay o mediante transferencia bancaria.",
+            "continueButtonText": "Continuar con MoonPay",
+            "learnMoreText": "Más información sobre MoonPay"
+          },
+          "transak": {
+            "title": "Compre Ethereum MANA con Transak",
+            "subtitle": "Puedes comprar con tarjetas de débito y crédito, Apple Pay, Google Pay o mediante transferencia bancaria.",
+            "continueButtonText": "Continuar con Transak",
+            "learnMoreText": "Más información sobre Transak"
+          }
+        },
+        "matic": {
+          "cta": "Maná polígono",
+          "ctaSubtitle": "Úsalo para comprar TERRENOS, nombres y wearables específicos.",
+          "title": "Compra Polygon MANA",
+          "error": "No se pudo realizar la compra de Polygon MANA",
+          "moonPay": {
+            "title": "Compra Polygon MANA con MoonPay",
+            "subtitle": "Puedes comprar con tarjetas de débito y crédito, Apple Pay, Google Pay o mediante transferencia bancaria.",
+            "continueButtonText": "Continuar con MoonPay",
+            "learnMoreText": "Más información sobre MoonPay"
+          },
+          "transak": {
+            "title": "Compra Polygon MANA con Transak",
+            "subtitle": "Puedes comprar con tarjetas de débito y crédito, Apple Pay, Google Pay o mediante transferencia bancaria.",
+            "continueButtonText": "Continuar con Transak",
+            "learnMoreText": "Más información sobre Transak"
+          }
+        }
+      }
+    },
     "user_menu": {
       "sign_in": "Conectar",
       "sign_out": "Desconectar",

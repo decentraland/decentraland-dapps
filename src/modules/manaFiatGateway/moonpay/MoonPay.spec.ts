@@ -4,8 +4,8 @@ import axios from 'axios'
 import { MoonPay } from './MoonPay'
 import { MoonPayConfig } from '../types'
 import { MoonPayTransaction, MoonPayTransactionStatus } from './types'
-import { PurchaseStatus } from '../../mana/types'
 import { Network } from '@dcl/schemas'
+import { NetworkGatewayType } from 'decentraland-ui'
 
 axios.defaults.adapter = require('axios/lib/adapters/http')
 
@@ -139,6 +139,7 @@ describe('when interacting with MoonPay', () => {
 
     nock(mockConfig.apiBaseUrl)
       .get(`/v1/transactions/${mockTransaction.id}`)
+      .query({ apiKey: mockConfig.apiKey })
       .reply(200, mockTransaction)
       .defaultReplyHeaders({
         'Access-Control-Allow-Origin': '*'
@@ -147,17 +148,14 @@ describe('when interacting with MoonPay', () => {
 
   describe('when build the widget url', () => {
     it('should return the entire url using the information from the config and the address of the connected user', () => {
-      return expect(moonPay.widgetUrl(mockAddress)).toEqual(
-        `${mockConfig.widgetBaseUrl}?apiKey=${mockConfig.apiKey}&currencyCode=MANA&walletAddres=${mockAddress}`
+      const redirectUrl = `${window.location.origin}?network=${Network.ETHEREUM}&gateway=${NetworkGatewayType.MOON_PAY}`
+      return expect(moonPay.widgetUrl(mockAddress, Network.ETHEREUM)).toEqual(
+        `${mockConfig.widgetBaseUrl}?apiKey=${
+          mockConfig.apiKey
+        }&currencyCode=MANA&walletAddres=${mockAddress}&redirectURL=${encodeURIComponent(
+          redirectUrl
+        )}`
       )
-    })
-  })
-
-  describe('when get the transaction status by its id', () => {
-    it('should take and return only the status from the fetched transaction', () => {
-      return expect(
-        moonPay.getTransactionStatus(mockTransaction.id)
-      ).resolves.toEqual(PurchaseStatus.PENDING)
     })
   })
 
@@ -169,12 +167,13 @@ describe('when interacting with MoonPay', () => {
         id: '354b1f46-480c-4307-9896-f4c81c1e1e17',
         network: 'ETHEREUM',
         status: 'pending',
-        timestamp: 1535398843748
+        timestamp: 1535398843748,
+        gateway: NetworkGatewayType.MOON_PAY
       }
 
       return expect(
-        moonPay.createPurchase(mockTransaction.id, Network.ETHEREUM)
-      ).resolves.toEqual(expectedPurchase)
+        moonPay.createPurchase(mockTransaction, Network.ETHEREUM)
+      ).toEqual(expectedPurchase)
     })
   })
 })
