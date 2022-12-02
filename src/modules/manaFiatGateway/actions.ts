@@ -18,10 +18,10 @@ export const SET_WIDGET_URL = 'Set Widget Url'
 export const setWidgetUrl = (widgetUrl: string) =>
   action(SET_WIDGET_URL, { widgetUrl })
 
-export type SetWidgetSrcAction = ReturnType<typeof setWidgetUrl>
+export type SetWidgetUrlAction = ReturnType<typeof setWidgetUrl>
 
 // MANA-FIAT Gateway Purchase Completed
-export const MANA_FIAT_GATEWAY_PURCHASE_COMPLETED_REQUEST =
+export const MANA_FIAT_GATEWAY_PURCHASE_COMPLETED =
   '[Request] MANA-FIAT Gateway Purchase Completed'
 export const MANA_FIAT_GATEWAY_PURCHASE_COMPLETED_FAILURE =
   '[Failure] MANA-FIAT Gateway Purchase Completed'
@@ -30,9 +30,9 @@ export const manaFiatGatewayPurchaseCompleted = (
   network: Network,
   gateway: NetworkGatewayType,
   transactionId: string,
-  status: string
+  status: string // TODO (buy mana with fiat): should it be a MoonPayTransactionStatus?
 ) =>
-  action(MANA_FIAT_GATEWAY_PURCHASE_COMPLETED_REQUEST, {
+  action(MANA_FIAT_GATEWAY_PURCHASE_COMPLETED, {
     network,
     gateway,
     transactionId,

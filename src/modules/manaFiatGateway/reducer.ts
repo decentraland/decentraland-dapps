@@ -2,7 +2,7 @@ import { loadingReducer, LoadingState } from '../loading/reducer'
 import {
   ManaFiatGatewayPurchaseCompletedFailureAction,
   MANA_FIAT_GATEWAY_PURCHASE_COMPLETED_FAILURE,
-  SetWidgetSrcAction,
+  SetWidgetUrlAction,
   SET_WIDGET_URL
 } from './actions'
 
@@ -19,7 +19,7 @@ export const INITIAL_STATE: ManaFiatGatewayState = {
 }
 
 export type ManaFiatGatewayReducerAction =
-  | SetWidgetSrcAction
+  | SetWidgetUrlAction
   | ManaFiatGatewayPurchaseCompletedFailureAction
 
 export function manaFiatGatewayReducer(

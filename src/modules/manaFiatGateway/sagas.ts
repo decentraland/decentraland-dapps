@@ -13,7 +13,7 @@ import { getAddress } from '../wallet/selectors'
 import {
   OPEN_MANA_FIAT_GATEWAY,
   OpenManaFiatGatewayAction,
-  MANA_FIAT_GATEWAY_PURCHASE_COMPLETED_REQUEST,
+  MANA_FIAT_GATEWAY_PURCHASE_COMPLETED,
   ManaFiatGatewayPurchaseCompletedAction,
   setWidgetUrl,
   manaFiatGatewayPurchaseCompletedFailure
@@ -31,7 +31,7 @@ export function createManaFiatGatewaysSaga(config: ManaFiatGatewaySagasConfig) {
   return function* manaFiatGatewaysSaga(): IterableIterator<ForkEffect> {
     yield takeEvery(OPEN_MANA_FIAT_GATEWAY, handleOpenFiatGateway, config)
     yield takeEvery(
-      MANA_FIAT_GATEWAY_PURCHASE_COMPLETED_REQUEST,
+      MANA_FIAT_GATEWAY_PURCHASE_COMPLETED,
       handleFiatGatewayPurchaseCompleted,
       config
     )
