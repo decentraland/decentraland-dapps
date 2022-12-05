@@ -23,7 +23,7 @@ import { Transak } from './transak'
 import { ManaFiatGatewaySagasConfig } from './types'
 import { purchaseEventsChannel } from './utils'
 import { Network } from '@dcl/schemas'
-import { MoonPayTransaction } from './moonpay/types'
+import { MoonPayTransaction, MoonPayTransactionStatus } from './moonpay/types'
 
 const DEFAULT_POLLING_DELAY = 3000
 
@@ -85,6 +85,7 @@ function* handleFiatGatewayPurchaseCompleted(
     switch (gateway) {
       case NetworkGatewayType.MOON_PAY:
         const moonPay = new MoonPay(moonPayConfig)
+        let statusHasChanged: boolean = false
         let transaction: MoonPayTransaction = yield call(
           [moonPay, moonPay.getTransaction],
           transactionId
@@ -92,11 +93,16 @@ function* handleFiatGatewayPurchaseCompleted(
 
         yield call(upsertPurchase, moonPay, transaction, network)
 
-        let statusHasChanged: boolean = status !== transaction.status
         while (!statusHasChanged) {
           const { status: newStatus } = transaction
 
-          if (newStatus !== status) {
+          if (
+            newStatus !== status ||
+            [
+              MoonPayTransactionStatus.COMPLETED,
+              MoonPayTransactionStatus.FAILED
+            ].includes(newStatus)
+          ) {
             statusHasChanged = true
             yield call(upsertPurchase, moonPay, transaction, network)
             continue

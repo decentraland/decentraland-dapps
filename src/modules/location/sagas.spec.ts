@@ -4,13 +4,14 @@ import { getLocation, onLocationChanged } from 'connected-react-router'
 import { Location } from 'history'
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
+import { manaFiatGatewayPurchaseCompleted } from '../manaFiatGateway/actions'
+import { MoonPayTransactionStatus } from '../manaFiatGateway/moonpay/types'
 import { locations } from '../locations'
 import { locationSaga } from './sagas'
-import { manaFiatGatewayPurchaseCompleted } from '../manaFiatGateway/actions'
 
 describe('when handling location change', () => {
   const mockTransactionId = 'transactionId'
-  const mockTransactionStatus = 'transactionStatus'
+  const mockTransactionStatus = MoonPayTransactionStatus.PENDING
 
   const mockLocation: Location = {
     pathname: '/pathname',

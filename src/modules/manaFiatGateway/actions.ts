@@ -1,6 +1,7 @@
 import { Network } from '@dcl/schemas'
 import { action } from 'typesafe-actions'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
+import { MoonPayTransactionStatus } from './moonpay/types'
 
 // Open MANA-FIAT Gateway
 export const OPEN_MANA_FIAT_GATEWAY = 'Open MANA-FIAT Gateway'
@@ -30,7 +31,7 @@ export const manaFiatGatewayPurchaseCompleted = (
   network: Network,
   gateway: NetworkGatewayType,
   transactionId: string,
-  status: string // TODO (buy mana with fiat): should it be a MoonPayTransactionStatus?
+  status: MoonPayTransactionStatus
 ) =>
   action(MANA_FIAT_GATEWAY_PURCHASE_COMPLETED, {
     network,
