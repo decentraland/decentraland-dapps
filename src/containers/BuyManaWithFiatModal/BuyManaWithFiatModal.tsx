@@ -48,10 +48,10 @@ export default class BuyManaWithFiatModal extends React.PureComponent<
     }
   }
 
-  _getDefaultTranslations<T extends Translations, Key extends keyof T & string>(
-    basePath: string,
-    props: Key[]
-  ): T | undefined {
+  private getDefaultTranslations<
+    T extends Translations,
+    Key extends keyof T & string
+  >(basePath: string, props: Key[]): T | undefined {
     if (!this.props.hasTranslations) {
       return undefined
     }
@@ -62,7 +62,7 @@ export default class BuyManaWithFiatModal extends React.PureComponent<
   }
 
   getDefaultModalTranslations = (): BuyManaWithFiatModalI18N | undefined => {
-    return this._getDefaultTranslations('@dapps.buyManaWithFiat.modal', [
+    return this.getDefaultTranslations('@dapps.buyManaWithFiat.modal', [
       'title',
       'subtitle',
       'error'
@@ -72,7 +72,7 @@ export default class BuyManaWithFiatModal extends React.PureComponent<
   getDefaultNetworkTranslations = (
     network: Network
   ): (BuyManaWithFiatModalNetworkI18N & NetworkI18N) | undefined => {
-    return this._getDefaultTranslations(
+    return this.getDefaultTranslations(
       `@dapps.buyManaWithFiat.network.${network.toLowerCase()}`,
       ['cta', 'ctaSubtitle', 'title', 'error']
     )
@@ -82,7 +82,7 @@ export default class BuyManaWithFiatModal extends React.PureComponent<
     network: Network,
     gateway: NetworkGatewayType
   ): NetworkGatewayI18N | undefined => {
-    return this._getDefaultTranslations(
+    return this.getDefaultTranslations(
       `@dapps.buyManaWithFiat.network.${network.toLowerCase()}.${gateway}`,
       ['title', 'subtitle', 'continueButtonText', 'learnMoreText']
     )
