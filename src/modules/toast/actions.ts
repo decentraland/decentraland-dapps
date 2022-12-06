@@ -1,12 +1,13 @@
 import { action } from 'typesafe-actions'
+import { ToastPosition } from 'decentraland-ui'
 import { Toast } from './types'
 
 // Show Toast
 
 export const SHOW_TOAST = 'Show toast'
 
-export const showToast = (toast: Omit<Toast, 'id'>) =>
-  action(SHOW_TOAST, { toast })
+export const showToast = (toast: Omit<Toast, 'id'>, position?: ToastPosition) =>
+  action(SHOW_TOAST, { toast, position })
 
 export type ShowToastAction = ReturnType<typeof showToast>
 

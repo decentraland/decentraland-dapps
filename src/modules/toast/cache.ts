@@ -1,9 +1,14 @@
+import { ToastPosition } from 'decentraland-ui'
 import { Toast } from './types'
 
 const cache: Record<string, Toast> = {}
 
-export function set(id: number, toast: Toast | Omit<Toast, 'id'>) {
-  cache[id] = { ...toast, id }
+export function set(
+  id: number,
+  toast: Toast | Omit<Toast, 'id'>,
+  position?: ToastPosition
+) {
+  cache[id] = { ...toast, id, position }
 }
 
 export function get(id: string | number): Toast {

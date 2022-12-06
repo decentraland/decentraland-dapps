@@ -14,12 +14,15 @@ export default class ToastProvider extends React.PureComponent<Props> {
   }
 
   render() {
-    const { children, toasts, position } = this.props
+    const { children, toasts, position: defaultPosition } = this.props
 
     const ToastComponents: JSX.Element[] = []
 
+    let position = defaultPosition
+
     for (const id in toasts) {
       const toast = toasts[id]
+      position = toast.position ?? position
 
       if (!toast) {
         throw new Error(`Couldn't find a toast for id "${id}"`)

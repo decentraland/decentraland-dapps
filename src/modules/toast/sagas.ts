@@ -33,13 +33,13 @@ export function* toastSaga() {
 }
 
 function* handleShowToast(action: ShowToastAction) {
-  const { toast } = action.payload
+  const { toast, position } = action.payload
 
   const ids: number[] = yield select(getState)
   const lastId = Number(ids[ids.length - 1] || 0)
   const id = lastId + 1
 
-  cache.set(id, toast)
+  cache.set(id, toast, position)
 
   yield put(renderToast(id))
 }
