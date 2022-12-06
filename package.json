@@ -6,6 +6,7 @@
     "@0xsequence/relayer": "^0.25.1",
     "@dcl/crypto": "^3.0.0",
     "@dcl/schemas": "^5.29.0",
+    "@transak/transak-sdk": "^1.0.31",
     "@types/flat": "0.0.28",
     "@types/uuid": "^3.4.3",
     "axios": "^0.21.1",
@@ -33,14 +34,19 @@
     "commitmsg": "validate-commit-msg"
   },
   "devDependencies": {
+    "@types/history": "^4.7.3",
     "@types/jest": "^27.0.1",
     "@types/node": "^16.6.0",
     "@types/ramda": "^0.27.44",
     "@types/react": "^17.0.17",
     "@types/react-redux": "^7.1.18",
+    "@types/react-router-dom": "^5.1.7",
     "@types/redux-storage-engine-localstorage": "^1.1.1",
     "@types/segment-analytics": "0.0.34",
+    "@types/ws": "^8.5.3",
+    "connected-react-router": "^6.9.1",
     "dcl-tslint-config-standard": "^1.0.1",
+    "history": "^4.10.1",
     "husky": "^0.14.3",
     "jest": "^27.0.6",
     "nock": "^13.2.9",
@@ -48,6 +54,7 @@
     "ramda": "^0.27.1",
     "react": "^17.0.2",
     "react-redux": "^7.2.4",
+    "react-router": "^5.3.4",
     "redux": "^4.1.0",
     "redux-saga": "^1.1.3",
     "redux-saga-test-plan": "^4.0.5",
@@ -63,8 +70,11 @@
     "validate-commit-message": "^3.0.1"
   },
   "peerDependencies": {
+    "connected-react-router": "^6.9.1",
+    "history": "^4.10.1",
     "react": "^17.0.2",
     "react-redux": "^7.2.4",
+    "react-router": "^5.2.0",
     "redux": "^4.1.0",
     "redux-saga": "^1.1.3"
   },
