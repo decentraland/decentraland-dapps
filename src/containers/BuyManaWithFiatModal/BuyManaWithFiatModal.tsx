@@ -118,6 +118,12 @@ export default class BuyManaWithFiatModal extends React.PureComponent<
   handleOnContinue(network: Network, gateway: NetworkGatewayType) {
     this.setState({ ...this.state, gatewayIsOpen: true })
     this.props.onContinue && this.props.onContinue(network, gateway)
+    this.props.onClose && this.props.onClose()
+  }
+
+  handleOnClose() {
+    this.setState({ ...this.state, gatewayIsOpen: false })
+    this.props.onClose && this.props.onClose()
   }
 
   render() {
@@ -128,7 +134,6 @@ export default class BuyManaWithFiatModal extends React.PureComponent<
       isLoading,
       widgetUrl,
       selectedNetwork,
-      onClose,
       onInfo
     } = this.props
     const { hasError, gatewayIsOpen } = this.state
@@ -151,7 +156,7 @@ export default class BuyManaWithFiatModal extends React.PureComponent<
           }
           loading={isLoading}
           hasError={hasError}
-          onClose={onClose}
+          onClose={() => this.handleOnClose()}
           onInfo={onInfo}
         />
       </>
