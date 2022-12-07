@@ -15,7 +15,6 @@ import {
   OpenManaFiatGatewayAction,
   MANA_FIAT_GATEWAY_PURCHASE_COMPLETED,
   ManaFiatGatewayPurchaseCompletedAction,
-  setWidgetUrl,
   manaFiatGatewayPurchaseCompletedFailure
 } from './actions'
 import { MoonPay } from './moonpay'
@@ -58,7 +57,7 @@ function* handleOpenFiatGateway(
       break
     case NetworkGatewayType.MOON_PAY:
       const widgetUrl = new MoonPay(moonPayConfig).widgetUrl(address, network)
-      yield put(setWidgetUrl(widgetUrl))
+      window.open(widgetUrl, '_blank', 'noopener,noreferrer')
       break
     default:
       break

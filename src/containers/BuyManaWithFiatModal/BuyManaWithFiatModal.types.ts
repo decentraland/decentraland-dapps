@@ -31,18 +31,16 @@ export type Props = DefaultProps &
       | (BuyManaWithFiatModalNetworkProps & BuyWithFiatNetworkProps)[]
       | undefined
     hasTranslations?: boolean
-    widgetUrl?: string
     onContinue?: (network: Network, gateway: NetworkGatewayType) => void
   }
 
 export type State = {
   hasError: boolean
-  gatewayIsOpen: boolean
 }
 
 export type MapStateProps = Pick<
   Props,
-  'widgetUrl' | 'hasTranslations' | 'isLoading' | 'hasError'
+  'hasTranslations' | 'isLoading' | 'hasError'
 >
 export type MapDispatchProps = Pick<Props, 'onContinue' | 'onInfo'>
 export type MapDispatch = Dispatch<OpenManaFiatGatewayAction>

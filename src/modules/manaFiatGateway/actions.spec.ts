@@ -7,9 +7,7 @@ import {
   MANA_FIAT_GATEWAY_PURCHASE_COMPLETED,
   MANA_FIAT_GATEWAY_PURCHASE_COMPLETED_FAILURE,
   openManaFiatGateway,
-  OPEN_MANA_FIAT_GATEWAY,
-  setWidgetUrl,
-  SET_WIDGET_URL
+  OPEN_MANA_FIAT_GATEWAY
 } from './actions'
 
 describe('when creating the action to open the MANA-FIAT modal', () => {
@@ -23,19 +21,6 @@ describe('when creating the action to open the MANA-FIAT modal', () => {
         gateway: NetworkGatewayType.TRANSAK
       },
       type: OPEN_MANA_FIAT_GATEWAY
-    })
-  })
-})
-
-describe('when creating the action to set the widget url', () => {
-  it('should return an object representing the action', () => {
-    const mockUrl = 'https://mockurl.com'
-    expect(setWidgetUrl(mockUrl)).toEqual({
-      meta: undefined,
-      payload: {
-        widgetUrl: mockUrl
-      },
-      type: SET_WIDGET_URL
     })
   })
 })

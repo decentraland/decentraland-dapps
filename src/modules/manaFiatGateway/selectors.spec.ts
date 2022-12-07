@@ -1,6 +1,6 @@
 import { Network } from '@dcl/schemas'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
-import { manaFiatGatewayPurchaseCompleted, setWidgetUrl } from './actions'
+import { manaFiatGatewayPurchaseCompleted } from './actions'
 import { MoonPayTransactionStatus } from './moonpay/types'
 import { INITIAL_STATE } from './reducer'
 import {
@@ -8,9 +8,7 @@ import {
   getState,
   getError,
   getLoading,
-  isRenderingWidget,
-  isFinishingPurchase,
-  getWidgetUrl
+  isFinishingPurchase
 } from './selectors'
 
 let manaFiatGatewayState: any
@@ -34,7 +32,7 @@ describe('MANA-FIAT Gateway selectors', () => {
         ...manaFiatGatewayState,
         manaFiatGateway: {
           ...manaFiatGatewayState.manaFiatGateway,
-          data: { widgetUrl: 'anUrl' }
+          data: {}
         }
       }
     })
@@ -59,40 +57,6 @@ describe('MANA-FIAT Gateway selectors', () => {
       expect(getLoading(manaFiatGatewayState)).toEqual(
         manaFiatGatewayState.manaFiatGateway.loading
       )
-    })
-  })
-
-  describe('when getting if the set manaFiatGateway widget url is on going', () => {
-    describe('when it is on going', () => {
-      beforeEach(() => {
-        manaFiatGatewayState = {
-          ...manaFiatGatewayState,
-          manaFiatGateway: {
-            ...manaFiatGatewayState.manaFiatGateway,
-            loading: [setWidgetUrl('anUrl')]
-          }
-        }
-      })
-
-      it('should return true', () => {
-        expect(isRenderingWidget(manaFiatGatewayState)).toBe(true)
-      })
-    })
-
-    describe("when it isn't on going", () => {
-      beforeEach(() => {
-        manaFiatGatewayState = {
-          ...manaFiatGatewayState,
-          manaFiatGateway: {
-            ...manaFiatGatewayState.manaFiatGateway,
-            loading: []
-          }
-        }
-      })
-
-      it('should return false', () => {
-        expect(isRenderingWidget(manaFiatGatewayState)).toBe(false)
-      })
     })
   })
 
@@ -134,22 +98,6 @@ describe('MANA-FIAT Gateway selectors', () => {
       it('should return false', () => {
         expect(isFinishingPurchase(manaFiatGatewayState)).toBe(false)
       })
-    })
-  })
-
-  describe('when getting the manaFiatGateway widget url', () => {
-    beforeEach(() => {
-      manaFiatGatewayState = {
-        ...manaFiatGatewayState,
-        manaFiatGateway: {
-          ...manaFiatGatewayState.manaFiatGateway,
-          data: { widgetUrl: 'anUrl' }
-        }
-      }
-    })
-
-    it("should return the manaFiatGateway state's widget url", () => {
-      expect(getWidgetUrl(manaFiatGatewayState)).toEqual('anUrl')
     })
   })
 })

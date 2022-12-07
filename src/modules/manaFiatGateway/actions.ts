@@ -13,14 +13,6 @@ export const openManaFiatGateway = (
 
 export type OpenManaFiatGatewayAction = ReturnType<typeof openManaFiatGateway>
 
-// Set Widget Url
-export const SET_WIDGET_URL = 'Set Widget Url'
-
-export const setWidgetUrl = (widgetUrl: string) =>
-  action(SET_WIDGET_URL, { widgetUrl })
-
-export type SetWidgetUrlAction = ReturnType<typeof setWidgetUrl>
-
 // MANA-FIAT Gateway Purchase Completed
 export const MANA_FIAT_GATEWAY_PURCHASE_COMPLETED =
   '[Request] MANA-FIAT Gateway Purchase Completed'

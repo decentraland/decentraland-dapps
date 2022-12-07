@@ -31,8 +31,7 @@ export default class BuyManaWithFiatModal extends React.PureComponent<
   constructor(props: Props) {
     super(props)
     this.state = {
-      hasError: false,
-      gatewayIsOpen: false
+      hasError: false
     }
   }
 
@@ -104,25 +103,24 @@ export default class BuyManaWithFiatModal extends React.PureComponent<
         ({
           type: network,
           i18n: this.getDefaultNetworkTranslations(network),
-          gateways: gateways.map(gateway => ({
-            type: gateway,
-            i18n: this.getDefaultGatewayTranslations(network, gateway),
-            disabled: isDisabled(network, gateway),
-            learnMoreLink: gatewayLearnMoreLink[gateway],
-            onContinue: () => this.handleOnContinue(network, gateway)
-          }))
+          gateways: gateways
+            .filter(gateway => !isDisabled(network, gateway))
+            .map(gateway => ({
+              type: gateway,
+              i18n: this.getDefaultGatewayTranslations(network, gateway),
+              learnMoreLink: gatewayLearnMoreLink[gateway],
+              onContinue: () => this.handleOnContinue(network, gateway)
+            }))
         } as BuyManaWithFiatModalNetworkProps & BuyWithFiatNetworkProps)
     )
   }
 
   handleOnContinue(network: Network, gateway: NetworkGatewayType) {
-    this.setState({ ...this.state, gatewayIsOpen: true })
     this.props.onContinue && this.props.onContinue(network, gateway)
-    this.props.onClose && this.props.onClose()
+    this.handleOnClose()
   }
 
   handleOnClose() {
-    this.setState({ ...this.state, gatewayIsOpen: false })
     this.props.onClose && this.props.onClose()
   }
 
@@ -132,21 +130,16 @@ export default class BuyManaWithFiatModal extends React.PureComponent<
       i18n,
       className,
       isLoading,
-      widgetUrl,
       selectedNetwork,
       onInfo
     } = this.props
-    const { hasError, gatewayIsOpen } = this.state
+    const { hasError } = this.state
     const networks = this.props.networks || this.getDefaultNetworks()
-
-    if (widgetUrl) {
-      window.location.href = widgetUrl
-    }
 
     return (
       <>
         <BaseBuyManaWithFiatModal
-          open={open && !gatewayIsOpen}
+          open={open}
           className={className}
           i18n={i18n || this.getDefaultModalTranslations()}
           networks={
