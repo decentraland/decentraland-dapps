@@ -1,3 +1,4 @@
+import crypto from 'crypto'
 import { Network } from '@dcl/schemas'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 import { BaseAPI } from '../../../lib/api'
@@ -7,13 +8,15 @@ import { MoonPayTransaction, MoonPayTransactionStatus } from './types'
 
 export class MoonPay {
   private readonly apiKey: string
+  private readonly secretKey: string
   private readonly widgetBaseUrl: string
   private readonly moonPayAPI: BaseAPI
 
   constructor(config: MoonPayConfig) {
-    const { apiKey, apiBaseUrl, widgetBaseUrl } = config
+    const { apiKey, apiBaseUrl, secretKey, widgetBaseUrl } = config
 
     this.apiKey = apiKey
+    this.secretKey = secretKey
     this.widgetBaseUrl = widgetBaseUrl
     this.moonPayAPI = new BaseAPI(apiBaseUrl)
   }
@@ -68,10 +71,17 @@ export class MoonPay {
 
   widgetUrl(address: string, network: Network) {
     const redirectURL = `${window.location.origin}?network=${network}&gateway=${NetworkGatewayType.MOON_PAY}`
-    return `${this.widgetBaseUrl}?apiKey=${
+    const originalURL = `${this.widgetBaseUrl}?apiKey=${
       this.apiKey
     }&currencyCode=MANA&walletAddres=${address}&redirectURL=${encodeURIComponent(
       redirectURL
     )}`
+
+    const signature = crypto
+      .createHmac('sha256', this.secretKey)
+      .update(new URL(originalURL).search)
+      .digest('base64')
+
+    return `${originalURL}&signature=${encodeURIComponent(signature)}`
   }
 }

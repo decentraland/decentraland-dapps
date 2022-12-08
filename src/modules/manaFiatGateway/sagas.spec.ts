@@ -22,6 +22,7 @@ jest.mock('./transak')
 const mockConfig: ManaFiatGatewaySagasConfig = {
   [NetworkGatewayType.MOON_PAY]: {
     apiKey: 'api-key',
+    secretKey: 'secret-key',
     apiBaseUrl: 'http://base.url.xyz',
     widgetBaseUrl: 'http://widget.base.url.xyz',
     pollingDelay: 50
@@ -35,11 +36,8 @@ const mockConfig: ManaFiatGatewaySagasConfig = {
 const manaFiatGatewaysSaga = createManaFiatGatewaysSaga(mockConfig)
 const mockAddress = '0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2'
 
-const mockRedirectURL = encodeURIComponent(
-  `${window.location.origin}?network=${Network.ETHEREUM}&gateway=${NetworkGatewayType.MOON_PAY}`
-)
-
-const mockWidgetUrl = `${mockConfig.moonPay.widgetBaseUrl}?apiKey=${mockConfig.moonPay.apiKey}&currencyCode=MANA&walletAddres=${mockAddress}&redirectURL=${mockRedirectURL}`
+const mockWidgetUrl =
+  'http://widget.base.url.xyz?apiKey=api-key&currencyCode=MANA&walletAddres=0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2&redirectURL=http%3A%2F%2Flocalhost%3Fnetwork%3DETHEREUM%26gateway%3DmoonPay&signature=VcSg1H8yQ61zjkeC5HVv8LaIyicSpaF%2FD8u%2FxRL0bWE%3D'
 
 const mockTransaction: MoonPayTransaction = {
   id: '354b1f46-480c-4307-9896-f4c81c1e1e17',

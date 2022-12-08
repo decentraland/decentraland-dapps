@@ -3,6 +3,7 @@ import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithF
 export type MoonPayConfig = {
   apiBaseUrl: string
   apiKey: string
+  secretKey: string
   pollingDelay?: number
   widgetBaseUrl: string
 }

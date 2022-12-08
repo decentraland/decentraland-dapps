@@ -13,6 +13,7 @@ nock.disableNetConnect()
 
 const mockConfig: MoonPayConfig = {
   apiKey: 'api-key',
+  secretKey: 'secret-key',
   apiBaseUrl: 'http://base.url.xyz',
   widgetBaseUrl: 'http://widget.base.url.xyz',
   pollingDelay: 500
@@ -148,13 +149,10 @@ describe('when interacting with MoonPay', () => {
 
   describe('when build the widget url', () => {
     it('should return the entire url using the information from the config and the address of the connected user', () => {
-      const redirectUrl = `${window.location.origin}?network=${Network.ETHEREUM}&gateway=${NetworkGatewayType.MOON_PAY}`
+      const mockWidgetURL =
+        'http://widget.base.url.xyz?apiKey=api-key&currencyCode=MANA&walletAddres=0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2&redirectURL=http%3A%2F%2Flocalhost%3Fnetwork%3DETHEREUM%26gateway%3DmoonPay&signature=VcSg1H8yQ61zjkeC5HVv8LaIyicSpaF%2FD8u%2FxRL0bWE%3D'
       return expect(moonPay.widgetUrl(mockAddress, Network.ETHEREUM)).toEqual(
-        `${mockConfig.widgetBaseUrl}?apiKey=${
-          mockConfig.apiKey
-        }&currencyCode=MANA&walletAddres=${mockAddress}&redirectURL=${encodeURIComponent(
-          redirectUrl
-        )}`
+        mockWidgetURL
       )
     })
   })
