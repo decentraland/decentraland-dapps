@@ -86,7 +86,7 @@
       "network": {
         "ethereum": {
           "cta": "以太坊 MANA",
-          "ctaSubtitle": "用它来购买大多数可穿戴设备和表情。",
+          "ctaSubtitle": "用它在以太坊中购买 LAND、名称和特定的可穿戴设备。",
           "title": "购买以太坊 MANA",
           "error": "无法购买以太坊 MANA",
           "moonPay": {
@@ -104,7 +104,7 @@
         },
         "matic": {
           "cta": "多边形 MANA",
-          "ctaSubtitle": "用它来购买 LAND、名称和特定的可穿戴设备。",
+          "ctaSubtitle": "用它来购买 Polygon 中的大多数可穿戴设备和表情。",
           "title": "购买多边形 MANA",
           "error": "无法购买多边形 MANA",
           "moonPay": {
