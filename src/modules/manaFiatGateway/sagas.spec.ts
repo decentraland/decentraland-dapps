@@ -7,8 +7,7 @@ import { getAddress } from '../wallet/selectors'
 import {
   manaFiatGatewayPurchaseCompleted,
   manaFiatGatewayPurchaseCompletedFailure,
-  openManaFiatGateway,
-  setWidgetUrl
+  openManaFiatGateway
 } from './actions'
 import { MoonPay } from './moonpay'
 import { MoonPayTransaction, MoonPayTransactionStatus } from './moonpay/types'
@@ -190,14 +189,24 @@ describe('when handling the request to open the MANA-FIAT gateway', () => {
   })
 
   describe('when the selected gateway is MoonPay', () => {
+    beforeEach(() => {
+      window.open = jest.fn()
+    })
+
     it('should put the action signaling the widget url', () => {
       return expectSaga(manaFiatGatewaysSaga)
         .provide([[select(getAddress), mockAddress]])
-        .put(setWidgetUrl(mockWidgetUrl))
         .dispatch(
           openManaFiatGateway(Network.ETHEREUM, NetworkGatewayType.MOON_PAY)
         )
         .silentRun()
+        .then(() => {
+          expect(window.open).toHaveBeenCalledWith(
+            mockWidgetUrl,
+            '_blank',
+            'noopener,noreferrer'
+          )
+        })
     })
   })
 })

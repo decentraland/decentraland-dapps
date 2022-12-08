@@ -4,9 +4,7 @@ import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithF
 import { openManaFiatGateway } from '../../modules/manaFiatGateway/actions'
 import {
   getError,
-  getWidgetUrl,
-  isFinishingPurchase,
-  isRenderingWidget
+  isFinishingPurchase
 } from '../../modules/manaFiatGateway/selectors'
 import { isEnabled } from '../../modules/translation/selectors'
 import {
@@ -19,9 +17,8 @@ import BuyManaWithFiatModal from './BuyManaWithFiatModal'
 
 const mapState = (state: any): MapStateProps => ({
   hasError: !!getError(state),
-  isLoading: isRenderingWidget(state) || isFinishingPurchase(state),
-  hasTranslations: isEnabled(state),
-  widgetUrl: getWidgetUrl(state)
+  isLoading: isFinishingPurchase(state),
+  hasTranslations: isEnabled(state)
 })
 
 const mapDispatch = (dispatch: MapDispatch): MapDispatchProps => ({
