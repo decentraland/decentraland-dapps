@@ -13,7 +13,7 @@ nock.disableNetConnect()
 
 const mockConfig: MoonPayConfig = {
   apiKey: 'api-key',
-  secretKey: 'secret-key',
+  moonPaySignatureApiBaseUrl: 'http://signature.url.xyz',
   apiBaseUrl: 'http://base.url.xyz',
   widgetBaseUrl: 'http://widget.base.url.xyz',
   pollingDelay: 500
@@ -137,23 +137,30 @@ describe('when interacting with MoonPay', () => {
 
   beforeEach(() => {
     moonPay = new MoonPay(mockConfig)
-
-    nock(mockConfig.apiBaseUrl)
-      .get(`/v1/transactions/${mockTransaction.id}`)
-      .query({ apiKey: mockConfig.apiKey })
-      .reply(200, mockTransaction)
-      .defaultReplyHeaders({
-        'Access-Control-Allow-Origin': '*'
-      })
   })
 
   describe('when build the widget url', () => {
+    const mockOriginalURL =
+      'http://widget.base.url.xyz?apiKey=api-key&currencyCode=MANA&walletAddres=0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2&redirectURL=http%3A%2F%2Flocalhost%3Fnetwork%3DETHEREUM%26gateway%3DmoonPay'
+    const mockSignature = 'd8/LyWZ1PI4JhDARu5KuC6cEQw/x2kyaeinPwBvbav8='
+
+    beforeEach(() => {
+      nock(mockConfig.moonPaySignatureApiBaseUrl)
+        .get('/signature')
+        .query({ originalURL: mockOriginalURL })
+        .reply(200, mockSignature)
+        .defaultReplyHeaders({
+          'Access-Control-Allow-Origin': '*'
+        })
+    })
+
     it('should return the entire url using the information from the config and the address of the connected user', () => {
-      const mockWidgetURL =
-        'http://widget.base.url.xyz?apiKey=api-key&currencyCode=MANA&walletAddres=0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2&redirectURL=http%3A%2F%2Flocalhost%3Fnetwork%3DETHEREUM%26gateway%3DmoonPay&signature=VcSg1H8yQ61zjkeC5HVv8LaIyicSpaF%2FD8u%2FxRL0bWE%3D'
-      return expect(moonPay.widgetUrl(mockAddress, Network.ETHEREUM)).toEqual(
-        mockWidgetURL
-      )
+      const mockWidgetURL = `${mockOriginalURL}&signature=${encodeURIComponent(
+        mockSignature
+      )}`
+      return expect(
+        moonPay.widgetUrl(mockAddress, Network.ETHEREUM)
+      ).resolves.toEqual(mockWidgetURL)
     })
   })
 

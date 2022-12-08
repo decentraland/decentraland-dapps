@@ -56,7 +56,9 @@ function* handleOpenFiatGateway(
       transak.openWidget(network)
       break
     case NetworkGatewayType.MOON_PAY:
-      const widgetUrl = new MoonPay(moonPayConfig).widgetUrl(address, network)
+      const moonPay = new MoonPay(moonPayConfig)
+      const widgetUrl: string = yield call(moonPay.widgetUrl, address, network)
+      // TODO (sign url): what does happen if the request fail?
       window.open(widgetUrl, '_blank', 'noopener,noreferrer')
       break
     default:

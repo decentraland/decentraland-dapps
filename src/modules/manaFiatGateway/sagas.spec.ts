@@ -1,4 +1,4 @@
-import { select } from 'redux-saga/effects'
+import { call, select } from 'redux-saga/effects'
 import { expectSaga } from 'redux-saga-test-plan'
 import * as matchers from 'redux-saga-test-plan/matchers'
 import { Network } from '@dcl/schemas'
@@ -22,7 +22,7 @@ jest.mock('./transak')
 const mockConfig: ManaFiatGatewaySagasConfig = {
   [NetworkGatewayType.MOON_PAY]: {
     apiKey: 'api-key',
-    secretKey: 'secret-key',
+    moonPaySignatureApiBaseUrl: 'http://signature.url.xyz',
     apiBaseUrl: 'http://base.url.xyz',
     widgetBaseUrl: 'http://widget.base.url.xyz',
     pollingDelay: 50
@@ -187,13 +187,22 @@ describe('when handling the request to open the MANA-FIAT gateway', () => {
   })
 
   describe('when the selected gateway is MoonPay', () => {
+    let moonPay: MoonPay
+
     beforeEach(() => {
+      moonPay = new MoonPay(mockConfig.moonPay)
       window.open = jest.fn()
     })
 
     it('should put the action signaling the widget url', () => {
       return expectSaga(manaFiatGatewaysSaga)
-        .provide([[select(getAddress), mockAddress]])
+        .provide([
+          [select(getAddress), mockAddress],
+          [
+            call(moonPay.widgetUrl, mockAddress, Network.ETHEREUM),
+            mockWidgetUrl
+          ]
+        ])
         .dispatch(
           openManaFiatGateway(Network.ETHEREUM, NetworkGatewayType.MOON_PAY)
         )
