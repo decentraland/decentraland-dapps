@@ -86,7 +86,7 @@
       "network": {
         "ethereum": {
           "cta": "Ethereum MANA",
-          "ctaSubtitle": "Use it to buy most wearables and emotes.",
+          "ctaSubtitle": "Use it to buy LAND, names and specific wearables in Ethereum.",
           "title": "Buy Ethereum MANA",
           "error": "Could not buy Ethereum MANA",
           "moonPay": {
@@ -104,7 +104,7 @@
         },
         "matic": {
           "cta": "Polygon MANA",
-          "ctaSubtitle": "Use it to buy LAND, names and specific wearables.",
+          "ctaSubtitle": "Use it to buy most wearables and emotes in Polygon.",
           "title": "Buy Polygon MANA",
           "error": "Could not buy Polygon MANA",
           "moonPay": {
