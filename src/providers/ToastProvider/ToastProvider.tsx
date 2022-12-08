@@ -37,6 +37,7 @@ export default class ToastProvider extends React.PureComponent<Props> {
           closable={toast.closable}
           timeout={toast.timeout}
           icon={toast.icon}
+          className={toast.className}
           onClose={this.getCloseHandler(toast.id)}
         />
       )
