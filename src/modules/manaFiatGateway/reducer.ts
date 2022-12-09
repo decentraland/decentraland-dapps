@@ -11,13 +11,11 @@ import {
 } from './actions'
 
 export type ManaFiatGatewayState = {
-  data: {} | null
   loading: LoadingState
   error: string | null
 }
 
 export const INITIAL_STATE: ManaFiatGatewayState = {
-  data: null,
   loading: [],
   error: null
 }

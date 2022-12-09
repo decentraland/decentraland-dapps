@@ -7,7 +7,6 @@ import {
 import { MoonPayTransactionStatus } from './moonpay/types'
 import { INITIAL_STATE } from './reducer'
 import {
-  getData,
   getState,
   getError,
   getLoading,
@@ -26,24 +25,6 @@ describe('MANA-FIAT Gateway selectors', () => {
     it('should return the state', () => {
       expect(getState(manaFiatGatewayState)).toEqual(
         manaFiatGatewayState.manaFiatGateway
-      )
-    })
-  })
-
-  describe("when getting the manaFiatGateway state's data", () => {
-    beforeEach(() => {
-      manaFiatGatewayState = {
-        ...manaFiatGatewayState,
-        manaFiatGateway: {
-          ...manaFiatGatewayState.manaFiatGateway,
-          data: {}
-        }
-      }
-    })
-
-    it("should return the manaFiatGateway's state data", () => {
-      expect(getData(manaFiatGatewayState)).toEqual(
-        manaFiatGatewayState.manaFiatGateway.data
       )
     })
   })

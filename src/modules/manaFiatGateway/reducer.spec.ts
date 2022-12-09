@@ -20,11 +20,11 @@ describe('when handling the open mana fiat gateway modal request', () => {
     )
 
     const state = manaFiatGatewayReducer(
-      { data: {}, loading: [], error: 'error' },
+      { loading: [], error: 'error' },
       action
     )
 
-    expect(state).toEqual({ data: {}, loading: [action], error: null })
+    expect(state).toEqual({ loading: [action], error: null })
   })
 })
 
@@ -37,11 +37,11 @@ describe('when handling the open mana fiat gateway modal success', () => {
     const successAction = openManaFiatGatewaySuccess()
 
     const state = manaFiatGatewayReducer(
-      { data: {}, loading: [requestAction], error: null },
+      { loading: [requestAction], error: null },
       successAction
     )
 
-    expect(state).toEqual({ data: {}, loading: [], error: null })
+    expect(state).toEqual({ loading: [], error: null })
   })
 })
 
@@ -59,11 +59,11 @@ describe('when handling the open mana fiat gateway modal failure', () => {
     )
 
     const state = manaFiatGatewayReducer(
-      { data: {}, loading: [requestAction], error: null },
+      { loading: [requestAction], error: null },
       failureAction
     )
 
-    expect(state).toEqual({ data: {}, loading: [], error })
+    expect(state).toEqual({ loading: [], error })
   })
 })
 
@@ -86,7 +86,6 @@ describe('when reducing the action MANA_FIAT_GATEWAY_PURCHASE_COMPLETED_FAILURE'
       )
     ).toEqual({
       ...state,
-      data: null,
       error
     })
   })
