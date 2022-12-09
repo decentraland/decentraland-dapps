@@ -29,7 +29,7 @@ describe('when handling the open mana fiat gateway modal request', () => {
 })
 
 describe('when handling the open mana fiat gateway modal success', () => {
-  it('should update data and remove the request action from the loading state', () => {
+  it('should remove the request action from the loading state and remove the error', () => {
     const requestAction = openManaFiatGatewayRequest(
       Network.ETHEREUM,
       NetworkGatewayType.MOON_PAY
