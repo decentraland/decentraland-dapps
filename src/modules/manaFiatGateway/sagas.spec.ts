@@ -7,7 +7,9 @@ import { getAddress } from '../wallet/selectors'
 import {
   manaFiatGatewayPurchaseCompleted,
   manaFiatGatewayPurchaseCompletedFailure,
-  openManaFiatGatewayRequest
+  openManaFiatGatewayFailure,
+  openManaFiatGatewayRequest,
+  openManaFiatGatewaySuccess
 } from './actions'
 import { MoonPay } from './moonpay'
 import { MoonPayTransaction, MoonPayTransactionStatus } from './moonpay/types'
@@ -162,16 +164,43 @@ const mockPurchase: Purchase = {
 
 // () => {}
 describe('when handling the request to open the MANA-FIAT gateway', () => {
+  const error = 'Default Error'
+
   afterEach(() => {
     jest.clearAllMocks()
   })
 
   describe('when the selected gateway is Transak', () => {
-    beforeEach(() => {
-      jest.spyOn(Transak.prototype, 'openWidget').mockImplementation(() => {})
+    describe('when the call to open widget fails', () => {
+      beforeEach(() => {
+        jest.spyOn(Transak.prototype, 'openWidget').mockImplementation(() => {
+          throw new Error(error)
+        })
+      })
+
+      it('should put the failure action', async () => {
+        return expectSaga(manaFiatGatewaysSaga)
+          .provide([[select(getAddress), mockAddress]])
+          .dispatch(
+            openManaFiatGatewayRequest(
+              Network.ETHEREUM,
+              NetworkGatewayType.TRANSAK
+            )
+          )
+          .put(
+            openManaFiatGatewayFailure(
+              Network.ETHEREUM,
+              NetworkGatewayType.TRANSAK,
+              error
+            )
+          )
+          .silentRun()
+      })
     })
 
-    it('should init its SDK', () => {
+    it('should init its SDK and put the success action', () => {
+      jest.spyOn(Transak.prototype, 'openWidget').mockImplementation(() => {})
+
       return expectSaga(manaFiatGatewaysSaga)
         .provide([[select(getAddress), mockAddress]])
         .dispatch(
@@ -180,6 +209,7 @@ describe('when handling the request to open the MANA-FIAT gateway', () => {
             NetworkGatewayType.TRANSAK
           )
         )
+        .put(openManaFiatGatewaySuccess())
         .silentRun()
         .then(() => {
           expect(Transak.prototype.openWidget).toHaveBeenCalledWith(
@@ -197,7 +227,34 @@ describe('when handling the request to open the MANA-FIAT gateway', () => {
       window.open = jest.fn()
     })
 
-    it('should put the action signaling the widget url', () => {
+    describe('when the call to get widget url fails', () => {
+      it('should put the failure action', async () => {
+        return expectSaga(manaFiatGatewaysSaga)
+          .provide([
+            [select(getAddress), mockAddress],
+            [
+              call(moonPay.getWidgetUrl, mockAddress, Network.ETHEREUM),
+              Promise.reject(new Error(error))
+            ]
+          ])
+          .dispatch(
+            openManaFiatGatewayRequest(
+              Network.ETHEREUM,
+              NetworkGatewayType.MOON_PAY
+            )
+          )
+          .put(
+            openManaFiatGatewayFailure(
+              Network.ETHEREUM,
+              NetworkGatewayType.MOON_PAY,
+              error
+            )
+          )
+          .silentRun()
+      })
+    })
+
+    it('should open a new tab with the widget url and put the success action', () => {
       return expectSaga(manaFiatGatewaysSaga)
         .provide([
           [select(getAddress), mockAddress],
@@ -212,6 +269,7 @@ describe('when handling the request to open the MANA-FIAT gateway', () => {
             NetworkGatewayType.MOON_PAY
           )
         )
+        .put(openManaFiatGatewaySuccess())
         .silentRun()
         .then(() => {
           expect(window.open).toHaveBeenCalledWith(
