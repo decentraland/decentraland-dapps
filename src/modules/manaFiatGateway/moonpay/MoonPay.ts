@@ -3,7 +3,11 @@ import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithF
 import { BaseAPI } from '../../../lib/api'
 import { Purchase, PurchaseStatus } from '../../mana/types'
 import { MoonPayConfig } from '../types'
-import { MoonPayTransaction, MoonPayTransactionStatus } from './types'
+import {
+  MoonPayTransaction,
+  MoonPayTransactionStatus,
+  SignatureResponse
+} from './types'
 
 export class MoonPay {
   private readonly apiKey: string
@@ -73,7 +77,7 @@ export class MoonPay {
     }
   }
 
-  async widgetUrl(address: string, network: Network) {
+  async getWidgetUrl(address: string, network: Network) {
     const redirectURL = `${window.location.origin}?network=${network}&gateway=${NetworkGatewayType.MOON_PAY}`
     const originalURL = `${this.widgetBaseUrl}?apiKey=${
       this.apiKey
@@ -81,13 +85,13 @@ export class MoonPay {
       redirectURL
     )}`
 
-    const signature = await this.moonPaySignatureApi.request(
+    const { signature } = (await this.moonPaySignatureApi.request(
       'GET',
-      '/signature',
+      '/v1/signature',
       {
-        originalURL: originalURL
+        originalURL
       }
-    )
+    )) as SignatureResponse
 
     return `${originalURL}&signature=${encodeURIComponent(signature)}`
   }

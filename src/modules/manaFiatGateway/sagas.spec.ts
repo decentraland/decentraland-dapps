@@ -7,7 +7,7 @@ import { getAddress } from '../wallet/selectors'
 import {
   manaFiatGatewayPurchaseCompleted,
   manaFiatGatewayPurchaseCompletedFailure,
-  openManaFiatGateway
+  openManaFiatGatewayRequest
 } from './actions'
 import { MoonPay } from './moonpay'
 import { MoonPayTransaction, MoonPayTransactionStatus } from './moonpay/types'
@@ -175,7 +175,10 @@ describe('when handling the request to open the MANA-FIAT gateway', () => {
       return expectSaga(manaFiatGatewaysSaga)
         .provide([[select(getAddress), mockAddress]])
         .dispatch(
-          openManaFiatGateway(Network.ETHEREUM, NetworkGatewayType.TRANSAK)
+          openManaFiatGatewayRequest(
+            Network.ETHEREUM,
+            NetworkGatewayType.TRANSAK
+          )
         )
         .silentRun()
         .then(() => {
@@ -199,12 +202,15 @@ describe('when handling the request to open the MANA-FIAT gateway', () => {
         .provide([
           [select(getAddress), mockAddress],
           [
-            call(moonPay.widgetUrl, mockAddress, Network.ETHEREUM),
+            call(moonPay.getWidgetUrl, mockAddress, Network.ETHEREUM),
             mockWidgetUrl
           ]
         ])
         .dispatch(
-          openManaFiatGateway(Network.ETHEREUM, NetworkGatewayType.MOON_PAY)
+          openManaFiatGatewayRequest(
+            Network.ETHEREUM,
+            NetworkGatewayType.MOON_PAY
+          )
         )
         .silentRun()
         .then(() => {

@@ -127,3 +127,7 @@ export type MoonPayTransaction = {
   country: string
   stages: Stage[]
 }
+
+export type SignatureResponse = {
+  signature: string
+}

@@ -4,14 +4,33 @@ import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithF
 import { MoonPayTransactionStatus } from './moonpay/types'
 
 // Open MANA-FIAT Gateway
-export const OPEN_MANA_FIAT_GATEWAY = 'Open MANA-FIAT Gateway'
+export const OPEN_MANA_FIAT_GATEWAY_REQUEST = '[Request] Open MANA-FIAT Gateway'
+export const OPEN_MANA_FIAT_GATEWAY_SUCCESS = '[Success] Open MANA-FIAT Gateway'
+export const OPEN_MANA_FIAT_GATEWAY_FAILURE = '[Failure] Open MANA-FIAT Gateway'
 
-export const openManaFiatGateway = (
+export const openManaFiatGatewayRequest = (
   network: Network,
   gateway: NetworkGatewayType
-) => action(OPEN_MANA_FIAT_GATEWAY, { network, gateway })
+) => action(OPEN_MANA_FIAT_GATEWAY_REQUEST, { network, gateway })
 
-export type OpenManaFiatGatewayAction = ReturnType<typeof openManaFiatGateway>
+export const openManaFiatGatewaySuccess = () =>
+  action(OPEN_MANA_FIAT_GATEWAY_SUCCESS)
+
+export const openManaFiatGatewayFailure = (
+  network: Network,
+  gateway: NetworkGatewayType,
+  error: string
+) => action(OPEN_MANA_FIAT_GATEWAY_FAILURE, { network, gateway, error })
+
+export type OpenManaFiatGatewayRequestAction = ReturnType<
+  typeof openManaFiatGatewayRequest
+>
+export type OpenManaFiatGatewaySuccessAction = ReturnType<
+  typeof openManaFiatGatewaySuccess
+>
+export type OpenManaFiatGatewayFailureAction = ReturnType<
+  typeof openManaFiatGatewayFailure
+>
 
 // MANA-FIAT Gateway Purchase Completed
 export const MANA_FIAT_GATEWAY_PURCHASE_COMPLETED =

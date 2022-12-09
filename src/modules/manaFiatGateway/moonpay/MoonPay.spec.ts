@@ -146,9 +146,9 @@ describe('when interacting with MoonPay', () => {
 
     beforeEach(() => {
       nock(mockConfig.moonPaySignatureApiBaseUrl)
-        .get('/signature')
+        .get('/v1/signature')
         .query({ originalURL: mockOriginalURL })
-        .reply(200, mockSignature)
+        .reply(200, { signature: mockSignature })
         .defaultReplyHeaders({
           'Access-Control-Allow-Origin': '*'
         })
@@ -159,7 +159,7 @@ describe('when interacting with MoonPay', () => {
         mockSignature
       )}`
       return expect(
-        moonPay.widgetUrl(mockAddress, Network.ETHEREUM)
+        moonPay.getWidgetUrl(mockAddress, Network.ETHEREUM)
       ).resolves.toEqual(mockWidgetURL)
     })
   })
