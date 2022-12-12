@@ -232,7 +232,6 @@ describe('when handling the request to open the MANA-FIAT gateway', () => {
 
       it('should put the failure action', async () => {
         return expectSaga(manaFiatGatewaysSaga)
-          .provide([[select(getAddress), mockAddress]])
           .dispatch(
             openManaFiatGatewayRequest(
               Network.ETHEREUM,
@@ -256,7 +255,6 @@ describe('when handling the request to open the MANA-FIAT gateway', () => {
         .mockReturnValueOnce(mockWidgetUrl)
 
       return expectSaga(manaFiatGatewaysSaga)
-        .provide([[select(getAddress), mockAddress]])
         .dispatch(
           openManaFiatGatewayRequest(
             Network.ETHEREUM,

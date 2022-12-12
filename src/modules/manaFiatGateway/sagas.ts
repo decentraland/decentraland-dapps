@@ -56,10 +56,9 @@ function* handleOpenFiatGateway(
   const { transak: transakConfig, moonPay: moonPayConfig } = config
 
   try {
-    const address: string = yield select(getAddress)
-
     switch (gateway) {
       case NetworkGatewayType.TRANSAK:
+        const address: string = yield select(getAddress)
         const transak = new Transak(transakConfig, address, network)
         transak.openWidget(network)
         break
