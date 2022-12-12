@@ -52,6 +52,12 @@ export class Transak {
         })
       )
     })
+
+    this.sdk.on(this.sdk.EVENTS.TRANSAK_WIDGET_CLOSE, () => {
+      setTimeout(() => {
+        document.querySelector('html')?.style.removeProperty('overflow')
+      }, 1000)
+    })
   }
 
   /**
