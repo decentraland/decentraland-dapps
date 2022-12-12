@@ -141,26 +141,37 @@ describe('when interacting with MoonPay', () => {
 
   describe('when build the widget url', () => {
     const mockOriginalURL =
-      'http://widget.base.url.xyz?apiKey=api-key&currencyCode=MANA&walletAddres=0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2&redirectURL=http%3A%2F%2Flocalhost%3Fnetwork%3DETHEREUM%26gateway%3DmoonPay'
-    const mockSignature = 'd8/LyWZ1PI4JhDARu5KuC6cEQw/x2kyaeinPwBvbav8='
-
-    beforeEach(() => {
-      nock(mockConfig.moonPaySignatureApiBaseUrl)
-        .get('/v1/signature')
-        .query({ originalURL: mockOriginalURL })
-        .reply(200, { signature: mockSignature })
-        .defaultReplyHeaders({
-          'Access-Control-Allow-Origin': '*'
-        })
+      'http://widget.base.url.xyz?apiKey=api-key&currencyCode=MANA&redirectURL=http%3A%2F%2Flocalhost%3Fnetwork%3DETHEREUM%26gateway%3DmoonPay'
+    describe('when the user is not logged in', () => {
+      it('should sign the original url using all the parameters including the user address', () => {
+        return expect(
+          moonPay.getWidgetUrl(undefined, Network.ETHEREUM)
+        ).resolves.toEqual(mockOriginalURL)
+      })
     })
 
-    it('should return the entire url using the information from the config and the address of the connected user', () => {
-      const mockWidgetURL = `${mockOriginalURL}&signature=${encodeURIComponent(
-        mockSignature
-      )}`
-      return expect(
-        moonPay.getWidgetUrl(mockAddress, Network.ETHEREUM)
-      ).resolves.toEqual(mockWidgetURL)
+    describe('when the user is logged in', () => {
+      const mockSignature = 'd8/LyWZ1PI4JhDARu5KuC6cEQw/x2kyaeinPwBvbav8='
+
+      beforeEach(() => {
+        const originalURL = `${mockOriginalURL}&walletAddress=${mockAddress}`
+        nock(mockConfig.moonPaySignatureApiBaseUrl)
+          .get('/v1/signature')
+          .query({ originalURL })
+          .reply(200, { signature: mockSignature })
+          .defaultReplyHeaders({
+            'Access-Control-Allow-Origin': '*'
+          })
+      })
+
+      it('should sign the original url using all the parameters including the user address', () => {
+        const expectedWidgetURL = `${mockOriginalURL}&walletAddress=${mockAddress}&signature=${encodeURIComponent(
+          mockSignature
+        )}`
+        return expect(
+          moonPay.getWidgetUrl(mockAddress, Network.ETHEREUM)
+        ).resolves.toEqual(expectedWidgetURL)
+      })
     })
   })
 

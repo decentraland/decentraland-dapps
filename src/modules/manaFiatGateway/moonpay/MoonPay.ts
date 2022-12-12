@@ -77,21 +77,25 @@ export class MoonPay {
     }
   }
 
-  async getWidgetUrl(address: string, network: Network) {
+  async getWidgetUrl(address: string | undefined, network: Network) {
     const redirectURL = `${window.location.origin}?network=${network}&gateway=${NetworkGatewayType.MOON_PAY}`
-    const originalURL = `${this.widgetBaseUrl}?apiKey=${
+    let originalURL = `${this.widgetBaseUrl}?apiKey=${
       this.apiKey
-    }&currencyCode=MANA&walletAddres=${address}&redirectURL=${encodeURIComponent(
-      redirectURL
-    )}`
+    }&currencyCode=MANA&redirectURL=${encodeURIComponent(redirectURL)}`
 
-    const { signature } = (await this.moonPaySignatureApi.request(
+    if (!address) return originalURL
+
+    originalURL += `&walletAddress=${address}`
+
+    const {
+      signature
+    }: SignatureResponse = await this.moonPaySignatureApi.request(
       'GET',
       '/v1/signature',
       {
         originalURL
       }
-    )) as SignatureResponse
+    )
 
     return `${originalURL}&signature=${encodeURIComponent(signature)}`
   }
