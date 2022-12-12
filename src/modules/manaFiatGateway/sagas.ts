@@ -66,7 +66,7 @@ function* handleOpenFiatGateway(
       case NetworkGatewayType.MOON_PAY:
         const moonPay = new MoonPay(moonPayConfig)
         const widgetUrl: string = yield call(
-          moonPay.getWidgetUrl,
+          [moonPay, moonPay.getWidgetUrl],
           address,
           network
         )
