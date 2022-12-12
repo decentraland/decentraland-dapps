@@ -65,11 +65,7 @@ function* handleOpenFiatGateway(
         break
       case NetworkGatewayType.MOON_PAY:
         const moonPay = new MoonPay(moonPayConfig)
-        const widgetUrl: string = yield call(
-          [moonPay, moonPay.getWidgetUrl],
-          address,
-          network
-        )
+        const widgetUrl = moonPay.getWidgetUrl(network)
         window.open(widgetUrl, '_blank', 'noopener,noreferrer')
         break
       default:

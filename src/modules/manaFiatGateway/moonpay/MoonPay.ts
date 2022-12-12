@@ -3,30 +3,19 @@ import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithF
 import { BaseAPI } from '../../../lib/api'
 import { Purchase, PurchaseStatus } from '../../mana/types'
 import { MoonPayConfig } from '../types'
-import {
-  MoonPayTransaction,
-  MoonPayTransactionStatus,
-  SignatureResponse
-} from './types'
+import { MoonPayTransaction, MoonPayTransactionStatus } from './types'
 
 export class MoonPay {
   private readonly apiKey: string
   private readonly widgetBaseUrl: string
   private readonly moonPayAPI: BaseAPI
-  private readonly moonPaySignatureApi: BaseAPI
 
   constructor(config: MoonPayConfig) {
-    const {
-      apiKey,
-      apiBaseUrl,
-      moonPaySignatureApiBaseUrl,
-      widgetBaseUrl
-    } = config
+    const { apiKey, apiBaseUrl, widgetBaseUrl } = config
 
     this.apiKey = apiKey
     this.widgetBaseUrl = widgetBaseUrl
     this.moonPayAPI = new BaseAPI(apiBaseUrl)
-    this.moonPaySignatureApi = new BaseAPI(moonPaySignatureApiBaseUrl)
   }
 
   private getPurchaseStatus(status: MoonPayTransactionStatus): PurchaseStatus {
@@ -77,26 +66,10 @@ export class MoonPay {
     }
   }
 
-  async getWidgetUrl(address: string | undefined, network: Network) {
+  getWidgetUrl(network: Network) {
     const redirectURL = `${window.location.origin}?network=${network}&gateway=${NetworkGatewayType.MOON_PAY}`
-    let originalURL = `${this.widgetBaseUrl}?apiKey=${
+    return `${this.widgetBaseUrl}?apiKey=${
       this.apiKey
     }&currencyCode=MANA&redirectURL=${encodeURIComponent(redirectURL)}`
-
-    if (!address) return originalURL
-
-    originalURL += `&walletAddress=${address}`
-
-    const {
-      signature
-    }: SignatureResponse = await this.moonPaySignatureApi.request(
-      'GET',
-      '/v1/signature',
-      {
-        originalURL
-      }
-    )
-
-    return `${originalURL}&signature=${encodeURIComponent(signature)}`
   }
 }

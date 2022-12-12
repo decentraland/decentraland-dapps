@@ -13,13 +13,10 @@ nock.disableNetConnect()
 
 const mockConfig: MoonPayConfig = {
   apiKey: 'api-key',
-  moonPaySignatureApiBaseUrl: 'http://signature.url.xyz',
   apiBaseUrl: 'http://base.url.xyz',
   widgetBaseUrl: 'http://widget.base.url.xyz',
   pollingDelay: 500
 }
-
-const mockAddress = '0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2'
 
 const mockTransaction: MoonPayTransaction = {
   id: '354b1f46-480c-4307-9896-f4c81c1e1e17',
@@ -139,39 +136,14 @@ describe('when interacting with MoonPay', () => {
     moonPay = new MoonPay(mockConfig)
   })
 
-  describe('when build the widget url', () => {
+  describe.only('when build the widget url', () => {
     const mockOriginalURL =
       'http://widget.base.url.xyz?apiKey=api-key&currencyCode=MANA&redirectURL=http%3A%2F%2Flocalhost%3Fnetwork%3DETHEREUM%26gateway%3DmoonPay'
-    describe('when the user is not logged in', () => {
-      it('should sign the original url using all the parameters including the user address', () => {
-        return expect(
-          moonPay.getWidgetUrl(undefined, Network.ETHEREUM)
-        ).resolves.toEqual(mockOriginalURL)
-      })
-    })
 
-    describe('when the user is logged in', () => {
-      const mockSignature = 'd8/LyWZ1PI4JhDARu5KuC6cEQw/x2kyaeinPwBvbav8='
-
-      beforeEach(() => {
-        const originalURL = `${mockOriginalURL}&walletAddress=${mockAddress}`
-        nock(mockConfig.moonPaySignatureApiBaseUrl)
-          .get('/v1/signature')
-          .query({ originalURL })
-          .reply(200, { signature: mockSignature })
-          .defaultReplyHeaders({
-            'Access-Control-Allow-Origin': '*'
-          })
-      })
-
-      it('should sign the original url using all the parameters including the user address', () => {
-        const expectedWidgetURL = `${mockOriginalURL}&walletAddress=${mockAddress}&signature=${encodeURIComponent(
-          mockSignature
-        )}`
-        return expect(
-          moonPay.getWidgetUrl(mockAddress, Network.ETHEREUM)
-        ).resolves.toEqual(expectedWidgetURL)
-      })
+    it('should return the widget url with the api key, currency code, and redirect url as query parameters', () => {
+      return expect(moonPay.getWidgetUrl(Network.ETHEREUM)).toEqual(
+        mockOriginalURL
+      )
     })
   })
 

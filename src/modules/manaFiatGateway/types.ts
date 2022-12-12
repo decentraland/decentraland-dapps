@@ -5,7 +5,6 @@ export type MoonPayConfig = {
   apiKey: string
   pollingDelay?: number
   widgetBaseUrl: string
-  moonPaySignatureApiBaseUrl: string
 }
 
 export type TransakConfig = {
