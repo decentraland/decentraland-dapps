@@ -11,11 +11,13 @@ import { setPurchase } from '../mana/actions'
 import { Purchase } from '../mana/types'
 import { getAddress } from '../wallet/selectors'
 import {
-  OPEN_MANA_FIAT_GATEWAY,
-  OpenManaFiatGatewayAction,
+  OPEN_MANA_FIAT_GATEWAY_REQUEST,
+  OpenManaFiatGatewayRequestAction,
   MANA_FIAT_GATEWAY_PURCHASE_COMPLETED,
   ManaFiatGatewayPurchaseCompletedAction,
-  manaFiatGatewayPurchaseCompletedFailure
+  manaFiatGatewayPurchaseCompletedFailure,
+  openManaFiatGatewaySuccess,
+  openManaFiatGatewayFailure
 } from './actions'
 import { MoonPay } from './moonpay'
 import { Transak } from './transak'
@@ -28,7 +30,11 @@ const DEFAULT_POLLING_DELAY = 3000
 
 export function createManaFiatGatewaysSaga(config: ManaFiatGatewaySagasConfig) {
   return function* manaFiatGatewaysSaga(): IterableIterator<ForkEffect> {
-    yield takeEvery(OPEN_MANA_FIAT_GATEWAY, handleOpenFiatGateway, config)
+    yield takeEvery(
+      OPEN_MANA_FIAT_GATEWAY_REQUEST,
+      handleOpenFiatGateway,
+      config
+    )
     yield takeEvery(
       MANA_FIAT_GATEWAY_PURCHASE_COMPLETED,
       handleFiatGatewayPurchaseCompleted,
@@ -44,23 +50,30 @@ export function createManaFiatGatewaysSaga(config: ManaFiatGatewaySagasConfig) {
 
 function* handleOpenFiatGateway(
   config: ManaFiatGatewaySagasConfig,
-  action: OpenManaFiatGatewayAction
+  action: OpenManaFiatGatewayRequestAction
 ) {
   const { network, gateway } = action.payload
   const { transak: transakConfig, moonPay: moonPayConfig } = config
-  const address: string = yield select(getAddress)
 
-  switch (gateway) {
-    case NetworkGatewayType.TRANSAK:
-      const transak = new Transak(transakConfig, address, network)
-      transak.openWidget(network)
-      break
-    case NetworkGatewayType.MOON_PAY:
-      const widgetUrl = new MoonPay(moonPayConfig).widgetUrl(address, network)
-      window.open(widgetUrl, '_blank', 'noopener,noreferrer')
-      break
-    default:
-      break
+  try {
+    switch (gateway) {
+      case NetworkGatewayType.TRANSAK:
+        const address: string = yield select(getAddress)
+        const transak = new Transak(transakConfig, address, network)
+        transak.openWidget(network)
+        break
+      case NetworkGatewayType.MOON_PAY:
+        const moonPay = new MoonPay(moonPayConfig)
+        const widgetUrl = moonPay.getWidgetUrl(network)
+        window.open(widgetUrl, '_blank', 'noopener,noreferrer')
+        break
+      default:
+        break
+    }
+
+    yield put(openManaFiatGatewaySuccess())
+  } catch (error) {
+    yield put(openManaFiatGatewayFailure(network, gateway, error.message))
   }
 }
 

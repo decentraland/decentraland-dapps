@@ -117,7 +117,7 @@ export default class BuyManaWithFiatModal extends React.PureComponent<
 
   handleOnContinue(network: Network, gateway: NetworkGatewayType) {
     this.props.onContinue && this.props.onContinue(network, gateway)
-    this.handleOnClose()
+    if (gateway !== NetworkGatewayType.MOON_PAY) this.handleOnClose()
   }
 
   handleOnClose() {

@@ -7,7 +7,9 @@ import { getAddress } from '../wallet/selectors'
 import {
   manaFiatGatewayPurchaseCompleted,
   manaFiatGatewayPurchaseCompletedFailure,
-  openManaFiatGateway
+  openManaFiatGatewayFailure,
+  openManaFiatGatewayRequest,
+  openManaFiatGatewaySuccess
 } from './actions'
 import { MoonPay } from './moonpay'
 import { MoonPayTransaction, MoonPayTransactionStatus } from './moonpay/types'
@@ -35,11 +37,8 @@ const mockConfig: ManaFiatGatewaySagasConfig = {
 const manaFiatGatewaysSaga = createManaFiatGatewaysSaga(mockConfig)
 const mockAddress = '0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2'
 
-const mockRedirectURL = encodeURIComponent(
-  `${window.location.origin}?network=${Network.ETHEREUM}&gateway=${NetworkGatewayType.MOON_PAY}`
-)
-
-const mockWidgetUrl = `${mockConfig.moonPay.widgetBaseUrl}?apiKey=${mockConfig.moonPay.apiKey}&currencyCode=MANA&walletAddres=${mockAddress}&redirectURL=${mockRedirectURL}`
+const mockWidgetUrl =
+  'http://widget.base.url.xyz?apiKey=api-key&currencyCode=MANA&redirectURL=http%3A%2F%2Flocalhost%3Fnetwork%3DETHEREUM%26gateway%3DmoonPay'
 
 const mockTransaction: MoonPayTransaction = {
   id: '354b1f46-480c-4307-9896-f4c81c1e1e17',
@@ -164,21 +163,52 @@ const mockPurchase: Purchase = {
 
 // () => {}
 describe('when handling the request to open the MANA-FIAT gateway', () => {
+  const error = 'Default Error'
+
   afterEach(() => {
     jest.clearAllMocks()
   })
 
   describe('when the selected gateway is Transak', () => {
-    beforeEach(() => {
-      jest.spyOn(Transak.prototype, 'openWidget').mockImplementation(() => {})
+    describe('when the call to open widget fails', () => {
+      beforeEach(() => {
+        jest.spyOn(Transak.prototype, 'openWidget').mockImplementation(() => {
+          throw new Error(error)
+        })
+      })
+
+      it('should put the failure action', async () => {
+        return expectSaga(manaFiatGatewaysSaga)
+          .provide([[select(getAddress), mockAddress]])
+          .dispatch(
+            openManaFiatGatewayRequest(
+              Network.ETHEREUM,
+              NetworkGatewayType.TRANSAK
+            )
+          )
+          .put(
+            openManaFiatGatewayFailure(
+              Network.ETHEREUM,
+              NetworkGatewayType.TRANSAK,
+              error
+            )
+          )
+          .silentRun()
+      })
     })
 
-    it('should init its SDK', () => {
+    it('should init its SDK and put the success action', () => {
+      jest.spyOn(Transak.prototype, 'openWidget').mockImplementation(() => {})
+
       return expectSaga(manaFiatGatewaysSaga)
         .provide([[select(getAddress), mockAddress]])
         .dispatch(
-          openManaFiatGateway(Network.ETHEREUM, NetworkGatewayType.TRANSAK)
+          openManaFiatGatewayRequest(
+            Network.ETHEREUM,
+            NetworkGatewayType.TRANSAK
+          )
         )
+        .put(openManaFiatGatewaySuccess())
         .silentRun()
         .then(() => {
           expect(Transak.prototype.openWidget).toHaveBeenCalledWith(
@@ -193,12 +223,45 @@ describe('when handling the request to open the MANA-FIAT gateway', () => {
       window.open = jest.fn()
     })
 
-    it('should put the action signaling the widget url', () => {
+    describe('when the call to get widget url fails', () => {
+      beforeEach(() => {
+        jest.spyOn(MoonPay.prototype, 'getWidgetUrl').mockImplementation(() => {
+          throw new Error(error)
+        })
+      })
+
+      it('should put the failure action', async () => {
+        return expectSaga(manaFiatGatewaysSaga)
+          .dispatch(
+            openManaFiatGatewayRequest(
+              Network.ETHEREUM,
+              NetworkGatewayType.MOON_PAY
+            )
+          )
+          .put(
+            openManaFiatGatewayFailure(
+              Network.ETHEREUM,
+              NetworkGatewayType.MOON_PAY,
+              error
+            )
+          )
+          .silentRun()
+      })
+    })
+
+    it('should open a new tab with the widget url and put the success action', () => {
+      jest
+        .spyOn(MoonPay.prototype, 'getWidgetUrl')
+        .mockReturnValueOnce(mockWidgetUrl)
+
       return expectSaga(manaFiatGatewaysSaga)
-        .provide([[select(getAddress), mockAddress]])
         .dispatch(
-          openManaFiatGateway(Network.ETHEREUM, NetworkGatewayType.MOON_PAY)
+          openManaFiatGatewayRequest(
+            Network.ETHEREUM,
+            NetworkGatewayType.MOON_PAY
+          )
         )
+        .put(openManaFiatGatewaySuccess())
         .silentRun()
         .then(() => {
           expect(window.open).toHaveBeenCalledWith(

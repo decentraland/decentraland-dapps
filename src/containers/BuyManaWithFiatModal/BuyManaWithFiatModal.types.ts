@@ -12,7 +12,7 @@ import {
   NetworkGatewayType,
   NetworkI18N
 } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
-import { OpenManaFiatGatewayAction } from '../../modules/manaFiatGateway/actions'
+import { OpenManaFiatGatewayRequestAction } from '../../modules/manaFiatGateway/actions'
 
 type MakeOptional<Type, Key extends keyof Type> = Omit<Type, Key> &
   Partial<Pick<Type, Key>>
@@ -43,7 +43,7 @@ export type MapStateProps = Pick<
   'hasTranslations' | 'isLoading' | 'hasError'
 >
 export type MapDispatchProps = Pick<Props, 'onContinue' | 'onInfo'>
-export type MapDispatch = Dispatch<OpenManaFiatGatewayAction>
+export type MapDispatch = Dispatch<OpenManaFiatGatewayRequestAction>
 
 export type Translations =
   | BuyManaWithFiatModalI18N

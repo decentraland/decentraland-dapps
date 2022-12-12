@@ -1,10 +1,11 @@
 import { connect } from 'react-redux'
 import { Network } from '@dcl/schemas'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
-import { openManaFiatGateway } from '../../modules/manaFiatGateway/actions'
+import { openManaFiatGatewayRequest } from '../../modules/manaFiatGateway/actions'
 import {
   getError,
-  isFinishingPurchase
+  isFinishingPurchase,
+  isOpeningGateway
 } from '../../modules/manaFiatGateway/selectors'
 import { isEnabled } from '../../modules/translation/selectors'
 import {
@@ -17,13 +18,13 @@ import BuyManaWithFiatModal from './BuyManaWithFiatModal'
 
 const mapState = (state: any): MapStateProps => ({
   hasError: !!getError(state),
-  isLoading: isFinishingPurchase(state),
+  isLoading: isOpeningGateway(state) || isFinishingPurchase(state),
   hasTranslations: isEnabled(state)
 })
 
 const mapDispatch = (dispatch: MapDispatch): MapDispatchProps => ({
   onContinue: (network: Network, gateway: NetworkGatewayType) =>
-    dispatch(openManaFiatGateway(network, gateway))
+    dispatch(openManaFiatGatewayRequest(network, gateway))
 })
 
 const mergeProps = (

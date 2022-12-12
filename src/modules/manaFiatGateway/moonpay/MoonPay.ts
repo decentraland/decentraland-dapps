@@ -66,12 +66,10 @@ export class MoonPay {
     }
   }
 
-  widgetUrl(address: string, network: Network) {
+  getWidgetUrl(network: Network) {
     const redirectURL = `${window.location.origin}?network=${network}&gateway=${NetworkGatewayType.MOON_PAY}`
     return `${this.widgetBaseUrl}?apiKey=${
       this.apiKey
-    }&currencyCode=MANA&walletAddres=${address}&redirectURL=${encodeURIComponent(
-      redirectURL
-    )}`
+    }&currencyCode=MANA&redirectURL=${encodeURIComponent(redirectURL)}`
   }
 }

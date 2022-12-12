@@ -18,8 +18,6 @@ const mockConfig: MoonPayConfig = {
   pollingDelay: 500
 }
 
-const mockAddress = '0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2'
-
 const mockTransaction: MoonPayTransaction = {
   id: '354b1f46-480c-4307-9896-f4c81c1e1e17',
   createdAt: '2018-08-27T19:40:43.748Z',
@@ -136,25 +134,15 @@ describe('when interacting with MoonPay', () => {
 
   beforeEach(() => {
     moonPay = new MoonPay(mockConfig)
-
-    nock(mockConfig.apiBaseUrl)
-      .get(`/v1/transactions/${mockTransaction.id}`)
-      .query({ apiKey: mockConfig.apiKey })
-      .reply(200, mockTransaction)
-      .defaultReplyHeaders({
-        'Access-Control-Allow-Origin': '*'
-      })
   })
 
   describe('when build the widget url', () => {
-    it('should return the entire url using the information from the config and the address of the connected user', () => {
-      const redirectUrl = `${window.location.origin}?network=${Network.ETHEREUM}&gateway=${NetworkGatewayType.MOON_PAY}`
-      return expect(moonPay.widgetUrl(mockAddress, Network.ETHEREUM)).toEqual(
-        `${mockConfig.widgetBaseUrl}?apiKey=${
-          mockConfig.apiKey
-        }&currencyCode=MANA&walletAddres=${mockAddress}&redirectURL=${encodeURIComponent(
-          redirectUrl
-        )}`
+    const mockOriginalURL =
+      'http://widget.base.url.xyz?apiKey=api-key&currencyCode=MANA&redirectURL=http%3A%2F%2Flocalhost%3Fnetwork%3DETHEREUM%26gateway%3DmoonPay'
+
+    it('should return the widget url with the api key, currency code, and redirect url as query parameters', () => {
+      return expect(moonPay.getWidgetUrl(Network.ETHEREUM)).toEqual(
+        mockOriginalURL
       )
     })
   })
