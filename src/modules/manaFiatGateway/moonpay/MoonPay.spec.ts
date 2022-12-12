@@ -136,7 +136,7 @@ describe('when interacting with MoonPay', () => {
     moonPay = new MoonPay(mockConfig)
   })
 
-  describe.only('when build the widget url', () => {
+  describe('when build the widget url', () => {
     const mockOriginalURL =
       'http://widget.base.url.xyz?apiKey=api-key&currencyCode=MANA&redirectURL=http%3A%2F%2Flocalhost%3Fnetwork%3DETHEREUM%26gateway%3DmoonPay'
 
