@@ -53,7 +53,7 @@ export function createManaFiatGatewaysSaga(config: ManaFiatGatewaySagasConfig) {
 
 function* updateBalanceOnPurchaseCompletion(purchase: Purchase) {
   if (purchase.status === PurchaseStatus.COMPLETE)
-    yield call(fetchWalletRequest)
+    yield put(fetchWalletRequest())
 }
 
 function* handleOpenFiatGateway(
@@ -71,7 +71,7 @@ function* handleOpenFiatGateway(
         transak.openWidget(network)
         break
       case NetworkGatewayType.MOON_PAY:
-        const moonPay = new MoonPay(moonPayConfig)
+        const moonPay: MoonPay = new MoonPay(moonPayConfig)
         const widgetUrl = moonPay.getWidgetUrl(network)
         window.open(widgetUrl, '_blank', 'noopener,noreferrer')
         break
@@ -105,7 +105,7 @@ function* handleFiatGatewayPurchaseCompleted(
   try {
     switch (gateway) {
       case NetworkGatewayType.MOON_PAY:
-        const moonPay = new MoonPay(moonPayConfig)
+        const moonPay: MoonPay = new MoonPay(moonPayConfig)
         let statusHasChanged: boolean = false
         let transaction: MoonPayTransaction = yield call(
           [moonPay, moonPay.getTransaction],
@@ -130,6 +130,7 @@ function* handleFiatGatewayPurchaseCompleted(
           }
 
           yield delay(moonPayConfig.pollingDelay || DEFAULT_POLLING_DELAY)
+
           transaction = yield call(
             [moonPay, moonPay.getTransaction],
             transactionId

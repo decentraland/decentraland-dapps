@@ -1,3 +1,4 @@
+import util from 'util'
 import { select } from 'redux-saga/effects'
 import { expectSaga } from 'redux-saga-test-plan'
 import * as matchers from 'redux-saga-test-plan/matchers'
@@ -18,6 +19,7 @@ import { Transak } from './transak'
 import { ManaFiatGatewaySagasConfig } from './types'
 import { setPurchase } from '../mana/actions'
 import { Purchase, PurchaseStatus } from '../mana/types'
+import { fetchWalletRequest } from '../wallet/actions'
 
 jest.mock('./transak')
 
@@ -332,6 +334,7 @@ describe('when handling the completion of the purchase', () => {
               ]
             ])
             .put(setPurchase(expectedPurchase))
+            .put(fetchWalletRequest())
             .dispatch(
               manaFiatGatewayPurchaseCompleted(
                 Network.ETHEREUM,
@@ -345,20 +348,27 @@ describe('when handling the completion of the purchase', () => {
       })
 
       describe('when the status changes after polling for some time', () => {
-        it.skip('should put the action signaling that the purchase was created with its initial status and updated with the new one ', () => {
-          // TODO: is this possible?
+        util.inspect.defaultOptions.depth = null
+
+        beforeEach(() => {
+          jest
+            .spyOn(MoonPay.prototype, 'getTransaction')
+            .mockImplementationOnce(() => Promise.resolve(mockTransaction))
+            .mockImplementationOnce(() =>
+              Promise.resolve({
+                ...mockTransaction,
+                status: MoonPayTransactionStatus.COMPLETED
+              })
+            )
+        })
+
+        it('should put the action signaling that the purchase was created with its initial status and updated with the new one ', () => {
           return expectSaga(manaFiatGatewaysSaga)
-            .provide([
-              [matchers.call.fn(moonPay.getTransaction), mockTransaction],
-              [
-                matchers.call.fn(moonPay.getTransaction),
-                { mockTransaction, status: MoonPayTransactionStatus.COMPLETED }
-              ]
-            ])
             .put(setPurchase(mockPurchase))
             .put(
               setPurchase({ ...mockPurchase, status: PurchaseStatus.COMPLETE })
             )
+            .put(fetchWalletRequest())
             .dispatch(
               manaFiatGatewayPurchaseCompleted(
                 Network.ETHEREUM,
@@ -373,3 +383,5 @@ describe('when handling the completion of the purchase', () => {
     })
   })
 })
+
+// TODO (test purchase events channel)
