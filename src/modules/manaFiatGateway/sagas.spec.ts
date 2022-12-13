@@ -385,3 +385,31 @@ describe('when handling the completion of the purchase', () => {
 })
 
 // TODO (test purchase events channel)
+
+describe('when handling the action signaling the set purchase', () => {
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
+
+  describe('when the purhcase is not yet complete', () => {
+    it('should put the failure action', async () => {
+      return expectSaga(manaFiatGatewaysSaga)
+        .dispatch(setPurchase(mockPurchase))
+        .silentRun()
+        .then(({ effects }) => {
+          expect(effects.put).toBeUndefined()
+        })
+    })
+  })
+
+  describe('when the purhcase is not yet complete', () => {
+    it('should put the failure action', async () => {
+      return expectSaga(manaFiatGatewaysSaga)
+        .dispatch(
+          setPurchase({ ...mockPurchase, status: PurchaseStatus.COMPLETE })
+        )
+        .put(fetchWalletRequest())
+        .silentRun()
+    })
+  })
+})
