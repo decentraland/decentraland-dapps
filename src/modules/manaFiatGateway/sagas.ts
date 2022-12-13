@@ -8,7 +8,7 @@ import {
 } from 'redux-saga/effects'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 import { setPurchase } from '../mana/actions'
-import { Purchase } from '../mana/types'
+import { Purchase, PurchaseStatus } from '../mana/types'
 import { getAddress } from '../wallet/selectors'
 import {
   OPEN_MANA_FIAT_GATEWAY_REQUEST,
@@ -25,6 +25,7 @@ import { ManaFiatGatewaySagasConfig } from './types'
 import { purchaseEventsChannel } from './utils'
 import { Network } from '@dcl/schemas'
 import { MoonPayTransaction, MoonPayTransactionStatus } from './moonpay/types'
+import { fetchWalletRequest } from '../wallet/actions'
 
 const DEFAULT_POLLING_DELAY = 3000
 
@@ -43,9 +44,16 @@ export function createManaFiatGatewaysSaga(config: ManaFiatGatewaySagasConfig) {
     yield takeEvery(purchaseEventsChannel, handlePurchaseChannelEvent)
 
     function* handlePurchaseChannelEvent(action: { purchase: Purchase }) {
-      yield put(setPurchase(action.purchase))
+      const { purchase } = action
+      yield put(setPurchase(purchase))
+      yield call(updateBalanceOnPurchaseCompletion, purchase)
     }
   }
+}
+
+function* updateBalanceOnPurchaseCompletion(purchase: Purchase) {
+  if (purchase.status === PurchaseStatus.COMPLETE)
+    yield call(fetchWalletRequest)
 }
 
 function* handleOpenFiatGateway(
@@ -84,6 +92,7 @@ function* upsertPurchase(
 ) {
   let purchase: Purchase = moonPay.createPurchase(transaction, network)
   yield put(setPurchase(purchase))
+  yield call(updateBalanceOnPurchaseCompletion, purchase)
 }
 
 function* handleFiatGatewayPurchaseCompleted(
