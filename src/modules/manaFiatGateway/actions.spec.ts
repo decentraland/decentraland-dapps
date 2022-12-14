@@ -2,13 +2,17 @@ import { Network } from '@dcl/schemas'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 import { MoonPayTransactionStatus } from '../manaFiatGateway/moonpay/types'
 import {
+  closeManaFiatFeedbackModalRequest,
+  CLOSE_MANA_FIAT_FEEDBACK_MODAL_REQUEST,
   manaFiatGatewayPurchaseCompleted,
   manaFiatGatewayPurchaseCompletedFailure,
   MANA_FIAT_GATEWAY_PURCHASE_COMPLETED,
   MANA_FIAT_GATEWAY_PURCHASE_COMPLETED_FAILURE,
+  openManaFiatFeedbackModalRequest,
   openManaFiatGatewayFailure,
   openManaFiatGatewayRequest,
   openManaFiatGatewaySuccess,
+  OPEN_MANA_FIAT_FEEDBACK_MODAL_REQUEST,
   OPEN_MANA_FIAT_GATEWAY_FAILURE,
   OPEN_MANA_FIAT_GATEWAY_REQUEST,
   OPEN_MANA_FIAT_GATEWAY_SUCCESS
@@ -102,6 +106,27 @@ describe('when creating the action to signal a failure after a purchase was comp
         error
       },
       type: MANA_FIAT_GATEWAY_PURCHASE_COMPLETED_FAILURE
+    })
+  })
+})
+
+describe('when creating the action that signals the opening of the feedback modal', () => {
+  it('should return an object representing the action', () => {
+    const gateway = NetworkGatewayType.MOON_PAY
+    expect(openManaFiatFeedbackModalRequest(gateway)).toEqual({
+      meta: undefined,
+      payload: { gateway },
+      type: OPEN_MANA_FIAT_FEEDBACK_MODAL_REQUEST
+    })
+  })
+})
+
+describe('when creating the action that signals the closing of the feedback modal', () => {
+  it('should return an object representing the action', () => {
+    expect(closeManaFiatFeedbackModalRequest()).toEqual({
+      meta: undefined,
+      payload: undefined,
+      type: CLOSE_MANA_FIAT_FEEDBACK_MODAL_REQUEST
     })
   })
 })

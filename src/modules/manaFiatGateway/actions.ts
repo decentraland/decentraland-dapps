@@ -69,3 +69,25 @@ export type ManaFiatGatewayPurchaseCompletedAction = ReturnType<
 export type ManaFiatGatewayPurchaseCompletedFailureAction = ReturnType<
   typeof manaFiatGatewayPurchaseCompletedFailure
 >
+
+// Open Feedback Modal
+export const OPEN_MANA_FIAT_FEEDBACK_MODAL_REQUEST =
+  '[Request] Open MANA-FIAT Feedback Modal'
+
+export const openManaFiatFeedbackModalRequest = (gateway: NetworkGatewayType) =>
+  action(OPEN_MANA_FIAT_FEEDBACK_MODAL_REQUEST, { gateway })
+
+export type OpenManaFiatFeedbackModalRequestAction = ReturnType<
+  typeof openManaFiatFeedbackModalRequest
+>
+
+// Close Feedback Modal
+export const CLOSE_MANA_FIAT_FEEDBACK_MODAL_REQUEST =
+  '[Request] Close MANA-FIAT Feedback Modal'
+
+export const closeManaFiatFeedbackModalRequest = () =>
+  action(CLOSE_MANA_FIAT_FEEDBACK_MODAL_REQUEST)
+
+export type CloseManaFiatFeedbackModalRequestAction = ReturnType<
+  typeof closeManaFiatFeedbackModalRequest
+>

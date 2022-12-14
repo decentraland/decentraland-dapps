@@ -7,6 +7,7 @@ import { getAddress } from '../wallet/selectors'
 import {
   manaFiatGatewayPurchaseCompleted,
   manaFiatGatewayPurchaseCompletedFailure,
+  openManaFiatFeedbackModalRequest,
   openManaFiatGatewayFailure,
   openManaFiatGatewayRequest,
   openManaFiatGatewaySuccess
@@ -334,6 +335,7 @@ describe('when handling the completion of the purchase', () => {
             ])
             .put(setPurchase(expectedPurchase))
             .put(fetchWalletRequest())
+            .put(openManaFiatFeedbackModalRequest(NetworkGatewayType.MOON_PAY))
             .dispatch(
               manaFiatGatewayPurchaseCompleted(
                 Network.ETHEREUM,
@@ -366,6 +368,7 @@ describe('when handling the completion of the purchase', () => {
               setPurchase({ ...mockPurchase, status: PurchaseStatus.COMPLETE })
             )
             .put(fetchWalletRequest())
+            .put(openManaFiatFeedbackModalRequest(NetworkGatewayType.MOON_PAY))
             .dispatch(
               manaFiatGatewayPurchaseCompleted(
                 Network.ETHEREUM,

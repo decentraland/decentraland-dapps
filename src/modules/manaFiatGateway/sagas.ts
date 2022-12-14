@@ -17,7 +17,8 @@ import {
   ManaFiatGatewayPurchaseCompletedAction,
   manaFiatGatewayPurchaseCompletedFailure,
   openManaFiatGatewaySuccess,
-  openManaFiatGatewayFailure
+  openManaFiatGatewayFailure,
+  openManaFiatFeedbackModalRequest
 } from './actions'
 import { MoonPay } from './moonpay'
 import { Transak } from './transak'
@@ -87,6 +88,9 @@ function* upsertPurchase(
 ) {
   let purchase: Purchase = moonPay.createPurchase(transaction, network)
   yield put(setPurchase(purchase))
+
+  if (purchase.status === PurchaseStatus.COMPLETE)
+    yield put(openManaFiatFeedbackModalRequest(NetworkGatewayType.MOON_PAY))
 }
 
 function* handleFiatGatewayPurchaseCompleted(

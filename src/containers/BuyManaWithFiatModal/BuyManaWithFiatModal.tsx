@@ -12,6 +12,7 @@ import {
   NetworkGatewayType,
   NetworkI18N
 } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
+import { FeedbackModal } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/FeedbackModal'
 import { t } from '../../modules/translation/utils'
 import {
   DefaultProps,
@@ -25,7 +26,8 @@ export default class BuyManaWithFiatModal extends React.PureComponent<
   State
 > {
   static defaultProps: DefaultProps = {
-    isLoading: false
+    isLoading: false,
+    showFeedback: false
   }
 
   constructor(props: Props) {
@@ -131,10 +133,14 @@ export default class BuyManaWithFiatModal extends React.PureComponent<
       className,
       isLoading,
       selectedNetwork,
+      showFeedback,
       onInfo
     } = this.props
     const { hasError } = this.state
     const networks = this.props.networks || this.getDefaultNetworks()
+
+    if (showFeedback)
+      return <FeedbackModal open onClose={this.props.onCloseFeedback} />
 
     return (
       <>
