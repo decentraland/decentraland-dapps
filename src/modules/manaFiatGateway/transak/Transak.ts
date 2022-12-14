@@ -34,6 +34,8 @@ export class Transak {
 
   /**
    * Uses the sdk to suscribe to changes in the status of the transaction and dispatch an action depending on each different state.
+   *
+   * @param network - Network in which the trasanctions will be done
    */
   private suscribeToEvents(network: Network) {
     const events = {
@@ -44,12 +46,8 @@ export class Transak {
     }
 
     Object.entries(events).forEach(([event, status]) => {
-      // this.handleStatusChange(orderData, status)
       this.sdk.on(event, (orderData: OrderData) =>
-        purchaseEventsChannel.put({
-          type: PURCHASE_EVENT,
-          purchase: this.createPurchase(orderData, status, network)
-        })
+        this.emitPurchaseEvent(orderData, status, network)
       )
     })
 
@@ -57,6 +55,24 @@ export class Transak {
       setTimeout(() => {
         document.querySelector('html')?.style.removeProperty('overflow')
       }, 1000)
+    })
+  }
+
+  /**
+   * Uses redux-saga channels to emit a message every time a transaction changes its status.
+   *
+   * @param orderData - Order entity that comes from the Transak SDK.
+   * @param status - Status of the order.
+   * @param Network - Network in which the transaction will be done.
+   */
+  emitPurchaseEvent(
+    orderData: OrderData,
+    status: PurchaseStatus,
+    network: Network
+  ) {
+    purchaseEventsChannel.put({
+      type: PURCHASE_EVENT,
+      purchase: this.createPurchase(orderData, status, network)
     })
   }
 

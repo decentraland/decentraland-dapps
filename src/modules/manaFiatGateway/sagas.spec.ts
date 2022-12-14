@@ -1,4 +1,3 @@
-import util from 'util'
 import { select } from 'redux-saga/effects'
 import { expectSaga } from 'redux-saga-test-plan'
 import * as matchers from 'redux-saga-test-plan/matchers'
@@ -348,8 +347,6 @@ describe('when handling the completion of the purchase', () => {
       })
 
       describe('when the status changes after polling for some time', () => {
-        util.inspect.defaultOptions.depth = null
-
         beforeEach(() => {
           jest
             .spyOn(MoonPay.prototype, 'getTransaction')
@@ -383,8 +380,6 @@ describe('when handling the completion of the purchase', () => {
     })
   })
 })
-
-// TODO (test purchase events channel)
 
 describe('when handling the action signaling the set purchase', () => {
   afterEach(() => {
