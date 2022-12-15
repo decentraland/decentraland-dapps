@@ -7,8 +7,8 @@ import {
   takeEvery
 } from 'redux-saga/effects'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
-import { setPurchase } from '../mana/actions'
-import { Purchase } from '../mana/types'
+import { setPurchase, SetPurchaseAction, SET_PURCHASE } from '../mana/actions'
+import { Purchase, PurchaseStatus } from '../mana/types'
 import { getAddress } from '../wallet/selectors'
 import {
   OPEN_MANA_FIAT_GATEWAY_REQUEST,
@@ -25,6 +25,7 @@ import { ManaFiatGatewaySagasConfig } from './types'
 import { purchaseEventsChannel } from './utils'
 import { Network } from '@dcl/schemas'
 import { MoonPayTransaction, MoonPayTransactionStatus } from './moonpay/types'
+import { fetchWalletRequest } from '../wallet/actions'
 
 const DEFAULT_POLLING_DELAY = 3000
 
@@ -40,10 +41,12 @@ export function createManaFiatGatewaysSaga(config: ManaFiatGatewaySagasConfig) {
       handleFiatGatewayPurchaseCompleted,
       config
     )
+    yield takeEvery(SET_PURCHASE, updateBalanceOnPurchaseCompletion)
     yield takeEvery(purchaseEventsChannel, handlePurchaseChannelEvent)
 
     function* handlePurchaseChannelEvent(action: { purchase: Purchase }) {
-      yield put(setPurchase(action.purchase))
+      const { purchase } = action
+      yield put(setPurchase(purchase))
     }
   }
 }
@@ -63,7 +66,7 @@ function* handleOpenFiatGateway(
         transak.openWidget(network)
         break
       case NetworkGatewayType.MOON_PAY:
-        const moonPay = new MoonPay(moonPayConfig)
+        const moonPay: MoonPay = new MoonPay(moonPayConfig)
         const widgetUrl = moonPay.getWidgetUrl(network)
         window.open(widgetUrl, '_blank', 'noopener,noreferrer')
         break
@@ -96,7 +99,7 @@ function* handleFiatGatewayPurchaseCompleted(
   try {
     switch (gateway) {
       case NetworkGatewayType.MOON_PAY:
-        const moonPay = new MoonPay(moonPayConfig)
+        const moonPay: MoonPay = new MoonPay(moonPayConfig)
         let statusHasChanged: boolean = false
         let transaction: MoonPayTransaction = yield call(
           [moonPay, moonPay.getTransaction],
@@ -121,6 +124,7 @@ function* handleFiatGatewayPurchaseCompleted(
           }
 
           yield delay(moonPayConfig.pollingDelay || DEFAULT_POLLING_DELAY)
+
           transaction = yield call(
             [moonPay, moonPay.getTransaction],
             transactionId
@@ -139,4 +143,11 @@ function* handleFiatGatewayPurchaseCompleted(
       )
     )
   }
+}
+
+export function* updateBalanceOnPurchaseCompletion(action: SetPurchaseAction) {
+  const { purchase } = action.payload
+
+  if (purchase.status === PurchaseStatus.COMPLETE)
+    yield put(fetchWalletRequest())
 }

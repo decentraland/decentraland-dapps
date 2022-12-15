@@ -18,6 +18,7 @@ import { Transak } from './transak'
 import { ManaFiatGatewaySagasConfig } from './types'
 import { setPurchase } from '../mana/actions'
 import { Purchase, PurchaseStatus } from '../mana/types'
+import { fetchWalletRequest } from '../wallet/actions'
 
 jest.mock('./transak')
 
@@ -332,6 +333,7 @@ describe('when handling the completion of the purchase', () => {
               ]
             ])
             .put(setPurchase(expectedPurchase))
+            .put(fetchWalletRequest())
             .dispatch(
               manaFiatGatewayPurchaseCompleted(
                 Network.ETHEREUM,
@@ -345,20 +347,25 @@ describe('when handling the completion of the purchase', () => {
       })
 
       describe('when the status changes after polling for some time', () => {
-        it.skip('should put the action signaling that the purchase was created with its initial status and updated with the new one ', () => {
-          // TODO: is this possible?
+        beforeEach(() => {
+          jest
+            .spyOn(MoonPay.prototype, 'getTransaction')
+            .mockImplementationOnce(() => Promise.resolve(mockTransaction))
+            .mockImplementationOnce(() =>
+              Promise.resolve({
+                ...mockTransaction,
+                status: MoonPayTransactionStatus.COMPLETED
+              })
+            )
+        })
+
+        it('should put the action signaling that the purchase was created with its initial status and updated with the new one ', () => {
           return expectSaga(manaFiatGatewaysSaga)
-            .provide([
-              [matchers.call.fn(moonPay.getTransaction), mockTransaction],
-              [
-                matchers.call.fn(moonPay.getTransaction),
-                { mockTransaction, status: MoonPayTransactionStatus.COMPLETED }
-              ]
-            ])
             .put(setPurchase(mockPurchase))
             .put(
               setPurchase({ ...mockPurchase, status: PurchaseStatus.COMPLETE })
             )
+            .put(fetchWalletRequest())
             .dispatch(
               manaFiatGatewayPurchaseCompleted(
                 Network.ETHEREUM,
@@ -370,6 +377,34 @@ describe('when handling the completion of the purchase', () => {
             .silentRun()
         })
       })
+    })
+  })
+})
+
+describe('when handling the action signaling the set purchase', () => {
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
+
+  describe('when the purchase is not yet complete', () => {
+    it('should not put the fetch wallet request action', async () => {
+      return expectSaga(manaFiatGatewaysSaga)
+        .dispatch(setPurchase(mockPurchase))
+        .silentRun()
+        .then(({ effects }) => {
+          expect(effects.put).toBeUndefined()
+        })
+    })
+  })
+
+  describe('when the purchase is complete', () => {
+    it('should put the fetch wallet request action', async () => {
+      return expectSaga(manaFiatGatewaysSaga)
+        .dispatch(
+          setPurchase({ ...mockPurchase, status: PurchaseStatus.COMPLETE })
+        )
+        .put(fetchWalletRequest())
+        .silentRun()
     })
   })
 })
