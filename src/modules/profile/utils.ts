@@ -1,3 +1,4 @@
+import { Snapshots } from '@dcl/schemas'
 import { Profile } from '../../modules/profile/types'
 
 export const lambdaProfileToContentProfile = (profile: Profile) => {
@@ -7,16 +8,13 @@ export const lambdaProfileToContentProfile = (profile: Profile) => {
       ...avatar,
       avatar: {
         ...avatar.avatar,
-        snapshots: {
-          body: avatar.avatar.snapshots.body.replace(
-            /.*\/content\/contents\//,
-            ''
-          ),
-          face256: avatar.avatar.snapshots.face256.replace(
-            /.*\/content\/contents\//,
-            ''
-          )
-        }
+        snapshots: Object.entries(avatar.avatar.snapshots)
+          .map(([key, value]) => ({
+            [key]: value.replace(/.*\/content\/contents\//, '')
+          }))
+          .reduce((acc, curr) => {
+            return { ...acc, ...curr }
+          }, {}) as Snapshots
       }
     }))
   }
