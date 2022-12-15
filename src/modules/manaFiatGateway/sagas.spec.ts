@@ -386,7 +386,7 @@ describe('when handling the action signaling the set purchase', () => {
     jest.clearAllMocks()
   })
 
-  describe('when the purhcase is not yet complete', () => {
+  describe('when the purchase is not yet complete', () => {
     it('should put the failure action', async () => {
       return expectSaga(manaFiatGatewaysSaga)
         .dispatch(setPurchase(mockPurchase))
