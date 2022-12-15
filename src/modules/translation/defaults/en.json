@@ -83,6 +83,11 @@
         "subtitle": "Select what MANA you want to buy:",
         "error": "Could not buy MANA."
       },
+      "feedback_modal": {
+        "title": "MANA purchase completed!",
+        "description": "The MANA has been added to your account. If you still don’t see it in your balance, refresh this page.",
+        "cta": "Done"
+      },
       "network": {
         "ethereum": {
           "cta": "Ethereum MANA",

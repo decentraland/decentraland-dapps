@@ -12,7 +12,10 @@ import {
   NetworkGatewayType,
   NetworkI18N
 } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
-import { FeedbackModal } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/FeedbackModal'
+import {
+  FeedbackModal,
+  FeedbackModalI18N
+} from 'decentraland-ui/dist/components/BuyManaWithFiatModal/FeedbackModal'
 import { t } from '../../modules/translation/utils'
 import {
   DefaultProps,
@@ -89,6 +92,13 @@ export default class BuyManaWithFiatModal extends React.PureComponent<
     )
   }
 
+  getDefaultFeedbackTranslations = (): FeedbackModalI18N | undefined => {
+    return this.getDefaultTranslations(
+      '@dapps.buyManaWithFiat.feedback_modal',
+      ['title', 'description', 'cta']
+    )
+  }
+
   getDefaultNetworks() {
     const networks = [Network.MATIC, Network.ETHEREUM]
     const gateways = [NetworkGatewayType.MOON_PAY, NetworkGatewayType.TRANSAK]
@@ -139,11 +149,13 @@ export default class BuyManaWithFiatModal extends React.PureComponent<
     const { hasError } = this.state
     const networks = this.props.networks || this.getDefaultNetworks()
 
-    if (showFeedback)
-      return <FeedbackModal open onClose={this.props.onCloseFeedback} />
-
     return (
       <>
+        <FeedbackModal
+          open={showFeedback}
+          onClose={this.props.onCloseFeedback}
+          i18n={this.getDefaultFeedbackTranslations()}
+        />
         <BaseBuyManaWithFiatModal
           open={open}
           className={className}
