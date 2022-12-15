@@ -72,7 +72,7 @@ export class EntitiesOperator {
    * @param address - The owner / soon to be owner of the entity.
    */
   async deployEntityWithoutNewFiles(
-    entity: Entity,
+    entityMetadata: Entity['metadata'],
     entityType: EntityType,
     pointer: string,
     address: string
@@ -80,7 +80,7 @@ export class EntitiesOperator {
     const options: BuildEntityWithoutFilesOptions = {
       type: entityType,
       pointers: [pointer],
-      metadata: entity.metadata,
+      metadata: entityMetadata,
       timestamp: Date.now()
     }
 

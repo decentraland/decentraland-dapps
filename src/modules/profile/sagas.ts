@@ -24,6 +24,7 @@ import {
   setProfileAvatarAliasFailure,
   setProfileAvatarAliasSuccess
 } from './actions'
+import { lambdaProfileToContentProfile } from './utils'
 import { Profile } from './types'
 
 type CreateProfileSagaOptions = {
@@ -115,30 +116,22 @@ export function createProfileSaga({ peerUrl }: CreateProfileSagaOptions) {
     address: string,
     changes: Partial<Avatar>
   ) {
-    const entity: ProfileEntity = yield call(
-      [entities, entities.getProfileEntity],
-      address
-    )
+    const profile: Profile = yield call([peerApi, 'fetchProfile'], address)
+    const profileWithContentHashes = lambdaProfileToContentProfile(profile)
 
     const newAvatar: Avatar = {
-      ...entity.metadata.avatars[0],
+      ...profileWithContentHashes.avatars[0],
       ...changes,
-      version: entity.metadata.avatars[0].version + 1
+      version: profileWithContentHashes.avatars[0].version + 1
     }
 
     const profileMetadata: Profile = {
-      ...entity.metadata,
-      avatars: [newAvatar, ...entity.metadata.avatars.slice(1)]
-    }
-
-    const newProfileEntity: ProfileEntity = {
-      ...entity,
-      metadata: profileMetadata
+      avatars: [newAvatar, ...profileWithContentHashes.avatars.slice(1)]
     }
 
     yield call(
       [entities, 'deployEntityWithoutNewFiles'],
-      newProfileEntity,
+      profileMetadata,
       EntityType.PROFILE,
       address,
       address
