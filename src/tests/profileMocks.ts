@@ -1,5 +1,4 @@
-import { Avatar, EntityType } from '@dcl/schemas'
-import { ProfileEntity } from '../lib/types'
+import { Avatar } from '@dcl/schemas'
 import { Profile } from '../modules/profile/types'
 
 export const avatar: Avatar = {
@@ -13,8 +12,10 @@ export const avatar: Avatar = {
   avatar: {
     bodyShape: 'aShape',
     snapshots: {
-      face256: 'aFace',
-      body: 'aBody'
+      body:
+        'https://peer.decentraland.zone/content/contents/bafkreibxwevyktyrqikrlbbfohyec3ayvvjoolzagnlhppyph7q3l5qcky',
+      face256:
+        'https://peer.decentraland.zone/content/contents/bafkreiamoamfdlzqodg6yserd74cseci62o7qq4uuwgglz2awxowgw737q'
     },
     eyes: {
       color: { r: 255, g: 255, b: 255 }
@@ -34,12 +35,7 @@ export const profile: Profile = {
   avatars: [avatar]
 }
 
-export const profileEntity: ProfileEntity = {
-  id: 'anId',
-  version: 'v4',
-  type: EntityType.PROFILE,
-  pointers: [],
+export const profileFromLambda: Profile & { timestamp: number } = {
   timestamp: 343243242,
-  content: [],
-  metadata: profile
+  avatars: profile.avatars
 }
