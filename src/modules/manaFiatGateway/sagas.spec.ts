@@ -397,7 +397,7 @@ describe('when handling the action signaling the set purchase', () => {
     })
   })
 
-  describe('when the purhcase is not yet complete', () => {
+  describe('when the purchase is complete', () => {
     it('should put the fetch wallet request action', async () => {
       return expectSaga(manaFiatGatewaysSaga)
         .dispatch(
