@@ -2,7 +2,6 @@ import { takeLatest, put, call, takeEvery } from 'redux-saga/effects'
 import { Avatar, EntityType } from '@dcl/schemas'
 import { PeerAPI } from '../../lib/peer'
 import { EntitiesOperator } from '../../lib/entities'
-import { ProfileEntity } from '../../lib/types'
 import {
   ConnectWalletSuccessAction,
   CONNECT_WALLET_SUCCESS,
