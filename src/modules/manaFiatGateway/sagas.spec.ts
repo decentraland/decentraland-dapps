@@ -387,7 +387,7 @@ describe('when handling the action signaling the set purchase', () => {
   })
 
   describe('when the purchase is not yet complete', () => {
-    it('should put the failure action', async () => {
+    it('should not put the fetch wallet request action', async () => {
       return expectSaga(manaFiatGatewaysSaga)
         .dispatch(setPurchase(mockPurchase))
         .silentRun()
