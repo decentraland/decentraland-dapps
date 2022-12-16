@@ -163,7 +163,7 @@ const mockPurchase: Purchase = {
   gateway: NetworkGatewayType.MOON_PAY
 }
 
-const feedbackModalName = 'FeedbackModal'
+const feedbackModalName = 'BuyManaWithFiatFeedbackModal'
 
 // () => {}
 describe('when handling the request to open the MANA-FIAT gateway', () => {

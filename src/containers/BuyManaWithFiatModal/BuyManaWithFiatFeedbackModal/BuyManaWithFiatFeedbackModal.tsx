@@ -1,10 +1,10 @@
 import React from 'react'
 import {
-  FeedbackModal as BaseFeedbackModal,
+  FeedbackModal as BaseBuyManaWithFiatFeedbackModal,
   FeedbackModalI18N
 } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/FeedbackModal'
 import { t } from '../../../modules/translation/utils'
-import { Props } from './FeedbackModal.types'
+import { Props } from './BuyManaWithFiatFeedbackModal.types'
 
 const getDefaultFeedbackTranslations = (): FeedbackModalI18N => ({
   title: t('@dapps.buyManaWithFiat.feedback_modal.title'),
@@ -13,9 +13,9 @@ const getDefaultFeedbackTranslations = (): FeedbackModalI18N => ({
   error: ''
 })
 
-const FeedbackModal = ({ onClose }: Props) => {
+const BuyManaWithFiatFeedbackModal = ({ onClose }: Props) => {
   return (
-    <BaseFeedbackModal
+    <BaseBuyManaWithFiatFeedbackModal
       open
       onClose={onClose}
       i18n={getDefaultFeedbackTranslations()}
@@ -23,4 +23,4 @@ const FeedbackModal = ({ onClose }: Props) => {
   )
 }
 
-export default React.memo(FeedbackModal)
+export default React.memo(BuyManaWithFiatFeedbackModal)

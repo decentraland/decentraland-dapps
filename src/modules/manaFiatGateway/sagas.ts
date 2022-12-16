@@ -90,7 +90,7 @@ function* upsertPurchase(
   yield put(setPurchase(purchase))
 
   if (purchase.status === PurchaseStatus.COMPLETE)
-    yield put(openModal('FeedbackModal'))
+    yield put(openModal('BuyManaWithFiatFeedbackModal'))
 }
 
 function* handleFiatGatewayPurchaseCompleted(
