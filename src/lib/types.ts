@@ -40,5 +40,5 @@ export type StorageOwnData = {
 }
 
 export type FetchProfileOptions = {
-  useCache: boolean
+  useCache?: boolean
 }
