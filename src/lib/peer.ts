@@ -1,7 +1,7 @@
 import { LambdasClient } from 'dcl-catalyst-client'
 import { Profile } from '../modules/profile/types'
 import { BaseAPI } from './api'
-import { ProfileEntity } from './types'
+import { FetchProfileOptions, ProfileEntity } from './types'
 
 export class PeerAPI extends BaseAPI {
   cache: Record<string, Promise<Profile>> = {}
@@ -18,8 +18,11 @@ export class PeerAPI extends BaseAPI {
    *
    * @param address - The address of the profile to retrieve.
    */
-  public async fetchProfile(address: string): Promise<Profile> {
-    if (address in this.cache) {
+  public async fetchProfile(
+    address: string,
+    options: FetchProfileOptions = { useCache: true }
+  ): Promise<Profile> {
+    if (options.useCache && address in this.cache) {
       return this.cache[address]
     }
 

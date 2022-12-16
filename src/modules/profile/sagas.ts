@@ -115,7 +115,9 @@ export function createProfileSaga({ peerUrl }: CreateProfileSagaOptions) {
     address: string,
     changes: Partial<Avatar>
   ) {
-    const profile: Profile = yield call([peerApi, 'fetchProfile'], address)
+    const profile: Profile = yield call([peerApi, 'fetchProfile'], address, {
+      useCache: false
+    })
     const profileWithContentHashes = lambdaProfileToContentProfile(profile)
 
     const newAvatar: Avatar = {

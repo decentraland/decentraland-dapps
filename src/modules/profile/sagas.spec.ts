@@ -79,7 +79,7 @@ describe('when handling the action to set the profile avatar description', () =>
           [
             matchers.call.fn(PeerAPI.prototype.fetchProfile),
             dynamicDeepParametersEquality(
-              [address],
+              [address, { useCache: false }],
               Promise.resolve(profileFromLambda)
             )
           ],
@@ -166,7 +166,7 @@ describe('when handling the action to set the profile avatar alias', () => {
           [
             matchers.call.fn(PeerAPI.prototype.fetchProfile),
             dynamicDeepParametersEquality(
-              [address],
+              [address, { useCache: false }],
               Promise.resolve(profileFromLambda)
             )
           ],
