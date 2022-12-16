@@ -57,6 +57,9 @@ describe('peerAPI', () => {
           expect(await peerApi.fetchProfile(address, { useCache: true })).toBe(
             profileUpdated
           )
+          await expect(peerApi.cache[address]).resolves.toStrictEqual(
+            profileUpdated
+          )
         })
       })
     })
@@ -83,6 +86,9 @@ describe('peerAPI', () => {
       })
       it('should fetch the profile', async () => {
         expect(await peerApi.fetchProfile(address, { useCache: false })).toBe(
+          profileUpdated
+        )
+        await expect(peerApi.cache[address]).resolves.toStrictEqual(
           profileUpdated
         )
       })
