@@ -1,9 +1,7 @@
 import { Network } from '@dcl/schemas'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 import {
-  closeManaFiatFeedbackModalRequest,
   manaFiatGatewayPurchaseCompletedFailure,
-  openManaFiatFeedbackModalRequest,
   openManaFiatGatewayFailure,
   openManaFiatGatewayRequest,
   openManaFiatGatewaySuccess
@@ -22,11 +20,11 @@ describe('when handling the open mana fiat gateway modal request', () => {
     )
 
     const state = manaFiatGatewayReducer(
-      { data: {}, loading: [], error: 'error' },
+      { loading: [], error: 'error' },
       action
     )
 
-    expect(state).toEqual({ data: {}, loading: [action], error: null })
+    expect(state).toEqual({ loading: [action], error: null })
   })
 })
 
@@ -39,11 +37,11 @@ describe('when handling the open mana fiat gateway modal success', () => {
     const successAction = openManaFiatGatewaySuccess()
 
     const state = manaFiatGatewayReducer(
-      { data: {}, loading: [requestAction], error: null },
+      { loading: [requestAction], error: null },
       successAction
     )
 
-    expect(state).toEqual({ data: {}, loading: [], error: null })
+    expect(state).toEqual({ loading: [], error: null })
   })
 })
 
@@ -61,11 +59,11 @@ describe('when handling the open mana fiat gateway modal failure', () => {
     )
 
     const state = manaFiatGatewayReducer(
-      { data: {}, loading: [requestAction], error: null },
+      { loading: [requestAction], error: null },
       failureAction
     )
 
-    expect(state).toEqual({ data: {}, loading: [], error })
+    expect(state).toEqual({ loading: [], error })
   })
 })
 
@@ -89,37 +87,6 @@ describe('when the failure on purchase completion', () => {
     ).toEqual({
       ...state,
       error
-    })
-  })
-})
-
-describe('when handling the opening of the feedback modal', () => {
-  it("should set the showFeedback flag as true in the states' data", () => {
-    const state: ManaFiatGatewayState = INITIAL_STATE
-    const gateway = NetworkGatewayType.MOON_PAY
-    expect(
-      manaFiatGatewayReducer(state, openManaFiatFeedbackModalRequest(gateway))
-    ).toEqual({
-      ...state,
-      data: {
-        ...state.data,
-        showFeedback: true
-      }
-    })
-  })
-})
-
-describe('when handling the closing of the feedback modal', () => {
-  it("should set the showFeedback flag as false in the states' data", () => {
-    const state: ManaFiatGatewayState = INITIAL_STATE
-    expect(
-      manaFiatGatewayReducer(state, closeManaFiatFeedbackModalRequest())
-    ).toEqual({
-      ...state,
-      data: {
-        ...state.data,
-        showFeedback: false
-      }
     })
   })
 })

@@ -11,9 +11,7 @@ import {
   getError,
   getLoading,
   isFinishingPurchase,
-  isOpeningGateway,
-  getData,
-  showFeedback
+  isOpeningGateway
 } from './selectors'
 
 let manaFiatGatewayState: any
@@ -31,14 +29,6 @@ describe('MANA-FIAT Gateway selectors', () => {
     })
   })
 
-  describe('when getting the manaFiatGateway state data', () => {
-    it('should return the manaFiatGateway data', () => {
-      expect(getData(manaFiatGatewayState)).toEqual(
-        manaFiatGatewayState.manaFiatGateway.data
-      )
-    })
-  })
-
   describe('when getting the error state of the manaFiatGateway', () => {
     it("should return the manaFiatGateway state's errors", () => {
       expect(getError(manaFiatGatewayState)).toEqual(
@@ -51,14 +41,6 @@ describe('MANA-FIAT Gateway selectors', () => {
     it("should return the manaFiatGateway's state loading data", () => {
       expect(getLoading(manaFiatGatewayState)).toEqual(
         manaFiatGatewayState.manaFiatGateway.loading
-      )
-    })
-  })
-
-  describe('when getting the showFeedback state of the manaFiatGateway', () => {
-    it("should return the manaFiatGateway's state showFeedback data", () => {
-      expect(showFeedback(manaFiatGatewayState)).toEqual(
-        manaFiatGatewayState.manaFiatGateway.data.showFeedback
       )
     })
   })

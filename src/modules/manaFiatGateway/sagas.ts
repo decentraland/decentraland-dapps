@@ -17,8 +17,7 @@ import {
   ManaFiatGatewayPurchaseCompletedAction,
   manaFiatGatewayPurchaseCompletedFailure,
   openManaFiatGatewaySuccess,
-  openManaFiatGatewayFailure,
-  openManaFiatFeedbackModalRequest
+  openManaFiatGatewayFailure
 } from './actions'
 import { MoonPay } from './moonpay'
 import { Transak } from './transak'
@@ -27,6 +26,7 @@ import { purchaseEventsChannel } from './utils'
 import { Network } from '@dcl/schemas'
 import { MoonPayTransaction, MoonPayTransactionStatus } from './moonpay/types'
 import { fetchWalletRequest } from '../wallet/actions'
+import { openModal } from '../modal/actions'
 
 const DEFAULT_POLLING_DELAY = 3000
 
@@ -90,7 +90,7 @@ function* upsertPurchase(
   yield put(setPurchase(purchase))
 
   if (purchase.status === PurchaseStatus.COMPLETE)
-    yield put(openManaFiatFeedbackModalRequest(NetworkGatewayType.MOON_PAY))
+    yield put(openModal('FeedbackModal'))
 }
 
 function* handleFiatGatewayPurchaseCompleted(

@@ -12,10 +12,6 @@ import {
   NetworkGatewayType,
   NetworkI18N
 } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
-import {
-  FeedbackModal,
-  FeedbackModalI18N
-} from 'decentraland-ui/dist/components/BuyManaWithFiatModal/FeedbackModal'
 import { t } from '../../modules/translation/utils'
 import {
   DefaultProps,
@@ -29,8 +25,7 @@ export default class BuyManaWithFiatModal extends React.PureComponent<
   State
 > {
   static defaultProps: DefaultProps = {
-    isLoading: false,
-    showFeedback: false
+    isLoading: false
   }
 
   constructor(props: Props) {
@@ -92,13 +87,6 @@ export default class BuyManaWithFiatModal extends React.PureComponent<
     )
   }
 
-  getDefaultFeedbackTranslations = (): FeedbackModalI18N | undefined => {
-    return this.getDefaultTranslations(
-      '@dapps.buyManaWithFiat.feedback_modal',
-      ['title', 'description', 'cta']
-    )
-  }
-
   getDefaultNetworks() {
     const networks = [Network.MATIC, Network.ETHEREUM]
     const gateways = [NetworkGatewayType.MOON_PAY, NetworkGatewayType.TRANSAK]
@@ -128,12 +116,12 @@ export default class BuyManaWithFiatModal extends React.PureComponent<
   }
 
   handleOnContinue(network: Network, gateway: NetworkGatewayType) {
-    this.props.onContinue && this.props.onContinue(network, gateway)
-    if (gateway !== NetworkGatewayType.MOON_PAY) this.handleOnClose()
+    this.props.onContinue?.(network, gateway)
+    this.handleOnClose()
   }
 
   handleOnClose() {
-    this.props.onClose && this.props.onClose()
+    this.props.onClose?.()
   }
 
   render() {
@@ -143,34 +131,26 @@ export default class BuyManaWithFiatModal extends React.PureComponent<
       className,
       isLoading,
       selectedNetwork,
-      showFeedback,
       onInfo
     } = this.props
     const { hasError } = this.state
     const networks = this.props.networks || this.getDefaultNetworks()
 
     return (
-      <>
-        <FeedbackModal
-          open={showFeedback}
-          onClose={this.props.onCloseFeedback}
-          i18n={this.getDefaultFeedbackTranslations()}
-        />
-        <BaseBuyManaWithFiatModal
-          open={open}
-          className={className}
-          i18n={i18n || this.getDefaultModalTranslations()}
-          networks={
-            selectedNetwork
-              ? networks.filter(network => network.type === selectedNetwork)
-              : networks
-          }
-          loading={isLoading}
-          hasError={hasError}
-          onClose={() => this.handleOnClose()}
-          onInfo={onInfo}
-        />
-      </>
+      <BaseBuyManaWithFiatModal
+        open={open}
+        className={className}
+        i18n={i18n || this.getDefaultModalTranslations()}
+        networks={
+          selectedNetwork
+            ? networks.filter(network => network.type === selectedNetwork)
+            : networks
+        }
+        loading={isLoading}
+        hasError={hasError}
+        onClose={() => this.handleOnClose()}
+        onInfo={onInfo}
+      />
     )
   }
 }

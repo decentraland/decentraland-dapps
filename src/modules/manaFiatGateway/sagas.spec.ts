@@ -7,7 +7,6 @@ import { getAddress } from '../wallet/selectors'
 import {
   manaFiatGatewayPurchaseCompleted,
   manaFiatGatewayPurchaseCompletedFailure,
-  openManaFiatFeedbackModalRequest,
   openManaFiatGatewayFailure,
   openManaFiatGatewayRequest,
   openManaFiatGatewaySuccess
@@ -20,6 +19,7 @@ import { ManaFiatGatewaySagasConfig } from './types'
 import { setPurchase } from '../mana/actions'
 import { Purchase, PurchaseStatus } from '../mana/types'
 import { fetchWalletRequest } from '../wallet/actions'
+import { openModal } from '../modal/actions'
 
 jest.mock('./transak')
 
@@ -162,6 +162,8 @@ const mockPurchase: Purchase = {
   status: PurchaseStatus.PENDING,
   gateway: NetworkGatewayType.MOON_PAY
 }
+
+const feedbackModalName = 'FeedbackModal'
 
 // () => {}
 describe('when handling the request to open the MANA-FIAT gateway', () => {
@@ -335,7 +337,7 @@ describe('when handling the completion of the purchase', () => {
             ])
             .put(setPurchase(expectedPurchase))
             .put(fetchWalletRequest())
-            .put(openManaFiatFeedbackModalRequest(NetworkGatewayType.MOON_PAY))
+            .put(openModal(feedbackModalName))
             .dispatch(
               manaFiatGatewayPurchaseCompleted(
                 Network.ETHEREUM,
@@ -368,7 +370,7 @@ describe('when handling the completion of the purchase', () => {
               setPurchase({ ...mockPurchase, status: PurchaseStatus.COMPLETE })
             )
             .put(fetchWalletRequest())
-            .put(openManaFiatFeedbackModalRequest(NetworkGatewayType.MOON_PAY))
+            .put(openModal(feedbackModalName))
             .dispatch(
               manaFiatGatewayPurchaseCompleted(
                 Network.ETHEREUM,

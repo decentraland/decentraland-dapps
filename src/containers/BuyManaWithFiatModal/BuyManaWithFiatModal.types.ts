@@ -12,10 +12,7 @@ import {
   NetworkGatewayType,
   NetworkI18N
 } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
-import {
-  CloseManaFiatFeedbackModalRequestAction,
-  OpenManaFiatGatewayRequestAction
-} from '../../modules/manaFiatGateway/actions'
+import { OpenManaFiatGatewayRequestAction } from '../../modules/manaFiatGateway/actions'
 import { FeedbackModalI18N } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/FeedbackModal'
 
 type MakeOptional<Type, Key extends keyof Type> = Omit<Type, Key> &
@@ -26,7 +23,7 @@ export type BuyManaWithFiatModalProps = MakeOptional<
   'networks'
 >
 
-export type DefaultProps = { isLoading: boolean; showFeedback?: boolean }
+export type DefaultProps = { isLoading: boolean }
 
 export type Props = DefaultProps &
   BuyManaWithFiatModalProps & {
@@ -36,7 +33,6 @@ export type Props = DefaultProps &
       | undefined
     hasTranslations?: boolean
     onContinue?: (network: Network, gateway: NetworkGatewayType) => void
-    onCloseFeedback?: () => void
   }
 
 export type State = {
@@ -45,15 +41,10 @@ export type State = {
 
 export type MapStateProps = Pick<
   Props,
-  'hasTranslations' | 'isLoading' | 'hasError' | 'showFeedback'
+  'hasTranslations' | 'isLoading' | 'hasError'
 >
-export type MapDispatchProps = Pick<
-  Props,
-  'onContinue' | 'onInfo' | 'onCloseFeedback'
->
-export type MapDispatch = Dispatch<
-  OpenManaFiatGatewayRequestAction | CloseManaFiatFeedbackModalRequestAction
->
+export type MapDispatchProps = Pick<Props, 'onContinue' | 'onInfo'>
+export type MapDispatch = Dispatch<OpenManaFiatGatewayRequestAction>
 
 export type Translations =
   | BuyManaWithFiatModalI18N
