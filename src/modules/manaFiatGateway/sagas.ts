@@ -88,9 +88,6 @@ function* upsertPurchase(
 ) {
   let purchase: Purchase = moonPay.createPurchase(transaction, network)
   yield put(setPurchase(purchase))
-
-  if (purchase.status === PurchaseStatus.COMPLETE)
-    yield put(openModal('BuyManaWithFiatFeedbackModal'))
 }
 
 function* handleFiatGatewayPurchaseCompleted(
@@ -152,6 +149,8 @@ function* handleFiatGatewayPurchaseCompleted(
 export function* updateBalanceOnPurchaseCompletion(action: SetPurchaseAction) {
   const { purchase } = action.payload
 
-  if (purchase.status === PurchaseStatus.COMPLETE)
+  if (purchase.status === PurchaseStatus.COMPLETE) {
+    yield put(openModal('BuyManaWithFiatFeedbackModal'))
     yield put(fetchWalletRequest())
+  }
 }
