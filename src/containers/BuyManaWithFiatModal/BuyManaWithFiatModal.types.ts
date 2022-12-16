@@ -12,8 +12,8 @@ import {
   NetworkGatewayType,
   NetworkI18N
 } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
-import { OpenManaFiatGatewayRequestAction } from '../../modules/manaFiatGateway/actions'
 import { FeedbackModalI18N } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/FeedbackModal'
+import { OpenManaFiatGatewayRequestAction } from '../../modules/manaFiatGateway/actions'
 
 type MakeOptional<Type, Key extends keyof Type> = Omit<Type, Key> &
   Partial<Pick<Type, Key>>
