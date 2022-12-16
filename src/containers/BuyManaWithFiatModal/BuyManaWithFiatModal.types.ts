@@ -12,6 +12,7 @@ import {
   NetworkGatewayType,
   NetworkI18N
 } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
+import { FeedbackModalI18N } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/FeedbackModal'
 import { OpenManaFiatGatewayRequestAction } from '../../modules/manaFiatGateway/actions'
 
 type MakeOptional<Type, Key extends keyof Type> = Omit<Type, Key> &
@@ -49,3 +50,4 @@ export type Translations =
   | BuyManaWithFiatModalI18N
   | (BuyManaWithFiatModalNetworkI18N & NetworkI18N)
   | NetworkGatewayI18N
+  | FeedbackModalI18N

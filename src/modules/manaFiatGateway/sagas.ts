@@ -26,6 +26,7 @@ import { purchaseEventsChannel } from './utils'
 import { Network } from '@dcl/schemas'
 import { MoonPayTransaction, MoonPayTransactionStatus } from './moonpay/types'
 import { fetchWalletRequest } from '../wallet/actions'
+import { openModal } from '../modal/actions'
 
 const DEFAULT_POLLING_DELAY = 3000
 
@@ -87,6 +88,9 @@ function* upsertPurchase(
 ) {
   let purchase: Purchase = moonPay.createPurchase(transaction, network)
   yield put(setPurchase(purchase))
+
+  if (purchase.status === PurchaseStatus.COMPLETE)
+    yield put(openModal('BuyManaWithFiatFeedbackModal'))
 }
 
 function* handleFiatGatewayPurchaseCompleted(

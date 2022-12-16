@@ -67,8 +67,8 @@ describe('when handling the open mana fiat gateway modal failure', () => {
   })
 })
 
-describe('when reducing the action MANA_FIAT_GATEWAY_PURCHASE_COMPLETED_FAILURE', () => {
-  it("should set the error in the states' data", () => {
+describe('when the failure on purchase completion', () => {
+  it('should set the error in the state', () => {
     const state: ManaFiatGatewayState = INITIAL_STATE
     const network = Network.ETHEREUM
     const gateway = NetworkGatewayType.MOON_PAY

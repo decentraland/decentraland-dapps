@@ -83,6 +83,11 @@
         "subtitle": "Selecciona que MANA quieres comprar:",
         "error": "No se pudo comprar MANA."
       },
+      "feedback_modal": {
+        "title": "¡Compra de MANA completada!",
+        "description": "El MANA ha sido agregado a su cuenta. Si aún no lo ve en su saldo, actualice esta página.",
+        "cta": "Hecho"
+      },
       "network": {
         "ethereum": {
           "cta": "Ethereum MANA",

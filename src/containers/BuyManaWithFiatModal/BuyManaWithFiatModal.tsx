@@ -116,12 +116,12 @@ export default class BuyManaWithFiatModal extends React.PureComponent<
   }
 
   handleOnContinue(network: Network, gateway: NetworkGatewayType) {
-    this.props.onContinue && this.props.onContinue(network, gateway)
-    if (gateway !== NetworkGatewayType.MOON_PAY) this.handleOnClose()
+    this.props.onContinue?.(network, gateway)
+    this.handleOnClose()
   }
 
   handleOnClose() {
-    this.props.onClose && this.props.onClose()
+    this.props.onClose?.()
   }
 
   render() {
@@ -137,22 +137,20 @@ export default class BuyManaWithFiatModal extends React.PureComponent<
     const networks = this.props.networks || this.getDefaultNetworks()
 
     return (
-      <>
-        <BaseBuyManaWithFiatModal
-          open={open}
-          className={className}
-          i18n={i18n || this.getDefaultModalTranslations()}
-          networks={
-            selectedNetwork
-              ? networks.filter(network => network.type === selectedNetwork)
-              : networks
-          }
-          loading={isLoading}
-          hasError={hasError}
-          onClose={() => this.handleOnClose()}
-          onInfo={onInfo}
-        />
-      </>
+      <BaseBuyManaWithFiatModal
+        open={open}
+        className={className}
+        i18n={i18n || this.getDefaultModalTranslations()}
+        networks={
+          selectedNetwork
+            ? networks.filter(network => network.type === selectedNetwork)
+            : networks
+        }
+        loading={isLoading}
+        hasError={hasError}
+        onClose={() => this.handleOnClose()}
+        onInfo={onInfo}
+      />
     )
   }
 }
