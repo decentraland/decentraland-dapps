@@ -28,7 +28,7 @@ import { Profile } from './types'
 
 type CreateProfileSagaOptions = {
   peerUrl: string
-  peerWithNoGbCollectorUrl: string
+  peerWithNoGbCollectorUrl?: string
 }
 
 export function createProfileSaga({

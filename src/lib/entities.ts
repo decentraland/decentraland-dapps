@@ -12,14 +12,16 @@ import { PeerAPI } from './peer'
 export class EntitiesOperator {
   private readonly catalystClient: CatalystClient
   // this is a temporal work-around to fix profile deployment issues on catalysts with Garbage Collector
-  private readonly catalystClientWithoutGbCollector: CatalystClient
+  private readonly catalystClientWithoutGbCollector: CatalystClient | null
   private readonly peerAPI: PeerAPI
 
-  constructor(peerUrl: string, peerWithNoGbCollectorUrl: string) {
+  constructor(peerUrl: string, peerWithNoGbCollectorUrl?: string) {
     this.catalystClient = new CatalystClient({ catalystUrl: peerUrl })
-    this.catalystClientWithoutGbCollector = new CatalystClient({
-      catalystUrl: peerWithNoGbCollectorUrl
-    })
+    this.catalystClientWithoutGbCollector = peerWithNoGbCollectorUrl
+      ? new CatalystClient({
+          catalystUrl: peerWithNoGbCollectorUrl
+        })
+      : null
     this.peerAPI = new PeerAPI(peerUrl)
   }
 
@@ -98,7 +100,10 @@ export class EntitiesOperator {
       entityToDeploy.entityId
     )
 
-    return this.catalystClientWithoutGbCollector.deployEntity({
+    const catalystClient =
+      this.catalystClientWithoutGbCollector ?? this.catalystClient
+
+    return catalystClient.deployEntity({
       ...entityToDeploy,
       authChain
     })
