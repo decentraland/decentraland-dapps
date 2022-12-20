@@ -1,11 +1,11 @@
 import React from 'react'
+import { Network } from '@dcl/schemas'
 import {
   FeedbackModal as BaseBuyManaWithFiatFeedbackModal,
   FeedbackModalI18N
 } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/FeedbackModal'
 import { t } from '../../../modules/translation/utils'
 import { Props } from './BuyManaWithFiatFeedbackModal.types'
-import { Network } from '@dcl/schemas'
 
 const getDefaultFeedbackTranslations = (
   network: Network
