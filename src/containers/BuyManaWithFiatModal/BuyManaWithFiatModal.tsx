@@ -120,16 +120,13 @@ export default class BuyManaWithFiatModal extends React.PureComponent<
   }
 
   handleOnContinue(network: Network, gateway: NetworkGatewayType) {
-    this.analytics.track(
-      'Buy MANA with FIAT - Continue with gateway on selected network',
-      { network, gateway }
-    )
+    this.analytics.track('Choose gateway', { network, gateway })
     this.props.onContinue?.(network, gateway)
     this.handleOnClose()
   }
 
   handleNetworkOnClick(network: Network) {
-    this.analytics.track('Buy MANA with FIAT - Click Network', { network })
+    this.analytics.track('Choose Network', { network })
   }
 
   handleOnClose() {
