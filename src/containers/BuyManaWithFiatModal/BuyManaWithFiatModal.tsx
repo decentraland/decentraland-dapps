@@ -13,6 +13,7 @@ import {
   NetworkI18N
 } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 import { t } from '../../modules/translation/utils'
+import { getAnalytics } from '../../modules/analytics/utils'
 import {
   DefaultProps,
   Props,
@@ -24,6 +25,8 @@ export default class BuyManaWithFiatModal extends React.PureComponent<
   Props,
   State
 > {
+  analytics = getAnalytics()
+
   static defaultProps: DefaultProps = {
     isLoading: false
   }
@@ -110,14 +113,23 @@ export default class BuyManaWithFiatModal extends React.PureComponent<
               i18n: this.getDefaultGatewayTranslations(network, gateway),
               learnMoreLink: gatewayLearnMoreLink[gateway],
               onContinue: () => this.handleOnContinue(network, gateway)
-            }))
+            })),
+          onClick: () => this.handleNetworkOnClick(network)
         } as BuyManaWithFiatModalNetworkProps & BuyWithFiatNetworkProps)
     )
   }
 
   handleOnContinue(network: Network, gateway: NetworkGatewayType) {
+    this.analytics.track(
+      'Buy MANA with FIAT - Continue with gateway on selected network',
+      { network, gateway }
+    )
     this.props.onContinue?.(network, gateway)
     this.handleOnClose()
+  }
+
+  handleNetworkOnClick(network: Network) {
+    this.analytics.track('Buy MANA with FIAT - Click Network', { network })
   }
 
   handleOnClose() {
