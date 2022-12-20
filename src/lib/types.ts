@@ -38,3 +38,7 @@ export type StorageOwnData = {
     version: number
   }
 }
+
+export type FetchProfileOptions = {
+  useCache?: boolean
+}
