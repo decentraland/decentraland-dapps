@@ -84,9 +84,16 @@
         "error": "Could not buy MANA."
       },
       "feedback_modal": {
-        "title": "MANA purchase completed!",
-        "description": "The MANA has been added to your account. If you still don’t see it in your balance, refresh this page.",
-        "cta": "Done"
+        "ethereum": {
+          "title": "Ethereum MANA purchase completed!",
+          "description": "The Ethereum MANA has been added to your account. If you still don’t see it in your balance, refresh this page.",
+          "cta": "Done"
+        },
+        "matic": {
+          "title": "Polygon MANA purchase completed!",
+          "description": "The Polygon MANA has been added to your account. If you still don’t see it in your balance, refresh this page.",
+          "cta": "Done"
+        }
       },
       "network": {
         "ethereum": {

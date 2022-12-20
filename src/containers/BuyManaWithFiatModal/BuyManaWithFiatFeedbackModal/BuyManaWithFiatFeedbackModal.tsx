@@ -1,4 +1,5 @@
 import React from 'react'
+import { Network } from '@dcl/schemas'
 import {
   FeedbackModal as BaseBuyManaWithFiatFeedbackModal,
   FeedbackModalI18N
@@ -6,19 +7,28 @@ import {
 import { t } from '../../../modules/translation/utils'
 import { Props } from './BuyManaWithFiatFeedbackModal.types'
 
-const getDefaultFeedbackTranslations = (): FeedbackModalI18N => ({
-  title: t('@dapps.buyManaWithFiat.feedback_modal.title'),
-  description: t('@dapps.buyManaWithFiat.feedback_modal.description'),
-  cta: t('@dapps.buyManaWithFiat.feedback_modal.cta'),
+const getDefaultFeedbackTranslations = (
+  network: Network
+): FeedbackModalI18N => ({
+  title: t(
+    `@dapps.buyManaWithFiat.feedback_modal.${network.toLowerCase()}.title`
+  ),
+  description: t(
+    `@dapps.buyManaWithFiat.feedback_modal.${network.toLowerCase()}.description`
+  ),
+  cta: t(`@dapps.buyManaWithFiat.feedback_modal.${network.toLowerCase()}.cta`),
   error: ''
 })
 
-const BuyManaWithFiatFeedbackModal = ({ onClose }: Props) => {
+const BuyManaWithFiatFeedbackModal = ({
+  metadata: { purchase },
+  onClose
+}: Props) => {
   return (
     <BaseBuyManaWithFiatFeedbackModal
       open
       onClose={onClose}
-      i18n={getDefaultFeedbackTranslations()}
+      i18n={getDefaultFeedbackTranslations(purchase.network)}
     />
   )
 }

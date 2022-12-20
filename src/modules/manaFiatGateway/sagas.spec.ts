@@ -337,7 +337,7 @@ describe('when handling the completion of the purchase', () => {
             ])
             .put(setPurchase(expectedPurchase))
             .put(fetchWalletRequest())
-            .put(openModal(feedbackModalName))
+            .put(openModal(feedbackModalName, { purchase: expectedPurchase }))
             .dispatch(
               manaFiatGatewayPurchaseCompleted(
                 Network.ETHEREUM,
@@ -364,13 +364,15 @@ describe('when handling the completion of the purchase', () => {
         })
 
         it('should put the action signaling that the purchase was created with its initial status and updated with the new one ', () => {
+          const expectedPurchase = {
+            ...mockPurchase,
+            status: PurchaseStatus.COMPLETE
+          }
           return expectSaga(manaFiatGatewaysSaga)
             .put(setPurchase(mockPurchase))
-            .put(
-              setPurchase({ ...mockPurchase, status: PurchaseStatus.COMPLETE })
-            )
+            .put(setPurchase(expectedPurchase))
             .put(fetchWalletRequest())
-            .put(openModal(feedbackModalName))
+            .put(openModal(feedbackModalName, { purchase: expectedPurchase }))
             .dispatch(
               manaFiatGatewayPurchaseCompleted(
                 Network.ETHEREUM,

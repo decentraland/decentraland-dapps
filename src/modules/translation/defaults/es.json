@@ -84,9 +84,16 @@
         "error": "No se pudo comprar MANA."
       },
       "feedback_modal": {
-        "title": "¡Compra de MANA completada!",
-        "description": "El MANA ha sido agregado a su cuenta. Si aún no lo ve en su saldo, actualice esta página.",
-        "cta": "Hecho"
+        "ethereum": {
+          "title": "¡Compra de Ethereum MANA completada!",
+          "description": "El Ethereum MANA ha sido agregado a su cuenta. Si aún no lo ve en su saldo, actualice esta página.",
+          "cta": "Hecho"
+        },
+        "matic": {
+          "title": "¡Compra de Polygon MANA completada!",
+          "description": "El Polygon MANA ha sido agregado a su cuenta. Si aún no lo ve en su saldo, actualice esta página.",
+          "cta": "Hecho"
+        }
       },
       "network": {
         "ethereum": {

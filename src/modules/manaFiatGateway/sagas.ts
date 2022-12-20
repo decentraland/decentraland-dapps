@@ -150,7 +150,7 @@ export function* updateBalanceOnPurchaseCompletion(action: SetPurchaseAction) {
   const { purchase } = action.payload
 
   if (purchase.status === PurchaseStatus.COMPLETE) {
-    yield put(openModal('BuyManaWithFiatFeedbackModal'))
+    yield put(openModal('BuyManaWithFiatFeedbackModal', { purchase }))
     yield put(fetchWalletRequest())
   }
 }
