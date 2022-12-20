@@ -28,11 +28,15 @@ import { Profile } from './types'
 
 type CreateProfileSagaOptions = {
   peerUrl: string
+  peerWithNoGbCollectorUrl?: string
 }
 
-export function createProfileSaga({ peerUrl }: CreateProfileSagaOptions) {
+export function createProfileSaga({
+  peerUrl,
+  peerWithNoGbCollectorUrl
+}: CreateProfileSagaOptions) {
   const peerApi = new PeerAPI(peerUrl)
-  const entities = new EntitiesOperator(peerUrl)
+  const entities = new EntitiesOperator(peerUrl, peerWithNoGbCollectorUrl)
 
   function* profileSaga() {
     yield takeEvery(LOAD_PROFILE_REQUEST, handleLoadProfileRequest)
