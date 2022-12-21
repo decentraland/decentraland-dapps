@@ -12,7 +12,7 @@ import {
   MapStateProps,
   MapDispatch,
   MapDispatchProps,
-  BuyManaWithFiatModalProps
+  OwnProps
 } from './BuyManaWithFiatModal.types'
 import BuyManaWithFiatModal from './BuyManaWithFiatModal'
 
@@ -30,8 +30,8 @@ const mapDispatch = (dispatch: MapDispatch): MapDispatchProps => ({
 const mergeProps = (
   stateProps: MapStateProps,
   dispatchProps: MapDispatchProps,
-  ownProps: BuyManaWithFiatModalProps
-): BuyManaWithFiatModalProps => ({
+  ownProps: OwnProps
+): OwnProps => ({
   ...stateProps,
   ...dispatchProps,
   ...ownProps

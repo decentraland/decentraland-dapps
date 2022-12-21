@@ -1,2 +1,2 @@
-import BuyManaWithFiatFeedbackModal from './BuyManaWithFiatFeedbackModal'
+import BuyManaWithFiatFeedbackModal from './BuyManaWithFiatFeedbackModal.container'
 export { BuyManaWithFiatFeedbackModal }

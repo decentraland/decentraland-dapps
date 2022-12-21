@@ -149,8 +149,15 @@ function* handleFiatGatewayPurchaseCompleted(
 export function* updateBalanceOnPurchaseCompletion(action: SetPurchaseAction) {
   const { purchase } = action.payload
 
-  if (purchase.status === PurchaseStatus.COMPLETE) {
+  if (
+    [
+      PurchaseStatus.COMPLETE,
+      PurchaseStatus.FAILED,
+      PurchaseStatus.CANCELLED
+    ].includes(purchase.status)
+  )
     yield put(openModal('BuyManaWithFiatFeedbackModal', { purchase }))
+
+  if (purchase.status === PurchaseStatus.COMPLETE)
     yield put(fetchWalletRequest())
-  }
 }

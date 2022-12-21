@@ -14,6 +14,7 @@ import {
 } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 import { FeedbackModalI18N } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/FeedbackModal'
 import { OpenManaFiatGatewayRequestAction } from '../../modules/manaFiatGateway/actions'
+import { ModalProps } from '../../providers/ModalProvider/ModalProvider.types'
 
 type MakeOptional<Type, Key extends keyof Type> = Omit<Type, Key> &
   Partial<Pick<Type, Key>>
@@ -23,11 +24,16 @@ export type BuyManaWithFiatModalProps = MakeOptional<
   'networks'
 >
 
+export type Metadata = {
+  selectedNetwork: Network
+}
+
 export type DefaultProps = { isLoading: boolean }
 
 export type Props = DefaultProps &
-  BuyManaWithFiatModalProps & {
-    selectedNetwork?: Network
+  BuyManaWithFiatModalProps &
+  Omit<ModalProps, 'metadata'> & {
+    metadata: Metadata
     networks?:
       | (BuyManaWithFiatModalNetworkProps & BuyWithFiatNetworkProps)[]
       | undefined
@@ -39,6 +45,7 @@ export type State = {
   hasError: boolean
 }
 
+export type OwnProps = BuyManaWithFiatModalProps & Pick<Props, 'metadata'>
 export type MapStateProps = Pick<
   Props,
   'hasTranslations' | 'isLoading' | 'hasError'
