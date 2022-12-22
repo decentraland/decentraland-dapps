@@ -1,4 +1,3 @@
-import { AnyAction } from 'redux'
 import { LoadingState } from '../loading/reducer'
 import { isLoadingType } from '../loading/selectors'
 import { FETCH_APPLICATION_FEATURES_REQUEST } from './actions'
