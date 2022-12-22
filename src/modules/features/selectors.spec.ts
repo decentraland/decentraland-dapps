@@ -1,6 +1,13 @@
 import { fetchApplicationFeaturesRequest } from './actions'
 import { getMockApplicationFeaturesRecord } from './actions.spec'
-import { getData, getError, getIsFeatureEnabled, getLoading } from './selectors'
+import {
+  getData,
+  getError,
+  getIsFeatureEnabled,
+  getLoading,
+  hasLoadedInitialFlags,
+  isLoadingFeatureFlags
+} from './selectors'
 import { ApplicationName, StateWithFeatures } from './types'
 
 describe('when getting the features state data', () => {
@@ -11,6 +18,7 @@ describe('when getting the features state data', () => {
       features: {
         data,
         error: null,
+        hasLoadedInitialFlags: false,
         loading: []
       }
     })
@@ -32,6 +40,7 @@ describe('when getting the features state loading', () => {
       features: {
         data: {},
         error: null,
+        hasLoadedInitialFlags: false,
         loading
       }
     })
@@ -48,6 +57,7 @@ describe('when getting the features state error', () => {
       features: {
         data: {},
         error,
+        hasLoadedInitialFlags: false,
         loading: []
       }
     })
@@ -65,6 +75,7 @@ describe('when getting if a feature is enabled', () => {
         features: {
           data,
           error: null,
+          hasLoadedInitialFlags: false,
           loading: []
         }
       }
@@ -83,6 +94,7 @@ describe('when getting if a feature is enabled', () => {
         features: {
           data,
           error: null,
+          hasLoadedInitialFlags: false,
           loading: []
         }
       }
@@ -101,6 +113,7 @@ describe('when getting if a feature is enabled', () => {
         features: {
           data: {},
           error: null,
+          hasLoadedInitialFlags: false,
           loading: []
         }
       }
@@ -124,6 +137,7 @@ describe('when getting if a feature is enabled', () => {
         features: {
           data: {},
           loading: [],
+          hasLoadedInitialFlags: false,
           error: null
         }
       }
@@ -161,6 +175,81 @@ describe('when getting if a feature is enabled', () => {
 
         expect(result).toEqual(false)
       })
+    })
+  })
+})
+
+describe('when getting if the feature flags were loaded at least once', () => {
+  let state: StateWithFeatures
+
+  beforeEach(() => {
+    state = {
+      features: {
+        data: {},
+        error: null,
+        hasLoadedInitialFlags: false,
+        loading: []
+      }
+    }
+  })
+
+  describe('and the feature flags were not loaded', () => {
+    beforeEach(() => {
+      state.features.hasLoadedInitialFlags = false
+    })
+
+    it('should return false', () => {
+      expect(hasLoadedInitialFlags(state)).toBe(false)
+    })
+  })
+
+  describe('and the feature flags were loaded', () => {
+    beforeEach(() => {
+      state.features.hasLoadedInitialFlags = true
+    })
+
+    it('should return true', () => {
+      expect(hasLoadedInitialFlags(state)).toBe(true)
+    })
+  })
+})
+
+describe('when getting is the feature flags are being loaded', () => {
+  let state: StateWithFeatures
+
+  beforeEach(() => {
+    state = {
+      features: {
+        data: {},
+        error: null,
+        hasLoadedInitialFlags: false,
+        loading: []
+      }
+    }
+  })
+
+  describe('and the feature flags are being loaded', () => {
+    beforeEach(() => {
+      state.features.loading = [
+        fetchApplicationFeaturesRequest([
+          ApplicationName.ACCOUNT,
+          ApplicationName.BUILDER
+        ])
+      ]
+    })
+
+    it('should return true', () => {
+      expect(isLoadingFeatureFlags(state)).toBe(true)
+    })
+  })
+
+  describe('and the feature flags are not being loaded', () => {
+    beforeEach(() => {
+      state.features.loading = []
+    })
+
+    it('should return false', () => {
+      expect(isLoadingFeatureFlags(state)).toBe(false)
     })
   })
 })

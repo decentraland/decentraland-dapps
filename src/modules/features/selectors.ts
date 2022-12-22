@@ -1,4 +1,6 @@
 import { LoadingState } from '../loading/reducer'
+import { isLoadingType } from '../loading/selectors'
+import { FETCH_APPLICATION_FEATURES_REQUEST } from './actions'
 import { FeaturesState } from './reducer'
 import {
   ApplicationName,
@@ -53,6 +55,14 @@ export const getIsFeatureEnabled = (
   }
 
   return !!appFeatures.flags[`${app}-${feature}`]
+}
+
+export const isLoadingFeatureFlags = (state: StateWithFeatures) => {
+  return isLoadingType(getLoading(state), FETCH_APPLICATION_FEATURES_REQUEST)
+}
+
+export const hasLoadedInitialFlags = (state: StateWithFeatures) => {
+  return state.features.hasLoadedInitialFlags
 }
 
 const getFromEnv = (

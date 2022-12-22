@@ -15,27 +15,42 @@ describe('when handling the fetch features request', () => {
     ])
 
     const state = featuresReducer(
-      { data: {}, loading: [], error: 'error' },
+      { data: {}, hasLoadedInitialFlags: false, loading: [], error: 'error' },
       action
     )
 
-    expect(state).toEqual({ data: {}, loading: [action], error: null })
+    expect(state).toEqual({
+      data: {},
+      loading: [action],
+      hasLoadedInitialFlags: false,
+      error: null
+    })
   })
 })
 
 describe('when handling the fetch features success', () => {
-  it('should update data and remove the request action from the loading state', () => {
+  it("should update data, remove the request action from the loading state and set the flag to signal that the ff's were loaded", () => {
     const apps = [ApplicationName.ACCOUNT, ApplicationName.BUILDER]
     const requestAction = fetchApplicationFeaturesRequest(apps)
     const features = getMockApplicationFeaturesRecord()
     const successAction = fetchApplicationFeaturesSuccess(apps, features)
 
     const state = featuresReducer(
-      { data: {}, loading: [requestAction], error: null },
+      {
+        data: {},
+        hasLoadedInitialFlags: true,
+        loading: [requestAction],
+        error: null
+      },
       successAction
     )
 
-    expect(state).toEqual({ data: features, loading: [], error: null })
+    expect(state).toEqual({
+      data: features,
+      loading: [],
+      hasLoadedInitialFlags: true,
+      error: null
+    })
   })
 })
 
@@ -47,10 +62,20 @@ describe('when handling the fetch features failure', () => {
     const failureAction = fetchApplicationFeaturesFailure(apps, error)
 
     const state = featuresReducer(
-      { data: {}, loading: [requestAction], error: null },
+      {
+        data: {},
+        hasLoadedInitialFlags: false,
+        loading: [requestAction],
+        error: null
+      },
       failureAction
     )
 
-    expect(state).toEqual({ data: {}, loading: [], error })
+    expect(state).toEqual({
+      data: {},
+      loading: [],
+      hasLoadedInitialFlags: false,
+      error
+    })
   })
 })
