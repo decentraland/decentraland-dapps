@@ -6,10 +6,13 @@ import {
   select,
   takeEvery
 } from 'redux-saga/effects'
+import { Network } from '@dcl/schemas'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 import { setPurchase, SetPurchaseAction, SET_PURCHASE } from '../mana/actions'
 import { Purchase, PurchaseStatus } from '../mana/types'
+import { openModal } from '../modal/actions'
 import { getAddress } from '../wallet/selectors'
+import { fetchWalletRequest } from '../wallet/actions'
 import {
   OPEN_MANA_FIAT_GATEWAY_REQUEST,
   OpenManaFiatGatewayRequestAction,
@@ -19,16 +22,15 @@ import {
   openManaFiatGatewaySuccess,
   openManaFiatGatewayFailure,
   OPEN_BUY_MANA_WITH_FIAT_MODAL_REQUEST,
-  OpenBuyManaWithFiatModalRequestAction
+  OpenBuyManaWithFiatModalRequestAction,
+  openBuyManaWithFiatModalFailure,
+  openBuyManaWithFiatModalSuccess
 } from './actions'
 import { MoonPay } from './moonpay'
 import { Transak } from './transak'
 import { ManaFiatGatewaySagasConfig } from './types'
 import { purchaseEventsChannel } from './utils'
-import { Network } from '@dcl/schemas'
 import { MoonPayTransaction, MoonPayTransactionStatus } from './moonpay/types'
-import { fetchWalletRequest } from '../wallet/actions'
-import { openModal } from '../modal/actions'
 import { getPendingPurchase } from './selectors'
 
 const DEFAULT_POLLING_DELAY = 3000
@@ -65,26 +67,34 @@ function* handleOpenBuyManaWithFiatModal(
   config: ManaFiatGatewaySagasConfig,
   action: OpenBuyManaWithFiatModalRequestAction
 ) {
-  const { selectedNetwork } = action.payload
-  const pendingPurchase: Purchase | undefined = yield select(getPendingPurchase)
+  try {
+    const { selectedNetwork } = action.payload
+    const pendingPurchase: Purchase | undefined = yield select(
+      getPendingPurchase
+    )
 
-  if (pendingPurchase) {
-    let goToUrl: string | undefined
+    if (pendingPurchase) {
+      let goToUrl: string | undefined
 
-    if (pendingPurchase.gateway === NetworkGatewayType.MOON_PAY) {
-      goToUrl = new MoonPay(config.moonPay).getTransactionReceiptUrl(
-        pendingPurchase.id
+      if (pendingPurchase.gateway === NetworkGatewayType.MOON_PAY) {
+        goToUrl = new MoonPay(config.moonPay).getTransactionReceiptUrl(
+          pendingPurchase.id
+        )
+      }
+
+      yield put(
+        openModal(BUY_MANA_WITH_FIAT_FEEDBACK_MODAL_NAME, {
+          purchase: pendingPurchase,
+          goToUrl
+        })
       )
+    } else {
+      yield put(openModal('BuyManaWithFiatModal', { selectedNetwork }))
     }
 
-    yield put(
-      openModal(BUY_MANA_WITH_FIAT_FEEDBACK_MODAL_NAME, {
-        purchase: pendingPurchase,
-        goToUrl
-      })
-    )
-  } else {
-    yield put(openModal('BuyManaWithFiatModal', { selectedNetwork }))
+    yield put(openBuyManaWithFiatModalSuccess())
+  } catch (error) {
+    yield put(openBuyManaWithFiatModalFailure(error.message))
   }
 }
 
