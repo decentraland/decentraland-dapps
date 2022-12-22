@@ -12,12 +12,14 @@ import { ApplicationFeatures } from './types'
 export type FeaturesState = {
   data: Record<string, ApplicationFeatures>
   loading: LoadingState
+  hasLoadedInitialFlags: boolean
   error: string | null
 }
 
 export const INITIAL_STATE: FeaturesState = {
   data: {},
   loading: [],
+  hasLoadedInitialFlags: false,
   error: null
 }
 
@@ -44,6 +46,7 @@ export const featuresReducer = (
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
+        hasLoadedInitialFlags: true,
         data: features
       }
     }
