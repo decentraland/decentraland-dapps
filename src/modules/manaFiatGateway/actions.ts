@@ -4,6 +4,33 @@ import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithF
 import { MoonPayTransactionStatus } from './moonpay/types'
 
 // Open MANA-FIAT Gateway
+export const OPEN_BUY_MANA_WITH_FIAT_MODAL_REQUEST =
+  '[Request] Open Buy MANA with FIAT Modal'
+export const OPEN_BUY_MANA_WITH_FIAT_MODAL_SUCCESS =
+  '[Success] Open Buy MANA with FIAT Modal'
+export const OPEN_BUY_MANA_WITH_FIAT_MODAL_FAILURE =
+  '[Failure] Open Buy MANA with FIAT Modal'
+
+export const openBuyManaWithFiatModalRequest = (selectedNetwork?: Network) =>
+  action(OPEN_BUY_MANA_WITH_FIAT_MODAL_REQUEST, { selectedNetwork })
+
+export const openBuyManaWithFiatModalSuccess = () =>
+  action(OPEN_BUY_MANA_WITH_FIAT_MODAL_SUCCESS)
+
+export const openBuyManaWithFiatModalFailure = (error: string) =>
+  action(OPEN_BUY_MANA_WITH_FIAT_MODAL_FAILURE, { error })
+
+export type OpenBuyManaWithFiatModalRequestAction = ReturnType<
+  typeof openBuyManaWithFiatModalRequest
+>
+export type OpenBuyManaWithFiatModalSuccessAction = ReturnType<
+  typeof openBuyManaWithFiatModalSuccess
+>
+export type OpenBuyManaWithFiatModalFailureAction = ReturnType<
+  typeof openBuyManaWithFiatModalFailure
+>
+
+// Open MANA-FIAT Gateway
 export const OPEN_MANA_FIAT_GATEWAY_REQUEST = '[Request] Open MANA-FIAT Gateway'
 export const OPEN_MANA_FIAT_GATEWAY_SUCCESS = '[Success] Open MANA-FIAT Gateway'
 export const OPEN_MANA_FIAT_GATEWAY_FAILURE = '[Failure] Open MANA-FIAT Gateway'

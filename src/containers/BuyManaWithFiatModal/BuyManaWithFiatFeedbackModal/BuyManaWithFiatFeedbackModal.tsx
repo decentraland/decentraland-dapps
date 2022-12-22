@@ -20,23 +20,35 @@ const transactionStatuses = {
   [PurchaseStatus.CANCELLED]: TransactionStatus.FAILURE
 }
 
-// TODO: fix the errors raised because of missing translations
+const camelToSnakeCase = (str: string) =>
+  str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`)
+
+const propsToTranslateByStatus = {
+  [TransactionStatus.PENDING]: [
+    'title',
+    'statusTitle',
+    'description',
+    'goToText'
+  ],
+  [TransactionStatus.SUCCESS]: ['title', 'description', 'cta'],
+  [TransactionStatus.FAILURE]: [
+    'title',
+    'statusTitle',
+    'description',
+    'cta',
+    'secondaryCta'
+  ]
+}
+
 const getDefaultFeedbackTranslations = (
   { network, gateway }: Purchase,
   status: TransactionStatus
 ): FeedbackModalI18N => {
   const basePath = `@dapps.buyManaWithFiat.feedback_modal.${status}`
   return Object.fromEntries(
-    [
-      'title',
-      'statusTitle',
-      'description',
-      'cta',
-      'goToText',
-      'secondaryCta'
-    ].map(it => [
+    propsToTranslateByStatus[status].map(it => [
       it,
-      t(`${basePath}.${it}`, {
+      t(`${basePath}.${camelToSnakeCase(it)}`, {
         network: networksNames[network],
         gateway: gatewaysNames[gateway]
       })
@@ -45,7 +57,7 @@ const getDefaultFeedbackTranslations = (
 }
 
 const BuyManaWithFiatFeedbackModal = ({
-  metadata: { purchase },
+  metadata: { purchase, goToUrl },
   onTryAgain,
   onSelectOtherProvider,
   onClose
@@ -61,7 +73,6 @@ const BuyManaWithFiatFeedbackModal = ({
         break
 
       case TransactionStatus.FAILURE:
-        // TODO: remove query params from url (network, gateway, transaction id, and status)
         analytics.track('Try again with same Gateway', { network, gateway })
         onTryAgain(network, gateway)
         onClose()
@@ -79,7 +90,6 @@ const BuyManaWithFiatFeedbackModal = ({
         previousGateway: gateway
       })
       onSelectOtherProvider(network)
-      // TODO: is it necessary?
       onClose()
     }
   }
@@ -90,6 +100,7 @@ const BuyManaWithFiatFeedbackModal = ({
       status={transactionStatus}
       selectedNetwork={purchase.network}
       selectedGateway={purchase.gateway}
+      goToUrl={goToUrl}
       onClickCta={handleCtaClick}
       onClickSecondaryCta={handleSecondaryCtaClick}
       onClose={onClose}

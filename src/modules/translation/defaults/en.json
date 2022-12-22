@@ -86,9 +86,9 @@
       "feedback_modal": {
         "pending": {
           "title": "Buy {network} MANA",
-          "statusTitle": "The transaction is processing",
+          "status_title": "The transaction is processing",
           "description": "Wait a few minutes while the transaction is being processed",
-          "goToText": "Go to {gateway} tab"
+          "go_to_text": "Go to {gateway} tab"
         },
         "success": {
           "title": "{network} MANA purchase completed!",
@@ -98,9 +98,9 @@
         "failure": {
           "title": "Buy {network} MANA",
           "description": "You can try again with {gateway} or select other provider",
-          "statusTitle": "The transaction failed",
+          "status_title": "The transaction failed",
           "cta": "Try again",
-          "secondaryCta": "Select other provider"
+          "secondary_cta": "Select other provider"
         }
       },
       "network": {

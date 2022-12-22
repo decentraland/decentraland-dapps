@@ -86,9 +86,9 @@
       "feedback_modal": {
         "pending": {
           "title": "Compre {network} MANA",
-          "statusTitle": "La transacción está siendo procesada",
+          "status_title": "La transacción está siendo procesada",
           "description": "Espere unos minutos mientras la transacción está siendo procesada",
-          "goToText": "Ir a {gateway}"
+          "go_to_text": "Ir a {gateway}"
         },
         "success": {
           "title": "¡La compra de {network} MANA ha sido completada!",
@@ -98,9 +98,9 @@
         "failure": {
           "title": "Compre {network} MANA",
           "description": "Puede intentarlo de nuevo en {gateway} o seleccionar otro proveedor",
-          "statusTitle": "La transacción falló",
+          "status_title": "La transacción falló",
           "cta": "Inténtelo de nuevo",
-          "secondaryCta": "Seleccione otro proveedor"
+          "secondary_cta": "Seleccione otro proveedor"
         }
       },
       "network": {

@@ -11,6 +11,7 @@ import { openModal, OpenModalAction } from '../../../modules/modal/actions'
 
 export type Metadata = {
   purchase: Purchase
+  goToUrl?: string
 }
 
 export type Props = Omit<ModalProps, 'metadata'> & {

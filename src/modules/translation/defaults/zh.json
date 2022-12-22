@@ -86,9 +86,9 @@
       "feedback_modal": {
         "pending": {
           "title": "购买 {network} MANA",
-          "statusTitle": "交易正在处理中",
+          "status_title": "交易正在处理中",
           "description": "在处理交易时等待几分钟",
-          "goToText": "转到{网关}标签"
+          "go_to_text": "转到{网关}标签"
         },
         "success": {
           "title": "{network} MANA 购买完成！",
@@ -98,9 +98,9 @@
         "failure": {
           "title": "购买 {network} MANA",
           "description": "您可以使用{gateway} 重试或选择其他提供商",
-          "statusTitle": "交易失败",
+          "status_title": "交易失败",
           "cta": "再试一次",
-          "secondaryCta": "选择其他供应商"
+          "secondary_cta": "选择其他供应商"
         }
       },
       "network": {
