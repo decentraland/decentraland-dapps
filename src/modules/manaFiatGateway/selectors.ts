@@ -14,7 +14,7 @@ export const getLoading = (state: any) => getState(state).loading
 export const getError = (state: any) => getState(state).error
 
 export const getPendingPurchase = (state: any) =>
-  getData(state).purchases.find(
+  getData(state).purchases?.find(
     purchase => purchase.status === PurchaseStatus.PENDING
   )
 

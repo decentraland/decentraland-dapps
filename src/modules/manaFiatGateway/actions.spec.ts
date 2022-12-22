@@ -6,13 +6,66 @@ import {
   manaFiatGatewayPurchaseCompletedFailure,
   MANA_FIAT_GATEWAY_PURCHASE_COMPLETED,
   MANA_FIAT_GATEWAY_PURCHASE_COMPLETED_FAILURE,
+  openBuyManaWithFiatModalFailure,
+  openBuyManaWithFiatModalRequest,
+  openBuyManaWithFiatModalSuccess,
   openManaFiatGatewayFailure,
   openManaFiatGatewayRequest,
   openManaFiatGatewaySuccess,
+  OPEN_BUY_MANA_WITH_FIAT_MODAL_FAILURE,
+  OPEN_BUY_MANA_WITH_FIAT_MODAL_REQUEST,
+  OPEN_BUY_MANA_WITH_FIAT_MODAL_SUCCESS,
   OPEN_MANA_FIAT_GATEWAY_FAILURE,
   OPEN_MANA_FIAT_GATEWAY_REQUEST,
   OPEN_MANA_FIAT_GATEWAY_SUCCESS
 } from './actions'
+
+describe('when creating the action that signals the start of a buy mana with fiat modal opening', () => {
+  describe('when not passing the selected network', () => {
+    it('should return an object representing the action', () => {
+      expect(openBuyManaWithFiatModalRequest()).toEqual({
+        meta: undefined,
+        payload: {},
+        type: OPEN_BUY_MANA_WITH_FIAT_MODAL_REQUEST
+      })
+    })
+  })
+
+  describe('when passing the selected network', () => {
+    it('should return an object representing the action', () => {
+      const selectedNetwork = Network.ETHEREUM
+      expect(openBuyManaWithFiatModalRequest(selectedNetwork)).toEqual({
+        meta: undefined,
+        payload: {
+          selectedNetwork
+        },
+        type: OPEN_BUY_MANA_WITH_FIAT_MODAL_REQUEST
+      })
+    })
+  })
+})
+
+describe('when creating the action that signals the successful opening of the buy mana with fiat modal', () => {
+  it('should return an action signaling the success of the buy mana with fiat modal opening', () => {
+    expect(openBuyManaWithFiatModalSuccess()).toEqual({
+      meta: undefined,
+      type: OPEN_BUY_MANA_WITH_FIAT_MODAL_SUCCESS
+    })
+  })
+})
+
+describe('when creating the action that signals the unsuccessful opening of the buy mana with fiat modal', () => {
+  it('should return an action signaling the unsuccess of the buy mana with fiat modal opening', () => {
+    const defaultError = 'Default error'
+    expect(openBuyManaWithFiatModalFailure(defaultError)).toEqual({
+      meta: undefined,
+      payload: {
+        error: defaultError
+      },
+      type: OPEN_BUY_MANA_WITH_FIAT_MODAL_FAILURE
+    })
+  })
+})
 
 describe('when creating the action that signals the start of a mana fiat gateway modal opening', () => {
   it('should return an object representing the action', () => {
