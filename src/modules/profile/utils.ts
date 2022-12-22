@@ -1,4 +1,4 @@
-import { Snapshots } from '@dcl/schemas'
+import { Avatar, Snapshots } from '@dcl/schemas'
 import { Profile } from '../../modules/profile/types'
 
 export const lambdaProfileToContentProfile = (profile: Profile) => {
@@ -18,4 +18,12 @@ export const lambdaProfileToContentProfile = (profile: Profile) => {
       }
     }))
   }
+}
+
+export const getHashesByKeyMap = (avatar: Avatar) => {
+  const hashesByKey = new Map()
+  Object.entries(avatar.avatar.snapshots).forEach(([key, value]) => {
+    hashesByKey.set(`${key}.png`, value)
+  })
+  return hashesByKey
 }

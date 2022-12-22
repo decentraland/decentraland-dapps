@@ -23,7 +23,7 @@ import {
   setProfileAvatarAliasFailure,
   setProfileAvatarAliasSuccess
 } from './actions'
-import { lambdaProfileToContentProfile } from './utils'
+import { getHashesByKeyMap, lambdaProfileToContentProfile } from './utils'
 import { Profile } from './types'
 
 type CreateProfileSagaOptions = {
@@ -137,6 +137,7 @@ export function createProfileSaga({
     yield call(
       [entities, 'deployEntityWithoutNewFiles'],
       profileMetadata,
+      getHashesByKeyMap(newAvatar),
       EntityType.PROFILE,
       address,
       address

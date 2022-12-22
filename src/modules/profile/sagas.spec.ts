@@ -7,7 +7,7 @@ import { ProfileEntity } from '../../lib/types'
 import { PeerAPI } from '../../lib/peer'
 import { dynamicDeepParametersEquality } from '../../tests/sagas'
 import { createProfileSaga } from './sagas'
-import { lambdaProfileToContentProfile } from './utils'
+import { getHashesByKeyMap, lambdaProfileToContentProfile } from './utils'
 import {
   setProfileAvatarAliasFailure,
   setProfileAvatarAliasRequest,
@@ -88,7 +88,13 @@ describe('when handling the action to set the profile avatar description', () =>
               EntitiesOperator.prototype.deployEntityWithoutNewFiles
             ),
             dynamicDeepParametersEquality(
-              [newProfileMetadata, EntityType.PROFILE, address, address],
+              [
+                newProfileMetadata,
+                getHashesByKeyMap(newAvatar),
+                EntityType.PROFILE,
+                address,
+                address
+              ],
               Promise.resolve(undefined)
             )
           ]
@@ -175,7 +181,13 @@ describe('when handling the action to set the profile avatar alias', () => {
               EntitiesOperator.prototype.deployEntityWithoutNewFiles
             ),
             dynamicDeepParametersEquality(
-              [newProfileMetadata, EntityType.PROFILE, address, address],
+              [
+                newProfileMetadata,
+                getHashesByKeyMap(newAvatar),
+                EntityType.PROFILE,
+                address,
+                address
+              ],
               Promise.resolve(undefined)
             )
           ]

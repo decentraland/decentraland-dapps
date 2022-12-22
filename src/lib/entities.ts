@@ -80,6 +80,7 @@ export class EntitiesOperator {
    */
   async deployEntityWithoutNewFiles(
     entityMetadata: Entity['metadata'],
+    hashesByKey: Map<string, string>,
     entityType: EntityType,
     pointer: string,
     address: string
@@ -88,6 +89,7 @@ export class EntitiesOperator {
       type: entityType,
       pointers: [pointer],
       metadata: entityMetadata,
+      hashesByKey,
       timestamp: Date.now()
     }
 
