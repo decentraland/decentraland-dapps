@@ -180,70 +180,76 @@ describe('when getting if a feature is enabled', () => {
 })
 
 describe('when getting if the feature flags were loaded at least once', () => {
+  let state: StateWithFeatures
+
+  beforeEach(() => {
+    state = {
+      features: {
+        data: {},
+        error: null,
+        hasLoadedInitialFlags: false,
+        loading: []
+      }
+    }
+  })
+
   describe('and the feature flags were not loaded', () => {
-    it('should return true', () => {
-      expect(
-        hasLoadedInitialFlags({
-          features: {
-            data: {},
-            error: null,
-            hasLoadedInitialFlags: false,
-            loading: []
-          }
-        })
-      ).toBe(true)
+    beforeEach(() => {
+      state.features.hasLoadedInitialFlags = false
+    })
+
+    it('should return false', () => {
+      expect(hasLoadedInitialFlags(state)).toBe(false)
     })
   })
 
   describe('and the feature flags were loaded', () => {
-    it('should return false', () => {
-      expect(
-        hasLoadedInitialFlags({
-          features: {
-            data: {},
-            error: null,
-            hasLoadedInitialFlags: false,
-            loading: []
-          }
-        })
-      ).toBe(false)
+    beforeEach(() => {
+      state.features.hasLoadedInitialFlags = true
+    })
+
+    it('should return true', () => {
+      expect(hasLoadedInitialFlags(state)).toBe(true)
     })
   })
 })
 
 describe('when getting is the feature flags are being loaded', () => {
+  let state: StateWithFeatures
+
+  beforeEach(() => {
+    state = {
+      features: {
+        data: {},
+        error: null,
+        hasLoadedInitialFlags: false,
+        loading: []
+      }
+    }
+  })
+
   describe('and the feature flags are being loaded', () => {
+    beforeEach(() => {
+      state.features.loading = [
+        fetchApplicationFeaturesRequest([
+          ApplicationName.ACCOUNT,
+          ApplicationName.BUILDER
+        ])
+      ]
+    })
+
     it('should return true', () => {
-      expect(
-        isLoadingFeatureFlags({
-          features: {
-            data: {},
-            error: null,
-            hasLoadedInitialFlags: false,
-            loading: [
-              fetchApplicationFeaturesRequest([
-                ApplicationName.ACCOUNT,
-                ApplicationName.BUILDER
-              ])
-            ]
-          }
-        })
-      ).toBe(true)
+      expect(isLoadingFeatureFlags(state)).toBe(true)
     })
   })
 
   describe('and the feature flags are not being loaded', () => {
+    beforeEach(() => {
+      state.features.loading = []
+    })
+
     it('should return false', () => {
-      expect(
-        isLoadingFeatureFlags({
-          features: {
-            data: {},
-            error: null,
-            hasLoadedInitialFlags: false,
-            loading: []
-          }
-        })
-      ).toBe(false)
+      expect(isLoadingFeatureFlags(state)).toBe(false)
     })
   })
 })

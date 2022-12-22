@@ -19,7 +19,12 @@ describe('when handling the fetch features request', () => {
       action
     )
 
-    expect(state).toEqual({ data: {}, loading: [action], error: null })
+    expect(state).toEqual({
+      data: {},
+      loading: [action],
+      hasLoadedInitialFlags: false,
+      error: null
+    })
   })
 })
 
@@ -40,7 +45,12 @@ describe('when handling the fetch features success', () => {
       successAction
     )
 
-    expect(state).toEqual({ data: features, loading: [], error: null })
+    expect(state).toEqual({
+      data: features,
+      loading: [],
+      hasLoadedInitialFlags: true,
+      error: null
+    })
   })
 })
 
@@ -61,6 +71,11 @@ describe('when handling the fetch features failure', () => {
       failureAction
     )
 
-    expect(state).toEqual({ data: {}, loading: [], error })
+    expect(state).toEqual({
+      data: {},
+      loading: [],
+      hasLoadedInitialFlags: false,
+      error
+    })
   })
 })
