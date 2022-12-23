@@ -23,10 +23,7 @@ import { setPurchase } from '../mana/actions'
 import { Purchase, PurchaseStatus } from '../mana/types'
 import { fetchWalletRequest } from '../wallet/actions'
 import { openModal } from '../modal/actions'
-import util from 'util'
 import { getPendingPurchase } from './selectors'
-
-util.inspect.defaultOptions.depth = null
 
 jest.mock('./transak')
 

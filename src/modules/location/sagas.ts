@@ -13,16 +13,16 @@ export function* locationSaga() {
 }
 
 function* handleLocationChange(_action: LocationChangeAction) {
-  const location: ReturnType<typeof getLocation> = yield select(getLocation)
+  const { query }: ReturnType<typeof getLocation> = yield select(getLocation)
   const {
     network,
     gateway,
     transactionId,
     transactionStatus
-  } = location.query as RedirectTransactionQuery
+  } = query as RedirectTransactionQuery
 
   if (transactionId && transactionStatus && network && gateway) {
-    const queryParams = new URLSearchParams(location.search)
+    const queryParams = new URLSearchParams(query)
     const params = ['transactionId', 'transactionStatus', 'network', 'gateway']
 
     params.forEach(param => queryParams.delete(param))
