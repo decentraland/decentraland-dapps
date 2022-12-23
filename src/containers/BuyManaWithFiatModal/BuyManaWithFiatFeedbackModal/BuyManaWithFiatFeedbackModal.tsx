@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import {
   FeedbackModal as BaseBuyManaWithFiatFeedbackModal,
   FeedbackModalI18N,
@@ -66,7 +66,7 @@ const BuyManaWithFiatFeedbackModal = ({
   const transactionStatus = transactionStatuses[purchaseStatus]
   const analytics = getAnalytics()
 
-  const handleCtaClick = () => {
+  const handleCtaClick = useCallback(() => {
     switch (transactionStatus) {
       case TransactionStatus.SUCCESS:
         onClose()
@@ -81,9 +81,9 @@ const BuyManaWithFiatFeedbackModal = ({
       default:
         break
     }
-  }
+  }, [transactionStatus, analytics, network, gateway, onClose, onTryAgain])
 
-  const handleSecondaryCtaClick = () => {
+  const handleSecondaryCtaClick = useCallback(() => {
     if (transactionStatus === TransactionStatus.FAILURE) {
       analytics.track('Select other gateway', {
         network,
@@ -92,7 +92,14 @@ const BuyManaWithFiatFeedbackModal = ({
       onSelectOtherProvider(network)
       onClose()
     }
-  }
+  }, [
+    transactionStatus,
+    analytics,
+    network,
+    gateway,
+    onSelectOtherProvider,
+    onClose
+  ])
 
   return (
     <BaseBuyManaWithFiatFeedbackModal
