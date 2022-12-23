@@ -121,43 +121,34 @@ export default class BuyManaWithFiatModal extends React.PureComponent<
 
   handleOnContinue(network: Network, gateway: NetworkGatewayType) {
     this.analytics.track('Choose Gateway', { network, gateway })
-    this.props.onContinue?.(network, gateway)
-    this.handleOnClose()
+    this.props.onContinue(network, gateway)
+    this.props.onClose()
   }
 
   handleNetworkOnClick(network: Network) {
     this.analytics.track('Choose Network', { network })
   }
 
-  handleOnClose() {
-    this.props.onClose?.()
-  }
-
   render() {
-    const {
-      open,
-      i18n,
-      className,
-      isLoading,
-      selectedNetwork,
-      onInfo
-    } = this.props
+    const { i18n, className, isLoading, metadata, onClose, onInfo } = this.props
     const { hasError } = this.state
     const networks = this.props.networks || this.getDefaultNetworks()
 
     return (
       <BaseBuyManaWithFiatModal
-        open={open}
+        open
         className={className}
         i18n={i18n || this.getDefaultModalTranslations()}
         networks={
-          selectedNetwork
-            ? networks.filter(network => network.type === selectedNetwork)
+          metadata?.selectedNetwork
+            ? networks.filter(
+                network => network.type === metadata.selectedNetwork
+              )
             : networks
         }
         loading={isLoading}
         hasError={hasError}
-        onClose={() => this.handleOnClose()}
+        onClose={onClose}
         onInfo={onInfo}
       />
     )

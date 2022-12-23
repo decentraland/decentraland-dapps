@@ -2,7 +2,8 @@ import { takeEvery, put, select } from 'redux-saga/effects'
 import {
   getLocation,
   LOCATION_CHANGE,
-  LocationChangeAction
+  LocationChangeAction,
+  replace
 } from 'connected-react-router'
 import { manaFiatGatewayPurchaseCompleted } from '../manaFiatGateway/actions'
 import { RedirectTransactionQuery } from './types'
@@ -21,6 +22,13 @@ function* handleLocationChange(_action: LocationChangeAction) {
   } = query as RedirectTransactionQuery
 
   if (transactionId && transactionStatus && network && gateway) {
+    const queryParams = new URLSearchParams(query)
+    const params = ['transactionId', 'transactionStatus', 'network', 'gateway']
+
+    params.forEach(param => queryParams.delete(param))
+
+    yield put(replace(`${location.pathname}?${queryParams.toString()}`))
+
     yield put(
       manaFiatGatewayPurchaseCompleted(
         network,

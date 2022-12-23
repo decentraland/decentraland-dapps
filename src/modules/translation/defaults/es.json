@@ -84,15 +84,23 @@
         "error": "No se pudo comprar MANA."
       },
       "feedback_modal": {
-        "ethereum": {
-          "title": "¡Compra de Ethereum MANA completada!",
-          "description": "El Ethereum MANA ha sido agregado a su cuenta. Si aún no lo ve en su saldo, actualice esta página.",
-          "cta": "Hecho"
+        "pending": {
+          "title": "Compre {network} MANA",
+          "status_title": "La transacción está siendo procesada",
+          "description": "Espere unos minutos mientras la transacción está siendo procesada",
+          "go_to_text": "Ir a {gateway}"
         },
-        "matic": {
-          "title": "¡Compra de Polygon MANA completada!",
-          "description": "El Polygon MANA ha sido agregado a su cuenta. Si aún no lo ve en su saldo, actualice esta página.",
-          "cta": "Hecho"
+        "success": {
+          "title": "¡La compra de {network} MANA ha sido completada!",
+          "description": "El {network} MANA comprado ha sido agregado a su cuenta. Si todavía no lo ve reflejado en su balande, recargue la página.",
+          "cta": "Listo"
+        },
+        "failure": {
+          "title": "Compre {network} MANA",
+          "description": "Puede intentarlo de nuevo en {gateway} o seleccionar otro proveedor",
+          "status_title": "La transacción falló",
+          "cta": "Inténtelo de nuevo",
+          "secondary_cta": "Seleccione otro proveedor"
         }
       },
       "network": {

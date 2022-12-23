@@ -72,4 +72,8 @@ export class MoonPay {
       this.apiKey
     }&currencyCode=MANA&redirectURL=${encodeURIComponent(redirectURL)}`
   }
+
+  getTransactionReceiptUrl(transactionId: string) {
+    return `${this.widgetBaseUrl}/transaction_receipt?transactionId=${transactionId}`
+  }
 }

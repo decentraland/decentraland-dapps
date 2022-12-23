@@ -1,5 +1,6 @@
 import { Network } from '@dcl/schemas'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
+import { Purchase, PurchaseStatus } from '../mana/types'
 import {
   manaFiatGatewayPurchaseCompleted,
   openManaFiatGatewayRequest
@@ -11,10 +12,23 @@ import {
   getError,
   getLoading,
   isFinishingPurchase,
-  isOpeningGateway
+  isOpeningGateway,
+  getData,
+  getPendingPurchase,
+  getPurchases
 } from './selectors'
 
 let manaFiatGatewayState: any
+
+const mockPurchase: Purchase = {
+  address: '0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2',
+  amount: 100,
+  id: 'mock-id',
+  network: Network.ETHEREUM,
+  timestamp: 1535398843748,
+  status: PurchaseStatus.PENDING,
+  gateway: NetworkGatewayType.MOON_PAY
+}
 
 describe('MANA-FIAT Gateway selectors', () => {
   beforeEach(() => {
@@ -25,6 +39,14 @@ describe('MANA-FIAT Gateway selectors', () => {
     it('should return the state', () => {
       expect(getState(manaFiatGatewayState)).toEqual(
         manaFiatGatewayState.manaFiatGateway
+      )
+    })
+  })
+
+  describe('when getting the data state of the manaFiatGateway', () => {
+    it("should return the manaFiatGateway state's data", () => {
+      expect(getData(manaFiatGatewayState)).toEqual(
+        manaFiatGatewayState.manaFiatGateway.data
       )
     })
   })
@@ -42,6 +64,54 @@ describe('MANA-FIAT Gateway selectors', () => {
       expect(getLoading(manaFiatGatewayState)).toEqual(
         manaFiatGatewayState.manaFiatGateway.loading
       )
+    })
+  })
+
+  describe('when getting the purchases', () => {
+    it("should return the array of purchases in the manaFiatGateway's state", () => {
+      expect(getPurchases(manaFiatGatewayState)).toEqual(
+        manaFiatGatewayState.manaFiatGateway.data.purchases
+      )
+    })
+  })
+
+  describe('when getting the pending purchase', () => {
+    describe('when there is a pending purchase', () => {
+      beforeEach(() => {
+        manaFiatGatewayState = {
+          ...manaFiatGatewayState,
+          manaFiatGateway: {
+            ...manaFiatGatewayState.manaFiatGateway,
+            data: { purchases: [mockPurchase] },
+            loading: [
+              openManaFiatGatewayRequest(
+                Network.ETHEREUM,
+                NetworkGatewayType.MOON_PAY
+              )
+            ]
+          }
+        }
+      })
+
+      it('should return it', () => {
+        expect(getPendingPurchase(manaFiatGatewayState)).toBe(mockPurchase)
+      })
+    })
+
+    describe('when there is not', () => {
+      beforeEach(() => {
+        manaFiatGatewayState = {
+          ...manaFiatGatewayState,
+          manaFiatGateway: {
+            ...manaFiatGatewayState.manaFiatGateway,
+            loading: []
+          }
+        }
+      })
+
+      it('should return undefined', () => {
+        expect(getPendingPurchase(manaFiatGatewayState)).toBeUndefined()
+      })
     })
   })
 

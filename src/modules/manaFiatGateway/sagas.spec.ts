@@ -7,6 +7,9 @@ import { getAddress } from '../wallet/selectors'
 import {
   manaFiatGatewayPurchaseCompleted,
   manaFiatGatewayPurchaseCompletedFailure,
+  openBuyManaWithFiatModalFailure,
+  openBuyManaWithFiatModalRequest,
+  openBuyManaWithFiatModalSuccess,
   openManaFiatGatewayFailure,
   openManaFiatGatewayRequest,
   openManaFiatGatewaySuccess
@@ -20,6 +23,7 @@ import { setPurchase } from '../mana/actions'
 import { Purchase, PurchaseStatus } from '../mana/types'
 import { fetchWalletRequest } from '../wallet/actions'
 import { openModal } from '../modal/actions'
+import { getPendingPurchase } from './selectors'
 
 jest.mock('./transak')
 
@@ -163,9 +167,126 @@ const mockPurchase: Purchase = {
   gateway: NetworkGatewayType.MOON_PAY
 }
 
-const feedbackModalName = 'BuyManaWithFiatFeedbackModal'
+const buyManaWithFiatModalName = 'BuyManaWithFiatModal'
+const buyManaWithFiatFeedbackModalName = 'BuyManaWithFiatFeedbackModal'
 
-// () => {}
+describe('when handling the request to open the Buy MANA with FIAT modal', () => {
+  const error = 'Default Error'
+
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
+
+  describe('when the pending purchase selector fails', () => {
+    it('should put the failure action', async () => {
+      return expectSaga(manaFiatGatewaysSaga)
+        .provide([
+          [select(getPendingPurchase), Promise.reject(new Error(error))]
+        ])
+        .dispatch(openBuyManaWithFiatModalRequest())
+        .put(openBuyManaWithFiatModalFailure(error))
+        .silentRun()
+    })
+  })
+
+  describe('when there is no pending purchase', () => {
+    let selectedNetwork: Network | undefined
+
+    describe('when there is no selected network', () => {
+      it('should put the action signaling the opening of the Buy MANA with FIAT modal and that the request succeed', async () => {
+        return expectSaga(manaFiatGatewaysSaga)
+          .provide([[select(getPendingPurchase), undefined]])
+          .dispatch(openBuyManaWithFiatModalRequest())
+          .put(
+            openModal(buyManaWithFiatModalName, { selectedNetwork: undefined })
+          )
+          .put(openBuyManaWithFiatModalSuccess())
+          .silentRun()
+      })
+    })
+
+    describe('when there is a selected network', () => {
+      beforeEach(() => {
+        selectedNetwork = Network.ETHEREUM
+      })
+
+      it('should put the action signaling the opening of the Buy MANA with FIAT modal and that the request succeed', async () => {
+        return expectSaga(manaFiatGatewaysSaga)
+          .provide([[select(getPendingPurchase), undefined]])
+          .dispatch(openBuyManaWithFiatModalRequest(selectedNetwork))
+          .put(openModal(buyManaWithFiatModalName, { selectedNetwork }))
+          .put(openBuyManaWithFiatModalSuccess())
+          .silentRun()
+      })
+    })
+  })
+
+  describe('when there is a pending purchase', () => {
+    describe('when the selected gateway was Transak', () => {
+      it('should put the action signaling the opening of the Feedback Modal in pending status without a go to url, and that the request succeed', async () => {
+        const transakMockPurchase = {
+          ...mockPurchase,
+          gateway: NetworkGatewayType.TRANSAK
+        }
+
+        return expectSaga(manaFiatGatewaysSaga)
+          .provide([[select(getPendingPurchase), transakMockPurchase]])
+          .dispatch(openBuyManaWithFiatModalRequest())
+          .put(
+            openModal(buyManaWithFiatFeedbackModalName, {
+              purchase: transakMockPurchase,
+              goToUrl: undefined
+            })
+          )
+          .put(openBuyManaWithFiatModalSuccess())
+          .silentRun()
+      })
+    })
+  })
+
+  describe('when the selected gateway was Moon Pay', () => {
+    describe('when failing on trying to get the transaction receipt url', () => {
+      beforeEach(() => {
+        jest
+          .spyOn(MoonPay.prototype, 'getTransactionReceiptUrl')
+          .mockImplementation(() => {
+            throw new Error(error)
+          })
+      })
+
+      it('should put the failure action', async () => {
+        return expectSaga(manaFiatGatewaysSaga)
+          .provide([[select(getPendingPurchase), mockPurchase]])
+          .dispatch(openBuyManaWithFiatModalRequest())
+          .put(openBuyManaWithFiatModalFailure(error))
+          .silentRun()
+      })
+    })
+
+    describe('when suceeding on getting the receipt url', () => {
+      const mockTxReceiptUrl = `${mockConfig.moonPay.widgetBaseUrl}/transaction_receipt?transactionId=${mockPurchase.id}`
+      beforeEach(() => {
+        jest
+          .spyOn(MoonPay.prototype, 'getTransactionReceiptUrl')
+          .mockReturnValue(mockTxReceiptUrl)
+      })
+
+      it('should put the action signaling the opening of the Feedback Modal in pending status with the go to url, and that the request succeed', async () => {
+        return expectSaga(manaFiatGatewaysSaga)
+          .provide([[select(getPendingPurchase), mockPurchase]])
+          .dispatch(openBuyManaWithFiatModalRequest())
+          .put(
+            openModal(buyManaWithFiatFeedbackModalName, {
+              purchase: mockPurchase,
+              goToUrl: mockTxReceiptUrl
+            })
+          )
+          .silentRun()
+      })
+    })
+  })
+})
+
 describe('when handling the request to open the MANA-FIAT gateway', () => {
   const error = 'Default Error'
 
@@ -286,103 +407,117 @@ describe('when handling the completion of the purchase', () => {
       moonPay = new MoonPay(mockConfig.moonPay)
     })
 
-    describe('when the selected gateway is MoonPay', () => {
-      describe('when the transaction was not found', () => {
-        it('should put the action signaling the failure', () => {
-          const error = '404 - Transaction not found'
+    describe('when the transaction was not found', () => {
+      it('should put the action signaling the failure', () => {
+        const error = '404 - Transaction not found'
 
-          return expectSaga(manaFiatGatewaysSaga)
-            .provide([
-              [
-                matchers.call.fn(moonPay.getTransaction),
-                Promise.reject(new Error(error))
-              ]
-            ])
-            .put(
-              manaFiatGatewayPurchaseCompletedFailure(
-                Network.ETHEREUM,
-                NetworkGatewayType.MOON_PAY,
-                mockTransaction.id,
-                error
-              )
+        return expectSaga(manaFiatGatewaysSaga)
+          .provide([
+            [
+              matchers.call.fn(moonPay.getTransaction),
+              Promise.reject(new Error(error))
+            ]
+          ])
+          .put(
+            manaFiatGatewayPurchaseCompletedFailure(
+              Network.ETHEREUM,
+              NetworkGatewayType.MOON_PAY,
+              mockTransaction.id,
+              error
             )
-            .dispatch(
-              manaFiatGatewayPurchaseCompleted(
-                Network.ETHEREUM,
-                NetworkGatewayType.MOON_PAY,
-                mockTransaction.id,
-                MoonPayTransactionStatus.PENDING
-              )
+          )
+          .dispatch(
+            manaFiatGatewayPurchaseCompleted(
+              Network.ETHEREUM,
+              NetworkGatewayType.MOON_PAY,
+              mockTransaction.id,
+              MoonPayTransactionStatus.PENDING
             )
-            .silentRun()
-        })
+          )
+          .silentRun()
       })
+    })
 
-      describe('when the initial status is pending and it changes inmediately after starting the polling', () => {
-        it('should put the action signaling that the purchase was created with its final status ', () => {
-          const expectedPurchase = {
-            ...mockPurchase,
-            status: PurchaseStatus.COMPLETE
-          }
+    describe('when the initial status is pending and it changes inmediately after starting the polling', () => {
+      it('should put the action signaling that the purchase was created with its final status ', () => {
+        const expectedPurchase = {
+          ...mockPurchase,
+          status: PurchaseStatus.COMPLETE
+        }
 
-          return expectSaga(manaFiatGatewaysSaga)
-            .provide([
-              [
-                matchers.call.fn(moonPay.getTransaction),
-                {
-                  ...mockTransaction,
-                  status: MoonPayTransactionStatus.COMPLETED
-                }
-              ]
-            ])
-            .put(setPurchase(expectedPurchase))
-            .put(fetchWalletRequest())
-            .put(openModal(feedbackModalName, { purchase: expectedPurchase }))
-            .dispatch(
-              manaFiatGatewayPurchaseCompleted(
-                Network.ETHEREUM,
-                NetworkGatewayType.MOON_PAY,
-                mockTransaction.id,
-                MoonPayTransactionStatus.PENDING
-              )
-            )
-            .silentRun()
-        })
-      })
-
-      describe('when the status changes after polling for some time', () => {
-        beforeEach(() => {
-          jest
-            .spyOn(MoonPay.prototype, 'getTransaction')
-            .mockImplementationOnce(() => Promise.resolve(mockTransaction))
-            .mockImplementationOnce(() =>
-              Promise.resolve({
+        return expectSaga(manaFiatGatewaysSaga)
+          .provide([
+            [
+              matchers.call.fn(moonPay.getTransaction),
+              {
                 ...mockTransaction,
                 status: MoonPayTransactionStatus.COMPLETED
-              })
+              }
+            ]
+          ])
+          .put(setPurchase(expectedPurchase))
+          .put(
+            openModal(buyManaWithFiatFeedbackModalName, {
+              purchase: expectedPurchase
+            })
+          )
+          .put(fetchWalletRequest())
+          .dispatch(
+            manaFiatGatewayPurchaseCompleted(
+              Network.ETHEREUM,
+              NetworkGatewayType.MOON_PAY,
+              mockTransaction.id,
+              MoonPayTransactionStatus.PENDING
             )
-        })
+          )
+          .silentRun()
+      })
+    })
 
-        it('should put the action signaling that the purchase was created with its initial status and updated with the new one ', () => {
-          const expectedPurchase = {
-            ...mockPurchase,
-            status: PurchaseStatus.COMPLETE
-          }
-          return expectSaga(manaFiatGatewaysSaga)
-            .put(setPurchase(mockPurchase))
-            .put(setPurchase(expectedPurchase))
-            .put(fetchWalletRequest())
-            .put(openModal(feedbackModalName, { purchase: expectedPurchase }))
-            .dispatch(
-              manaFiatGatewayPurchaseCompleted(
-                Network.ETHEREUM,
-                NetworkGatewayType.MOON_PAY,
-                mockTransaction.id,
-                MoonPayTransactionStatus.PENDING
-              )
+    describe('when the status changes after polling for some time', () => {
+      beforeEach(() => {
+        jest
+          .spyOn(MoonPay.prototype, 'getTransaction')
+          .mockImplementationOnce(() => Promise.resolve(mockTransaction))
+          .mockImplementationOnce(() =>
+            Promise.resolve({
+              ...mockTransaction,
+              status: MoonPayTransactionStatus.COMPLETED
+            })
+          )
+      })
+
+      it('should put the action signaling that the purchase was created with its initial status and updated with the new one ', () => {
+        const expectedPurchase = {
+          ...mockPurchase,
+          status: PurchaseStatus.COMPLETE
+        }
+
+        return expectSaga(manaFiatGatewaysSaga)
+          .put(
+            openModal(buyManaWithFiatFeedbackModalName, {
+              purchase: mockPurchase,
+              goToUrl:
+                'http://widget.base.url.xyz/transaction_receipt?transactionId=354b1f46-480c-4307-9896-f4c81c1e1e17'
+            })
+          )
+          .put(setPurchase(mockPurchase))
+          .put(setPurchase(expectedPurchase))
+          .put(
+            openModal(buyManaWithFiatFeedbackModalName, {
+              purchase: expectedPurchase
+            })
+          )
+          .put(fetchWalletRequest())
+          .dispatch(
+            manaFiatGatewayPurchaseCompleted(
+              Network.ETHEREUM,
+              NetworkGatewayType.MOON_PAY,
+              mockTransaction.id,
+              MoonPayTransactionStatus.PENDING
             )
-            .silentRun()
-        })
+          )
+          .silentRun()
       })
     })
   })
@@ -393,7 +528,7 @@ describe('when handling the action signaling the set purchase', () => {
     jest.clearAllMocks()
   })
 
-  describe('when the purchase is not yet complete', () => {
+  describe('when the purchase is not yet complete, failed, nor cancelled', () => {
     it('should not put the fetch wallet request action', async () => {
       return expectSaga(manaFiatGatewaysSaga)
         .dispatch(setPurchase(mockPurchase))
@@ -411,6 +546,26 @@ describe('when handling the action signaling the set purchase', () => {
           setPurchase({ ...mockPurchase, status: PurchaseStatus.COMPLETE })
         )
         .put(fetchWalletRequest())
+        .silentRun()
+    })
+  })
+
+  describe('when the purchase is failed', () => {
+    it('should put the fetch wallet request action', async () => {
+      return expectSaga(manaFiatGatewaysSaga)
+        .dispatch(
+          setPurchase({ ...mockPurchase, status: PurchaseStatus.FAILED })
+        )
+        .silentRun()
+    })
+  })
+
+  describe('when the purchase is cancelled', () => {
+    it('should put the fetch wallet request action', async () => {
+      return expectSaga(manaFiatGatewaysSaga)
+        .dispatch(
+          setPurchase({ ...mockPurchase, status: PurchaseStatus.CANCELLED })
+        )
         .silentRun()
     })
   })

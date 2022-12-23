@@ -1,7 +1,12 @@
 import { Network } from '@dcl/schemas'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
+import { setPurchase } from '../mana/actions'
+import { Purchase, PurchaseStatus } from '../mana/types'
 import {
   manaFiatGatewayPurchaseCompletedFailure,
+  openBuyManaWithFiatModalFailure,
+  openBuyManaWithFiatModalRequest,
+  openBuyManaWithFiatModalSuccess,
   openManaFiatGatewayFailure,
   openManaFiatGatewayRequest,
   openManaFiatGatewaySuccess
@@ -12,6 +17,71 @@ import {
   ManaFiatGatewayState
 } from './reducer'
 
+describe('when handling the open buy mana with fiat modal request', () => {
+  describe('when opening the modal without a selected network', () => {
+    it('should set error to null and add the action to the loading state', () => {
+      const action = openBuyManaWithFiatModalRequest()
+
+      const state = manaFiatGatewayReducer(
+        { data: { purchases: [] }, loading: [], error: 'error' },
+        action
+      )
+
+      expect(state).toEqual({
+        data: { purchases: [] },
+        loading: [action],
+        error: null
+      })
+    })
+  })
+
+  describe('when opening the modal with an already selected network', () => {
+    it('should set error to null and add the action to the loading state', () => {
+      const action = openBuyManaWithFiatModalRequest(Network.ETHEREUM)
+
+      const state = manaFiatGatewayReducer(
+        { data: { purchases: [] }, loading: [], error: 'error' },
+        action
+      )
+
+      expect(state).toEqual({
+        data: { purchases: [] },
+        loading: [action],
+        error: null
+      })
+    })
+  })
+})
+
+describe('when handling the open buy mana with fiat modal success', () => {
+  it('should remove the request action from the loading state and remove the error', () => {
+    const requestAction = openBuyManaWithFiatModalRequest()
+    const successAction = openBuyManaWithFiatModalSuccess()
+
+    const state = manaFiatGatewayReducer(
+      { data: { purchases: [] }, loading: [requestAction], error: null },
+      successAction
+    )
+
+    expect(state).toEqual({ data: { purchases: [] }, loading: [], error: null })
+  })
+})
+
+describe('when handling the open buy mana with fiat modal failure', () => {
+  it('should update the error and remove the request action from the loading state', () => {
+    const requestAction = openBuyManaWithFiatModalRequest()
+    const error = 'error'
+    const failureAction = openBuyManaWithFiatModalFailure(error)
+
+    const state = manaFiatGatewayReducer(
+      { data: { purchases: [] }, loading: [requestAction], error: null },
+      failureAction
+    )
+
+    expect(state).toEqual({ data: { purchases: [] }, loading: [], error })
+  })
+})
+
 describe('when handling the open mana fiat gateway modal request', () => {
   it('should set error to null and add the action to the loading state', () => {
     const action = openManaFiatGatewayRequest(
@@ -20,11 +90,15 @@ describe('when handling the open mana fiat gateway modal request', () => {
     )
 
     const state = manaFiatGatewayReducer(
-      { loading: [], error: 'error' },
+      { data: { purchases: [] }, loading: [], error: 'error' },
       action
     )
 
-    expect(state).toEqual({ loading: [action], error: null })
+    expect(state).toEqual({
+      data: { purchases: [] },
+      loading: [action],
+      error: null
+    })
   })
 })
 
@@ -37,11 +111,11 @@ describe('when handling the open mana fiat gateway modal success', () => {
     const successAction = openManaFiatGatewaySuccess()
 
     const state = manaFiatGatewayReducer(
-      { loading: [requestAction], error: null },
+      { data: { purchases: [] }, loading: [requestAction], error: null },
       successAction
     )
 
-    expect(state).toEqual({ loading: [], error: null })
+    expect(state).toEqual({ data: { purchases: [] }, loading: [], error: null })
   })
 })
 
@@ -59,15 +133,15 @@ describe('when handling the open mana fiat gateway modal failure', () => {
     )
 
     const state = manaFiatGatewayReducer(
-      { loading: [requestAction], error: null },
+      { data: { purchases: [] }, loading: [requestAction], error: null },
       failureAction
     )
 
-    expect(state).toEqual({ loading: [], error })
+    expect(state).toEqual({ data: { purchases: [] }, loading: [], error })
   })
 })
 
-describe('when the failure on purchase completion', () => {
+describe('when handling the failure on purchase completion', () => {
   it('should set the error in the state', () => {
     const state: ManaFiatGatewayState = INITIAL_STATE
     const network = Network.ETHEREUM
@@ -87,6 +161,57 @@ describe('when the failure on purchase completion', () => {
     ).toEqual({
       ...state,
       error
+    })
+  })
+})
+
+describe('when handling the set purchase', () => {
+  const mockPurchase: Purchase = {
+    address: '0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2',
+    amount: 100,
+    id: 'mock-id',
+    network: Network.ETHEREUM,
+    timestamp: 1535398843748,
+    status: PurchaseStatus.PENDING,
+    gateway: NetworkGatewayType.MOON_PAY
+  }
+  const state: ManaFiatGatewayState = INITIAL_STATE
+
+  describe('when the purchase does not yet exist', () => {
+    it('should add or replace if already exists ', () => {
+      expect(manaFiatGatewayReducer(state, setPurchase(mockPurchase))).toEqual({
+        ...state,
+        data: {
+          ...state.data,
+          purchases: [...state.data.purchases, mockPurchase]
+        }
+      })
+    })
+  })
+
+  describe('when the purchase already exists', () => {
+    const stateWithPurchases = {
+      ...state,
+      data: { ...state.data, purchases: [mockPurchase] }
+    }
+
+    it('should add or replace if already exists ', () => {
+      const completeMockPurchase: Purchase = {
+        ...mockPurchase,
+        status: PurchaseStatus.COMPLETE
+      }
+      expect(
+        manaFiatGatewayReducer(
+          stateWithPurchases,
+          setPurchase(completeMockPurchase)
+        )
+      ).toEqual({
+        ...stateWithPurchases,
+        data: {
+          ...state.data,
+          purchases: [...state.data.purchases, completeMockPurchase]
+        }
+      })
     })
   })
 })
