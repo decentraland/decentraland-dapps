@@ -38,7 +38,7 @@ export type Props = DefaultProps &
       | (BuyManaWithFiatModalNetworkProps & BuyWithFiatNetworkProps)[]
       | undefined
     hasTranslations?: boolean
-    onContinue?: (network: Network, gateway: NetworkGatewayType) => void
+    onContinue: (network: Network, gateway: NetworkGatewayType) => void
   }
 
 export type State = {

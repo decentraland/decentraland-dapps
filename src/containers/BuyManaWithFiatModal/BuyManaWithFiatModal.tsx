@@ -121,7 +121,7 @@ export default class BuyManaWithFiatModal extends React.PureComponent<
 
   handleOnContinue(network: Network, gateway: NetworkGatewayType) {
     this.analytics.track('Choose Gateway', { network, gateway })
-    this.props.onContinue?.(network, gateway)
+    this.props.onContinue(network, gateway)
     this.props.onClose()
   }
 
