@@ -1,9 +1,13 @@
 import { select } from 'redux-saga/effects'
 import { expectSaga } from 'redux-saga-test-plan'
 import * as matchers from 'redux-saga-test-plan/matchers'
-import { Network } from '@dcl/schemas'
+import { ChainId, Network } from '@dcl/schemas'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
-import { getAddress } from '../wallet/selectors'
+import { getAddress, getChainId } from '../wallet/selectors'
+import { setPurchase } from '../mana/actions'
+import { Purchase, PurchaseStatus } from '../mana/types'
+import { openModal } from '../modal/actions'
+import { fetchWalletRequest } from '../wallet/actions'
 import {
   manaFiatGatewayPurchaseCompleted,
   manaFiatGatewayPurchaseCompletedFailure,
@@ -18,16 +22,16 @@ import { MoonPay } from './moonpay'
 import { MoonPayTransaction, MoonPayTransactionStatus } from './moonpay/types'
 import { createManaFiatGatewaysSaga } from './sagas'
 import { Transak } from './transak'
-import { ManaFiatGatewaySagasConfig } from './types'
-import { setPurchase } from '../mana/actions'
-import { Purchase, PurchaseStatus } from '../mana/types'
-import { fetchWalletRequest } from '../wallet/actions'
-import { openModal } from '../modal/actions'
+import { Environment, ManaFiatGatewaySagasConfig } from './types'
 import { getPendingPurchase } from './selectors'
+
+import util from 'util'
+util.inspect.defaultOptions.depth = null
 
 jest.mock('./transak')
 
 const mockConfig: ManaFiatGatewaySagasConfig = {
+  environment: Environment.DEVELOPMENT,
   [NetworkGatewayType.MOON_PAY]: {
     apiKey: 'api-key',
     apiBaseUrl: 'http://base.url.xyz',
@@ -46,6 +50,9 @@ const mockAddress = '0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2'
 const mockWidgetUrl =
   'http://widget.base.url.xyz?apiKey=api-key&currencyCode=MANA&redirectURL=http%3A%2F%2Flocalhost%3Fnetwork%3DETHEREUM%26gateway%3DmoonPay'
 
+const mockCryptoTransactionId = 'crypto-transaction-id'
+const mockTxUrl = `https://goerli.etherscan.io/tx/${mockCryptoTransactionId}`
+
 const mockTransaction: MoonPayTransaction = {
   id: '354b1f46-480c-4307-9896-f4c81c1e1e17',
   createdAt: '2018-08-27T19:40:43.748Z',
@@ -60,7 +67,7 @@ const mockTransaction: MoonPayTransaction = {
   failureReason: null,
   walletAddress: '0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2',
   walletAddressTag: null,
-  cryptoTransactionId: null,
+  cryptoTransactionId: mockCryptoTransactionId,
   returnUrl:
     'https://buy.moonpay.com/transaction_receipt?transactionId=354b1f46-480c-4307-9896-f4c81c1e1e17',
   redirectUrl: null,
@@ -167,6 +174,11 @@ const mockPurchase: Purchase = {
   gateway: NetworkGatewayType.MOON_PAY
 }
 
+const mockPurchaseWithCryptoTransactionId = {
+  ...mockPurchase,
+  txHash: mockCryptoTransactionId
+}
+
 const buyManaWithFiatModalName = 'BuyManaWithFiatModal'
 const buyManaWithFiatFeedbackModalName = 'BuyManaWithFiatFeedbackModal'
 
@@ -256,7 +268,9 @@ describe('when handling the request to open the Buy MANA with FIAT modal', () =>
 
       it('should put the failure action', async () => {
         return expectSaga(manaFiatGatewaysSaga)
-          .provide([[select(getPendingPurchase), mockPurchase]])
+          .provide([
+            [select(getPendingPurchase), mockPurchaseWithCryptoTransactionId]
+          ])
           .dispatch(openBuyManaWithFiatModalRequest())
           .put(openBuyManaWithFiatModalFailure(error))
           .silentRun()
@@ -273,11 +287,13 @@ describe('when handling the request to open the Buy MANA with FIAT modal', () =>
 
       it('should put the action signaling the opening of the Feedback Modal in pending status with the go to url, and that the request succeed', async () => {
         return expectSaga(manaFiatGatewaysSaga)
-          .provide([[select(getPendingPurchase), mockPurchase]])
+          .provide([
+            [select(getPendingPurchase), mockPurchaseWithCryptoTransactionId]
+          ])
           .dispatch(openBuyManaWithFiatModalRequest())
           .put(
             openModal(buyManaWithFiatFeedbackModalName, {
-              purchase: mockPurchase,
+              purchase: mockPurchaseWithCryptoTransactionId,
               goToUrl: mockTxReceiptUrl
             })
           )
@@ -441,7 +457,7 @@ describe('when handling the completion of the purchase', () => {
     describe('when the initial status is pending and it changes inmediately after starting the polling', () => {
       it('should put the action signaling that the purchase was created with its final status ', () => {
         const expectedPurchase = {
-          ...mockPurchase,
+          ...mockPurchaseWithCryptoTransactionId,
           status: PurchaseStatus.COMPLETE
         }
 
@@ -453,12 +469,15 @@ describe('when handling the completion of the purchase', () => {
                 ...mockTransaction,
                 status: MoonPayTransactionStatus.COMPLETED
               }
-            ]
+            ],
+            [select(getChainId), ChainId.ETHEREUM_GOERLI]
           ])
+
           .put(setPurchase(expectedPurchase))
           .put(
             openModal(buyManaWithFiatFeedbackModalName, {
-              purchase: expectedPurchase
+              purchase: expectedPurchase,
+              transactionUrl: mockTxUrl
             })
           )
           .put(fetchWalletRequest())
@@ -489,23 +508,25 @@ describe('when handling the completion of the purchase', () => {
 
       it('should put the action signaling that the purchase was created with its initial status and updated with the new one ', () => {
         const expectedPurchase = {
-          ...mockPurchase,
+          ...mockPurchaseWithCryptoTransactionId,
           status: PurchaseStatus.COMPLETE
         }
 
         return expectSaga(manaFiatGatewaysSaga)
+          .provide([[select(getChainId), ChainId.ETHEREUM_GOERLI]])
           .put(
             openModal(buyManaWithFiatFeedbackModalName, {
-              purchase: mockPurchase,
+              purchase: mockPurchaseWithCryptoTransactionId,
               goToUrl:
                 'http://widget.base.url.xyz/transaction_receipt?transactionId=354b1f46-480c-4307-9896-f4c81c1e1e17'
             })
           )
-          .put(setPurchase(mockPurchase))
+          .put(setPurchase(mockPurchaseWithCryptoTransactionId))
           .put(setPurchase(expectedPurchase))
           .put(
             openModal(buyManaWithFiatFeedbackModalName, {
-              purchase: expectedPurchase
+              purchase: expectedPurchase,
+              transactionUrl: mockTxUrl
             })
           )
           .put(fetchWalletRequest())
@@ -540,31 +561,82 @@ describe('when handling the action signaling the set purchase', () => {
   })
 
   describe('when the purchase is complete', () => {
-    it('should put the fetch wallet request action', async () => {
-      return expectSaga(manaFiatGatewaysSaga)
-        .dispatch(
-          setPurchase({ ...mockPurchase, status: PurchaseStatus.COMPLETE })
-        )
-        .put(fetchWalletRequest())
-        .silentRun()
+    describe('and the user is connected to a wallet', () => {
+      it('should put the fetch wallet request action and the open modal action with the correct status and transaction url using the chainId from the wallet', async () => {
+        const expectedPurchase = {
+          ...mockPurchaseWithCryptoTransactionId,
+          status: PurchaseStatus.COMPLETE
+        }
+
+        return expectSaga(manaFiatGatewaysSaga)
+          .provide([[select(getChainId), ChainId.ETHEREUM_GOERLI]])
+          .dispatch(setPurchase(expectedPurchase))
+          .put(fetchWalletRequest())
+          .put(
+            openModal(buyManaWithFiatFeedbackModalName, {
+              purchase: expectedPurchase,
+              transactionUrl: mockTxUrl
+            })
+          )
+          .silentRun()
+      })
+    })
+
+    describe('and the user is not connected to a wallet', () => {
+      it('should put the fetch wallet request action and the open modal action with the correct status and transaction url based on the environment from the config', async () => {
+        const expectedPurchase = {
+          ...mockPurchaseWithCryptoTransactionId,
+          status: PurchaseStatus.COMPLETE
+        }
+
+        return expectSaga(manaFiatGatewaysSaga)
+          .provide([[select(getChainId), undefined]])
+          .dispatch(setPurchase(expectedPurchase))
+          .put(fetchWalletRequest())
+          .put(
+            openModal(buyManaWithFiatFeedbackModalName, {
+              purchase: expectedPurchase,
+              transactionUrl: mockTxUrl
+            })
+          )
+          .silentRun()
+      })
     })
   })
 
   describe('when the purchase is failed', () => {
-    it('should put the fetch wallet request action', async () => {
+    it('should put the fetch wallet request action and the open modal action with the correct status', async () => {
+      const expectedPurchase = {
+        ...mockPurchaseWithCryptoTransactionId,
+        status: PurchaseStatus.FAILED
+      }
+
       return expectSaga(manaFiatGatewaysSaga)
-        .dispatch(
-          setPurchase({ ...mockPurchase, status: PurchaseStatus.FAILED })
+        .dispatch(setPurchase(expectedPurchase))
+        .put(
+          openModal(buyManaWithFiatFeedbackModalName, {
+            purchase: expectedPurchase,
+            transactionUrl: undefined
+          })
         )
         .silentRun()
     })
   })
 
   describe('when the purchase is cancelled', () => {
-    it('should put the fetch wallet request action', async () => {
+    it('should put the fetch wallet request action and the open modal action with the correct status', async () => {
+      const expectedPurchase = {
+        ...mockPurchaseWithCryptoTransactionId,
+        status: PurchaseStatus.CANCELLED
+      }
+
       return expectSaga(manaFiatGatewaysSaga)
-        .dispatch(
-          setPurchase({ ...mockPurchase, status: PurchaseStatus.CANCELLED })
+        .dispatch(setPurchase(expectedPurchase))
+        .put(
+          openModal(buyManaWithFiatFeedbackModalName, {
+            purchase: expectedPurchase,
+            transactionUrl: undefined
+          })
         )
         .silentRun()
     })

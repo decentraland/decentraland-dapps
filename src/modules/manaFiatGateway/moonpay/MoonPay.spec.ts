@@ -32,7 +32,7 @@ const mockTransaction: MoonPayTransaction = {
   failureReason: null,
   walletAddress: '0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2',
   walletAddressTag: null,
-  cryptoTransactionId: null,
+  cryptoTransactionId: 'crypto-transaction-id',
   returnUrl:
     'https://buy.moonpay.com/transaction_receipt?transactionId=354b1f46-480c-4307-9896-f4c81c1e1e17',
   redirectUrl: null,
@@ -156,7 +156,8 @@ describe('when interacting with MoonPay', () => {
         network: 'ETHEREUM',
         status: 'pending',
         timestamp: 1535398843748,
-        gateway: NetworkGatewayType.MOON_PAY
+        gateway: NetworkGatewayType.MOON_PAY,
+        txHash: 'crypto-transaction-id'
       }
 
       return expect(

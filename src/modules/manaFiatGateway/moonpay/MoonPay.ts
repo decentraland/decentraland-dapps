@@ -52,7 +52,8 @@ export class MoonPay {
       quoteCurrencyAmount,
       createdAt,
       status,
-      walletAddress
+      walletAddress,
+      cryptoTransactionId
     } = transaction
 
     return {
@@ -62,7 +63,8 @@ export class MoonPay {
       timestamp: +new Date(createdAt),
       status: this.getPurchaseStatus(status),
       address: walletAddress,
-      gateway: NetworkGatewayType.MOON_PAY
+      gateway: NetworkGatewayType.MOON_PAY,
+      txHash: cryptoTransactionId || undefined
     }
   }
 

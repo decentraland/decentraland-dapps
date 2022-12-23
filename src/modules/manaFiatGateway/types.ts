@@ -1,5 +1,11 @@
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 
+export enum Environment {
+  DEVELOPMENT = 'development',
+  STAGING = 'staging',
+  PRODUCTION = 'production'
+}
+
 export type MoonPayConfig = {
   apiBaseUrl: string
   apiKey: string
@@ -13,6 +19,7 @@ export type TransakConfig = {
 }
 
 export type ManaFiatGatewaySagasConfig = {
+  environment: Environment
   [NetworkGatewayType.MOON_PAY]: MoonPayConfig
   [NetworkGatewayType.TRANSAK]: TransakConfig
 }

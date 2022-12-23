@@ -1,16 +1,19 @@
 import transakSDK from '@transak/transak-sdk'
 import { NetworkGatewayType } from 'decentraland-ui'
 import { Transak } from '../transak/Transak'
-import { ManaFiatGatewaySagasConfig } from '../types'
-import { Network } from '@dcl/schemas'
+import { Environment, ManaFiatGatewaySagasConfig } from '../types'
+import { ChainId, Network } from '@dcl/schemas'
 import { OrderData } from './types'
 import { Purchase, PurchaseStatus } from '../../mana/types'
 import { createManaFiatGatewaysSaga } from '../sagas'
 import { expectSaga } from 'redux-saga-test-plan'
 import { setPurchase } from '../../mana/actions'
 import { fetchWalletRequest } from '../../wallet/actions'
+import { select } from 'redux-saga/effects'
+import { getChainId } from '../../wallet/selectors'
 
 const mockConfig: ManaFiatGatewaySagasConfig = {
+  environment: Environment.DEVELOPMENT,
   [NetworkGatewayType.MOON_PAY]: {
     apiKey: 'api-key',
     apiBaseUrl: 'http://base.url.xyz',
@@ -81,6 +84,7 @@ describe('when interacting with Transak', () => {
           Network.ETHEREUM
         )
         return expectSaga(manaFiatGatewaysSaga)
+          .provide([[select(getChainId), ChainId.ETHEREUM_GOERLI]])
           .put(setPurchase(mockPurchase))
           .silentRun()
       })
@@ -94,6 +98,7 @@ describe('when interacting with Transak', () => {
           Network.ETHEREUM
         )
         return expectSaga(manaFiatGatewaysSaga)
+          .provide([[select(getChainId), ChainId.ETHEREUM_GOERLI]])
           .put(
             setPurchase({ ...mockPurchase, status: PurchaseStatus.COMPLETE })
           )
