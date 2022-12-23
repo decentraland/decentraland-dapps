@@ -14,7 +14,8 @@ import {
   isFinishingPurchase,
   isOpeningGateway,
   getData,
-  getPendingPurchase
+  getPendingPurchase,
+  getPurchases
 } from './selectors'
 
 let manaFiatGatewayState: any
@@ -62,6 +63,14 @@ describe('MANA-FIAT Gateway selectors', () => {
     it("should return the manaFiatGateway's state loading data", () => {
       expect(getLoading(manaFiatGatewayState)).toEqual(
         manaFiatGatewayState.manaFiatGateway.loading
+      )
+    })
+  })
+
+  describe('when getting the purchases', () => {
+    it("should return the array of purchases in the manaFiatGateway's state", () => {
+      expect(getPurchases(manaFiatGatewayState)).toEqual(
+        manaFiatGatewayState.manaFiatGateway.data.purchases
       )
     })
   })
