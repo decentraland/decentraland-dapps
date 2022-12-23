@@ -46,9 +46,9 @@ const getDefaultFeedbackTranslations = (
 ): FeedbackModalI18N => {
   const basePath = `@dapps.buyManaWithFiat.feedback_modal.${status}`
   return Object.fromEntries(
-    propsToTranslateByStatus[status].map(it => [
-      it,
-      t(`${basePath}.${camelToSnakeCase(it)}`, {
+    propsToTranslateByStatus[status].map(prop => [
+      prop,
+      t(`${basePath}.${camelToSnakeCase(prop)}`, {
         network: networksNames[network],
         gateway: gatewaysNames[gateway]
       })
