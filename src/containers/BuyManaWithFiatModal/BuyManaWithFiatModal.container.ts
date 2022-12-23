@@ -11,8 +11,7 @@ import { isEnabled } from '../../modules/translation/selectors'
 import {
   MapStateProps,
   MapDispatch,
-  MapDispatchProps,
-  OwnProps
+  MapDispatchProps
 } from './BuyManaWithFiatModal.types'
 import BuyManaWithFiatModal from './BuyManaWithFiatModal'
 
@@ -27,14 +26,4 @@ const mapDispatch = (dispatch: MapDispatch): MapDispatchProps => ({
     dispatch(openManaFiatGatewayRequest(network, gateway))
 })
 
-const mergeProps = (
-  stateProps: MapStateProps,
-  dispatchProps: MapDispatchProps,
-  ownProps: OwnProps
-): OwnProps => ({
-  ...stateProps,
-  ...dispatchProps,
-  ...ownProps
-})
-
-export default connect(mapState, mapDispatch, mergeProps)(BuyManaWithFiatModal)
+export default connect(mapState, mapDispatch)(BuyManaWithFiatModal)
