@@ -1,7 +1,7 @@
 import transakSDK from '@transak/transak-sdk'
 import { NetworkGatewayType } from 'decentraland-ui'
 import { Transak } from '../transak/Transak'
-import { Environment, ManaFiatGatewaySagasConfig } from '../types'
+import { ManaFiatGatewaySagasConfig } from '../types'
 import { ChainId, Network } from '@dcl/schemas'
 import { OrderData, TransakOrderStatus } from './types'
 import { Purchase, PurchaseStatus } from '../../mana/types'
@@ -13,7 +13,6 @@ import { select } from 'redux-saga/effects'
 import { getChainId } from '../../wallet/selectors'
 
 const mockConfig: ManaFiatGatewaySagasConfig = {
-  environment: Environment.DEVELOPMENT,
   [NetworkGatewayType.MOON_PAY]: {
     apiKey: 'api-key',
     apiBaseUrl: 'http://base.url.xyz',

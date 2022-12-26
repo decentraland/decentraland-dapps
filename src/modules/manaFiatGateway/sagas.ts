@@ -8,11 +8,12 @@ import {
 } from 'redux-saga/effects'
 import { ChainId, Network } from '@dcl/schemas'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
+import { getChainIdByNetwork } from '../../lib/eth'
 import { setPurchase, SetPurchaseAction, SET_PURCHASE } from '../mana/actions'
 import { Purchase, PurchaseStatus } from '../mana/types'
 import { openModal } from '../modal/actions'
 import { getTransactionHref } from '../transaction/utils'
-import { getAddress, getChainId } from '../wallet/selectors'
+import { getAddress } from '../wallet/selectors'
 import { fetchWalletRequest } from '../wallet/actions'
 import {
   OPEN_MANA_FIAT_GATEWAY_REQUEST,
@@ -29,10 +30,10 @@ import {
 } from './actions'
 import { MoonPay } from './moonpay'
 import { MoonPayTransaction, MoonPayTransactionStatus } from './moonpay/types'
+import { getPendingPurchase } from './selectors'
 import { Transak } from './transak'
 import { ManaFiatGatewaySagasConfig } from './types'
-import { getChainIdByEnvAndNetwork, purchaseEventsChannel } from './utils'
-import { getPendingPurchase } from './selectors'
+import { purchaseEventsChannel } from './utils'
 
 const DEFAULT_POLLING_DELAY = 3000
 const BUY_MANA_WITH_FIAT_FEEDBACK_MODAL_NAME = 'BuyManaWithFiatFeedbackModal'
@@ -54,7 +55,7 @@ export function createManaFiatGatewaysSaga(config: ManaFiatGatewaySagasConfig) {
       handleFiatGatewayPurchaseCompleted,
       config
     )
-    yield takeEvery(SET_PURCHASE, handleSetPurchase, config)
+    yield takeEvery(SET_PURCHASE, handleSetPurchase)
     yield takeEvery(purchaseEventsChannel, handlePurchaseChannelEvent)
 
     function* handlePurchaseChannelEvent(action: { purchase: Purchase }) {
@@ -200,10 +201,7 @@ function* handleFiatGatewayPurchaseCompleted(
   }
 }
 
-export function* handleSetPurchase(
-  config: ManaFiatGatewaySagasConfig,
-  action: SetPurchaseAction
-) {
+export function* handleSetPurchase(action: SetPurchaseAction) {
   const { purchase } = action.payload
   const finalStatuses = [
     PurchaseStatus.COMPLETE,
@@ -219,12 +217,7 @@ export function* handleSetPurchase(
       yield put(fetchWalletRequest())
 
       if (txHash) {
-        let chainId: ChainId | undefined = yield select(getChainId)
-
-        if (!chainId) {
-          chainId = getChainIdByEnvAndNetwork(config.environment, network)
-        }
-
+        const chainId: ChainId = yield call(getChainIdByNetwork, network)
         transactionUrl = getTransactionHref({ txHash }, chainId)
       }
     }
