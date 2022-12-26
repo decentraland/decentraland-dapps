@@ -93,7 +93,8 @@
         "success": {
           "title": "¡La compra de {network} MANA ha sido completada!",
           "description": "El {network} MANA comprado ha sido agregado a su cuenta. Si todavía no lo ve reflejado en su balande, recargue la página.",
-          "cta": "Listo"
+          "cta": "Listo",
+          "view_transaction": "Ver la transacción en el explorador"
         },
         "failure": {
           "title": "Compre {network} MANA",

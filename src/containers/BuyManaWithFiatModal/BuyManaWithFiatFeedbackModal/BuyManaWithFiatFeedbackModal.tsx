@@ -30,7 +30,12 @@ const propsToTranslateByStatus = {
     'description',
     'goToText'
   ],
-  [TransactionStatus.SUCCESS]: ['title', 'description', 'cta'],
+  [TransactionStatus.SUCCESS]: [
+    'title',
+    'description',
+    'cta',
+    'viewTransaction'
+  ],
   [TransactionStatus.FAILURE]: [
     'title',
     'statusTitle',

@@ -93,7 +93,8 @@
         "success": {
           "title": "{network} MANA 购买完成！",
           "description": "{network} MANA 已添加到您的帐户。 如果您仍然没有在余额中看到它，请刷新此页面。",
-          "cta": "完毕"
+          "cta": "完毕",
+          "view_transaction": "在资源管理器中查看交易"
         },
         "failure": {
           "title": "购买 {network} MANA",

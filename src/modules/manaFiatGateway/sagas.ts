@@ -218,13 +218,15 @@ export function* handleSetPurchase(
     if (status === PurchaseStatus.COMPLETE) {
       yield put(fetchWalletRequest())
 
-      let chainId: ChainId | undefined = yield select(getChainId)
+      if (txHash) {
+        let chainId: ChainId | undefined = yield select(getChainId)
 
-      if (!chainId) {
-        chainId = getChainIdByEnvAndNetwork(config.environment, network)
+        if (!chainId) {
+          chainId = getChainIdByEnvAndNetwork(config.environment, network)
+        }
+
+        transactionUrl = getTransactionHref({ txHash }, chainId)
       }
-
-      transactionUrl = getTransactionHref({ txHash }, chainId)
     }
 
     yield put(
