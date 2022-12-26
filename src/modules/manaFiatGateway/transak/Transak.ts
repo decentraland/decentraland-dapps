@@ -1,10 +1,10 @@
 import transakSDK from '@transak/transak-sdk'
 import { Network } from '@dcl/schemas'
+import { NetworkGatewayType } from 'decentraland-ui'
 import { Purchase, PurchaseStatus } from '../../mana/types'
-import { OrderData, TransakSDK } from './types'
 import { TransakConfig } from '../types'
 import { purchaseEventsChannel } from '../utils'
-import { NetworkGatewayType } from 'decentraland-ui'
+import { OrderData, TransakOrderStatus, TransakSDK } from './types'
 
 const PURCHASE_EVENT = 'Purchase status change'
 
@@ -38,16 +38,16 @@ export class Transak {
    * @param network - Network in which the trasanctions will be done
    */
   private suscribeToEvents(network: Network) {
-    const events = {
-      [this.sdk.EVENTS.TRANSAK_ORDER_CREATED]: PurchaseStatus.PENDING,
-      [this.sdk.EVENTS.TRANSAK_ORDER_SUCCESSFUL]: PurchaseStatus.COMPLETE,
-      [this.sdk.EVENTS.TRANSAK_ORDER_FAILED]: PurchaseStatus.FAILED,
-      [this.sdk.EVENTS.TRANSAK_ORDER_CANCELLED]: PurchaseStatus.CANCELLED
-    }
+    const events = [
+      this.sdk.EVENTS.TRANSAK_ORDER_CREATED,
+      this.sdk.EVENTS.TRANSAK_ORDER_SUCCESSFUL,
+      this.sdk.EVENTS.TRANSAK_ORDER_FAILED,
+      this.sdk.EVENTS.TRANSAK_ORDER_CANCELLED
+    ]
 
-    Object.entries(events).forEach(([event, status]) => {
+    events.forEach(event => {
       this.sdk.on(event, (orderData: OrderData) =>
-        this.emitPurchaseEvent(orderData, status, network)
+        this.emitPurchaseEvent(orderData, network)
       )
     })
 
@@ -65,15 +65,28 @@ export class Transak {
    * @param status - Status of the order.
    * @param Network - Network in which the transaction will be done.
    */
-  emitPurchaseEvent(
-    orderData: OrderData,
-    status: PurchaseStatus,
-    network: Network
-  ) {
+  emitPurchaseEvent(orderData: OrderData, network: Network) {
     purchaseEventsChannel.put({
       type: PURCHASE_EVENT,
-      purchase: this.createPurchase(orderData, status, network)
+      purchase: this.createPurchase(orderData, network)
     })
+  }
+
+  private getPurchaseStatus(status: TransakOrderStatus): PurchaseStatus {
+    return {
+      [TransakOrderStatus.AWAITING_PAYMENT_FROM_USER]: PurchaseStatus.PENDING,
+      [TransakOrderStatus.PAYMENT_DONE_MARKED_BY_USER]: PurchaseStatus.PENDING,
+      [TransakOrderStatus.PROCESSING]: PurchaseStatus.PENDING,
+      [TransakOrderStatus.PENDING_DELIVERY_FROM_TRANSAK]:
+        PurchaseStatus.PENDING,
+      [TransakOrderStatus.ON_HOLD_PENDING_DELIVERY_FROM_TRANSAK]:
+        PurchaseStatus.PENDING,
+      [TransakOrderStatus.COMPLETED]: PurchaseStatus.COMPLETE,
+      [TransakOrderStatus.REFUNDED]: PurchaseStatus.COMPLETE,
+      [TransakOrderStatus.CANCELLED]: PurchaseStatus.CANCELLED,
+      [TransakOrderStatus.FAILED]: PurchaseStatus.FAILED,
+      [TransakOrderStatus.EXPIRED]: PurchaseStatus.FAILED
+    }[status]
   }
 
   /**
@@ -82,18 +95,18 @@ export class Transak {
    * @param orderData - Order entity that comes from the Transak SDK.
    * @param status - Status of the order.
    */
-  private createPurchase(
-    orderData: OrderData,
-    status: PurchaseStatus,
-    network: Network
-  ): Purchase {
+  private createPurchase(orderData: OrderData, network: Network): Purchase {
+    const {
+      status: { id, cryptoAmount, createdAt, status, walletAddress }
+    } = orderData
+
     return {
-      id: orderData.status.id,
-      amount: orderData.status.cryptoAmount,
+      id: id,
+      amount: cryptoAmount,
       network,
-      timestamp: +new Date(orderData.status.createdAt),
-      status,
-      address: orderData.status.walletAddress,
+      timestamp: +new Date(createdAt),
+      status: this.getPurchaseStatus(status),
+      address: walletAddress,
       gateway: NetworkGatewayType.TRANSAK
     }
   }

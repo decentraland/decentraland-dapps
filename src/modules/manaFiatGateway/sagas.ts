@@ -6,11 +6,13 @@ import {
   select,
   takeEvery
 } from 'redux-saga/effects'
-import { Network } from '@dcl/schemas'
+import { ChainId, Network } from '@dcl/schemas'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
+import { getChainIdByNetwork } from '../../lib/eth'
 import { setPurchase, SetPurchaseAction, SET_PURCHASE } from '../mana/actions'
 import { Purchase, PurchaseStatus } from '../mana/types'
 import { openModal } from '../modal/actions'
+import { getTransactionHref } from '../transaction/utils'
 import { getAddress } from '../wallet/selectors'
 import { fetchWalletRequest } from '../wallet/actions'
 import {
@@ -27,11 +29,11 @@ import {
   openBuyManaWithFiatModalSuccess
 } from './actions'
 import { MoonPay } from './moonpay'
+import { MoonPayTransaction, MoonPayTransactionStatus } from './moonpay/types'
+import { getPendingPurchase } from './selectors'
 import { Transak } from './transak'
 import { ManaFiatGatewaySagasConfig } from './types'
 import { purchaseEventsChannel } from './utils'
-import { MoonPayTransaction, MoonPayTransactionStatus } from './moonpay/types'
-import { getPendingPurchase } from './selectors'
 
 const DEFAULT_POLLING_DELAY = 3000
 const BUY_MANA_WITH_FIAT_FEEDBACK_MODAL_NAME = 'BuyManaWithFiatFeedbackModal'
@@ -201,16 +203,30 @@ function* handleFiatGatewayPurchaseCompleted(
 
 export function* handleSetPurchase(action: SetPurchaseAction) {
   const { purchase } = action.payload
+  const finalStatuses = [
+    PurchaseStatus.COMPLETE,
+    PurchaseStatus.FAILED,
+    PurchaseStatus.CANCELLED
+  ]
+  const { status, network, txHash } = purchase
 
-  if (
-    [
-      PurchaseStatus.COMPLETE,
-      PurchaseStatus.FAILED,
-      PurchaseStatus.CANCELLED
-    ].includes(purchase.status)
-  )
-    yield put(openModal(BUY_MANA_WITH_FIAT_FEEDBACK_MODAL_NAME, { purchase }))
+  if (finalStatuses.includes(status)) {
+    let transactionUrl: string | undefined
 
-  if (purchase.status === PurchaseStatus.COMPLETE)
-    yield put(fetchWalletRequest())
+    if (status === PurchaseStatus.COMPLETE) {
+      yield put(fetchWalletRequest())
+
+      if (txHash) {
+        const chainId: ChainId = yield call(getChainIdByNetwork, network)
+        transactionUrl = getTransactionHref({ txHash }, chainId)
+      }
+    }
+
+    yield put(
+      openModal(BUY_MANA_WITH_FIAT_FEEDBACK_MODAL_NAME, {
+        purchase,
+        transactionUrl
+      })
+    )
+  }
 }

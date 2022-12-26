@@ -30,7 +30,12 @@ const propsToTranslateByStatus = {
     'description',
     'goToText'
   ],
-  [TransactionStatus.SUCCESS]: ['title', 'description', 'cta'],
+  [TransactionStatus.SUCCESS]: [
+    'title',
+    'description',
+    'cta',
+    'viewTransaction'
+  ],
   [TransactionStatus.FAILURE]: [
     'title',
     'statusTitle',
@@ -57,7 +62,7 @@ const getDefaultFeedbackTranslations = (
 }
 
 const BuyManaWithFiatFeedbackModal = ({
-  metadata: { purchase, goToUrl },
+  metadata: { purchase, goToUrl, transactionUrl },
   onTryAgain,
   onSelectOtherProvider,
   onClose
@@ -108,6 +113,7 @@ const BuyManaWithFiatFeedbackModal = ({
       selectedNetwork={purchase.network}
       selectedGateway={purchase.gateway}
       goToUrl={goToUrl}
+      transactionUrl={transactionUrl}
       onClickCta={handleCtaClick}
       onClickSecondaryCta={handleSecondaryCtaClick}
       onClose={onClose}

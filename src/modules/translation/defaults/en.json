@@ -93,7 +93,8 @@
         "success": {
           "title": "{network} MANA purchase completed!",
           "description": "The {network} MANA has been added to your account. If you still don't see it in your balance, refresh this page.",
-          "cta": "Done"
+          "cta": "Done",
+          "view_transaction": "View Transaction in Exporer"
         },
         "failure": {
           "title": "Buy {network} MANA",

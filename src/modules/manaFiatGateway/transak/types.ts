@@ -1,5 +1,18 @@
 import { EventEmitter } from 'ws'
 
+export enum TransakOrderStatus {
+  AWAITING_PAYMENT_FROM_USER = 'AWAITING_PAYMENT_FROM_USER',
+  PAYMENT_DONE_MARKED_BY_USER = 'PAYMENT_DONE_MARKED_BY_USER',
+  PROCESSING = 'PROCESSING',
+  PENDING_DELIVERY_FROM_TRANSAK = 'PENDING_DELIVERY_FROM_TRANSAK',
+  ON_HOLD_PENDING_DELIVERY_FROM_TRANSAK = 'ON_HOLD_PENDING_DELIVERY_FROM_TRANSAK',
+  COMPLETED = 'COMPLETED',
+  CANCELLED = 'CANCELLED',
+  FAILED = 'FAILED',
+  REFUNDED = 'REFUNDED',
+  EXPIRED = 'EXPIRED'
+}
+
 export type OrderData = {
   eventName: string
   status: {
@@ -22,7 +35,7 @@ export type OrderData = {
     quoteId: string
     referenceCode: number
     reservationId: string
-    status: string
+    status: TransakOrderStatus
     totalFeeInFiat: number
     walletAddress: string
     walletLink: string
