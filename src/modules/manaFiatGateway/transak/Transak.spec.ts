@@ -3,7 +3,7 @@ import { NetworkGatewayType } from 'decentraland-ui'
 import { Transak } from '../transak/Transak'
 import { Environment, ManaFiatGatewaySagasConfig } from '../types'
 import { ChainId, Network } from '@dcl/schemas'
-import { OrderData } from './types'
+import { OrderData, TransakOrderStatus } from './types'
 import { Purchase, PurchaseStatus } from '../../mana/types'
 import { createManaFiatGatewaysSaga } from '../sagas'
 import { expectSaga } from 'redux-saga-test-plan'
@@ -49,7 +49,7 @@ const mockOrderData: OrderData = {
     quoteId: 'quote-id',
     referenceCode: 12345,
     reservationId: 'reservation-id',
-    status: 'pending',
+    status: TransakOrderStatus.PROCESSING,
     totalFeeInFiat: 2,
     walletAddress: mockAddress,
     walletLink: 'wallet-link'
@@ -78,11 +78,7 @@ describe('when interacting with Transak', () => {
   describe('when emitting a purchase event in the purchaseEventsChannel', () => {
     describe('when the status of the purchase is not yet complete', () => {
       it('should put a new message in the channel signaling the set of the purchase without trying to refresh the balance', () => {
-        transak.emitPurchaseEvent(
-          mockOrderData,
-          PurchaseStatus.PENDING,
-          Network.ETHEREUM
-        )
+        transak.emitPurchaseEvent(mockOrderData, Network.ETHEREUM)
         return expectSaga(manaFiatGatewaysSaga)
           .provide([[select(getChainId), ChainId.ETHEREUM_GOERLI]])
           .put(setPurchase(mockPurchase))
@@ -93,8 +89,13 @@ describe('when interacting with Transak', () => {
     describe('when the status of the purchase is complete', () => {
       it('should put a new message in the channel signaling the set of the purchase and the request to refresh the balance', () => {
         transak.emitPurchaseEvent(
-          mockOrderData,
-          PurchaseStatus.COMPLETE,
+          {
+            ...mockOrderData,
+            status: {
+              ...mockOrderData.status,
+              status: TransakOrderStatus.COMPLETED
+            }
+          },
           Network.ETHEREUM
         )
         return expectSaga(manaFiatGatewaysSaga)

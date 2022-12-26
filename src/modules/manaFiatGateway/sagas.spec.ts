@@ -25,9 +25,6 @@ import { Transak } from './transak'
 import { Environment, ManaFiatGatewaySagasConfig } from './types'
 import { getPendingPurchase } from './selectors'
 
-import util from 'util'
-util.inspect.defaultOptions.depth = null
-
 jest.mock('./transak')
 
 const mockConfig: ManaFiatGatewaySagasConfig = {
