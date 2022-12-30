@@ -551,18 +551,45 @@ describe('when handling the completion of the purchase', () => {
 })
 
 describe('when handling the action signaling the set purchase', () => {
+  beforeEach(() => {
+    window.addEventListener = jest.fn()
+    window.removeEventListener = jest.fn()
+  })
+
   afterEach(() => {
     jest.clearAllMocks()
   })
 
   describe('when the purchase is not yet complete, failed, nor cancelled', () => {
-    it('should not put the fetch wallet request action', async () => {
-      return expectSaga(manaFiatGatewaysSaga)
-        .dispatch(setPurchase(mockPurchase))
-        .silentRun()
-        .then(({ effects }) => {
-          expect(effects.put).toBeUndefined()
-        })
+    describe('when the purchase is from Transak', () => {
+      it('should not put the fetch wallet request action but should add a listener to the beforeunload event', async () => {
+        return expectSaga(manaFiatGatewaysSaga)
+          .dispatch(
+            setPurchase({
+              ...mockPurchase,
+              gateway: NetworkGatewayType.TRANSAK
+            })
+          )
+          .silentRun()
+          .then(({ effects }) => {
+            expect(effects.put).toBeUndefined()
+            expect(window.addEventListener).toHaveBeenCalledTimes(1)
+            expect(window.removeEventListener).not.toHaveBeenCalled()
+          })
+      })
+    })
+
+    describe('when the purchase is from MoonPay', () => {
+      it('should not put the fetch wallet request action nor add the listener to the beforeunload event', async () => {
+        return expectSaga(manaFiatGatewaysSaga)
+          .dispatch(setPurchase(mockPurchase))
+          .silentRun()
+          .then(({ effects }) => {
+            expect(effects.put).toBeUndefined()
+            expect(window.addEventListener).not.toHaveBeenCalled()
+            expect(window.removeEventListener).toHaveBeenCalledTimes(1)
+          })
+      })
     })
   })
 
@@ -586,6 +613,10 @@ describe('when handling the action signaling the set purchase', () => {
           })
         )
         .silentRun()
+        .then(() => {
+          expect(window.addEventListener).not.toHaveBeenCalled()
+          expect(window.removeEventListener).toHaveBeenCalledTimes(1)
+        })
     })
   })
 
@@ -605,6 +636,10 @@ describe('when handling the action signaling the set purchase', () => {
           })
         )
         .silentRun()
+        .then(() => {
+          expect(window.addEventListener).not.toHaveBeenCalled()
+          expect(window.removeEventListener).toHaveBeenCalledTimes(1)
+        })
     })
   })
 
@@ -624,6 +659,10 @@ describe('when handling the action signaling the set purchase', () => {
           })
         )
         .silentRun()
+        .then(() => {
+          expect(window.addEventListener).not.toHaveBeenCalled()
+          expect(window.removeEventListener).toHaveBeenCalledTimes(1)
+        })
     })
   })
 })
