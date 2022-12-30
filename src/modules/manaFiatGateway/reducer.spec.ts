@@ -1,6 +1,6 @@
 import { Network } from '@dcl/schemas'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
-import { setPurchase } from '../mana/actions'
+import { setPurchase, unsetPurchase } from '../mana/actions'
 import { Purchase, PurchaseStatus } from '../mana/types'
 import {
   manaFiatGatewayPurchaseCompletedFailure,
@@ -195,7 +195,7 @@ describe('when handling the set purchase', () => {
       data: { ...state.data, purchases: [mockPurchase] }
     }
 
-    it('should add or replace if already exists ', () => {
+    it('should add or replace if already exists', () => {
       const completeMockPurchase: Purchase = {
         ...mockPurchase,
         status: PurchaseStatus.COMPLETE
@@ -210,6 +210,52 @@ describe('when handling the set purchase', () => {
         data: {
           ...state.data,
           purchases: [...state.data.purchases, completeMockPurchase]
+        }
+      })
+    })
+  })
+})
+
+describe('when handling the unset purchase', () => {
+  const mockPurchase: Purchase = {
+    address: '0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2',
+    amount: 100,
+    id: 'mock-id',
+    network: Network.ETHEREUM,
+    timestamp: 1535398843748,
+    status: PurchaseStatus.PENDING,
+    gateway: NetworkGatewayType.MOON_PAY
+  }
+  const state: ManaFiatGatewayState = INITIAL_STATE
+
+  describe('when the purchase does not exist', () => {
+    it('should leave the purchases as before ', () => {
+      expect(
+        manaFiatGatewayReducer(state, unsetPurchase(mockPurchase))
+      ).toEqual({
+        ...state,
+        data: {
+          ...state.data,
+          purchases: state.data.purchases
+        }
+      })
+    })
+  })
+
+  describe('when the purchase exists', () => {
+    const stateWithPurchases = {
+      ...state,
+      data: { ...state.data, purchases: [mockPurchase] }
+    }
+
+    it('should remove it from the purchases list', () => {
+      expect(
+        manaFiatGatewayReducer(stateWithPurchases, unsetPurchase(mockPurchase))
+      ).toEqual({
+        ...stateWithPurchases,
+        data: {
+          ...state.data,
+          purchases: []
         }
       })
     })

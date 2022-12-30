@@ -123,11 +123,9 @@ export function manaFiatGatewayReducer(
         ...state,
         data: {
           ...state.data,
-          purchases: [
-            ...state.data.purchases.filter(
-              _purchase => _purchase.id !== purchase.id
-            )
-          ]
+          purchases: state.data.purchases.filter(
+            _purchase => _purchase.id !== purchase.id
+          )
         }
       }
     }
