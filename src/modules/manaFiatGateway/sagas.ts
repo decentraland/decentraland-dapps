@@ -11,7 +11,12 @@ import { LOAD } from 'redux-persistence'
 import { ChainId, Network } from '@dcl/schemas'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 import { getChainIdByNetwork } from '../../lib/eth'
-import { setPurchase, SetPurchaseAction, SET_PURCHASE } from '../mana/actions'
+import {
+  setPurchase,
+  SetPurchaseAction,
+  SET_PURCHASE,
+  unsetPurchase
+} from '../mana/actions'
 import { Purchase, PurchaseStatus } from '../mana/types'
 import { openModal } from '../modal/actions'
 import { getTransactionHref } from '../transaction/utils'
@@ -149,14 +154,20 @@ function* handleStorageLoad() {
 
   if (pendingPurchase) {
     const { network, gateway, id } = pendingPurchase
-    yield put(
-      manaFiatGatewayPurchaseCompleted(
-        network,
-        gateway,
-        id,
-        MoonPayTransactionStatus.PENDING
-      )
-    )
+    switch (gateway) {
+      case NetworkGatewayType.TRANSAK:
+        yield put(unsetPurchase(pendingPurchase))
+      case NetworkGatewayType.MOON_PAY:
+        yield put(
+          manaFiatGatewayPurchaseCompleted(
+            network,
+            gateway,
+            id,
+            MoonPayTransactionStatus.PENDING
+          )
+        )
+        break
+    }
   }
 }
 
@@ -223,6 +234,12 @@ function* handleFiatGatewayPurchaseCompleted(
   }
 }
 
+const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+  e.preventDefault()
+  return (e.returnValue =
+    'Are you sure you want to exit with a purchase in process? You will not be able to see it progress in the future.')
+}
+
 export function* handleSetPurchase(action: SetPurchaseAction) {
   const { purchase } = action.payload
   const finalStatuses = [
@@ -231,6 +248,15 @@ export function* handleSetPurchase(action: SetPurchaseAction) {
     PurchaseStatus.CANCELLED
   ]
   const { status, network, txHash } = purchase
+
+  if (
+    purchase.gateway === NetworkGatewayType.TRANSAK &&
+    purchase.status === PurchaseStatus.PENDING
+  ) {
+    window.addEventListener('beforeunload', handleBeforeUnload)
+  } else {
+    window.removeEventListener('beforeunload', handleBeforeUnload)
+  }
 
   if (finalStatuses.includes(status)) {
     let transactionUrl: string | undefined
