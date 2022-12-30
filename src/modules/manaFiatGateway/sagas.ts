@@ -4,8 +4,10 @@ import {
   ForkEffect,
   put,
   select,
-  takeEvery
+  takeEvery,
+  takeLatest
 } from 'redux-saga/effects'
+import { LOAD } from 'redux-persistence'
 import { ChainId, Network } from '@dcl/schemas'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 import { getChainIdByNetwork } from '../../lib/eth'
@@ -26,7 +28,8 @@ import {
   OPEN_BUY_MANA_WITH_FIAT_MODAL_REQUEST,
   OpenBuyManaWithFiatModalRequestAction,
   openBuyManaWithFiatModalFailure,
-  openBuyManaWithFiatModalSuccess
+  openBuyManaWithFiatModalSuccess,
+  manaFiatGatewayPurchaseCompleted
 } from './actions'
 import { MoonPay } from './moonpay'
 import { MoonPayTransaction, MoonPayTransactionStatus } from './moonpay/types'
@@ -56,6 +59,7 @@ export function createManaFiatGatewaysSaga(config: ManaFiatGatewaySagasConfig) {
       config
     )
     yield takeEvery(SET_PURCHASE, handleSetPurchase)
+    yield takeLatest(LOAD, handleStorageLoad)
     yield takeEvery(purchaseEventsChannel, handlePurchaseChannelEvent)
 
     function* handlePurchaseChannelEvent(action: { purchase: Purchase }) {
@@ -138,16 +142,34 @@ function* upsertPurchase(
   yield put(setPurchase(purchase))
 }
 
+function* handleStorageLoad() {
+  const pendingPurchase: ReturnType<typeof getPendingPurchase> = yield select(
+    getPendingPurchase
+  )
+
+  if (pendingPurchase) {
+    const { network, gateway, id } = pendingPurchase
+    yield put(
+      manaFiatGatewayPurchaseCompleted(
+        network,
+        gateway,
+        id,
+        MoonPayTransactionStatus.PENDING
+      )
+    )
+  }
+}
+
 function* handleFiatGatewayPurchaseCompleted(
   config: ManaFiatGatewaySagasConfig,
   action: ManaFiatGatewayPurchaseCompletedAction
 ) {
   const { network, gateway, transactionId, status } = action.payload
-  const { moonPay: moonPayConfig } = config
 
   try {
     switch (gateway) {
       case NetworkGatewayType.MOON_PAY:
+        const { moonPay: moonPayConfig } = config
         const finalStatuses = [
           MoonPayTransactionStatus.COMPLETED,
           MoonPayTransactionStatus.FAILED
