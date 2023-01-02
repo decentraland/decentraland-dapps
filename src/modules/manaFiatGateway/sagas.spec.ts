@@ -4,12 +4,14 @@ import { expectSaga } from 'redux-saga-test-plan'
 import * as matchers from 'redux-saga-test-plan/matchers'
 import { ChainId, Network } from '@dcl/schemas'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
+import { getChainIdByNetwork } from '../../lib/eth'
 import { getAddress } from '../wallet/selectors'
 import { setPurchase, unsetPurchase } from '../mana/actions'
 import { Purchase, PurchaseStatus } from '../mana/types'
 import { openModal } from '../modal/actions'
 import { fetchWalletRequest } from '../wallet/actions'
 import {
+  addManaPurchaseAsTransaction,
   manaFiatGatewayPurchaseCompleted,
   manaFiatGatewayPurchaseCompletedFailure,
   openBuyManaWithFiatModalFailure,
@@ -25,9 +27,13 @@ import { createManaFiatGatewaysSaga } from './sagas'
 import { Transak } from './transak'
 import { ManaFiatGatewaySagasConfig } from './types'
 import { getPendingPurchase } from './selectors'
-import { getChainIdByNetwork } from '../../lib/eth'
 
+jest.mock('../../lib/eth')
 jest.mock('./transak')
+
+const mockGetChainIdByNetwork = getChainIdByNetwork as jest.MockedFunction<
+  typeof getChainIdByNetwork
+>
 
 const mockConfig: ManaFiatGatewaySagasConfig = {
   [NetworkGatewayType.MOON_PAY]: {
@@ -46,7 +52,7 @@ const manaFiatGatewaysSaga = createManaFiatGatewaysSaga(mockConfig)
 const mockAddress = '0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2'
 
 const mockWidgetUrl =
-  'http://widget.base.url.xyz?apiKey=api-key&currencyCode=MANA&redirectURL=http%3A%2F%2Flocalhost%3Fnetwork%3DETHEREUM%26gateway%3DmoonPay'
+  'http://widget.base.url.xyz?apiKey=api-key&currencyCode=MANA&redirectURL=http%3A%2F%2Flocalhost%2F%3Fnetwork%3DETHEREUM%26gateway%3DmoonPay'
 
 const mockCryptoTransactionId = 'crypto-transaction-id'
 const mockTxUrl = `https://goerli.etherscan.io/tx/${mockCryptoTransactionId}`
@@ -414,11 +420,19 @@ describe('when handling the request to open the MANA-FIAT gateway', () => {
 })
 
 describe('when handling the completion of the purchase', () => {
+  beforeEach(() => {
+    mockGetChainIdByNetwork.mockReturnValue(ChainId.ETHEREUM_GOERLI)
+  })
+
   describe('when the selected gateway is MoonPay', () => {
     let moonPay: MoonPay
 
     beforeEach(() => {
       moonPay = new MoonPay(mockConfig.moonPay)
+    })
+
+    afterEach(() => {
+      jest.clearAllMocks()
     })
 
     describe('when the transaction was not found', () => {
@@ -594,29 +608,61 @@ describe('when handling the action signaling the set purchase', () => {
   })
 
   describe('when the purchase is complete', () => {
-    it('should put the fetch wallet request action and the open modal action with the correct status and transaction url using the chainId', async () => {
-      const expectedPurchase = {
-        ...mockPurchaseWithCryptoTransactionId,
-        status: PurchaseStatus.COMPLETE
-      }
+    describe('and the tx hash is not in the purchase', () => {
+      it('should put the fetch wallet request and the open modal action with the correct status (without the transaction url) without adding the purchase as a transaction', async () => {
+        const expectedPurchase = {
+          ...mockPurchaseWithCryptoTransactionId,
+          txHash: undefined,
+          status: PurchaseStatus.COMPLETE
+        }
 
-      return expectSaga(manaFiatGatewaysSaga)
-        .provide([
-          [call(getChainIdByNetwork, Network.ETHEREUM), ChainId.ETHEREUM_GOERLI]
-        ])
-        .dispatch(setPurchase(expectedPurchase))
-        .put(fetchWalletRequest())
-        .put(
-          openModal(buyManaWithFiatFeedbackModalName, {
-            purchase: expectedPurchase,
-            transactionUrl: mockTxUrl
+        return expectSaga(manaFiatGatewaysSaga)
+          .dispatch(setPurchase(expectedPurchase))
+          .put(fetchWalletRequest())
+          .put(
+            openModal(buyManaWithFiatFeedbackModalName, {
+              purchase: expectedPurchase,
+              transactionUrl: undefined
+            })
+          )
+          .silentRun()
+          .then(({ effects }) => {
+            expect(effects.put).toBeUndefined()
+            expect(window.addEventListener).not.toHaveBeenCalled()
+            expect(window.removeEventListener).toHaveBeenCalledTimes(1)
           })
-        )
-        .silentRun()
-        .then(() => {
-          expect(window.addEventListener).not.toHaveBeenCalled()
-          expect(window.removeEventListener).toHaveBeenCalledTimes(1)
-        })
+      })
+    })
+
+    describe('and the tx hash is present in the purchase', () => {
+      it('should put the fetch wallet request, the add MANA purchase as transaction, and the open modal action with the correct status and transaction url using the chainId', async () => {
+        const expectedPurchase = {
+          ...mockPurchaseWithCryptoTransactionId,
+          status: PurchaseStatus.COMPLETE
+        }
+
+        return expectSaga(manaFiatGatewaysSaga)
+          .provide([
+            [
+              call(getChainIdByNetwork, Network.ETHEREUM),
+              ChainId.ETHEREUM_GOERLI
+            ]
+          ])
+          .dispatch(setPurchase(expectedPurchase))
+          .put(fetchWalletRequest())
+          .put(addManaPurchaseAsTransaction(expectedPurchase))
+          .put(
+            openModal(buyManaWithFiatFeedbackModalName, {
+              purchase: expectedPurchase,
+              transactionUrl: mockTxUrl
+            })
+          )
+          .silentRun()
+          .then(() => {
+            expect(window.addEventListener).not.toHaveBeenCalled()
+            expect(window.removeEventListener).toHaveBeenCalledTimes(1)
+          })
+      })
     })
   })
 
@@ -629,6 +675,7 @@ describe('when handling the action signaling the set purchase', () => {
 
       return expectSaga(manaFiatGatewaysSaga)
         .dispatch(setPurchase(expectedPurchase))
+        .put(addManaPurchaseAsTransaction(expectedPurchase))
         .put(
           openModal(buyManaWithFiatFeedbackModalName, {
             purchase: expectedPurchase,
@@ -652,6 +699,7 @@ describe('when handling the action signaling the set purchase', () => {
 
       return expectSaga(manaFiatGatewaysSaga)
         .dispatch(setPurchase(expectedPurchase))
+        .put(addManaPurchaseAsTransaction(expectedPurchase))
         .put(
           openModal(buyManaWithFiatFeedbackModalName, {
             purchase: expectedPurchase,

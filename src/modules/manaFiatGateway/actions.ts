@@ -1,6 +1,9 @@
 import { Network } from '@dcl/schemas'
 import { action } from 'typesafe-actions'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
+import { getChainIdByNetwork } from '../../lib/eth'
+import { Purchase } from '../mana/types'
+import { buildTransactionWithFromPayload } from '../transaction/utils'
 import { MoonPayTransactionStatus } from './moonpay/types'
 
 // Open MANA-FIAT Gateway
@@ -95,4 +98,30 @@ export type ManaFiatGatewayPurchaseCompletedAction = ReturnType<
 >
 export type ManaFiatGatewayPurchaseCompletedFailureAction = ReturnType<
   typeof manaFiatGatewayPurchaseCompletedFailure
+>
+
+// Add MANA Purchase as Transaction
+export const ADD_MANA_PURCHASE_AS_TRANSACTION =
+  'Add MANA Purchase as Transaction'
+
+export const addManaPurchaseAsTransaction = (purchase: Purchase) => {
+  if (!purchase.txHash) {
+    throw new Error(`Transaction Hash is undefined for purchase ${purchase.id}`)
+  }
+
+  return action(ADD_MANA_PURCHASE_AS_TRANSACTION, {
+    purchase,
+    ...buildTransactionWithFromPayload(
+      getChainIdByNetwork(purchase.network),
+      purchase.txHash,
+      purchase.address,
+      {
+        purchase
+      }
+    )
+  })
+}
+
+export type AddManaPurchaseAsTransactionAction = ReturnType<
+  typeof addManaPurchaseAsTransaction
 >

@@ -50,6 +50,12 @@ export function getTransactionHashFromAction(
   return getTransactionFromAction(action).hash
 }
 
+export function getTransactionAddressFromAction(
+  action: AnyAction
+): Transaction['from'] | undefined {
+  return getTransactionFromAction(action).from
+}
+
 export function buildTransactionPayload(
   chainId: ChainId,
   hash: string,
@@ -72,6 +78,19 @@ export function buildTransactionWithReceiptPayload(
   const txPayload = buildTransactionPayload(chainId, hash, payload)
 
   txPayload[TRANSACTION_ACTION_FLAG].withReceipt = true
+
+  return txPayload
+}
+
+export function buildTransactionWithFromPayload(
+  chainId: ChainId,
+  hash: string,
+  from: string,
+  payload = {}
+): TransactionPayload {
+  const txPayload = buildTransactionPayload(chainId, hash, payload)
+
+  txPayload[TRANSACTION_ACTION_FLAG].from = from
 
   return txPayload
 }

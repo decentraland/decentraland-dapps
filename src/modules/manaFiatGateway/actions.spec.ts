@@ -1,7 +1,11 @@
-import { Network } from '@dcl/schemas'
+import { ChainId, Network } from '@dcl/schemas'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
+import { getChainIdByNetwork } from '../../lib/eth'
+import { Purchase, PurchaseStatus } from '../mana/types'
 import { MoonPayTransactionStatus } from '../manaFiatGateway/moonpay/types'
 import {
+  addManaPurchaseAsTransaction,
+  ADD_MANA_PURCHASE_AS_TRANSACTION,
   manaFiatGatewayPurchaseCompleted,
   manaFiatGatewayPurchaseCompletedFailure,
   MANA_FIAT_GATEWAY_PURCHASE_COMPLETED,
@@ -19,6 +23,23 @@ import {
   OPEN_MANA_FIAT_GATEWAY_REQUEST,
   OPEN_MANA_FIAT_GATEWAY_SUCCESS
 } from './actions'
+
+jest.mock('../../lib/eth')
+
+const mockGetChainIdByNetwork = getChainIdByNetwork as jest.MockedFunction<
+  typeof getChainIdByNetwork
+>
+
+const mockPurchase: Purchase = {
+  address: 'mock-address',
+  amount: 100,
+  id: 'mock-id',
+  network: Network.ETHEREUM,
+  timestamp: 1535398843748,
+  status: PurchaseStatus.PENDING,
+  gateway: NetworkGatewayType.MOON_PAY,
+  txHash: 'mock-tx-hash'
+}
 
 describe('when creating the action that signals the start of a buy mana with fiat modal opening', () => {
   describe('when not passing the selected network', () => {
@@ -155,6 +176,34 @@ describe('when creating the action to signal a failure after a purchase was comp
         error
       },
       type: MANA_FIAT_GATEWAY_PURCHASE_COMPLETED_FAILURE
+    })
+  })
+})
+
+describe('when creating the action to signal the addition of a MANA purchase as a tx', () => {
+  beforeEach(() => {
+    mockGetChainIdByNetwork.mockReturnValue(ChainId.ETHEREUM_GOERLI)
+  })
+
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
+
+  it('should return an object representing the action', () => {
+    expect(addManaPurchaseAsTransaction(mockPurchase)).toEqual({
+      meta: undefined,
+      payload: {
+        _watch_tx: {
+          chainId: 5,
+          from: 'mock-address',
+          hash: 'mock-tx-hash',
+          payload: {
+            purchase: mockPurchase
+          }
+        },
+        purchase: mockPurchase
+      },
+      type: ADD_MANA_PURCHASE_AS_TRANSACTION
     })
   })
 })

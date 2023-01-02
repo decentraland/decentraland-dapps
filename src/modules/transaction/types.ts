@@ -90,6 +90,7 @@ export type TransactionPayload = {
     hash: string
     payload: any
     withReceipt?: boolean
+    from?: string // This could be undefined depending if its needed in the action
   }
 }
 
