@@ -15,7 +15,8 @@ import {
   isTransactionAction,
   getTransactionFromAction,
   getTransactionHashFromAction,
-  waitForTx
+  waitForTx,
+  buildTransactionWithFromPayload
 } from './utils'
 
 describe('modules', function() {
@@ -24,9 +25,11 @@ describe('modules', function() {
       const hash = '0xdeadbeef'
       const payload = { some: 'data' }
       const chainId = ChainId.ETHEREUM_MAINNET
+      const from = '0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2'
 
       const tx = { hash, payload, chainId }
       const txWithReceipt = { hash, payload, chainId, withReceipt: true }
+      const txWithFrom = { hash, payload, chainId, from }
 
       describe('buildTransactionPayload', function() {
         it('should return a new object with the transaction flag an the action inside', function() {
@@ -75,6 +78,35 @@ describe('modules', function() {
               ...txWithReceipt,
               payload: {}
             }
+          })
+        })
+      })
+
+      describe('buildTransactionWithFromPayload', function() {
+        it('should return a new object with the transaction flag an the action inside', function() {
+          const txPayload = buildTransactionWithFromPayload(
+            chainId,
+            tx.hash,
+            from,
+            payload
+          )
+
+          expect(txPayload).toEqual({
+            [TRANSACTION_ACTION_FLAG]: txWithFrom
+          })
+        })
+
+        it('should support only supplying the transaction hash', function() {
+          const tx = { hash }
+          const txPayload = buildTransactionWithFromPayload(
+            chainId,
+            tx.hash,
+            from,
+            payload
+          )
+
+          expect(txPayload).toEqual({
+            [TRANSACTION_ACTION_FLAG]: txWithFrom
           })
         })
       })

@@ -1,16 +1,23 @@
-import transakSDK from '@transak/transak-sdk'
-import { NetworkGatewayType } from 'decentraland-ui'
-import { Transak } from '../transak/Transak'
-import { ManaFiatGatewaySagasConfig } from '../types'
-import { ChainId, Network } from '@dcl/schemas'
-import { OrderData, TransakOrderStatus } from './types'
-import { Purchase, PurchaseStatus } from '../../mana/types'
-import { createManaFiatGatewaysSaga } from '../sagas'
-import { expectSaga } from 'redux-saga-test-plan'
-import { setPurchase } from '../../mana/actions'
-import { fetchWalletRequest } from '../../wallet/actions'
 import { select } from 'redux-saga/effects'
+import { expectSaga } from 'redux-saga-test-plan'
+import transakSDK from '@transak/transak-sdk'
+import { ChainId, Network } from '@dcl/schemas'
+import { NetworkGatewayType } from 'decentraland-ui'
+import { getChainIdByNetwork } from '../../../lib/eth'
+import { setPurchase } from '../../mana/actions'
+import { Purchase, PurchaseStatus } from '../../mana/types'
+import { fetchWalletRequest } from '../../wallet/actions'
 import { getChainId } from '../../wallet/selectors'
+import { Transak } from '../transak/Transak'
+import { createManaFiatGatewaysSaga } from '../sagas'
+import { ManaFiatGatewaySagasConfig } from '../types'
+import { OrderData, TransakOrderStatus } from './types'
+
+jest.mock('../../../lib/eth')
+
+const mockGetChainIdByNetwork = getChainIdByNetwork as jest.MockedFunction<
+  typeof getChainIdByNetwork
+>
 
 const mockConfig: ManaFiatGatewaySagasConfig = {
   [NetworkGatewayType.MOON_PAY]: {
@@ -50,6 +57,7 @@ const mockOrderData: OrderData = {
     reservationId: 'reservation-id',
     status: TransakOrderStatus.PROCESSING,
     totalFeeInFiat: 2,
+    transactionHash: 'mock-transaction-hash',
     walletAddress: mockAddress,
     walletLink: 'wallet-link'
   }
@@ -62,7 +70,8 @@ const mockPurchase: Purchase = {
   network: Network.ETHEREUM,
   timestamp: 1671028355396,
   status: PurchaseStatus.PENDING,
-  gateway: NetworkGatewayType.TRANSAK
+  gateway: NetworkGatewayType.TRANSAK,
+  txHash: 'mock-transaction-hash'
 }
 
 const manaFiatGatewaysSaga = createManaFiatGatewaysSaga(mockConfig)
@@ -72,6 +81,11 @@ describe('when interacting with Transak', () => {
 
   beforeEach(() => {
     transak = new Transak(mockConfig.transak, mockAddress, Network.ETHEREUM)
+    mockGetChainIdByNetwork.mockReturnValue(ChainId.ETHEREUM_GOERLI)
+  })
+
+  afterEach(() => {
+    jest.clearAllMocks()
   })
 
   describe('when emitting a purchase event in the purchaseEventsChannel', () => {
