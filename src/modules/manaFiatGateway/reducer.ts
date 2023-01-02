@@ -1,5 +1,10 @@
 import { loadingReducer, LoadingState } from '../loading/reducer'
-import { SetPurchaseAction, SET_PURCHASE } from '../mana/actions'
+import {
+  SetPurchaseAction,
+  SET_PURCHASE,
+  UnsetPurchaseAction,
+  UNSET_PURCHASE
+} from '../mana/actions'
 import { Purchase } from '../mana/types'
 import {
   ManaFiatGatewayPurchaseCompletedFailureAction,
@@ -41,6 +46,7 @@ export type ManaFiatGatewayReducerAction =
   | OpenManaFiatGatewayFailureAction
   | ManaFiatGatewayPurchaseCompletedFailureAction
   | SetPurchaseAction
+  | UnsetPurchaseAction
 
 export function manaFiatGatewayReducer(
   state: ManaFiatGatewayState = INITIAL_STATE,
@@ -108,6 +114,18 @@ export function manaFiatGatewayReducer(
             ),
             purchase
           ]
+        }
+      }
+    }
+    case UNSET_PURCHASE: {
+      const { purchase } = action.payload
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          purchases: state.data.purchases.filter(
+            _purchase => _purchase.id !== purchase.id
+          )
         }
       }
     }

@@ -1,10 +1,11 @@
+import { load } from 'redux-persistence'
 import { call, select } from 'redux-saga/effects'
 import { expectSaga } from 'redux-saga-test-plan'
 import * as matchers from 'redux-saga-test-plan/matchers'
 import { ChainId, Network } from '@dcl/schemas'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 import { getAddress } from '../wallet/selectors'
-import { setPurchase } from '../mana/actions'
+import { setPurchase, unsetPurchase } from '../mana/actions'
 import { Purchase, PurchaseStatus } from '../mana/types'
 import { openModal } from '../modal/actions'
 import { fetchWalletRequest } from '../wallet/actions'
@@ -550,18 +551,45 @@ describe('when handling the completion of the purchase', () => {
 })
 
 describe('when handling the action signaling the set purchase', () => {
+  beforeEach(() => {
+    window.addEventListener = jest.fn()
+    window.removeEventListener = jest.fn()
+  })
+
   afterEach(() => {
     jest.clearAllMocks()
   })
 
   describe('when the purchase is not yet complete, failed, nor cancelled', () => {
-    it('should not put the fetch wallet request action', async () => {
-      return expectSaga(manaFiatGatewaysSaga)
-        .dispatch(setPurchase(mockPurchase))
-        .silentRun()
-        .then(({ effects }) => {
-          expect(effects.put).toBeUndefined()
-        })
+    describe('when the purchase is from Transak', () => {
+      it('should not put the fetch wallet request action but should add a listener to the beforeunload event', async () => {
+        return expectSaga(manaFiatGatewaysSaga)
+          .dispatch(
+            setPurchase({
+              ...mockPurchase,
+              gateway: NetworkGatewayType.TRANSAK
+            })
+          )
+          .silentRun()
+          .then(({ effects }) => {
+            expect(effects.put).toBeUndefined()
+            expect(window.addEventListener).toHaveBeenCalledTimes(1)
+            expect(window.removeEventListener).not.toHaveBeenCalled()
+          })
+      })
+    })
+
+    describe('when the purchase is from MoonPay', () => {
+      it('should not put the fetch wallet request action nor add the listener to the beforeunload event', async () => {
+        return expectSaga(manaFiatGatewaysSaga)
+          .dispatch(setPurchase(mockPurchase))
+          .silentRun()
+          .then(({ effects }) => {
+            expect(effects.put).toBeUndefined()
+            expect(window.addEventListener).not.toHaveBeenCalled()
+            expect(window.removeEventListener).toHaveBeenCalledTimes(1)
+          })
+      })
     })
   })
 
@@ -585,6 +613,10 @@ describe('when handling the action signaling the set purchase', () => {
           })
         )
         .silentRun()
+        .then(() => {
+          expect(window.addEventListener).not.toHaveBeenCalled()
+          expect(window.removeEventListener).toHaveBeenCalledTimes(1)
+        })
     })
   })
 
@@ -604,6 +636,10 @@ describe('when handling the action signaling the set purchase', () => {
           })
         )
         .silentRun()
+        .then(() => {
+          expect(window.addEventListener).not.toHaveBeenCalled()
+          expect(window.removeEventListener).toHaveBeenCalledTimes(1)
+        })
     })
   })
 
@@ -623,6 +659,60 @@ describe('when handling the action signaling the set purchase', () => {
           })
         )
         .silentRun()
+        .then(() => {
+          expect(window.addEventListener).not.toHaveBeenCalled()
+          expect(window.removeEventListener).toHaveBeenCalledTimes(1)
+        })
+    })
+  })
+})
+
+describe('when handling the action signaling the load of the local storage into the state', () => {
+  describe('when there is no pending purchases in the state', () => {
+    it('should not put any action', async () => {
+      return expectSaga(manaFiatGatewaysSaga)
+        .provide([[select(getPendingPurchase), undefined]])
+        .dispatch(load({}))
+        .silentRun()
+        .then(({ effects }) => {
+          expect(effects.put).toBeUndefined()
+        })
+    })
+  })
+
+  describe('when there is a pending purchase in the state', () => {
+    describe('when it is a MoonPay purchase', () => {
+      it('should put the action signaling the completion of the purchase', async () => {
+        return expectSaga(manaFiatGatewaysSaga)
+          .provide([
+            [select(getPendingPurchase), mockPurchaseWithCryptoTransactionId]
+          ])
+          .dispatch(load({}))
+          .put(
+            manaFiatGatewayPurchaseCompleted(
+              Network.ETHEREUM,
+              NetworkGatewayType.MOON_PAY,
+              mockPurchaseWithCryptoTransactionId.id,
+              MoonPayTransactionStatus.PENDING
+            )
+          )
+          .silentRun()
+      })
+    })
+
+    describe('when it is a Transak purchase', () => {
+      it('should remove it from the list of purchases because it cannot be tracked anymore', async () => {
+        const transakPurchase = {
+          ...mockPurchase,
+          gateway: NetworkGatewayType.TRANSAK
+        }
+
+        return expectSaga(manaFiatGatewaysSaga)
+          .provide([[select(getPendingPurchase), transakPurchase]])
+          .dispatch(load({}))
+          .put(unsetPurchase(transakPurchase))
+          .silentRun()
+      })
     })
   })
 })

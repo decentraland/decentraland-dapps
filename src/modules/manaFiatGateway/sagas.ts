@@ -4,12 +4,19 @@ import {
   ForkEffect,
   put,
   select,
-  takeEvery
+  takeEvery,
+  takeLatest
 } from 'redux-saga/effects'
+import { LOAD } from 'redux-persistence'
 import { ChainId, Network } from '@dcl/schemas'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 import { getChainIdByNetwork } from '../../lib/eth'
-import { setPurchase, SetPurchaseAction, SET_PURCHASE } from '../mana/actions'
+import {
+  setPurchase,
+  SetPurchaseAction,
+  SET_PURCHASE,
+  unsetPurchase
+} from '../mana/actions'
 import { Purchase, PurchaseStatus } from '../mana/types'
 import { openModal } from '../modal/actions'
 import { getTransactionHref } from '../transaction/utils'
@@ -26,7 +33,8 @@ import {
   OPEN_BUY_MANA_WITH_FIAT_MODAL_REQUEST,
   OpenBuyManaWithFiatModalRequestAction,
   openBuyManaWithFiatModalFailure,
-  openBuyManaWithFiatModalSuccess
+  openBuyManaWithFiatModalSuccess,
+  manaFiatGatewayPurchaseCompleted
 } from './actions'
 import { MoonPay } from './moonpay'
 import { MoonPayTransaction, MoonPayTransactionStatus } from './moonpay/types'
@@ -56,6 +64,7 @@ export function createManaFiatGatewaysSaga(config: ManaFiatGatewaySagasConfig) {
       config
     )
     yield takeEvery(SET_PURCHASE, handleSetPurchase)
+    yield takeLatest(LOAD, handleStorageLoad)
     yield takeEvery(purchaseEventsChannel, handlePurchaseChannelEvent)
 
     function* handlePurchaseChannelEvent(action: { purchase: Purchase }) {
@@ -138,16 +147,40 @@ function* upsertPurchase(
   yield put(setPurchase(purchase))
 }
 
+function* handleStorageLoad() {
+  const pendingPurchase: ReturnType<typeof getPendingPurchase> = yield select(
+    getPendingPurchase
+  )
+
+  if (pendingPurchase) {
+    const { network, gateway, id } = pendingPurchase
+    switch (gateway) {
+      case NetworkGatewayType.TRANSAK:
+        yield put(unsetPurchase(pendingPurchase))
+      case NetworkGatewayType.MOON_PAY:
+        yield put(
+          manaFiatGatewayPurchaseCompleted(
+            network,
+            gateway,
+            id,
+            MoonPayTransactionStatus.PENDING
+          )
+        )
+        break
+    }
+  }
+}
+
 function* handleFiatGatewayPurchaseCompleted(
   config: ManaFiatGatewaySagasConfig,
   action: ManaFiatGatewayPurchaseCompletedAction
 ) {
   const { network, gateway, transactionId, status } = action.payload
-  const { moonPay: moonPayConfig } = config
 
   try {
     switch (gateway) {
       case NetworkGatewayType.MOON_PAY:
+        const { moonPay: moonPayConfig } = config
         const finalStatuses = [
           MoonPayTransactionStatus.COMPLETED,
           MoonPayTransactionStatus.FAILED
@@ -201,6 +234,12 @@ function* handleFiatGatewayPurchaseCompleted(
   }
 }
 
+const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+  e.preventDefault()
+  return (e.returnValue =
+    'Are you sure you want to exit with a purchase in process? You will not be able to see it progress in the future.')
+}
+
 export function* handleSetPurchase(action: SetPurchaseAction) {
   const { purchase } = action.payload
   const finalStatuses = [
@@ -209,6 +248,15 @@ export function* handleSetPurchase(action: SetPurchaseAction) {
     PurchaseStatus.CANCELLED
   ]
   const { status, network, txHash } = purchase
+
+  if (
+    purchase.gateway === NetworkGatewayType.TRANSAK &&
+    purchase.status === PurchaseStatus.PENDING
+  ) {
+    window.addEventListener('beforeunload', handleBeforeUnload)
+  } else {
+    window.removeEventListener('beforeunload', handleBeforeUnload)
+  }
 
   if (finalStatuses.includes(status)) {
     let transactionUrl: string | undefined
