@@ -69,10 +69,20 @@ export class MoonPay {
   }
 
   getWidgetUrl(network: Network) {
-    const redirectURL = `${window.location.origin}?network=${network}&gateway=${NetworkGatewayType.MOON_PAY}`
-    return `${this.widgetBaseUrl}?apiKey=${
-      this.apiKey
-    }&currencyCode=MANA&redirectURL=${encodeURIComponent(redirectURL)}`
+    const newQueryParams = {
+      network,
+      gateway: NetworkGatewayType.MOON_PAY
+    }
+    const { origin, pathname, search } = window.location
+    const params = new URLSearchParams(search)
+    Object.entries(newQueryParams).forEach(([key, value]) =>
+      params.append(key, value)
+    )
+
+    const redirectURL = encodeURIComponent(
+      `${origin}${pathname}?${params.toString()}`
+    )
+    return `${this.widgetBaseUrl}?apiKey=${this.apiKey}&currencyCode=MANA&redirectURL=${redirectURL}`
   }
 
   getTransactionReceiptUrl(transactionId: string) {
