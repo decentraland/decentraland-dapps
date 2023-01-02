@@ -97,7 +97,14 @@ export class Transak {
    */
   private createPurchase(orderData: OrderData, network: Network): Purchase {
     const {
-      status: { id, cryptoAmount, createdAt, status, walletAddress }
+      status: {
+        id,
+        cryptoAmount,
+        createdAt,
+        status,
+        transactionHash,
+        walletAddress
+      }
     } = orderData
 
     return {
@@ -107,7 +114,8 @@ export class Transak {
       timestamp: +new Date(createdAt),
       status: this.getPurchaseStatus(status),
       address: walletAddress,
-      gateway: NetworkGatewayType.TRANSAK
+      gateway: NetworkGatewayType.TRANSAK,
+      txHash: transactionHash
     }
   }
 

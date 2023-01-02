@@ -30,6 +30,8 @@ export type OrderData = {
     fiatCurrency: string
     fromWalletAddress: string
     isBuyOrSell: 'BUY' | 'SELL'
+    transactionLink: string
+    transactionHash: string
     network: 'ethereum' | 'matic'
     paymentOptionId: string
     quoteId: string

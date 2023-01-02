@@ -34,6 +34,7 @@ import {
   OpenBuyManaWithFiatModalRequestAction,
   openBuyManaWithFiatModalFailure,
   openBuyManaWithFiatModalSuccess,
+  addManaPurchaseAsTransaction,
   manaFiatGatewayPurchaseCompleted
 } from './actions'
 import { MoonPay } from './moonpay'
@@ -268,6 +269,10 @@ export function* handleSetPurchase(action: SetPurchaseAction) {
         const chainId: ChainId = yield call(getChainIdByNetwork, network)
         transactionUrl = getTransactionHref({ txHash }, chainId)
       }
+    }
+
+    if (txHash) {
+      yield put(addManaPurchaseAsTransaction(purchase))
     }
 
     yield put(
