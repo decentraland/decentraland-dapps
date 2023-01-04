@@ -27,7 +27,8 @@ const mockPurchase: Purchase = {
   network: Network.ETHEREUM,
   timestamp: 1535398843748,
   status: PurchaseStatus.PENDING,
-  gateway: NetworkGatewayType.MOON_PAY
+  gateway: NetworkGatewayType.MOON_PAY,
+  txHash: null
 }
 
 describe('MANA-FIAT Gateway selectors', () => {

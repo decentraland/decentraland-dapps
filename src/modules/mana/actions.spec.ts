@@ -17,7 +17,8 @@ describe('when creating the action to set the purchase', () => {
       network: Network.ETHEREUM,
       status: PurchaseStatus.PENDING,
       timestamp: 1535398843748,
-      gateway: NetworkGatewayType.MOON_PAY
+      gateway: NetworkGatewayType.MOON_PAY,
+      txHash: null
     }
 
     expect(setPurchase(mockPurchase)).toEqual({
@@ -39,7 +40,8 @@ describe('when creating the action to unset the purchase', () => {
       network: Network.ETHEREUM,
       status: PurchaseStatus.PENDING,
       timestamp: 1535398843748,
-      gateway: NetworkGatewayType.MOON_PAY
+      gateway: NetworkGatewayType.MOON_PAY,
+      txHash: null
     }
 
     expect(unsetPurchase(mockPurchase)).toEqual({

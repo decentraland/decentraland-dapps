@@ -175,7 +175,8 @@ const mockPurchase: Purchase = {
   network: Network.ETHEREUM,
   timestamp: 1535398843748,
   status: PurchaseStatus.PENDING,
-  gateway: NetworkGatewayType.MOON_PAY
+  gateway: NetworkGatewayType.MOON_PAY,
+  txHash: null
 }
 
 const mockPurchaseWithCryptoTransactionId = {
@@ -612,7 +613,7 @@ describe('when handling the action signaling the set purchase', () => {
       it('should put the fetch wallet request and the open modal action with the correct status (without the transaction url) without adding the purchase as a transaction', async () => {
         const expectedPurchase = {
           ...mockPurchaseWithCryptoTransactionId,
-          txHash: undefined,
+          txHash: null,
           status: PurchaseStatus.COMPLETE
         }
 
