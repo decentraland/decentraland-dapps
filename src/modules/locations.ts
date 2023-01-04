@@ -1,4 +1,5 @@
 export const locations = {
   root: () => '/',
-  signIn: () => '/sign-in'
+  signIn: () => '/sign-in',
+  lands: () => '/lands'
 }

@@ -1,6 +1,7 @@
 import { Network } from '@dcl/schemas'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 import { BaseAPI } from '../../../lib/api'
+import { locations } from '../../locations'
 import { Purchase, PurchaseStatus } from '../../mana/types'
 import { MoonPayConfig } from '../types'
 import { MoonPayTransaction, MoonPayTransactionStatus } from './types'
@@ -74,13 +75,18 @@ export class MoonPay {
       gateway: NetworkGatewayType.MOON_PAY
     }
     const { origin, pathname, search } = window.location
-    const params = new URLSearchParams(search)
+    let params = new URLSearchParams()
+
+    if (pathname === locations.lands()) {
+      params = new URLSearchParams(search)
+    }
+
     Object.entries(newQueryParams).forEach(([key, value]) =>
       params.append(key, value)
     )
 
     const redirectURL = encodeURIComponent(
-      `${origin}${pathname}?${params.toString()}`
+      `${origin}${locations.lands()}?${params.toString()}`
     )
     return `${this.widgetBaseUrl}?apiKey=${this.apiKey}&currencyCode=MANA&redirectURL=${redirectURL}`
   }
