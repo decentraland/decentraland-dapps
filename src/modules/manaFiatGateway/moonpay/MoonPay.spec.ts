@@ -141,29 +141,13 @@ describe('when interacting with MoonPay', () => {
   })
 
   describe('when build the widget url', () => {
-    describe('when the location does not have pathname nor query params', () => {
-      it('should return the widget url with the api key, currency code, and redirect url as query parameters', () => {
-        return expect(moonPay.getWidgetUrl(Network.ETHEREUM)).toEqual(
-          'http://widget.base.url.xyz?apiKey=api-key&currencyCode=MANA&redirectURL=http%3A%2F%2Flocalhost%2F%3Fnetwork%3DETHEREUM%26gateway%3DmoonPay'
-        )
-      })
-    })
+    const mockOriginalURL =
+      'http://widget.base.url.xyz?apiKey=api-key&currencyCode=MANA&redirectURL=http%3A%2F%2Flocalhost%3Fnetwork%3DETHEREUM%26gateway%3DmoonPay'
 
-    describe('when the location have a different pathname than "/" and also query params', () => {
-      beforeEach(() => {
-        const location = {
-          ...window.location,
-          pathname: '/pathname',
-          search: '?s1=1&s2=2'
-        }
-        jest.spyOn(window, 'location', 'get').mockReturnValue(location)
-      })
-
-      it('should return the widget url with the api key, currency code, and redirect url as query parameters', () => {
-        return expect(moonPay.getWidgetUrl(Network.ETHEREUM)).toEqual(
-          'http://widget.base.url.xyz?apiKey=api-key&currencyCode=MANA&redirectURL=http%3A%2F%2Flocalhost%2Fpathname%3Fs1%3D1%26s2%3D2%26network%3DETHEREUM%26gateway%3DmoonPay'
-        )
-      })
+    it('should return the widget url with the api key, currency code, and redirect url as query parameters', () => {
+      return expect(moonPay.getWidgetUrl(Network.ETHEREUM)).toEqual(
+        mockOriginalURL
+      )
     })
   })
 

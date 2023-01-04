@@ -173,7 +173,8 @@ describe('when handling the set purchase', () => {
     network: Network.ETHEREUM,
     timestamp: 1535398843748,
     status: PurchaseStatus.PENDING,
-    gateway: NetworkGatewayType.MOON_PAY
+    gateway: NetworkGatewayType.MOON_PAY,
+    txHash: null
   }
   const state: ManaFiatGatewayState = INITIAL_STATE
 
@@ -224,7 +225,8 @@ describe('when handling the unset purchase', () => {
     network: Network.ETHEREUM,
     timestamp: 1535398843748,
     status: PurchaseStatus.PENDING,
-    gateway: NetworkGatewayType.MOON_PAY
+    gateway: NetworkGatewayType.MOON_PAY,
+    txHash: null
   }
   const state: ManaFiatGatewayState = INITIAL_STATE
 

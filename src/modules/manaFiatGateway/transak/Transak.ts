@@ -115,7 +115,7 @@ export class Transak {
       status: this.getPurchaseStatus(status),
       address: walletAddress,
       gateway: NetworkGatewayType.TRANSAK,
-      txHash: transactionHash
+      txHash: transactionHash || null
     }
   }
 
