@@ -16,5 +16,5 @@ export type Purchase = {
   timestamp: number
   status: PurchaseStatus
   address: string
-  txHash?: string
+  txHash?: string | null
 }

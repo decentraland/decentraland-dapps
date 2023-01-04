@@ -65,7 +65,7 @@ export class MoonPay {
       status: this.getPurchaseStatus(status),
       address: walletAddress,
       gateway: NetworkGatewayType.MOON_PAY,
-      txHash: cryptoTransactionId || undefined
+      txHash: cryptoTransactionId
     }
   }
 
