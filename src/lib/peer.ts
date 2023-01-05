@@ -28,7 +28,7 @@ export class PeerAPI extends BaseAPI {
 
     this.cache[address] = this.lambdasClient
       .fetchProfiles([address.toLowerCase()], undefined, {
-        headers: { 'Cache-Control': 'max-age=0', Pragma: 'no-cache' }
+        headers: { 'Cache-Control': 'max-age=0' }
       })
       .then(profiles => profiles[0])
 
