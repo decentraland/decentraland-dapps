@@ -358,6 +358,7 @@ describe('when handling the request to open the MANA-FIAT gateway', () => {
         .silentRun()
         .then(() => {
           expect(Transak.prototype.openWidget).toHaveBeenCalledWith(
+            mockAddress,
             Network.ETHEREUM
           )
         })
