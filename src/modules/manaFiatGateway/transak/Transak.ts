@@ -4,32 +4,47 @@ import { NetworkGatewayType } from 'decentraland-ui'
 import { Purchase, PurchaseStatus } from '../../mana/types'
 import { TransakConfig } from '../types'
 import { purchaseEventsChannel } from '../utils'
-import { OrderData, TransakOrderStatus, TransakSDK } from './types'
+import {
+  CustomizationOptions,
+  DefaultCustomizationOptions,
+  OrderData,
+  TransakOrderStatus,
+  TransakSDK
+} from './types'
 
 const PURCHASE_EVENT = 'Purchase status change'
 
 export class Transak {
-  private readonly sdk: TransakSDK
-  private readonly address: string
+  private readonly config: TransakConfig
+  private sdk: TransakSDK
 
-  constructor(config: TransakConfig, address: string, network: Network) {
-    this.sdk = new transakSDK({
-      apiKey: config.key, // Your API Key
-      environment: config.env || 'STAGING', // STAGING/PRODUCTION
-      defaultCryptoCurrency: 'MANA',
-      cyptoCurrencyList: 'MANA',
+  constructor(config: TransakConfig) {
+    this.config = config
+  }
+
+  protected defaultCustomizationOptions(
+    address: string
+  ): DefaultCustomizationOptions {
+    return {
+      apiKey: this.config.key, // Your API Key
+      environment: this.config.env || 'STAGING', // STAGING/PRODUCTION
       networks: 'ethereum,matic',
       walletAddress: address, // Your customer's wallet address
-      fiatCurrency: '', // INR/GBP
-      email: '', // Your customer's email address
-      redirectURL: '',
       hostURL: window.location.origin,
       widgetHeight: '650px',
       widgetWidth: '450px'
-    }) as TransakSDK
-    this.address = address
+    }
+  }
 
-    this.suscribeToEvents(network)
+  protected customizationOptions(address: string): CustomizationOptions {
+    return {
+      ...this.defaultCustomizationOptions(address),
+      defaultCryptoCurrency: 'MANA',
+      cyptoCurrencyList: 'MANA',
+      fiatCurrency: '', // INR/GBP
+      email: '', // Your customer's email address
+      redirectURL: ''
+    }
   }
 
   /**
@@ -125,10 +140,14 @@ export class Transak {
    * @param address - Address of the connected wallet.
    * @param network - Network in which the transaction will be done.
    */
-  openWidget(network: Network) {
+  openWidget(address: string, network: Network) {
     const transakNetwork = network === Network.MATIC ? 'polygon' : 'ethereum'
 
-    this.sdk.partnerData.walletAddress = this.address
+    const customizationOptions = this.customizationOptions(address)
+    this.sdk = new transakSDK(customizationOptions) as TransakSDK
+    this.suscribeToEvents(network)
+
+    this.sdk.partnerData.walletAddress = address
     this.sdk.partnerData.defaultNetwork = transakNetwork
     this.sdk.partnerData.networks = transakNetwork
     this.sdk.init()

@@ -80,7 +80,7 @@ describe('when interacting with Transak', () => {
   let transak: Transak
 
   beforeEach(() => {
-    transak = new Transak(mockConfig.transak, mockAddress, Network.ETHEREUM)
+    transak = new Transak(mockConfig.transak)
     mockGetChainIdByNetwork.mockReturnValue(ChainId.ETHEREUM_GOERLI)
   })
 
@@ -128,7 +128,7 @@ describe('when interacting with Transak', () => {
     })
 
     it('should call the method init from the Transak SDK', () => {
-      transak.openWidget(Network.ETHEREUM)
+      transak.openWidget(mockAddress, Network.ETHEREUM)
       return expect(transakSDK.prototype.init).toHaveBeenCalled()
     })
   })
