@@ -1,8 +1,7 @@
 import transakSDK from '@transak/transak-sdk'
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui'
-import { Purchase, PurchaseStatus } from '../../mana/types'
-import { TransakConfig } from '../types'
+import { TransakConfig, Purchase, PurchaseStatus } from '../types'
 import { purchaseEventsChannel } from '../utils'
 import {
   CustomizationOptions,
@@ -20,31 +19,6 @@ export class Transak {
 
   constructor(config: TransakConfig) {
     this.config = config
-  }
-
-  protected defaultCustomizationOptions(
-    address: string
-  ): DefaultCustomizationOptions {
-    return {
-      apiKey: this.config.key, // Your API Key
-      environment: this.config.env || 'STAGING', // STAGING/PRODUCTION
-      networks: 'ethereum,matic',
-      walletAddress: address, // Your customer's wallet address
-      hostURL: window.location.origin,
-      widgetHeight: '650px',
-      widgetWidth: '450px'
-    }
-  }
-
-  protected customizationOptions(address: string): CustomizationOptions {
-    return {
-      ...this.defaultCustomizationOptions(address),
-      defaultCryptoCurrency: 'MANA',
-      cyptoCurrencyList: 'MANA',
-      fiatCurrency: '', // INR/GBP
-      email: '', // Your customer's email address
-      redirectURL: ''
-    }
   }
 
   /**
@@ -73,20 +47,6 @@ export class Transak {
     })
   }
 
-  /**
-   * Uses redux-saga channels to emit a message every time a transaction changes its status.
-   *
-   * @param orderData - Order entity that comes from the Transak SDK.
-   * @param status - Status of the order.
-   * @param Network - Network in which the transaction will be done.
-   */
-  emitPurchaseEvent(orderData: OrderData, network: Network) {
-    purchaseEventsChannel.put({
-      type: PURCHASE_EVENT,
-      purchase: this.createPurchase(orderData, network)
-    })
-  }
-
   private getPurchaseStatus(status: TransakOrderStatus): PurchaseStatus {
     return {
       [TransakOrderStatus.AWAITING_PAYMENT_FROM_USER]: PurchaseStatus.PENDING,
@@ -104,6 +64,31 @@ export class Transak {
     }[status]
   }
 
+  protected defaultCustomizationOptions(
+    address: string
+  ): DefaultCustomizationOptions {
+    return {
+      apiKey: this.config.key, // Your API Key
+      environment: this.config.env || 'STAGING', // STAGING/PRODUCTION
+      networks: 'ethereum,matic',
+      walletAddress: address, // Your customer's wallet address
+      hostURL: window.location.origin,
+      widgetHeight: '650px',
+      widgetWidth: '450px'
+    }
+  }
+
+  protected customizationOptions(address: string): CustomizationOptions {
+    return {
+      ...this.defaultCustomizationOptions(address),
+      defaultCryptoCurrency: 'MANA',
+      cyptoCurrencyList: 'MANA',
+      fiatCurrency: '', // INR/GBP
+      email: '', // Your customer's email address
+      redirectURL: ''
+    }
+  }
+
   /**
    * Given the data of the order and its status, returns an object with the relevant information of the purchase.
    *
@@ -117,6 +102,8 @@ export class Transak {
         cryptoAmount,
         createdAt,
         status,
+        isNFTOrder,
+        nftAssetInfo,
         transactionHash,
         walletAddress
       }
@@ -130,8 +117,30 @@ export class Transak {
       status: this.getPurchaseStatus(status),
       address: walletAddress,
       gateway: NetworkGatewayType.TRANSAK,
-      txHash: transactionHash || null
+      txHash: transactionHash || null,
+      nft:
+        isNFTOrder && nftAssetInfo
+          ? {
+              contractAddress: nftAssetInfo.contractAddress,
+              tokenId: nftAssetInfo.tokenId,
+              tradeType: nftAssetInfo.tradeType
+            }
+          : null
     }
+  }
+
+  /**
+   * Uses redux-saga channels to emit a message every time a transaction changes its status.
+   *
+   * @param orderData - Order entity that comes from the Transak SDK.
+   * @param status - Status of the order.
+   * @param Network - Network in which the transaction will be done.
+   */
+  emitPurchaseEvent(orderData: OrderData, network: Network) {
+    purchaseEventsChannel.put({
+      type: PURCHASE_EVENT,
+      purchase: this.createPurchase(orderData, network)
+    })
   }
 
   /**

@@ -5,7 +5,7 @@ import {
   LocationChangeAction,
   replace
 } from 'connected-react-router'
-import { manaFiatGatewayPurchaseCompleted } from '../manaFiatGateway/actions'
+import { manaFiatGatewayPurchaseCompleted } from '../gateway/actions'
 import { RedirectTransactionQuery } from './types'
 
 export function* locationSaga() {

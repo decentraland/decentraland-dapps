@@ -4,8 +4,8 @@ import {
   SET_PURCHASE,
   UnsetPurchaseAction,
   UNSET_PURCHASE
-} from '../mana/actions'
-import { Purchase } from '../mana/types'
+} from '../gateway/actions'
+import { Purchase } from './types'
 import {
   ManaFiatGatewayPurchaseCompletedFailureAction,
   MANA_FIAT_GATEWAY_PURCHASE_COMPLETED_FAILURE,
@@ -23,7 +23,7 @@ import {
   OPEN_MANA_FIAT_GATEWAY_SUCCESS
 } from './actions'
 
-export type ManaFiatGatewayState = {
+export type GatewayState = {
   data: {
     purchases: Purchase[]
   }
@@ -31,7 +31,7 @@ export type ManaFiatGatewayState = {
   error: string | null
 }
 
-export const INITIAL_STATE: ManaFiatGatewayState = {
+export const INITIAL_STATE: GatewayState = {
   data: { purchases: [] },
   loading: [],
   error: null
@@ -48,10 +48,10 @@ export type ManaFiatGatewayReducerAction =
   | SetPurchaseAction
   | UnsetPurchaseAction
 
-export function manaFiatGatewayReducer(
-  state: ManaFiatGatewayState = INITIAL_STATE,
+export function gatewayReducer(
+  state: GatewayState = INITIAL_STATE,
   action: ManaFiatGatewayReducerAction
-): ManaFiatGatewayState {
+): GatewayState {
   switch (action.type) {
     case OPEN_BUY_MANA_WITH_FIAT_MODAL_REQUEST: {
       return {

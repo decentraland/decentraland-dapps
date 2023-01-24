@@ -17,8 +17,7 @@ import {
   SetPurchaseAction,
   SET_PURCHASE,
   unsetPurchase
-} from '../mana/actions'
-import { Purchase, PurchaseStatus } from '../mana/types'
+} from '../gateway/actions'
 import { openModal } from '../modal/actions'
 import { getTransactionHref } from '../transaction/utils'
 import { getAddress } from '../wallet/selectors'
@@ -40,16 +39,16 @@ import {
 } from './actions'
 import { MoonPay } from './moonpay'
 import { MoonPayTransaction, MoonPayTransactionStatus } from './moonpay/types'
-import { getPendingPurchase } from './selectors'
+import { getPendingManaPurchase } from './selectors'
 import { Transak } from './transak'
-import { ManaFiatGatewaySagasConfig } from './types'
+import { ManaFiatGatewaySagasConfig, Purchase, PurchaseStatus } from './types'
 import { purchaseEventsChannel } from './utils'
 
 const DEFAULT_POLLING_DELAY = 3000
 const BUY_MANA_WITH_FIAT_FEEDBACK_MODAL_NAME = 'BuyManaWithFiatFeedbackModal'
 
 export function createManaFiatGatewaysSaga(config: ManaFiatGatewaySagasConfig) {
-  return function* manaFiatGatewaysSaga(): IterableIterator<ForkEffect> {
+  return function* gatewaysSaga(): IterableIterator<ForkEffect> {
     yield takeEvery(
       OPEN_BUY_MANA_WITH_FIAT_MODAL_REQUEST,
       handleOpenBuyManaWithFiatModal,
@@ -82,22 +81,22 @@ function* handleOpenBuyManaWithFiatModal(
 ) {
   try {
     const { selectedNetwork } = action.payload
-    const pendingPurchase: Purchase | undefined = yield select(
-      getPendingPurchase
+    const pendingManaPurchase: Purchase | undefined = yield select(
+      getPendingManaPurchase
     )
 
-    if (pendingPurchase) {
+    if (pendingManaPurchase) {
       let goToUrl: string | undefined
 
-      if (pendingPurchase.gateway === NetworkGatewayType.MOON_PAY) {
+      if (pendingManaPurchase.gateway === NetworkGatewayType.MOON_PAY) {
         goToUrl = new MoonPay(config.moonPay).getTransactionReceiptUrl(
-          pendingPurchase.id
+          pendingManaPurchase.id
         )
       }
 
       yield put(
         openModal(BUY_MANA_WITH_FIAT_FEEDBACK_MODAL_NAME, {
-          purchase: pendingPurchase,
+          purchase: pendingManaPurchase,
           goToUrl
         })
       )
@@ -150,15 +149,15 @@ function* upsertPurchase(
 }
 
 function* handleStorageLoad() {
-  const pendingPurchase: ReturnType<typeof getPendingPurchase> = yield select(
-    getPendingPurchase
+  const pendingManaPurchase: ReturnType<typeof getPendingManaPurchase> = yield select(
+    getPendingManaPurchase
   )
 
-  if (pendingPurchase) {
-    const { network, gateway, id } = pendingPurchase
+  if (pendingManaPurchase) {
+    const { network, gateway, id } = pendingManaPurchase
     switch (gateway) {
       case NetworkGatewayType.TRANSAK:
-        yield put(unsetPurchase(pendingPurchase))
+        yield put(unsetPurchase(pendingManaPurchase))
       case NetworkGatewayType.MOON_PAY:
         yield put(
           manaFiatGatewayPurchaseCompleted(
@@ -249,38 +248,40 @@ export function* handleSetPurchase(action: SetPurchaseAction) {
     PurchaseStatus.FAILED,
     PurchaseStatus.CANCELLED
   ]
-  const { status, network, txHash } = purchase
+  const { status, network, txHash, nft } = purchase
 
-  if (
-    purchase.gateway === NetworkGatewayType.TRANSAK &&
-    purchase.status === PurchaseStatus.PENDING
-  ) {
-    window.addEventListener('beforeunload', handleBeforeUnload)
-  } else {
-    window.removeEventListener('beforeunload', handleBeforeUnload)
-  }
+  if (!nft) {
+    if (
+      purchase.gateway === NetworkGatewayType.TRANSAK &&
+      purchase.status === PurchaseStatus.PENDING
+    ) {
+      window.addEventListener('beforeunload', handleBeforeUnload)
+    } else {
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+    }
 
-  if (finalStatuses.includes(status)) {
-    let transactionUrl: string | undefined
+    if (finalStatuses.includes(status)) {
+      let transactionUrl: string | undefined
 
-    if (status === PurchaseStatus.COMPLETE) {
-      yield put(fetchWalletRequest())
+      if (status === PurchaseStatus.COMPLETE) {
+        yield put(fetchWalletRequest())
+
+        if (txHash) {
+          const chainId: ChainId = yield call(getChainIdByNetwork, network)
+          transactionUrl = getTransactionHref({ txHash }, chainId)
+        }
+      }
 
       if (txHash) {
-        const chainId: ChainId = yield call(getChainIdByNetwork, network)
-        transactionUrl = getTransactionHref({ txHash }, chainId)
+        yield put(addManaPurchaseAsTransaction(purchase))
       }
-    }
 
-    if (txHash) {
-      yield put(addManaPurchaseAsTransaction(purchase))
+      yield put(
+        openModal(BUY_MANA_WITH_FIAT_FEEDBACK_MODAL_NAME, {
+          purchase,
+          transactionUrl
+        })
+      )
     }
-
-    yield put(
-      openModal(BUY_MANA_WITH_FIAT_FEEDBACK_MODAL_NAME, {
-        purchase,
-        transactionUrl
-      })
-    )
   }
 }

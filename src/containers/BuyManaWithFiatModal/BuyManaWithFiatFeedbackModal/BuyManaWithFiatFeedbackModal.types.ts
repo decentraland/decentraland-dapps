@@ -1,11 +1,11 @@
 import { Dispatch } from 'redux'
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
-import { Purchase } from '../../../modules/mana/types'
+import { Purchase } from '../../../modules/gateway/types'
 import {
   openManaFiatGatewayRequest,
   OpenManaFiatGatewayRequestAction
-} from '../../../modules/manaFiatGateway/actions'
+} from '../../../modules/gateway/actions'
 import { ModalProps } from '../../../providers/ModalProvider/ModalProvider.types'
 import { openModal, OpenModalAction } from '../../../modules/modal/actions'
 

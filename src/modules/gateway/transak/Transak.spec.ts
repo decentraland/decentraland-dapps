@@ -5,13 +5,12 @@ import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui'
 import { getChainIdByNetwork } from '../../../lib/eth'
-import { setPurchase } from '../../mana/actions'
-import { Purchase, PurchaseStatus } from '../../mana/types'
+import { setPurchase } from '../../gateway/actions'
 import { fetchWalletRequest } from '../../wallet/actions'
 import { getChainId } from '../../wallet/selectors'
 import { Transak } from '../transak/Transak'
 import { createManaFiatGatewaysSaga } from '../sagas'
-import { ManaFiatGatewaySagasConfig } from '../types'
+import { ManaFiatGatewaySagasConfig, Purchase, PurchaseStatus } from '../types'
 import { OrderData, TransakOrderStatus } from './types'
 
 jest.mock('../../../lib/eth')
@@ -51,6 +50,7 @@ const mockOrderData: OrderData = {
     fiatCurrency: 'USD',
     fromWalletAddress: mockAddress,
     isBuyOrSell: 'BUY',
+    isNFTOrder: false,
     network: 'ethereum',
     paymentOptionId: 'payment-option-id',
     quoteId: 'quote-id',
@@ -72,10 +72,11 @@ const mockPurchase: Purchase = {
   timestamp: 1671028355396,
   status: PurchaseStatus.PENDING,
   gateway: NetworkGatewayType.TRANSAK,
-  txHash: 'mock-transaction-hash'
+  txHash: 'mock-transaction-hash',
+  nft: null
 }
 
-const manaFiatGatewaysSaga = createManaFiatGatewaysSaga(mockConfig)
+const gatewaysSaga = createManaFiatGatewaysSaga(mockConfig)
 
 describe('when interacting with Transak', () => {
   let transak: Transak
@@ -93,7 +94,7 @@ describe('when interacting with Transak', () => {
     describe('when the status of the purchase is not yet complete', () => {
       it('should put a new message in the channel signaling the set of the purchase without trying to refresh the balance', () => {
         transak.emitPurchaseEvent(mockOrderData, Network.ETHEREUM)
-        return expectSaga(manaFiatGatewaysSaga)
+        return expectSaga(gatewaysSaga)
           .provide([[select(getChainId), ChainId.ETHEREUM_GOERLI]])
           .put(setPurchase(mockPurchase))
           .silentRun()
@@ -112,7 +113,7 @@ describe('when interacting with Transak', () => {
           },
           Network.ETHEREUM
         )
-        return expectSaga(manaFiatGatewaysSaga)
+        return expectSaga(gatewaysSaga)
           .provide([[select(getChainId), ChainId.ETHEREUM_GOERLI]])
           .put(
             setPurchase({ ...mockPurchase, status: PurchaseStatus.COMPLETE })
