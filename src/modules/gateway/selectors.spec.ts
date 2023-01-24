@@ -42,7 +42,8 @@ const mockNFTPurchase: Purchase = {
   nft: {
     contractAddress: mockContractAddress,
     tokenId: mockTokenId,
-    tradeType: TradeType.PRIMARY
+    tradeType: TradeType.PRIMARY,
+    cryptoAmount: 100
   }
 }
 

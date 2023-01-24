@@ -111,7 +111,7 @@ export class Transak {
 
     return {
       id: id,
-      amount: cryptoAmount,
+      amount: isNFTOrder ? 1 : cryptoAmount,
       network,
       timestamp: +new Date(createdAt),
       status: this.getPurchaseStatus(status),
@@ -123,7 +123,8 @@ export class Transak {
           ? {
               contractAddress: nftAssetInfo.contractAddress,
               tokenId: nftAssetInfo.tokenId,
-              tradeType: nftAssetInfo.tradeType
+              tradeType: nftAssetInfo.tradeType,
+              cryptoAmount
             }
           : null
     }

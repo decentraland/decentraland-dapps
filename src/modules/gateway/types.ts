@@ -42,6 +42,7 @@ type NFTPurchase = {
     contractAddress: string
     tokenId: string
     tradeType: TradeType
+    cryptoAmount: number
   } | null
 }
 
