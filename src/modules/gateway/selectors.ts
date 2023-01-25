@@ -4,7 +4,8 @@ import {
   OPEN_MANA_FIAT_GATEWAY_REQUEST
 } from './actions'
 import { GatewayState } from './reducer'
-import { Purchase, PurchaseStatus } from './types'
+import { NFTPurchase, Purchase, PurchaseStatus } from './types'
+import { isManaPurchase } from './utils'
 
 const sortByTimestamp = (a: Purchase, b: Purchase) =>
   a.timestamp > b.timestamp ? -1 : 1
@@ -18,20 +19,27 @@ export const getError = (state: any) => getState(state).error
 export const getPurchases = (state: any) => getData(state).purchases
 export const getPendingManaPurchase = (state: any) =>
   getPurchases(state).find(
-    purchase => purchase.status === PurchaseStatus.PENDING && !purchase.nft
+    purchase =>
+      isManaPurchase(purchase) && purchase.status === PurchaseStatus.PENDING
   )
 
+// In case a user buys an NFT multiple times (after selling it), the purchases are sorted by timestamp, so only the last purchase will be taken into account.
 export const getNFTPurchase = (
   state: any,
   contractAddress: string,
   tokenId: string
-) =>
-  getPurchases(state)
+) => {
+  const nftPurchases = getPurchases(state).filter(
+    purchase => !isManaPurchase(purchase)
+  ) as NFTPurchase[]
+
+  return nftPurchases
     .sort(sortByTimestamp)
     .find(
       ({ nft }) =>
-        nft && nft.contractAddress == contractAddress && nft.tokenId == tokenId
+        nft.contractAddress == contractAddress && nft.tokenId == tokenId
     )
+}
 
 export const isFinishingPurchase = (state: any) =>
   isLoadingType(getLoading(state), MANA_FIAT_GATEWAY_PURCHASE_COMPLETED)

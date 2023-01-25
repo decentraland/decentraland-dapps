@@ -110,23 +110,24 @@ export class Transak {
     } = orderData
 
     return {
-      id: id,
-      amount: isNFTOrder ? 1 : cryptoAmount,
+      id,
       network,
       timestamp: +new Date(createdAt),
       status: this.getPurchaseStatus(status),
       address: walletAddress,
       gateway: NetworkGatewayType.TRANSAK,
       txHash: transactionHash || null,
-      nft:
-        isNFTOrder && nftAssetInfo
-          ? {
-              contractAddress: nftAssetInfo.contractAddress,
-              tokenId: nftAssetInfo.tokenId,
-              tradeType: nftAssetInfo.tradeType,
+      amount: isNFTOrder ? 1 : cryptoAmount,
+      ...(isNFTOrder && nftAssetInfo
+        ? {
+            nft: {
+              contractAddress: nftAssetInfo?.contractAddress,
+              tokenId: nftAssetInfo?.tokenId,
+              tradeType: nftAssetInfo?.tradeType,
               cryptoAmount
             }
-          : null
+          }
+        : {})
     }
   }
 

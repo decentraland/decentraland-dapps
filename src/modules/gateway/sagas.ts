@@ -42,7 +42,7 @@ import { MoonPayTransaction, MoonPayTransactionStatus } from './moonpay/types'
 import { getPendingManaPurchase } from './selectors'
 import { Transak } from './transak'
 import { ManaFiatGatewaySagasConfig, Purchase, PurchaseStatus } from './types'
-import { purchaseEventsChannel } from './utils'
+import { isManaPurchase, purchaseEventsChannel } from './utils'
 
 const DEFAULT_POLLING_DELAY = 3000
 const BUY_MANA_WITH_FIAT_FEEDBACK_MODAL_NAME = 'BuyManaWithFiatFeedbackModal'
@@ -286,7 +286,7 @@ function* handleSetManaPurchase(purchase: Purchase) {
 export function* handleSetPurchase(action: SetPurchaseAction) {
   const { purchase } = action.payload
 
-  if (!purchase.nft) {
+  if (isManaPurchase(purchase)) {
     yield call(handleSetManaPurchase, purchase)
   }
 }

@@ -72,8 +72,7 @@ const mockPurchase: Purchase = {
   timestamp: 1671028355396,
   status: PurchaseStatus.PENDING,
   gateway: NetworkGatewayType.TRANSAK,
-  txHash: 'mock-transaction-hash',
-  nft: null
+  txHash: 'mock-transaction-hash'
 }
 
 const gatewaysSaga = createGatewaySaga(mockConfig)

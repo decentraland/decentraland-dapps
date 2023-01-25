@@ -26,9 +26,8 @@ export enum PurchaseStatus {
   COMPLETE = 'complete'
 }
 
-type ManaPurchase = {
+type BasePurchase = {
   id: string
-  amount: number
   network: Network
   gateway: NetworkGatewayType
   timestamp: number
@@ -37,13 +36,15 @@ type ManaPurchase = {
   txHash: string | null
 }
 
-type NFTPurchase = {
-  nft?: {
+export type ManaPurchase = BasePurchase & { amount: number }
+
+export type NFTPurchase = BasePurchase & {
+  nft: {
     contractAddress: string
     tokenId: string
     tradeType: TradeType
     cryptoAmount: number
-  } | null
+  }
 }
 
-export type Purchase = ManaPurchase & NFTPurchase
+export type Purchase = ManaPurchase | NFTPurchase
