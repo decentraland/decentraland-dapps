@@ -23,13 +23,7 @@ export class Transak {
     customizationOptions?: Partial<CustomizationOptions>
   ) {
     this.config = config
-    this.customizationOptions = customizationOptions || {
-      defaultCryptoCurrency: 'MANA',
-      cyptoCurrencyList: 'MANA',
-      fiatCurrency: '', // INR/GBP
-      email: '', // Your customer's email address
-      redirectURL: ''
-    }
+    this.customizationOptions = customizationOptions || {}
   }
 
   /**

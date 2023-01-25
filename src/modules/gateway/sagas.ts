@@ -41,6 +41,7 @@ import { MoonPay } from './moonpay'
 import { MoonPayTransaction, MoonPayTransactionStatus } from './moonpay/types'
 import { getPendingManaPurchase } from './selectors'
 import { Transak } from './transak'
+import { CustomizationOptions } from './transak/types'
 import { ManaFiatGatewaySagasConfig, Purchase, PurchaseStatus } from './types'
 import { isManaPurchase, purchaseEventsChannel } from './utils'
 
@@ -121,7 +122,14 @@ function* handleOpenFiatGateway(
     switch (gateway) {
       case NetworkGatewayType.TRANSAK:
         const address: string = yield select(getAddress)
-        const transak = new Transak(transakConfig)
+        const customizationOptions: Partial<CustomizationOptions> = {
+          defaultCryptoCurrency: 'MANA',
+          cyptoCurrencyList: 'MANA',
+          fiatCurrency: '', // INR/GBP
+          email: '', // Your customer's email address
+          redirectURL: ''
+        }
+        const transak = new Transak(transakConfig, customizationOptions)
         transak.openWidget(address, network)
         break
       case NetworkGatewayType.MOON_PAY:
