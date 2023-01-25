@@ -48,7 +48,7 @@ const DEFAULT_POLLING_DELAY = 3000
 const BUY_MANA_WITH_FIAT_FEEDBACK_MODAL_NAME = 'BuyManaWithFiatFeedbackModal'
 
 export function createGatewaySaga(config: ManaFiatGatewaySagasConfig) {
-  return function* gatewaysSaga(): IterableIterator<ForkEffect> {
+  return function* gatewaySaga(): IterableIterator<ForkEffect> {
     yield takeEvery(
       OPEN_BUY_MANA_WITH_FIAT_MODAL_REQUEST,
       handleOpenBuyManaWithFiatModal,
@@ -241,47 +241,52 @@ const handleBeforeUnload = (e: BeforeUnloadEvent) => {
     'Are you sure you want to exit with a purchase in process? You will not be able to see it progress in the future.')
 }
 
-export function* handleSetPurchase(action: SetPurchaseAction) {
-  const { purchase } = action.payload
+function* handleSetManaPurchase(purchase: Purchase) {
   const finalStatuses = [
     PurchaseStatus.COMPLETE,
     PurchaseStatus.FAILED,
     PurchaseStatus.CANCELLED
   ]
-  const { status, network, txHash, nft } = purchase
+  const { status, network, txHash, gateway } = purchase
 
-  if (!nft) {
-    if (
-      purchase.gateway === NetworkGatewayType.TRANSAK &&
-      purchase.status === PurchaseStatus.PENDING
-    ) {
-      window.addEventListener('beforeunload', handleBeforeUnload)
-    } else {
-      window.removeEventListener('beforeunload', handleBeforeUnload)
-    }
+  if (
+    gateway === NetworkGatewayType.TRANSAK &&
+    status === PurchaseStatus.PENDING
+  ) {
+    window.addEventListener('beforeunload', handleBeforeUnload)
+  } else {
+    window.removeEventListener('beforeunload', handleBeforeUnload)
+  }
 
-    if (finalStatuses.includes(status)) {
-      let transactionUrl: string | undefined
+  if (finalStatuses.includes(status)) {
+    let transactionUrl: string | undefined
 
-      if (status === PurchaseStatus.COMPLETE) {
-        yield put(fetchWalletRequest())
-
-        if (txHash) {
-          const chainId: ChainId = yield call(getChainIdByNetwork, network)
-          transactionUrl = getTransactionHref({ txHash }, chainId)
-        }
-      }
+    if (status === PurchaseStatus.COMPLETE) {
+      yield put(fetchWalletRequest())
 
       if (txHash) {
-        yield put(addManaPurchaseAsTransaction(purchase))
+        const chainId: ChainId = yield call(getChainIdByNetwork, network)
+        transactionUrl = getTransactionHref({ txHash }, chainId)
       }
-
-      yield put(
-        openModal(BUY_MANA_WITH_FIAT_FEEDBACK_MODAL_NAME, {
-          purchase,
-          transactionUrl
-        })
-      )
     }
+
+    if (txHash) {
+      yield put(addManaPurchaseAsTransaction(purchase))
+    }
+
+    yield put(
+      openModal(BUY_MANA_WITH_FIAT_FEEDBACK_MODAL_NAME, {
+        purchase,
+        transactionUrl
+      })
+    )
+  }
+}
+
+export function* handleSetPurchase(action: SetPurchaseAction) {
+  const { purchase } = action.payload
+
+  if (!purchase.nft) {
+    yield call(handleSetManaPurchase, purchase)
   }
 }
