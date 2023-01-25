@@ -17,6 +17,7 @@
     "noUnusedParameters": true,
     "noUnusedLocals": true,
     "plugins": [{ "name": "tslint-language-service" }],
+    "skipLibCheck": true,
     "declaration": true,
     "resolveJsonModule": true,
     "esModuleInterop": true
