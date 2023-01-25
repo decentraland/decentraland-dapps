@@ -1,6 +1,8 @@
 import { EventEmitter } from 'events'
-import { ethers } from 'ethers'
-import { Provider } from 'decentraland-connect'
+import { formatEther } from '@ethersproject/units'
+import { Contract, PopulatedTransaction } from '@ethersproject/contracts'
+import { Web3Provider } from '@ethersproject/providers/lib/web3-provider'
+import type { Provider } from 'decentraland-connect'
 import {
   ContractData,
   ContractName,
@@ -25,13 +27,13 @@ export async function fetchManaBalance(chainId: ChainId, address: string) {
   try {
     const provider = await getNetworkProvider(chainId)
     const contract = getContract(ContractName.MANAToken, chainId)
-    const mana = new ethers.Contract(
+    const mana = new Contract(
       contract.address,
       contract.abi,
-      new ethers.providers.Web3Provider(provider)
+      new Web3Provider(provider)
     )
     const balance = await mana.balanceOf(address)
-    return parseFloat(ethers.utils.formatEther(balance))
+    return parseFloat(formatEther(balance))
   } catch (error) {
     return 0
   }
@@ -45,7 +47,7 @@ export async function buildWallet(appChainId: ChainId): Promise<Wallet> {
     throw new Error('Could not connect to Ethereum')
   }
 
-  const eth = new ethers.providers.Web3Provider(provider)
+  const eth = new Web3Provider(provider)
 
   const accounts: string[] = await eth.listAccounts()
   if (accounts.length === 0) {
@@ -78,7 +80,7 @@ export async function buildWallet(appChainId: ChainId): Promise<Wallet> {
 
 export async function getTargetNetworkProvider(chainId: ChainId) {
   const networkProvider = await getNetworkProvider(chainId)
-  return new ethers.providers.Web3Provider(networkProvider)
+  return new Web3Provider(networkProvider)
 }
 
 export enum TransactionEventType {
@@ -121,8 +123,8 @@ export async function sendTransaction(
 export async function sendTransaction(
   contract: ContractData,
   getPopulatedTransaction: (
-    populateTransaction: ethers.Contract['populateTransaction']
-  ) => Promise<ethers.PopulatedTransaction>
+    populateTransaction: Contract['populateTransaction']
+  ) => Promise<PopulatedTransaction>
 ): Promise<string>
 
 export async function sendTransaction(...args: any[]) {
@@ -144,7 +146,7 @@ export async function sendTransaction(...args: any[]) {
       contract.chainId
     )
 
-    const contractInstance = new ethers.Contract(
+    const contractInstance = new Contract(
       contract.address,
       contract.abi,
       targetNetworkProvider
@@ -152,13 +154,13 @@ export async function sendTransaction(...args: any[]) {
 
     // Populate the transaction data
     const unsignedTx = await (typeof contractMethodNameOrGetPopulatedTransaction ===
-    'function'
+      'function'
       ? contractMethodNameOrGetPopulatedTransaction(
-          contractInstance.populateTransaction
-        )
+        contractInstance.populateTransaction
+      )
       : contractInstance.populateTransaction[
-          contractMethodNameOrGetPopulatedTransaction
-        ](...contractArguments))
+        contractMethodNameOrGetPopulatedTransaction
+      ](...contractArguments))
 
     // If the connected provider is in the target network, use it to sign and send the tx
     if (chainId === contract.chainId) {

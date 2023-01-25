@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { ethers } from 'ethers'
+import { isAddress } from '@ethersproject/address/lib/index'
 import { AddressError, Props } from './AddressProvider.types'
 import { isENSAddress, resolveENSname } from './utils'
 
@@ -11,7 +11,7 @@ const AddressProvider = (props: Props) => {
   const [error, setError] = useState<AddressError>()
 
   useEffect(() => {
-    if (address && !ethers.utils.isAddress(address) && !isENS) {
+    if (address && !isAddress(address) && !isENS) {
       setError(AddressError.INVALID)
     }
   }, [address, isENS])

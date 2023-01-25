@@ -1,8 +1,8 @@
-import { ethers } from 'ethers'
+import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 import { Authorization, AuthorizationType } from './types'
 
-export function getTokenAmountToApprove(): ethers.BigNumber {
-  return ethers.BigNumber.from(2)
+export function getTokenAmountToApprove(): BigNumber {
+  return BigNumber.from(2)
     .pow(256)
     .sub(1)
 }
@@ -20,9 +20,9 @@ export function areEqual(left: Authorization, right: Authorization) {
   return (
     left.type === right.type &&
     left.authorizedAddress.toLowerCase() ===
-      right.authorizedAddress.toLowerCase() &&
+    right.authorizedAddress.toLowerCase() &&
     left.contractAddress.toLowerCase() ===
-      right.contractAddress.toLowerCase() &&
+    right.contractAddress.toLowerCase() &&
     left.chainId === right.chainId &&
     left.address.toLowerCase() === right.address.toLowerCase()
   )
