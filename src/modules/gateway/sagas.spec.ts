@@ -23,7 +23,7 @@ import {
 } from './actions'
 import { MoonPay } from './moonpay'
 import { MoonPayTransaction, MoonPayTransactionStatus } from './moonpay/types'
-import { createManaFiatGatewaysSaga } from './sagas'
+import { createGatewaySaga } from './sagas'
 import { Transak } from './transak'
 import { ManaFiatGatewaySagasConfig, Purchase, PurchaseStatus } from './types'
 import { getPendingManaPurchase } from './selectors'
@@ -48,7 +48,7 @@ const mockConfig: ManaFiatGatewaySagasConfig = {
   }
 }
 
-const gatewaysSaga = createManaFiatGatewaysSaga(mockConfig)
+const gatewaysSaga = createGatewaySaga(mockConfig)
 const mockAddress = '0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2'
 
 const mockWidgetUrl =

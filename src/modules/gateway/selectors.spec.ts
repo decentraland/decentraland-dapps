@@ -134,7 +134,7 @@ describe('MANA-FIAT Gateway selectors', () => {
     })
   })
 
-  describe.only('when getting the nft purchase', () => {
+  describe('when getting the nft purchase', () => {
     describe('when there is a nft purchase', () => {
       beforeEach(() => {
         manaFiatGatewayState = {

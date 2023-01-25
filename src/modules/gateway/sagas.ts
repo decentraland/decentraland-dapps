@@ -47,7 +47,7 @@ import { purchaseEventsChannel } from './utils'
 const DEFAULT_POLLING_DELAY = 3000
 const BUY_MANA_WITH_FIAT_FEEDBACK_MODAL_NAME = 'BuyManaWithFiatFeedbackModal'
 
-export function createManaFiatGatewaysSaga(config: ManaFiatGatewaySagasConfig) {
+export function createGatewaySaga(config: ManaFiatGatewaySagasConfig) {
   return function* gatewaysSaga(): IterableIterator<ForkEffect> {
     yield takeEvery(
       OPEN_BUY_MANA_WITH_FIAT_MODAL_REQUEST,

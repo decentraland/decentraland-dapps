@@ -9,7 +9,7 @@ import { setPurchase } from '../../gateway/actions'
 import { fetchWalletRequest } from '../../wallet/actions'
 import { getChainId } from '../../wallet/selectors'
 import { Transak } from '../transak/Transak'
-import { createManaFiatGatewaysSaga } from '../sagas'
+import { createGatewaySaga } from '../sagas'
 import { ManaFiatGatewaySagasConfig, Purchase, PurchaseStatus } from '../types'
 import { OrderData, TransakOrderStatus } from './types'
 
@@ -76,7 +76,7 @@ const mockPurchase: Purchase = {
   nft: null
 }
 
-const gatewaysSaga = createManaFiatGatewaysSaga(mockConfig)
+const gatewaysSaga = createGatewaySaga(mockConfig)
 
 describe('when interacting with Transak', () => {
   let transak: Transak
