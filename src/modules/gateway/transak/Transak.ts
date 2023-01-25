@@ -15,15 +15,15 @@ const PURCHASE_EVENT = 'Purchase status change'
 
 export class Transak {
   private readonly config: TransakConfig
-  private readonly providedCustomizationOptions: Partial<CustomizationOptions>
+  private readonly customizationOptions: Partial<CustomizationOptions>
   private sdk: TransakSDK
 
   constructor(
     config: TransakConfig,
-    providedCustomizationOptions?: Partial<CustomizationOptions>
+    customizationOptions?: Partial<CustomizationOptions>
   ) {
     this.config = config
-    this.providedCustomizationOptions = providedCustomizationOptions || {
+    this.customizationOptions = customizationOptions || {
       defaultCryptoCurrency: 'MANA',
       cyptoCurrencyList: 'MANA',
       fiatCurrency: '', // INR/GBP
@@ -156,7 +156,7 @@ export class Transak {
 
     const customizationOptions = {
       ...this.defaultCustomizationOptions(address),
-      ...this.providedCustomizationOptions
+      ...this.customizationOptions
     }
     this.sdk = new transakSDK(customizationOptions) as TransakSDK
     this.suscribeToEvents(network)
