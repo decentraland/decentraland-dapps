@@ -1,4 +1,4 @@
-import { type Avatar, Snapshots } from '@dcl/schemas/dist/platform/profile'
+import type { Avatar, Snapshots } from '@dcl/schemas/dist/platform/profile'
 import type { Profile } from '../../modules/profile/types'
 
 export const lambdaProfileToContentProfile = (profile: Profile) => {
