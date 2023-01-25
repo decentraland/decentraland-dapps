@@ -20,7 +20,7 @@ import {
 import { TradeType } from './transak/types'
 import { Purchase, PurchaseStatus } from './types'
 
-let manaFiatGatewayState: any
+let initialState: any
 
 const mockManaPurchase: Purchase = {
   address: '0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2',
@@ -49,45 +49,37 @@ const mockNFTPurchase: Purchase = {
 
 describe('MANA-FIAT Gateway selectors', () => {
   beforeEach(() => {
-    manaFiatGatewayState = { gateway: INITIAL_STATE }
+    initialState = { gateway: INITIAL_STATE }
   })
 
   describe("when getting the gateway's state", () => {
     it('should return the state', () => {
-      expect(getState(manaFiatGatewayState)).toEqual(
-        manaFiatGatewayState.gateway
-      )
+      expect(getState(initialState)).toEqual(initialState.gateway)
     })
   })
 
   describe('when getting the data state of the gateway', () => {
     it("should return the gateway state's data", () => {
-      expect(getData(manaFiatGatewayState)).toEqual(
-        manaFiatGatewayState.gateway.data
-      )
+      expect(getData(initialState)).toEqual(initialState.gateway.data)
     })
   })
 
   describe('when getting the error state of the gateway', () => {
     it("should return the gateway state's errors", () => {
-      expect(getError(manaFiatGatewayState)).toEqual(
-        manaFiatGatewayState.gateway.error
-      )
+      expect(getError(initialState)).toEqual(initialState.gateway.error)
     })
   })
 
   describe('when getting the loading state of the gateway', () => {
     it("should return the gateway's state loading data", () => {
-      expect(getLoading(manaFiatGatewayState)).toEqual(
-        manaFiatGatewayState.gateway.loading
-      )
+      expect(getLoading(initialState)).toEqual(initialState.gateway.loading)
     })
   })
 
   describe('when getting the purchases', () => {
     it("should return the array of purchases in the gateway's state", () => {
-      expect(getPurchases(manaFiatGatewayState)).toEqual(
-        manaFiatGatewayState.gateway.data.purchases
+      expect(getPurchases(initialState)).toEqual(
+        initialState.gateway.data.purchases
       )
     })
   })
@@ -95,10 +87,10 @@ describe('MANA-FIAT Gateway selectors', () => {
   describe('when getting the pending mana purchase', () => {
     describe('when there is a pending mana purchase', () => {
       beforeEach(() => {
-        manaFiatGatewayState = {
-          ...manaFiatGatewayState,
+        initialState = {
+          ...initialState,
           gateway: {
-            ...manaFiatGatewayState.gateway,
+            ...initialState.gateway,
             data: { purchases: [mockManaPurchase] },
             loading: [
               openManaFiatGatewayRequest(
@@ -111,25 +103,23 @@ describe('MANA-FIAT Gateway selectors', () => {
       })
 
       it('should return it', () => {
-        expect(getPendingManaPurchase(manaFiatGatewayState)).toBe(
-          mockManaPurchase
-        )
+        expect(getPendingManaPurchase(initialState)).toBe(mockManaPurchase)
       })
     })
 
     describe('when there is not', () => {
       beforeEach(() => {
-        manaFiatGatewayState = {
-          ...manaFiatGatewayState,
+        initialState = {
+          ...initialState,
           gateway: {
-            ...manaFiatGatewayState.gateway,
+            ...initialState.gateway,
             loading: []
           }
         }
       })
 
       it('should return undefined', () => {
-        expect(getPendingManaPurchase(manaFiatGatewayState)).toBeUndefined()
+        expect(getPendingManaPurchase(initialState)).toBeUndefined()
       })
     })
   })
@@ -137,10 +127,10 @@ describe('MANA-FIAT Gateway selectors', () => {
   describe('when getting the nft purchase', () => {
     describe('when there is a nft purchase', () => {
       beforeEach(() => {
-        manaFiatGatewayState = {
-          ...manaFiatGatewayState,
+        initialState = {
+          ...initialState,
           gateway: {
-            ...manaFiatGatewayState.gateway,
+            ...initialState.gateway,
             data: { purchases: [mockNFTPurchase] },
             loading: []
           }
@@ -149,7 +139,7 @@ describe('MANA-FIAT Gateway selectors', () => {
 
       it('should return it', () => {
         expect(
-          getNFTPurchase(manaFiatGatewayState, mockContractAddress, mockTokenId)
+          getNFTPurchase(initialState, mockContractAddress, mockTokenId)
         ).toBe(mockNFTPurchase)
       })
     })
@@ -163,10 +153,10 @@ describe('MANA-FIAT Gateway selectors', () => {
           timestamp: mockNFTPurchase.timestamp + 10
         }
 
-        manaFiatGatewayState = {
-          ...manaFiatGatewayState,
+        initialState = {
+          ...initialState,
           gateway: {
-            ...manaFiatGatewayState.gateway,
+            ...initialState.gateway,
             data: {
               purchases: [mockNFTPurchase, mockLastNFTPurchase]
             },
@@ -177,17 +167,17 @@ describe('MANA-FIAT Gateway selectors', () => {
 
       it('should return it', () => {
         expect(
-          getNFTPurchase(manaFiatGatewayState, mockContractAddress, mockTokenId)
+          getNFTPurchase(initialState, mockContractAddress, mockTokenId)
         ).toBe(mockLastNFTPurchase)
       })
     })
 
     describe('when there is not', () => {
       beforeEach(() => {
-        manaFiatGatewayState = {
-          ...manaFiatGatewayState,
+        initialState = {
+          ...initialState,
           gateway: {
-            ...manaFiatGatewayState.gateway,
+            ...initialState.gateway,
             loading: []
           }
         }
@@ -195,7 +185,7 @@ describe('MANA-FIAT Gateway selectors', () => {
 
       it('should return undefined', () => {
         expect(
-          getNFTPurchase(manaFiatGatewayState, mockContractAddress, mockTokenId)
+          getNFTPurchase(initialState, mockContractAddress, mockTokenId)
         ).toBeUndefined()
       })
     })
@@ -204,10 +194,10 @@ describe('MANA-FIAT Gateway selectors', () => {
   describe('when getting if the set gateway purchase completed is on going', () => {
     describe('when it is on going', () => {
       beforeEach(() => {
-        manaFiatGatewayState = {
-          ...manaFiatGatewayState,
+        initialState = {
+          ...initialState,
           gateway: {
-            ...manaFiatGatewayState.gateway,
+            ...initialState.gateway,
             loading: [
               manaFiatGatewayPurchaseCompleted(
                 Network.ETHEREUM,
@@ -221,23 +211,23 @@ describe('MANA-FIAT Gateway selectors', () => {
       })
 
       it('should return true', () => {
-        expect(isFinishingPurchase(manaFiatGatewayState)).toBe(true)
+        expect(isFinishingPurchase(initialState)).toBe(true)
       })
     })
 
     describe("when it isn't on going", () => {
       beforeEach(() => {
-        manaFiatGatewayState = {
-          ...manaFiatGatewayState,
+        initialState = {
+          ...initialState,
           gateway: {
-            ...manaFiatGatewayState.gateway,
+            ...initialState.gateway,
             loading: []
           }
         }
       })
 
       it('should return false', () => {
-        expect(isFinishingPurchase(manaFiatGatewayState)).toBe(false)
+        expect(isFinishingPurchase(initialState)).toBe(false)
       })
     })
   })
@@ -245,10 +235,10 @@ describe('MANA-FIAT Gateway selectors', () => {
   describe('when getting if the open gateway request is on going', () => {
     describe('when it is on going', () => {
       beforeEach(() => {
-        manaFiatGatewayState = {
-          ...manaFiatGatewayState,
+        initialState = {
+          ...initialState,
           gateway: {
-            ...manaFiatGatewayState.gateway,
+            ...initialState.gateway,
             loading: [
               openManaFiatGatewayRequest(
                 Network.ETHEREUM,
@@ -260,23 +250,23 @@ describe('MANA-FIAT Gateway selectors', () => {
       })
 
       it('should return true', () => {
-        expect(isOpeningGateway(manaFiatGatewayState)).toBe(true)
+        expect(isOpeningGateway(initialState)).toBe(true)
       })
     })
 
     describe("when it isn't on going", () => {
       beforeEach(() => {
-        manaFiatGatewayState = {
-          ...manaFiatGatewayState,
+        initialState = {
+          ...initialState,
           gateway: {
-            ...manaFiatGatewayState.gateway,
+            ...initialState.gateway,
             loading: []
           }
         }
       })
 
       it('should return false', () => {
-        expect(isOpeningGateway(manaFiatGatewayState)).toBe(false)
+        expect(isOpeningGateway(initialState)).toBe(false)
       })
     })
   })
