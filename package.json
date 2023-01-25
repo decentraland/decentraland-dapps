@@ -4,7 +4,7 @@
   "dependencies": {
     "@0xsequence/multicall": "^0.25.1",
     "@0xsequence/relayer": "^0.25.1",
-    "@dcl/crypto": "^3.0.0",
+    "@dcl/crypto": "^3.3.1",
     "@dcl/schemas": "^6.4.2",
     "@transak/transak-sdk": "^1.0.31",
     "@types/flat": "0.0.28",
