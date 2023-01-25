@@ -2,7 +2,8 @@ import { load } from 'redux-persistence'
 import { call, select } from 'redux-saga/effects'
 import { expectSaga } from 'redux-saga-test-plan'
 import * as matchers from 'redux-saga-test-plan/matchers'
-import { ChainId, Network } from '@dcl/schemas'
+import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
+import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 import { getChainIdByNetwork } from '../../lib/eth'
 import { getAddress } from '../wallet/selectors'
@@ -344,7 +345,7 @@ describe('when handling the request to open the MANA-FIAT gateway', () => {
     })
 
     it('should init its SDK and put the success action', () => {
-      jest.spyOn(Transak.prototype, 'openWidget').mockImplementation(() => {})
+      jest.spyOn(Transak.prototype, 'openWidget').mockImplementation(() => { })
 
       return expectSaga(manaFiatGatewaysSaga)
         .provide([[select(getAddress), mockAddress]])

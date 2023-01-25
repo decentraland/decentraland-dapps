@@ -1,4 +1,4 @@
-import { Network } from '@dcl/schemas'
+import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 import { BaseAPI } from '../../../lib/api'
 import { Purchase, PurchaseStatus } from '../../mana/types'
@@ -70,9 +70,8 @@ export class MoonPay {
 
   getWidgetUrl(network: Network) {
     const redirectURL = `${window.location.origin}?network=${network}&gateway=${NetworkGatewayType.MOON_PAY}`
-    return `${this.widgetBaseUrl}?apiKey=${
-      this.apiKey
-    }&currencyCode=MANA&redirectURL=${encodeURIComponent(redirectURL)}`
+    return `${this.widgetBaseUrl}?apiKey=${this.apiKey
+      }&currencyCode=MANA&redirectURL=${encodeURIComponent(redirectURL)}`
   }
 
   getTransactionReceiptUrl(transactionId: string) {

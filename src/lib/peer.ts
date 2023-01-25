@@ -1,4 +1,4 @@
-import { LambdasClient } from 'dcl-catalyst-client'
+import { LambdasClient } from 'dcl-catalyst-client/dist/LambdasClient'
 import { Profile } from '../modules/profile/types'
 import { BaseAPI } from './api'
 import { FetchProfileOptions, ProfileEntity } from './types'
@@ -27,7 +27,7 @@ export class PeerAPI extends BaseAPI {
     }
 
     this.cache[address] = this.lambdasClient
-      .fetchProfiles([address.toLowerCase()], undefined, {
+      .fetchProfiles([address.toLowerCase()], {
         headers: { 'Cache-Control': 'max-age=0' }
       })
       .then(profiles => profiles[0])
@@ -42,7 +42,7 @@ export class PeerAPI extends BaseAPI {
     const profile = await this.request(
       'GET',
       '/content/entities/profile?pointer=default' +
-        Math.floor(Math.random() * 128 + 1)
+      Math.floor(Math.random() * 128 + 1)
     )
     return profile[0]
   }

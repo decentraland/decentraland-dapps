@@ -4,7 +4,7 @@ import axios from 'axios'
 import { MoonPay } from './MoonPay'
 import { MoonPayConfig } from '../types'
 import { MoonPayTransaction, MoonPayTransactionStatus } from './types'
-import { Network } from '@dcl/schemas'
+import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui'
 
 axios.defaults.adapter = require('axios/lib/adapters/http')

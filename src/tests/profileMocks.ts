@@ -1,5 +1,5 @@
-import { Avatar } from '@dcl/schemas'
-import { Profile } from '../modules/profile/types'
+import type { Avatar } from '@dcl/schemas/dist/platform/profile'
+import type { Profile } from '../modules/profile/types'
 
 export const avatar: Avatar = {
   userId: 'userId',

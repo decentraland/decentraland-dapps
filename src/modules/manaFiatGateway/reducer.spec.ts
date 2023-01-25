@@ -1,4 +1,4 @@
-import { Network } from '@dcl/schemas'
+import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 import { setPurchase, unsetPurchase } from '../mana/actions'
 import { Purchase, PurchaseStatus } from '../mana/types'

@@ -1,5 +1,5 @@
 import transakSDK from '@transak/transak-sdk'
-import { Network } from '@dcl/schemas'
+import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui'
 import { Purchase, PurchaseStatus } from '../../mana/types'
 import { TransakConfig } from '../types'

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Network } from '@dcl/schemas'
+import { Network } from '@dcl/schemas/dist/dapps/network'
 import {
   BuyManaWithFiatModal as BaseBuyManaWithFiatModal,
   BuyManaWithFiatModalI18N,
@@ -103,19 +103,19 @@ export default class BuyManaWithFiatModal extends React.PureComponent<
 
     return networks.map(
       network =>
-        ({
-          type: network,
-          i18n: this.getDefaultNetworkTranslations(network),
-          gateways: gateways
-            .filter(gateway => !isDisabled(network, gateway))
-            .map(gateway => ({
-              type: gateway,
-              i18n: this.getDefaultGatewayTranslations(network, gateway),
-              learnMoreLink: gatewayLearnMoreLink[gateway],
-              onContinue: () => this.handleOnContinue(network, gateway)
-            })),
-          onClick: () => this.handleNetworkOnClick(network)
-        } as BuyManaWithFiatModalNetworkProps & BuyWithFiatNetworkProps)
+      ({
+        type: network,
+        i18n: this.getDefaultNetworkTranslations(network),
+        gateways: gateways
+          .filter(gateway => !isDisabled(network, gateway))
+          .map(gateway => ({
+            type: gateway,
+            i18n: this.getDefaultGatewayTranslations(network, gateway),
+            learnMoreLink: gatewayLearnMoreLink[gateway],
+            onContinue: () => this.handleOnContinue(network, gateway)
+          })),
+        onClick: () => this.handleNetworkOnClick(network)
+      } as BuyManaWithFiatModalNetworkProps & BuyWithFiatNetworkProps)
     )
   }
 
@@ -142,8 +142,8 @@ export default class BuyManaWithFiatModal extends React.PureComponent<
         networks={
           metadata?.selectedNetwork
             ? networks.filter(
-                network => network.type === metadata.selectedNetwork
-              )
+              network => network.type === metadata.selectedNetwork
+            )
             : networks
         }
         loading={isLoading}

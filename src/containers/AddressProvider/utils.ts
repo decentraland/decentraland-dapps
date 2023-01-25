@@ -1,5 +1,5 @@
 import { ethers } from 'ethers'
-import { ChainId } from '@dcl/schemas'
+import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { getNetworkProvider } from '../../lib/eth'
 
 export const isENSAddress = (address: string) => {

@@ -1,4 +1,4 @@
-import { Avatar } from '@dcl/schemas'
+import { Avatar } from '@dcl/schemas/dist/platform/profile'
 import { profile } from '../../tests/profileMocks'
 import { loadingReducer } from '../loading/reducer'
 import {

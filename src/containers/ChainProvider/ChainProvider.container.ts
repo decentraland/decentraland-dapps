@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import { getChainName } from '@dcl/schemas'
+import { getChainName } from '@dcl/schemas/dist/dapps/chain-id'
 import { getAppChainId, getChainId } from '../../modules/wallet/selectors'
 import { getChainConfiguration } from '../../lib/chainConfiguration'
 import {

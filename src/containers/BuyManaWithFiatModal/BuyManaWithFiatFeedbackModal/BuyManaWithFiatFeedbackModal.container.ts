@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import { Network } from '@dcl/schemas'
+import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 import { openManaFiatGatewayRequest } from '../../../modules/manaFiatGateway/actions'
 import { openModal } from '../../../modules/modal/actions'

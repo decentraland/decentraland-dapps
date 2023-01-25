@@ -1,10 +1,8 @@
 import { ethers } from 'ethers'
 import { Authenticator, AuthChain } from '@dcl/crypto'
-import { Entity, EntityType } from '@dcl/schemas'
-import {
-  CatalystClient,
-  BuildEntityWithoutFilesOptions
-} from 'dcl-catalyst-client'
+import { Entity, EntityType } from '@dcl/schemas/dist/platform/entity'
+import { CatalystClient } from 'dcl-catalyst-client/dist/CatalystClient'
+import { BuildEntityWithoutFilesOptions } from 'dcl-catalyst-client/dist/ContentClient'
 import { getConnectedProvider } from './eth'
 import { ProfileEntity } from './types'
 import { PeerAPI } from './peer'
@@ -19,8 +17,8 @@ export class EntitiesOperator {
     this.catalystClient = new CatalystClient({ catalystUrl: peerUrl })
     this.catalystClientWithoutGbCollector = peerWithNoGbCollectorUrl
       ? new CatalystClient({
-          catalystUrl: peerWithNoGbCollectorUrl
-        })
+        catalystUrl: peerWithNoGbCollectorUrl
+      })
       : null
     this.peerAPI = new PeerAPI(peerUrl)
   }
@@ -57,7 +55,6 @@ export class EntitiesOperator {
    */
   async getProfileEntity(address: string): Promise<ProfileEntity> {
     const entities: Entity[] = await this.catalystClient.fetchEntitiesByPointers(
-      EntityType.PROFILE,
       [address.toLowerCase()]
     )
 
