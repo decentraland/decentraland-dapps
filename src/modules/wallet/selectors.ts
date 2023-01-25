@@ -1,4 +1,4 @@
-import { ChainId } from '@dcl/schemas'
+import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { isLoadingType } from '../loading/selectors'
 import { CONNECT_WALLET_REQUEST, ENABLE_WALLET_REQUEST } from './actions'

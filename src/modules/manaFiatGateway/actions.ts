@@ -1,4 +1,4 @@
-import { Network } from '@dcl/schemas'
+import { Network } from '@dcl/schemas/dist/dapps/network'
 import { action } from 'typesafe-actions'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 import { getChainIdByNetwork } from '../../lib/eth'

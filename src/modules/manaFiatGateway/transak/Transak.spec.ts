@@ -1,7 +1,8 @@
 import { select } from 'redux-saga/effects'
 import { expectSaga } from 'redux-saga-test-plan'
 import transakSDK from '@transak/transak-sdk'
-import { ChainId, Network } from '@dcl/schemas'
+import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
+import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui'
 import { getChainIdByNetwork } from '../../../lib/eth'
 import { setPurchase } from '../../mana/actions'
@@ -124,7 +125,7 @@ describe('when interacting with Transak', () => {
 
   describe('when opnening the widget', () => {
     beforeEach(() => {
-      jest.spyOn(transakSDK.prototype, 'init').mockImplementation(() => {})
+      jest.spyOn(transakSDK.prototype, 'init').mockImplementation(() => { })
     })
 
     it('should call the method init from the Transak SDK', () => {

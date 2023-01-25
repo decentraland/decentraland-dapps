@@ -2,7 +2,7 @@ import { call, select, take } from 'redux-saga/effects'
 import * as matchers from 'redux-saga-test-plan/matchers'
 import { expectSaga } from 'redux-saga-test-plan'
 import { ErrorCode } from 'decentraland-transactions'
-import { ChainId } from '@dcl/schemas'
+import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { switchNetworkSuccess } from '../wallet/actions'
 import {
   getContractAccountErrorToast,
@@ -40,9 +40,9 @@ describe('when running the toastSaga', () => {
 describe('when running the watchMetaTransactionErrors', () => {
   it('should take actions from channel and forward them to the handleMetaTransactionError saga', () => {
     const fakeChannel = {
-      take() {},
-      flush() {},
-      close() {}
+      take() { },
+      flush() { },
+      close() { }
     }
 
     return expectSaga(watchMetaTransactionErrors)

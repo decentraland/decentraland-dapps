@@ -1,5 +1,5 @@
 import { Dispatch } from 'redux'
-import { Network } from '@dcl/schemas'
+import { Network } from '@dcl/schemas/dist/dapps/network'
 import {
   BuyManaWithFiatModalI18N,
   BuyManaWithFiatModalNetworkI18N,
@@ -35,8 +35,8 @@ export type Props = DefaultProps &
   Omit<ModalProps, 'metadata'> & {
     metadata: Metadata
     networks?:
-      | (BuyManaWithFiatModalNetworkProps & BuyWithFiatNetworkProps)[]
-      | undefined
+    | (BuyManaWithFiatModalNetworkProps & BuyWithFiatNetworkProps)[]
+    | undefined
     hasTranslations?: boolean
     onContinue: (network: Network, gateway: NetworkGatewayType) => void
   }

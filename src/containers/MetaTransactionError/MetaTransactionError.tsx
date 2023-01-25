@@ -1,5 +1,6 @@
 import React from 'react'
-import { getChainName, Network } from '@dcl/schemas'
+import { getChainName } from '@dcl/schemas/dist/dapps/chain-id'
+import { Network } from '@dcl/schemas/dist/dapps/network'
 import { Button, Row } from 'decentraland-ui'
 import { t } from '../../modules/translation/utils'
 import { getChainIdByNetwork } from '../../lib/eth'

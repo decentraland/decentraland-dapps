@@ -1,5 +1,5 @@
 import { Dispatch } from 'redux'
-import { Network } from '@dcl/schemas'
+import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 import { Purchase } from '../../../modules/mana/types'
 import {
