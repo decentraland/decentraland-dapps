@@ -15,10 +15,21 @@ const PURCHASE_EVENT = 'Purchase status change'
 
 export class Transak {
   private readonly config: TransakConfig
+  private readonly providedCustomizationOptions: Partial<CustomizationOptions>
   private sdk: TransakSDK
 
-  constructor(config: TransakConfig) {
+  constructor(
+    config: TransakConfig,
+    providedCustomizationOptions?: Partial<CustomizationOptions>
+  ) {
     this.config = config
+    this.providedCustomizationOptions = providedCustomizationOptions || {
+      defaultCryptoCurrency: 'MANA',
+      cyptoCurrencyList: 'MANA',
+      fiatCurrency: '', // INR/GBP
+      email: '', // Your customer's email address
+      redirectURL: ''
+    }
   }
 
   /**
@@ -64,7 +75,7 @@ export class Transak {
     }[status]
   }
 
-  protected defaultCustomizationOptions(
+  private defaultCustomizationOptions(
     address: string
   ): DefaultCustomizationOptions {
     return {
@@ -75,17 +86,6 @@ export class Transak {
       hostURL: window.location.origin,
       widgetHeight: '650px',
       widgetWidth: '450px'
-    }
-  }
-
-  protected customizationOptions(address: string): CustomizationOptions {
-    return {
-      ...this.defaultCustomizationOptions(address),
-      defaultCryptoCurrency: 'MANA',
-      cyptoCurrencyList: 'MANA',
-      fiatCurrency: '', // INR/GBP
-      email: '', // Your customer's email address
-      redirectURL: ''
     }
   }
 
@@ -154,7 +154,10 @@ export class Transak {
   openWidget(address: string, network: Network) {
     const transakNetwork = network === Network.MATIC ? 'polygon' : 'ethereum'
 
-    const customizationOptions = this.customizationOptions(address)
+    const customizationOptions = {
+      ...this.defaultCustomizationOptions(address),
+      ...this.providedCustomizationOptions
+    }
     this.sdk = new transakSDK(customizationOptions) as TransakSDK
     this.suscribeToEvents(network)
 
