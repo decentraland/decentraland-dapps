@@ -4,7 +4,10 @@ import {
   getNetworkMapping
 } from '@dcl/schemas/dist/dapps/chain-id'
 import { Network } from '@dcl/schemas/dist/dapps/network'
-import { RPC_URLS } from 'decentraland-connect/dist/connectors/NetworkConnector'
+import { ProviderType } from '@dcl/schemas/dist/dapps/provider-type'
+import { getRpcUrls } from 'decentraland-connect/dist/configuration'
+
+const RPC_URLS = getRpcUrls(ProviderType.NETWORK)
 
 export const MANA_GRAPH_BY_CHAIN_ID = {
   [ChainId.ETHEREUM_MAINNET]:
