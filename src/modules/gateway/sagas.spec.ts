@@ -48,7 +48,7 @@ const mockConfig: ManaFiatGatewaySagasConfig = {
   }
 }
 
-const gatewaysSaga = createGatewaySaga(mockConfig)
+const gatewaySaga = createGatewaySaga(mockConfig)
 const mockAddress = '0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2'
 
 const mockWidgetUrl =
@@ -196,7 +196,7 @@ describe('when handling the request to open the Buy MANA with FIAT modal', () =>
 
   describe('when the pending purchase selector fails', () => {
     it('should put the failure action', async () => {
-      return expectSaga(gatewaysSaga)
+      return expectSaga(gatewaySaga)
         .provide([
           [select(getPendingManaPurchase), Promise.reject(new Error(error))]
         ])
@@ -211,7 +211,7 @@ describe('when handling the request to open the Buy MANA with FIAT modal', () =>
 
     describe('when there is no selected network', () => {
       it('should put the action signaling the opening of the Buy MANA with FIAT modal and that the request succeed', async () => {
-        return expectSaga(gatewaysSaga)
+        return expectSaga(gatewaySaga)
           .provide([[select(getPendingManaPurchase), undefined]])
           .dispatch(openBuyManaWithFiatModalRequest())
           .put(
@@ -228,7 +228,7 @@ describe('when handling the request to open the Buy MANA with FIAT modal', () =>
       })
 
       it('should put the action signaling the opening of the Buy MANA with FIAT modal and that the request succeed', async () => {
-        return expectSaga(gatewaysSaga)
+        return expectSaga(gatewaySaga)
           .provide([[select(getPendingManaPurchase), undefined]])
           .dispatch(openBuyManaWithFiatModalRequest(selectedNetwork))
           .put(openModal(buyManaWithFiatModalName, { selectedNetwork }))
@@ -246,7 +246,7 @@ describe('when handling the request to open the Buy MANA with FIAT modal', () =>
           gateway: NetworkGatewayType.TRANSAK
         }
 
-        return expectSaga(gatewaysSaga)
+        return expectSaga(gatewaySaga)
           .provide([[select(getPendingManaPurchase), transakMockPurchase]])
           .dispatch(openBuyManaWithFiatModalRequest())
           .put(
@@ -272,7 +272,7 @@ describe('when handling the request to open the Buy MANA with FIAT modal', () =>
       })
 
       it('should put the failure action', async () => {
-        return expectSaga(gatewaysSaga)
+        return expectSaga(gatewaySaga)
           .provide([
             [
               select(getPendingManaPurchase),
@@ -294,7 +294,7 @@ describe('when handling the request to open the Buy MANA with FIAT modal', () =>
       })
 
       it('should put the action signaling the opening of the Feedback Modal in pending status with the go to url, and that the request succeed', async () => {
-        return expectSaga(gatewaysSaga)
+        return expectSaga(gatewaySaga)
           .provide([
             [
               select(getPendingManaPurchase),
@@ -330,7 +330,7 @@ describe('when handling the request to open the MANA-FIAT gateway', () => {
       })
 
       it('should put the failure action', async () => {
-        return expectSaga(gatewaysSaga)
+        return expectSaga(gatewaySaga)
           .provide([[select(getAddress), mockAddress]])
           .dispatch(
             openManaFiatGatewayRequest(
@@ -350,9 +350,9 @@ describe('when handling the request to open the MANA-FIAT gateway', () => {
     })
 
     it('should init its SDK and put the success action', () => {
-      jest.spyOn(Transak.prototype, 'openWidget').mockImplementation(() => { })
+      jest.spyOn(Transak.prototype, 'openWidget').mockImplementation(() => {})
 
-      return expectSaga(gatewaysSaga)
+      return expectSaga(gatewaySaga)
         .provide([[select(getAddress), mockAddress]])
         .dispatch(
           openManaFiatGatewayRequest(
@@ -384,7 +384,7 @@ describe('when handling the request to open the MANA-FIAT gateway', () => {
       })
 
       it('should put the failure action', async () => {
-        return expectSaga(gatewaysSaga)
+        return expectSaga(gatewaySaga)
           .dispatch(
             openManaFiatGatewayRequest(
               Network.ETHEREUM,
@@ -407,7 +407,7 @@ describe('when handling the request to open the MANA-FIAT gateway', () => {
         .spyOn(MoonPay.prototype, 'getWidgetUrl')
         .mockReturnValueOnce(mockWidgetUrl)
 
-      return expectSaga(gatewaysSaga)
+      return expectSaga(gatewaySaga)
         .dispatch(
           openManaFiatGatewayRequest(
             Network.ETHEREUM,
@@ -447,7 +447,7 @@ describe('when handling the completion of the purchase', () => {
       it('should put the action signaling the failure', () => {
         const error = '404 - Transaction not found'
 
-        return expectSaga(gatewaysSaga)
+        return expectSaga(gatewaySaga)
           .provide([
             [
               matchers.call.fn(moonPay.getTransaction),
@@ -481,7 +481,7 @@ describe('when handling the completion of the purchase', () => {
           status: PurchaseStatus.COMPLETE
         }
 
-        return expectSaga(gatewaysSaga)
+        return expectSaga(gatewaySaga)
           .provide([
             [
               matchers.call.fn(moonPay.getTransaction),
@@ -535,7 +535,7 @@ describe('when handling the completion of the purchase', () => {
           status: PurchaseStatus.COMPLETE
         }
 
-        return expectSaga(gatewaysSaga)
+        return expectSaga(gatewaySaga)
           .provide([
             [
               call(getChainIdByNetwork, Network.ETHEREUM),
@@ -585,7 +585,7 @@ describe('when handling the action signaling the set purchase', () => {
   describe('when the purchase is not yet complete, failed, nor cancelled', () => {
     describe('when the purchase is from Transak', () => {
       it('should not put the fetch wallet request action but should add a listener to the beforeunload event', async () => {
-        return expectSaga(gatewaysSaga)
+        return expectSaga(gatewaySaga)
           .dispatch(
             setPurchase({
               ...mockPurchase,
@@ -603,7 +603,7 @@ describe('when handling the action signaling the set purchase', () => {
 
     describe('when the purchase is from MoonPay', () => {
       it('should not put the fetch wallet request action nor add the listener to the beforeunload event', async () => {
-        return expectSaga(gatewaysSaga)
+        return expectSaga(gatewaySaga)
           .dispatch(setPurchase(mockPurchase))
           .silentRun()
           .then(({ effects }) => {
@@ -624,7 +624,7 @@ describe('when handling the action signaling the set purchase', () => {
           status: PurchaseStatus.COMPLETE
         }
 
-        return expectSaga(gatewaysSaga)
+        return expectSaga(gatewaySaga)
           .dispatch(setPurchase(expectedPurchase))
           .put(fetchWalletRequest())
           .put(
@@ -649,7 +649,7 @@ describe('when handling the action signaling the set purchase', () => {
           status: PurchaseStatus.COMPLETE
         }
 
-        return expectSaga(gatewaysSaga)
+        return expectSaga(gatewaySaga)
           .provide([
             [
               call(getChainIdByNetwork, Network.ETHEREUM),
@@ -681,7 +681,7 @@ describe('when handling the action signaling the set purchase', () => {
         status: PurchaseStatus.FAILED
       }
 
-      return expectSaga(gatewaysSaga)
+      return expectSaga(gatewaySaga)
         .dispatch(setPurchase(expectedPurchase))
         .put(addManaPurchaseAsTransaction(expectedPurchase))
         .put(
@@ -705,7 +705,7 @@ describe('when handling the action signaling the set purchase', () => {
         status: PurchaseStatus.CANCELLED
       }
 
-      return expectSaga(gatewaysSaga)
+      return expectSaga(gatewaySaga)
         .dispatch(setPurchase(expectedPurchase))
         .put(addManaPurchaseAsTransaction(expectedPurchase))
         .put(
@@ -726,7 +726,7 @@ describe('when handling the action signaling the set purchase', () => {
 describe('when handling the action signaling the load of the local storage into the state', () => {
   describe('when there is no pending purchases in the state', () => {
     it('should not put any action', async () => {
-      return expectSaga(gatewaysSaga)
+      return expectSaga(gatewaySaga)
         .provide([[select(getPendingManaPurchase), undefined]])
         .dispatch(load({}))
         .silentRun()
@@ -739,7 +739,7 @@ describe('when handling the action signaling the load of the local storage into 
   describe('when there is a pending purchase in the state', () => {
     describe('when it is a MoonPay purchase', () => {
       it('should put the action signaling the completion of the purchase', async () => {
-        return expectSaga(gatewaysSaga)
+        return expectSaga(gatewaySaga)
           .provide([
             [
               select(getPendingManaPurchase),
@@ -766,7 +766,7 @@ describe('when handling the action signaling the load of the local storage into 
           gateway: NetworkGatewayType.TRANSAK
         }
 
-        return expectSaga(gatewaysSaga)
+        return expectSaga(gatewaySaga)
           .provide([[select(getPendingManaPurchase), transakPurchase]])
           .dispatch(load({}))
           .put(unsetPurchase(transakPurchase))

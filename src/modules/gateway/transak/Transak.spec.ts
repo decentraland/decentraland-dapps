@@ -75,7 +75,7 @@ const mockPurchase: Purchase = {
   txHash: 'mock-transaction-hash'
 }
 
-const gatewaysSaga = createGatewaySaga(mockConfig)
+const gatewaySaga = createGatewaySaga(mockConfig)
 
 describe('when interacting with Transak', () => {
   let transak: Transak
@@ -93,7 +93,7 @@ describe('when interacting with Transak', () => {
     describe('when the status of the purchase is not yet complete', () => {
       it('should put a new message in the channel signaling the set of the purchase without trying to refresh the balance', () => {
         transak.emitPurchaseEvent(mockOrderData, Network.ETHEREUM)
-        return expectSaga(gatewaysSaga)
+        return expectSaga(gatewaySaga)
           .provide([[select(getChainId), ChainId.ETHEREUM_GOERLI]])
           .put(setPurchase(mockPurchase))
           .silentRun()
@@ -112,7 +112,7 @@ describe('when interacting with Transak', () => {
           },
           Network.ETHEREUM
         )
-        return expectSaga(gatewaysSaga)
+        return expectSaga(gatewaySaga)
           .provide([[select(getChainId), ChainId.ETHEREUM_GOERLI]])
           .put(
             setPurchase({ ...mockPurchase, status: PurchaseStatus.COMPLETE })
@@ -125,7 +125,7 @@ describe('when interacting with Transak', () => {
 
   describe('when opnening the widget', () => {
     beforeEach(() => {
-      jest.spyOn(transakSDK.prototype, 'init').mockImplementation(() => { })
+      jest.spyOn(transakSDK.prototype, 'init').mockImplementation(() => {})
     })
 
     it('should call the method init from the Transak SDK', () => {
