@@ -1,4 +1,5 @@
-import { connection, Provider } from 'decentraland-connect'
+import type { Provider } from 'decentraland-connect/dist/types'
+import { connection } from 'decentraland-connect/dist/ConnectionManager'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { Web3Provider } from '@ethersproject/providers/lib/web3-provider'

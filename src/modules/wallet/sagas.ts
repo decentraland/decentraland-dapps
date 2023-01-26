@@ -11,7 +11,8 @@ import {
   fork
 } from 'redux-saga/effects'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
-import { connection, Provider } from 'decentraland-connect'
+import { connection } from 'decentraland-connect/dist/ConnectionManager'
+import type { Provider } from 'decentraland-connect/dist/types'
 import {
   _getAppChainId,
   getConnectedProvider,
