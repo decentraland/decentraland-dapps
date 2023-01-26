@@ -1,7 +1,7 @@
-import {
+import type {
   TransactionResponse,
   TransactionReceipt
-} from '@ethersproject/providers'
+} from '@ethersproject/abstract-provider'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 
 export enum TransactionStatus {

@@ -1,4 +1,4 @@
-import { ethers } from 'ethers'
+import { Web3Provider } from '@ethersproject/providers/lib/web3-provider'
 import {
   put,
   call,
@@ -11,7 +11,8 @@ import {
   fork
 } from 'redux-saga/effects'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
-import { connection, Provider } from 'decentraland-connect'
+import { connection } from 'decentraland-connect/dist/ConnectionManager'
+import type { Provider } from 'decentraland-connect/dist/types'
 import {
   _getAppChainId,
   getConnectedProvider,
@@ -61,7 +62,7 @@ import { CreateWalletOptions, Wallet } from './types'
 import { getAppChainId, isConnected } from './selectors'
 
 // Patch Samsung's Cucumber provider send to support promises
-const provider = (window as any).ethereum as ethers.providers.Web3Provider
+const provider = (window as any).ethereum as Web3Provider
 
 let cucumberProviderSend: (...args: any[]) => Promise<string[]>
 if (isCucumberProvider()) {

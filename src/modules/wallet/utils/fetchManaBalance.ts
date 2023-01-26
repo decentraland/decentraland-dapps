@@ -1,4 +1,6 @@
-import { ethers } from 'ethers';
+import { formatEther } from '@ethersproject/units';
+import { Contract } from '@ethersproject/contracts';
+import { Web3Provider } from '@ethersproject/providers/lib/web3-provider';
 import {
   ContractName,
   getContract
@@ -11,13 +13,13 @@ export async function fetchManaBalance(chainId: ChainId, address: string) {
   try {
     const provider = await getNetworkProvider(chainId);
     const contract = getContract(ContractName.MANAToken, chainId);
-    const mana = new ethers.Contract(
+    const mana = new Contract(
       contract.address,
       contract.abi,
-      new ethers.providers.Web3Provider(provider)
+      new Web3Provider(provider)
     );
     const balance = await mana.balanceOf(address);
-    return parseFloat(ethers.utils.formatEther(balance));
+    return parseFloat(formatEther(balance));
   } catch (error) {
     return 0;
   }

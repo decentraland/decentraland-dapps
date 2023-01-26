@@ -1,7 +1,9 @@
-import { connection, Provider } from 'decentraland-connect'
+import type { Provider } from 'decentraland-connect/dist/types'
+import { connection } from 'decentraland-connect/dist/ConnectionManager'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { Network } from '@dcl/schemas/dist/dapps/network'
-import { ethers } from 'ethers'
+import { Web3Provider } from '@ethersproject/providers/lib/web3-provider'
+import { Signer } from '@ethersproject/abstract-signer'
 import { ProviderType } from '@dcl/schemas/dist/dapps/provider-type'
 import { getChainConfiguration } from './chainConfiguration'
 import { isMobile } from './utils'
@@ -42,7 +44,7 @@ export async function getNetworkProvider(chainId: ChainId): Promise<Provider> {
   */
   const connectedProvider = await getConnectedProvider()
   if (connectedProvider) {
-    const connectedChainId = await new ethers.providers.Web3Provider(
+    const connectedChainId = await new Web3Provider(
       connectedProvider
     )
       .getSigner()
@@ -63,13 +65,13 @@ export async function getConnectedProvider(): Promise<Provider | null> {
   }
 }
 
-export async function getSigner(): Promise<ethers.Signer> {
+export async function getSigner(): Promise<Signer> {
   const provider = await getConnectedProvider()
   if (!provider) {
     throw new Error('Could not connect to provider')
   }
 
-  const eth = new ethers.providers.Web3Provider(provider)
+  const eth = new Web3Provider(provider)
   return eth.getSigner()
 }
 
