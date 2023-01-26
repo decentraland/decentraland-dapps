@@ -12,11 +12,8 @@ import {
 } from './actions'
 import { getState } from './selectors'
 import * as cache from './cache'
-import {
-  TransactionEventData,
-  TransactionEventType,
-  transactionEvents
-} from '../wallet/utils'
+import { TransactionEventData, TransactionEventType } from '../wallet/utils/types'
+import { transactionEvents } from '../wallet/utils/transactionEvents'
 import { SWITCH_NETWORK_SUCCESS } from '../wallet/actions'
 import {
   getContractAccountErrorToast,

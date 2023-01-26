@@ -5,8 +5,6 @@ import filter from 'redux-storage-decorator-filter'
 import { hasLocalStorage, migrateStorage } from '../../lib/localStorage'
 import { disabledMiddleware } from '../../lib/disabledMiddleware'
 import { StorageOwnData } from '../../lib/types'
-import { STORAGE_LOAD } from './actions'
-import { StorageMiddleware } from './types'
 import {
   CHANGE_LOCALE,
   FETCH_TRANSLATIONS_SUCCESS
@@ -22,7 +20,9 @@ import {
   CLEAR_TRANSACTIONS,
   CLEAR_TRANSACTION
 } from '../transaction/actions'
-import { SET_PURCHASE } from '../mana/actions'
+import { SET_PURCHASE } from '../gateway/actions'
+import { STORAGE_LOAD } from './actions'
+import { StorageMiddleware } from './types'
 
 const disabledLoad = (store: any) =>
   setTimeout(() => store.dispatch({ type: STORAGE_LOAD, payload: {} }))
@@ -53,7 +53,7 @@ export function createStorageMiddleware<T extends StorageOwnData>(
     ['translation', 'locale'],
     'transaction',
     ['storage', 'version'],
-    ['manaFiatGateway', 'data', 'purchases'],
+    ['gateway', 'data', 'purchases'],
     ...paths
   ])
 

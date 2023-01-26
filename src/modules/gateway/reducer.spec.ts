@@ -1,7 +1,7 @@
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
-import { setPurchase, unsetPurchase } from '../mana/actions'
-import { Purchase, PurchaseStatus } from '../mana/types'
+import { setPurchase, unsetPurchase } from '../gateway/actions'
+import { Purchase, PurchaseStatus } from './types'
 import {
   manaFiatGatewayPurchaseCompletedFailure,
   openBuyManaWithFiatModalFailure,
@@ -11,18 +11,14 @@ import {
   openManaFiatGatewayRequest,
   openManaFiatGatewaySuccess
 } from './actions'
-import {
-  INITIAL_STATE,
-  manaFiatGatewayReducer,
-  ManaFiatGatewayState
-} from './reducer'
+import { INITIAL_STATE, gatewayReducer, GatewayState } from './reducer'
 
 describe('when handling the open buy mana with fiat modal request', () => {
   describe('when opening the modal without a selected network', () => {
     it('should set error to null and add the action to the loading state', () => {
       const action = openBuyManaWithFiatModalRequest()
 
-      const state = manaFiatGatewayReducer(
+      const state = gatewayReducer(
         { data: { purchases: [] }, loading: [], error: 'error' },
         action
       )
@@ -39,7 +35,7 @@ describe('when handling the open buy mana with fiat modal request', () => {
     it('should set error to null and add the action to the loading state', () => {
       const action = openBuyManaWithFiatModalRequest(Network.ETHEREUM)
 
-      const state = manaFiatGatewayReducer(
+      const state = gatewayReducer(
         { data: { purchases: [] }, loading: [], error: 'error' },
         action
       )
@@ -58,7 +54,7 @@ describe('when handling the open buy mana with fiat modal success', () => {
     const requestAction = openBuyManaWithFiatModalRequest()
     const successAction = openBuyManaWithFiatModalSuccess()
 
-    const state = manaFiatGatewayReducer(
+    const state = gatewayReducer(
       { data: { purchases: [] }, loading: [requestAction], error: null },
       successAction
     )
@@ -73,7 +69,7 @@ describe('when handling the open buy mana with fiat modal failure', () => {
     const error = 'error'
     const failureAction = openBuyManaWithFiatModalFailure(error)
 
-    const state = manaFiatGatewayReducer(
+    const state = gatewayReducer(
       { data: { purchases: [] }, loading: [requestAction], error: null },
       failureAction
     )
@@ -89,7 +85,7 @@ describe('when handling the open mana fiat gateway modal request', () => {
       NetworkGatewayType.MOON_PAY
     )
 
-    const state = manaFiatGatewayReducer(
+    const state = gatewayReducer(
       { data: { purchases: [] }, loading: [], error: 'error' },
       action
     )
@@ -110,7 +106,7 @@ describe('when handling the open mana fiat gateway modal success', () => {
     )
     const successAction = openManaFiatGatewaySuccess()
 
-    const state = manaFiatGatewayReducer(
+    const state = gatewayReducer(
       { data: { purchases: [] }, loading: [requestAction], error: null },
       successAction
     )
@@ -132,7 +128,7 @@ describe('when handling the open mana fiat gateway modal failure', () => {
       error
     )
 
-    const state = manaFiatGatewayReducer(
+    const state = gatewayReducer(
       { data: { purchases: [] }, loading: [requestAction], error: null },
       failureAction
     )
@@ -143,13 +139,13 @@ describe('when handling the open mana fiat gateway modal failure', () => {
 
 describe('when handling the failure on purchase completion', () => {
   it('should set the error in the state', () => {
-    const state: ManaFiatGatewayState = INITIAL_STATE
+    const state: GatewayState = INITIAL_STATE
     const network = Network.ETHEREUM
     const gateway = NetworkGatewayType.MOON_PAY
     const transactionId = 'aTransactionId'
     const error = 'anError'
     expect(
-      manaFiatGatewayReducer(
+      gatewayReducer(
         state,
         manaFiatGatewayPurchaseCompletedFailure(
           network,
@@ -176,11 +172,11 @@ describe('when handling the set purchase', () => {
     gateway: NetworkGatewayType.MOON_PAY,
     txHash: null
   }
-  const state: ManaFiatGatewayState = INITIAL_STATE
+  const state: GatewayState = INITIAL_STATE
 
   describe('when the purchase does not yet exist', () => {
     it('should add or replace if already exists ', () => {
-      expect(manaFiatGatewayReducer(state, setPurchase(mockPurchase))).toEqual({
+      expect(gatewayReducer(state, setPurchase(mockPurchase))).toEqual({
         ...state,
         data: {
           ...state.data,
@@ -202,10 +198,7 @@ describe('when handling the set purchase', () => {
         status: PurchaseStatus.COMPLETE
       }
       expect(
-        manaFiatGatewayReducer(
-          stateWithPurchases,
-          setPurchase(completeMockPurchase)
-        )
+        gatewayReducer(stateWithPurchases, setPurchase(completeMockPurchase))
       ).toEqual({
         ...stateWithPurchases,
         data: {
@@ -228,13 +221,11 @@ describe('when handling the unset purchase', () => {
     gateway: NetworkGatewayType.MOON_PAY,
     txHash: null
   }
-  const state: ManaFiatGatewayState = INITIAL_STATE
+  const state: GatewayState = INITIAL_STATE
 
   describe('when the purchase does not exist', () => {
     it('should leave the purchases as before ', () => {
-      expect(
-        manaFiatGatewayReducer(state, unsetPurchase(mockPurchase))
-      ).toEqual({
+      expect(gatewayReducer(state, unsetPurchase(mockPurchase))).toEqual({
         ...state,
         data: {
           ...state.data,
@@ -252,7 +243,7 @@ describe('when handling the unset purchase', () => {
 
     it('should remove it from the purchases list', () => {
       expect(
-        manaFiatGatewayReducer(stateWithPurchases, unsetPurchase(mockPurchase))
+        gatewayReducer(stateWithPurchases, unsetPurchase(mockPurchase))
       ).toEqual({
         ...stateWithPurchases,
         data: {

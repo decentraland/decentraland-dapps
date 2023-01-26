@@ -70,9 +70,15 @@ export type OrderData = {
     fiatCurrency: string
     fromWalletAddress: string
     isBuyOrSell: 'BUY' | 'SELL'
+    isNFTOrder: boolean
     transactionLink?: string
     transactionHash?: string
     network: 'ethereum' | 'matic'
+    nftAssetInfo?: {
+      contractAddress: string
+      tokenId: string
+      tradeType: TradeType
+    }
     paymentOptionId: string
     quoteId: string
     referenceCode: number

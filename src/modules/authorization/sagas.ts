@@ -22,7 +22,7 @@ import {
   REVOKE_TOKEN_REQUEST
 } from './actions'
 import { Authorization, AuthorizationAction, AuthorizationType } from './types'
-import { sendTransaction } from '../wallet/utils'
+import { sendTransaction } from '../wallet/utils/sendTransaction'
 
 export function createAuthorizationSaga() {
   return function* authorizationSaga() {

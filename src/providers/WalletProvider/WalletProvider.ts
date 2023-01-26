@@ -1,6 +1,6 @@
 import React from 'react'
 import { getConnectedProvider } from '../../lib/eth'
-import { buildWallet } from '../../modules/wallet/utils'
+import { buildWallet } from "../../modules/wallet/utils/buildWallet"
 import {
   Props,
   EventType,

@@ -2,9 +2,9 @@ import { Network } from '@dcl/schemas/dist/dapps/network'
 import { action } from 'typesafe-actions'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 import { getChainIdByNetwork } from '../../lib/eth'
-import { Purchase } from '../mana/types'
 import { buildTransactionWithFromPayload } from '../transaction/utils'
 import { MoonPayTransactionStatus } from './moonpay/types'
+import { Purchase } from './types'
 
 // Open MANA-FIAT Gateway
 export const OPEN_BUY_MANA_WITH_FIAT_MODAL_REQUEST =
@@ -125,3 +125,15 @@ export const addManaPurchaseAsTransaction = (purchase: Purchase) => {
 export type AddManaPurchaseAsTransactionAction = ReturnType<
   typeof addManaPurchaseAsTransaction
 >
+
+// Set Purchase
+export const SET_PURCHASE = 'Set Purchase'
+export const setPurchase = (purchase: Purchase) =>
+  action(SET_PURCHASE, { purchase })
+export type SetPurchaseAction = ReturnType<typeof setPurchase>
+
+// Unset Purchase
+export const UNSET_PURCHASE = 'Unset Purchase'
+export const unsetPurchase = (purchase: Purchase) =>
+  action(UNSET_PURCHASE, { purchase })
+export type UnsetPurchaseAction = ReturnType<typeof unsetPurchase>
