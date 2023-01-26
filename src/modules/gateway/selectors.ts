@@ -37,7 +37,8 @@ export const getNFTPurchase = (
     .sort(sortByTimestamp)
     .find(
       ({ nft }) =>
-        nft.contractAddress == contractAddress && nft.tokenId == tokenId
+        nft.contractAddress === contractAddress &&
+        (nft.tokenId === tokenId || nft.itemId === tokenId)
     )
 }
 

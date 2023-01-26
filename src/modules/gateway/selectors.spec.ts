@@ -18,7 +18,7 @@ import {
   getNFTPurchase
 } from './selectors'
 import { TradeType } from './transak/types'
-import { Purchase, PurchaseStatus } from './types'
+import { NFTPurchase, Purchase, PurchaseStatus } from './types'
 
 let initialState: any
 
@@ -36,9 +36,8 @@ const mockManaPurchase: Purchase = {
 const mockContractAddress = 'a-contract-address'
 const mockTokenId = 'aTokenId'
 
-const mockNFTPurchase: Purchase = {
+const mockNFTPurchase: NFTPurchase = {
   ...mockManaPurchase,
-  amount: 1,
   nft: {
     contractAddress: mockContractAddress,
     tokenId: mockTokenId,
@@ -125,7 +124,7 @@ describe('MANA-FIAT Gateway selectors', () => {
   })
 
   describe('when getting the nft purchase', () => {
-    describe('when there is a nft purchase', () => {
+    describe('when there is a nft purchase with tokenId', () => {
       beforeEach(() => {
         initialState = {
           ...initialState,
@@ -141,6 +140,36 @@ describe('MANA-FIAT Gateway selectors', () => {
         expect(
           getNFTPurchase(initialState, mockContractAddress, mockTokenId)
         ).toBe(mockNFTPurchase)
+      })
+    })
+
+    describe('when there is a nft purchase with itemId', () => {
+      const mockNftPurchaseWithItemId = {
+        ...mockNFTPurchase,
+        nft: {
+          ...mockNFTPurchase.nft,
+          itemId: mockNFTPurchase.nft.tokenId,
+          tokenId: undefined
+        }
+      }
+
+      beforeEach(() => {
+        initialState = {
+          ...initialState,
+          gateway: {
+            ...initialState.gateway,
+            data: {
+              purchases: [mockNftPurchaseWithItemId]
+            },
+            loading: []
+          }
+        }
+      })
+
+      it('should return it', () => {
+        expect(
+          getNFTPurchase(initialState, mockContractAddress, mockTokenId)
+        ).toBe(mockNftPurchaseWithItemId)
       })
     })
 
