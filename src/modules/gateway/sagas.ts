@@ -17,8 +17,7 @@ import {
   SetPurchaseAction,
   SET_PURCHASE,
   unsetPurchase
-} from '../mana/actions'
-import { Purchase, PurchaseStatus } from '../mana/types'
+} from '../gateway/actions'
 import { openModal } from '../modal/actions'
 import { getTransactionHref } from '../transaction/utils'
 import { getAddress } from '../wallet/selectors'
@@ -40,16 +39,17 @@ import {
 } from './actions'
 import { MoonPay } from './moonpay'
 import { MoonPayTransaction, MoonPayTransactionStatus } from './moonpay/types'
-import { getPendingPurchase } from './selectors'
+import { getPendingManaPurchase } from './selectors'
 import { Transak } from './transak'
-import { ManaFiatGatewaySagasConfig } from './types'
-import { purchaseEventsChannel } from './utils'
+import { CustomizationOptions } from './transak/types'
+import { ManaFiatGatewaySagasConfig, Purchase, PurchaseStatus } from './types'
+import { isManaPurchase, purchaseEventsChannel } from './utils'
 
 const DEFAULT_POLLING_DELAY = 3000
 const BUY_MANA_WITH_FIAT_FEEDBACK_MODAL_NAME = 'BuyManaWithFiatFeedbackModal'
 
-export function createManaFiatGatewaysSaga(config: ManaFiatGatewaySagasConfig) {
-  return function* manaFiatGatewaysSaga(): IterableIterator<ForkEffect> {
+export function createGatewaySaga(config: ManaFiatGatewaySagasConfig) {
+  return function* gatewaySaga(): IterableIterator<ForkEffect> {
     yield takeEvery(
       OPEN_BUY_MANA_WITH_FIAT_MODAL_REQUEST,
       handleOpenBuyManaWithFiatModal,
@@ -82,22 +82,22 @@ function* handleOpenBuyManaWithFiatModal(
 ) {
   try {
     const { selectedNetwork } = action.payload
-    const pendingPurchase: Purchase | undefined = yield select(
-      getPendingPurchase
+    const pendingManaPurchase: Purchase | undefined = yield select(
+      getPendingManaPurchase
     )
 
-    if (pendingPurchase) {
+    if (pendingManaPurchase) {
       let goToUrl: string | undefined
 
-      if (pendingPurchase.gateway === NetworkGatewayType.MOON_PAY) {
+      if (pendingManaPurchase.gateway === NetworkGatewayType.MOON_PAY) {
         goToUrl = new MoonPay(config.moonPay).getTransactionReceiptUrl(
-          pendingPurchase.id
+          pendingManaPurchase.id
         )
       }
 
       yield put(
         openModal(BUY_MANA_WITH_FIAT_FEEDBACK_MODAL_NAME, {
-          purchase: pendingPurchase,
+          purchase: pendingManaPurchase,
           goToUrl
         })
       )
@@ -122,7 +122,14 @@ function* handleOpenFiatGateway(
     switch (gateway) {
       case NetworkGatewayType.TRANSAK:
         const address: string = yield select(getAddress)
-        const transak = new Transak(transakConfig)
+        const customizationOptions: Partial<CustomizationOptions> = {
+          defaultCryptoCurrency: 'MANA',
+          cyptoCurrencyList: 'MANA',
+          fiatCurrency: '', // INR/GBP
+          email: '', // Your customer's email address
+          redirectURL: ''
+        }
+        const transak = new Transak(transakConfig, customizationOptions)
         transak.openWidget(address, network)
         break
       case NetworkGatewayType.MOON_PAY:
@@ -150,15 +157,15 @@ function* upsertPurchase(
 }
 
 function* handleStorageLoad() {
-  const pendingPurchase: ReturnType<typeof getPendingPurchase> = yield select(
-    getPendingPurchase
+  const pendingManaPurchase: ReturnType<typeof getPendingManaPurchase> = yield select(
+    getPendingManaPurchase
   )
 
-  if (pendingPurchase) {
-    const { network, gateway, id } = pendingPurchase
+  if (pendingManaPurchase) {
+    const { network, gateway, id } = pendingManaPurchase
     switch (gateway) {
       case NetworkGatewayType.TRANSAK:
-        yield put(unsetPurchase(pendingPurchase))
+        yield put(unsetPurchase(pendingManaPurchase))
       case NetworkGatewayType.MOON_PAY:
         yield put(
           manaFiatGatewayPurchaseCompleted(
@@ -242,18 +249,17 @@ const handleBeforeUnload = (e: BeforeUnloadEvent) => {
     'Are you sure you want to exit with a purchase in process? You will not be able to see it progress in the future.')
 }
 
-export function* handleSetPurchase(action: SetPurchaseAction) {
-  const { purchase } = action.payload
+function* handleSetManaPurchase(purchase: Purchase) {
   const finalStatuses = [
     PurchaseStatus.COMPLETE,
     PurchaseStatus.FAILED,
     PurchaseStatus.CANCELLED
   ]
-  const { status, network, txHash } = purchase
+  const { status, network, txHash, gateway } = purchase
 
   if (
-    purchase.gateway === NetworkGatewayType.TRANSAK &&
-    purchase.status === PurchaseStatus.PENDING
+    gateway === NetworkGatewayType.TRANSAK &&
+    status === PurchaseStatus.PENDING
   ) {
     window.addEventListener('beforeunload', handleBeforeUnload)
   } else {
@@ -282,5 +288,13 @@ export function* handleSetPurchase(action: SetPurchaseAction) {
         transactionUrl
       })
     )
+  }
+}
+
+export function* handleSetPurchase(action: SetPurchaseAction) {
+  const { purchase } = action.payload
+
+  if (isManaPurchase(purchase)) {
+    yield call(handleSetManaPurchase, purchase)
   }
 }

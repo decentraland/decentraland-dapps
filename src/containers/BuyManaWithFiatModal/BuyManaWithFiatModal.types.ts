@@ -13,7 +13,7 @@ import {
   NetworkI18N
 } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 import { FeedbackModalI18N } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/FeedbackModal'
-import { OpenManaFiatGatewayRequestAction } from '../../modules/manaFiatGateway/actions'
+import { OpenManaFiatGatewayRequestAction } from '../../modules/gateway/actions'
 import { ModalProps } from '../../providers/ModalProvider/ModalProvider.types'
 
 type MakeOptional<Type, Key extends keyof Type> = Omit<Type, Key> &

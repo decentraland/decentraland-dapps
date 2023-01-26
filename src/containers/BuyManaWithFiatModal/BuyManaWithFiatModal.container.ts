@@ -1,12 +1,12 @@
 import { connect } from 'react-redux'
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
-import { openManaFiatGatewayRequest } from '../../modules/manaFiatGateway/actions'
+import { openManaFiatGatewayRequest } from '../../modules/gateway/actions'
 import {
   getError,
   isFinishingPurchase,
   isOpeningGateway
-} from '../../modules/manaFiatGateway/selectors'
+} from '../../modules/gateway/selectors'
 import { isEnabled } from '../../modules/translation/selectors'
 import {
   MapStateProps,

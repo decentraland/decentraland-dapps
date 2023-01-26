@@ -2,8 +2,7 @@ import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 import { getChainIdByNetwork } from '../../lib/eth'
-import { Purchase, PurchaseStatus } from '../mana/types'
-import { MoonPayTransactionStatus } from '../manaFiatGateway/moonpay/types'
+import { MoonPayTransactionStatus } from '../gateway/moonpay/types'
 import {
   addManaPurchaseAsTransaction,
   ADD_MANA_PURCHASE_AS_TRANSACTION,
@@ -22,8 +21,13 @@ import {
   OPEN_BUY_MANA_WITH_FIAT_MODAL_SUCCESS,
   OPEN_MANA_FIAT_GATEWAY_FAILURE,
   OPEN_MANA_FIAT_GATEWAY_REQUEST,
-  OPEN_MANA_FIAT_GATEWAY_SUCCESS
+  OPEN_MANA_FIAT_GATEWAY_SUCCESS,
+  setPurchase,
+  SET_PURCHASE,
+  unsetPurchase,
+  UNSET_PURCHASE
 } from './actions'
+import { Purchase, PurchaseStatus } from './types'
 
 jest.mock('../../lib/eth')
 
@@ -205,6 +209,52 @@ describe('when creating the action to signal the addition of a MANA purchase as 
         purchase: mockPurchase
       },
       type: ADD_MANA_PURCHASE_AS_TRANSACTION
+    })
+  })
+})
+
+describe('when creating the action to set the purchase', () => {
+  it('should return an object representing the action', () => {
+    const mockPurchase: Purchase = {
+      address: '0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2',
+      amount: 100,
+      id: '354b1f46-480c-4307-9896-f4c81c1e1e17',
+      network: Network.ETHEREUM,
+      status: PurchaseStatus.PENDING,
+      timestamp: 1535398843748,
+      gateway: NetworkGatewayType.MOON_PAY,
+      txHash: null
+    }
+
+    expect(setPurchase(mockPurchase)).toEqual({
+      meta: undefined,
+      payload: {
+        purchase: mockPurchase
+      },
+      type: SET_PURCHASE
+    })
+  })
+})
+
+describe('when creating the action to unset the purchase', () => {
+  it('should return an object representing the action', () => {
+    const mockPurchase: Purchase = {
+      address: '0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2',
+      amount: 100,
+      id: '354b1f46-480c-4307-9896-f4c81c1e1e17',
+      network: Network.ETHEREUM,
+      status: PurchaseStatus.PENDING,
+      timestamp: 1535398843748,
+      gateway: NetworkGatewayType.MOON_PAY,
+      txHash: null
+    }
+
+    expect(unsetPurchase(mockPurchase)).toEqual({
+      meta: undefined,
+      payload: {
+        purchase: mockPurchase
+      },
+      type: UNSET_PURCHASE
     })
   })
 })

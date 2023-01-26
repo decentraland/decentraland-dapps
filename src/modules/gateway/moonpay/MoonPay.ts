@@ -1,8 +1,7 @@
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 import { BaseAPI } from '../../../lib/api'
-import { Purchase, PurchaseStatus } from '../../mana/types'
-import { MoonPayConfig } from '../types'
+import { MoonPayConfig, Purchase, PurchaseStatus } from '../types'
 import { MoonPayTransaction, MoonPayTransactionStatus } from './types'
 
 export class MoonPay {

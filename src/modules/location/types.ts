@@ -1,6 +1,6 @@
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui'
-import { MoonPayTransactionStatus } from '../manaFiatGateway/moonpay/types'
+import { MoonPayTransactionStatus } from '../gateway/moonpay/types'
 
 export type RedirectTransactionQuery = {
   network?: Network

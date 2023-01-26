@@ -9,7 +9,7 @@ import {
   networksNames
 } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 import { getAnalytics } from '../../../modules/analytics/utils'
-import { Purchase, PurchaseStatus } from '../../../modules/mana/types'
+import { Purchase, PurchaseStatus } from '../../../modules/gateway/types'
 import { t } from '../../../modules/translation/utils'
 import { Props } from './BuyManaWithFiatFeedbackModal.types'
 
