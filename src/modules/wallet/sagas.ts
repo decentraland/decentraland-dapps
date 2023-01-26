@@ -52,11 +52,11 @@ import {
   setAppChainId
 } from './actions'
 import {
-  buildWallet,
   getTransactionsApiUrl,
-  setTransactionsApiUrl,
-  switchProviderChainId
+  setTransactionsApiUrl
 } from './utils'
+import { switchProviderChainId } from "./switchProviderChainId"
+import { buildWallet } from "./buildWallet"
 import { CreateWalletOptions, Wallet } from './types'
 import { getAppChainId, isConnected } from './selectors'
 
