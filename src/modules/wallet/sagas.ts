@@ -55,8 +55,8 @@ import {
   getTransactionsApiUrl,
   setTransactionsApiUrl
 } from './utils'
-import { switchProviderChainId } from "./switchProviderChainId"
-import { buildWallet } from "./buildWallet"
+import { switchProviderChainId } from "./utils/switchProviderChainId"
+import { buildWallet } from "./utils/buildWallet"
 import { CreateWalletOptions, Wallet } from './types'
 import { getAppChainId, isConnected } from './selectors'
 

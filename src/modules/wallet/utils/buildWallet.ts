@@ -6,6 +6,7 @@ import {
 } from '../../../lib/eth';
 import { getChainConfiguration } from '../../../lib/chainConfiguration';
 import { Networks, Wallet } from '../types';
+import { fetchManaBalance } from './fetchManaBalance';
 
 
 export async function buildWallet(appChainId: ChainId): Promise<Wallet> {
