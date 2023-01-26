@@ -10,8 +10,13 @@ import { fetchWalletRequest } from '../../wallet/actions'
 import { getChainId } from '../../wallet/selectors'
 import { Transak } from '../transak/Transak'
 import { createGatewaySaga } from '../sagas'
-import { ManaFiatGatewaySagasConfig, Purchase, PurchaseStatus } from '../types'
-import { OrderData, TransakOrderStatus } from './types'
+import {
+  ManaFiatGatewaySagasConfig,
+  NFTPurchase,
+  Purchase,
+  PurchaseStatus
+} from '../types'
+import { OrderData, TradeType, TransakOrderStatus } from './types'
 
 jest.mock('../../../lib/eth')
 
@@ -64,7 +69,20 @@ const mockOrderData: OrderData = {
   }
 }
 
-const mockPurchase: Purchase = {
+const mockOrderDataWithNftAssetInfo = {
+  ...mockOrderData,
+  status: {
+    ...mockOrderData.status,
+    isNFTOrder: true,
+    nftAssetInfo: {
+      contractAddress: 'contractAddress',
+      tokenId: 'anId',
+      tradeType: TradeType.PRIMARY
+    }
+  }
+}
+
+const mockManaPurchase: Purchase = {
   address: mockAddress,
   amount: 10,
   id: mockOrderData.status.id,
@@ -73,6 +91,17 @@ const mockPurchase: Purchase = {
   status: PurchaseStatus.PENDING,
   gateway: NetworkGatewayType.TRANSAK,
   txHash: 'mock-transaction-hash'
+}
+
+const mockNftPurchase: NFTPurchase = {
+  ...mockManaPurchase,
+  nft: {
+    contractAddress: 'contractAddress',
+    itemId: 'anId',
+    tokenId: undefined,
+    tradeType: TradeType.PRIMARY,
+    cryptoAmount: 10
+  }
 }
 
 const gatewaySaga = createGatewaySaga(mockConfig)
@@ -95,7 +124,7 @@ describe('when interacting with Transak', () => {
         transak.emitPurchaseEvent(mockOrderData, Network.ETHEREUM)
         return expectSaga(gatewaySaga)
           .provide([[select(getChainId), ChainId.ETHEREUM_GOERLI]])
-          .put(setPurchase(mockPurchase))
+          .put(setPurchase(mockManaPurchase))
           .silentRun()
       })
     })
@@ -115,10 +144,59 @@ describe('when interacting with Transak', () => {
         return expectSaga(gatewaySaga)
           .provide([[select(getChainId), ChainId.ETHEREUM_GOERLI]])
           .put(
-            setPurchase({ ...mockPurchase, status: PurchaseStatus.COMPLETE })
+            setPurchase({
+              ...mockManaPurchase,
+              status: PurchaseStatus.COMPLETE
+            })
           )
           .put(fetchWalletRequest())
           .silentRun()
+      })
+    })
+
+    describe('when purchasing an NFT', () => {
+      describe('when it belongs to the primary market', () => {
+        it('should put a new message in the channel signaling the set of the purchase with the nft info and the item id', () => {
+          transak.emitPurchaseEvent(
+            mockOrderDataWithNftAssetInfo,
+            Network.ETHEREUM
+          )
+          return expectSaga(gatewaySaga)
+            .put(setPurchase({ ...mockNftPurchase, amount: 1 }))
+            .silentRun()
+        })
+      })
+
+      describe('when it belongs to the primary market', () => {
+        it('should put a new message in the channel signaling the set of the purchase with the nft info and the item id', () => {
+          transak.emitPurchaseEvent(
+            {
+              ...mockOrderDataWithNftAssetInfo,
+              status: {
+                ...mockOrderDataWithNftAssetInfo.status,
+                nftAssetInfo: {
+                  ...mockOrderDataWithNftAssetInfo.status.nftAssetInfo,
+                  tradeType: TradeType.SECONDARY
+                }
+              }
+            },
+            Network.ETHEREUM
+          )
+          return expectSaga(gatewaySaga)
+            .put(
+              setPurchase({
+                ...mockNftPurchase,
+                amount: 1,
+                nft: {
+                  ...mockNftPurchase.nft,
+                  tradeType: TradeType.SECONDARY,
+                  itemId: undefined,
+                  tokenId: 'anId'
+                }
+              })
+            )
+            .silentRun()
+        })
       })
     })
   })

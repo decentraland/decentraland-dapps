@@ -7,6 +7,7 @@ import {
   CustomizationOptions,
   DefaultCustomizationOptions,
   OrderData,
+  TradeType,
   TransakOrderStatus,
   TransakSDK
 } from './types'
@@ -115,9 +116,16 @@ export class Transak {
       ...(isNFTOrder && nftAssetInfo
         ? {
             nft: {
-              contractAddress: nftAssetInfo?.contractAddress,
-              tokenId: nftAssetInfo?.tokenId,
-              tradeType: nftAssetInfo?.tradeType,
+              contractAddress: nftAssetInfo.contractAddress,
+              tokenId:
+                nftAssetInfo.tradeType === TradeType.SECONDARY
+                  ? nftAssetInfo.tokenId
+                  : undefined,
+              itemId:
+                nftAssetInfo.tradeType === TradeType.PRIMARY
+                  ? nftAssetInfo.tokenId
+                  : undefined,
+              tradeType: nftAssetInfo.tradeType,
               cryptoAmount
             }
           }

@@ -41,7 +41,8 @@ export type ManaPurchase = BasePurchase & { amount: number }
 export type NFTPurchase = BasePurchase & {
   nft: {
     contractAddress: string
-    tokenId: string
+    tokenId?: string
+    itemId?: string
     tradeType: TradeType
     cryptoAmount: number
   }
