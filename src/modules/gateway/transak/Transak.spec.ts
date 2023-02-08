@@ -33,7 +33,11 @@ const mockConfig: ManaFiatGatewaySagasConfig = {
   },
   [NetworkGatewayType.TRANSAK]: {
     key: 'transak-key',
-    env: 'TEST'
+    env: 'TEST',
+    pusher: {
+      appKey: 'appKey',
+      appCluster: 'appCluster'
+    }
   }
 }
 
@@ -121,7 +125,7 @@ describe('when interacting with Transak', () => {
   describe('when emitting a purchase event in the purchaseEventsChannel', () => {
     describe('when the status of the purchase is not yet complete', () => {
       it('should put a new message in the channel signaling the set of the purchase without trying to refresh the balance', () => {
-        transak.emitPurchaseEvent(mockOrderData, Network.ETHEREUM)
+        transak.emitPurchaseEvent(mockOrderData.status, Network.ETHEREUM)
         return expectSaga(gatewaySaga)
           .provide([[select(getChainId), ChainId.ETHEREUM_GOERLI]])
           .put(setPurchase(mockManaPurchase))
@@ -133,11 +137,8 @@ describe('when interacting with Transak', () => {
       it('should put a new message in the channel signaling the set of the purchase and the request to refresh the balance', () => {
         transak.emitPurchaseEvent(
           {
-            ...mockOrderData,
-            status: {
-              ...mockOrderData.status,
-              status: TransakOrderStatus.COMPLETED
-            }
+            ...mockOrderData.status,
+            status: TransakOrderStatus.COMPLETED
           },
           Network.ETHEREUM
         )
@@ -158,7 +159,7 @@ describe('when interacting with Transak', () => {
       describe('when it belongs to the primary market', () => {
         it('should put a new message in the channel signaling the set of the purchase with the nft info and the item id', () => {
           transak.emitPurchaseEvent(
-            mockOrderDataWithNftAssetInfo,
+            mockOrderDataWithNftAssetInfo.status,
             Network.ETHEREUM
           )
           return expectSaga(gatewaySaga)
@@ -171,13 +172,10 @@ describe('when interacting with Transak', () => {
         it('should put a new message in the channel signaling the set of the purchase with the nft info and the item id', () => {
           transak.emitPurchaseEvent(
             {
-              ...mockOrderDataWithNftAssetInfo,
-              status: {
-                ...mockOrderDataWithNftAssetInfo.status,
-                nftAssetInfo: {
-                  ...mockOrderDataWithNftAssetInfo.status.nftAssetInfo,
-                  tradeType: TradeType.SECONDARY
-                }
+              ...mockOrderDataWithNftAssetInfo.status,
+              nftAssetInfo: {
+                ...mockOrderDataWithNftAssetInfo.status.nftAssetInfo,
+                tradeType: TradeType.SECONDARY
               }
             },
             Network.ETHEREUM

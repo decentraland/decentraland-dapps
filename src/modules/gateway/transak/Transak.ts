@@ -1,4 +1,5 @@
 import transakSDK from '@transak/transak-sdk'
+import Pusher from 'pusher-js'
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui'
 import { TransakConfig, Purchase, PurchaseStatus } from '../types'
@@ -9,7 +10,8 @@ import {
   OrderData,
   TradeType,
   TransakOrderStatus,
-  TransakSDK
+  TransakSDK,
+  WebSocketEvents
 } from './types'
 
 const PURCHASE_EVENT = 'Purchase status change'
@@ -17,6 +19,7 @@ const PURCHASE_EVENT = 'Purchase status change'
 export class Transak {
   private readonly config: TransakConfig
   private readonly customizationOptions: Partial<CustomizationOptions>
+  private readonly pusher: Pusher
   private sdk: TransakSDK
 
   constructor(
@@ -24,6 +27,9 @@ export class Transak {
     customizationOptions?: Partial<CustomizationOptions>
   ) {
     this.config = config
+    this.pusher = new Pusher(config.pusher.appKey, {
+      cluster: config.pusher.appCluster
+    })
     this.customizationOptions = customizationOptions || {}
   }
 
@@ -33,18 +39,34 @@ export class Transak {
    * @param network - Network in which the trasanctions will be done
    */
   private suscribeToEvents(network: Network) {
-    const events = [
+    this.sdk.on(
       this.sdk.EVENTS.TRANSAK_ORDER_CREATED,
-      this.sdk.EVENTS.TRANSAK_ORDER_SUCCESSFUL,
-      this.sdk.EVENTS.TRANSAK_ORDER_FAILED,
-      this.sdk.EVENTS.TRANSAK_ORDER_CANCELLED
-    ]
+      (orderData: OrderData) => {
+        const events = [
+          WebSocketEvents.ORDER_PAYMENT_VERIFYING,
+          WebSocketEvents.ORDER_PROCESSING,
+          WebSocketEvents.ORDER_COMPLETED,
+          WebSocketEvents.ORDER_FAILED
+        ]
+        this.emitPurchaseEvent(orderData.status, network)
 
-    events.forEach(event => {
-      this.sdk.on(event, (orderData: OrderData) =>
-        this.emitPurchaseEvent(orderData, network)
-      )
-    })
+        const channel = this.pusher.subscribe(orderData.status.id)
+
+        events.forEach(event => {
+          channel.bind(event, (orderData: OrderData['status']) => {
+            this.emitPurchaseEvent(orderData, network)
+            if (
+              [
+                WebSocketEvents.ORDER_COMPLETED,
+                WebSocketEvents.ORDER_FAILED
+              ].includes(event)
+            ) {
+              this.pusher.unsubscribe(orderData.id)
+            }
+          })
+        })
+      }
+    )
 
     this.sdk.on(this.sdk.EVENTS.TRANSAK_WIDGET_CLOSE, () => {
       setTimeout(() => {
@@ -90,18 +112,19 @@ export class Transak {
    * @param orderData - Order entity that comes from the Transak SDK.
    * @param status - Status of the order.
    */
-  private createPurchase(orderData: OrderData, network: Network): Purchase {
+  private createPurchase(
+    orderData: OrderData['status'],
+    network: Network
+  ): Purchase {
     const {
-      status: {
-        id,
-        cryptoAmount,
-        createdAt,
-        status,
-        isNFTOrder,
-        nftAssetInfo,
-        transactionHash,
-        walletAddress
-      }
+      id,
+      cryptoAmount,
+      createdAt,
+      status,
+      isNFTOrder,
+      nftAssetInfo,
+      transactionHash,
+      walletAddress
     } = orderData
 
     return {
@@ -140,7 +163,7 @@ export class Transak {
    * @param status - Status of the order.
    * @param Network - Network in which the transaction will be done.
    */
-  emitPurchaseEvent(orderData: OrderData, network: Network) {
+  emitPurchaseEvent(orderData: OrderData['status'], network: Network) {
     purchaseEventsChannel.put({
       type: PURCHASE_EVENT,
       purchase: this.createPurchase(orderData, network)
