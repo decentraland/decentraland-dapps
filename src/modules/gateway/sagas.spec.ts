@@ -44,7 +44,11 @@ const mockConfig: ManaFiatGatewaySagasConfig = {
   },
   [NetworkGatewayType.TRANSAK]: {
     key: 'transak-key',
-    env: 'TEST'
+    env: 'TEST',
+    pusher: {
+      appKey: 'appKey',
+      appCluster: 'appCluster'
+    }
   }
 }
 
