@@ -1,5 +1,12 @@
 import { EventEmitter } from 'ws'
 
+export enum WebSocketEvents {
+  ORDER_PAYMENT_VERIFYING = 'ORDER_PAYMENT_VERIFYING',
+  ORDER_PROCESSING = 'ORDER_PROCESSING',
+  ORDER_COMPLETED = 'ORDER_COMPLETED',
+  ORDER_FAILED = 'ORDER_FAILED'
+}
+
 export enum TransakOrderStatus {
   AWAITING_PAYMENT_FROM_USER = 'AWAITING_PAYMENT_FROM_USER',
   PAYMENT_DONE_MARKED_BY_USER = 'PAYMENT_DONE_MARKED_BY_USER',
@@ -99,5 +106,4 @@ export type TransakSDK = EventEmitter & {
     networks: string
   }
   EVENTS: Record<string, string>
-  WEBSOCKET_EVENTS: Record<string, string>
 }

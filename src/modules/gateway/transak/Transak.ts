@@ -10,7 +10,8 @@ import {
   OrderData,
   TradeType,
   TransakOrderStatus,
-  TransakSDK
+  TransakSDK,
+  WebSocketEvents
 } from './types'
 
 const PURCHASE_EVENT = 'Purchase status change'
@@ -42,27 +43,27 @@ export class Transak {
       this.sdk.EVENTS.TRANSAK_ORDER_CREATED,
       (orderData: OrderData) => {
         const events = [
-          this.sdk.WEBSOCKET_EVENTS.ORDER_PAYMENT_VERIFYING,
-          this.sdk.WEBSOCKET_EVENTS.ORDER_PROCESSING,
-          this.sdk.WEBSOCKET_EVENTS.ORDER_COMPLETED,
-          this.sdk.WEBSOCKET_EVENTS.ORDER_FAILED
+          WebSocketEvents.ORDER_PAYMENT_VERIFYING,
+          WebSocketEvents.ORDER_PROCESSING,
+          WebSocketEvents.ORDER_COMPLETED,
+          WebSocketEvents.ORDER_FAILED
         ]
-        this.emitPurchaseEvent(orderData, network)
+        this.emitPurchaseEvent(orderData.status, network)
 
         const channel = this.pusher.subscribe(orderData.status.id)
-        events.forEach(event => {
-          channel.bind(event, (orderData: OrderData) =>
-            this.emitPurchaseEvent(orderData, network)
-          )
 
-          if (
-            [
-              this.sdk.WEBSOCKET_EVENTS.ORDER_COMPLETED,
-              this.sdk.WEBSOCKET_EVENTS.ORDER_FAILED
-            ].includes(event)
-          ) {
-            this.pusher.unsubscribe(orderData.status.id)
-          }
+        events.forEach(event => {
+          channel.bind(event, (orderData: OrderData['status']) => {
+            this.emitPurchaseEvent(orderData, network)
+            if (
+              [
+                WebSocketEvents.ORDER_COMPLETED,
+                WebSocketEvents.ORDER_FAILED
+              ].includes(event)
+            ) {
+              this.pusher.unsubscribe(orderData.id)
+            }
+          })
         })
       }
     )
@@ -111,18 +112,19 @@ export class Transak {
    * @param orderData - Order entity that comes from the Transak SDK.
    * @param status - Status of the order.
    */
-  private createPurchase(orderData: OrderData, network: Network): Purchase {
+  private createPurchase(
+    orderData: OrderData['status'],
+    network: Network
+  ): Purchase {
     const {
-      status: {
-        id,
-        cryptoAmount,
-        createdAt,
-        status,
-        isNFTOrder,
-        nftAssetInfo,
-        transactionHash,
-        walletAddress
-      }
+      id,
+      cryptoAmount,
+      createdAt,
+      status,
+      isNFTOrder,
+      nftAssetInfo,
+      transactionHash,
+      walletAddress
     } = orderData
 
     return {
@@ -161,7 +163,7 @@ export class Transak {
    * @param status - Status of the order.
    * @param Network - Network in which the transaction will be done.
    */
-  emitPurchaseEvent(orderData: OrderData, network: Network) {
+  emitPurchaseEvent(orderData: OrderData['status'], network: Network) {
     purchaseEventsChannel.put({
       type: PURCHASE_EVENT,
       purchase: this.createPurchase(orderData, network)
