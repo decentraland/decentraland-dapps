@@ -1,7 +1,7 @@
-import type { Web3Provider } from '@ethersproject/providers/lib/web3-provider'
-import type { Dispatch } from 'redux'
-import type { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
-import type {
+import { ethers } from 'ethers'
+import { Dispatch } from 'redux'
+import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
+import {
   connectWalletRequest,
   ConnectWalletRequestAction,
   changeAccount,
@@ -40,5 +40,5 @@ export type AccountsChangedHandler = (accounts: string[]) => void
 export type NetworkChangedHandler = (chainId: string) => void
 export type Handler = AccountsChangedHandler | NetworkChangedHandler
 export type ProviderWindow = Window & {
-  ethereum?: Web3Provider
+  ethereum?: ethers.providers.Web3Provider
 }

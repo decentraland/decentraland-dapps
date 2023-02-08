@@ -7,8 +7,9 @@ import {
   fork,
   delay
 } from 'redux-saga/effects'
-import type { BlockWithTransactions, TransactionResponse } from '@ethersproject/abstract-provider'
-import { Web3Provider } from '@ethersproject/providers/lib/web3-provider'
+import { ethers } from 'ethers'
+import { TransactionResponse } from '@ethersproject/providers'
+import { BlockWithTransactions } from '@ethersproject/abstract-provider'
 import { Provider } from 'decentraland-connect/dist/types'
 import { Transaction, TransactionStatus, AnyTransaction } from './types'
 import {
@@ -193,7 +194,7 @@ function* handleReplaceTransactionRequest(
     console.warn('Could not connect to ethereum')
     return
   }
-  const eth = new Web3Provider(provider)
+  const eth = new ethers.providers.Web3Provider(provider)
 
   const accounts: string[] = yield call(() => eth.listAccounts())
   if (accounts.length === 0) {

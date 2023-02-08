@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { connection } from 'decentraland-connect/dist/ConnectionManager'
+import { connection } from 'decentraland-connect'
 import {
   LoginModal as BaseLoginModal,
   LoginModalI18N,

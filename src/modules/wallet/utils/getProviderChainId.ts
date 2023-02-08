@@ -1,4 +1,4 @@
-import type { Provider } from 'decentraland-connect/dist/types';
+import { Provider } from 'decentraland-connect';
 
 /**
  * Obtains the chain id through a provider.

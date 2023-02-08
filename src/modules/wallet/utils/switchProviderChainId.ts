@@ -1,5 +1,5 @@
-import type { Provider } from 'decentraland-connect/dist/types';
-import type { ChainId } from '@dcl/schemas/dist/dapps/chain-id';
+import { Provider } from 'decentraland-connect';
+import { ChainId } from '@dcl/schemas/dist/dapps/chain-id';
 import { getProviderChainId } from './getProviderChainId';
 import { getAddEthereumChainParameters } from "./getAddEthereumChainParameters";
 
