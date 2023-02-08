@@ -12,6 +12,10 @@ export type MoonPayConfig = {
 export type TransakConfig = {
   key: string
   env: string
+  pusher: {
+    appKey: string
+    appCluster: string
+  }
 }
 
 export type ManaFiatGatewaySagasConfig = {

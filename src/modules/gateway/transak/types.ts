@@ -99,4 +99,5 @@ export type TransakSDK = EventEmitter & {
     networks: string
   }
   EVENTS: Record<string, string>
+  WEBSOCKET_EVENTS: Record<string, string>
 }

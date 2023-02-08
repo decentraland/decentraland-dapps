@@ -18,6 +18,7 @@
     "ethers": "^5.6.8",
     "events": "^3.3.0",
     "flat": "^5.0.2",
+    "pusher-js": "^8.0.1",
     "react-intl": "^5.20.7",
     "redux-persistence": "^1.2.0",
     "redux-persistence-engine-localstorage": "^1.0.0",

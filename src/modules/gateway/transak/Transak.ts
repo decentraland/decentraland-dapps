@@ -1,4 +1,5 @@
 import transakSDK from '@transak/transak-sdk'
+import Pusher from 'pusher-js'
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui'
 import { TransakConfig, Purchase, PurchaseStatus } from '../types'
@@ -17,6 +18,7 @@ const PURCHASE_EVENT = 'Purchase status change'
 export class Transak {
   private readonly config: TransakConfig
   private readonly customizationOptions: Partial<CustomizationOptions>
+  private readonly pusher: Pusher
   private sdk: TransakSDK
 
   constructor(
@@ -24,6 +26,9 @@ export class Transak {
     customizationOptions?: Partial<CustomizationOptions>
   ) {
     this.config = config
+    this.pusher = new Pusher(config.pusher.appKey, {
+      cluster: config.pusher.appCluster
+    })
     this.customizationOptions = customizationOptions || {}
   }
 
@@ -33,18 +38,34 @@ export class Transak {
    * @param network - Network in which the trasanctions will be done
    */
   private suscribeToEvents(network: Network) {
-    const events = [
+    this.sdk.on(
       this.sdk.EVENTS.TRANSAK_ORDER_CREATED,
-      this.sdk.EVENTS.TRANSAK_ORDER_SUCCESSFUL,
-      this.sdk.EVENTS.TRANSAK_ORDER_FAILED,
-      this.sdk.EVENTS.TRANSAK_ORDER_CANCELLED
-    ]
-
-    events.forEach(event => {
-      this.sdk.on(event, (orderData: OrderData) =>
+      (orderData: OrderData) => {
+        const events = [
+          this.sdk.WEBSOCKET_EVENTS.ORDER_PAYMENT_VERIFYING,
+          this.sdk.WEBSOCKET_EVENTS.ORDER_PROCESSING,
+          this.sdk.WEBSOCKET_EVENTS.ORDER_COMPLETED,
+          this.sdk.WEBSOCKET_EVENTS.ORDER_FAILED
+        ]
         this.emitPurchaseEvent(orderData, network)
-      )
-    })
+
+        const channel = this.pusher.subscribe(orderData.status.id)
+        events.forEach(event => {
+          channel.bind(event, (orderData: OrderData) =>
+            this.emitPurchaseEvent(orderData, network)
+          )
+
+          if (
+            [
+              this.sdk.WEBSOCKET_EVENTS.ORDER_COMPLETED,
+              this.sdk.WEBSOCKET_EVENTS.ORDER_FAILED
+            ].includes(event)
+          ) {
+            this.pusher.unsubscribe(orderData.status.id)
+          }
+        })
+      }
+    )
 
     this.sdk.on(this.sdk.EVENTS.TRANSAK_WIDGET_CLOSE, () => {
       setTimeout(() => {
