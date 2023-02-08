@@ -2,6 +2,8 @@ import { ChainId, getChainName } from '@dcl/schemas/dist/dapps/chain-id';
 import { getChainConfiguration } from '../../../lib/chainConfiguration';
 import { AddEthereumChainParameters } from '../types';
 
+
+
 export function getAddEthereumChainParameters(
   chainId: ChainId
 ): AddEthereumChainParameters {

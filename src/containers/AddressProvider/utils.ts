@@ -1,4 +1,4 @@
-import { Web3Provider } from '@ethersproject/providers/lib/web3-provider'
+import { ethers } from 'ethers'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { getNetworkProvider } from '../../lib/eth'
 
@@ -8,6 +8,6 @@ export const isENSAddress = (address: string) => {
 
 export const resolveENSname = async (name: string, chainId: ChainId) => {
   const connectedProvider = await getNetworkProvider(chainId)
-  const ethersProvider = new Web3Provider(connectedProvider)
+  const ethersProvider = new ethers.providers.Web3Provider(connectedProvider)
   return await ethersProvider.resolveName(name)
 }
