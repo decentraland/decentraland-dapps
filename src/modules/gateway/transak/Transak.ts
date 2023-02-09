@@ -48,7 +48,6 @@ export class Transak {
           WebSocketEvents.ORDER_COMPLETED,
           WebSocketEvents.ORDER_FAILED
         ]
-        this.emitPurchaseEvent(orderData.status, network)
 
         const channel = this.pusher.subscribe(orderData.status.id)
 
