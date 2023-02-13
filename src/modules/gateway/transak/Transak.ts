@@ -71,6 +71,7 @@ export class Transak {
       setTimeout(() => {
         document.querySelector('html')?.style.removeProperty('overflow')
       }, 1000)
+      this.sdk.close()
     })
   }
 

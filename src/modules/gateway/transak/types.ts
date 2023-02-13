@@ -99,6 +99,7 @@ export type OrderData = {
 
 export type TransakSDK = EventEmitter & {
   init: () => void
+  close: () => void
   partnerData: {
     defaultNetwork: string
     walletAddress: string
