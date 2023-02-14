@@ -44,7 +44,6 @@ import { getPendingPurchase } from './selectors'
 import { OrderResponse, TransakOrderStatus } from './transak/types'
 
 jest.mock('../../lib/eth')
-// jest.mock('./transak')
 
 const mockGetChainIdByNetwork = getChainIdByNetwork as jest.MockedFunction<
   typeof getChainIdByNetwork
