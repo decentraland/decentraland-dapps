@@ -65,7 +65,8 @@
         "using": {
           "browser_extension": "ブラウザ拡張機能の使用",
           "email": "メールを使用する",
-          "mobile": "モバイルウォレットの使用"
+          "mobile": "モバイルウォレットの使用",
+          "metamask_mobile": "メタマスク アプリの使用"
         }
       }
     },

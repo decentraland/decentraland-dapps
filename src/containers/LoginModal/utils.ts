@@ -13,13 +13,16 @@ const {
   FORTMATIC,
   COINBASE,
   WALLET_CONNECT,
-  WALLET_LINK
+  WALLET_LINK,
+  METAMASK_MOBILE
 } = LoginModalOptionType
 
 export function toModalOptionType(
   providerType: ProviderType
 ): LoginModalOptionType | undefined {
   switch (providerType) {
+    case ProviderType.METAMASK_MOBILE:
+      return METAMASK_MOBILE
     case ProviderType.INJECTED:
       if (isCucumberProvider()) {
         return SAMSUNG
@@ -46,6 +49,8 @@ export function toProviderType(
   modalOptionType: LoginModalOptionType
 ): ProviderType {
   switch (modalOptionType) {
+    case METAMASK_MOBILE:
+      return ProviderType.WALLET_CONNECT
     case METAMASK:
     case COINBASE:
     case DAPPER:
