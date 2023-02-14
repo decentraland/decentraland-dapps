@@ -116,7 +116,7 @@ export class Transak {
       [TransakPaymentMethod.GBP_BANK_TRANSFER]:
         PurchasePaymentMethod.BANK_TRANSFER,
       [TransakPaymentMethod.GOOGLE_PAY]: PurchasePaymentMethod.GOOGLE_PAY,
-      [TransakPaymentMethod.MOBIKWIK_WALLET]: PurchasePaymentMethod.UNKNOWN,
+      [TransakPaymentMethod.MOBIKWIK_WALLET]: PurchasePaymentMethod.OTHER,
       [TransakPaymentMethod.SEPA_BANK_TRANSFER]:
         PurchasePaymentMethod.BANK_TRANSFER,
       [TransakPaymentMethod.UPI]: PurchasePaymentMethod.BANK_TRANSFER

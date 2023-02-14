@@ -47,13 +47,13 @@ export class MoonPay {
       [MoonPayPaymentMethod.GBP_BANK_TRANSFER]:
         PurchasePaymentMethod.BANK_TRANSFER,
       [MoonPayPaymentMethod.GBP_OPEN_BANKING_PAYMENT]:
-        PurchasePaymentMethod.UNKNOWN,
-      [MoonPayPaymentMethod.MOBILE_WALLET]: PurchasePaymentMethod.UNKNOWN,
-      [MoonPayPaymentMethod.PIX_INSTANT_PAYMENT]: PurchasePaymentMethod.UNKNOWN,
+        PurchasePaymentMethod.OTHER,
+      [MoonPayPaymentMethod.MOBILE_WALLET]: PurchasePaymentMethod.OTHER,
+      [MoonPayPaymentMethod.PIX_INSTANT_PAYMENT]: PurchasePaymentMethod.OTHER,
       [MoonPayPaymentMethod.SEPA_BANK_TRANSFER]:
         PurchasePaymentMethod.BANK_TRANSFER,
       [MoonPayPaymentMethod.SEPA_OPEN_BANKING_PAYMENT]:
-        PurchasePaymentMethod.UNKNOWN
+        PurchasePaymentMethod.OTHER
     }[paymentMethod]
   }
 

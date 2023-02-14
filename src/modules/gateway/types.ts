@@ -40,7 +40,7 @@ export enum PurchasePaymentMethod {
   // TODO (buy MANA & NFTs with FIAT): finish the mapping between payment methods
   // https://docs.moonpay.com/moonpay/apis-and-webhooks/apis/client-side-apis/transactions
   // https://docs.transak.com/docs/control-the-fiat-or-crypto-options-for-the-user#payment-method
-  UNKNOWN = '???'
+  OTHER = 'other'
 }
 
 type BasePurchase = {
