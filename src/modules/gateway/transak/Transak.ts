@@ -231,7 +231,7 @@ export class Transak {
    * @param orderId - Transak Order ID.
    */
   async getOrder(orderId: string): Promise<OrderResponse> {
-    return await this.transakAPI.request('GET', `/v2/order/${orderId}`, {
+    return await this.transakAPI.request('GET', '/v2/order', {
       apiKey: this.config.key,
       orderId
     })
