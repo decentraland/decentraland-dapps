@@ -132,8 +132,26 @@ export const setPurchase = (purchase: Purchase) =>
   action(SET_PURCHASE, { purchase })
 export type SetPurchaseAction = ReturnType<typeof setPurchase>
 
-// Unset Purchase
-export const UNSET_PURCHASE = 'Unset Purchase'
-export const unsetPurchase = (purchase: Purchase) =>
-  action(UNSET_PURCHASE, { purchase })
-export type UnsetPurchaseAction = ReturnType<typeof unsetPurchase>
+// Poll Purchase Status
+export const POLL_PURCHASE_STATUS_REQUEST = '[Request] Poll Purchase Status'
+export const POLL_PURCHASE_STATUS_SUCCESS = '[Success] Poll Purchase Status'
+export const POLL_PURCHASE_STATUS_FAILURE = '[Failure] Poll Purchase Status'
+
+export const pollPurchaseStatusRequest = (purchase: Purchase) =>
+  action(POLL_PURCHASE_STATUS_REQUEST, { purchase })
+
+export const pollPurchaseStatusSuccess = () =>
+  action(POLL_PURCHASE_STATUS_SUCCESS)
+
+export const pollPurchaseStatusFailure = (error: string) =>
+  action(POLL_PURCHASE_STATUS_FAILURE, { error })
+
+export type PollPurchaseStatusRequestAction = ReturnType<
+  typeof pollPurchaseStatusRequest
+>
+export type PollPurchaseStatusSuccessAction = ReturnType<
+  typeof pollPurchaseStatusSuccess
+>
+export type PollPurchaseStatusFailureAction = ReturnType<
+  typeof pollPurchaseStatusFailure
+>

@@ -10,8 +10,10 @@ export type MoonPayConfig = {
 }
 
 export type TransakConfig = {
+  apiBaseUrl: string
   key: string
   env: string
+  pollingDelay?: number
   pusher: {
     appKey: string
     appCluster: string
@@ -50,6 +52,7 @@ type BasePurchase = {
   paymentMethod: PurchasePaymentMethod
   address: string
   txHash: string | null
+  failureReason?: string | null
 }
 
 export type ManaPurchase = BasePurchase & { amount: number }

@@ -7,7 +7,12 @@ import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 import { getChainIdByNetwork } from '../../lib/eth'
 import { getAddress } from '../wallet/selectors'
-import { setPurchase, unsetPurchase } from '../gateway/actions'
+import {
+  pollPurchaseStatusFailure,
+  pollPurchaseStatusRequest,
+  pollPurchaseStatusSuccess,
+  setPurchase
+} from '../gateway/actions'
 import { openModal } from '../modal/actions'
 import { fetchWalletRequest } from '../wallet/actions'
 import {
@@ -35,10 +40,11 @@ import {
   PurchasePaymentMethod,
   PurchaseStatus
 } from './types'
-import { getPendingManaPurchase } from './selectors'
+import { getPendingPurchase } from './selectors'
+import { OrderResponse, TransakOrderStatus } from './transak/types'
 
 jest.mock('../../lib/eth')
-jest.mock('./transak')
+// jest.mock('./transak')
 
 const mockGetChainIdByNetwork = getChainIdByNetwork as jest.MockedFunction<
   typeof getChainIdByNetwork
@@ -47,11 +53,12 @@ const mockGetChainIdByNetwork = getChainIdByNetwork as jest.MockedFunction<
 const mockConfig: ManaFiatGatewaySagasConfig = {
   [NetworkGatewayType.MOON_PAY]: {
     apiKey: 'api-key',
-    apiBaseUrl: 'http://base.url.xyz',
+    apiBaseUrl: 'http://moonpay-base.url.xyz',
     widgetBaseUrl: 'http://widget.base.url.xyz',
     pollingDelay: 50
   },
   [NetworkGatewayType.TRANSAK]: {
+    apiBaseUrl: 'http://transak-base.url.xyz',
     key: 'transak-key',
     env: 'TEST',
     pusher: {
@@ -181,6 +188,18 @@ const mockTransaction: MoonPayTransaction = {
   ]
 }
 
+const mockTransakOrderResponse: OrderResponse = {
+  meta: {
+    orderId: '816374b8-11fd-4ec4-be2d-3936de24d9c2',
+    apiKey: mockConfig.transak.key
+  },
+  data: {
+    id: '816374b8-11fd-4ec4-be2d-3936de24d9c2',
+    status: TransakOrderStatus.COMPLETED,
+    transactionHash: 'aTxHash'
+  }
+}
+
 const mockPurchase: Purchase = {
   address: mockAddress,
   amount: 100,
@@ -201,9 +220,9 @@ const mockPurchaseWithCryptoTransactionId = {
 const buyManaWithFiatModalName = 'BuyManaWithFiatModal'
 const buyManaWithFiatFeedbackModalName = 'BuyManaWithFiatFeedbackModal'
 
-describe('when handling the request to open the Buy MANA with FIAT modal', () => {
-  const error = 'Default Error'
+const error = 'Default Error'
 
+describe('when handling the request to open the Buy MANA with FIAT modal', () => {
   afterEach(() => {
     jest.clearAllMocks()
   })
@@ -212,7 +231,7 @@ describe('when handling the request to open the Buy MANA with FIAT modal', () =>
     it('should put the failure action', async () => {
       return expectSaga(gatewaySaga)
         .provide([
-          [select(getPendingManaPurchase), Promise.reject(new Error(error))]
+          [select(getPendingPurchase), Promise.reject(new Error(error))]
         ])
         .dispatch(openBuyManaWithFiatModalRequest())
         .put(openBuyManaWithFiatModalFailure(error))
@@ -226,7 +245,7 @@ describe('when handling the request to open the Buy MANA with FIAT modal', () =>
     describe('when there is no selected network', () => {
       it('should put the action signaling the opening of the Buy MANA with FIAT modal and that the request succeed', async () => {
         return expectSaga(gatewaySaga)
-          .provide([[select(getPendingManaPurchase), undefined]])
+          .provide([[select(getPendingPurchase), undefined]])
           .dispatch(openBuyManaWithFiatModalRequest())
           .put(
             openModal(buyManaWithFiatModalName, { selectedNetwork: undefined })
@@ -243,7 +262,7 @@ describe('when handling the request to open the Buy MANA with FIAT modal', () =>
 
       it('should put the action signaling the opening of the Buy MANA with FIAT modal and that the request succeed', async () => {
         return expectSaga(gatewaySaga)
-          .provide([[select(getPendingManaPurchase), undefined]])
+          .provide([[select(getPendingPurchase), undefined]])
           .dispatch(openBuyManaWithFiatModalRequest(selectedNetwork))
           .put(openModal(buyManaWithFiatModalName, { selectedNetwork }))
           .put(openBuyManaWithFiatModalSuccess())
@@ -261,7 +280,7 @@ describe('when handling the request to open the Buy MANA with FIAT modal', () =>
         }
 
         return expectSaga(gatewaySaga)
-          .provide([[select(getPendingManaPurchase), transakMockPurchase]])
+          .provide([[select(getPendingPurchase), transakMockPurchase]])
           .dispatch(openBuyManaWithFiatModalRequest())
           .put(
             openModal(buyManaWithFiatFeedbackModalName, {
@@ -288,10 +307,7 @@ describe('when handling the request to open the Buy MANA with FIAT modal', () =>
       it('should put the failure action', async () => {
         return expectSaga(gatewaySaga)
           .provide([
-            [
-              select(getPendingManaPurchase),
-              mockPurchaseWithCryptoTransactionId
-            ]
+            [select(getPendingPurchase), mockPurchaseWithCryptoTransactionId]
           ])
           .dispatch(openBuyManaWithFiatModalRequest())
           .put(openBuyManaWithFiatModalFailure(error))
@@ -310,10 +326,7 @@ describe('when handling the request to open the Buy MANA with FIAT modal', () =>
       it('should put the action signaling the opening of the Feedback Modal in pending status with the go to url, and that the request succeed', async () => {
         return expectSaga(gatewaySaga)
           .provide([
-            [
-              select(getPendingManaPurchase),
-              mockPurchaseWithCryptoTransactionId
-            ]
+            [select(getPendingPurchase), mockPurchaseWithCryptoTransactionId]
           ])
           .dispatch(openBuyManaWithFiatModalRequest())
           .put(
@@ -587,10 +600,7 @@ describe('when handling the completion of the purchase', () => {
 })
 
 describe('when handling the action signaling the set purchase', () => {
-  beforeEach(() => {
-    window.addEventListener = jest.fn()
-    window.removeEventListener = jest.fn()
-  })
+  beforeEach(() => {})
 
   afterEach(() => {
     jest.clearAllMocks()
@@ -609,8 +619,6 @@ describe('when handling the action signaling the set purchase', () => {
           .silentRun()
           .then(({ effects }) => {
             expect(effects.put).toBeUndefined()
-            expect(window.addEventListener).toHaveBeenCalledTimes(1)
-            expect(window.removeEventListener).not.toHaveBeenCalled()
           })
       })
     })
@@ -622,8 +630,6 @@ describe('when handling the action signaling the set purchase', () => {
           .silentRun()
           .then(({ effects }) => {
             expect(effects.put).toBeUndefined()
-            expect(window.addEventListener).not.toHaveBeenCalled()
-            expect(window.removeEventListener).toHaveBeenCalledTimes(1)
           })
       })
     })
@@ -650,8 +656,6 @@ describe('when handling the action signaling the set purchase', () => {
           .silentRun()
           .then(({ effects }) => {
             expect(effects.put).toBeUndefined()
-            expect(window.addEventListener).not.toHaveBeenCalled()
-            expect(window.removeEventListener).toHaveBeenCalledTimes(1)
           })
       })
     })
@@ -680,10 +684,7 @@ describe('when handling the action signaling the set purchase', () => {
             })
           )
           .silentRun()
-          .then(() => {
-            expect(window.addEventListener).not.toHaveBeenCalled()
-            expect(window.removeEventListener).toHaveBeenCalledTimes(1)
-          })
+          .then(() => {})
       })
     })
   })
@@ -705,10 +706,7 @@ describe('when handling the action signaling the set purchase', () => {
           })
         )
         .silentRun()
-        .then(() => {
-          expect(window.addEventListener).not.toHaveBeenCalled()
-          expect(window.removeEventListener).toHaveBeenCalledTimes(1)
-        })
+        .then(() => {})
     })
   })
 
@@ -729,10 +727,7 @@ describe('when handling the action signaling the set purchase', () => {
           })
         )
         .silentRun()
-        .then(() => {
-          expect(window.addEventListener).not.toHaveBeenCalled()
-          expect(window.removeEventListener).toHaveBeenCalledTimes(1)
-        })
+        .then(() => {})
     })
   })
 })
@@ -741,7 +736,7 @@ describe('when handling the action signaling the load of the local storage into 
   describe('when there is no pending purchases in the state', () => {
     it('should not put any action', async () => {
       return expectSaga(gatewaySaga)
-        .provide([[select(getPendingManaPurchase), undefined]])
+        .provide([[select(getPendingPurchase), undefined]])
         .dispatch(load({}))
         .silentRun()
         .then(({ effects }) => {
@@ -755,10 +750,7 @@ describe('when handling the action signaling the load of the local storage into 
       it('should put the action signaling the completion of the purchase', async () => {
         return expectSaga(gatewaySaga)
           .provide([
-            [
-              select(getPendingManaPurchase),
-              mockPurchaseWithCryptoTransactionId
-            ]
+            [select(getPendingPurchase), mockPurchaseWithCryptoTransactionId]
           ])
           .dispatch(load({}))
           .put(
@@ -774,16 +766,80 @@ describe('when handling the action signaling the load of the local storage into 
     })
 
     describe('when it is a Transak purchase', () => {
-      it('should remove it from the list of purchases because it cannot be tracked anymore', async () => {
+      beforeEach(() => {
+        jest
+          .spyOn(Transak.prototype, 'getOrder')
+          .mockResolvedValue(mockTransakOrderResponse)
+      })
+
+      it('should put the action signaling the start pof the purchase status polling request', async () => {
         const transakPurchase = {
           ...mockPurchase,
+          id: mockTransakOrderResponse.data.id,
           gateway: NetworkGatewayType.TRANSAK
         }
 
         return expectSaga(gatewaySaga)
-          .provide([[select(getPendingManaPurchase), transakPurchase]])
+          .provide([[select(getPendingPurchase), transakPurchase]])
           .dispatch(load({}))
-          .put(unsetPurchase(transakPurchase))
+          .put(pollPurchaseStatusRequest(transakPurchase))
+          .put(
+            setPurchase({
+              ...transakPurchase,
+              status: PurchaseStatus.COMPLETE,
+              txHash: mockTransakOrderResponse.data.transactionHash!,
+              failureReason: undefined
+            })
+          )
+          .put(pollPurchaseStatusSuccess())
+          .silentRun()
+      })
+    })
+  })
+})
+
+describe('when handling the action signaling the load of the local storage into the state', () => {
+  describe('when it is a Transak purchase', () => {
+    const transakPurchase = {
+      ...mockPurchase,
+      id: mockTransakOrderResponse.data.id,
+      gateway: NetworkGatewayType.TRANSAK
+    }
+
+    describe('when it is possible to get the order from Transak API', () => {
+      beforeEach(() => {
+        jest
+          .spyOn(Transak.prototype, 'getOrder')
+          .mockResolvedValue(mockTransakOrderResponse)
+      })
+
+      it('should get the order, put the action signaling the set of updated purchase, and the action signaling the success of the poll purchase status request', async () => {
+        return expectSaga(gatewaySaga)
+          .put(
+            setPurchase({
+              ...transakPurchase,
+              status: PurchaseStatus.COMPLETE,
+              txHash: mockTransakOrderResponse.data.transactionHash!,
+              failureReason: undefined
+            })
+          )
+          .put(pollPurchaseStatusSuccess())
+          .dispatch(pollPurchaseStatusRequest(transakPurchase))
+          .silentRun()
+      })
+    })
+
+    describe('when it is not possible to get the order from Transak API because the request fails', () => {
+      beforeEach(() => {
+        jest
+          .spyOn(Transak.prototype, 'getOrder')
+          .mockRejectedValue(new Error(error))
+      })
+
+      it('should get the order, put the action signaling the set of updated purchase, and the action signaling the success of the poll purchase status request', async () => {
+        return expectSaga(gatewaySaga)
+          .put(pollPurchaseStatusFailure(error))
+          .dispatch(pollPurchaseStatusRequest(transakPurchase))
           .silentRun()
       })
     })

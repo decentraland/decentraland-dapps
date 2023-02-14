@@ -13,7 +13,7 @@ import {
   isFinishingPurchase,
   isOpeningGateway,
   getData,
-  getPendingManaPurchase,
+  getPendingPurchase,
   getPurchases,
   getNFTPurchase
 } from './selectors'
@@ -108,7 +108,7 @@ describe('MANA-FIAT Gateway selectors', () => {
       })
 
       it('should return it', () => {
-        expect(getPendingManaPurchase(initialState)).toBe(mockManaPurchase)
+        expect(getPendingPurchase(initialState)).toBe(mockManaPurchase)
       })
     })
 
@@ -124,7 +124,7 @@ describe('MANA-FIAT Gateway selectors', () => {
       })
 
       it('should return undefined', () => {
-        expect(getPendingManaPurchase(initialState)).toBeUndefined()
+        expect(getPendingPurchase(initialState)).toBeUndefined()
       })
     })
   })

@@ -1,6 +1,11 @@
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
-import { setPurchase, unsetPurchase } from '../gateway/actions'
+import {
+  pollPurchaseStatusFailure,
+  pollPurchaseStatusRequest,
+  pollPurchaseStatusSuccess,
+  setPurchase
+} from '../gateway/actions'
 import { Purchase, PurchasePaymentMethod, PurchaseStatus } from './types'
 import {
   manaFiatGatewayPurchaseCompletedFailure,
@@ -212,37 +217,48 @@ describe('when handling the set purchase', () => {
   })
 })
 
-describe('when handling the unset purchase', () => {
-  const state: GatewayState = INITIAL_STATE
+describe('when handling the poll purchase status request', () => {
+  it('should set error to null and add the action to the loading state', () => {
+    const action = pollPurchaseStatusRequest(mockPurchase)
 
-  describe('when the purchase does not exist', () => {
-    it('should leave the purchases as before ', () => {
-      expect(gatewayReducer(state, unsetPurchase(mockPurchase))).toEqual({
-        ...state,
-        data: {
-          ...state.data,
-          purchases: state.data.purchases
-        }
-      })
+    const state = gatewayReducer(
+      { data: { purchases: [] }, loading: [], error: 'error' },
+      action
+    )
+
+    expect(state).toEqual({
+      data: { purchases: [] },
+      loading: [action],
+      error: null
     })
   })
+})
 
-  describe('when the purchase exists', () => {
-    const stateWithPurchases = {
-      ...state,
-      data: { ...state.data, purchases: [mockPurchase] }
-    }
+describe('when handling the poll purchase status success', () => {
+  it('should remove the request action from the loading state and remove the error', () => {
+    const requestAction = pollPurchaseStatusRequest(mockPurchase)
+    const successAction = pollPurchaseStatusSuccess()
 
-    it('should remove it from the purchases list', () => {
-      expect(
-        gatewayReducer(stateWithPurchases, unsetPurchase(mockPurchase))
-      ).toEqual({
-        ...stateWithPurchases,
-        data: {
-          ...state.data,
-          purchases: []
-        }
-      })
-    })
+    const state = gatewayReducer(
+      { data: { purchases: [] }, loading: [requestAction], error: null },
+      successAction
+    )
+
+    expect(state).toEqual({ data: { purchases: [] }, loading: [], error: null })
+  })
+})
+
+describe('when handling the poll purchase status failure', () => {
+  it('should update the error and remove the request action from the loading state', () => {
+    const requestAction = pollPurchaseStatusRequest(mockPurchase)
+    const error = 'error'
+    const failureAction = pollPurchaseStatusFailure(error)
+
+    const state = gatewayReducer(
+      { data: { purchases: [] }, loading: [requestAction], error: null },
+      failureAction
+    )
+
+    expect(state).toEqual({ data: { purchases: [] }, loading: [], error })
   })
 })

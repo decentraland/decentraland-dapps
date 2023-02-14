@@ -17,10 +17,9 @@ export const getLoading = (state: any) => getState(state).loading
 export const getError = (state: any) => getState(state).error
 
 export const getPurchases = (state: any) => getData(state).purchases
-export const getPendingManaPurchase = (state: any) =>
+export const getPendingPurchase = (state: any) =>
   getPurchases(state).find(
-    purchase =>
-      isManaPurchase(purchase) && purchase.status === PurchaseStatus.PENDING
+    purchase => purchase.status === PurchaseStatus.PENDING
   )
 
 // In case a user buys an NFT multiple times (after selling it), the purchases are sorted by timestamp, so only the last purchase will be taken into account.

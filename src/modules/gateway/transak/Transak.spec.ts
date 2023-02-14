@@ -33,11 +33,12 @@ const mockGetChainIdByNetwork = getChainIdByNetwork as jest.MockedFunction<
 const mockConfig: ManaFiatGatewaySagasConfig = {
   [NetworkGatewayType.MOON_PAY]: {
     apiKey: 'api-key',
-    apiBaseUrl: 'http://base.url.xyz',
+    apiBaseUrl: 'http://moonpay-base.url.xyz',
     widgetBaseUrl: 'http://widget.base.url.xyz',
     pollingDelay: 50
   },
   [NetworkGatewayType.TRANSAK]: {
+    apiBaseUrl: 'http://transak-base.url.xyz',
     key: 'transak-key',
     env: 'TEST',
     pusher: {

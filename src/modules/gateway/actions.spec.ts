@@ -22,10 +22,14 @@ import {
   OPEN_MANA_FIAT_GATEWAY_FAILURE,
   OPEN_MANA_FIAT_GATEWAY_REQUEST,
   OPEN_MANA_FIAT_GATEWAY_SUCCESS,
+  pollPurchaseStatusFailure,
+  pollPurchaseStatusRequest,
+  pollPurchaseStatusSuccess,
+  POLL_PURCHASE_STATUS_FAILURE,
+  POLL_PURCHASE_STATUS_REQUEST,
+  POLL_PURCHASE_STATUS_SUCCESS,
   setPurchase,
-  SET_PURCHASE,
-  unsetPurchase,
-  UNSET_PURCHASE
+  SET_PURCHASE
 } from './actions'
 import { Purchase, PurchasePaymentMethod, PurchaseStatus } from './types'
 
@@ -226,14 +230,34 @@ describe('when creating the action to set the purchase', () => {
   })
 })
 
-describe('when creating the action to unset the purchase', () => {
+describe('when creating the action that signals the poll purchase status request', () => {
   it('should return an object representing the action', () => {
-    expect(unsetPurchase(mockPurchase)).toEqual({
+    expect(pollPurchaseStatusRequest(mockPurchase)).toEqual({
+      meta: undefined,
+      payload: { purchase: mockPurchase },
+      type: POLL_PURCHASE_STATUS_REQUEST
+    })
+  })
+})
+
+describe('when creating the action that signals success in the poll purchase status request', () => {
+  it('should return an action signaling the success of the buy mana with fiat modal opening', () => {
+    expect(pollPurchaseStatusSuccess()).toEqual({
+      meta: undefined,
+      type: POLL_PURCHASE_STATUS_SUCCESS
+    })
+  })
+})
+
+describe('when creating the action that signals failure in the poll purchase status request', () => {
+  it('should return an action signaling the unsuccess of the buy mana with fiat modal opening', () => {
+    const defaultError = 'Default error'
+    expect(pollPurchaseStatusFailure(defaultError)).toEqual({
       meta: undefined,
       payload: {
-        purchase: mockPurchase
+        error: defaultError
       },
-      type: UNSET_PURCHASE
+      type: POLL_PURCHASE_STATUS_FAILURE
     })
   })
 })

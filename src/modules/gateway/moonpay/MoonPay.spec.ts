@@ -22,7 +22,7 @@ nock.disableNetConnect()
 
 const mockConfig: MoonPayConfig = {
   apiKey: 'api-key',
-  apiBaseUrl: 'http://base.url.xyz',
+  apiBaseUrl: 'http://moonpay-base.url.xyz',
   widgetBaseUrl: 'http://widget.base.url.xyz',
   pollingDelay: 500
 }
