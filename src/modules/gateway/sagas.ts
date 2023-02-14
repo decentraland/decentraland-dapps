@@ -207,9 +207,9 @@ function* handlePollPurchaseStatusRequest(
         while (!statusHasChanged) {
           const {
             data: { status, transactionHash, errorMessage }
-          }: OrderResponse = yield call(transak.getOrder, id)
+          }: OrderResponse = yield call([transak, transak.getOrder], id)
           const newStatus: PurchaseStatus = yield call(
-            transak.getPurchaseStatus,
+            [transak, transak.getPurchaseStatus],
             status
           )
           if (newStatus !== purchase.status) {
