@@ -1,17 +1,8 @@
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 import { BaseAPI } from '../../../lib/api'
-import {
-  MoonPayConfig,
-  Purchase,
-  PurchasePaymentMethod,
-  PurchaseStatus
-} from '../types'
-import {
-  MoonPayPaymentMethod,
-  MoonPayTransaction,
-  MoonPayTransactionStatus
-} from './types'
+import { MoonPayConfig, Purchase, PurchaseStatus } from '../types'
+import { MoonPayTransaction, MoonPayTransactionStatus } from './types'
 
 export class MoonPay {
   private readonly apiKey: string
@@ -34,27 +25,6 @@ export class MoonPay {
       [MoonPayTransactionStatus.FAILED]: PurchaseStatus.FAILED,
       [MoonPayTransactionStatus.COMPLETED]: PurchaseStatus.COMPLETE
     }[status]
-  }
-
-  private getPaymentMethod(
-    paymentMethod: MoonPayPaymentMethod
-  ): PurchasePaymentMethod {
-    return {
-      [MoonPayPaymentMethod.ACH_BANK_TRANSFER]:
-        PurchasePaymentMethod.BANK_TRANSFER,
-      [MoonPayPaymentMethod.CREDIT_DEBIT_CARD]:
-        PurchasePaymentMethod.CREDIT_DEBIT_CARD,
-      [MoonPayPaymentMethod.GBP_BANK_TRANSFER]:
-        PurchasePaymentMethod.BANK_TRANSFER,
-      [MoonPayPaymentMethod.GBP_OPEN_BANKING_PAYMENT]:
-        PurchasePaymentMethod.OTHER,
-      [MoonPayPaymentMethod.MOBILE_WALLET]: PurchasePaymentMethod.OTHER,
-      [MoonPayPaymentMethod.PIX_INSTANT_PAYMENT]: PurchasePaymentMethod.OTHER,
-      [MoonPayPaymentMethod.SEPA_BANK_TRANSFER]:
-        PurchasePaymentMethod.BANK_TRANSFER,
-      [MoonPayPaymentMethod.SEPA_OPEN_BANKING_PAYMENT]:
-        PurchasePaymentMethod.OTHER
-    }[paymentMethod]
   }
 
   /**
@@ -92,7 +62,7 @@ export class MoonPay {
       network,
       timestamp: +new Date(createdAt),
       status: this.getPurchaseStatus(status),
-      paymentMethod: this.getPaymentMethod(paymentMethod),
+      paymentMethod,
       address: walletAddress,
       gateway: NetworkGatewayType.MOON_PAY,
       txHash: cryptoTransactionId

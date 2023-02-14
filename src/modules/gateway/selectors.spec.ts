@@ -18,12 +18,7 @@ import {
   getNFTPurchase
 } from './selectors'
 import { TradeType } from './transak/types'
-import {
-  NFTPurchase,
-  Purchase,
-  PurchasePaymentMethod,
-  PurchaseStatus
-} from './types'
+import { NFTPurchase, Purchase, PurchaseStatus } from './types'
 
 let initialState: any
 
@@ -34,7 +29,7 @@ const mockManaPurchase: Purchase = {
   network: Network.ETHEREUM,
   timestamp: 1535398843748,
   status: PurchaseStatus.PENDING,
-  paymentMethod: PurchasePaymentMethod.CREDIT_DEBIT_CARD,
+  paymentMethod: 'credit_debit_card',
   gateway: NetworkGatewayType.MOON_PAY,
   txHash: null
 }

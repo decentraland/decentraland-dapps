@@ -31,7 +31,7 @@ import {
   setPurchase,
   SET_PURCHASE
 } from './actions'
-import { Purchase, PurchasePaymentMethod, PurchaseStatus } from './types'
+import { Purchase, PurchaseStatus } from './types'
 
 jest.mock('../../lib/eth')
 
@@ -48,7 +48,7 @@ const mockPurchase: Purchase = {
   status: PurchaseStatus.PENDING,
   gateway: NetworkGatewayType.MOON_PAY,
   txHash: 'mock-tx-hash',
-  paymentMethod: PurchasePaymentMethod.CREDIT_DEBIT_CARD
+  paymentMethod: 'credit_debit_card'
 }
 
 describe('when creating the action that signals the start of a buy mana with fiat modal opening', () => {

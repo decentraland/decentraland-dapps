@@ -83,17 +83,6 @@ type Currency = {
   maxSellAmount: number
 }
 
-export enum MoonPayPaymentMethod {
-  CREDIT_DEBIT_CARD = 'credit_debit_card',
-  SEPA_BANK_TRANSFER = 'sepa_bank_transfer',
-  SEPA_OPEN_BANKING_PAYMENT = 'sepa_open_banking_payment',
-  GBP_BANK_TRANSFER = 'gbp_bank_transfer',
-  GBP_OPEN_BANKING_PAYMENT = 'gbp_open_banking_payment',
-  ACH_BANK_TRANSFER = 'ach_bank_transfer',
-  PIX_INSTANT_PAYMENT = 'pix_instant_payment',
-  MOBILE_WALLET = 'mobile_wallet'
-}
-
 export type MoonPayTransaction = {
   id: string
   createdAt: string
@@ -123,7 +112,7 @@ export type MoonPayTransaction = {
   usdRate: number
   gbpRate: number
   externalTransactionId: string
-  paymentMethod: MoonPayPaymentMethod
+  paymentMethod: string
   baseCurrency: BaseCurrency
   currency: Currency
   externalCustomerId: string

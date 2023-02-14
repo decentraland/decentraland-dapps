@@ -6,7 +6,7 @@ import {
   pollPurchaseStatusSuccess,
   setPurchase
 } from '../gateway/actions'
-import { Purchase, PurchasePaymentMethod, PurchaseStatus } from './types'
+import { Purchase, PurchaseStatus } from './types'
 import {
   manaFiatGatewayPurchaseCompletedFailure,
   openBuyManaWithFiatModalFailure,
@@ -25,7 +25,7 @@ const mockPurchase: Purchase = {
   network: Network.ETHEREUM,
   timestamp: 1535398843748,
   status: PurchaseStatus.PENDING,
-  paymentMethod: PurchasePaymentMethod.CREDIT_DEBIT_CARD,
+  paymentMethod: 'credit_debit_card',
   gateway: NetworkGatewayType.MOON_PAY,
   txHash: null
 }

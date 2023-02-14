@@ -20,16 +20,6 @@ export enum TransakOrderStatus {
   EXPIRED = 'EXPIRED'
 }
 
-export enum TransakPaymentMethod {
-  CREDIT_DEBIT_CARD = 'credit_debit_card',
-  APPLE_PAY = 'apple_pay',
-  GOOGLE_PAY = 'google_pay',
-  SEPA_BANK_TRANSFER = 'sepa_bank_transfer',
-  GBP_BANK_TRANSFER = 'gbp_bank_transfer',
-  UPI = 'upi',
-  MOBIKWIK_WALLET = 'mobikwik_wallet'
-}
-
 export enum TradeType {
   PRIMARY = 'primary',
   SECONDARY = 'secondary'
@@ -96,7 +86,7 @@ export type OrderData = {
       tokenId: string
       tradeType: TradeType
     }
-    paymentOptionId: TransakPaymentMethod
+    paymentOptionId: string
     quoteId: string
     referenceCode: number
     reservationId: string
