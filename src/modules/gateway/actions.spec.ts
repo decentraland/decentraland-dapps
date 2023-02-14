@@ -27,7 +27,7 @@ import {
   unsetPurchase,
   UNSET_PURCHASE
 } from './actions'
-import { Purchase, PurchaseStatus } from './types'
+import { Purchase, PurchasePaymentMethod, PurchaseStatus } from './types'
 
 jest.mock('../../lib/eth')
 
@@ -43,7 +43,8 @@ const mockPurchase: Purchase = {
   timestamp: 1535398843748,
   status: PurchaseStatus.PENDING,
   gateway: NetworkGatewayType.MOON_PAY,
-  txHash: 'mock-tx-hash'
+  txHash: 'mock-tx-hash',
+  paymentMethod: PurchasePaymentMethod.CREDIT_DEBIT_CARD
 }
 
 describe('when creating the action that signals the start of a buy mana with fiat modal opening', () => {
@@ -215,17 +216,6 @@ describe('when creating the action to signal the addition of a MANA purchase as 
 
 describe('when creating the action to set the purchase', () => {
   it('should return an object representing the action', () => {
-    const mockPurchase: Purchase = {
-      address: '0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2',
-      amount: 100,
-      id: '354b1f46-480c-4307-9896-f4c81c1e1e17',
-      network: Network.ETHEREUM,
-      status: PurchaseStatus.PENDING,
-      timestamp: 1535398843748,
-      gateway: NetworkGatewayType.MOON_PAY,
-      txHash: null
-    }
-
     expect(setPurchase(mockPurchase)).toEqual({
       meta: undefined,
       payload: {
@@ -238,17 +228,6 @@ describe('when creating the action to set the purchase', () => {
 
 describe('when creating the action to unset the purchase', () => {
   it('should return an object representing the action', () => {
-    const mockPurchase: Purchase = {
-      address: '0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2',
-      amount: 100,
-      id: '354b1f46-480c-4307-9896-f4c81c1e1e17',
-      network: Network.ETHEREUM,
-      status: PurchaseStatus.PENDING,
-      timestamp: 1535398843748,
-      gateway: NetworkGatewayType.MOON_PAY,
-      txHash: null
-    }
-
     expect(unsetPurchase(mockPurchase)).toEqual({
       meta: undefined,
       payload: {

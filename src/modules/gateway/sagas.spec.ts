@@ -22,10 +22,19 @@ import {
   openManaFiatGatewaySuccess
 } from './actions'
 import { MoonPay } from './moonpay'
-import { MoonPayTransaction, MoonPayTransactionStatus } from './moonpay/types'
+import {
+  MoonPayPaymentMethod,
+  MoonPayTransaction,
+  MoonPayTransactionStatus
+} from './moonpay/types'
 import { createGatewaySaga } from './sagas'
 import { Transak } from './transak'
-import { ManaFiatGatewaySagasConfig, Purchase, PurchaseStatus } from './types'
+import {
+  ManaFiatGatewaySagasConfig,
+  Purchase,
+  PurchasePaymentMethod,
+  PurchaseStatus
+} from './types'
 import { getPendingManaPurchase } from './selectors'
 
 jest.mock('../../lib/eth')
@@ -91,7 +100,7 @@ const mockTransaction: MoonPayTransaction = {
   usdRate: 1.11336,
   gbpRate: 0.86044,
   externalTransactionId: '2dad9a78-bc35-452b-aa2c-968a247a9646',
-  paymentMethod: 'credit_debit_card',
+  paymentMethod: MoonPayPaymentMethod.CREDIT_DEBIT_CARD,
   baseCurrency: {
     id: '71435a8d-211c-4664-a59e-2a5361a6c5a7',
     createdAt: '2022-02-28T11:17:08.116Z',
@@ -179,6 +188,7 @@ const mockPurchase: Purchase = {
   network: Network.ETHEREUM,
   timestamp: 1535398843748,
   status: PurchaseStatus.PENDING,
+  paymentMethod: PurchasePaymentMethod.CREDIT_DEBIT_CARD,
   gateway: NetworkGatewayType.MOON_PAY,
   txHash: null
 }

@@ -2,8 +2,17 @@ import nock from 'nock'
 import axios from 'axios'
 
 import { MoonPay } from './MoonPay'
-import { MoonPayConfig } from '../types'
-import { MoonPayTransaction, MoonPayTransactionStatus } from './types'
+import {
+  MoonPayConfig,
+  Purchase,
+  PurchasePaymentMethod,
+  PurchaseStatus
+} from '../types'
+import {
+  MoonPayPaymentMethod,
+  MoonPayTransaction,
+  MoonPayTransactionStatus
+} from './types'
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui'
 
@@ -48,7 +57,7 @@ const mockTransaction: MoonPayTransaction = {
   usdRate: 1.11336,
   gbpRate: 0.86044,
   externalTransactionId: '2dad9a78-bc35-452b-aa2c-968a247a9646',
-  paymentMethod: 'credit_debit_card',
+  paymentMethod: MoonPayPaymentMethod.CREDIT_DEBIT_CARD,
   baseCurrency: {
     id: '71435a8d-211c-4664-a59e-2a5361a6c5a7',
     createdAt: '2022-02-28T11:17:08.116Z',
@@ -153,12 +162,13 @@ describe('when interacting with MoonPay', () => {
 
   describe('when create a purchase using the transaction id', () => {
     it('should fetch the transaction and return a purchase object', () => {
-      const expectedPurchase = {
+      const expectedPurchase: Purchase = {
         address: '0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2',
         amount: 100,
         id: '354b1f46-480c-4307-9896-f4c81c1e1e17',
-        network: 'ETHEREUM',
-        status: 'pending',
+        network: Network.ETHEREUM,
+        status: PurchaseStatus.PENDING,
+        paymentMethod: PurchasePaymentMethod.CREDIT_DEBIT_CARD,
         timestamp: 1535398843748,
         gateway: NetworkGatewayType.MOON_PAY,
         txHash: 'crypto-transaction-id'

@@ -1,7 +1,7 @@
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 import { setPurchase, unsetPurchase } from '../gateway/actions'
-import { Purchase, PurchaseStatus } from './types'
+import { Purchase, PurchasePaymentMethod, PurchaseStatus } from './types'
 import {
   manaFiatGatewayPurchaseCompletedFailure,
   openBuyManaWithFiatModalFailure,
@@ -12,6 +12,18 @@ import {
   openManaFiatGatewaySuccess
 } from './actions'
 import { INITIAL_STATE, gatewayReducer, GatewayState } from './reducer'
+
+const mockPurchase: Purchase = {
+  address: '0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2',
+  amount: 100,
+  id: 'mock-id',
+  network: Network.ETHEREUM,
+  timestamp: 1535398843748,
+  status: PurchaseStatus.PENDING,
+  paymentMethod: PurchasePaymentMethod.CREDIT_DEBIT_CARD,
+  gateway: NetworkGatewayType.MOON_PAY,
+  txHash: null
+}
 
 describe('when handling the open buy mana with fiat modal request', () => {
   describe('when opening the modal without a selected network', () => {
@@ -162,16 +174,6 @@ describe('when handling the failure on purchase completion', () => {
 })
 
 describe('when handling the set purchase', () => {
-  const mockPurchase: Purchase = {
-    address: '0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2',
-    amount: 100,
-    id: 'mock-id',
-    network: Network.ETHEREUM,
-    timestamp: 1535398843748,
-    status: PurchaseStatus.PENDING,
-    gateway: NetworkGatewayType.MOON_PAY,
-    txHash: null
-  }
   const state: GatewayState = INITIAL_STATE
 
   describe('when the purchase does not yet exist', () => {
@@ -211,16 +213,6 @@ describe('when handling the set purchase', () => {
 })
 
 describe('when handling the unset purchase', () => {
-  const mockPurchase: Purchase = {
-    address: '0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2',
-    amount: 100,
-    id: 'mock-id',
-    network: Network.ETHEREUM,
-    timestamp: 1535398843748,
-    status: PurchaseStatus.PENDING,
-    gateway: NetworkGatewayType.MOON_PAY,
-    txHash: null
-  }
   const state: GatewayState = INITIAL_STATE
 
   describe('when the purchase does not exist', () => {

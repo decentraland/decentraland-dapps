@@ -2,7 +2,12 @@ import transakSDK from '@transak/transak-sdk'
 import Pusher from 'pusher-js'
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui'
-import { TransakConfig, Purchase, PurchaseStatus } from '../types'
+import {
+  TransakConfig,
+  Purchase,
+  PurchaseStatus,
+  PurchasePaymentMethod
+} from '../types'
 import { purchaseEventsChannel } from '../utils'
 import {
   CustomizationOptions,
@@ -10,6 +15,7 @@ import {
   OrderData,
   TradeType,
   TransakOrderStatus,
+  TransakPaymentMethod,
   TransakSDK,
   WebSocketEvents
 } from './types'
@@ -92,6 +98,23 @@ export class Transak {
     }[status]
   }
 
+  private getPaymentMethod(
+    paymentMethod: TransakPaymentMethod
+  ): PurchasePaymentMethod {
+    return {
+      [TransakPaymentMethod.APPLE_PAY]: PurchasePaymentMethod.APPLE_PAY,
+      [TransakPaymentMethod.CREDIT_DEBIT_CARD]:
+        PurchasePaymentMethod.CREDIT_DEBIT_CARD,
+      [TransakPaymentMethod.GBP_BANK_TRANSFER]:
+        PurchasePaymentMethod.BANK_TRANSFER,
+      [TransakPaymentMethod.GOOGLE_PAY]: PurchasePaymentMethod.GOOGLE_PAY,
+      [TransakPaymentMethod.MOBIKWIK_WALLET]: PurchasePaymentMethod.UNKNOWN,
+      [TransakPaymentMethod.SEPA_BANK_TRANSFER]:
+        PurchasePaymentMethod.BANK_TRANSFER,
+      [TransakPaymentMethod.UPI]: PurchasePaymentMethod.BANK_TRANSFER
+    }[paymentMethod]
+  }
+
   private defaultCustomizationOptions(
     address: string
   ): DefaultCustomizationOptions {
@@ -124,7 +147,8 @@ export class Transak {
       isNFTOrder,
       nftAssetInfo,
       transactionHash,
-      walletAddress
+      walletAddress,
+      paymentOptionId
     } = orderData
 
     return {
@@ -132,6 +156,7 @@ export class Transak {
       network,
       timestamp: +new Date(createdAt),
       status: this.getPurchaseStatus(status),
+      paymentMethod: this.getPaymentMethod(paymentOptionId),
       address: walletAddress,
       gateway: NetworkGatewayType.TRANSAK,
       txHash: transactionHash || null,

@@ -1,8 +1,17 @@
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 import { BaseAPI } from '../../../lib/api'
-import { MoonPayConfig, Purchase, PurchaseStatus } from '../types'
-import { MoonPayTransaction, MoonPayTransactionStatus } from './types'
+import {
+  MoonPayConfig,
+  Purchase,
+  PurchasePaymentMethod,
+  PurchaseStatus
+} from '../types'
+import {
+  MoonPayPaymentMethod,
+  MoonPayTransaction,
+  MoonPayTransactionStatus
+} from './types'
 
 export class MoonPay {
   private readonly apiKey: string
@@ -25,6 +34,27 @@ export class MoonPay {
       [MoonPayTransactionStatus.FAILED]: PurchaseStatus.FAILED,
       [MoonPayTransactionStatus.COMPLETED]: PurchaseStatus.COMPLETE
     }[status]
+  }
+
+  private getPaymentMethod(
+    paymentMethod: MoonPayPaymentMethod
+  ): PurchasePaymentMethod {
+    return {
+      [MoonPayPaymentMethod.ACH_BANK_TRANSFER]:
+        PurchasePaymentMethod.BANK_TRANSFER,
+      [MoonPayPaymentMethod.CREDIT_DEBIT_CARD]:
+        PurchasePaymentMethod.CREDIT_DEBIT_CARD,
+      [MoonPayPaymentMethod.GBP_BANK_TRANSFER]:
+        PurchasePaymentMethod.BANK_TRANSFER,
+      [MoonPayPaymentMethod.GBP_OPEN_BANKING_PAYMENT]:
+        PurchasePaymentMethod.UNKNOWN,
+      [MoonPayPaymentMethod.MOBILE_WALLET]: PurchasePaymentMethod.UNKNOWN,
+      [MoonPayPaymentMethod.PIX_INSTANT_PAYMENT]: PurchasePaymentMethod.UNKNOWN,
+      [MoonPayPaymentMethod.SEPA_BANK_TRANSFER]:
+        PurchasePaymentMethod.BANK_TRANSFER,
+      [MoonPayPaymentMethod.SEPA_OPEN_BANKING_PAYMENT]:
+        PurchasePaymentMethod.UNKNOWN
+    }[paymentMethod]
   }
 
   /**
@@ -52,7 +82,8 @@ export class MoonPay {
       createdAt,
       status,
       walletAddress,
-      cryptoTransactionId
+      cryptoTransactionId,
+      paymentMethod
     } = transaction
 
     return {
@@ -61,6 +92,7 @@ export class MoonPay {
       network,
       timestamp: +new Date(createdAt),
       status: this.getPurchaseStatus(status),
+      paymentMethod: this.getPaymentMethod(paymentMethod),
       address: walletAddress,
       gateway: NetworkGatewayType.MOON_PAY,
       txHash: cryptoTransactionId
@@ -69,8 +101,9 @@ export class MoonPay {
 
   getWidgetUrl(network: Network) {
     const redirectURL = `${window.location.origin}?network=${network}&gateway=${NetworkGatewayType.MOON_PAY}`
-    return `${this.widgetBaseUrl}?apiKey=${this.apiKey
-      }&currencyCode=MANA&redirectURL=${encodeURIComponent(redirectURL)}`
+    return `${this.widgetBaseUrl}?apiKey=${
+      this.apiKey
+    }&currencyCode=MANA&redirectURL=${encodeURIComponent(redirectURL)}`
   }
 
   getTransactionReceiptUrl(transactionId: string) {

@@ -14,9 +14,15 @@ import {
   ManaFiatGatewaySagasConfig,
   NFTPurchase,
   Purchase,
+  PurchasePaymentMethod,
   PurchaseStatus
 } from '../types'
-import { OrderData, TradeType, TransakOrderStatus } from './types'
+import {
+  OrderData,
+  TradeType,
+  TransakOrderStatus,
+  TransakPaymentMethod
+} from './types'
 
 jest.mock('../../../lib/eth')
 
@@ -61,7 +67,7 @@ const mockOrderData: OrderData = {
     isBuyOrSell: 'BUY',
     isNFTOrder: false,
     network: 'ethereum',
-    paymentOptionId: 'payment-option-id',
+    paymentOptionId: TransakPaymentMethod.CREDIT_DEBIT_CARD,
     quoteId: 'quote-id',
     referenceCode: 12345,
     reservationId: 'reservation-id',
@@ -93,6 +99,7 @@ const mockManaPurchase: Purchase = {
   network: Network.ETHEREUM,
   timestamp: 1671028355396,
   status: PurchaseStatus.PENDING,
+  paymentMethod: PurchasePaymentMethod.CREDIT_DEBIT_CARD,
   gateway: NetworkGatewayType.TRANSAK,
   txHash: 'mock-transaction-hash'
 }
