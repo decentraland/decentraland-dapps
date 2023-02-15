@@ -13,9 +13,10 @@ import {
   isFinishingPurchase,
   isOpeningGateway,
   getData,
-  getPendingPurchase,
+  getPendingPurchases,
   getPurchases,
-  getNFTPurchase
+  getNFTPurchase,
+  getPendingManaPurchase
 } from './selectors'
 import { TradeType } from './transak/types'
 import { NFTPurchase, Purchase, PurchaseStatus } from './types'
@@ -84,6 +85,48 @@ describe('MANA-FIAT Gateway selectors', () => {
     })
   })
 
+  describe('when getting the pending purchases', () => {
+    describe('when there are pending purchases', () => {
+      beforeEach(() => {
+        initialState = {
+          ...initialState,
+          gateway: {
+            ...initialState.gateway,
+            data: { purchases: [mockManaPurchase] },
+            loading: [
+              openManaFiatGatewayRequest(
+                Network.ETHEREUM,
+                NetworkGatewayType.MOON_PAY
+              )
+            ]
+          }
+        }
+      })
+
+      it('should return it', () => {
+        expect(getPendingPurchases(initialState)).toStrictEqual([
+          mockManaPurchase
+        ])
+      })
+    })
+
+    describe('when there are not', () => {
+      beforeEach(() => {
+        initialState = {
+          ...initialState,
+          gateway: {
+            ...initialState.gateway,
+            loading: []
+          }
+        }
+      })
+
+      it('should return an empty array', () => {
+        expect(getPendingPurchases(initialState)).toStrictEqual([])
+      })
+    })
+  })
+
   describe('when getting the pending mana purchase', () => {
     describe('when there is a pending mana purchase', () => {
       beforeEach(() => {
@@ -103,7 +146,7 @@ describe('MANA-FIAT Gateway selectors', () => {
       })
 
       it('should return it', () => {
-        expect(getPendingPurchase(initialState)).toBe(mockManaPurchase)
+        expect(getPendingManaPurchase(initialState)).toBe(mockManaPurchase)
       })
     })
 
@@ -119,7 +162,7 @@ describe('MANA-FIAT Gateway selectors', () => {
       })
 
       it('should return undefined', () => {
-        expect(getPendingPurchase(initialState)).toBeUndefined()
+        expect(getPendingManaPurchase(initialState)).toStrictEqual(undefined)
       })
     })
   })

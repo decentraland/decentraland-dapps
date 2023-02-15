@@ -43,7 +43,7 @@ import {
 } from './actions'
 import { MoonPay } from './moonpay'
 import { MoonPayTransaction, MoonPayTransactionStatus } from './moonpay/types'
-import { getPendingPurchase } from './selectors'
+import { getPendingManaPurchase, getPendingPurchases } from './selectors'
 import { Transak } from './transak'
 import { CustomizationOptions, OrderResponse } from './transak/types'
 import { ManaFiatGatewaySagasConfig, Purchase, PurchaseStatus } from './types'
@@ -92,7 +92,7 @@ function* handleOpenBuyManaWithFiatModal(
   try {
     const { selectedNetwork } = action.payload
     const pendingManaPurchase: Purchase | undefined = yield select(
-      getPendingPurchase
+      getPendingManaPurchase
     )
 
     if (pendingManaPurchase) {
@@ -166,26 +166,28 @@ function* upsertPurchase(
 }
 
 function* handleStorageLoad() {
-  const pendingPurchase: ReturnType<typeof getPendingPurchase> = yield select(
-    getPendingPurchase
+  const pendingPurchases: ReturnType<typeof getPendingPurchases> = yield select(
+    getPendingPurchases
   )
 
-  if (pendingPurchase) {
-    const { network, gateway, id } = pendingPurchase
-    switch (gateway) {
-      case NetworkGatewayType.TRANSAK:
-        yield put(pollPurchaseStatusRequest(pendingPurchase))
-        break
-      case NetworkGatewayType.MOON_PAY:
-        yield put(
-          manaFiatGatewayPurchaseCompleted(
-            network,
-            gateway,
-            id,
-            MoonPayTransactionStatus.PENDING
+  if (pendingPurchases) {
+    for (const pendingPurchase of pendingPurchases) {
+      const { network, gateway, id } = pendingPurchase
+      switch (gateway) {
+        case NetworkGatewayType.TRANSAK:
+          yield put(pollPurchaseStatusRequest(pendingPurchase))
+          break
+        case NetworkGatewayType.MOON_PAY:
+          yield put(
+            manaFiatGatewayPurchaseCompleted(
+              network,
+              gateway,
+              id,
+              MoonPayTransactionStatus.PENDING
+            )
           )
-        )
-        break
+          break
+      }
     }
   }
 }
