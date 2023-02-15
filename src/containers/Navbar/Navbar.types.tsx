@@ -16,6 +16,7 @@ export type NavbarProps = NavbarComponentProps & {
   onSwitchNetwork: typeof switchNetworkRequest
   onSignOut: typeof disconnectWallet
   hasAcceptedNetworkPartialSupport: boolean
+  showPartiallySupportedModal?: boolean
   onAcceptNetworkPartialSupport: typeof acceptNetworkPartialSupport
 }
 
