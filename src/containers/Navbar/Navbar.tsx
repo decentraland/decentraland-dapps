@@ -47,7 +47,8 @@ export default class Navbar extends React.PureComponent<NavbarProps> {
     const {
       appChainId,
       hasAcceptedNetworkPartialSupport,
-      onAcceptNetworkPartialSupport
+      onAcceptNetworkPartialSupport,
+      showPartiallySupportedModal = true
     } = this.props
     const expectedChainName = getChainName(appChainId)
     return (
@@ -89,7 +90,7 @@ export default class Navbar extends React.PureComponent<NavbarProps> {
                   </Button>
                 </Modal.Actions>
               </Modal>
-            ) : isPartiallySupported ? (
+            ) : isPartiallySupported && showPartiallySupportedModal ? (
               <Modal open={!hasAcceptedNetworkPartialSupport} size="small">
                 <ModalNavigation
                   title={
