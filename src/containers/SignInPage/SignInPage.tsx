@@ -1,6 +1,9 @@
 import * as React from 'react'
 
-import { SignIn, SignInI18N } from 'decentraland-ui/dist/components/SignIn/SignIn'
+import {
+  SignIn,
+  SignInI18N
+} from 'decentraland-ui/dist/components/SignIn/SignIn'
 
 import { T } from '../../modules/translation/utils'
 import { isMobile } from '../../lib/utils'
@@ -57,6 +60,15 @@ export default class SignInPage extends React.PureComponent<
         <T
           id="@dapps.sign_in.options.mobile"
           values={{
+            metamask_link: (
+              <a
+                href="https://metamask.io"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                MetaMask
+              </a>
+            ),
             coinbase_link: (
               <a
                 href="https://wallet.coinbase.com"

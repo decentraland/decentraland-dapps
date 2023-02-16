@@ -74,7 +74,8 @@
         "browser_extension": "Usando una extensión de navegador",
         "email": "Usando tu cuenta de email",
         "mobile": "Usando un navegador móvil",
-        "mobile_and_browser": "Usando tu móvil o extensión de navegador"
+        "mobile_and_browser": "Usando tu móvil o extensión de navegador",
+        "metamask_mobile": "Usando la aplicación de MetaMask"
       }
     },
     "buyManaWithFiat": {

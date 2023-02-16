@@ -65,7 +65,8 @@
         "using": {
           "browser_extension": "Utiliser une extension de navigateur",
           "email": "Utiliser votre email",
-          "mobile": "Utiliser votre portefeuille mobile"
+          "mobile": "Utiliser votre portefeuille mobile",
+          "metamask_mobile": "Utilisation de l'application MetaMask"
         }
       }
     },

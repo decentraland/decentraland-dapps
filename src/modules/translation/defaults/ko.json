@@ -65,7 +65,8 @@
         "using": {
           "browser_extension": "브라우저 확장 사용",
           "email": "이메일 사용",
-          "mobile": "모바일 지갑 사용"
+          "mobile": "모바일 지갑 사용",
+          "metamask_mobile": "मेटामास्क ऍप्लिकेशन वापरून"
         }
       }
     },
