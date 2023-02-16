@@ -200,37 +200,39 @@ function* handlePollPurchaseStatusRequest(
   const { gateway, id } = purchase
 
   try {
-    switch (gateway) {
-      case NetworkGatewayType.TRANSAK:
-        const { transak: transakConfig } = config
-        const transak = new Transak(transakConfig)
-        let statusHasChanged = false
+    if (purchase.status === PurchaseStatus.PENDING) {
+      switch (gateway) {
+        case NetworkGatewayType.TRANSAK:
+          const { transak: transakConfig } = config
+          const transak = new Transak(transakConfig)
+          let statusHasChanged = false
 
-        while (!statusHasChanged) {
-          const {
-            data: { status, transactionHash, errorMessage }
-          }: OrderResponse = yield call([transak, transak.getOrder], id)
-          const newStatus: PurchaseStatus = yield call(
-            [transak, transak.getPurchaseStatus],
-            status
-          )
-          if (newStatus !== purchase.status) {
-            statusHasChanged = true
-            yield put(
-              setPurchase({
-                ...purchase,
-                status: newStatus,
-                txHash: transactionHash || null,
-                failureReason: errorMessage
-              })
+          while (!statusHasChanged) {
+            const {
+              data: { status, transactionHash, errorMessage }
+            }: OrderResponse = yield call([transak, transak.getOrder], id)
+            const newStatus: PurchaseStatus = yield call(
+              [transak, transak.getPurchaseStatus],
+              status
             )
-            continue
+            if (newStatus !== purchase.status) {
+              statusHasChanged = true
+              yield put(
+                setPurchase({
+                  ...purchase,
+                  status: newStatus,
+                  txHash: transactionHash || null,
+                  failureReason: errorMessage
+                })
+              )
+              continue
+            }
+            yield delay(transakConfig.pollingDelay || DEFAULT_POLLING_DELAY)
           }
-          yield delay(transakConfig.pollingDelay || DEFAULT_POLLING_DELAY)
-        }
-        break
-      default:
-        break
+          break
+        default:
+          break
+      }
     }
     yield put(pollPurchaseStatusSuccess())
   } catch (error) {
