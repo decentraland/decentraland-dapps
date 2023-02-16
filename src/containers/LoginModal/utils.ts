@@ -49,6 +49,7 @@ export function toProviderType(
   modalOptionType: LoginModalOptionType
 ): ProviderType {
   switch (modalOptionType) {
+    // we're using the same logic of wallet connect for metamask in mobile
     case METAMASK_MOBILE:
       return ProviderType.WALLET_CONNECT
     case METAMASK:
