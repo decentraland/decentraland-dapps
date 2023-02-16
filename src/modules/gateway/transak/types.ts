@@ -102,11 +102,8 @@ export type OrderResponse = {
     orderId: string
     apiKey: string
   }
-  data: {
-    id: OrderData['status']['id']
-    status: OrderData['status']['status']
-    transactionHash?: OrderData['status']['transactionHash']
-    errorMessage?: string | null
+  data: Pick<OrderData['status'], 'id' | 'status' | 'transactionHash'> & {
+    errorMessage: string | null
   }
 }
 

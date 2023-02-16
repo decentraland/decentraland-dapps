@@ -186,7 +186,8 @@ const mockTransakOrderResponse: OrderResponse = {
   data: {
     id: '816374b8-11fd-4ec4-be2d-3936de24d9c2',
     status: TransakOrderStatus.COMPLETED,
-    transactionHash: 'aTxHash'
+    transactionHash: 'aTxHash',
+    errorMessage: null
   }
 }
 
@@ -784,7 +785,7 @@ describe('when handling the action signaling the load of the local storage into 
               ...transakPurchase,
               status: PurchaseStatus.COMPLETE,
               txHash: mockTransakOrderResponse.data.transactionHash!,
-              failureReason: undefined
+              failureReason: null
             })
           )
           .put(pollPurchaseStatusSuccess())
@@ -816,7 +817,7 @@ describe('when handling the action signaling the load of the local storage into 
               ...transakPurchase,
               status: PurchaseStatus.COMPLETE,
               txHash: mockTransakOrderResponse.data.transactionHash!,
-              failureReason: undefined
+              failureReason: null
             })
           )
           .put(pollPurchaseStatusSuccess())
