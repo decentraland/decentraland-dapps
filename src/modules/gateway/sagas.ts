@@ -200,40 +200,44 @@ function* handlePollPurchaseStatusRequest(
   const { gateway, id } = purchase
 
   try {
-    if (purchase.status === PurchaseStatus.PENDING) {
-      switch (gateway) {
-        case NetworkGatewayType.TRANSAK:
-          const { transak: transakConfig } = config
-          const transak = new Transak(transakConfig)
-          let statusHasChanged = false
-
-          while (!statusHasChanged) {
-            const {
-              data: { status, transactionHash, errorMessage }
-            }: OrderResponse = yield call([transak, transak.getOrder], id)
-            const newStatus: PurchaseStatus = yield call(
-              [transak, transak.getPurchaseStatus],
-              status
-            )
-            if (newStatus !== purchase.status) {
-              statusHasChanged = true
-              yield put(
-                setPurchase({
-                  ...purchase,
-                  status: newStatus,
-                  txHash: transactionHash || null,
-                  failureReason: errorMessage
-                })
-              )
-              continue
-            }
-            yield delay(transakConfig.pollingDelay || DEFAULT_POLLING_DELAY)
-          }
-          break
-        default:
-          break
-      }
+    if (purchase.status !== PurchaseStatus.PENDING) {
+      yield put(pollPurchaseStatusSuccess())
+      return
     }
+
+    switch (gateway) {
+      case NetworkGatewayType.TRANSAK:
+        const { transak: transakConfig } = config
+        const transak = new Transak(transakConfig)
+        let statusHasChanged = false
+
+        while (!statusHasChanged) {
+          const {
+            data: { status, transactionHash, errorMessage }
+          }: OrderResponse = yield call([transak, transak.getOrder], id)
+          const newStatus: PurchaseStatus = yield call(
+            [transak, transak.getPurchaseStatus],
+            status
+          )
+          if (newStatus !== purchase.status) {
+            statusHasChanged = true
+            yield put(
+              setPurchase({
+                ...purchase,
+                status: newStatus,
+                txHash: transactionHash || null,
+                failureReason: errorMessage
+              })
+            )
+            continue
+          }
+          yield delay(transakConfig.pollingDelay || DEFAULT_POLLING_DELAY)
+        }
+        break
+      default:
+        break
+    }
+
     yield put(pollPurchaseStatusSuccess())
   } catch (error) {
     yield put(pollPurchaseStatusFailure(error.message))
