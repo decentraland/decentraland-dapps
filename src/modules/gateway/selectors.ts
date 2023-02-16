@@ -5,7 +5,7 @@ import {
 } from './actions'
 import { GatewayState } from './reducer'
 import { NFTPurchase, Purchase, PurchaseStatus } from './types'
-import { isManaPurchase } from './utils'
+import { isManaPurchase, isNFTPurchase } from './utils'
 
 const sortByTimestamp = (a: Purchase, b: Purchase) =>
   a.timestamp > b.timestamp ? -1 : 1
@@ -31,8 +31,8 @@ export const getNFTPurchase = (
   contractAddress: string,
   tokenId: string
 ) => {
-  const nftPurchases = getPurchases(state).filter(
-    purchase => !isManaPurchase(purchase)
+  const nftPurchases = getPurchases(state).filter(purchase =>
+    isNFTPurchase(purchase)
   ) as NFTPurchase[]
 
   return nftPurchases
