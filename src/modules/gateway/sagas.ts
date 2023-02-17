@@ -13,10 +13,14 @@ import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 import { getChainIdByNetwork } from '../../lib/eth'
 import {
+  pollPurchaseStatusFailure,
+  pollPurchaseStatusRequest,
+  PollPurchaseStatusRequestAction,
+  pollPurchaseStatusSuccess,
+  POLL_PURCHASE_STATUS_REQUEST,
   setPurchase,
   SetPurchaseAction,
-  SET_PURCHASE,
-  unsetPurchase
+  SET_PURCHASE
 } from '../gateway/actions'
 import { openModal } from '../modal/actions'
 import { getTransactionHref } from '../transaction/utils'
@@ -39,9 +43,9 @@ import {
 } from './actions'
 import { MoonPay } from './moonpay'
 import { MoonPayTransaction, MoonPayTransactionStatus } from './moonpay/types'
-import { getPendingManaPurchase } from './selectors'
+import { getPendingManaPurchase, getPendingPurchases } from './selectors'
 import { Transak } from './transak'
-import { CustomizationOptions } from './transak/types'
+import { CustomizationOptions, OrderResponse } from './transak/types'
 import { ManaFiatGatewaySagasConfig, Purchase, PurchaseStatus } from './types'
 import { isManaPurchase, purchaseEventsChannel } from './utils'
 
@@ -67,6 +71,11 @@ export function createGatewaySaga(config: ManaFiatGatewaySagasConfig) {
     )
     yield takeEvery(SET_PURCHASE, handleSetPurchase)
     yield takeLatest(LOAD, handleStorageLoad)
+    yield takeEvery(
+      POLL_PURCHASE_STATUS_REQUEST,
+      handlePollPurchaseStatusRequest,
+      config
+    )
     yield takeEvery(purchaseEventsChannel, handlePurchaseChannelEvent)
 
     function* handlePurchaseChannelEvent(action: { purchase: Purchase }) {
@@ -157,26 +166,81 @@ function* upsertPurchase(
 }
 
 function* handleStorageLoad() {
-  const pendingManaPurchase: ReturnType<typeof getPendingManaPurchase> = yield select(
-    getPendingManaPurchase
+  const pendingPurchases: ReturnType<typeof getPendingPurchases> = yield select(
+    getPendingPurchases
   )
 
-  if (pendingManaPurchase) {
-    const { network, gateway, id } = pendingManaPurchase
+  if (pendingPurchases) {
+    for (const pendingPurchase of pendingPurchases) {
+      const { network, gateway, id } = pendingPurchase
+      switch (gateway) {
+        case NetworkGatewayType.TRANSAK:
+          yield put(pollPurchaseStatusRequest(pendingPurchase))
+          break
+        case NetworkGatewayType.MOON_PAY:
+          yield put(
+            manaFiatGatewayPurchaseCompleted(
+              network,
+              gateway,
+              id,
+              MoonPayTransactionStatus.PENDING
+            )
+          )
+          break
+      }
+    }
+  }
+}
+
+function* handlePollPurchaseStatusRequest(
+  config: ManaFiatGatewaySagasConfig,
+  action: PollPurchaseStatusRequestAction
+) {
+  const { purchase } = action.payload
+  const { gateway, id } = purchase
+
+  try {
+    if (purchase.status !== PurchaseStatus.PENDING) {
+      yield put(pollPurchaseStatusSuccess())
+      return
+    }
+
     switch (gateway) {
       case NetworkGatewayType.TRANSAK:
-        yield put(unsetPurchase(pendingManaPurchase))
-      case NetworkGatewayType.MOON_PAY:
-        yield put(
-          manaFiatGatewayPurchaseCompleted(
-            network,
-            gateway,
-            id,
-            MoonPayTransactionStatus.PENDING
+        const { transak: transakConfig } = config
+        const transak = new Transak(transakConfig)
+        let statusHasChanged = false
+
+        while (!statusHasChanged) {
+          const {
+            data: { status, transactionHash, errorMessage }
+          }: OrderResponse = yield call([transak, transak.getOrder], id)
+          const newStatus: PurchaseStatus = yield call(
+            [transak, transak.getPurchaseStatus],
+            status
           )
-        )
+          if (newStatus !== purchase.status) {
+            statusHasChanged = true
+            yield put(
+              setPurchase({
+                ...purchase,
+                status: newStatus,
+                txHash: transactionHash || null,
+                failureReason: errorMessage
+              })
+            )
+            continue
+          }
+          yield delay(transakConfig.pollingDelay || DEFAULT_POLLING_DELAY)
+        }
+        break
+      default:
         break
     }
+
+    yield put(pollPurchaseStatusSuccess())
+  } catch (error) {
+    yield put(pollPurchaseStatusFailure(error.message))
   }
 }
 
@@ -243,28 +307,13 @@ function* handleFiatGatewayPurchaseCompleted(
   }
 }
 
-const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-  e.preventDefault()
-  return (e.returnValue =
-    'Are you sure you want to exit with a purchase in process? You will not be able to see it progress in the future.')
-}
-
 function* handleSetManaPurchase(purchase: Purchase) {
   const finalStatuses = [
     PurchaseStatus.COMPLETE,
     PurchaseStatus.FAILED,
     PurchaseStatus.CANCELLED
   ]
-  const { status, network, txHash, gateway } = purchase
-
-  if (
-    gateway === NetworkGatewayType.TRANSAK &&
-    status === PurchaseStatus.PENDING
-  ) {
-    window.addEventListener('beforeunload', handleBeforeUnload)
-  } else {
-    window.removeEventListener('beforeunload', handleBeforeUnload)
-  }
+  const { status, network, txHash } = purchase
 
   if (finalStatuses.includes(status)) {
     let transactionUrl: string | undefined

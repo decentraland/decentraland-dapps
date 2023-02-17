@@ -22,10 +22,14 @@ import {
   OPEN_MANA_FIAT_GATEWAY_FAILURE,
   OPEN_MANA_FIAT_GATEWAY_REQUEST,
   OPEN_MANA_FIAT_GATEWAY_SUCCESS,
+  pollPurchaseStatusFailure,
+  pollPurchaseStatusRequest,
+  pollPurchaseStatusSuccess,
+  POLL_PURCHASE_STATUS_FAILURE,
+  POLL_PURCHASE_STATUS_REQUEST,
+  POLL_PURCHASE_STATUS_SUCCESS,
   setPurchase,
-  SET_PURCHASE,
-  unsetPurchase,
-  UNSET_PURCHASE
+  SET_PURCHASE
 } from './actions'
 import { Purchase, PurchaseStatus } from './types'
 
@@ -43,7 +47,8 @@ const mockPurchase: Purchase = {
   timestamp: 1535398843748,
   status: PurchaseStatus.PENDING,
   gateway: NetworkGatewayType.MOON_PAY,
-  txHash: 'mock-tx-hash'
+  txHash: 'mock-tx-hash',
+  paymentMethod: 'credit_debit_card'
 }
 
 describe('when creating the action that signals the start of a buy mana with fiat modal opening', () => {
@@ -215,17 +220,6 @@ describe('when creating the action to signal the addition of a MANA purchase as 
 
 describe('when creating the action to set the purchase', () => {
   it('should return an object representing the action', () => {
-    const mockPurchase: Purchase = {
-      address: '0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2',
-      amount: 100,
-      id: '354b1f46-480c-4307-9896-f4c81c1e1e17',
-      network: Network.ETHEREUM,
-      status: PurchaseStatus.PENDING,
-      timestamp: 1535398843748,
-      gateway: NetworkGatewayType.MOON_PAY,
-      txHash: null
-    }
-
     expect(setPurchase(mockPurchase)).toEqual({
       meta: undefined,
       payload: {
@@ -236,25 +230,34 @@ describe('when creating the action to set the purchase', () => {
   })
 })
 
-describe('when creating the action to unset the purchase', () => {
+describe('when creating the action that signals the poll purchase status request', () => {
   it('should return an object representing the action', () => {
-    const mockPurchase: Purchase = {
-      address: '0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2',
-      amount: 100,
-      id: '354b1f46-480c-4307-9896-f4c81c1e1e17',
-      network: Network.ETHEREUM,
-      status: PurchaseStatus.PENDING,
-      timestamp: 1535398843748,
-      gateway: NetworkGatewayType.MOON_PAY,
-      txHash: null
-    }
+    expect(pollPurchaseStatusRequest(mockPurchase)).toEqual({
+      meta: undefined,
+      payload: { purchase: mockPurchase },
+      type: POLL_PURCHASE_STATUS_REQUEST
+    })
+  })
+})
 
-    expect(unsetPurchase(mockPurchase)).toEqual({
+describe('when creating the action that signals success in the poll purchase status request', () => {
+  it('should return an action signaling the success of the buy mana with fiat modal opening', () => {
+    expect(pollPurchaseStatusSuccess()).toEqual({
+      meta: undefined,
+      type: POLL_PURCHASE_STATUS_SUCCESS
+    })
+  })
+})
+
+describe('when creating the action that signals failure in the poll purchase status request', () => {
+  it('should return an action signaling the unsuccess of the buy mana with fiat modal opening', () => {
+    const defaultError = 'Default error'
+    expect(pollPurchaseStatusFailure(defaultError)).toEqual({
       meta: undefined,
       payload: {
-        purchase: mockPurchase
+        error: defaultError
       },
-      type: UNSET_PURCHASE
+      type: POLL_PURCHASE_STATUS_FAILURE
     })
   })
 })

@@ -97,6 +97,16 @@ export type OrderData = {
   }
 }
 
+export type OrderResponse = {
+  meta: {
+    orderId: string
+    apiKey: string
+  }
+  data: Pick<OrderData['status'], 'id' | 'status' | 'transactionHash'> & {
+    errorMessage: string | null
+  }
+}
+
 export type TransakSDK = EventEmitter & {
   init: () => void
   close: () => void

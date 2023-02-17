@@ -27,11 +27,12 @@ const mockGetChainIdByNetwork = getChainIdByNetwork as jest.MockedFunction<
 const mockConfig: ManaFiatGatewaySagasConfig = {
   [NetworkGatewayType.MOON_PAY]: {
     apiKey: 'api-key',
-    apiBaseUrl: 'http://base.url.xyz',
+    apiBaseUrl: 'http://moonpay-base.url.xyz',
     widgetBaseUrl: 'http://widget.base.url.xyz',
     pollingDelay: 50
   },
   [NetworkGatewayType.TRANSAK]: {
+    apiBaseUrl: 'http://transak-base.url.xyz',
     key: 'transak-key',
     env: 'TEST',
     pusher: {
@@ -61,7 +62,7 @@ const mockOrderData: OrderData = {
     isBuyOrSell: 'BUY',
     isNFTOrder: false,
     network: 'ethereum',
-    paymentOptionId: 'payment-option-id',
+    paymentOptionId: 'credit_debit_card',
     quoteId: 'quote-id',
     referenceCode: 12345,
     reservationId: 'reservation-id',
@@ -93,6 +94,7 @@ const mockManaPurchase: Purchase = {
   network: Network.ETHEREUM,
   timestamp: 1671028355396,
   status: PurchaseStatus.PENDING,
+  paymentMethod: 'credit_debit_card',
   gateway: NetworkGatewayType.TRANSAK,
   txHash: 'mock-transaction-hash'
 }

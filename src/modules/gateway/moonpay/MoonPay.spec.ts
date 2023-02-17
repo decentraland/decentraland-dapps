@@ -2,7 +2,7 @@ import nock from 'nock'
 import axios from 'axios'
 
 import { MoonPay } from './MoonPay'
-import { MoonPayConfig } from '../types'
+import { MoonPayConfig, Purchase, PurchaseStatus } from '../types'
 import { MoonPayTransaction, MoonPayTransactionStatus } from './types'
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui'
@@ -13,7 +13,7 @@ nock.disableNetConnect()
 
 const mockConfig: MoonPayConfig = {
   apiKey: 'api-key',
-  apiBaseUrl: 'http://base.url.xyz',
+  apiBaseUrl: 'http://moonpay-base.url.xyz',
   widgetBaseUrl: 'http://widget.base.url.xyz',
   pollingDelay: 500
 }
@@ -153,12 +153,13 @@ describe('when interacting with MoonPay', () => {
 
   describe('when create a purchase using the transaction id', () => {
     it('should fetch the transaction and return a purchase object', () => {
-      const expectedPurchase = {
+      const expectedPurchase: Purchase = {
         address: '0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2',
         amount: 100,
         id: '354b1f46-480c-4307-9896-f4c81c1e1e17',
-        network: 'ETHEREUM',
-        status: 'pending',
+        network: Network.ETHEREUM,
+        status: PurchaseStatus.PENDING,
+        paymentMethod: 'credit_debit_card',
         timestamp: 1535398843748,
         gateway: NetworkGatewayType.MOON_PAY,
         txHash: 'crypto-transaction-id'
