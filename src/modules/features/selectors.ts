@@ -50,20 +50,23 @@ export const getIsFeatureEnabled = (
   app: ApplicationName,
   feature: string
 ): boolean => {
-  const envValue = getFromEnv(app, feature)
+  const env = getFromEnv(app, feature)
 
-  if (envValue !== null) {
-    return envValue
+  // Return the flag value if it has been defined in the env.
+  // If flags are only defined in the env, there is no need to implement the features reducer.
+  if (env !== null) {
+    return env
   }
 
-  const features = getData(state)
-  const appFeatures: ApplicationFeatures | undefined = features[app]
+  const appFlags = getData(state)[app]
 
-  if (!appFeatures) {
-    throw new Error(`Application "${app}" not found`)
+  // The app might not be defined in the store because the flags might not have been fetched yet.
+  // We suggest using isLoadingFeatureFlags and hasLoadedInitialFlags to handle this first.
+  if (!appFlags) {
+    return false
   }
 
-  return !!appFeatures.flags[`${app}-${feature}`]
+  return !!appFlags.flags[`${app}-${feature}`] ?? false
 }
 
 export const isLoadingFeatureFlags = (state: StateWithFeatures) => {
