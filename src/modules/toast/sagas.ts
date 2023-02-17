@@ -12,7 +12,10 @@ import {
 } from './actions'
 import { getState } from './selectors'
 import * as cache from './cache'
-import { TransactionEventData, TransactionEventType } from '../wallet/utils/types'
+import {
+  TransactionEventData,
+  TransactionEventType
+} from '../wallet/utils/types'
 import { transactionEvents } from '../wallet/utils/transactionEvents'
 import { SWITCH_NETWORK_SUCCESS } from '../wallet/actions'
 import {
@@ -92,6 +95,7 @@ export function* handleMetaTransactionError(code: ErrorCode) {
     }
     case ErrorCode.HIGH_CONGESTION: {
       yield put(showToast(getHighCongestionErrorToast()))
+      break
     }
     case ErrorCode.UNKNOWN:
     default: {
