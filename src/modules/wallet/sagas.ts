@@ -51,12 +51,9 @@ import {
   SwitchNetworkSuccessAction,
   setAppChainId
 } from './actions'
-import {
-  getTransactionsApiUrl,
-  setTransactionsApiUrl
-} from './utils'
-import { switchProviderChainId } from "./utils/switchProviderChainId"
-import { buildWallet } from "./utils/buildWallet"
+import { getTransactionsApiUrl, setTransactionsApiUrl } from './utils'
+import { switchProviderChainId } from './utils/switchProviderChainId'
+import { buildWallet } from './utils/buildWallet'
 import { CreateWalletOptions, Wallet } from './types'
 import { getAppChainId, isConnected } from './selectors'
 
@@ -91,7 +88,7 @@ export function* walletSaga() {
     takeEvery(DISCONNECT_WALLET, handleDisconnectWallet),
     takeEvery(CONNECT_WALLET_SUCCESS, handleConnectWalletSuccess),
     takeEvery(SWITCH_NETWORK_REQUEST, handleSwitchNetworkRequest),
-    takeEvery(SWITCH_NETWORK_SUCCESS, handleSwitchNetworkSucces)
+    takeEvery(SWITCH_NETWORK_SUCCESS, handleSwitchNetworkSuccess)
   ])
 }
 
@@ -136,6 +133,7 @@ function* handleEnableWalletRequest(action: EnableWalletRequestAction) {
         providerType,
         _getAppChainId()
       )
+
       return account
     })
 
@@ -208,7 +206,7 @@ function* handleSwitchNetworkRequest(action: SwitchNetworkRequestAction) {
   }
 }
 
-function* handleSwitchNetworkSucces(_action: SwitchNetworkSuccessAction) {
+function* handleSwitchNetworkSuccess(_action: SwitchNetworkSuccessAction) {
   yield put(fetchWalletRequest())
 }
 
