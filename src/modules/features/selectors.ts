@@ -11,10 +11,10 @@ import {
 export const getState = (state: StateWithFeatures): FeaturesState => {
   const { features } = state
 
-  // If the features prop is undefined in the state, it is because the client has not implemented the features module.
-  // If any feature inside this lib requires querying the features module, it should try-catch any query to the state and handle accordingly. (Ignore checking for feature flags, etc.)
+  // If the features prop is undefined in the state, it is because the client has not implemented the features reducer.
+  // If any feature inside this lib requires querying the features reducer, it should try-catch any query to the state and handle accordingly. (Ignore checking for feature flags, etc.)
   if (!features) {
-    throw new Error("'features' module not implemented")
+    throw new Error("'features' reducer not implemented")
   }
 
   return features
