@@ -17,6 +17,7 @@ import { transactionEvents } from '../wallet/utils/transactionEvents'
 import { SWITCH_NETWORK_SUCCESS } from '../wallet/actions'
 import {
   getContractAccountErrorToast,
+  getHighCongestionErrorToast,
   getInvalidAddressErrorToast,
   getSalePriceTooLowErrorToast,
   getUnknownErrorToast
@@ -88,6 +89,9 @@ export function* handleMetaTransactionError(code: ErrorCode) {
     case ErrorCode.USER_DENIED: {
       // do nothing
       break
+    }
+    case ErrorCode.HIGH_CONGESTION: {
+      yield put(showToast(getHighCongestionErrorToast()))
     }
     case ErrorCode.UNKNOWN:
     default: {
