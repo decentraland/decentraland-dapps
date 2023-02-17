@@ -133,6 +133,7 @@ function* handleEnableWalletRequest(action: EnableWalletRequestAction) {
         providerType,
         _getAppChainId()
       )
+
       return account
     })
 
