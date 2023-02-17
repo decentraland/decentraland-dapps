@@ -38,9 +38,9 @@ describe('when getting the features state data', () => {
       state = {}
     })
 
-    it('should throw an error indicating features module was not implemented', () => {
+    it('should throw an error indicating features reducer was not implemented', () => {
       expect(() => getData(state)).toThrowError(
-        "'features' module not implemented"
+        "'features' reducer not implemented"
       )
     })
   })
@@ -152,7 +152,7 @@ describe('when getting if a feature is enabled', () => {
         ).toEqual(true)
       })
 
-      describe('and the feature module is undefined', () => {
+      describe('and the feature reducer is undefined', () => {
         beforeEach(() => {
           state = {}
         })
