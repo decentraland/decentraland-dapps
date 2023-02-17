@@ -8,8 +8,15 @@ import {
   StateWithFeatures
 } from './types'
 
-export const getState = (state: StateWithFeatures): FeaturesState =>
-  state.features!
+export const getState = (state: StateWithFeatures): FeaturesState => {
+  const { features } = state
+
+  if (!features) {
+    throw new Error("'features' module not implemented")
+  }
+
+  return features
+}
 
 export const getData = (
   state: StateWithFeatures

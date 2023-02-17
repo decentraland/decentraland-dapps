@@ -39,5 +39,7 @@ export type FeatureSagasConfig = {
 }
 
 export type StateWithFeatures = {
-  features: FeaturesState
+  // Possibly undefined because clients might not have implemented te features module into their dapps.
+  // This allows us to check that before operating on it.
+  features?: FeaturesState
 }
