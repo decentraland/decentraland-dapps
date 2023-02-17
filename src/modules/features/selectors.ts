@@ -66,7 +66,7 @@ export const getIsFeatureEnabled = (
     return false
   }
 
-  return !!appFlags.flags[`${app}-${feature}`] ?? false
+  return !!appFlags.flags[`${app}-${feature}`]
 }
 
 export const isLoadingFeatureFlags = (state: StateWithFeatures) => {
