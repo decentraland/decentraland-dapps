@@ -168,6 +168,10 @@
         "unknown_error": {
           "title": "出了点问题",
           "body": "发送元交易时出现意外错误。您可以将网络切换到 Polygon 并尝试发送常规交易。"
+        },
+        "high_congestion_error": {
+          "title": "高度拥堵",
+          "body": "由于区块链上的高度拥塞，发送元交易时出错。 您可以将网络切换到 Polygon 并尝试发送常规交易。"
         }
       },
       "switch_network": "切换到 {network}",

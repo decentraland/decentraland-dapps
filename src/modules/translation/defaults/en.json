@@ -168,6 +168,10 @@
         "unknown_error": {
           "title": "Something went wrong",
           "body": "There was an unexpected error sending the meta-transaction. You can switch your network to Polygon and try sending a regular transaction."
+        },
+        "high_congestion_error": {
+          "title": "High congestion",
+          "body": "There was an error sending the meta-transaction due to high congestion on the blockchain. You can switch your network to Polygon and try sending a regular transaction."
         }
       },
       "switch_network": "Switch to {network}",
