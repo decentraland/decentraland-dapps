@@ -91,7 +91,7 @@ export function* walletSaga() {
     takeEvery(DISCONNECT_WALLET, handleDisconnectWallet),
     takeEvery(CONNECT_WALLET_SUCCESS, handleConnectWalletSuccess),
     takeEvery(SWITCH_NETWORK_REQUEST, handleSwitchNetworkRequest),
-    takeEvery(SWITCH_NETWORK_SUCCESS, handleSwitchNetworkSucces)
+    takeEvery(SWITCH_NETWORK_SUCCESS, handleSwitchNetworkSuccess)
   ])
 }
 
@@ -208,7 +208,7 @@ function* handleSwitchNetworkRequest(action: SwitchNetworkRequestAction) {
   }
 }
 
-function* handleSwitchNetworkSucces(_action: SwitchNetworkSuccessAction) {
+function* handleSwitchNetworkSuccess(_action: SwitchNetworkSuccessAction) {
   yield put(fetchWalletRequest())
 }
 
