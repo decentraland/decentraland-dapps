@@ -25,6 +25,7 @@ export enum ApplicationName {
   DAO = 'dao',
   EVENTS = 'events',
   LANDING = 'landing',
+  DAPPS = 'dapps',
   TEST = 'test'
 }
 
