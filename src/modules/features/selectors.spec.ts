@@ -11,19 +11,38 @@ import {
 import { ApplicationName, StateWithFeatures } from './types'
 
 describe('when getting the features state data', () => {
-  it('should return the features data', () => {
-    const data = getMockApplicationFeaturesRecord()
+  let state: StateWithFeatures
+  let data: ReturnType<typeof getMockApplicationFeaturesRecord>
 
-    const result = getData({
-      features: {
-        data,
-        error: null,
-        hasLoadedInitialFlags: false,
-        loading: []
+  describe('when features is defined', () => {
+    beforeEach(() => {
+      data = getMockApplicationFeaturesRecord()
+
+      state = {
+        features: {
+          data,
+          error: null,
+          hasLoadedInitialFlags: false,
+          loading: []
+        }
       }
     })
 
-    expect(result).toEqual(data)
+    it('should return the features data', () => {
+      expect(getData(state)).toEqual(data)
+    })
+  })
+
+  describe('when features is undefined', () => {
+    beforeEach(() => {
+      state = {}
+    })
+
+    it('should throw an error indicating features module was not implemented', () => {
+      expect(() => getData(state)).toThrowError(
+        "'features' module not implemented"
+      )
+    })
   })
 })
 
@@ -195,7 +214,7 @@ describe('when getting if the feature flags were loaded at least once', () => {
 
   describe('and the feature flags were not loaded', () => {
     beforeEach(() => {
-      state.features.hasLoadedInitialFlags = false
+      state.features!.hasLoadedInitialFlags = false
     })
 
     it('should return false', () => {
@@ -205,7 +224,7 @@ describe('when getting if the feature flags were loaded at least once', () => {
 
   describe('and the feature flags were loaded', () => {
     beforeEach(() => {
-      state.features.hasLoadedInitialFlags = true
+      state.features!.hasLoadedInitialFlags = true
     })
 
     it('should return true', () => {
@@ -230,7 +249,7 @@ describe('when getting is the feature flags are being loaded', () => {
 
   describe('and the feature flags are being loaded', () => {
     beforeEach(() => {
-      state.features.loading = [
+      state.features!.loading = [
         fetchApplicationFeaturesRequest([
           ApplicationName.ACCOUNT,
           ApplicationName.BUILDER
@@ -245,7 +264,7 @@ describe('when getting is the feature flags are being loaded', () => {
 
   describe('and the feature flags are not being loaded', () => {
     beforeEach(() => {
-      state.features.loading = []
+      state.features!.loading = []
     })
 
     it('should return false', () => {
