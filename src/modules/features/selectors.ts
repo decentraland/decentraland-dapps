@@ -69,7 +69,7 @@ export const isLoadingFeatureFlags = (state: StateWithFeatures) => {
 }
 
 export const hasLoadedInitialFlags = (state: StateWithFeatures) => {
-  return state.features.hasLoadedInitialFlags
+  return getState(state).hasLoadedInitialFlags
 }
 
 const getFromEnv = (
