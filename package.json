@@ -46,7 +46,7 @@
     "@types/segment-analytics": "0.0.34",
     "@types/ws": "^8.5.3",
     "connected-react-router": "^6.9.1",
-    "dcl-tslint-config-standard": "^1.0.1",
+    "dcl-tslint-config-standard": "^3.0.0",
     "history": "^4.10.1",
     "husky": "^0.14.3",
     "jest": "^27.0.6",
