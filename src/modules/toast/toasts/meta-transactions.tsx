@@ -69,3 +69,18 @@ export function getUnknownErrorToast(): Omit<Toast, 'id'> {
     timeout: 30000
   }
 }
+
+export function getHighCongestionErrorToast(): Omit<Toast, 'id'> {
+  return {
+    type: ToastType.ERROR,
+    title: t('@dapps.toasts.meta_transactions.high_congestion_error.title'),
+    body: (
+      <MetaTransactionError
+        text={t('@dapps.toasts.meta_transactions.high_congestion_error.body')}
+        learnMoreLink={transactionsInPolygonDocs}
+      />
+    ),
+    closable: true,
+    timeout: 30000
+  }
+}

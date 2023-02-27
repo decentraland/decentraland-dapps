@@ -6,6 +6,7 @@ import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { switchNetworkSuccess } from '../wallet/actions'
 import {
   getContractAccountErrorToast,
+  getHighCongestionErrorToast,
   getInvalidAddressErrorToast,
   getSalePriceTooLowErrorToast,
   getUnknownErrorToast
@@ -96,6 +97,14 @@ describe('when handling a meta-transaction error', () => {
     it('should show an unknown error toast', () => {
       return expectSaga(handleMetaTransactionError, ErrorCode.UNKNOWN)
         .put(showToast(getUnknownErrorToast()))
+        .silentRun()
+    })
+  })
+
+  describe('when the error code is HIGH_CONGESTION', () => {
+    it('should show an high congestion error toast', () => {
+      return expectSaga(handleMetaTransactionError, ErrorCode.HIGH_CONGESTION)
+        .put(showToast(getHighCongestionErrorToast()))
         .silentRun()
     })
   })

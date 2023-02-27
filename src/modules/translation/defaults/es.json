@@ -168,6 +168,10 @@
         "unknown_error": {
           "title": "Ha ocurrido un error",
           "body": "Algo salio mal enviando la meta-transacción. Puedes cambiar la red a Polygon e intentar mandar una transacción común."
+        },
+        "high_congestion_error": {
+          "title": "Alta demanda",
+          "body": "Algo salio mal enviando la meta-transacción debido a una alta demanda en la blockchain. Puedes cambiar la red a Polygon e intentar mandar una transacción común."
         }
       },
       "switch_network": "Cambiar a {network}",

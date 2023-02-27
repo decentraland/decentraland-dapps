@@ -94,6 +94,10 @@
         "unknown_error": {
           "title": "Quelque chose s'est mal passé",
           "body": "Une erreur inattendue s'est produite lors de l'envoi de la méta-transaction. Vous pouvez basculer votre réseau vers Polygon et essayer d'envoyer une transaction normale."
+        },
+        "high_congestion_error": {
+          "title": "Forte congestion",
+          "body": "Une erreur inattendue s'est produite lors de l'envoi de la méta-transaction en raison d'une forte congestion sur la blockchain. Vous pouvez basculer votre réseau vers Polygon et essayer d'envoyer une transaction normale."
         }
       },
       "switch_network": "Passer à {network}",

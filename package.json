@@ -13,7 +13,7 @@
     "date-fns": "^1.29.0",
     "dcl-catalyst-client": "^14.0.9",
     "decentraland-connect": "^3.5.0",
-    "decentraland-transactions": "^1.35.0",
+    "decentraland-transactions": "^1.43.0",
     "decentraland-ui": "^3.81.0",
     "ethers": "^5.6.8",
     "events": "^3.3.0",
