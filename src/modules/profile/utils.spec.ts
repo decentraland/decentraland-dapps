@@ -96,8 +96,12 @@ describe('lambdaProfileToContentProfile', () => {
         mockedProfileFromLambda
       ).avatars[0].avatar.snapshots
 
-      expect(body).toBe('foo')
-      expect(face256).toBe('bar')
+      expect(body).toBe(
+        'bafkreibxwevyktyrqikrlbbfohyec3ayvvjoolzagnlhppyph7q3l5qcky'
+      )
+      expect(face256).toBe(
+        'bafkreiamoamfdlzqodg6yserd74cseci62o7qq4uuwgglz2awxowgw737q'
+      )
     })
   })
 })
