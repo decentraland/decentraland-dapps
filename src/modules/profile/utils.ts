@@ -10,7 +10,7 @@ export const lambdaProfileToContentProfile = (profile: Profile) => {
         ...avatar.avatar,
         snapshots: Object.entries(avatar.avatar.snapshots)
           .map(([key, value]) => ({
-            [key]: value.replace(/.*\/content\/contents\//, '')
+            [key]: value.replace(/.*\//, '')
           }))
           .reduce((acc, curr) => {
             return { ...acc, ...curr }
