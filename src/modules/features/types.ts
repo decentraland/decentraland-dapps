@@ -25,6 +25,7 @@ export enum ApplicationName {
   DAO = 'dao',
   EVENTS = 'events',
   LANDING = 'landing',
+  DAPPS = 'dapps',
   TEST = 'test'
 }
 
@@ -38,5 +39,7 @@ export type FeatureSagasConfig = {
 }
 
 export type StateWithFeatures = {
-  features: FeaturesState
+  // Possibly undefined because clients might not have implemented the features module into their dapps.
+  // This allows us to check that before operating on it.
+  features?: FeaturesState
 }

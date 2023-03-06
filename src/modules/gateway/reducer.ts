@@ -1,9 +1,13 @@
 import { loadingReducer, LoadingState } from '../loading/reducer'
 import {
+  PollPurchaseStatusFailureAction,
+  PollPurchaseStatusRequestAction,
+  PollPurchaseStatusSuccessAction,
+  POLL_PURCHASE_STATUS_FAILURE,
+  POLL_PURCHASE_STATUS_REQUEST,
+  POLL_PURCHASE_STATUS_SUCCESS,
   SetPurchaseAction,
-  SET_PURCHASE,
-  UnsetPurchaseAction,
-  UNSET_PURCHASE
+  SET_PURCHASE
 } from '../gateway/actions'
 import { Purchase } from './types'
 import {
@@ -46,7 +50,9 @@ export type ManaFiatGatewayReducerAction =
   | OpenManaFiatGatewayFailureAction
   | ManaFiatGatewayPurchaseCompletedFailureAction
   | SetPurchaseAction
-  | UnsetPurchaseAction
+  | PollPurchaseStatusRequestAction
+  | PollPurchaseStatusSuccessAction
+  | PollPurchaseStatusFailureAction
 
 export function gatewayReducer(
   state: GatewayState = INITIAL_STATE,
@@ -117,16 +123,25 @@ export function gatewayReducer(
         }
       }
     }
-    case UNSET_PURCHASE: {
-      const { purchase } = action.payload
+    case POLL_PURCHASE_STATUS_REQUEST: {
       return {
         ...state,
-        data: {
-          ...state.data,
-          purchases: state.data.purchases.filter(
-            _purchase => _purchase.id !== purchase.id
-          )
-        }
+        loading: loadingReducer(state.loading, action),
+        error: null
+      }
+    }
+    case POLL_PURCHASE_STATUS_SUCCESS: {
+      return {
+        ...state,
+        loading: loadingReducer(state.loading, action)
+      }
+    }
+    case POLL_PURCHASE_STATUS_FAILURE: {
+      const { error } = action.payload
+      return {
+        ...state,
+        loading: loadingReducer(state.loading, action),
+        error
       }
     }
     default:

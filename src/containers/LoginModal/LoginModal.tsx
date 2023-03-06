@@ -59,7 +59,8 @@ export default class LoginModal extends React.PureComponent<Props, State> {
       browser_extension: <T id="@dapps.login.option.browser_extension" />,
       email: <T id="@dapps.login.option.email" />,
       mobile: <T id="@dapps.login.option.mobile" />,
-      mobile_and_browser: <T id="@dapps.login.option.mobile_and_browser" />
+      mobile_and_browser: <T id="@dapps.login.option.mobile_and_browser" />,
+      metamask_mobile: <T id="@dapps.login.option.metamask_mobile" />
     }
   }
 

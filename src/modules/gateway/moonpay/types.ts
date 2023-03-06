@@ -112,15 +112,7 @@ export type MoonPayTransaction = {
   usdRate: number
   gbpRate: number
   externalTransactionId: string
-  paymentMethod:
-    | 'credit_debit_card'
-    | 'sepa_bank_transfer'
-    | 'sepa_open_banking_payment'
-    | 'gbp_bank_transfer'
-    | 'gbp_open_banking_payment'
-    | 'ach_bank_transfer'
-    | 'pix_instant_payment'
-    | 'mobile_wallet'
+  paymentMethod: string
   baseCurrency: BaseCurrency
   currency: Currency
   externalCustomerId: string

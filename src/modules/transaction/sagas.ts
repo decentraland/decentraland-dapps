@@ -94,7 +94,7 @@ function* handleFetchTransactionRequest(action: FetchTransactionRequestAction) {
   }
 
   try {
-    const address: string = yield select(state => getAddress(state))
+    let address: string = yield select(state => getAddress(state))
     watchPendingIndex[hash] = true
 
     let tx: AnyTransaction = yield call(() =>
@@ -141,6 +141,7 @@ function* handleFetchTransactionRequest(action: FetchTransactionRequestAction) {
       yield delay(TRANSACTION_FETCH_DELAY)
 
       // update tx status from network
+      address = yield select(state => getAddress(state))
       tx = yield call(() =>
         getTransactionFromChain(address, transaction.chainId, hash)
       )

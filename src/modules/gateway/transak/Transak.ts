@@ -2,12 +2,14 @@ import transakSDK from '@transak/transak-sdk'
 import Pusher from 'pusher-js'
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui'
+import { BaseAPI } from '../../../lib/api'
 import { TransakConfig, Purchase, PurchaseStatus } from '../types'
 import { purchaseEventsChannel } from '../utils'
 import {
   CustomizationOptions,
   DefaultCustomizationOptions,
   OrderData,
+  OrderResponse,
   TradeType,
   TransakOrderStatus,
   TransakSDK,
@@ -20,17 +22,23 @@ export class Transak {
   private readonly config: TransakConfig
   private readonly customizationOptions: Partial<CustomizationOptions>
   private readonly pusher: Pusher
+  private readonly transakAPI: BaseAPI
   private sdk: TransakSDK
 
   constructor(
     config: TransakConfig,
     customizationOptions?: Partial<CustomizationOptions>
   ) {
+    const {
+      apiBaseUrl,
+      pusher: { appCluster, appKey }
+    } = config
     this.config = config
-    this.pusher = new Pusher(config.pusher.appKey, {
-      cluster: config.pusher.appCluster
-    })
     this.customizationOptions = customizationOptions || {}
+    this.pusher = new Pusher(appKey, {
+      cluster: appCluster
+    })
+    this.transakAPI = new BaseAPI(apiBaseUrl)
   }
 
   /**
@@ -75,7 +83,7 @@ export class Transak {
     })
   }
 
-  private getPurchaseStatus(status: TransakOrderStatus): PurchaseStatus {
+  getPurchaseStatus(status: TransakOrderStatus): PurchaseStatus {
     return {
       [TransakOrderStatus.AWAITING_PAYMENT_FROM_USER]: PurchaseStatus.PENDING,
       [TransakOrderStatus.PAYMENT_DONE_MARKED_BY_USER]: PurchaseStatus.PENDING,
@@ -124,7 +132,8 @@ export class Transak {
       isNFTOrder,
       nftAssetInfo,
       transactionHash,
-      walletAddress
+      walletAddress,
+      paymentOptionId
     } = orderData
 
     return {
@@ -132,6 +141,7 @@ export class Transak {
       network,
       timestamp: +new Date(createdAt),
       status: this.getPurchaseStatus(status),
+      paymentMethod: paymentOptionId,
       address: walletAddress,
       gateway: NetworkGatewayType.TRANSAK,
       txHash: transactionHash || null,
@@ -190,5 +200,17 @@ export class Transak {
     this.sdk.partnerData.defaultNetwork = transakNetwork
     this.sdk.partnerData.networks = transakNetwork
     this.sdk.init()
+  }
+
+  /**
+   * Given the order id, returns relevant data related to status changes (status & tx hash).
+   *
+   * @param orderId - Transak Order ID.
+   */
+  async getOrder(orderId: string): Promise<OrderResponse> {
+    return await this.transakAPI.request('GET', '/v2/order', {
+      apiKey: this.config.key,
+      orderId
+    })
   }
 }

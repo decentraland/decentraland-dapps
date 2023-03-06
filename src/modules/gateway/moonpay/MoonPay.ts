@@ -52,7 +52,8 @@ export class MoonPay {
       createdAt,
       status,
       walletAddress,
-      cryptoTransactionId
+      cryptoTransactionId,
+      paymentMethod
     } = transaction
 
     return {
@@ -61,6 +62,7 @@ export class MoonPay {
       network,
       timestamp: +new Date(createdAt),
       status: this.getPurchaseStatus(status),
+      paymentMethod,
       address: walletAddress,
       gateway: NetworkGatewayType.MOON_PAY,
       txHash: cryptoTransactionId
@@ -69,8 +71,9 @@ export class MoonPay {
 
   getWidgetUrl(network: Network) {
     const redirectURL = `${window.location.origin}?network=${network}&gateway=${NetworkGatewayType.MOON_PAY}`
-    return `${this.widgetBaseUrl}?apiKey=${this.apiKey
-      }&currencyCode=MANA&redirectURL=${encodeURIComponent(redirectURL)}`
+    return `${this.widgetBaseUrl}?apiKey=${
+      this.apiKey
+    }&currencyCode=MANA&redirectURL=${encodeURIComponent(redirectURL)}`
   }
 
   getTransactionReceiptUrl(transactionId: string) {

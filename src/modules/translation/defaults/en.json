@@ -69,7 +69,8 @@
         "browser_extension": "Using a browser extension",
         "email": "Using your email",
         "mobile": "Using a mobile wallet",
-        "mobile_and_browser": "Using your mobile or browser extension"
+        "mobile_and_browser": "Using your mobile or browser extension",
+        "metamask_mobile": "Using the MetaMask app"
       }
     },
     "buyManaWithFiat": {
@@ -162,6 +163,10 @@
         "unknown_error": {
           "title": "Something went wrong",
           "body": "There was an unexpected error sending the meta-transaction. You can switch your network to Polygon and try sending a regular transaction."
+        },
+        "high_congestion_error": {
+          "title": "High congestion",
+          "body": "There was an error sending the meta-transaction due to high congestion on the blockchain. You can switch your network to Polygon and try sending a regular transaction."
         }
       },
       "switch_network": "Switch to {network}",
