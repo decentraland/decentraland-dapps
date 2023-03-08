@@ -5,10 +5,12 @@ import {
   getAddress,
   getMana,
   getChainId,
+  hasAcceptedNetworkPartialSupport,
   getAppChainId
 } from '../../modules/wallet/selectors'
 import { isEnabled } from '../../modules/translation/selectors'
 import {
+  acceptNetworkPartialSupport,
   disconnectWallet,
   switchNetworkRequest
 } from '../../modules/wallet/actions'
@@ -23,12 +25,14 @@ const mapState = (state: any): MapStateProps => ({
   isConnected: isConnected(state),
   isConnecting: isConnecting(state),
   hasTranslations: isEnabled(state),
-  appChainId: getAppChainId(state)
+  appChainId: getAppChainId(state),
+  hasAcceptedNetworkPartialSupport: hasAcceptedNetworkPartialSupport(state)
 })
 
 const mapDispatch = (dispatch: RootDispatch): MapDispatchProps => ({
   onSwitchNetwork: chainId => dispatch(switchNetworkRequest(chainId)),
-  onSignOut: () => dispatch(disconnectWallet())
+  onSignOut: () => dispatch(disconnectWallet()),
+  onAcceptNetworkPartialSupport: () => dispatch(acceptNetworkPartialSupport())
 })
 
 const mergeProps = (

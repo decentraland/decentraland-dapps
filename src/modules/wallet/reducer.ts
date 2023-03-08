@@ -26,6 +26,8 @@ import {
   FetchWalletFailureAction,
   FETCH_WALLET_SUCCESS,
   FETCH_WALLET_FAILURE,
+  AcceptNetworkPartialSupportAction,
+  ACCEPT_NETWORK_PARTIAL_SUPPORT,
   SetAppChainIdAction,
   SET_APP_CHAIN_ID
 } from './actions'
@@ -34,6 +36,7 @@ export type WalletState = {
   data: Wallet | null
   loading: LoadingState
   error: string | null
+  hasAcceptedNetworkPartialSupport: boolean
   appChainId: ChainId | null
 }
 
@@ -41,6 +44,7 @@ export const INITIAL_STATE: WalletState = {
   data: null,
   loading: [],
   error: null,
+  hasAcceptedNetworkPartialSupport: false,
   appChainId: null
 }
 
@@ -57,6 +61,7 @@ export type WalletReducerAction =
   | FetchWalletRequestAction
   | FetchWalletSuccessAction
   | FetchWalletFailureAction
+  | AcceptNetworkPartialSupportAction
   | SetAppChainIdAction
 
 export function walletReducer(
@@ -95,7 +100,8 @@ export function walletReducer(
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
-        error: null
+        error: null,
+        hasAcceptedNetworkPartialSupport: false
       }
     }
 
@@ -119,7 +125,8 @@ export function walletReducer(
       return {
         ...state,
         error: null,
-        data: action.payload.wallet
+        data: action.payload.wallet,
+        hasAcceptedNetworkPartialSupport: false
       }
     }
 
@@ -128,6 +135,13 @@ export function walletReducer(
         ...state,
         error: null,
         data: null
+      }
+    }
+
+    case ACCEPT_NETWORK_PARTIAL_SUPPORT: {
+      return {
+        ...state,
+        hasAcceptedNetworkPartialSupport: true
       }
     }
 
