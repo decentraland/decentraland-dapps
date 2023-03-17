@@ -97,7 +97,7 @@
         },
         "high_congestion_error": {
           "title": "Forte congestion",
-          "body": "Une erreur inattendue s'est produite lors de l'envoi de la méta-transaction en raison d'une forte congestion sur la blockchain. Vous pouvez basculer votre réseau vers Polygon et essayer d'envoyer une transaction normale."
+          "body": "Les <a>prix du gaz</a> du réseau Polygon sont trop élevés! Veuillez patienter et réessayer plus tard, ou basculez votre réseau vers Polygon et payez les frais de gaz avec MATIC."
         }
       },
       "switch_network": "Passer à {network}",

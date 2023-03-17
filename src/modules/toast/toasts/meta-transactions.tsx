@@ -76,7 +76,21 @@ export function getHighCongestionErrorToast(): Omit<Toast, 'id'> {
     title: t('@dapps.toasts.meta_transactions.high_congestion_error.title'),
     body: (
       <MetaTransactionError
-        text={t('@dapps.toasts.meta_transactions.high_congestion_error.body')}
+        text={
+          <span>
+            {t('@dapps.toasts.meta_transactions.high_congestion_error.body', {
+              a: (text: string) => (
+                <a
+                  href="https://polygonscan.com/gastracker"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {text}
+                </a>
+              )
+            })}
+          </span>
+        }
         learnMoreLink={transactionsInPolygonDocs}
       />
     ),
