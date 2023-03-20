@@ -7,6 +7,11 @@ import { Toast } from '../types'
 const transactionsInPolygonDocs =
   'https://docs.decentraland.org/blockchain-integration/transactions-in-polygon/'
 
+/* Using only the mainnet gas tracker because at the moment,
+ * mumbai.polygonscan doesn't have a gas tracker implemented
+ */
+const polygonGasTracker = 'https://polygonscan.com/gastracker'
+
 export function getContractAccountErrorToast(): Omit<Toast, 'id'> {
   return {
     type: ToastType.ERROR,
@@ -81,7 +86,7 @@ export function getHighCongestionErrorToast(): Omit<Toast, 'id'> {
             {t('@dapps.toasts.meta_transactions.high_congestion_error.body', {
               a: (text: string) => (
                 <a
-                  href="https://polygonscan.com/gastracker"
+                  href={polygonGasTracker}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
