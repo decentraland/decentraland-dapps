@@ -171,7 +171,7 @@
         },
         "high_congestion_error": {
           "title": "High congestion",
-          "body": "There was an error sending the meta-transaction due to high congestion on the blockchain. You can switch your network to Polygon and try sending a regular transaction."
+          "body": "Polygon Network <a>gas prices</a> are too high! Please wait and try again later, or switch your Network to Polygon and pay for the gas fee with MATIC."
         }
       },
       "switch_network": "Switch to {network}",

@@ -171,7 +171,7 @@
         },
         "high_congestion_error": {
           "title": "高度拥堵",
-          "body": "由于区块链上的高度拥塞，发送元交易时出错。 您可以将网络切换到 Polygon 并尝试发送常规交易。"
+          "body": "多边形网络 <a>费用价格</a> 太高！请稍后重试，或将您的网络切换到 Polygon 并使用 MATIC 支付费用。"
         }
       },
       "switch_network": "切换到 {network}",

@@ -171,7 +171,7 @@
         },
         "high_congestion_error": {
           "title": "Alta demanda",
-          "body": "Algo salio mal enviando la meta-transacción debido a una alta demanda en la blockchain. Puedes cambiar la red a Polygon e intentar mandar una transacción común."
+          "body": "Los <a>precios de las tarifas de transacción</a> en la red de Polygon estan muy altos! Por favor espere un momento e intentelo nuevamente, o puede cambiar la red a Polygon y pagar la tarifa de la transacción con MATIC."
         }
       },
       "switch_network": "Cambiar a {network}",
