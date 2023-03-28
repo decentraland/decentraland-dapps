@@ -6,7 +6,6 @@ import {
   isConnected,
   getError
 } from '../../modules/wallet/selectors'
-import { enableWalletRequest } from '../../modules/wallet/actions'
 import {
   MapDispatchProps,
   MapStateProps,
@@ -14,6 +13,7 @@ import {
   SignInPageProps
 } from './SignInPage.types'
 import SignInPage from './SignInPage'
+import { openModal } from '../../modules/modal/actions'
 
 const mapState = (state: any): MapStateProps => ({
   isConnecting: isConnecting(state),
@@ -23,7 +23,7 @@ const mapState = (state: any): MapStateProps => ({
 })
 
 const mapDispatch = (dispatch: MapDispatch): MapDispatchProps => ({
-  onConnect: providerType => dispatch(enableWalletRequest(providerType))
+  onConnect: () => dispatch(openModal('LoginModal'))
 })
 
 const mergeProps = (
@@ -36,8 +36,4 @@ const mergeProps = (
   ...ownProps
 })
 
-export default connect(
-  mapState,
-  mapDispatch,
-  mergeProps
-)(SignInPage) as any
+export default connect(mapState, mapDispatch, mergeProps)(SignInPage) as any

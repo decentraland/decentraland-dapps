@@ -8,23 +8,11 @@ import {
 import { T } from '../../modules/translation/utils'
 import { isMobile } from '../../lib/utils'
 import { isCucumberProvider } from '../../lib/eth'
-import { SignInPageProps, SignInPageState } from './SignInPage.types'
-import LoginModal from '../LoginModal'
+import { SignInPageProps } from './SignInPage.types'
 
-export default class SignInPage extends React.PureComponent<
-  SignInPageProps,
-  SignInPageState
-> {
+export default class SignInPage extends React.PureComponent<SignInPageProps> {
   constructor(props: SignInPageProps) {
     super(props)
-    this.state = {
-      isLoginModalOpen: false
-    }
-  }
-
-  handleToggleLoginModal = () => {
-    const isLoginModalOpen = !this.state.isLoginModalOpen
-    this.setState({ isLoginModalOpen })
   }
 
   getTranslations = (): SignInI18N | undefined => {
@@ -125,7 +113,6 @@ export default class SignInPage extends React.PureComponent<
       hasError,
       onConnect
     } = this.props
-    const { isLoginModalOpen } = this.state
 
     return (
       <>
@@ -134,13 +121,8 @@ export default class SignInPage extends React.PureComponent<
           isConnected={isConnected}
           isConnecting={isConnecting}
           hasError={hasError}
-          onConnect={this.handleToggleLoginModal}
-          i18n={this.getTranslations()}
-        />
-        <LoginModal
-          open={isLoginModalOpen}
           onConnect={onConnect}
-          onClose={this.handleToggleLoginModal}
+          i18n={this.getTranslations()}
         />
       </>
     )

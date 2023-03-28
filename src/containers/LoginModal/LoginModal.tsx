@@ -78,12 +78,12 @@ export default class LoginModal extends React.PureComponent<Props, State> {
   }
 
   render() {
-    const { open, className, isLoading, onClose } = this.props
+    const { className, isLoading, onClose } = this.props
     const { hasError } = this.state
 
     return (
       <BaseLoginModal
-        open={open}
+        open
         className={className}
         i18n={this.getModalTranslations()}
         message={
