@@ -30,9 +30,6 @@ export const getNetwork = (state: any) =>
 export const getNetworks = (state: any) =>
   isConnected(state) ? getData(state)!.networks : undefined
 
-export const hasAcceptedNetworkPartialSupport = (state: any) =>
-  getState(state).hasAcceptedNetworkPartialSupport
-
 // Casting as ChainId since it will be initialized at the beginning
 export const getAppChainId = (state: any) =>
   getState(state).appChainId as ChainId

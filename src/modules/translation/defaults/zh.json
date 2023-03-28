@@ -42,11 +42,6 @@
         "message_unknown_network": "您需要连接到 {expectedChainName} 才能使用此应用，请切换您的网络以继续。",
         "switch_button": "切换到 {chainName}",
         "sign_out": "登出"
-      },
-      "partially_supported_network": {
-        "header": "部分支持的网络",
-        "message": "您需要连接到 {expectedChainName} 才能使用此应用的所有功能。这样，所有应该在其他网络上发生的交易都将作为元交易发送。由于您当前连接到 {currentChainName}，您将只能使用此应用程序与该特定网络交互的功能，并且您需要支付这些交易的 gas 费用。",
-        "continue_button": "继续 {chainName}"
       }
     },
     "sign_in": {
@@ -176,6 +171,11 @@
       },
       "switch_network": "切换到 {network}",
       "learn_more": "了解更多"
+    },
+    "network_alert": {
+      "title": "您的钱包已连接到部分支持的网络（Polygon）",
+      "content": "如果您想使用此应用程序的所有功能，请切换到以太坊主网。 <link>了解更多</link>",
+      "action": "切换网络"
     }
   }
 }
