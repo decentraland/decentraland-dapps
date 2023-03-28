@@ -15,7 +15,8 @@ import { NavbarProps } from './Navbar.types'
 
 export default class Navbar extends React.PureComponent<NavbarProps> {
   static defaultProps = {
-    docsUrl: 'https://docs.decentraland.org'
+    docsUrl: 'https://docs.decentraland.org',
+    enableSwitchNetworkAlert: true
   }
 
   getTranslations = (): NavbarI18N | undefined => {
@@ -49,14 +50,14 @@ export default class Navbar extends React.PureComponent<NavbarProps> {
   }
 
   render() {
-    const { appChainId, docsUrl } = this.props
+    const { appChainId, docsUrl, enableSwitchNetworkAlert } = this.props
     const expectedChainName = getChainName(appChainId)
     return (
       <>
         <ChainProvider>
           {({ chainId, isUnsupported, isPartiallySupported }) => (
             <>
-              {isPartiallySupported ? (
+              {isPartiallySupported && enableSwitchNetworkAlert ? (
                 <NetworkAlert
                   i18n={{
                     title: t('@dapps.network_alert.title'),

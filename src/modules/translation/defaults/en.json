@@ -150,7 +150,7 @@
       "meta_transactions": {
         "contract_account_error": {
           "title": "Wallet not supported",
-          "body": "Smart contract wallets are not supported for meta-transations. You can switch your network to Polygon and send a regular transaction."
+          "body": "Smart contract wallets are not supported for meta-transactions. You can switch your network to Polygon and send a regular transaction."
         },
         "invalid_address_error": {
           "title": "Invalid address",

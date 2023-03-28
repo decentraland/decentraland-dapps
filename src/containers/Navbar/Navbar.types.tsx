@@ -12,6 +12,7 @@ export type NavbarProps = NavbarComponentProps & {
   appChainId: ChainId
   hasTranslations?: boolean
   docsUrl?: string
+  enableSwitchNetworkAlert?: boolean
   onSwitchNetwork: typeof switchNetworkRequest
   onSignOut: typeof disconnectWallet
 }
