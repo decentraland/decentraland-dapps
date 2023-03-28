@@ -4,17 +4,12 @@ import { ProviderType } from '@dcl/schemas/dist/dapps/provider-type'
 import { EnableWalletRequestAction } from '../../modules/wallet/actions'
 import { ModalProps } from '../../providers/ModalProvider/ModalProvider.types'
 
-export type Metadata = {
-  redirectUrl?: string
-}
-
 export type DefaultProps = { isLoading: boolean }
 
 export type Props = DefaultProps &
-  Omit<ModalProps, 'metadata'> &
+  ModalProps &
   LoginModalProps & {
     hasTranslations?: boolean
-    metadata: Metadata
     onConnect: (providerType: ProviderType) => any
   }
 
