@@ -31,6 +31,7 @@ export function hasAuthorizationAndEnoughAllowance(
 
   const { allowance: foundAuthAllowance } = foundAuth
 
+  // Only Allowance type authorizations have a defined allowance
   if (!foundAuthAllowance) {
     return false
   }
