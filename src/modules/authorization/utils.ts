@@ -29,9 +29,14 @@ export function hasAuthorizationAndEnoughAllowance(
     return false
   }
 
+  // It should only care in the case of allowance authorizations.
+  // The rest don't have allowance so they can be ignored.
+  if (authorizationToFind.type !== AuthorizationType.ALLOWANCE) {
+    return true
+  }
+
   const { allowance: foundAuthAllowance } = foundAuth
 
-  // Only Allowance type authorizations have a defined allowance
   if (!foundAuthAllowance) {
     return false
   }
