@@ -75,9 +75,16 @@ export function createAuthorizationSaga() {
                   authorization.address,
                   authorization.authorizedAddress
                 )
-                .then<Authorization | null>((allowance: ethers.BigNumber) =>
-                  allowance.gt(0) ? authorization : null
-                )
+                .then<Authorization | null>((allowance: ethers.BigNumber) => {
+                  if (allowance.gt(0)) {
+                    return {
+                      ...authorization,
+                      allowance: allowance.toString()
+                    }
+                  }
+
+                  return null
+                })
                 .catch((error: Error) => {
                   console.warn(`Error fetching allowance`, authorization, error)
                   return null
