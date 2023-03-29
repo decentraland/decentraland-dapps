@@ -69,13 +69,11 @@ export function createAuthorizationSaga() {
 
         switch (authorization.type) {
           case AuthorizationType.ALLOWANCE:
-            const erc20 = new ethers.Contract(
-              authorization.contractAddress,
-              [
-                'function allowance(address owner, address spender) view returns (uint256)'
-              ],
+            const erc20 = getERC20ContractInstance(
+              authorization,
               multicallProviders[chainId]
             )
+
             promises.push(
               // @ts-ignore
               erc20
@@ -100,13 +98,11 @@ export function createAuthorizationSaga() {
             )
             break
           case AuthorizationType.APPROVAL:
-            const erc721 = new ethers.Contract(
-              authorization.contractAddress,
-              [
-                'function isApprovedForAll(address owner, address operator) view returns (bool)'
-              ],
+            const erc721 = getERC721ContractInstance(
+              authorization,
               multicallProviders[chainId]
             )
+
             promises.push(
               // @ts-ignore
               erc721
@@ -154,13 +150,8 @@ export function createAuthorizationSaga() {
 
       switch (authorization.type) {
         case AuthorizationType.ALLOWANCE:
-          const erc20 = new ethers.Contract(
-            authorization.contractAddress,
-            [
-              'function allowance(address owner, address spender) view returns (uint256)'
-            ],
-            ethersProvider
-          )
+          const erc20 = getERC20ContractInstance(authorization, ethersProvider)
+
           const allowance: ethers.BigNumber = yield call(
             // @ts-ignore
             [erc20, 'allowance'],
@@ -177,13 +168,11 @@ export function createAuthorizationSaga() {
           }
           break
         case AuthorizationType.APPROVAL:
-          const erc721 = new ethers.Contract(
-            authorization.contractAddress,
-            [
-              'function isApprovedForAll(address owner, address operator) view returns (bool)'
-            ],
+          const erc721 = getERC721ContractInstance(
+            authorization,
             ethersProvider
           )
+
           const isApproved: boolean = yield call(
             // @ts-ignore
             [erc721, 'isApprovedForAll'],
@@ -257,6 +246,32 @@ export function createAuthorizationSaga() {
         )
     }
   }
+}
+
+function getERC20ContractInstance(
+  authorization: Authorization,
+  provider: ethers.providers.Provider
+) {
+  return new ethers.Contract(
+    authorization.contractAddress,
+    [
+      'function allowance(address owner, address spender) view returns (uint256)'
+    ],
+    provider
+  )
+}
+
+function getERC721ContractInstance(
+  authorization: Authorization,
+  provider: ethers.providers.Provider
+) {
+  return new ethers.Contract(
+    authorization.contractAddress,
+    [
+      'function isApprovedForAll(address owner, address operator) view returns (bool)'
+    ],
+    provider
+  )
 }
 
 export const authorizationSaga = createAuthorizationSaga()
