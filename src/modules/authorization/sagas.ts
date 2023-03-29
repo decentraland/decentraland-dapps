@@ -17,7 +17,11 @@ import {
   revokeTokenSuccess,
   revokeTokenFailure,
   RevokeTokenRequestAction,
-  REVOKE_TOKEN_REQUEST
+  REVOKE_TOKEN_REQUEST,
+  FetchAuthorizationRequestAction,
+  FETCH_AUTHORIZATION_REQUEST,
+  fetchAuthorizationSuccess,
+  fetchAuthorizationFailure
 } from './actions'
 import { Authorization, AuthorizationAction, AuthorizationType } from './types'
 import { sendTransaction } from '../wallet/utils/sendTransaction'
@@ -27,6 +31,10 @@ export function createAuthorizationSaga() {
     yield takeEvery(
       FETCH_AUTHORIZATIONS_REQUEST,
       handleFetchAuthorizationsRequest
+    )
+    yield takeEvery(
+      FETCH_AUTHORIZATION_REQUEST,
+      handleFetchAuthorizationRequest
     )
     yield takeEvery(GRANT_TOKEN_REQUEST, handleGrantTokenRequest)
     yield takeEvery(REVOKE_TOKEN_REQUEST, handleRevokeTokenRequest)
@@ -61,13 +69,11 @@ export function createAuthorizationSaga() {
 
         switch (authorization.type) {
           case AuthorizationType.ALLOWANCE:
-            const erc20 = new ethers.Contract(
-              authorization.contractAddress,
-              [
-                'function allowance(address owner, address spender) view returns (uint256)'
-              ],
+            const erc20 = getERC20ContractInstance(
+              authorization,
               multicallProviders[chainId]
             )
+
             promises.push(
               // @ts-ignore
               erc20
@@ -75,9 +81,16 @@ export function createAuthorizationSaga() {
                   authorization.address,
                   authorization.authorizedAddress
                 )
-                .then<Authorization | null>((allowance: ethers.BigNumber) =>
-                  allowance.gt(0) ? authorization : null
-                )
+                .then<Authorization | null>((allowance: ethers.BigNumber) => {
+                  if (allowance.gt(0)) {
+                    return {
+                      ...authorization,
+                      allowance: allowance.toString()
+                    }
+                  }
+
+                  return null
+                })
                 .catch((error: Error) => {
                   console.warn(`Error fetching allowance`, authorization, error)
                   return null
@@ -85,13 +98,11 @@ export function createAuthorizationSaga() {
             )
             break
           case AuthorizationType.APPROVAL:
-            const erc721 = new ethers.Contract(
-              authorization.contractAddress,
-              [
-                'function isApprovedForAll(address owner, address operator) view returns (bool)'
-              ],
+            const erc721 = getERC721ContractInstance(
+              authorization,
               multicallProviders[chainId]
             )
+
             promises.push(
               // @ts-ignore
               erc721
@@ -119,6 +130,64 @@ export function createAuthorizationSaga() {
       yield put(fetchAuthorizationsSuccess(authorizationsToStore))
     } catch (error) {
       yield put(fetchAuthorizationsFailure(authorizations, error.message))
+    }
+  }
+
+  function* handleFetchAuthorizationRequest(
+    action: FetchAuthorizationRequestAction
+  ) {
+    const { authorization } = action.payload
+
+    try {
+      if (!isValidType(authorization.type)) {
+        throw new Error(`Invalid authorization type ${authorization.type}`)
+      }
+
+      const { chainId } = authorization
+
+      const provider: Provider = yield call(getNetworkProvider, chainId)
+      const ethersProvider = new ethers.providers.Web3Provider(provider)
+
+      switch (authorization.type) {
+        case AuthorizationType.ALLOWANCE:
+          const erc20 = getERC20ContractInstance(authorization, ethersProvider)
+
+          const allowance: ethers.BigNumber = yield call(
+            // @ts-ignore
+            [erc20, 'allowance'],
+            authorization.address,
+            authorization.authorizedAddress
+          )
+          if (allowance.gt(0)) {
+            yield put(
+              fetchAuthorizationSuccess({
+                ...authorization,
+                allowance: allowance.toString()
+              })
+            )
+          }
+          break
+        case AuthorizationType.APPROVAL:
+          const erc721 = getERC721ContractInstance(
+            authorization,
+            ethersProvider
+          )
+
+          const isApproved: boolean = yield call(
+            // @ts-ignore
+            [erc721, 'isApprovedForAll'],
+            authorization.address,
+            authorization.authorizedAddress
+          )
+          yield put(
+            fetchAuthorizationSuccess(isApproved ? authorization : null)
+          )
+          break
+        default:
+          yield put(fetchAuthorizationSuccess(null))
+      }
+    } catch (error) {
+      yield put(fetchAuthorizationFailure(authorization, error.message))
     }
   }
 
@@ -177,6 +246,33 @@ export function createAuthorizationSaga() {
         )
     }
   }
+}
+
+// TODO: Use decentraland-transactions
+function getERC20ContractInstance(
+  authorization: Authorization,
+  provider: ethers.providers.Provider
+) {
+  return new ethers.Contract(
+    authorization.contractAddress,
+    [
+      'function allowance(address owner, address spender) view returns (uint256)'
+    ],
+    provider
+  )
+}
+
+function getERC721ContractInstance(
+  authorization: Authorization,
+  provider: ethers.providers.Provider
+) {
+  return new ethers.Contract(
+    authorization.contractAddress,
+    [
+      'function isApprovedForAll(address owner, address operator) view returns (bool)'
+    ],
+    provider
+  )
 }
 
 export const authorizationSaga = createAuthorizationSaga()

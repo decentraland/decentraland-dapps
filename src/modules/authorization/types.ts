@@ -18,4 +18,5 @@ export type Authorization = {
   authorizedAddress: string
   contractName: ContractName
   chainId: ChainId
+  allowance?: string
 }

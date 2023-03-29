@@ -7,6 +7,9 @@ import {
   FetchAuthorizationsRequestAction,
   FetchAuthorizationsSuccessAction,
   FetchAuthorizationsFailureAction,
+  FetchAuthorizationRequestAction,
+  FetchAuthorizationSuccessAction,
+  FetchAuthorizationFailureAction,
   GrantTokenRequestAction,
   GrantTokenSuccessAction,
   GrantTokenFailureAction,
@@ -16,6 +19,9 @@ import {
   FETCH_AUTHORIZATIONS_REQUEST,
   FETCH_AUTHORIZATIONS_SUCCESS,
   FETCH_AUTHORIZATIONS_FAILURE,
+  FETCH_AUTHORIZATION_REQUEST,
+  FETCH_AUTHORIZATION_SUCCESS,
+  FETCH_AUTHORIZATION_FAILURE,
   GRANT_TOKEN_REQUEST,
   GRANT_TOKEN_SUCCESS,
   GRANT_TOKEN_FAILURE,
@@ -42,6 +48,9 @@ type AuthorizationReducerAction =
   | FetchAuthorizationsRequestAction
   | FetchAuthorizationsSuccessAction
   | FetchAuthorizationsFailureAction
+  | FetchAuthorizationRequestAction
+  | FetchAuthorizationSuccessAction
+  | FetchAuthorizationFailureAction
   | GrantTokenRequestAction
   | GrantTokenSuccessAction
   | GrantTokenFailureAction
@@ -59,7 +68,8 @@ export function authorizationReducer(
     case REVOKE_TOKEN_REQUEST:
     case GRANT_TOKEN_SUCCESS:
     case REVOKE_TOKEN_SUCCESS:
-    case FETCH_AUTHORIZATIONS_REQUEST: {
+    case FETCH_AUTHORIZATIONS_REQUEST:
+    case FETCH_AUTHORIZATION_REQUEST: {
       return {
         ...state,
         loading: loadingReducer(state.loading, action)
@@ -74,9 +84,26 @@ export function authorizationReducer(
         data: [...state.data, ...authorizations]
       }
     }
+    case FETCH_AUTHORIZATION_SUCCESS: {
+      const { authorization } = action.payload
+      let data = [...state.data]
+      if (authorization) {
+        data = data.filter(
+          stateAuthorization => !areEqual(stateAuthorization, authorization)
+        )
+        data.push(authorization)
+      }
+
+      return {
+        loading: loadingReducer(state.loading, action),
+        error: null,
+        data
+      }
+    }
     case GRANT_TOKEN_FAILURE:
     case REVOKE_TOKEN_FAILURE:
-    case FETCH_AUTHORIZATIONS_FAILURE: {
+    case FETCH_AUTHORIZATIONS_FAILURE:
+    case FETCH_AUTHORIZATION_FAILURE: {
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
@@ -89,10 +116,14 @@ export function authorizationReducer(
       switch (transaction.actionType) {
         case GRANT_TOKEN_SUCCESS: {
           const { authorization } = transaction.payload
+          const data = state.data.filter(
+            stateAuthorization => !areEqual(stateAuthorization, authorization)
+          )
+          data.push(authorization)
 
           return {
             ...state,
-            data: [...state.data, { ...authorization }]
+            data
           }
         }
         case REVOKE_TOKEN_SUCCESS: {

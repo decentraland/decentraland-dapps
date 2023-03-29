@@ -16,6 +16,37 @@ export function hasAuthorization(
   )
 }
 
+export function hasAuthorizationAndEnoughAllowance(
+  authorizations: Authorization[],
+  authorizationToFind: Authorization,
+  allowance: string
+) {
+  const foundAuth = authorizations.find(authorization =>
+    areEqual(authorization, authorizationToFind)
+  )
+
+  if (!foundAuth) {
+    return false
+  }
+
+  // It should only care in the case of allowance authorizations.
+  // The rest don't have allowance so they can be ignored.
+  if (authorizationToFind.type !== AuthorizationType.ALLOWANCE) {
+    return true
+  }
+
+  const { allowance: foundAuthAllowance } = foundAuth
+
+  if (!foundAuthAllowance) {
+    return false
+  }
+
+  const a = ethers.utils.parseEther(allowance)
+  const b = ethers.utils.parseEther(foundAuthAllowance)
+
+  return a.lte(b)
+}
+
 export function areEqual(left: Authorization, right: Authorization) {
   return (
     left.type === right.type &&

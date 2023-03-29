@@ -3,7 +3,7 @@ import { action } from 'typesafe-actions'
 import { buildTransactionPayload } from '../transaction/utils'
 import { Authorization } from './types'
 
-// Fetch authorization
+// Fetch authorizations
 
 export const FETCH_AUTHORIZATIONS_REQUEST = '[Request] Fetch Authorizations'
 export const FETCH_AUTHORIZATIONS_SUCCESS = '[Success] Fetch Authorizations'
@@ -28,6 +28,34 @@ export type FetchAuthorizationsSuccessAction = ReturnType<
 >
 export type FetchAuthorizationsFailureAction = ReturnType<
   typeof fetchAuthorizationsFailure
+>
+
+// Fetch authorization
+
+export const FETCH_AUTHORIZATION_REQUEST = '[Request] Fetch Authorization'
+export const FETCH_AUTHORIZATION_SUCCESS = '[Success] Fetch Authorization'
+export const FETCH_AUTHORIZATION_FAILURE = '[Failure] Fetch Authorization'
+
+export const fetchAuthorizationRequest = (authorization: Authorization) =>
+  action(FETCH_AUTHORIZATION_REQUEST, { authorization })
+
+export const fetchAuthorizationSuccess = (
+  authorization: Authorization | null
+) => action(FETCH_AUTHORIZATION_SUCCESS, { authorization })
+
+export const fetchAuthorizationFailure = (
+  authorization: Authorization,
+  error: string
+) => action(FETCH_AUTHORIZATION_FAILURE, { authorization, error })
+
+export type FetchAuthorizationRequestAction = ReturnType<
+  typeof fetchAuthorizationRequest
+>
+export type FetchAuthorizationSuccessAction = ReturnType<
+  typeof fetchAuthorizationSuccess
+>
+export type FetchAuthorizationFailureAction = ReturnType<
+  typeof fetchAuthorizationFailure
 >
 
 // Grant Token
