@@ -173,9 +173,9 @@
       "learn_more": "Learn more"
     },
     "network_alert": {
-      "title": "Your wallet is connected to a partially supported network (Polygon)",
-      "content": "Switch to Ethereum Mainnet if you want to use all the features of this app. <link>Learn more</link>",
-      "action": "Switch Network"
+      "title": "Your wallet is connected to the Polygon Network",
+      "content": "Use this network when you need to cover the gas of the transaction (like buying items below 1 MANA). Switch back whenever you are finished. <link>Learn more</link>",
+      "action": "Switch to Ethereum Mainnet"
     }
   }
 }

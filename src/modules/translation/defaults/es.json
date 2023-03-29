@@ -173,9 +173,9 @@
       "learn_more": "Mas información"
     },
     "network_alert": {
-      "title": "Tu billetera está conectada a una red partcialmente soportada (Polygon)",
-      "content": "Cambie a Ethereum Mainnet si quiere utilizar todas las funcionalidades de esta aplicación. <link>Ver más</link>",
-      "action": "Cambiar red"
+      "title": "Su billetera está conectada a Polygon Network",
+      "content": "Use esta red cuando necesite cubrir el gas de la transacción (como comprar artículos por debajo de 1 MANA). Vuelve cuando hayas terminado. <link>Ver más</link>",
+      "action": "Cambiar a Ethereum Mainnet"
     }
   }
 }

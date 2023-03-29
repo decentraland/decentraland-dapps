@@ -99,9 +99,9 @@
       "learn_more": "En savoir plus"
     },
     "network_alert": {
-      "title": "Votre portefeuille est connecté à un réseau partiellement supporté (Polygon)",
-      "content": "Passez à Ethereum Mainnet si vous souhaitez utiliser toutes les fonctionnalités de cette application. <link>En savoir plus</link>",
-      "action": "Changer de réseau"
+      "title": "Votre portefeuille est connecté au réseau Polygon",
+      "content": "Utilisez ce réseau lorsque vous avez besoin de couvrir le gaz de la transaction (comme acheter des articles en dessous de 1 MANA). Revenez en arrière dès que vous avez terminé. <link>En savoir plus</link>",
+      "action": "Passer à Ethereum Mainnet"
     }
   }
 }
