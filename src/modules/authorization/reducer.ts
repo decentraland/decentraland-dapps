@@ -71,9 +71,7 @@ export function authorizationReducer(
       // TODO: Optimize with some sort of Map structure to prevent O(n^2)
       const baseAuthorizations = state.data.filter(
         stateAuth =>
-          !authorizations.some(
-            ([original, result]) => areEqual(original, stateAuth) && !!result
-          )
+          !authorizations.some(([original]) => areEqual(original, stateAuth))
       )
 
       const newAuthorizations = authorizations.reduce((acc, next) => {
