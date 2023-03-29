@@ -141,24 +141,16 @@ export function createAuthorizationSaga() {
     action: FetchAuthorizationRequestAction
   ) {
     const { authorization } = action.payload
-    try {
-      const multicallProviders: Record<string, providers.MulticallProvider> = {}
 
+    try {
       if (!isValidType(authorization.type)) {
         throw new Error(`Invalid authorization type ${authorization.type}`)
       }
+
       const { chainId } = authorization
 
-      if (!multicallProviders[chainId]) {
-        // provider party 🎉
-        const provider: Provider = yield call(() => getNetworkProvider(chainId))
-        const ethersProvider = new ethers.providers.Web3Provider(provider)
-        const multicallProvider = new providers.MulticallProvider(
-          ethersProvider,
-          { batchSize: 500 } // defaults to 50
-        )
-        multicallProviders[chainId] = multicallProvider
-      }
+      const provider: Provider = yield call(() => getNetworkProvider(chainId))
+      const ethersProvider = new ethers.providers.Web3Provider(provider)
 
       switch (authorization.type) {
         case AuthorizationType.ALLOWANCE:
@@ -167,7 +159,7 @@ export function createAuthorizationSaga() {
             [
               'function allowance(address owner, address spender) view returns (uint256)'
             ],
-            multicallProviders[chainId]
+            ethersProvider
           )
           const allowance: ethers.BigNumber = yield call(
             // @ts-ignore
@@ -190,7 +182,7 @@ export function createAuthorizationSaga() {
             [
               'function isApprovedForAll(address owner, address operator) view returns (bool)'
             ],
-            multicallProviders[chainId]
+            ethersProvider
           )
           const isApproved: boolean = yield call(
             // @ts-ignore
