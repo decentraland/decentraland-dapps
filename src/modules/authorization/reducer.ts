@@ -86,13 +86,13 @@ export function authorizationReducer(
     }
     case FETCH_AUTHORIZATION_SUCCESS: {
       const { authorization } = action.payload
-      const data = state.data.map(stateAuthorization => {
-        if (authorization && areEqual(stateAuthorization, authorization)) {
-          return authorization
-        } else {
-          return stateAuthorization
-        }
-      })
+      let data = [...state.data]
+      if (authorization) {
+        data = data.filter(
+          stateAuthorization => !areEqual(stateAuthorization, authorization)
+        )
+        data.push(authorization)
+      }
 
       return {
         loading: loadingReducer(state.loading, action),
@@ -116,19 +116,10 @@ export function authorizationReducer(
       switch (transaction.actionType) {
         case GRANT_TOKEN_SUCCESS: {
           const { authorization } = transaction.payload
-          let authorizationExists = false
-          const data = state.data.map(stateAuthorization => {
-            if (areEqual(stateAuthorization, authorization)) {
-              authorizationExists = true
-              return authorization
-            } else {
-              return stateAuthorization
-            }
-          })
-
-          if (!authorizationExists) {
-            data.push({ ...authorization })
-          }
+          const data = state.data.filter(
+            stateAuthorization => !areEqual(stateAuthorization, authorization)
+          )
+          data.push(authorization)
 
           return {
             ...state,
