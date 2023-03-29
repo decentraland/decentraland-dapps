@@ -17,7 +17,11 @@ import {
   revokeTokenSuccess,
   revokeTokenFailure,
   RevokeTokenRequestAction,
-  REVOKE_TOKEN_REQUEST
+  REVOKE_TOKEN_REQUEST,
+  FetchAuthorizationRequestAction,
+  FETCH_AUTHORIZATION_REQUEST,
+  fetchAuthorizationSuccess,
+  fetchAuthorizationFailure
 } from './actions'
 import { Authorization, AuthorizationAction, AuthorizationType } from './types'
 import { sendTransaction } from '../wallet/utils/sendTransaction'
@@ -27,6 +31,10 @@ export function createAuthorizationSaga() {
     yield takeEvery(
       FETCH_AUTHORIZATIONS_REQUEST,
       handleFetchAuthorizationsRequest
+    )
+    yield takeEvery(
+      FETCH_AUTHORIZATION_REQUEST,
+      handleFetchAuthorizationRequest
     )
     yield takeEvery(GRANT_TOKEN_REQUEST, handleGrantTokenRequest)
     yield takeEvery(REVOKE_TOKEN_REQUEST, handleRevokeTokenRequest)
@@ -126,6 +134,79 @@ export function createAuthorizationSaga() {
       yield put(fetchAuthorizationsSuccess(authorizationsToStore))
     } catch (error) {
       yield put(fetchAuthorizationsFailure(authorizations, error.message))
+    }
+  }
+
+  function* handleFetchAuthorizationRequest(
+    action: FetchAuthorizationRequestAction
+  ) {
+    const { authorization } = action.payload
+    try {
+      const multicallProviders: Record<string, providers.MulticallProvider> = {}
+
+      if (!isValidType(authorization.type)) {
+        throw new Error(`Invalid authorization type ${authorization.type}`)
+      }
+      const { chainId } = authorization
+
+      if (!multicallProviders[chainId]) {
+        // provider party 🎉
+        const provider: Provider = yield call(() => getNetworkProvider(chainId))
+        const ethersProvider = new ethers.providers.Web3Provider(provider)
+        const multicallProvider = new providers.MulticallProvider(
+          ethersProvider,
+          { batchSize: 500 } // defaults to 50
+        )
+        multicallProviders[chainId] = multicallProvider
+      }
+
+      switch (authorization.type) {
+        case AuthorizationType.ALLOWANCE:
+          const erc20 = new ethers.Contract(
+            authorization.contractAddress,
+            [
+              'function allowance(address owner, address spender) view returns (uint256)'
+            ],
+            multicallProviders[chainId]
+          )
+          const allowance: ethers.BigNumber = yield call(
+            // @ts-ignore
+            [erc20, 'allowance'],
+            authorization.address,
+            authorization.authorizedAddress
+          )
+          if (allowance.gt(0)) {
+            yield put(
+              fetchAuthorizationSuccess({
+                ...authorization,
+                allowance: allowance.toString()
+              })
+            )
+          }
+          break
+        case AuthorizationType.APPROVAL:
+          const erc721 = new ethers.Contract(
+            authorization.contractAddress,
+            [
+              'function isApprovedForAll(address owner, address operator) view returns (bool)'
+            ],
+            multicallProviders[chainId]
+          )
+          const isApproved: boolean = yield call(
+            // @ts-ignore
+            [erc721, 'isApprovedForAll'],
+            authorization.address,
+            authorization.authorizedAddress
+          )
+          yield put(
+            fetchAuthorizationSuccess(isApproved ? authorization : null)
+          )
+          break
+        default:
+          yield put(fetchAuthorizationSuccess(null))
+      }
+    } catch (error) {
+      yield put(fetchAuthorizationFailure(authorization, error.message))
     }
   }
 
