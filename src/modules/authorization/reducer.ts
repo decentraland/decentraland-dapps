@@ -7,9 +7,6 @@ import {
   FetchAuthorizationsRequestAction,
   FetchAuthorizationsSuccessAction,
   FetchAuthorizationsFailureAction,
-  FetchAuthorizationRequestAction,
-  FetchAuthorizationSuccessAction,
-  FetchAuthorizationFailureAction,
   GrantTokenRequestAction,
   GrantTokenSuccessAction,
   GrantTokenFailureAction,
@@ -19,9 +16,6 @@ import {
   FETCH_AUTHORIZATIONS_REQUEST,
   FETCH_AUTHORIZATIONS_SUCCESS,
   FETCH_AUTHORIZATIONS_FAILURE,
-  FETCH_AUTHORIZATION_REQUEST,
-  FETCH_AUTHORIZATION_SUCCESS,
-  FETCH_AUTHORIZATION_FAILURE,
   GRANT_TOKEN_REQUEST,
   GRANT_TOKEN_SUCCESS,
   GRANT_TOKEN_FAILURE,
@@ -48,9 +42,6 @@ type AuthorizationReducerAction =
   | FetchAuthorizationsRequestAction
   | FetchAuthorizationsSuccessAction
   | FetchAuthorizationsFailureAction
-  | FetchAuthorizationRequestAction
-  | FetchAuthorizationSuccessAction
-  | FetchAuthorizationFailureAction
   | GrantTokenRequestAction
   | GrantTokenSuccessAction
   | GrantTokenFailureAction
@@ -68,8 +59,7 @@ export function authorizationReducer(
     case REVOKE_TOKEN_REQUEST:
     case GRANT_TOKEN_SUCCESS:
     case REVOKE_TOKEN_SUCCESS:
-    case FETCH_AUTHORIZATIONS_REQUEST:
-    case FETCH_AUTHORIZATION_REQUEST: {
+    case FETCH_AUTHORIZATIONS_REQUEST: {
       return {
         ...state,
         loading: loadingReducer(state.loading, action)
@@ -78,32 +68,32 @@ export function authorizationReducer(
     case FETCH_AUTHORIZATIONS_SUCCESS: {
       const { authorizations } = action.payload
 
-      return {
-        loading: loadingReducer(state.loading, action),
-        error: null,
-        data: [...state.data, ...authorizations]
-      }
-    }
-    case FETCH_AUTHORIZATION_SUCCESS: {
-      const { authorization } = action.payload
-      let data = [...state.data]
-      if (authorization) {
-        data = data.filter(
-          stateAuthorization => !areEqual(stateAuthorization, authorization)
-        )
-        data.push(authorization)
-      }
+      // TODO: Optimize with some sort of Map structure to prevent O(n^2)
+      // Filters out all authorizations in the state that have been obtained in the fetch to prevent duplication.
+      const baseAuthorizations = state.data.filter(
+        stateAuth =>
+          !authorizations.some(([original]) => areEqual(original, stateAuth))
+      )
+
+      // Get from the fetched authorizations the ones that are not null.
+      const newAuthorizations = authorizations.reduce((acc, next) => {
+        const [_, result] = next
+        if (!!result) {
+          acc.push(result)
+        }
+        return acc
+      }, [] as Authorization[])
 
       return {
         loading: loadingReducer(state.loading, action),
         error: null,
-        data
+        // concat the base and new authorizations, without duplications and removing the ones that are now null.
+        data: [...baseAuthorizations, ...newAuthorizations]
       }
     }
     case GRANT_TOKEN_FAILURE:
     case REVOKE_TOKEN_FAILURE:
-    case FETCH_AUTHORIZATIONS_FAILURE:
-    case FETCH_AUTHORIZATION_FAILURE: {
+    case FETCH_AUTHORIZATIONS_FAILURE: {
       return {
         ...state,
         loading: loadingReducer(state.loading, action),

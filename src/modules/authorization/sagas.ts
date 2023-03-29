@@ -17,11 +17,7 @@ import {
   revokeTokenSuccess,
   revokeTokenFailure,
   RevokeTokenRequestAction,
-  REVOKE_TOKEN_REQUEST,
-  FetchAuthorizationRequestAction,
-  FETCH_AUTHORIZATION_REQUEST,
-  fetchAuthorizationSuccess,
-  fetchAuthorizationFailure
+  REVOKE_TOKEN_REQUEST
 } from './actions'
 import { Authorization, AuthorizationAction, AuthorizationType } from './types'
 import { sendTransaction } from '../wallet/utils/sendTransaction'
@@ -32,10 +28,6 @@ export function createAuthorizationSaga() {
       FETCH_AUTHORIZATIONS_REQUEST,
       handleFetchAuthorizationsRequest
     )
-    yield takeEvery(
-      FETCH_AUTHORIZATION_REQUEST,
-      handleFetchAuthorizationRequest
-    )
     yield takeEvery(GRANT_TOKEN_REQUEST, handleGrantTokenRequest)
     yield takeEvery(REVOKE_TOKEN_REQUEST, handleRevokeTokenRequest)
   }
@@ -45,7 +37,7 @@ export function createAuthorizationSaga() {
   ) {
     const { authorizations } = action.payload
     try {
-      const promises: Promise<Authorization | null>[] = []
+      const promises: Promise<[Authorization, Authorization | null]>[] = []
       const multicallProviders: Record<string, providers.MulticallProvider> = {}
 
       for (const authorization of authorizations) {
@@ -82,18 +74,19 @@ export function createAuthorizationSaga() {
                   authorization.authorizedAddress
                 )
                 .then<Authorization | null>((allowance: ethers.BigNumber) => {
-                  if (allowance.gt(0)) {
-                    return {
-                      ...authorization,
-                      allowance: allowance.toString()
-                    }
-                  }
-
-                  return null
+                  return [
+                    authorization,
+                    allowance.gt(0)
+                      ? {
+                          ...authorization,
+                          allowance: allowance.toString()
+                        }
+                      : null
+                  ]
                 })
                 .catch((error: Error) => {
                   console.warn(`Error fetching allowance`, authorization, error)
-                  return null
+                  return [authorization, null]
                 })
             )
             break
@@ -110,84 +103,29 @@ export function createAuthorizationSaga() {
                   authorization.address,
                   authorization.authorizedAddress
                 )
-                .then<Authorization | null>((isApproved: boolean) =>
+                .then<Authorization | null>((isApproved: boolean) => [
+                  authorization,
                   isApproved ? authorization : null
-                )
+                ])
                 .catch((error: Error) => {
                   console.warn(`Error fetching approval`, authorization, error)
-                  return null
+                  return [authorization, null]
                 })
             )
             break
         }
       }
 
-      const authorizationsToStore: Authorization[] = yield call(async () => {
-        const results = await Promise.all(promises)
-        return results.filter(result => !!result) // filter nulls, or undefineds due to caught promises
+      const authorizationsToStore: [
+        Authorization,
+        Authorization | null
+      ][] = yield call(async () => {
+        return Promise.all(promises)
       })
 
       yield put(fetchAuthorizationsSuccess(authorizationsToStore))
     } catch (error) {
       yield put(fetchAuthorizationsFailure(authorizations, error.message))
-    }
-  }
-
-  function* handleFetchAuthorizationRequest(
-    action: FetchAuthorizationRequestAction
-  ) {
-    const { authorization } = action.payload
-
-    try {
-      if (!isValidType(authorization.type)) {
-        throw new Error(`Invalid authorization type ${authorization.type}`)
-      }
-
-      const { chainId } = authorization
-
-      const provider: Provider = yield call(getNetworkProvider, chainId)
-      const ethersProvider = new ethers.providers.Web3Provider(provider)
-
-      switch (authorization.type) {
-        case AuthorizationType.ALLOWANCE:
-          const erc20 = getERC20ContractInstance(authorization, ethersProvider)
-
-          const allowance: ethers.BigNumber = yield call(
-            // @ts-ignore
-            [erc20, 'allowance'],
-            authorization.address,
-            authorization.authorizedAddress
-          )
-          if (allowance.gt(0)) {
-            yield put(
-              fetchAuthorizationSuccess({
-                ...authorization,
-                allowance: allowance.toString()
-              })
-            )
-          }
-          break
-        case AuthorizationType.APPROVAL:
-          const erc721 = getERC721ContractInstance(
-            authorization,
-            ethersProvider
-          )
-
-          const isApproved: boolean = yield call(
-            // @ts-ignore
-            [erc721, 'isApprovedForAll'],
-            authorization.address,
-            authorization.authorizedAddress
-          )
-          yield put(
-            fetchAuthorizationSuccess(isApproved ? authorization : null)
-          )
-          break
-        default:
-          yield put(fetchAuthorizationSuccess(null))
-      }
-    } catch (error) {
-      yield put(fetchAuthorizationFailure(authorization, error.message))
     }
   }
 

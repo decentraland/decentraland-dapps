@@ -12,8 +12,13 @@ export const FETCH_AUTHORIZATIONS_FAILURE = '[Failure] Fetch Authorizations'
 export const fetchAuthorizationsRequest = (authorizations: Authorization[]) =>
   action(FETCH_AUTHORIZATIONS_REQUEST, { authorizations })
 
-export const fetchAuthorizationsSuccess = (authorizations: Authorization[]) =>
-  action(FETCH_AUTHORIZATIONS_SUCCESS, { authorizations })
+/**
+ * @param authorizations Tuple of the original authorization used to fetch and the authorization fetched result.
+ * Necessary by the reducer to be able to remove authorizations fetched that now are not authorized anymore.
+ */
+export const fetchAuthorizationsSuccess = (
+  authorizations: [Authorization, Authorization | null][]
+) => action(FETCH_AUTHORIZATIONS_SUCCESS, { authorizations })
 
 export const fetchAuthorizationsFailure = (
   authorizations: Authorization[],
@@ -28,34 +33,6 @@ export type FetchAuthorizationsSuccessAction = ReturnType<
 >
 export type FetchAuthorizationsFailureAction = ReturnType<
   typeof fetchAuthorizationsFailure
->
-
-// Fetch authorization
-
-export const FETCH_AUTHORIZATION_REQUEST = '[Request] Fetch Authorization'
-export const FETCH_AUTHORIZATION_SUCCESS = '[Success] Fetch Authorization'
-export const FETCH_AUTHORIZATION_FAILURE = '[Failure] Fetch Authorization'
-
-export const fetchAuthorizationRequest = (authorization: Authorization) =>
-  action(FETCH_AUTHORIZATION_REQUEST, { authorization })
-
-export const fetchAuthorizationSuccess = (
-  authorization: Authorization | null
-) => action(FETCH_AUTHORIZATION_SUCCESS, { authorization })
-
-export const fetchAuthorizationFailure = (
-  authorization: Authorization,
-  error: string
-) => action(FETCH_AUTHORIZATION_FAILURE, { authorization, error })
-
-export type FetchAuthorizationRequestAction = ReturnType<
-  typeof fetchAuthorizationRequest
->
-export type FetchAuthorizationSuccessAction = ReturnType<
-  typeof fetchAuthorizationSuccess
->
-export type FetchAuthorizationFailureAction = ReturnType<
-  typeof fetchAuthorizationFailure
 >
 
 // Grant Token
