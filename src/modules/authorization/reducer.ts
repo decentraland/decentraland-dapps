@@ -68,10 +68,27 @@ export function authorizationReducer(
     case FETCH_AUTHORIZATIONS_SUCCESS: {
       const { authorizations } = action.payload
 
+      // TODO: Optimize with some sort of Map structure to prevent O(n^2)
+      // Filters out all authorizations in the state that have been obtained in the fetch to prevent duplication.
+      const baseAuthorizations = state.data.filter(
+        stateAuth =>
+          !authorizations.some(([original]) => areEqual(original, stateAuth))
+      )
+
+      // Get from the fetched authorizations the ones that are not null.
+      const newAuthorizations = authorizations.reduce((acc, next) => {
+        const [_, result] = next
+        if (!!result) {
+          acc.push(result)
+        }
+        return acc
+      }, [] as Authorization[])
+
       return {
         loading: loadingReducer(state.loading, action),
         error: null,
-        data: [...state.data, ...authorizations]
+        // concat the base and new authorizations, without duplications and removing the ones that are now null.
+        data: [...baseAuthorizations, ...newAuthorizations]
       }
     }
     case GRANT_TOKEN_FAILURE:
@@ -89,10 +106,14 @@ export function authorizationReducer(
       switch (transaction.actionType) {
         case GRANT_TOKEN_SUCCESS: {
           const { authorization } = transaction.payload
+          const data = state.data.filter(
+            stateAuthorization => !areEqual(stateAuthorization, authorization)
+          )
+          data.push(authorization)
 
           return {
             ...state,
-            data: [...state.data, { ...authorization }]
+            data
           }
         }
         case REVOKE_TOKEN_SUCCESS: {

@@ -37,7 +37,7 @@ export function createAuthorizationSaga() {
   ) {
     const { authorizations } = action.payload
     try {
-      const promises: Promise<Authorization | null>[] = []
+      const promises: Promise<[Authorization, Authorization | null]>[] = []
       const multicallProviders: Record<string, providers.MulticallProvider> = {}
 
       for (const authorization of authorizations) {
@@ -61,13 +61,11 @@ export function createAuthorizationSaga() {
 
         switch (authorization.type) {
           case AuthorizationType.ALLOWANCE:
-            const erc20 = new ethers.Contract(
-              authorization.contractAddress,
-              [
-                'function allowance(address owner, address spender) view returns (uint256)'
-              ],
+            const erc20 = getERC20ContractInstance(
+              authorization,
               multicallProviders[chainId]
             )
+
             promises.push(
               // @ts-ignore
               erc20
@@ -75,23 +73,29 @@ export function createAuthorizationSaga() {
                   authorization.address,
                   authorization.authorizedAddress
                 )
-                .then<Authorization | null>((allowance: ethers.BigNumber) =>
-                  allowance.gt(0) ? authorization : null
-                )
+                .then<Authorization | null>((allowance: ethers.BigNumber) => {
+                  return [
+                    authorization,
+                    allowance.gt(0)
+                      ? {
+                          ...authorization,
+                          allowance: allowance.toString()
+                        }
+                      : null
+                  ]
+                })
                 .catch((error: Error) => {
                   console.warn(`Error fetching allowance`, authorization, error)
-                  return null
+                  return [authorization, null]
                 })
             )
             break
           case AuthorizationType.APPROVAL:
-            const erc721 = new ethers.Contract(
-              authorization.contractAddress,
-              [
-                'function isApprovedForAll(address owner, address operator) view returns (bool)'
-              ],
+            const erc721 = getERC721ContractInstance(
+              authorization,
               multicallProviders[chainId]
             )
+
             promises.push(
               // @ts-ignore
               erc721
@@ -99,21 +103,24 @@ export function createAuthorizationSaga() {
                   authorization.address,
                   authorization.authorizedAddress
                 )
-                .then<Authorization | null>((isApproved: boolean) =>
+                .then<Authorization | null>((isApproved: boolean) => [
+                  authorization,
                   isApproved ? authorization : null
-                )
+                ])
                 .catch((error: Error) => {
                   console.warn(`Error fetching approval`, authorization, error)
-                  return null
+                  return [authorization, null]
                 })
             )
             break
         }
       }
 
-      const authorizationsToStore: Authorization[] = yield call(async () => {
-        const results = await Promise.all(promises)
-        return results.filter(result => !!result) // filter nulls, or undefineds due to caught promises
+      const authorizationsToStore: [
+        Authorization,
+        Authorization | null
+      ][] = yield call(async () => {
+        return Promise.all(promises)
       })
 
       yield put(fetchAuthorizationsSuccess(authorizationsToStore))
@@ -177,6 +184,33 @@ export function createAuthorizationSaga() {
         )
     }
   }
+}
+
+// TODO: Use decentraland-transactions
+function getERC20ContractInstance(
+  authorization: Authorization,
+  provider: ethers.providers.Provider
+) {
+  return new ethers.Contract(
+    authorization.contractAddress,
+    [
+      'function allowance(address owner, address spender) view returns (uint256)'
+    ],
+    provider
+  )
+}
+
+function getERC721ContractInstance(
+  authorization: Authorization,
+  provider: ethers.providers.Provider
+) {
+  return new ethers.Contract(
+    authorization.contractAddress,
+    [
+      'function isApprovedForAll(address owner, address operator) view returns (bool)'
+    ],
+    provider
+  )
 }
 
 export const authorizationSaga = createAuthorizationSaga()

@@ -3,7 +3,7 @@ import { action } from 'typesafe-actions'
 import { buildTransactionPayload } from '../transaction/utils'
 import { Authorization } from './types'
 
-// Fetch authorization
+// Fetch authorizations
 
 export const FETCH_AUTHORIZATIONS_REQUEST = '[Request] Fetch Authorizations'
 export const FETCH_AUTHORIZATIONS_SUCCESS = '[Success] Fetch Authorizations'
@@ -12,8 +12,13 @@ export const FETCH_AUTHORIZATIONS_FAILURE = '[Failure] Fetch Authorizations'
 export const fetchAuthorizationsRequest = (authorizations: Authorization[]) =>
   action(FETCH_AUTHORIZATIONS_REQUEST, { authorizations })
 
-export const fetchAuthorizationsSuccess = (authorizations: Authorization[]) =>
-  action(FETCH_AUTHORIZATIONS_SUCCESS, { authorizations })
+/**
+ * @param authorizations Tuple of the original authorization used to fetch and the authorization fetched result.
+ * Necessary by the reducer to be able to remove authorizations fetched that now are not authorized anymore.
+ */
+export const fetchAuthorizationsSuccess = (
+  authorizations: [Authorization, Authorization | null][]
+) => action(FETCH_AUTHORIZATIONS_SUCCESS, { authorizations })
 
 export const fetchAuthorizationsFailure = (
   authorizations: Authorization[],
