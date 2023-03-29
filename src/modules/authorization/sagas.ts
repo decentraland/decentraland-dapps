@@ -145,7 +145,7 @@ export function createAuthorizationSaga() {
 
       const { chainId } = authorization
 
-      const provider: Provider = yield call(() => getNetworkProvider(chainId))
+      const provider: Provider = yield call(getNetworkProvider, chainId)
       const ethersProvider = new ethers.providers.Web3Provider(provider)
 
       switch (authorization.type) {
@@ -248,6 +248,7 @@ export function createAuthorizationSaga() {
   }
 }
 
+// TODO: Use decentraland-transactions
 function getERC20ContractInstance(
   authorization: Authorization,
   provider: ethers.providers.Provider
