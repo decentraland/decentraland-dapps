@@ -69,11 +69,13 @@ export function authorizationReducer(
       const { authorizations } = action.payload
 
       // TODO: Optimize with some sort of Map structure to prevent O(n^2)
+      // Filters out all authorizations in the state that have been obtained in the fetch to prevent duplication.
       const baseAuthorizations = state.data.filter(
         stateAuth =>
           !authorizations.some(([original]) => areEqual(original, stateAuth))
       )
 
+      // Get from the fetched authorizations the ones that are not null.
       const newAuthorizations = authorizations.reduce((acc, next) => {
         const [_, result] = next
         if (!!result) {
@@ -85,6 +87,7 @@ export function authorizationReducer(
       return {
         loading: loadingReducer(state.loading, action),
         error: null,
+        // concat the base and new authorizations, without duplications and removing the ones that are now null.
         data: [...baseAuthorizations, ...newAuthorizations]
       }
     }
