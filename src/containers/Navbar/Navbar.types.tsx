@@ -2,8 +2,6 @@ import { Dispatch } from 'redux'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { NavbarProps as NavbarComponentProps } from 'decentraland-ui/dist/components/Navbar/Navbar'
 import {
-  acceptNetworkPartialSupport,
-  AcceptNetworkPartialSupportAction,
   disconnectWallet,
   switchNetworkRequest,
   SwitchNetworkRequestAction
@@ -13,11 +11,10 @@ export type NavbarProps = NavbarComponentProps & {
   chainId?: ChainId
   appChainId: ChainId
   hasTranslations?: boolean
+  docsUrl?: string
+  enablePartialSupportAlert?: boolean
   onSwitchNetwork: typeof switchNetworkRequest
   onSignOut: typeof disconnectWallet
-  hasAcceptedNetworkPartialSupport: boolean
-  showPartiallySupportedModal?: boolean
-  onAcceptNetworkPartialSupport: typeof acceptNetworkPartialSupport
 }
 
 export type MapStateProps = Pick<
@@ -29,13 +26,10 @@ export type MapStateProps = Pick<
   | 'hasTranslations'
   | 'chainId'
   | 'appChainId'
-  | 'hasAcceptedNetworkPartialSupport'
 >
 
 export type MapDispatchProps = Pick<
   NavbarProps,
-  'onSwitchNetwork' | 'onSignOut' | 'onAcceptNetworkPartialSupport'
+  'onSwitchNetwork' | 'onSignOut'
 >
-export type MapDispatch = Dispatch<
-  SwitchNetworkRequestAction | AcceptNetworkPartialSupportAction
->
+export type MapDispatch = Dispatch<SwitchNetworkRequestAction>

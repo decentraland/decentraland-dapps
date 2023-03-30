@@ -42,11 +42,6 @@
         "message_unknown_network": "You need to be connected to {expectedChainName} to use this app, please switch your network to continue.",
         "switch_button": "Switch to {chainName}",
         "sign_out": "Sign Out"
-      },
-      "partially_supported_network": {
-        "header": "Partially Supported Network",
-        "message": "You need to be connected to {expectedChainName} to use all the features of this app. That way, all the transactions that should happen on other networks would be sent as meta-transactions. Since you are currently connected to {currentChainName}, you will only be able to use the features of this app that interact with that particular network, and you will need to pay for the gas costs of those transactions.",
-        "continue_button": "Continue on {chainName}"
       }
     },
     "sign_in": {
@@ -155,7 +150,7 @@
       "meta_transactions": {
         "contract_account_error": {
           "title": "Wallet not supported",
-          "body": "Smart contract wallets are not supported for meta-transations. You can switch your network to Polygon and send a regular transaction."
+          "body": "Smart contract wallets are not supported for meta-transactions. You can switch your network to Polygon and send a regular transaction."
         },
         "invalid_address_error": {
           "title": "Invalid address",
@@ -176,6 +171,11 @@
       },
       "switch_network": "Switch to {network}",
       "learn_more": "Learn more"
+    },
+    "network_alert": {
+      "title": "Your wallet is connected to Polygon",
+      "content": "Use this network to cover the gas of a transaction (like when buying items below 1 MANA). Switch back when you finish. <link>Learn more</link>",
+      "action": "Switch to Ethereum Mainnet"
     }
   }
 }

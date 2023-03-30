@@ -41,11 +41,6 @@
         "message": "Vous devez être connecté au réseau {expectedChainName} pour utiliser cette application, mais vous êtes actuellement connecté au réseau {currentChainName}.",
         "message_unknown_network": "Vous devez être connecté à {expectedChainName} pour utiliser cette application, veuillez changer de réseau pour continuer.",
         "switch_button": "Passer à {chainName}"
-      },
-      "partially_supported_network": {
-        "header": "Réseau partiellement pris en charge",
-        "message": "Vous devez être connecté à {expectedChainName} pour utiliser toutes les fonctionnalités de cette application. De cette façon, toutes les transactions qui devraient se produire sur d'autres réseaux seraient envoyées en tant que méta-transactions. Étant donné que vous êtes actuellement connecté à {currentChainName}, vous ne pourrez utiliser que les fonctionnalités de cette application qui interagissent avec ce réseau particulier, et vous devrez payer les coûts de gaz de ces transactions.",
-        "continue_button": "Continuer sur {chainName}"
       }
     },
     "sign_in": {
@@ -102,6 +97,11 @@
       },
       "switch_network": "Passer à {network}",
       "learn_more": "En savoir plus"
+    },
+    "network_alert": {
+      "title": "Votre portefeuille est connecté au Polygon",
+      "content": "Utilisez ce réseau pour couvrir le gaz d'une transaction (comme lors de l'achat d'articles inférieurs à 1 MANA). Revenez en arrière lorsque vous avez terminé. <link>En savoir plus</link>",
+      "action": "Passer à Ethereum Mainnet"
     }
   }
 }

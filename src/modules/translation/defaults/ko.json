@@ -41,11 +41,6 @@
         "message": "이 앱을 사용하려면 {expectedChainName} 네트워크에 연결되어 있어야하지만 현재 {currentChainName} 네트워크에 연결되어 있습니다.",
         "message_unknown_network": "이 앱을 사용하려면 {expectedChainName}에 연결해야 합니다. 계속하려면 네트워크를 전환하세요.",
         "switch_button": "{chainName}(으)로 전환"
-      },
-      "partially_supported_network": {
-        "header": "부분적으로 지원되는 네트워크",
-        "message": "이 앱의 모든 기능을 사용하려면 {expectedChainName}에 연결해야 합니다. 이렇게 하면 다른 네트워크에서 발생해야 하는 모든 트랜잭션이 메타 트랜잭션으로 전송됩니다. 현재 {currentChainName}에 연결되어 있으므로 해당 네트워크와 상호 작용하는 이 앱의 기능만 사용할 수 있으며 해당 거래의 가스 비용을 지불해야 합니다.",
-        "continue_button": "{chainName}에서 계속"
       }
     },
     "sign_in": {
@@ -66,7 +61,7 @@
           "browser_extension": "브라우저 확장 사용",
           "email": "이메일 사용",
           "mobile": "모바일 지갑 사용",
-          "metamask_mobile": "मेटामास्क ऍप्लिकेशन वापरून"
+          "metamask_mobile": "메타마스크 앱 사용"
         }
       }
     },
@@ -102,6 +97,11 @@
       },
       "switch_network": "{네트워크}로 전환",
       "learn_more": "자세히 알아보기"
+    },
+    "network_alert": {
+      "title": "지갑이 Polygon에 연결되었습니다",
+      "content": "이 네트워크를 사용하여 거래의 가스를 처리합니다(예: 1 MANA 미만의 항목을 구매할 때). 끝나면 다시 전환하십시오. <link>자세히 알아보기</link>",
+      "action": "이더리움 메인넷으로 전환"
     }
   }
 }

@@ -41,11 +41,6 @@
         "message": "このアプリを使用するには、{expectedChainName}ネットワークに接続する必要がありますが、現在は{currentChainName}ネットワークに接続しています。",
         "message_unknown_network": "このアプリを使用するには、{expectedChainName}に接続する必要があります。続行するには、ネットワークを切り替えてください。",
         "switch_button": "{chainName}に切り替えます"
-      },
-      "partially_supported_network": {
-        "header": "部分的にサポートされているネットワーク",
-        "message": "このアプリのすべての機能を使用するには、{expectedChainName}に接続する必要があります。そうすれば、他のネットワークで発生するはずのすべてのトランザクションがメタトランザクションとして送信されます。現在{currentChainName}に接続しているため、このアプリの特定のネットワークとやり取りする機能のみを使用でき、これらのトランザクションのガス代を支払う必要があります。",
-        "continue_button": "{chainName}に進みます"
       }
     },
     "sign_in": {
@@ -102,6 +97,11 @@
       },
       "switch_network": "{network}に切り替え",
       "learn_more": "詳細"
+    },
+    "network_alert": {
+      "title": "あなたのウォレットは Polygon に接続されています",
+      "content": "このネットワークを使用して、トランザクションのガスをカバーします (1 MANA 未満のアイテムを購入する場合など)。 終わったらスイッチバック。 <link>詳細</link>",
+      "action": "「イーサリアムメインネット」に切り替え"
     }
   }
 }
