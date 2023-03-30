@@ -173,8 +173,8 @@
       "learn_more": "了解更多"
     },
     "network_alert": {
-      "title": "您的钱包已连接到 Polygon Network",
-      "content": "当您需要支付交易的费用时（例如购买低于 1 MANA 的物品），请使用此网络。 完成后切换回来。 <link>了解更多</link>",
+      "title": "您的钱包已连接到 Polygon",
+      "content": "使用此网络来支付交易的费用（例如购买低于 1 MANA 的物品时）。 完成后切换回去。 <link>了解更多</link>",
       "action": "切换到以太坊主网"
     }
   }

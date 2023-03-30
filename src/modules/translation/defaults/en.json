@@ -173,8 +173,8 @@
       "learn_more": "Learn more"
     },
     "network_alert": {
-      "title": "Your wallet is connected to the Polygon Network",
-      "content": "Use this network when you need to cover the gas of the transaction (like buying items below 1 MANA). Switch back whenever you are finished. <link>Learn more</link>",
+      "title": "Your wallet is connected to Polygon",
+      "content": "Use this network to cover the gas of a transaction (like when buying items below 1 MANA). Switch back when you finish. <link>Learn more</link>",
       "action": "Switch to Ethereum Mainnet"
     }
   }

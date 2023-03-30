@@ -173,8 +173,8 @@
       "learn_more": "Mas información"
     },
     "network_alert": {
-      "title": "Su billetera está conectada a Polygon Network",
-      "content": "Use esta red cuando necesite cubrir el gas de la transacción (como comprar artículos por debajo de 1 MANA). Vuelve cuando hayas terminado. <link>Ver más</link>",
+      "title": "Su billetera está conectada a Polygon",
+      "content": "Use esta red para cubrir el gas de una transacción (como cuando compra artículos por debajo de 1 MANA). Vuelva a cambiar cuando termine. <link>Ver más</link>",
       "action": "Cambiar a Ethereum Mainnet"
     }
   }
