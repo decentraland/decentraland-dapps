@@ -10,7 +10,7 @@ import {
 import { ethers } from 'ethers'
 import { TransactionResponse } from '@ethersproject/providers'
 import { BlockWithTransactions } from '@ethersproject/abstract-provider'
-import { Provider } from 'decentraland-connect/dist/types'
+import { getNetworkWeb3Provider } from '../../lib/eth'
 import { Transaction, TransactionStatus, AnyTransaction } from './types'
 import {
   fetchTransactionFailure,
@@ -45,7 +45,6 @@ import {
 import { isPending, buildActionRef } from './utils'
 import { getTransaction as getTransactionFromChain } from './txUtils'
 import { getAddress } from '../wallet/selectors'
-import { getConnectedProvider } from '../../lib/eth'
 
 export function* transactionSaga(): IterableIterator<ForkEffect> {
   yield takeEvery(FETCH_TRANSACTION_REQUEST, handleFetchTransactionRequest)
@@ -84,7 +83,7 @@ export class FailedTransactionError extends Error {
 }
 
 function* handleFetchTransactionRequest(action: FetchTransactionRequestAction) {
-  const { hash } = action.payload
+  const { hash, address } = action.payload
   const transaction: Transaction = yield select(state =>
     getTransactionInState(state, hash)
   )
@@ -94,11 +93,13 @@ function* handleFetchTransactionRequest(action: FetchTransactionRequestAction) {
   }
 
   try {
-    let address: string = yield select(state => getAddress(state))
     watchPendingIndex[hash] = true
 
-    let tx: AnyTransaction = yield call(() =>
-      getTransactionFromChain(address, transaction.chainId, hash)
+    let tx: AnyTransaction = yield call(
+      getTransactionFromChain,
+      address,
+      transaction.chainId,
+      hash
     )
     let isUnknown = tx == null
 
@@ -131,7 +132,7 @@ function* handleFetchTransactionRequest(action: FetchTransactionRequestAction) {
         const isReplaced = statusInNetwork === TransactionStatus.REPLACED
         if (isDropped || isReplaced) {
           // mark tx as dropped even if it was returned with a 'replaced' status, let the saga find its replacement
-          yield put(replaceTransactionRequest(hash, nonce))
+          yield put(replaceTransactionRequest(hash, nonce, address))
           throw new FailedTransactionError(hash, TransactionStatus.DROPPED)
         }
         yield put(updateTransactionStatus(hash, statusInNetwork))
@@ -141,9 +142,11 @@ function* handleFetchTransactionRequest(action: FetchTransactionRequestAction) {
       yield delay(TRANSACTION_FETCH_DELAY)
 
       // update tx status from network
-      address = yield select(state => getAddress(state))
-      tx = yield call(() =>
-        getTransactionFromChain(address, transaction.chainId, hash)
+      tx = yield call(
+        getTransactionFromChain,
+        address,
+        transaction.chainId,
+        hash
       )
       isUnknown = tx == null
     }
@@ -181,7 +184,7 @@ function* handleFetchTransactionRequest(action: FetchTransactionRequestAction) {
 function* handleReplaceTransactionRequest(
   action: ReplaceTransactionRequestAction
 ) {
-  const { hash, nonce } = action.payload
+  const { hash, nonce, address: account } = action.payload
   const transaction: Transaction = yield select(state =>
     getTransactionInState(state, hash)
   )
@@ -190,28 +193,23 @@ function* handleReplaceTransactionRequest(
     return
   }
 
-  const provider: Provider | null = yield call(() => getConnectedProvider())
-  if (!provider) {
-    console.warn('Could not connect to ethereum')
-    return
-  }
-  const eth = new ethers.providers.Web3Provider(provider)
-
-  const accounts: string[] = yield call(() => eth.listAccounts())
-  if (accounts.length === 0) {
-    console.warn('Could not get accounts')
-    return
-  }
-  const account = accounts[0]
   let checkpoint = null
-
   watchDroppedIndex[hash] = true
 
   while (true) {
-    // check if tx has status, this is to recover from a tx that is dropped momentarily
-    const tx: AnyTransaction = yield call(() =>
-      getTransactionFromChain(account, transaction.chainId, hash)
+    const eth: ethers.providers.Web3Provider = yield call(
+      getNetworkWeb3Provider,
+      transaction.chainId
     )
+
+    // check if tx has status, this is to recover from a tx that is dropped momentarily
+    const tx: AnyTransaction = yield call(
+      getTransactionFromChain,
+      account,
+      transaction.chainId,
+      hash
+    )
+
     if (tx != null) {
       const txInState: Transaction = yield select(state =>
         getTransactionInState(state, hash)
@@ -223,7 +221,7 @@ function* handleReplaceTransactionRequest(
     }
 
     // get latest block
-    const blockNumber: number = yield call(() => eth.getBlockNumber())
+    const blockNumber: number = yield call(eth.getBlockNumber)
 
     let highestNonce = 0
     let replacedBy = null
@@ -232,8 +230,9 @@ function* handleReplaceTransactionRequest(
     const startBlock = blockNumber
     const endBlock = checkpoint || blockNumber - BLOCKS_DEPTH
     for (let i = startBlock; i > endBlock; i--) {
-      let block: BlockWithTransactions = yield call(() =>
-        eth.getBlockWithTransactions(i)
+      let block: BlockWithTransactions = yield call(
+        eth.getBlockWithTransactions,
+        i
       )
       const transactions: TransactionResponse[] =
         block != null && block.transactions != null ? block.transactions : []
@@ -320,7 +319,7 @@ function* handleWatchDroppedTransactions() {
     if (!watchDroppedIndex[tx.hash]) {
       yield fork(
         handleReplaceTransactionRequest,
-        replaceTransactionRequest(tx.hash, tx.nonce as number)
+        replaceTransactionRequest(tx.hash, tx.nonce as number, tx.from)
       )
     }
   }
@@ -348,7 +347,9 @@ function* handleWatchRevertedTransaction(
       yield put(fixRevertedTransaction(hash))
       return
     } else if (txInNetwork == null && txInState.nonce) {
-      yield put(replaceTransactionRequest(hash, txInState.nonce))
+      yield put(
+        replaceTransactionRequest(hash, txInState.nonce, txInState.from)
+      )
       return
     }
   } while (!isExpired(txInState, REVERTED_TRANSACTION_THRESHOLD))
