@@ -36,8 +36,9 @@ export default class LoginModal extends React.PureComponent<Props, State> {
   }
 
   handleOnConnect = (loginType: LoginModalOptionType) => {
-    let providerType: ProviderType = toProviderType(loginType)
-    this.props.onConnect(providerType)
+    const onConnect = this.props.metadata?.onConnect ?? this.props.onConnect
+    const providerType: ProviderType = toProviderType(loginType)
+    onConnect(providerType)
   }
 
   getModalTranslations = (): LoginModalI18N | undefined => {
@@ -72,7 +73,7 @@ export default class LoginModal extends React.PureComponent<Props, State> {
         key={loginType}
         type={loginType}
         i18n={this.getOptionTranslations()}
-        onClick={() => this.handleOnConnect(loginType!)}
+        onClick={() => this.handleOnConnect(loginType)}
       />
     ) : null
   }
