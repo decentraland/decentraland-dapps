@@ -22,8 +22,14 @@ const mapState = (state: any): MapStateProps => ({
   hasTranslations: isEnabled(state)
 })
 
-const mapDispatch = (dispatch: MapDispatch): MapDispatchProps => ({
-  onConnect: () => dispatch(openModal('LoginModal'))
+const mapDispatch = (
+  dispatch: MapDispatch,
+  ownProps: SignInPageProps
+): MapDispatchProps => ({
+  onConnect: () =>
+    dispatch(
+      openModal('LoginModal', { onConnect: ownProps.handleLoginConnect })
+    )
 })
 
 const mergeProps = (
