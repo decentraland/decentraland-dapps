@@ -20,10 +20,6 @@ const THIRD_AUTH_HEADER = 'x-identity-auth-chain-2'
 
 nock.disableNetConnect()
 class TestBaseClient extends BaseClient {
-  constructor(pepe: string, pepa?: BaseClientConfig) {
-    super(pepe, pepa)
-  }
-
   public performRequest = (path: string, init?: SignedRequestInit) =>
     this.fetch(path, init)
 }
