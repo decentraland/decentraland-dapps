@@ -1,4 +1,4 @@
-import signedFetch, { type AuthIdentity } from 'decentraland-crypto-fetch'
+import signedFetch, { type AuthIdentity, type SignedRequestInit } from 'decentraland-crypto-fetch'
 import { URL } from 'url'
 import { ClientError } from './ClientError'
 
@@ -13,7 +13,7 @@ export type BaseClientConfig = {
   retryDelay?: number
 }
 
-export class BaseClient {
+export abstract class BaseClient {
   private readonly baseUrl: string
   private readonly retries: number
   private readonly retryDelay: number
@@ -37,13 +37,13 @@ export class BaseClient {
   private getIdentity = () =>
     this.identity instanceof Function ? this.identity() : this.identity
 
-  public rawFetch = (path: string, init?: RequestInit): Promise<Response> => {
+  private rawFetch = (path: string, init?: SignedRequestInit): Promise<Response> => {
     const fullUrl = new URL(path, this.baseUrl)
-    const identity = this.getIdentity()
+    const identity = init?.identity ?? this.getIdentity()
     return signedFetch(fullUrl.toString(), { ...init, identity })
   }
 
-  public fetch = async <T>(path: string, init?: RequestInit): Promise<T> => {
+  protected fetch = async <T>(path: string, init?: SignedRequestInit): Promise<T> => {
     for (let attempt = 0; attempt <= this.retries; attempt++) {
       try {
         let response: Response

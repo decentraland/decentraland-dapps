@@ -3,7 +3,7 @@ import { ethers } from 'ethers'
 import { Wallet } from '@ethersproject/wallet'
 
 import { BaseClient, BaseClientConfig } from './BaseClient'
-import { AuthIdentity } from 'decentraland-crypto-fetch'
+import { AuthIdentity, SignedRequestInit } from 'decentraland-crypto-fetch'
 import {
   createIdentity,
   firstHeaderValueMatcher,
@@ -19,8 +19,16 @@ const SECOND_AUTH_HEADER = 'x-identity-auth-chain-1'
 const THIRD_AUTH_HEADER = 'x-identity-auth-chain-2'
 
 nock.disableNetConnect()
+class TestBaseClient extends BaseClient {
+  constructor(pepe: string, pepa?: BaseClientConfig) {
+    super(pepe, pepa)
+  }
 
-let baseClient: BaseClient
+  public performRequest = (path: string, init?: SignedRequestInit) =>
+    this.fetch(path, init)
+}
+
+let baseClient: TestBaseClient
 let config: BaseClientConfig
 
 jest.spyOn(console, 'error').mockReturnValue(undefined)
@@ -52,7 +60,7 @@ describe('when the request fails', () => {
         ...config,
         retries: 1
       }
-      baseClient = new BaseClient(urlTest, config)
+      baseClient = new TestBaseClient(urlTest, config)
 
       nock(urlTest)
         .get('/test')
@@ -63,7 +71,7 @@ describe('when the request fails', () => {
     })
 
     it('should retry 1 time and throw with the response error', async () => {
-      await expect(baseClient.fetch('/test')).rejects.toThrowError(
+      await expect(baseClient.performRequest('/test')).rejects.toThrowError(
         'Request failed with status code 500'
       )
       expect(setTimeout).toHaveBeenCalledWith(
@@ -80,7 +88,7 @@ describe('when the request fails', () => {
         ...config,
         retries: 3
       }
-      baseClient = new BaseClient(urlTest, config)
+      baseClient = new TestBaseClient(urlTest, config)
 
       nock(urlTest)
         .get('/test')
@@ -92,7 +100,7 @@ describe('when the request fails', () => {
     })
 
     it('should retry 3 times and throw with the response error', async () => {
-      await expect(baseClient.fetch('/test')).rejects.toThrowError(
+      await expect(baseClient.performRequest('/test')).rejects.toThrowError(
         'Request failed with status code 500'
       )
       expect(setTimeout).toHaveBeenCalledWith(
@@ -109,11 +117,11 @@ describe('when the request fails', () => {
         ...config,
         retries: 0
       }
-      baseClient = new BaseClient(urlTest, config)
+      baseClient = new TestBaseClient(urlTest, config)
     })
 
     it('should throw an error', async () => {
-      await expect(baseClient.fetch('/test')).rejects.toThrowError(
+      await expect(baseClient.performRequest('/test')).rejects.toThrowError(
         'Request failed with status code 500'
       )
       expect(nock.isDone()).toBeTruthy()
@@ -127,7 +135,7 @@ describe('when the request fails', () => {
         retries: 1
       }
 
-      baseClient = new BaseClient(urlTest, config)
+      baseClient = new TestBaseClient(urlTest, config)
 
       nock(urlTest)
         .get('/test')
@@ -137,7 +145,9 @@ describe('when the request fails', () => {
         })
     })
     it('should retry 1 time and resolve with the response data', async () => {
-      await expect(baseClient.fetch('/test')).resolves.toEqual('my test data')
+      await expect(baseClient.performRequest('/test')).resolves.toEqual(
+        'my test data'
+      )
       expect(setTimeout).toHaveBeenCalledWith(
         expect.anything(),
         config.retryDelay
@@ -154,7 +164,7 @@ describe('when the request is successful', () => {
       ...config,
       retries: 0
     }
-    baseClient = new BaseClient(urlTest, config)
+    baseClient = new TestBaseClient(urlTest, config)
 
     nock(urlTest)
       .get('/test')
@@ -165,7 +175,9 @@ describe('when the request is successful', () => {
   })
 
   it('should resolve with the response data', async () => {
-    await expect(baseClient.fetch('/test')).resolves.toEqual('my test data')
+    await expect(baseClient.performRequest('/test')).resolves.toEqual(
+      'my test data'
+    )
     expect(nock.isDone()).toBeTruthy()
   })
 })
@@ -185,7 +197,7 @@ describe('when the client is authenticated', () => {
         ...config,
         identity
       }
-      baseClient = new BaseClient(urlTest, config)
+      baseClient = new TestBaseClient(urlTest, config)
       nock(urlTest)
         .get('/test')
         .matchHeader(FIRST_AUTH_HEADER, firstHeaderValueMatcher)
@@ -198,7 +210,9 @@ describe('when the client is authenticated', () => {
     })
 
     it('should include the authentication headers and resolve with the response data', async () => {
-      await expect(baseClient.fetch('/test')).resolves.toEqual('my test data')
+      await expect(baseClient.performRequest('/test')).resolves.toEqual(
+        'my test data'
+      )
       expect(nock.isDone()).toBeTruthy()
     })
   })
@@ -209,7 +223,7 @@ describe('when the client is authenticated', () => {
         ...config,
         identity: () => identity
       }
-      baseClient = new BaseClient(urlTest, config)
+      baseClient = new TestBaseClient(urlTest, config)
       nock(urlTest)
         .get('/test')
         .matchHeader(FIRST_AUTH_HEADER, firstHeaderValueMatcher)
@@ -222,7 +236,34 @@ describe('when the client is authenticated', () => {
     })
 
     it('should include the authentication headers and resolve with the response data', async () => {
-      await expect(baseClient.fetch('/test')).resolves.toEqual('my test data')
+      await expect(baseClient.performRequest('/test')).resolves.toEqual(
+        'my test data'
+      )
+      expect(nock.isDone()).toBeTruthy()
+    })
+  })
+
+  describe('and the authentication is given in the fetch', () => {
+    beforeEach(() => {
+      config = {
+        ...config
+      }
+      baseClient = new TestBaseClient(urlTest, config)
+      nock(urlTest)
+        .get('/test')
+        .matchHeader(FIRST_AUTH_HEADER, firstHeaderValueMatcher)
+        .matchHeader(SECOND_AUTH_HEADER, secondHeaderValueMatcher)
+        .matchHeader(THIRD_AUTH_HEADER, thirdHeaderValueMatcher('get', '/test'))
+        .reply(201, { data: 'my test data', ok: true })
+        .defaultReplyHeaders({
+          'Access-Control-Allow-Origin': '*'
+        })
+    })
+
+    it('should include the authentication headers and resolve with the response data', async () => {
+      await expect(
+        baseClient.performRequest('/test', { identity })
+      ).resolves.toEqual('my test data')
       expect(nock.isDone()).toBeTruthy()
     })
   })
