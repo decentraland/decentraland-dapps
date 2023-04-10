@@ -19,7 +19,7 @@ export abstract class BaseClient {
   private readonly retryDelay: number
   private readonly identity:
     | AuthIdentity
-    | ((...args: unknown[]) => AuthIdentity)
+    | ((...args: unknown[]) => AuthIdentity | undefined)
     | undefined
 
   constructor(url: string, config?: BaseClientConfig) {
