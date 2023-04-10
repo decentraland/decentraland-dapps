@@ -37,7 +37,7 @@ export abstract class BaseClient {
   private getIdentity = () =>
     this.identity instanceof Function ? this.identity() : this.identity
 
-  private rawFetch = (path: string, init?: SignedRequestInit): Promise<Response> => {
+  protected rawFetch = (path: string, init?: SignedRequestInit): Promise<Response> => {
     const fullUrl = new URL(path, this.baseUrl)
     const identity = init?.identity ?? this.getIdentity()
     return signedFetch(fullUrl.toString(), { ...init, identity })
