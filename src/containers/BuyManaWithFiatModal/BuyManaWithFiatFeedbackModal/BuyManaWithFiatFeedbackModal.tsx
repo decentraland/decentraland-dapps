@@ -4,10 +4,8 @@ import {
   FeedbackModalI18N,
   TransactionStatus
 } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/FeedbackModal'
-import {
-  gatewaysNames,
-  networksNames
-} from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
+import { gatewaysNames } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
+import { getNetworkMANADescription } from 'decentraland-ui/dist/lib/network'
 import { getAnalytics } from '../../../modules/analytics/utils'
 import { Purchase, PurchaseStatus } from '../../../modules/gateway/types'
 import { t } from '../../../modules/translation/utils'
@@ -54,7 +52,7 @@ const getDefaultFeedbackTranslations = (
     propsToTranslateByStatus[status].map(prop => [
       prop,
       t(`${basePath}.${camelToSnakeCase(prop)}`, {
-        network: networksNames[network],
+        network: getNetworkMANADescription(network),
         gateway: gatewaysNames[gateway]
       })
     ])
