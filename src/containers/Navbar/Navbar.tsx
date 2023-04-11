@@ -25,14 +25,41 @@ export default class Navbar extends React.PureComponent<NavbarProps> {
     }
     return {
       menu: {
-        marketplace: <T id="@dapps.navbar.menu.marketplace" />,
+        marketplace: {
+          main: <T id="@dapps.navbar.menu.marketplace.main" />,
+          overview: <T id="@dapps.navbar.menu.marketplace.overview" />,
+          collectibles: <T id="@dapps.navbar.menu.marketplace.collectibles" />,
+          land: <T id="@dapps.navbar.menu.marketplace.land" />,
+          myAssets: <T id="@dapps.navbar.menu.marketplace.myAssets" />
+        },
         events: <T id="@dapps.navbar.menu.events" />,
-        places: <T id="@dapps.navbar.menu.places" />,
+        places: {
+          main: <T id="@dapps.navbar.menu.places.main" />,
+          overview: <T id="@dapps.navbar.menu.places.overview" />,
+          allPlaces: <T id="@dapps.navbar.menu.places.allPlaces" />,
+          faq: <T id="@dapps.navbar.menu.places.faq" />
+        },
         agora: <T id="@dapps.navbar.menu.agora" />,
-        dao: <T id="@dapps.navbar.menu.dao" />,
-        docs: <T id="@dapps.navbar.menu.docs" />,
+        dao: {
+          main: <T id="@dapps.navbar.menu.dao.main" />,
+          list: <T id="@dapps.navbar.menu.dao.list" />
+        },
+        docs: {
+          main: <T id="@dapps.navbar.menu.docs.main" />,
+          players: <T id="@dapps.navbar.menu.docs.players" />,
+          creators: <T id="@dapps.navbar.menu.docs.creators" />,
+          contributors: <T id="@dapps.navbar.menu.docs.contributors" />,
+          studios: <T id="@dapps.navbar.menu.docs.studios" />
+        },
         blog: <T id="@dapps.navbar.menu.blog" />,
-        builder: <T id="@dapps.navbar.menu.builder" />
+        builder: {
+          main: <T id="@dapps.navbar.menu.builder.main" />,
+          overview: <T id="@dapps.navbar.menu.builder.overview" />,
+          collections: <T id="@dapps.navbar.menu.builder.collections" />,
+          scenes: <T id="@dapps.navbar.menu.builder.scenes" />,
+          land: <T id="@dapps.navbar.menu.builder.land" />,
+          names: <T id="@dapps.navbar.menu.builder.names" />
+        }
       },
       account: {
         connecting: <T id="@dapps.navbar.account.connecting" />,
