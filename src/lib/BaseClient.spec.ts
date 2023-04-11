@@ -154,27 +154,54 @@ describe('when the request fails', () => {
 })
 
 describe('when the request is successful', () => {
-  beforeEach(() => {
-    nock.cleanAll()
-    config = {
-      ...config,
-      retries: 0
-    }
-    baseClient = new TestBaseClient(urlTest, config)
+  describe('and it has a data property', () => {
+    beforeEach(() => {
+      nock.cleanAll()
+      config = {
+        ...config,
+        retries: 0
+      }
+      baseClient = new TestBaseClient(urlTest, config)
 
-    nock(urlTest)
-      .get('/test')
-      .reply(201, { data: 'my test data', ok: true })
-      .defaultReplyHeaders({
-        'Access-Control-Allow-Origin': '*'
-      })
+      nock(urlTest)
+        .get('/test')
+        .reply(201, { data: 'my test data', ok: true })
+        .defaultReplyHeaders({
+          'Access-Control-Allow-Origin': '*'
+        })
+    })
+
+    it('should resolve with the response data', async () => {
+      await expect(baseClient.performRequest('/test')).resolves.toEqual(
+        'my test data'
+      )
+      expect(nock.isDone()).toBeTruthy()
+    })
   })
 
-  it('should resolve with the response data', async () => {
-    await expect(baseClient.performRequest('/test')).resolves.toEqual(
-      'my test data'
-    )
-    expect(nock.isDone()).toBeTruthy()
+  describe("and it doesn't have a data property", () => {
+    beforeEach(() => {
+      nock.cleanAll()
+      config = {
+        ...config,
+        retries: 0
+      }
+      baseClient = new TestBaseClient(urlTest, config)
+
+      nock(urlTest)
+        .get('/test')
+        .reply(201, ['my test data'])
+        .defaultReplyHeaders({
+          'Access-Control-Allow-Origin': '*'
+        })
+    })
+
+    it('should resolve with the response', async () => {
+      await expect(baseClient.performRequest('/test')).resolves.toEqual([
+        'my test data'
+      ])
+      expect(nock.isDone()).toBeTruthy()
+    })
   })
 })
 

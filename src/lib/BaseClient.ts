@@ -1,12 +1,13 @@
 import signedFetch, { type AuthIdentity, type SignedRequestInit } from 'decentraland-crypto-fetch'
-import { URL } from 'url'
+import * as nodeURL from 'url'
 import { ClientError } from './ClientError'
 
 const DEFAULT_RETRIES = 3
 const DEFAULT_RETRY_DELAY = 1000
+const URL = globalThis?.URL ?? nodeURL.URL
 
 export type BaseClientConfig = {
-  identity?: AuthIdentity | ((...args: unknown[]) => AuthIdentity)
+  identity?: AuthIdentity | ((...args: unknown[]) => AuthIdentity | undefined)
   /** The number of retries if the request fails */
   retries?: number
   /** The delay between retries if the request fails */
@@ -55,7 +56,7 @@ export abstract class BaseClient {
           throw new ClientError(error.message, undefined, null)
         }
 
-        if (!response.ok || !parsedResponse.ok) {
+        if (!response.ok || parsedResponse.ok === false) {
           const errorMessage: string | undefined =
             parsedResponse.message ?? parsedResponse.error
           throw new ClientError(
@@ -65,7 +66,13 @@ export abstract class BaseClient {
             parsedResponse.data
           )
         }
-        return parsedResponse.data as T
+
+        if (parsedResponse.ok === true) {
+          return parsedResponse.data as T
+        } else {
+          return parsedResponse as T
+        }
+
       } catch (error) {
         console.error(
           `[API] HTTP request failed: ${error.message || ''}`,
