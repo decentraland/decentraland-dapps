@@ -15,7 +15,7 @@
     "decentraland-connect": "^3.5.0",
     "decentraland-crypto-fetch": "^1.0.3",
     "decentraland-transactions": "^1.43.1",
-    "decentraland-ui": "^3.92.2",
+    "decentraland-ui": "^3.94.0",
     "ethers": "^5.6.8",
     "events": "^3.3.0",
     "flat": "^5.0.2",

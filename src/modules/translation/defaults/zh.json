@@ -29,12 +29,36 @@
         "avatars": "Avatars",
         "agora": "Agora",
         "blog": "Blog",
-        "docs": "Docs",
-        "marketplace": "Marketplace",
-        "builder": "Builder",
+        "docs": {
+          "main": "Docs",
+          "players": "Players",
+          "creators": "Content Creators",
+          "contributors": "Contributors",
+          "studios": "Studios"
+        },
+        "marketplace": {
+          "main": "Marketplace",
+          "overview": "Overview",
+          "collectibles": "Collectibles",
+          "land": "LAND",
+          "myAssets": "My Assets"
+        },
+        "builder": {
+          "main": "Builder",
+          "overview": "Overview",
+          "collections": "Collections",
+          "scenes": "Scenes",
+          "land": "Land",
+          "names": "Names"
+        },
         "events": "Events",
-        "dao": "DAO",
-        "places": "Places"
+        "dao": { "main": "DAO", "list": "List" },
+        "places": {
+          "main": "Places",
+          "overview": "Overview",
+          "allPlaces": "All Places",
+          "faq": "FAQ"
+        }
       },
       "wrong_network": {
         "header": "网络错误",
