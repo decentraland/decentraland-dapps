@@ -221,7 +221,7 @@ function* handleReplaceTransactionRequest(
     }
 
     // get latest block
-    const blockNumber: number = yield call(eth.getBlockNumber)
+    const blockNumber: number = yield call([eth, 'getBlockNumber'])
 
     let highestNonce = 0
     let replacedBy = null
@@ -231,7 +231,7 @@ function* handleReplaceTransactionRequest(
     const endBlock = checkpoint || blockNumber - BLOCKS_DEPTH
     for (let i = startBlock; i > endBlock; i--) {
       let block: BlockWithTransactions = yield call(
-        eth.getBlockWithTransactions,
+        [eth, 'getBlockWithTransactions'],
         i
       )
       const transactions: TransactionResponse[] =
