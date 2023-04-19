@@ -52,7 +52,12 @@
           "names": "Names"
         },
         "events": "Events",
-        "dao": { "main": "DAO", "list": "List" },
+        "dao": {
+          "main": "DAO",
+          "overview": "Overview",
+          "governance": "Governance",
+          "transparency": "Transparency"
+        },
         "places": {
           "main": "Places",
           "overview": "Overview",
