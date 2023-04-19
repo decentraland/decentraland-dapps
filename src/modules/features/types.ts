@@ -43,3 +43,10 @@ export type StateWithFeatures = {
   // This allows us to check that before operating on it.
   features?: FeaturesState
 }
+
+/**
+ * Features that belong to all dapps.
+ */
+export enum DappsFeatures {
+  WALLET_CONNECT_V2 = 'wallet-connect-v2'
+}
