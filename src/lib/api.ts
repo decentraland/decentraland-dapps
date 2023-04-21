@@ -34,8 +34,10 @@ export class BaseAPI {
     method: APIMethod,
     path: string,
     params: APIParam | null = null,
-    axiosRequestConfig: AxiosRequestConfig = {}
+    axiosRequestConfig: AxiosRequestConfig = {},
+    retryParams?: RetryParams
   ) {
+    const retry = retryParams ?? this.retry
     let options: AxiosRequestConfig = {
       ...axiosRequestConfig,
       method,
@@ -63,10 +65,10 @@ export class BaseAPI {
           `[API] HTTP request failed: ${error.message || ''}`,
           error
         )
-        if (this.retry.attempts <= attempts) throw error
+        if (retry.attempts <= attempts) throw error
         attempts++
       }
-      await this.sleep(this.retry.delay)
+      await this.sleep(retry.delay)
     }
   }
 
