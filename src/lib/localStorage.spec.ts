@@ -5,27 +5,40 @@ import {
   getLocalStorage,
   getDefaultState
 } from './localStorage'
-declare var global: any
-let fakeStore = {}
-global.window = {}
 
 describe('localStorage', function() {
   const migrations: Migrations<any> = {
     2: (data: any) => ({ ...data, data: 'new version' })
   }
+  let fakeStore: Record<string, string>
+  let localStorageSpy: jest.SpyInstance
 
   beforeEach(function() {
     fakeStore = {}
-    global.window['localStorage'] = {
-      getItem: (key: string) => fakeStore[key],
-      setItem: (key: string, value: string) => (fakeStore[key] = value),
-      removeItem: (key: string) => delete fakeStore[key]
-    }
+
+    localStorageSpy = jest
+      .spyOn(global, 'localStorage', 'get')
+      .mockImplementation(() => {
+        return {
+          length: 0,
+          clear: () => {},
+          key: (_index: number) => null,
+          getItem: (key: string) => fakeStore[key],
+          setItem: (key: string, value: string) => {
+            fakeStore[key] = value
+          },
+          removeItem: (key: string) => delete fakeStore[key]
+        }
+      })
+  })
+
+  afterEach(() => {
+    localStorageSpy.mockRestore()
   })
 
   describe('hasLocalStorage', function() {
     it('should return false if localStorage is not available', function() {
-      delete global.window['localStorage']
+      localStorageSpy.mockImplementation(() => null)
       expect(hasLocalStorage()).toBe(false)
     })
     it('should return true if localStorage is available', function() {
