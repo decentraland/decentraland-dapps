@@ -20,7 +20,4 @@ const mapDispatch = (dispatch: MapDispatch): MapDispatchProps => ({
   onLoadProfile: address => dispatch(loadProfileRequest(address))
 })
 
-export default connect(
-  mapState,
-  mapDispatch
-)(Profile)
+export default connect(mapState, mapDispatch)(Profile)

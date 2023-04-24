@@ -2,7 +2,9 @@ import * as React from 'react'
 import { Profile as BaseProfile } from 'decentraland-ui/dist/components/Profile/Profile'
 import { Props } from './Profile.types'
 
-export default class Profile extends React.PureComponent<Props> {
+export default class Profile<
+  T extends React.ElementType = typeof React.Fragment
+> extends React.PureComponent<Props<T>> {
   static defaultProps = {
     inline: true
   }
@@ -10,17 +12,17 @@ export default class Profile extends React.PureComponent<Props> {
   timeout: NodeJS.Timeout | null = null
 
   componentWillMount() {
-    this.fetchProfile(this.props)
+    this.fetchProfile()
   }
 
-  componentDidUpdate(prevProps: Props) {
+  componentDidUpdate(prevProps: Props<T>) {
     if (prevProps.address !== this.props.address) {
-      this.fetchProfile(this.props)
+      this.fetchProfile()
     }
   }
 
-  fetchProfile(props: Props) {
-    const { address, avatar, debounce, onLoadProfile } = props
+  fetchProfile() {
+    const { address, avatar, debounce, onLoadProfile } = this.props
     if (!avatar) {
       if (debounce) {
         if (this.timeout) {

@@ -1,11 +1,15 @@
+import { Dispatch } from 'redux'
 import { ProfileProps } from 'decentraland-ui/dist/components/Profile/Profile'
+import React from 'react'
 import {
   loadProfileRequest,
   LoadProfileRequestAction
 } from '../../modules/profile/actions'
-import { Dispatch } from 'redux'
 
-export type Props = ProfileProps & {
+export type Props<T extends React.ElementType = typeof React.Fragment> = Omit<
+  ProfileProps<T>,
+  'as'
+> & {
   debounce?: number
   onLoadProfile: typeof loadProfileRequest
 }
