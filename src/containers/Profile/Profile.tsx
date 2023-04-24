@@ -39,6 +39,7 @@ export default class Profile<
   }
 
   render() {
-    return <BaseProfile {...this.props} />
+    const { address } = this.props
+    return <BaseProfile address={address} {...this.props} />
   }
 }

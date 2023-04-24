@@ -6,10 +6,9 @@ import {
   LoadProfileRequestAction
 } from '../../modules/profile/actions'
 
-export type Props<T extends React.ElementType = typeof React.Fragment> = Omit<
-  ProfileProps<T>,
-  'as'
-> & {
+export type Props<
+  T extends React.ElementType = typeof React.Fragment
+> = ProfileProps<T> & {
   debounce?: number
   onLoadProfile: typeof loadProfileRequest
 }
