@@ -40,7 +40,7 @@ const Profile = function<T extends React.ElementType>(props: Props<T>) {
 
   useEffect(() => {
     fetchProfile()
-  }, [fetchProfile, address])
+  }, [address])
 
   return <BaseProfile {...props} avatar={avatar} inline={inline} />
 }
