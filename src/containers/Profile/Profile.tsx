@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Profile as BaseProfile } from 'decentraland-ui/dist/components/Profile/Profile'
 import { loadProfileRequest } from '../../modules/profile/actions'
@@ -10,7 +10,7 @@ const Profile = function<T extends React.ElementType>(props: Props<T>) {
   const profiles = useSelector(getProfiles)
   const dispatch = useDispatch()
 
-  let timeout: number | null = null
+  const timeoutRef = useRef<NodeJS.Timeout>()
 
   const avatar = useMemo(() => {
     const profile = profiles[address]
@@ -22,25 +22,24 @@ const Profile = function<T extends React.ElementType>(props: Props<T>) {
     [address]
   )
 
-  const fetchProfile = useCallback(() => {
+  useEffect(() => {
     if (!avatar) {
       if (debounce) {
-        if (timeout) {
-          clearTimeout(timeout)
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current)
         }
-        timeout = setTimeout(() => {
-          onLoadProfile(address)
-          timeout = null
-        }, debounce)
+        timeoutRef.current = setTimeout(() => onLoadProfile(address), debounce)
       } else {
         onLoadProfile(address)
       }
     }
-  }, [address, avatar, debounce, onLoadProfile])
 
-  useEffect(() => {
-    fetchProfile()
-  }, [address])
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+      }
+    }
+  }, [address, timeoutRef])
 
   return <BaseProfile {...props} avatar={avatar} inline={inline} />
 }
