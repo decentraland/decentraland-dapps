@@ -1,45 +1,48 @@
-import * as React from 'react'
+import React, { useCallback, useEffect, useMemo } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { Profile as BaseProfile } from 'decentraland-ui/dist/components/Profile/Profile'
+import { loadProfileRequest } from '../../modules/profile/actions'
+import { getData as getProfiles } from '../../modules/profile/selectors'
 import { Props } from './Profile.types'
 
-export default class Profile<
-  T extends React.ElementType = typeof React.Fragment
-> extends React.PureComponent<Props<T>> {
-  static defaultProps = {
-    inline: true
-  }
+const Profile = function<T extends React.ElementType>(props: Props<T>) {
+  const { address, debounce, inline = true } = props
+  const profiles = useSelector(getProfiles)
+  const dispatch = useDispatch()
 
-  timeout: NodeJS.Timeout | null = null
+  let timeout: NodeJS.Timeout | null = null
 
-  componentWillMount() {
-    this.fetchProfile()
-  }
+  const avatar = useMemo(() => {
+    const profile = profiles[address]
+    return profile ? profile.avatars[0] : null
+  }, [address, profiles])
 
-  componentDidUpdate(prevProps: Props<T>) {
-    if (prevProps.address !== this.props.address) {
-      this.fetchProfile()
-    }
-  }
+  const onLoadProfile: typeof loadProfileRequest = useCallback(
+    (address: string) => dispatch(loadProfileRequest(address)),
+    [address]
+  )
 
-  fetchProfile() {
-    const { address, avatar, debounce, onLoadProfile } = this.props
+  const fetchProfile = useCallback(() => {
     if (!avatar) {
       if (debounce) {
-        if (this.timeout) {
-          clearTimeout(this.timeout)
+        if (timeout) {
+          clearTimeout(timeout)
         }
-        this.timeout = setTimeout(() => {
+        timeout = setTimeout(() => {
           onLoadProfile(address)
-          this.timeout = null
+          timeout = null
         }, debounce)
       } else {
         onLoadProfile(address)
       }
     }
-  }
+  }, [address, avatar, debounce, onLoadProfile])
 
-  render() {
-    const { address } = this.props
-    return <BaseProfile address={address} {...this.props} />
-  }
+  useEffect(() => {
+    fetchProfile()
+  }, [fetchProfile, address])
+
+  return <BaseProfile {...props} avatar={avatar} inline={inline} />
 }
+
+export default Profile
