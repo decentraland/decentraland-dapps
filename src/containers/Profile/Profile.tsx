@@ -10,7 +10,7 @@ const Profile = function<T extends React.ElementType>(props: Props<T>) {
   const profiles = useSelector(getProfiles)
   const dispatch = useDispatch()
 
-  let timeout: NodeJS.Timeout | null = null
+  let timeout: number | null = null
 
   const avatar = useMemo(() => {
     const profile = profiles[address]
