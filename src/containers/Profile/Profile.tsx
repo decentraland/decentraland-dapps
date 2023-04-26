@@ -10,7 +10,7 @@ const Profile = function<T extends React.ElementType>(props: Props<T>) {
   const profiles = useSelector(getProfiles)
   const dispatch = useDispatch()
 
-  const timeoutRef = useRef<NodeJS.Timeout>()
+  const timeoutRef = useRef<number | null>()
 
   const avatar = useMemo(() => {
     const profile = profiles[address]
@@ -28,7 +28,10 @@ const Profile = function<T extends React.ElementType>(props: Props<T>) {
         if (timeoutRef.current) {
           clearTimeout(timeoutRef.current)
         }
-        timeoutRef.current = setTimeout(() => onLoadProfile(address), debounce)
+        timeoutRef.current = window.setTimeout(
+          () => onLoadProfile(address),
+          debounce
+        )
       } else {
         onLoadProfile(address)
       }
@@ -36,10 +39,10 @@ const Profile = function<T extends React.ElementType>(props: Props<T>) {
 
     return () => {
       if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
+        window.clearTimeout(timeoutRef.current)
       }
     }
-  }, [address, timeoutRef])
+  }, [address])
 
   return <BaseProfile {...props} avatar={avatar} inline={inline} />
 }
