@@ -7,8 +7,9 @@ import { ModalProps } from '../../providers/ModalProvider/ModalProvider.types'
 export type DefaultProps = { isLoading: boolean }
 
 export type Props = DefaultProps &
-  ModalProps &
+  Omit<ModalProps, 'metadata'> &
   LoginModalProps & {
+    metadata?: Metadata
     hasTranslations?: boolean
     onConnect: (providerType: ProviderType) => any
   }
@@ -18,6 +19,10 @@ export type State = {
 }
 
 export type OwnProps = Pick<Props, 'metadata'>
+
+export type Metadata = {
+  onConnect: (providerType: ProviderType) => any
+}
 
 export type MapStateProps = Pick<
   Props,

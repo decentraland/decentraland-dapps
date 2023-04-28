@@ -119,10 +119,15 @@ export const REPLACE_TRANSACTION_REQUEST = '[Request] Replace Transaction'
 export const REPLACE_TRANSACTION_SUCCESS = '[Success] Replace Transaction'
 export const REPLACE_TRANSACTION_FAILURE = '[Failure] Replace Transaction'
 
-export const replaceTransactionRequest = (hash: string, nonce: number) =>
+export const replaceTransactionRequest = (
+  hash: string,
+  nonce: number,
+  address: string
+) =>
   action(REPLACE_TRANSACTION_REQUEST, {
     hash,
-    nonce
+    nonce,
+    address
   })
 
 export const replaceTransactionSuccess = (hash: string, replaceBy: string) =>
