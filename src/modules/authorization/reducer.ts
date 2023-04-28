@@ -32,7 +32,7 @@ export type AuthorizationState = {
   error: string | null
 }
 
-const INITIAL_STATE = {
+export const INITIAL_STATE = {
   data: [],
   loading: [],
   error: null
