@@ -62,6 +62,7 @@ export function authorizationReducer(
     case FETCH_AUTHORIZATIONS_REQUEST: {
       return {
         ...state,
+        error: null,
         loading: loadingReducer(state.loading, action)
       }
     }
