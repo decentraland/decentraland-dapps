@@ -32,7 +32,7 @@ export type AuthorizationState = {
   error: string | null
 }
 
-const INITIAL_STATE = {
+export const INITIAL_STATE = {
   data: [],
   loading: [],
   error: null
@@ -62,6 +62,7 @@ export function authorizationReducer(
     case FETCH_AUTHORIZATIONS_REQUEST: {
       return {
         ...state,
+        error: null,
         loading: loadingReducer(state.loading, action)
       }
     }
