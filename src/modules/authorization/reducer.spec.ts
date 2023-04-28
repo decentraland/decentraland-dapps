@@ -1,18 +1,18 @@
 import { ChainId } from '@dcl/schemas'
-import { grantTokenRequest } from './actions'
-import { revokeTokenRequest } from './actions'
-import { revokeTokenSuccess } from './actions'
-import { grantTokenSuccess } from './actions'
 import {
   FETCH_AUTHORIZATIONS_REQUEST,
   GRANT_TOKEN_REQUEST,
   GRANT_TOKEN_SUCCESS,
-  REVOKE_TOKEN_REQUEST
+  REVOKE_TOKEN_REQUEST,
+  REVOKE_TOKEN_SUCCESS,
+  fetchAuthorizationsRequest,
+  revokeTokenSuccess,
+  revokeTokenRequest,
+  grantTokenRequest,
+  grantTokenSuccess
 } from './actions'
 import { authorizationReducer, INITIAL_STATE } from './reducer'
 import { Authorization } from './types'
-import { fetchAuthorizationsRequest } from './actions'
-import { REVOKE_TOKEN_SUCCESS } from './actions'
 
 describe.each([
   {
