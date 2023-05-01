@@ -83,6 +83,14 @@ export function walletReducer(
       }
     }
 
+    case ENABLE_WALLET_SUCCESS: {
+      return {
+        ...state,
+        loading: loadingReducer(state.loading, action),
+        error: null
+      }
+    }
+
     case FETCH_WALLET_FAILURE: {
       return {
         ...state,
@@ -98,14 +106,6 @@ export function walletReducer(
       }
     }
 
-    case ENABLE_WALLET_SUCCESS: {
-      return {
-        ...state,
-        loading: loadingReducer(state.loading, action),
-        error: null
-      }
-    }
-
     case ENABLE_WALLET_FAILURE: {
       return {
         ...state,
@@ -115,14 +115,7 @@ export function walletReducer(
       }
     }
 
-    case CHANGE_ACCOUNT: {
-      return {
-        ...state,
-        error: null,
-        data: action.payload.wallet
-      }
-    }
-
+    case CHANGE_ACCOUNT:
     case CHANGE_NETWORK: {
       return {
         ...state,
