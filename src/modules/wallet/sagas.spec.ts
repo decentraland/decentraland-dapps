@@ -16,6 +16,7 @@ const walletSaga = createWalletSaga({ CHAIN_ID: 1 })
 
 describe('Wallet sagas', () => {
   let mockProvider: Provider
+
   beforeAll(async () => {
     mockProvider = await getNetworkProvider(ChainId.ETHEREUM_MAINNET)
   })

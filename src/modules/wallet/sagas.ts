@@ -31,7 +31,6 @@ import {
   ENABLE_WALLET_REQUEST,
   ENABLE_WALLET_SUCCESS,
   DisconnectWalletAction,
-  disconnectWallet,
   DISCONNECT_WALLET,
   FETCH_WALLET_REQUEST,
   FetchWalletRequestAction,
@@ -116,7 +115,6 @@ function* handleConnectWalletRequest() {
       throw new Error(failure!.payload.error)
     }
   } catch (error) {
-    yield put(disconnectWallet())
     yield put(connectWalletFailure(error.message))
   }
 }
@@ -142,7 +140,6 @@ function* handleEnableWalletRequest(action: EnableWalletRequestAction) {
     }
     yield put(enableWalletSuccess(providerType))
   } catch (error) {
-    yield put(disconnectWallet())
     yield put(enableWalletFailure(error.message))
   }
 }

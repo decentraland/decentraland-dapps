@@ -83,11 +83,18 @@ export function walletReducer(
       }
     }
 
-    case FETCH_WALLET_FAILURE:
-    case CONNECT_WALLET_FAILURE: {
+    case FETCH_WALLET_FAILURE: {
       return {
         ...state,
         loading: loadingReducer(state.loading, action)
+      }
+    }
+
+    case CONNECT_WALLET_FAILURE: {
+      return {
+        ...state,
+        loading: loadingReducer(state.loading, action),
+        data: null
       }
     }
 
@@ -103,7 +110,8 @@ export function walletReducer(
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
-        error: action.payload.error
+        error: action.payload.error,
+        data: null
       }
     }
 
