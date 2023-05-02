@@ -1,6 +1,6 @@
 import { expectSaga } from 'redux-saga-test-plan'
 import * as matchers from 'redux-saga-test-plan/matchers'
-import { call, race, take } from 'redux-saga/effects'
+import { call, put, take } from 'redux-saga/effects'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { Provider } from 'decentraland-connect'
 import { createWalletSaga, getAccount } from './sagas'
@@ -37,13 +37,8 @@ describe('Wallet sagas', () => {
       it('should dispatch the fetch wallet request, and an action to signal the failure', () => {
         return expectSaga(walletSaga)
           .provide([
-            [
-              race({
-                success: take(FETCH_WALLET_SUCCESS),
-                failure: take(FETCH_WALLET_FAILURE)
-              }),
-              { success: null, failure: { payload: { error } } }
-            ]
+            [put(fetchWalletRequest()), undefined],
+            [take(FETCH_WALLET_FAILURE), { payload: { error } }]
           ])
           .put(fetchWalletRequest())
           .put(connectWalletFailure(error))
@@ -62,13 +57,8 @@ describe('Wallet sagas', () => {
       it('should dispatch the fetch wallet request, and an action to signal the success of the connect wallet', () => {
         return expectSaga(walletSaga)
           .provide([
-            [
-              race({
-                success: take(FETCH_WALLET_SUCCESS),
-                failure: take(FETCH_WALLET_FAILURE)
-              }),
-              { success: { payload: { wallet } } }
-            ]
+            [put(fetchWalletRequest()), undefined],
+            [take(FETCH_WALLET_SUCCESS), { payload: { wallet } }]
           ])
           .put(fetchWalletRequest())
           .put(connectWalletSuccess(wallet))
@@ -100,7 +90,6 @@ describe('Wallet sagas', () => {
       it('should dispatch an action signaling the success of the enable wallet request', () => {
         return expectSaga(walletSaga)
           .provide([[call(getAccount, providerType), 'anAccount']])
-          .put(fetchWalletRequest())
           .put(enableWalletSuccess(providerType))
           .dispatch(enableWalletRequest(providerType))
           .run({ silenceTimeout: true })
