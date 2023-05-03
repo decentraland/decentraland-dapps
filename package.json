@@ -92,5 +92,8 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/decentraland/decentraland-dapps.git"
+  },
+  "publishConfig": {
+    "provenance": true
   }
 }
