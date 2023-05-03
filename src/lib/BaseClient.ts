@@ -13,6 +13,7 @@ export type BaseClientConfig = {
   retries?: number
   /** The delay between retries if the request fails */
   retryDelay?: number
+  /** The status numbers that would not be retried */
   nonRetryableStatuses?: number[]
 }
 
