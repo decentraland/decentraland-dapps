@@ -2,7 +2,7 @@
 
 # Decentraland dApps
 
-Common modules for our dApps
+Common modules for our dApps.
 
 # Table of Contents
 
@@ -33,7 +33,7 @@ Common modules for our dApps
 
 # Modules
 
-Common redux modules for dApps
+Common redux modules for dApps.
 
 ## Wallet
 
