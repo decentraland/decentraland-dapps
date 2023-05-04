@@ -1,5 +1,4 @@
 import { connect } from 'react-redux'
-import { LoginModalProps } from 'decentraland-ui/dist/components/LoginModal/LoginModal'
 import {
   getError,
   isEnabling,
@@ -10,10 +9,10 @@ import { isEnabled } from '../../modules/translation/selectors'
 import {
   MapStateProps,
   MapDispatch,
-  MapDispatchProps
+  MapDispatchProps,
+  OwnProps
 } from './LoginModal.types'
 import LoginModal from './LoginModal'
-import { OwnProps } from './LoginModal.types'
 
 const mapState = (state: any): MapStateProps => ({
   hasError: !!getError(state),
