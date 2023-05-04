@@ -39,7 +39,7 @@ const authorization: Authorization = {
 describe('handleAuthorizationFlowRequest', () => {
   describe('when granting a token', () => {
     describe('and authorization flow finishes successfully', () => {
-      it('should put success action', () => {
+      it('should put the success action', () => {
         return expectSaga(authorizationSaga)
           .provide([
             [put(fetchAuthorizationsRequest([authorization])), undefined],
@@ -69,7 +69,7 @@ describe('handleAuthorizationFlowRequest', () => {
     })
 
     describe('and grant token transaction fails', () => {
-      it('should put failure action', () => {
+      it('should put the failure action', () => {
         const error = new Error('an error occur')
         return expectSaga(authorizationSaga)
           .provide([
@@ -95,7 +95,7 @@ describe('handleAuthorizationFlowRequest', () => {
     })
 
     describe('and fetch authorizations action fails', () => {
-      it('should put failure action with correct error message', () => {
+      it('should put the failure action with correct error message', () => {
         const error = new Error('authorizations fetch error')
         return expectSaga(authorizationSaga)
           .provide([
@@ -122,7 +122,7 @@ describe('handleAuthorizationFlowRequest', () => {
     })
 
     describe('and user sets an allowance smaller than the required value', () => {
-      it('should put failure action with correct error message', () => {
+      it('should put the failure action with correct error message', () => {
         return expectSaga(authorizationSaga)
           .provide([
             [put(grantTokenRequest(authorization)), undefined],
@@ -151,11 +151,46 @@ describe('handleAuthorizationFlowRequest', () => {
           .run({ silenceTimeout: true })
       })
     })
+
+    describe('and authorization type is approval', () => {
+      describe("and user doesn't have authorization when flow finishes", () => {
+        it('should put the failure action with the correct error message', () => {
+          const approvalAuth = {
+            ...authorization,
+            type: AuthorizationType.APPROVAL
+          }
+          return expectSaga(authorizationSaga)
+            .provide([
+              [put(grantTokenRequest(approvalAuth)), undefined],
+              [call(waitForTx, 'tx-hash'), undefined],
+              [put(fetchAuthorizationsRequest([approvalAuth])), undefined],
+              [select(getData), []]
+            ])
+            .put(
+              authorizationFlowFailure(
+                approvalAuth,
+                AuthorizationError.GRANT_FAILED
+              )
+            )
+            .dispatch(
+              authorizationFlowRequest(approvalAuth, AuthorizationAction.GRANT)
+            )
+            .dispatch(
+              grantTokenSuccess(approvalAuth, approvalAuth.chainId, 'tx-hash')
+            )
+            .dispatch(
+              fetchTransactionSuccess({ hash: 'tx-hash' } as Transaction)
+            )
+            .dispatch(fetchAuthorizationsSuccess([]))
+            .run({ silenceTimeout: true })
+        })
+      })
+    })
   })
 
   describe('when revoking a token', () => {
     describe('and authorization flow finishes successfully', () => {
-      it('should put success action', () => {
+      it('should put the success action', () => {
         return expectSaga(authorizationSaga)
           .provide([
             [put(revokeTokenRequest(authorization)), undefined],
@@ -177,7 +212,7 @@ describe('handleAuthorizationFlowRequest', () => {
     })
 
     describe('and revoke token transaction fails', () => {
-      it('should put failure action with correct error message', () => {
+      it('should put the failure action with correct error message', () => {
         const error = new Error('an error occur')
         return expectSaga(authorizationSaga)
           .provide([
@@ -196,7 +231,7 @@ describe('handleAuthorizationFlowRequest', () => {
     })
 
     describe('and fetch authorizations action fails', () => {
-      it('should put failure action with correct error message', () => {
+      it('should put the failure action with correct error message', () => {
         const error = new Error('authorizations fetch error')
         return expectSaga(authorizationSaga)
           .provide([
@@ -219,7 +254,7 @@ describe('handleAuthorizationFlowRequest', () => {
     })
 
     describe('and user sets an allowance higher than 0', () => {
-      it('should put failure action with correct error message', () => {
+      it('should put the failure action with correct error message', () => {
         return expectSaga(authorizationSaga)
           .provide([
             [put(fetchAuthorizationsRequest([authorization])), undefined],

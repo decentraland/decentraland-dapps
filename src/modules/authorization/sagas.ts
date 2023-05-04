@@ -170,7 +170,6 @@ export function createAuthorizationSaga() {
 
   function* handleRevokeTokenRequest(action: RevokeTokenRequestAction) {
     const { authorization } = action.payload
-    console.log('HOLAAA')
     try {
       const txHash: string = yield call(() =>
         changeAuthorization(authorization, AuthorizationAction.REVOKE)

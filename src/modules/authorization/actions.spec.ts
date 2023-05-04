@@ -8,10 +8,15 @@ import {
 } from './actions'
 import { Authorization, AuthorizationAction } from './types'
 
+let authorization: Authorization
+
 describe('authorization flow actions', () => {
+  beforeEach(() => {
+    authorization = {} as Authorization
+  })
+
   describe('when calling authorizationFlowRequest action', () => {
     it('should return the correct action type and payload', () => {
-      const authorization = {} as Authorization
       const authorizationAction = AuthorizationAction.GRANT
       const allowance = '10'
       expect(
@@ -29,7 +34,6 @@ describe('authorization flow actions', () => {
 
   describe('when calling authorizationFlowSuccess action', () => {
     it('should return the correct action type and payload', () => {
-      const authorization = {} as Authorization
       expect(authorizationFlowSuccess(authorization)).toEqual({
         type: AUTHORIZATION_FLOW_SUCCESS,
         payload: {
@@ -41,7 +45,6 @@ describe('authorization flow actions', () => {
 
   describe('when calling authorizationFlowFailure action', () => {
     it('should return the correct action type and payload', () => {
-      const authorization = {} as Authorization
       const error = 'some error'
       expect(authorizationFlowFailure(authorization, error)).toEqual({
         type: AUTHORIZATION_FLOW_FAILURE,
