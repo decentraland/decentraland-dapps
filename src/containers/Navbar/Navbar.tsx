@@ -8,6 +8,7 @@ import {
   NavbarI18N
 } from 'decentraland-ui/dist/components/Navbar/Navbar'
 import { getChainName } from '@dcl/schemas/dist/dapps/chain-id'
+import { getAnalytics } from '../../modules/analytics/utils'
 import { t, T } from '../../modules/translation/utils'
 import Modal from '../../containers/Modal'
 import ChainProvider from '../ChainProvider'
@@ -18,6 +19,8 @@ export default class Navbar extends React.PureComponent<NavbarProps> {
     docsUrl: 'https://docs.decentraland.org',
     enablePartialSupportAlert: true
   }
+
+  analytics = getAnalytics()
 
   getTranslations = (): NavbarI18N | undefined => {
     if (!this.props.hasTranslations) {
@@ -78,6 +81,14 @@ export default class Navbar extends React.PureComponent<NavbarProps> {
     this.props.onSignOut()
   }
 
+  handleClickMenuOption = (_e: React.MouseEvent, section: string) => {
+    const [menuSection, subMenuSection = undefined] = section.split('_')
+    this.analytics.track('Click on Navbar', {
+      section: menuSection,
+      submenu: subMenuSection
+    })
+  }
+
   render() {
     const { appChainId, docsUrl, enablePartialSupportAlert } = this.props
     const expectedChainName = getChainName(appChainId)
@@ -106,7 +117,11 @@ export default class Navbar extends React.PureComponent<NavbarProps> {
                   onSwitchNetwork={this.handleSwitchNetwork}
                 />
               ) : null}
-              <NavbarComponent {...this.props} i18n={this.getTranslations()} />
+              <NavbarComponent
+                {...this.props}
+                i18n={this.getTranslations()}
+                onClickMenuOption={this.handleClickMenuOption}
+              />
               {isUnsupported ? (
                 <Modal open size="tiny">
                   <ModalNavigation
