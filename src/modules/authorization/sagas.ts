@@ -209,7 +209,9 @@ export function createAuthorizationSaga() {
       if (failure) {
         throw new Error(failure.payload.error)
       }
-      const txHash = getTransactionFromAction(success!).hash
+      const txHash = getTransactionFromAction(
+        success as RevokeTokenSuccessAction | GrantTokenSuccessAction
+      ).hash
 
       yield call(waitForTx, txHash)
 
