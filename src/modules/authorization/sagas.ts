@@ -1,10 +1,18 @@
-import { put, call, takeEvery } from 'redux-saga/effects'
+import { put, call, takeEvery, take, select, race } from 'redux-saga/effects'
 import { providers } from '@0xsequence/multicall'
 import { ethers } from 'ethers'
 import { Provider } from 'decentraland-connect/dist/types'
 import { ContractData, getContract } from 'decentraland-transactions'
 import { getNetworkProvider } from '../../lib/eth'
-import { getTokenAmountToApprove, isValidType } from './utils'
+import { sendTransaction } from '../wallet/utils/sendTransaction'
+import { getTransactionFromAction, waitForTx } from '../transaction/utils'
+import {
+  AuthorizationError,
+  getTokenAmountToApprove,
+  hasAuthorization,
+  hasAuthorizationAndEnoughAllowance,
+  isValidType
+} from './utils'
 import {
   fetchAuthorizationsSuccess,
   fetchAuthorizationsFailure,
@@ -17,10 +25,28 @@ import {
   revokeTokenSuccess,
   revokeTokenFailure,
   RevokeTokenRequestAction,
-  REVOKE_TOKEN_REQUEST
+  REVOKE_TOKEN_REQUEST,
+  AuthorizationFlowRequestAction,
+  AUTHORIZATION_FLOW_REQUEST,
+  authorizationFlowFailure,
+  authorizationFlowSuccess,
+  fetchAuthorizationsRequest,
+  FETCH_AUTHORIZATIONS_SUCCESS,
+  REVOKE_TOKEN_SUCCESS,
+  GRANT_TOKEN_SUCCESS,
+  revokeTokenRequest,
+  grantTokenRequest,
+  GrantTokenSuccessAction,
+  RevokeTokenSuccessAction,
+  REVOKE_TOKEN_FAILURE,
+  GRANT_TOKEN_FAILURE,
+  RevokeTokenFailureAction,
+  FETCH_AUTHORIZATIONS_FAILURE,
+  FetchAuthorizationsSuccessAction,
+  FetchAuthorizationsFailureAction
 } from './actions'
 import { Authorization, AuthorizationAction, AuthorizationType } from './types'
-import { sendTransaction } from '../wallet/utils/sendTransaction'
+import { getData } from './selectors'
 
 export function createAuthorizationSaga() {
   return function* authorizationSaga() {
@@ -30,6 +56,7 @@ export function createAuthorizationSaga() {
     )
     yield takeEvery(GRANT_TOKEN_REQUEST, handleGrantTokenRequest)
     yield takeEvery(REVOKE_TOKEN_REQUEST, handleRevokeTokenRequest)
+    yield takeEvery(AUTHORIZATION_FLOW_REQUEST, handleAuthorizationFlowRequest)
   }
 
   function* handleFetchAuthorizationsRequest(
@@ -152,6 +179,93 @@ export function createAuthorizationSaga() {
       )
     } catch (error) {
       yield put(revokeTokenFailure(authorization, error.message))
+    }
+  }
+
+  function* handleAuthorizationFlowRequest(
+    action: AuthorizationFlowRequestAction
+  ) {
+    const { authorizationAction, authorization, allowance } = action.payload
+    const isRevoke = authorizationAction === AuthorizationAction.REVOKE
+    const tokenRequest = isRevoke
+      ? revokeTokenRequest(authorization)
+      : grantTokenRequest(authorization)
+    const TOKEN_SUCCESS = isRevoke ? REVOKE_TOKEN_SUCCESS : GRANT_TOKEN_SUCCESS
+    const TOKEN_FAILURE = isRevoke ? REVOKE_TOKEN_FAILURE : GRANT_TOKEN_FAILURE
+
+    yield put(tokenRequest)
+
+    try {
+      const {
+        success,
+        failure
+      }: {
+        success: RevokeTokenSuccessAction | GrantTokenSuccessAction | undefined
+        failure: RevokeTokenFailureAction | RevokeTokenFailureAction | undefined
+      } = yield race({
+        success: take(TOKEN_SUCCESS),
+        failure: take(TOKEN_FAILURE)
+      })
+      if (failure) {
+        throw new Error(failure.payload.error)
+      }
+      const txHash = getTransactionFromAction(
+        success as RevokeTokenSuccessAction | GrantTokenSuccessAction
+      ).hash
+
+      yield call(waitForTx, txHash)
+
+      yield put(fetchAuthorizationsRequest([authorization]))
+
+      const {
+        fetchFailure
+      }: {
+        fetchSuccess: FetchAuthorizationsSuccessAction | undefined
+        fetchFailure: FetchAuthorizationsFailureAction | undefined
+      } = yield race({
+        fetchSuccess: take(FETCH_AUTHORIZATIONS_SUCCESS),
+        fetchFailure: take(FETCH_AUTHORIZATIONS_FAILURE)
+      })
+
+      if (fetchFailure) {
+        throw new Error(
+          fetchFailure.payload.error ||
+            AuthorizationError.FETCH_AUTHORIZATIONS_FAILURE
+        )
+      }
+      const authorizations: Authorization[] = yield select(getData)
+
+      if (
+        authorizationAction === AuthorizationAction.REVOKE &&
+        hasAuthorization(authorizations, authorization)
+      ) {
+        throw new Error(AuthorizationError.REVOKE_FAILED)
+      }
+
+      if (authorizationAction === AuthorizationAction.GRANT) {
+        if (
+          authorization.type === AuthorizationType.ALLOWANCE &&
+          allowance &&
+          !hasAuthorizationAndEnoughAllowance(
+            authorizations,
+            authorization,
+            allowance
+          )
+        ) {
+          throw new Error(AuthorizationError.INSUFFICIENT_ALLOWANCE)
+        }
+
+        if (
+          authorization.type === AuthorizationType.APPROVAL &&
+          !hasAuthorization(authorizations, authorization)
+        ) {
+          throw new Error(AuthorizationError.GRANT_FAILED)
+        }
+      }
+
+      yield put(authorizationFlowSuccess(authorization))
+    } catch (error) {
+      yield put(authorizationFlowFailure(authorization, error.message))
     }
   }
 
