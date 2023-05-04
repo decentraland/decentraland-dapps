@@ -13,6 +13,7 @@ import {
   MapDispatchProps
 } from './LoginModal.types'
 import LoginModal from './LoginModal'
+import { OwnProps } from './LoginModal.types'
 
 const mapState = (state: any): MapStateProps => ({
   hasError: !!getError(state),
@@ -20,22 +21,13 @@ const mapState = (state: any): MapStateProps => ({
   hasTranslations: isEnabled(state)
 })
 
-const mapDispatch = (dispatch: MapDispatch): MapDispatchProps => ({
-  onConnect: providerType => dispatch(enableWalletRequest(providerType))
+const mapDispatch = (
+  dispatch: MapDispatch,
+  ownProps: OwnProps
+): MapDispatchProps => ({
+  onConnect:
+    ownProps.metadata?.onConnect ??
+    (providerType => dispatch(enableWalletRequest(providerType)))
 })
 
-const mergeProps = (
-  stateProps: MapStateProps,
-  dispatchProps: MapDispatchProps,
-  ownProps: LoginModalProps
-): LoginModalProps => ({
-  ...stateProps,
-  ...dispatchProps,
-  ...ownProps
-})
-
-export default connect(
-  mapState,
-  mapDispatch,
-  mergeProps
-)(LoginModal)
+export default connect(mapState, mapDispatch)(LoginModal)
