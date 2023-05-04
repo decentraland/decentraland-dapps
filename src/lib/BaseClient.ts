@@ -4,6 +4,7 @@ import { ClientError } from './ClientError'
 
 const DEFAULT_RETRIES = 3
 const DEFAULT_RETRY_DELAY = 1000
+const DEFAULT_NON_RETRYABLE_STATUSES = [400, 401, 403, 404, 409, 422]
 const URL = globalThis?.URL ?? nodeURL.URL
 
 export type BaseClientConfig = {
@@ -12,12 +13,15 @@ export type BaseClientConfig = {
   retries?: number
   /** The delay between retries if the request fails */
   retryDelay?: number
+  /** The status numbers that would not be retried */
+  nonRetryableStatuses?: number[]
 }
 
 export abstract class BaseClient {
   private readonly baseUrl: string
   private readonly retries: number
   private readonly retryDelay: number
+  private readonly nonRetryableStatuses: number[]
   private readonly identity:
     | AuthIdentity
     | ((...args: unknown[]) => AuthIdentity | undefined)
@@ -28,6 +32,7 @@ export abstract class BaseClient {
     this.identity = config?.identity
     this.retries = config?.retries ?? DEFAULT_RETRIES
     this.retryDelay = config?.retryDelay ?? DEFAULT_RETRY_DELAY
+    this.nonRetryableStatuses = config?.nonRetryableStatuses ?? DEFAULT_NON_RETRYABLE_STATUSES
   }
 
   private sleep = (delay: number) =>
@@ -72,13 +77,12 @@ export abstract class BaseClient {
         } else {
           return parsedResponse as T
         }
-
       } catch (error) {
         console.error(
           `[API] HTTP request failed: ${error.message || ''}`,
           error
         )
-        if (this.retries === attempt) throw error
+        if (this.retries === attempt || (error.status && this.nonRetryableStatuses.includes(error.status))) throw error
         await this.sleep(this.retryDelay)
       }
     }
