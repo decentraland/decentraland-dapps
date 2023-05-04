@@ -21,7 +21,13 @@ import {
   GRANT_TOKEN_FAILURE,
   REVOKE_TOKEN_REQUEST,
   REVOKE_TOKEN_SUCCESS,
-  REVOKE_TOKEN_FAILURE
+  REVOKE_TOKEN_FAILURE,
+  AUTHORIZATION_FLOW_FAILURE,
+  AuthorizationFlowRequestAction,
+  AuthorizationFlowSuccessAction,
+  AuthorizationFlowFailureAction,
+  AUTHORIZATION_FLOW_REQUEST,
+  AUTHORIZATION_FLOW_SUCCESS
 } from './actions'
 import { Authorization } from './types'
 import { areEqual } from './utils'
@@ -30,12 +36,14 @@ export type AuthorizationState = {
   data: Authorization[]
   loading: LoadingState
   error: string | null
+  authorizationFlowError: string | null
 }
 
 export const INITIAL_STATE = {
   data: [],
   loading: [],
-  error: null
+  error: null,
+  authorizationFlowError: null
 }
 
 type AuthorizationReducerAction =
@@ -49,6 +57,9 @@ type AuthorizationReducerAction =
   | RevokeTokenSuccessAction
   | RevokeTokenFailureAction
   | FetchTransactionSuccessAction
+  | AuthorizationFlowRequestAction
+  | AuthorizationFlowSuccessAction
+  | AuthorizationFlowFailureAction
 
 export function authorizationReducer(
   state: AuthorizationState = INITIAL_STATE,
@@ -66,6 +77,19 @@ export function authorizationReducer(
         loading: loadingReducer(state.loading, action)
       }
     }
+    case AUTHORIZATION_FLOW_REQUEST:
+    case AUTHORIZATION_FLOW_SUCCESS:
+      return {
+        ...state,
+        authorizationFlowError: null,
+        loading: loadingReducer(state.loading, action)
+      }
+    case AUTHORIZATION_FLOW_FAILURE:
+      return {
+        ...state,
+        authorizationFlowError: action.payload.error,
+        loading: loadingReducer(state.loading, action)
+      }
     case FETCH_AUTHORIZATIONS_SUCCESS: {
       const { authorizations } = action.payload
 

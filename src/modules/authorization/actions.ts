@@ -1,7 +1,7 @@
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { action } from 'typesafe-actions'
 import { buildTransactionPayload } from '../transaction/utils'
-import { Authorization } from './types'
+import { Authorization, AuthorizationAction } from './types'
 
 // Fetch authorizations
 
@@ -98,3 +98,39 @@ export const revokeTokenFailure = (
 export type RevokeTokenRequestAction = ReturnType<typeof revokeTokenRequest>
 export type RevokeTokenSuccessAction = ReturnType<typeof revokeTokenSuccess>
 export type RevokeTokenFailureAction = ReturnType<typeof revokeTokenFailure>
+
+// Authorization Flow
+export const AUTHORIZATION_FLOW_REQUEST = '[Request] Authorization Flow'
+export const AUTHORIZATION_FLOW_SUCCESS = '[Success] Authorization Flow'
+export const AUTHORIZATION_FLOW_FAILURE = '[Failure] Authorization Flow'
+
+export const authorizationFlowRequest = (
+  authorization: Authorization,
+  authorizationAction: AuthorizationAction,
+  allowance?: string
+) =>
+  action(AUTHORIZATION_FLOW_REQUEST, {
+    authorization,
+    authorizationAction,
+    allowance
+  })
+
+export const authorizationFlowSuccess = (authorization: Authorization) =>
+  action(AUTHORIZATION_FLOW_SUCCESS, {
+    authorization
+  })
+
+export const authorizationFlowFailure = (
+  authorization: Authorization,
+  error: string
+) => action(AUTHORIZATION_FLOW_FAILURE, { authorization, error })
+
+export type AuthorizationFlowRequestAction = ReturnType<
+  typeof authorizationFlowRequest
+>
+export type AuthorizationFlowSuccessAction = ReturnType<
+  typeof authorizationFlowSuccess
+>
+export type AuthorizationFlowFailureAction = ReturnType<
+  typeof authorizationFlowFailure
+>

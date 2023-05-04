@@ -10,6 +10,8 @@ export const getData = (state: any) => getState(state).data
 export const getLoading = (state: any) => getState(state).loading
 export const isLoading = (state: any) => getLoading(state).length > 0
 export const getError = (state: any) => getState(state).error
+export const getAuthorizationFlowError = (state: any) =>
+  getState(state).authorizationFlowError
 
 export const getTransactions = (state: any) =>
   getTransactionsByType(state, getAddress(state) || '', GRANT_TOKEN_SUCCESS)

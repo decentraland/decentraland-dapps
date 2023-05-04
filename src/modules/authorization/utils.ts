@@ -1,6 +1,13 @@
 import { ethers } from 'ethers'
 import { Authorization, AuthorizationType } from './types'
 
+export enum AuthorizationError {
+  REVOKE_FAILED = 'revoke-failed-error',
+  GRANT_FAILED = 'grant-failed-error',
+  INSUFFICIENT_ALLOWANCE = 'insufficient-allowance',
+  FETCH_AUTHORIZATIONS_FAILURE = 'fetch-authorizations-failure'
+}
+
 export function getTokenAmountToApprove(): ethers.BigNumber {
   return ethers.BigNumber.from(2)
     .pow(256)
