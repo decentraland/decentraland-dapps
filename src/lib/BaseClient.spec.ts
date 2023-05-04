@@ -153,7 +153,7 @@ describe('when the request fails with a server error', () => {
   })
 })
 
-describe('when the request fails with a client error non-retryable error', () => {
+describe('when the request fails with a client non-retryable error', () => {
   beforeEach(() => {
     nock(urlTest)
       .get('/test')
