@@ -110,6 +110,7 @@ export function authorizationReducer(
       }, [] as Authorization[])
 
       return {
+        ...state,
         loading: loadingReducer(state.loading, action),
         error: null,
         // concat the base and new authorizations, without duplications and removing the ones that are now null.
