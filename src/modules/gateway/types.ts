@@ -29,6 +29,7 @@ export enum PurchaseStatus {
   PENDING = 'pending',
   FAILED = 'failed',
   CANCELLED = 'cancelled',
+  REFUNDED = 'refunded',
   COMPLETE = 'complete'
 }
 
