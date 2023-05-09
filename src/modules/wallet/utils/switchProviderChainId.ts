@@ -2,6 +2,7 @@ import { Provider } from 'decentraland-connect';
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id';
 import { getProviderChainId } from './getProviderChainId';
 import { getAddEthereumChainParameters } from "./getAddEthereumChainParameters";
+import { JsonRPCInvalidResponseError } from './JsonRPCInvalidResponseError';
 
 /**
  * Change the provider's chain to a provided chain.
@@ -39,6 +40,9 @@ export async function switchProviderChainId(
       } catch (addError) {
         throw new Error(`Error adding network: ${addError.message}`);
       }
+    }// We're throwing specific error for this message because we don't know how to reproduce it and we don't want to get logged
+    else if (switchError?.message === 'JSON RPC response format is invalid') {
+      throw new JsonRPCInvalidResponseError(switchError?.message)
     }
     throw new Error(`Error switching network: ${switchError.message}`);
   }
