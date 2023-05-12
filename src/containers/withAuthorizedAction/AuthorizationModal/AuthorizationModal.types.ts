@@ -1,6 +1,7 @@
 import { Dispatch } from 'redux'
 import { BigNumber } from 'ethers'
 import { Network } from '@dcl/schemas'
+import { RootStateOrAny } from 'react-redux'
 import {
   authorizationFlowRequest,
   AuthorizationFlowRequestAction,
@@ -11,7 +12,6 @@ import {
   Authorization,
   AuthorizationType
 } from '../../../modules/authorization/types'
-import { RootStateOrAny } from 'react-redux'
 
 // Action to perfom after authorization step is finished
 export enum AuthorizedAction {

@@ -5,6 +5,10 @@ import {
   Authorization,
   AuthorizationType
 } from '../../modules/authorization/types'
+import {
+  getERC20ContractInstance,
+  getERC721ContractInstance
+} from '../../modules/authorization/utils'
 import { getNetworkProvider } from '../../lib/eth'
 import { getAddress } from '../../modules/wallet/selectors'
 import {
@@ -17,7 +21,6 @@ import {
   MapStateProps,
   AuthorizeActionOptions
 } from './withAuthorizedAction.types'
-import { getERC20ContractInstance, getERC721ContractInstance } from './utils'
 
 const mapState = (state: RootStateOrAny): MapStateProps => ({
   address: getAddress(state)
