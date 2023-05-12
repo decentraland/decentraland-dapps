@@ -2,12 +2,11 @@ import React from 'react'
 import { BigNumber } from 'ethers'
 import { render, RenderResult, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { ContractData } from 'decentraland-transactions'
+import { Network } from '@dcl/schemas'
 import {
   Authorization,
   AuthorizationType
 } from '../../../modules/authorization/types'
-import { Network } from '@dcl/schemas'
 import { t } from '../../../modules/translation/utils'
 import { AuthorizationModal } from './AuthorizationModal'
 import {
@@ -20,16 +19,8 @@ jest.mock('../../../containers', () => ({
   TransactionLink: () => 'test'
 }))
 
-jest.mock('decentraland-transactions', () => {
-  const module = jest.requireActual('decentraland-transactions')
-  return {
-    ...module,
-    getContract: jest.fn().mockReturnValue({} as ContractData)
-  }
-})
-
-function renderAuthorizationModal(props: Partial<Props>) {
-  return render(
+function getAuthorizationModal(props: Partial<Props>) {
+  return (
     <AuthorizationModal
       authorization={{} as Authorization}
       authorizationType={AuthorizationType.APPROVAL}
@@ -37,14 +28,13 @@ function renderAuthorizationModal(props: Partial<Props>) {
       revokeStatus={AuthorizationStepStatus.PENDING}
       confirmationStatus={AuthorizationStepStatus.PENDING}
       confirmationError={null}
-      network={Network.MATIC}
+      network={Network.ETHEREUM}
       action={AuthorizedAction.BUY}
       onClose={jest.fn()}
       onRevoke={jest.fn()}
       onGrant={jest.fn()}
       onFetchAuthorizations={jest.fn()}
       onAuthorized={jest.fn()}
-      authorizedContractLabel="My contract"
       getConfirmationStatus={jest
         .fn()
         .mockReturnValue(AuthorizationStepStatus.PENDING)}
@@ -54,16 +44,15 @@ function renderAuthorizationModal(props: Partial<Props>) {
     />
   )
 }
+function renderAuthorizationModal(props: Partial<Props>) {
+  return render(getAuthorizationModal(props))
+}
 
 describe('when clicking close button', () => {
   it('should call onClose action', async () => {
     const onCloseMock = jest.fn()
     const screen = renderAuthorizationModal({ onClose: onCloseMock })
-    await userEvent.click(
-      screen.getByRole('button', {
-        name: 'Close'
-      })
-    )
+    await userEvent.click(screen.getByRole('button', { name: 'Close' }))
     expect(onCloseMock).toHaveBeenCalled()
   })
 })
@@ -307,15 +296,32 @@ describe('when authorization type is ALLOWANCE', () => {
     })
 
     describe('when rendering grant action', () => {
+      beforeEach(() => {
+        screen = renderAuthorizationModal({
+          authorizationType: AuthorizationType.ALLOWANCE,
+          revokeStatus: AuthorizationStepStatus.PENDING,
+          grantStatus: AuthorizationStepStatus.PENDING
+        })
+
+        const revokeStep = screen.getByTestId('revoke-step')
+        return userEvent.click(
+          within(revokeStep).getByRole('button', {
+            name: t('@dapps.authorization_modal.revoke_cap.action')
+          })
+        )
+      })
+
       describe('and grant status is WAITING', () => {
         let grantStatusStep: HTMLElement
 
         beforeEach(() => {
-          screen = renderAuthorizationModal({
-            authorizationType: AuthorizationType.ALLOWANCE,
-            revokeStatus: AuthorizationStepStatus.DONE,
-            grantStatus: AuthorizationStepStatus.WAITING
-          })
+          screen.rerender(
+            getAuthorizationModal({
+              authorizationType: AuthorizationType.ALLOWANCE,
+              revokeStatus: AuthorizationStepStatus.DONE,
+              grantStatus: AuthorizationStepStatus.WAITING
+            })
+          )
 
           grantStatusStep = screen.getByTestId('grant-step')
         })
@@ -347,12 +353,13 @@ describe('when authorization type is ALLOWANCE', () => {
         let grantStatusStep: HTMLElement
 
         beforeEach(() => {
-          screen = renderAuthorizationModal({
-            authorizationType: AuthorizationType.ALLOWANCE,
-            revokeStatus: AuthorizationStepStatus.DONE,
-            grantStatus: AuthorizationStepStatus.PROCESSING
-          })
-
+          screen.rerender(
+            getAuthorizationModal({
+              authorizationType: AuthorizationType.ALLOWANCE,
+              revokeStatus: AuthorizationStepStatus.DONE,
+              grantStatus: AuthorizationStepStatus.PROCESSING
+            })
+          )
           grantStatusStep = screen.getByTestId('grant-step')
         })
 
@@ -383,11 +390,13 @@ describe('when authorization type is ALLOWANCE', () => {
         let grantStatusStep: HTMLElement
 
         beforeEach(() => {
-          screen = renderAuthorizationModal({
-            authorizationType: AuthorizationType.ALLOWANCE,
-            revokeStatus: AuthorizationStepStatus.DONE,
-            grantStatus: AuthorizationStepStatus.DONE
-          })
+          screen.rerender(
+            getAuthorizationModal({
+              authorizationType: AuthorizationType.ALLOWANCE,
+              revokeStatus: AuthorizationStepStatus.DONE,
+              grantStatus: AuthorizationStepStatus.DONE
+            })
+          )
 
           grantStatusStep = screen.getByTestId('grant-step')
         })
@@ -415,37 +424,40 @@ describe('when authorization type is ALLOWANCE', () => {
         })
       })
 
-      describe('and revoke status is ALLOWANCE_AMOUNT_ERROR', () => {
-        let grantStatusStep: HTMLElement
+      describe('and grant status is ALLOWANCE_AMOUNT_ERROR', () => {
+        let reauthorizeStep: HTMLElement
 
         beforeEach(() => {
-          screen = renderAuthorizationModal({
-            authorizationType: AuthorizationType.ALLOWANCE,
-            revokeStatus: AuthorizationStepStatus.DONE,
-            grantStatus: AuthorizationStepStatus.ALLOWANCE_AMOUNT_ERROR
-          })
+          screen.rerender(
+            getAuthorizationModal({
+              authorizationType: AuthorizationType.ALLOWANCE,
+              revokeStatus: AuthorizationStepStatus.DONE,
+              grantStatus: AuthorizationStepStatus.ALLOWANCE_AMOUNT_ERROR,
+              network: Network.ETHEREUM
+            })
+          )
 
-          grantStatusStep = screen.getByTestId('grant-step')
+          reauthorizeStep = screen.getByTestId('reauthorize-step')
         })
 
         it('should show allowance error message', () => {
           expect(
-            within(grantStatusStep).getByText(
-              t('@dapps.authorization_modal.spending_cap_error')
+            within(reauthorizeStep).getByText(
+              t('@dapps.authorization_modal.insufficient_amount_error.message')
             )
           ).toBeInTheDocument()
         })
 
         it('should not show loading icon', () => {
           expect(
-            within(grantStatusStep).queryByTestId('step-loader')
+            within(reauthorizeStep).queryByTestId('step-loader')
           ).not.toBeInTheDocument()
         })
 
-        it('should show action button', () => {
+        it('should show revoke action button', () => {
           expect(
-            within(grantStatusStep).getByText(
-              t('@dapps.authorization_modal.authorize_mana.action')
+            within(reauthorizeStep).getByText(
+              t('@dapps.authorization_modal.insufficient_amount_error.action')
             )
           ).toBeInTheDocument()
         })
@@ -514,10 +526,24 @@ describe('when clicking grant authorization button', () => {
     const onGrantMock = jest.fn()
     const screen = renderAuthorizationModal({
       authorizationType: AuthorizationType.ALLOWANCE,
-      revokeStatus: AuthorizationStepStatus.DONE,
+      revokeStatus: AuthorizationStepStatus.PENDING,
       grantStatus: AuthorizationStepStatus.PENDING,
       onGrant: onGrantMock
     })
+    const revokeStatusStep = screen.getByTestId('revoke-step')
+    await userEvent.click(
+      within(revokeStatusStep).getByRole('button', {
+        name: t('@dapps.authorization_modal.revoke_cap.action')
+      })
+    )
+    screen.rerender(
+      getAuthorizationModal({
+        authorizationType: AuthorizationType.ALLOWANCE,
+        revokeStatus: AuthorizationStepStatus.DONE,
+        grantStatus: AuthorizationStepStatus.PENDING,
+        onGrant: onGrantMock
+      })
+    )
     const grantStatusStep = screen.getByTestId('grant-step')
     await userEvent.click(
       within(grantStatusStep).getByRole('button', {

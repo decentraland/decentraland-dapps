@@ -139,6 +139,11 @@
       "done": "Fait",
       "title": "Complétez votre {action}",
       "spending_cap_error": "N'oubliez pas de définir un plafond égal au prix de l'article ou plus.",
+      "generic_error": "Quelque chose s'est mal passé",
+      "insufficient_amount_error": {
+        "message": "N'oubliez pas de définir un plafond de dépenses égal au prix de l'article ou plus.Vous devrez révoquer votre plafond de dépenses actuel avant de l'autoriser à nouveau.",
+        "action": "Revoke"
+      },
       "authorize_mana": {
         "title": "Tout d'abord, autorisez le <contract></contract> Contrat pour opérer MANA en votre nom à Decentraland. ",
         "description": "Gardez à l'esprit que certains portefeuilles nécessitent de définir une limite de dépenses de mana personnalisée.Entrez le prix de l'article{price} Mana ou une quantité plus élevée avec laquelle vous êtes à l'aise pour dépenser maintenant ou plus tard.Vous pouvez modifier la limite à tout moment.",

@@ -1,5 +1,6 @@
 import React from 'react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Network } from '@dcl/schemas'
 import {
   AuthorizationStep,
   AuthorizationModal as BaseAuthorizationModal
@@ -39,6 +40,7 @@ export function AuthorizationModal({
 }: Props) {
   const [currentStep, setCurrentStep] = useState(0)
   const [loading, setLoading] = useState<AuthorizationStepAction>()
+  const [shouldReauthorize, setShouldReauthorize] = useState(false)
 
   useEffect(() => {
     onFetchAuthorizations()
@@ -83,6 +85,34 @@ export function AuthorizationModal({
     ]
       .map(step => {
         if (step.actionType === AuthorizationStepAction.GRANT) {
+          if (
+            shouldReauthorize ||
+            (grantStatus === AuthorizationStepStatus.ALLOWANCE_AMOUNT_ERROR &&
+              network === Network.ETHEREUM)
+          ) {
+            return {
+              ...step,
+              error: t(
+                '@dapps.authorization_modal.insufficient_amount_error.message'
+              ),
+              action: 'Revoke',
+              status: revokeStatus,
+              message:
+                revokeStatus === AuthorizationStepStatus.PENDING ||
+                revokeStatus === AuthorizationStepStatus.DONE ? (
+                  <div className="authorization-error">
+                    {t(
+                      '@dapps.authorization_modal.insufficient_amount_error.message'
+                    )}
+                  </div>
+                ) : (
+                  undefined
+                ),
+              actionType: AuthorizationStepAction.REVOKE,
+              testId: 'reauthorize-step',
+              onActionClick: handleRevokeToken
+            }
+          }
           return {
             ...step,
             action:
@@ -108,14 +138,18 @@ export function AuthorizationModal({
           }
         }
 
-        return step as AuthorizationStep
+        return step as AuthorizationStep & { error: string; testId: string }
       })
       .map((step, index) => {
         return {
           ...step,
-          isLoading: LOADING_STATUS.includes(step.status),
-          message: getStepMessage(index, step.status, error, currentStep),
-          testId: `${step.actionType}-step`
+          isLoading:
+            index === currentStep && LOADING_STATUS.includes(step.status),
+          message:
+            'message' in step && step.message
+              ? step.message
+              : getStepMessage(index, step.status, step.error, currentStep),
+          testId: 'testId' in step ? step.testId : `${step.actionType}-step`
         }
       })
   }, [
@@ -129,6 +163,7 @@ export function AuthorizationModal({
     confirmationStatus,
     confirmationError,
     authorizedContractLabel,
+    shouldReauthorize,
     currentStep,
     error,
     handleGrantToken,
@@ -143,20 +178,33 @@ export function AuthorizationModal({
       currentStepData.status === AuthorizationStepStatus.DONE &&
       currentStepData.actionType === loading
     ) {
-      setCurrentStep(currentStep + 1)
-      setLoading(undefined)
+      if (shouldReauthorize) {
+        setShouldReauthorize(false)
+      } else {
+        setCurrentStep(currentStep + 1)
+        setLoading(undefined)
+      }
     }
     // We only want to run this when there is a change in the current steps status
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [steps[currentStep].status])
+
+  useEffect(() => {
+    if (
+      grantStatus === AuthorizationStepStatus.ALLOWANCE_AMOUNT_ERROR &&
+      network === Network.ETHEREUM
+    ) {
+      setShouldReauthorize(true)
+    }
+  }, [grantStatus, network, setShouldReauthorize])
 
   return (
     <BaseAuthorizationModal
       onClose={onClose}
       currentStep={currentStep}
       steps={steps}
-      header={t('mana_authorization_modal.title', {
-        action: t(`mana_authorization_modal.${action}.title_action`)
+      header={t('@dapps.authorization_modal.title', {
+        action: t(`@dapps.authorization_modal.${action}.title_action`)
       })}
     />
   )

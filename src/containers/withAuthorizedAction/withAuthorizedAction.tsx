@@ -74,6 +74,7 @@ export default function withAuthorizedAction<
             const { requiredAllowanceInWei } = authorizeOptions
             if (BigNumber.from(requiredAllowanceInWei).isZero()) {
               onAuthorized()
+              setIsLoadingAuthorization(false)
               return
             }
 

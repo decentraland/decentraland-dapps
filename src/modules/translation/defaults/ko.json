@@ -139,6 +139,11 @@
       "done": "완료",
       "title": "당신을 완성하십시오 {action}",
       "spending_cap_error": "품목 가격 이상의 상한을 설정해야합니다.",
+      "generic_error": "뭔가 잘못되었습니다",
+      "insufficient_amount_error": {
+        "message": "지출 한도를 품목 가격보다 동일하게 설정해야합니다.다시 승인하기 전에 현재 지출 한도를 취소해야합니다.",
+        "action": "취소"
+      },
       "authorize_mana": {
         "title": "먼저 승인하십시오<contract></contract> Decentraland에서 귀하를 대신하여 Mana를 운영하는 계약.",
         "description": "일부 지갑에는 맞춤형 마나 지출 한도를 설정해야합니다.품목 가격 {price} mana 또는 지금 또는 나중에 지출하기에 편안한 금액을 입력하십시오.언제든지 한도를 변경할 수 있습니다.",

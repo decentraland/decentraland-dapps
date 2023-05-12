@@ -1,6 +1,7 @@
 import React from 'react'
 import { BigNumber, ethers } from 'ethers'
 import { Network } from '@dcl/schemas'
+import { RootStateOrAny } from 'react-redux'
 import {
   getAuthorizationFlowError,
   getError,
@@ -12,6 +13,7 @@ import {
   AuthorizationType
 } from '../../../modules/authorization/types'
 import {
+  AuthorizationError,
   areEqual,
   hasAuthorization,
   hasAuthorizationAndEnoughAllowance
@@ -24,15 +26,14 @@ import { isPending } from '../../../modules/transaction/utils'
 import { t } from '../../../modules/translation/utils'
 import { getData as getAuthorizations } from '../../../modules/authorization/selectors'
 import {
-  AuthorizationStepAction,
-  AuthorizationStepStatus
-} from './AuthorizationModal.types'
-import {
   AUTHORIZATION_FLOW_REQUEST,
   GRANT_TOKEN_REQUEST,
   REVOKE_TOKEN_REQUEST
 } from '../../../modules/authorization/actions'
-import { RootStateOrAny } from 'react-redux'
+import {
+  AuthorizationStepAction,
+  AuthorizationStepStatus
+} from './AuthorizationModal.types'
 
 export function getStepStatus(
   state: RootStateOrAny,
@@ -64,7 +65,13 @@ export function getStepStatus(
     return AuthorizationStepStatus.PROCESSING
   }
 
-  if (getAuthorizationFlowError(state) || getError(state)) {
+  const error = getAuthorizationFlowError(state)
+
+  if (error === AuthorizationError.INSUFFICIENT_ALLOWANCE) {
+    return AuthorizationStepStatus.ALLOWANCE_AMOUNT_ERROR
+  }
+
+  if (error || getError(state)) {
     return AuthorizationStepStatus.ERROR
   }
 
@@ -104,6 +111,16 @@ export function getStepStatus(
   return AuthorizationStepStatus.PENDING
 }
 
+export function getStepError(error: string | null) {
+  if (!error) {
+    return undefined
+  }
+
+  return error.length > 100
+    ? t('@dapps.authorization_modal.generic_error')
+    : error
+}
+
 export function getStepMessage(
   stepIndex: number,
   stepStatus: AuthorizationStepStatus,
@@ -124,7 +141,7 @@ export function getStepMessage(
     case AuthorizationStepStatus.PROCESSING:
       return t('@dapps.authorization_modal.waiting_confirmation')
     case AuthorizationStepStatus.ERROR:
-      return <div className="authorization-error">{error}</div>
+      return <div className="authorization-error">{getStepError(error)}</div>
     case AuthorizationStepStatus.ALLOWANCE_AMOUNT_ERROR:
       return (
         <div className="authorization-error">
