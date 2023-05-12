@@ -131,6 +131,71 @@
       "title": "지갑이 Polygon에 연결되었습니다",
       "content": "이 네트워크를 사용하여 거래의 가스를 처리합니다(예: 1 MANA 미만의 항목을 구매할 때). 끝나면 다시 전환하십시오. <link>자세히 알아보기</link>",
       "action": "이더리움 메인넷으로 전환"
+    },
+    "authorization_modal": {
+      "close": "Close",
+      "waiting_wallet": "지갑의 거래를 확인하십시오",
+      "waiting_confirmation": "처리 승인",
+      "done": "완료",
+      "title": "당신을 완성하십시오 {action}",
+      "spending_cap_error": "품목 가격 이상의 상한을 설정해야합니다.",
+      "generic_error": "뭔가 잘못되었습니다",
+      "insufficient_amount_error": {
+        "message": "지출 한도를 품목 가격보다 동일하게 설정해야합니다.다시 승인하기 전에 현재 지출 한도를 취소해야합니다.",
+        "action": "취소"
+      },
+      "authorize_mana": {
+        "title": "먼저 승인하십시오<contract></contract> Decentraland에서 귀하를 대신하여 Mana를 운영하는 계약.",
+        "description": "일부 지갑에는 맞춤형 마나 지출 한도를 설정해야합니다.품목 가격 {price} mana 또는 지금 또는 나중에 지출하기에 편안한 금액을 입력하십시오.언제든지 한도를 변경할 수 있습니다.",
+        "action": "승인",
+        "message": "품목 가격 {price} 마나 이상과 동일한 캡을 설정해야합니다."
+      },
+      "authorize_nft": {
+        "title": "먼저 승인하십시오<contract></contract> Decentraland에서 귀하를 대신하여 NFT를 운영하는 계약",
+        "action": "승인"
+      },
+      "confirm_transaction": {
+        "title": "{action} 항목에 대한 트랜잭션을 확인하십시오",
+        "action": "거래 확인"
+      },
+      "revoke_cap": {
+        "title": "현재 지출 한도를 취소하십시오",
+        "description": "현재 지출 한도는 {price} Mana보다 낮습니다.새로운 지출 한도를 만들기 전에 현재 지출 한도를 취소해야합니다.",
+        "action": "승인"
+      },
+      "set_cap": {
+        "title": "새로운 지출 한도를 설정하십시오",
+        "description": "품목 가격 {price} mana 또는 지금 또는 나중에 지출하기에 편안한 금액을 입력하십시오.언제든지 한도를 변경할 수 있습니다.",
+        "action": "승인"
+      },
+      "mint": {
+        "title_action": "구입",
+        "action": "구입하다"
+      },
+      "buy": {
+        "title_action": "구입",
+        "action": "구입하다"
+      },
+      "bid": {
+        "title_action": "권하다",
+        "action": "권하다"
+      },
+      "rent": {
+        "title_action": "임대",
+        "action": "임차료"
+      },
+      "claim_name": {
+        "title_action": "구입",
+        "action": "주장하다"
+      },
+      "swap_mana": {
+        "title_action": "교환",
+        "action": "교환"
+      },
+      "sell": {
+        "title_action": "판매용 목록",
+        "action": "판매용 목록"
+      }
     }
   }
 }

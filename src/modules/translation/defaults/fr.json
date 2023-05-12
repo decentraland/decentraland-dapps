@@ -131,6 +131,71 @@
       "title": "Votre portefeuille est connecté au Polygon",
       "content": "Utilisez ce réseau pour couvrir le gaz d'une transaction (comme lors de l'achat d'articles inférieurs à 1 MANA). Revenez en arrière lorsque vous avez terminé. <link>En savoir plus</link>",
       "action": "Passer à Ethereum Mainnet"
+    },
+    "authorization_modal": {
+      "close": "Fermer",
+      "waiting_wallet": "Confirmez la transaction sur votre portefeuille",
+      "waiting_confirmation": "Autorisation de traitement",
+      "done": "Fait",
+      "title": "Complétez votre {action}",
+      "spending_cap_error": "N'oubliez pas de définir un plafond égal au prix de l'article ou plus.",
+      "generic_error": "Quelque chose s'est mal passé",
+      "insufficient_amount_error": {
+        "message": "N'oubliez pas de définir un plafond de dépenses égal au prix de l'article ou plus.Vous devrez révoquer votre plafond de dépenses actuel avant de l'autoriser à nouveau.",
+        "action": "Revoke"
+      },
+      "authorize_mana": {
+        "title": "Tout d'abord, autorisez le <contract></contract> Contrat pour opérer MANA en votre nom à Decentraland. ",
+        "description": "Gardez à l'esprit que certains portefeuilles nécessitent de définir une limite de dépenses de mana personnalisée.Entrez le prix de l'article{price} Mana ou une quantité plus élevée avec laquelle vous êtes à l'aise pour dépenser maintenant ou plus tard.Vous pouvez modifier la limite à tout moment.",
+        "action": "Autoriser",
+        "message": "N'oubliez pas de définir un plafond égal au prix de l'article {price} Mana ou plus."
+      },
+      "authorize_nft": {
+        "title": "Tout d'abord, autorisez le <contract></contract> Contrat pour exploiter NFT en votre nom à Decentraland",
+        "action": "Autoriser"
+      },
+      "confirm_transaction": {
+        "title": "Confirmer la transaction à {action}l'articlem",
+        "action": "Confirmer la transaction"
+      },
+      "revoke_cap": {
+        "title": "Révoquez votre plafond de dépenses actuel",
+        "description": "Votre plafond de dépenses actuel est inférieur à {price} mana.Vous devrez révoquer votre plafond de dépenses actuel avant d'en faire un nouveau.",
+        "action": "Autoriser"
+      },
+      "set_cap": {
+        "title": "Définir un nouveau plafond de dépenses",
+        "description": "Entrez le prix de l'article {price} ou un montant plus élevé avec lequel vous êtes à l'aise pour dépenser maintenant ou plus tard.Vous pouvez modifier la limite à tout moment.",
+        "action": "Autoriser"
+      },
+      "mint": {
+        "title_action": "achat",
+        "action": "acheter"
+      },
+      "buy": {
+        "title_action": "achat",
+        "action": "acheter"
+      },
+      "bid": {
+        "title_action": "offre",
+        "action": "offre"
+      },
+      "rent": {
+        "title_action": "de location",
+        "action": "louer"
+      },
+      "claim_name": {
+        "title_action": "achat",
+        "action": "réclamation"
+      },
+      "swap_mana": {
+        "title_action": "échanger",
+        "action": "échanger"
+      },
+      "sell": {
+        "title_action": "liste à vendre",
+        "action": "liste à vendre"
+      }
     }
   }
 }

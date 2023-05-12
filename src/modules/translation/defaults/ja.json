@@ -131,6 +131,71 @@
       "title": "あなたのウォレットは Polygon に接続されています",
       "content": "このネットワークを使用して、トランザクションのガスをカバーします (1 MANA 未満のアイテムを購入する場合など)。 終わったらスイッチバック。 <link>詳細</link>",
       "action": "「イーサリアムメインネット」に切り替え"
+    },
+    "authorization_modal": {
+      "close": "近い",
+      "waiting_wallet": "ウォレットのトランザクションを確認します",
+      "waiting_confirmation": "許可の処理",
+      "done": "終わり",
+      "title": "{アクション}を完成させる",
+      "spending_cap_error": "アイテムの価格以上に等しいキャップを設定することを忘れないでください。",
+      "generic_error": "何かがうまくいかなかった",
+      "insufficient_amount_error": {
+        "message": "アイテムの価格以上に等しい支出キャップを設定することを忘れないでください。再び許可する前に、現在の支出キャップを取り消す必要があります。",
+        "action": "取り消す"
+      },
+      "authorize_mana": {
+        "title": "まず、<contract> </contract>契約を承認して、Decentralandであなたに代わってManaを運用します。 ",
+        "description": "一部のウォレットには、カスタムマナの支出制限を設定する必要があることに注意してください。アイテム価格{price}マナまたはあなたが今またはそれ以降の支出に満足している量を入力してください。いつでも制限を変更できます。",
+        "action": "許可",
+        "message": "アイテム価格{price}マナ以上に等しいキャップを設定することを忘れないでください。"
+      },
+      "authorize_nft": {
+        "title": "まず、<契約> </契約>契約を承認して、Decentralandでお客様に代わってNFTを操作する",
+        "action": "許可"
+      },
+      "confirm_transaction": {
+        "title": "{action}アイテムへのトランザクションを確認します",
+        "action": "トランザクションを確認します"
+      },
+      "revoke_cap": {
+        "title": "現在の支出キャップを取り消します",
+        "description": "現在の支出キャップは{price}マナよりも低いです。新しいものを作成する前に、現在の支出キャップを取り消す必要があります。",
+        "action": "許可"
+      },
+      "set_cap": {
+        "title": "新しい支出キャップを設定します",
+        "description": "アイテム価格{price}マナまたはあなたが今またはそれ以降の支出に満足している量を入力してください。いつでも制限を変更できます。",
+        "action": "許可"
+      },
+      "mint": {
+        "title_action": "購入",
+        "action": "買う"
+      },
+      "buy": {
+        "title_action": "購入",
+        "action": "買う"
+      },
+      "bid": {
+        "title_action": "オファー",
+        "action": "オファー"
+      },
+      "rent": {
+        "title_action": "レンタル",
+        "action": "家賃"
+      },
+      "claim_name": {
+        "title_action": "購入",
+        "action": "請求"
+      },
+      "swap_mana": {
+        "title_action": "スワップ",
+        "action": "スワップ"
+      },
+      "sell": {
+        "title_action": "販売のリスト",
+        "action": "販売のリスト"
+      }
     }
   }
 }

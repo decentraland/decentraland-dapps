@@ -1,3 +1,4 @@
+import '@testing-library/jest-dom'
 import flatten from 'flat'
 import nock from 'nock'
 import { TextEncoder, TextDecoder } from 'util'
