@@ -2,7 +2,7 @@ import React from 'react'
 import { BigNumber } from 'ethers'
 import { render, RenderResult, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { ContractData, ContractName } from 'decentraland-transactions'
+import { ContractData } from 'decentraland-transactions'
 import {
   Authorization,
   AuthorizationType
