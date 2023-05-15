@@ -212,10 +212,11 @@
       "waiting_confirmation": "Autorización de procesamiento",
       "done": "Hecho",
       "title": "Completa tu {action}",
-      "spending_cap_error": "Recuerde establecer un límite igual al precio del artículo o superior.",
+      "spending_cap_error": "Recuerde establecer un límite igual al precio del artículo {price} MANA o superior.",
+      "revoke_cap_error": "Recuerde establecer un límite de gasto de 0 MANA para revocar su anterior.",
       "generic_error": "Algo salió mal",
       "insufficient_amount_error": {
-        "message": "Recuerde establecer un límite de gasto igual al precio del artículo o superior.Tendrá que revocar su límite de gasto actual antes de autorizar nuevamente.",
+        "message": "Recuerde establecer un límite de gasto igual al precio del artículo {price} MANA o superior.Tendrá que revocar su límite de gasto actual antes de autorizar nuevamente.",
         "action": "Revocar"
       },
       "authorize_mana": {

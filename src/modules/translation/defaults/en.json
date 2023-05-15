@@ -212,10 +212,11 @@
       "waiting_confirmation": "Processing authorization",
       "done": "Done",
       "title": "Complete your {action}",
-      "spending_cap_error": "Remember to set a cap equal to the item price or higher.",
+      "spending_cap_error": "Remember to set a cap equal to the item price {price} MANA or higher.",
+      "revoke_cap_error": "Remember to set a spending cap of 0 MANA in order to revoke your previous one.",
       "generic_error": "Something went wrong",
       "insufficient_amount_error": {
-        "message": "Remember to set a spending cap equal to the item price or higher. You'll have to revoke your current spending cap before authorizing again.",
+        "message": "Remember to set a spending cap equal to the item price {price} MANA or higher. You'll have to revoke your current spending cap before authorizing again.",
         "action": "Revoke"
       },
       "authorize_mana": {

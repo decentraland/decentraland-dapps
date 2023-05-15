@@ -138,10 +138,11 @@
       "waiting_confirmation": "처리 승인",
       "done": "완료",
       "title": "당신을 완성하십시오 {action}",
-      "spending_cap_error": "품목 가격 이상의 상한을 설정해야합니다.",
+      "spending_cap_error": "품목 가격 {price} MANA 이상과 동일한 캡을 설정해야합니다.",
+      "revoke_cap_error": "이전 제품을 취소하기 위해 0 마나의 지출 한도를 설정해야합니다.",
       "generic_error": "뭔가 잘못되었습니다",
       "insufficient_amount_error": {
-        "message": "지출 한도를 품목 가격보다 동일하게 설정해야합니다.다시 승인하기 전에 현재 지출 한도를 취소해야합니다.",
+        "message": "품목 가격 {price} MANA 이상과 동일한 캡을 설정해야합니다.다시 승인하기 전에 현재 지출 한도를 취소해야합니다.",
         "action": "취소"
       },
       "authorize_mana": {

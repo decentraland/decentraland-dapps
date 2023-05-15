@@ -138,10 +138,11 @@
       "waiting_confirmation": "Autorisation de traitement",
       "done": "Fait",
       "title": "Complétez votre {action}",
-      "spending_cap_error": "N'oubliez pas de définir un plafond égal au prix de l'article ou plus.",
+      "spending_cap_error": "N'oubliez pas de définir un plafond égal au prix de l'article {price} MANA ou plus.",
+      "revoke_cap_error": "N'oubliez pas de définir un plafond de dépenses de 0 MANA afin de révoquer votre précédent.",
       "generic_error": "Quelque chose s'est mal passé",
       "insufficient_amount_error": {
-        "message": "N'oubliez pas de définir un plafond de dépenses égal au prix de l'article ou plus.Vous devrez révoquer votre plafond de dépenses actuel avant de l'autoriser à nouveau.",
+        "message": "N'oubliez pas de définir un plafond de dépenses égal au prix de l'article {price} MANA ou plus.Vous devrez révoquer votre plafond de dépenses actuel avant de l'autoriser à nouveau.",
         "action": "Revoke"
       },
       "authorize_mana": {

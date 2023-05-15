@@ -212,10 +212,11 @@
       "waiting_confirmation": "处理授权",
       "done": "完毕",
       "title": "完成您的 {action}",
-      "spending_cap_error": "请记住，设置一个等于物品价格或更高的上限。",
+      "spending_cap_error": "请记住，设置一个等于物品价格{price} MANA 或更高的帽子。",
+      "revoke_cap_error": "请记住，设置一个0法力的支出上限，以撤销您以前的支出。",
       "generic_error": "出了些问题",
       "insufficient_amount_error": {
-        "message": "请记住，将支出帽设置为等于商品价格或更高的支出上限。在再次授权之前，您必须撤销当前的支出上限。",
+        "message": "请记住，设置一个等于物品价格{price} MANA 或更高的帽子。在再次授权之前，您必须撤销当前的支出上限。",
         "action": "撤销"
       },
       "authorize_mana": {

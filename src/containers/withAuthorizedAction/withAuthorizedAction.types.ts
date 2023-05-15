@@ -1,7 +1,10 @@
 import { Dispatch } from 'redux'
 import { ContractName } from 'decentraland-transactions'
 import { Contract } from '@dcl/schemas'
-import { FetchAuthorizationsRequestAction } from '../../modules/authorization/actions'
+import {
+  AuthorizationFlowClearAction,
+  authorizationFlowClear
+} from '../../modules/authorization/actions'
 import { AuthorizationType } from '../../modules/authorization/types'
 
 type AuthorizeBaseOptions = {
@@ -35,4 +38,7 @@ export type WithAuthorizedActionProps = {
 }
 
 export type MapStateProps = { address: string | undefined }
-export type MapDispatch = Dispatch<FetchAuthorizationsRequestAction>
+export type MapDispatch = Dispatch<AuthorizationFlowClearAction>
+export type MapDispatchProps = {
+  onClearAuthorizationFlow: typeof authorizationFlowClear
+}

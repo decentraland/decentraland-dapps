@@ -27,7 +27,9 @@ import {
   AuthorizationFlowSuccessAction,
   AuthorizationFlowFailureAction,
   AUTHORIZATION_FLOW_REQUEST,
-  AUTHORIZATION_FLOW_SUCCESS
+  AUTHORIZATION_FLOW_SUCCESS,
+  AuthorizationFlowClearAction,
+  AUTHORIZATION_FLOW_CLEAR
 } from './actions'
 import { Authorization } from './types'
 import { areEqual } from './utils'
@@ -60,6 +62,7 @@ type AuthorizationReducerAction =
   | AuthorizationFlowRequestAction
   | AuthorizationFlowSuccessAction
   | AuthorizationFlowFailureAction
+  | AuthorizationFlowClearAction
 
 export function authorizationReducer(
   state: AuthorizationState = INITIAL_STATE,
@@ -124,6 +127,13 @@ export function authorizationReducer(
         ...state,
         loading: loadingReducer(state.loading, action),
         error: action.payload.error
+      }
+    }
+    case AUTHORIZATION_FLOW_CLEAR: {
+      return {
+        ...state,
+        loading: loadingReducer(state.loading, action),
+        authorizationFlowError: null
       }
     }
     case FETCH_TRANSACTION_SUCCESS: {

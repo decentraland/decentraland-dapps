@@ -35,6 +35,8 @@ import {
   AuthorizationStepStatus
 } from './AuthorizationModal.types'
 
+const MAX_ERROR_LENGTH = 150
+
 export function getStepStatus(
   state: RootStateOrAny,
   authorizationAction: AuthorizationAction,
@@ -116,7 +118,11 @@ export function getStepError(error: string | null) {
     return undefined
   }
 
-  return error.length > 100
+  if (error === AuthorizationError.REVOKE_FAILED) {
+    return t('@dapps.authorization_modal.revoke_cap_error')
+  }
+
+  return error.length > MAX_ERROR_LENGTH
     ? t('@dapps.authorization_modal.generic_error')
     : error
 }
@@ -125,7 +131,8 @@ export function getStepMessage(
   stepIndex: number,
   stepStatus: AuthorizationStepStatus,
   error: string | null,
-  currentStep: number
+  currentStep: number,
+  price: string
 ) {
   if (stepIndex > currentStep) {
     return ''
@@ -145,7 +152,7 @@ export function getStepMessage(
     case AuthorizationStepStatus.ALLOWANCE_AMOUNT_ERROR:
       return (
         <div className="authorization-error">
-          {t('@dapps.authorization_modal.spending_cap_error')}
+          {t('@dapps.authorization_modal.spending_cap_error', { price })}
         </div>
       )
     case AuthorizationStepStatus.DONE:
@@ -171,7 +178,7 @@ export function getSteps({
   authorizedContractLabel?: string
 }) {
   const requiredAllowanceAsEth = requiredAllowance
-    ? ethers.utils.formatEther(requiredAllowance)
+    ? ethers.utils.formatEther(requiredAllowance).replace(/\.0+$/, '')
     : ''
   if (
     (!currentAllowance || !currentAllowance.isZero()) &&

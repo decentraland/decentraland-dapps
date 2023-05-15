@@ -103,6 +103,7 @@ export type RevokeTokenFailureAction = ReturnType<typeof revokeTokenFailure>
 export const AUTHORIZATION_FLOW_REQUEST = '[Request] Authorization Flow'
 export const AUTHORIZATION_FLOW_SUCCESS = '[Success] Authorization Flow'
 export const AUTHORIZATION_FLOW_FAILURE = '[Failure] Authorization Flow'
+export const AUTHORIZATION_FLOW_CLEAR = '[Clear] Authorization Flow'
 
 export const authorizationFlowRequest = (
   authorization: Authorization,
@@ -125,6 +126,8 @@ export const authorizationFlowFailure = (
   error: string
 ) => action(AUTHORIZATION_FLOW_FAILURE, { authorization, error })
 
+export const authorizationFlowClear = () => action(AUTHORIZATION_FLOW_CLEAR)
+
 export type AuthorizationFlowRequestAction = ReturnType<
   typeof authorizationFlowRequest
 >
@@ -133,4 +136,7 @@ export type AuthorizationFlowSuccessAction = ReturnType<
 >
 export type AuthorizationFlowFailureAction = ReturnType<
   typeof authorizationFlowFailure
+>
+export type AuthorizationFlowClearAction = ReturnType<
+  typeof authorizationFlowClear
 >
