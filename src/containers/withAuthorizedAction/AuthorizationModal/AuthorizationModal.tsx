@@ -1,5 +1,5 @@
-import React from 'react'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { ethers } from 'ethers'
 import { Network } from '@dcl/schemas'
 import {
   AuthorizationStep,
@@ -12,7 +12,6 @@ import {
   Props
 } from './AuthorizationModal.types'
 import { getStepMessage, getSteps } from './utils'
-import { ethers } from 'ethers'
 
 const LOADING_STATUS = [
   AuthorizationStepStatus.LOADING_INFO,

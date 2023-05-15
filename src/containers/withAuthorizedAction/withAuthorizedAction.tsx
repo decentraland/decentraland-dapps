@@ -11,6 +11,7 @@ import {
 } from '../../modules/authorization/utils'
 import { getNetworkProvider } from '../../lib/eth'
 import { getAddress } from '../../modules/wallet/selectors'
+import { authorizationFlowClear } from '../../modules/authorization/actions'
 import {
   AuthorizationModal,
   AuthorizationStepStatus,
@@ -23,7 +24,6 @@ import {
   MapDispatch,
   MapDispatchProps
 } from './withAuthorizedAction.types'
-import { authorizationFlowClear } from '../../modules/authorization/actions'
 
 const mapState = (state: RootStateOrAny): MapStateProps => ({
   address: getAddress(state)
