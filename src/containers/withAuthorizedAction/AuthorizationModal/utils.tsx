@@ -113,12 +113,16 @@ export function getStepStatus(
   return AuthorizationStepStatus.PENDING
 }
 
-export function getStepError(error: string | null) {
+export function getStepError(
+  error: string | null,
+  action: AuthorizationStepAction
+) {
   if (!error) {
     return undefined
   }
 
-  if (error === AuthorizationError.REVOKE_FAILED) {
+  // When revoke fails always return revoke cap error message
+  if (action === AuthorizationStepAction.REVOKE) {
     return t('@dapps.authorization_modal.revoke_cap_error')
   }
 
@@ -132,7 +136,8 @@ export function getStepMessage(
   stepStatus: AuthorizationStepStatus,
   error: string | null,
   currentStep: number,
-  price: string
+  price: string,
+  action: AuthorizationStepAction
 ) {
   if (stepIndex > currentStep) {
     return ''
@@ -148,7 +153,9 @@ export function getStepMessage(
     case AuthorizationStepStatus.PROCESSING:
       return t('@dapps.authorization_modal.waiting_confirmation')
     case AuthorizationStepStatus.ERROR:
-      return <div className="authorization-error">{getStepError(error)}</div>
+      return (
+        <div className="authorization-error">{getStepError(error, action)}</div>
+      )
     case AuthorizationStepStatus.ALLOWANCE_AMOUNT_ERROR:
       return (
         <div className="authorization-error">

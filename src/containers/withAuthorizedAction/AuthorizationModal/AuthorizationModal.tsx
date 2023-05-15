@@ -157,7 +157,8 @@ export function AuthorizationModal({
                   step.status,
                   step.error,
                   currentStep,
-                  requiredAllowanceAsEth
+                  requiredAllowanceAsEth,
+                  step.actionType
                 ),
           testId: 'testId' in step ? step.testId : `${step.actionType}-step`
         }
