@@ -146,7 +146,6 @@ export function AuthorizationModal({
         return step as AuthorizationStep & { error: string; testId: string }
       })
       .map((step, index) => {
-        console.log({ step, ifif: 'message' in step && step.message })
         return {
           ...step,
           isLoading:
@@ -182,8 +181,6 @@ export function AuthorizationModal({
     handleRevokeToken,
     handleAuthorized
   ])
-
-  console.log({ revokeStatus, grantStatus, steps })
 
   useEffect(() => {
     const currentStepData = steps[currentStep]
