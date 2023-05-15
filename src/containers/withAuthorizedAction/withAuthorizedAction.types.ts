@@ -8,8 +8,13 @@ import {
 import { AuthorizationType } from '../../modules/authorization/types'
 
 type AuthorizeBaseOptions = {
-  /** callback to run when authorization process is completed */
-  onAuthorized: () => void
+  /**
+   * callback to run when authorization process is completed
+   * source indicates where is the onAuthorized function being called from.
+   * If the user was already authorized then source will be 'action'
+   * If the authorization modal is opened, then source will be 'modal'
+   * */
+  onAuthorized: (source: 'modal' | 'action') => void
   /** address that we want to authorize */
   authorizedAddress: string
   /** contract the should be called to check authorization and authorize */
