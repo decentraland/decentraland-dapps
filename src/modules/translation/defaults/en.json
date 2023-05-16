@@ -270,6 +270,10 @@
       "sell": {
         "title_action": "list for sale",
         "action": "list for sale"
+      },
+      "publish_collection": {
+        "title_action": "publish collection",
+        "action": "publish collection"
       }
     }
   }

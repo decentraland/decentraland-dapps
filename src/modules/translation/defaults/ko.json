@@ -196,6 +196,10 @@
       "sell": {
         "title_action": "판매용 목록",
         "action": "판매용 목록"
+      },
+      "publish_collection": {
+        "title_action": "게시 컬렉션",
+        "action": "게시 컬렉션"
       }
     }
   }

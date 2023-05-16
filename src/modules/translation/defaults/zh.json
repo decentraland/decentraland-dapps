@@ -270,6 +270,10 @@
       "sell": {
         "title_action": "出售列表",
         "action": "出售列表"
+      },
+      "publish_collection": {
+        "title_action": "发布收藏",
+        "action": "发布收藏"
       }
     }
   }

@@ -21,7 +21,8 @@ export enum AuthorizedAction {
   RENT = 'rent',
   CLAIM_NAME = 'claim_name',
   SWAP_MANA = 'swap_mana',
-  SELL = 'sell'
+  SELL = 'sell',
+  PUBLISH_COLLECTION = 'publish_collection'
 }
 
 export enum AuthorizationStepStatus {
