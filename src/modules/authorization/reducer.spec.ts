@@ -15,7 +15,9 @@ import {
   authorizationFlowFailure,
   AuthorizationFlowRequestAction,
   AuthorizationFlowFailureAction,
-  AuthorizationFlowSuccessAction
+  AuthorizationFlowSuccessAction,
+  authorizationFlowClear,
+  AuthorizationFlowClearAction
 } from './actions'
 import {
   authorizationReducer,
@@ -98,6 +100,7 @@ describe('authorization flow actions', () => {
     | AuthorizationFlowRequestAction
     | AuthorizationFlowFailureAction
     | AuthorizationFlowSuccessAction
+    | AuthorizationFlowClearAction
 
   describe('when handling AUTHORIZATION_FLOW_REQUEST action', () => {
     beforeEach(() => {
@@ -177,6 +180,33 @@ describe('authorization flow actions', () => {
       expect(authorizationReducer(initialState, action)).toEqual(
         expect.objectContaining({
           authorizationFlowError: 'an error'
+        })
+      )
+    })
+  })
+
+  describe('when handling AUTHORIZATION_FLOW_CLEAR action', () => {
+    beforeEach(() => {
+      action = authorizationFlowClear()
+      initialState = {
+        ...INITIAL_STATE,
+        loading: [action],
+        authorizationFlowError: null
+      }
+    })
+
+    it('should remove action from loading array', () => {
+      expect(authorizationReducer(initialState, action)).toEqual(
+        expect.objectContaining({
+          loading: []
+        })
+      )
+    })
+
+    it('should add error', () => {
+      expect(authorizationReducer(initialState, action)).toEqual(
+        expect.objectContaining({
+          authorizationFlowError: null
         })
       )
     })

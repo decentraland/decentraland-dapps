@@ -6,6 +6,7 @@ describe('modules', function() {
       const successAction = { type: '[Success] Some Action' }
       const failureAction = { type: '[Failure] Some Action' }
       const requestAction = { type: '[Request] Some Action' }
+      const clearAction = { type: '[Clear] Some Action' }
       const elements = [
         { type: 'A' },
         { type: 'B' },
@@ -84,6 +85,11 @@ describe('modules', function() {
           const actionType = getType(requestAction)
           expect(actionType).toBe('Some Action')
         })
+
+        it('should return the action type of a clear action', function() {
+          const actionType = getType(clearAction)
+          expect(actionType).toBe('Some Action')
+        })
       })
 
       describe('getStatus', function() {
@@ -100,6 +106,11 @@ describe('modules', function() {
         it('should return "REQUEST" status', function() {
           const actionType = getStatus(requestAction)
           expect(actionType).toBe('REQUEST')
+        })
+
+        it('should return "CLEAR" status', function() {
+          const actionType = getStatus(clearAction)
+          expect(actionType).toBe('CLEAR')
         })
       })
     })
