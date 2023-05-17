@@ -8,7 +8,7 @@ beforeEach(() => {
   state = INITIAL_STATE
 })
 
-describe('when handling [Request] action', () => {
+describe('when handling a [Request] action', () => {
   beforeEach(() => {
     state = []
     action = {
@@ -16,12 +16,12 @@ describe('when handling [Request] action', () => {
     }
   })
 
-  it('should add element to loading array', () => {
+  it('should add an element to loading array', () => {
     expect(loadingReducer(state, action)).toEqual([action])
   })
 })
 
-describe('when handling [Success] action', () => {
+describe('when handling a [Success] action', () => {
   beforeEach(() => {
     state = [{ type: '[Request] Load some data' }]
     action = {
@@ -29,12 +29,12 @@ describe('when handling [Success] action', () => {
     }
   })
 
-  it('should remove element from loading array', () => {
+  it('should remove an element from loading array', () => {
     expect(loadingReducer(state, action)).toEqual([])
   })
 })
 
-describe('when handling [Failure] action', () => {
+describe('when handling a [Failure] action', () => {
   beforeEach(() => {
     state = [{ type: '[Request] Load some data' }]
     action = {
@@ -42,12 +42,12 @@ describe('when handling [Failure] action', () => {
     }
   })
 
-  it('should remove element from loading array', () => {
+  it('should remove an element from loading array', () => {
     expect(loadingReducer(state, action)).toEqual([])
   })
 })
 
-describe('when handling [Clear] action', () => {
+describe('when handling a [Clear] action', () => {
   beforeEach(() => {
     state = [{ type: '[Request] Load some data' }]
     action = {
@@ -55,7 +55,7 @@ describe('when handling [Clear] action', () => {
     }
   })
 
-  it('should remove element from loading array', () => {
+  it('should remove an element from loading array', () => {
     expect(loadingReducer(state, action)).toEqual([])
   })
 })

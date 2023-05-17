@@ -94,23 +94,23 @@ describe('modules', function() {
 
       describe('getStatus', function() {
         it('should return "SUCCESS" status', function() {
-          const actionType = getStatus(successAction)
-          expect(actionType).toBe('SUCCESS')
+          const actionStatus = getStatus(successAction)
+          expect(actionStatus).toBe('SUCCESS')
         })
 
         it('should return "FAILURE" status', function() {
-          const actionType = getStatus(failureAction)
-          expect(actionType).toBe('FAILURE')
+          const actionStatus = getStatus(failureAction)
+          expect(actionStatus).toBe('FAILURE')
         })
 
         it('should return "REQUEST" status', function() {
-          const actionType = getStatus(requestAction)
-          expect(actionType).toBe('REQUEST')
+          const actionStatus = getStatus(requestAction)
+          expect(actionStatus).toBe('REQUEST')
         })
 
         it('should return "CLEAR" status', function() {
-          const actionType = getStatus(clearAction)
-          expect(actionType).toBe('CLEAR')
+          const actionStatus = getStatus(clearAction)
+          expect(actionStatus).toBe('CLEAR')
         })
       })
     })
