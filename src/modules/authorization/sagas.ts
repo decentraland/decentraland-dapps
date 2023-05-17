@@ -6,6 +6,7 @@ import { ContractData, getContract } from 'decentraland-transactions'
 import { getNetworkProvider } from '../../lib/eth'
 import { sendTransaction } from '../wallet/utils/sendTransaction'
 import { getTransactionFromAction, waitForTx } from '../transaction/utils'
+import { getAnalytics } from '../analytics/utils'
 import {
   AuthorizationError,
   getTokenAmountToApprove,
@@ -47,7 +48,6 @@ import {
 } from './actions'
 import { Authorization, AuthorizationAction, AuthorizationType } from './types'
 import { getData } from './selectors'
-import { getAnalytics } from '../analytics/utils'
 
 export function createAuthorizationSaga() {
   return function* authorizationSaga() {
