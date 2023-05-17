@@ -1,5 +1,5 @@
-import React from 'react'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { ethers } from 'ethers'
 import { Network } from '@dcl/schemas'
 import {
   AuthorizationStep,
@@ -41,6 +41,10 @@ export function AuthorizationModal({
   const [currentStep, setCurrentStep] = useState(0)
   const [loading, setLoading] = useState<AuthorizationStepAction>()
   const [shouldReauthorize, setShouldReauthorize] = useState(false)
+
+  const requiredAllowanceAsEth = requiredAllowance
+    ? ethers.utils.formatEther(requiredAllowance).replace(/\.0+$/, '')
+    : ''
 
   useEffect(() => {
     onFetchAuthorizations()
@@ -93,21 +97,21 @@ export function AuthorizationModal({
             return {
               ...step,
               error: t(
-                '@dapps.authorization_modal.insufficient_amount_error.message'
+                '@dapps.authorization_modal.insufficient_amount_error.message',
+                { price: requiredAllowanceAsEth }
               ),
               action: 'Revoke',
               status: revokeStatus,
-              message:
-                revokeStatus === AuthorizationStepStatus.PENDING ||
-                revokeStatus === AuthorizationStepStatus.DONE ? (
-                  <div className="authorization-error">
-                    {t(
-                      '@dapps.authorization_modal.insufficient_amount_error.message'
-                    )}
-                  </div>
-                ) : (
-                  undefined
-                ),
+              message: !LOADING_STATUS.includes(revokeStatus) ? (
+                <div className="authorization-error">
+                  {t(
+                    '@dapps.authorization_modal.insufficient_amount_error.message',
+                    { price: requiredAllowanceAsEth }
+                  )}
+                </div>
+              ) : (
+                undefined
+              ),
               actionType: AuthorizationStepAction.REVOKE,
               testId: 'reauthorize-step',
               onActionClick: handleRevokeToken
@@ -148,7 +152,14 @@ export function AuthorizationModal({
           message:
             'message' in step && step.message
               ? step.message
-              : getStepMessage(index, step.status, step.error, currentStep),
+              : getStepMessage(
+                  index,
+                  step.status,
+                  step.error,
+                  currentStep,
+                  requiredAllowanceAsEth,
+                  step.actionType
+                ),
           testId: 'testId' in step ? step.testId : `${step.actionType}-step`
         }
       })

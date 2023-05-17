@@ -17,7 +17,8 @@ export function loadingReducer(
       return [...state, action]
     }
     case 'FAILURE':
-    case 'SUCCESS': {
+    case 'SUCCESS':
+    case 'CLEAR': {
       return removeLast(state, actionItem => getType(actionItem) === type)
     }
     default:

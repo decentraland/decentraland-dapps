@@ -9,6 +9,22 @@ export function removeLast(
   return actions.filter(action => action !== last)
 }
 
-export const getType = (action: AnyAction) => action.type.slice(10)
-export const getStatus = (action: AnyAction) =>
-  action.type.slice(1, 8).toUpperCase()
+const ACTION_TYPE_REGEX = /\[(Request|Failure|Success|Clear)\]\s(.+)/
+
+export const getType = (action: AnyAction) => {
+  const match = ACTION_TYPE_REGEX.exec(action.type)
+  if (match && match.length > 2) {
+    return match[2]
+  }
+
+  return ''
+}
+
+export const getStatus = (action: AnyAction) => {
+  const match = ACTION_TYPE_REGEX.exec(action.type)
+  if (match && match.length > 2) {
+    return match[1].toUpperCase()
+  }
+
+  return ''
+}

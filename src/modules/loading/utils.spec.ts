@@ -6,6 +6,7 @@ describe('modules', function() {
       const successAction = { type: '[Success] Some Action' }
       const failureAction = { type: '[Failure] Some Action' }
       const requestAction = { type: '[Request] Some Action' }
+      const clearAction = { type: '[Clear] Some Action' }
       const elements = [
         { type: 'A' },
         { type: 'B' },
@@ -84,22 +85,32 @@ describe('modules', function() {
           const actionType = getType(requestAction)
           expect(actionType).toBe('Some Action')
         })
+
+        it('should return the action type of a clear action', function() {
+          const actionType = getType(clearAction)
+          expect(actionType).toBe('Some Action')
+        })
       })
 
       describe('getStatus', function() {
         it('should return "SUCCESS" status', function() {
-          const actionType = getStatus(successAction)
-          expect(actionType).toBe('SUCCESS')
+          const actionStatus = getStatus(successAction)
+          expect(actionStatus).toBe('SUCCESS')
         })
 
         it('should return "FAILURE" status', function() {
-          const actionType = getStatus(failureAction)
-          expect(actionType).toBe('FAILURE')
+          const actionStatus = getStatus(failureAction)
+          expect(actionStatus).toBe('FAILURE')
         })
 
         it('should return "REQUEST" status', function() {
-          const actionType = getStatus(requestAction)
-          expect(actionType).toBe('REQUEST')
+          const actionStatus = getStatus(requestAction)
+          expect(actionStatus).toBe('REQUEST')
+        })
+
+        it('should return "CLEAR" status', function() {
+          const actionStatus = getStatus(clearAction)
+          expect(actionStatus).toBe('CLEAR')
         })
       })
     })

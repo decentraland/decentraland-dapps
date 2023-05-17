@@ -11,6 +11,7 @@ import {
 } from '../../modules/authorization/utils'
 import { getNetworkProvider } from '../../lib/eth'
 import { getAddress } from '../../modules/wallet/selectors'
+import { authorizationFlowClear } from '../../modules/authorization/actions'
 import {
   AuthorizationModal,
   AuthorizationStepStatus,
@@ -19,11 +20,17 @@ import {
 import {
   WithAuthorizedActionProps,
   MapStateProps,
-  AuthorizeActionOptions
+  AuthorizeActionOptions,
+  MapDispatch,
+  MapDispatchProps
 } from './withAuthorizedAction.types'
 
 const mapState = (state: RootStateOrAny): MapStateProps => ({
   address: getAddress(state)
+})
+
+const mapDispatch = (dispatch: MapDispatch): MapDispatchProps => ({
+  onClearAuthorizationFlow: () => dispatch(authorizationFlowClear())
 })
 
 export default function withAuthorizedAction<
@@ -41,7 +48,7 @@ export default function withAuthorizedAction<
       Omit<ComponentProps<typeof AuthorizationModal>, 'onClose'>
     >()
     const [isLoadingAuthorization, setIsLoadingAuthorization] = useState(false)
-    const { address } = props
+    const { address, onClearAuthorizationFlow } = props
 
     const handleAuthorizedAction = useCallback(
       async (authorizeOptions: AuthorizeActionOptions) => {
@@ -76,7 +83,7 @@ export default function withAuthorizedAction<
           if (authorizationType === AuthorizationType.ALLOWANCE) {
             const { requiredAllowanceInWei } = authorizeOptions
             if (BigNumber.from(requiredAllowanceInWei).isZero()) {
-              onAuthorized()
+              onAuthorized(true)
               setIsLoadingAuthorization(false)
               return
             }
@@ -91,7 +98,7 @@ export default function withAuthorizedAction<
             )
 
             if (allowance.gte(BigNumber.from(requiredAllowanceInWei))) {
-              onAuthorized()
+              onAuthorized(true)
               setIsLoadingAuthorization(false)
               return
             }
@@ -104,7 +111,7 @@ export default function withAuthorizedAction<
               authorizationType: authorizationType,
               action,
               network: targetContract.network,
-              onAuthorized,
+              onAuthorized: () => onAuthorized(false),
               getConfirmationStatus,
               getConfirmationError
             })
@@ -119,7 +126,7 @@ export default function withAuthorizedAction<
             )
 
             if (isApprovedForAll) {
-              onAuthorized()
+              onAuthorized(true)
               setIsLoadingAuthorization(false)
               return
             }
@@ -130,7 +137,7 @@ export default function withAuthorizedAction<
               action,
               network: targetContract.network,
               authorizedContractLabel,
-              onAuthorized,
+              onAuthorized: () => onAuthorized(false),
               getConfirmationStatus,
               getConfirmationError
             })
@@ -147,6 +154,7 @@ export default function withAuthorizedAction<
     const handleClose = useCallback(() => {
       setIsLoadingAuthorization(false)
       setShowAuthorizationModal(false)
+      onClearAuthorizationFlow()
     }, [])
 
     return (
@@ -162,5 +170,5 @@ export default function withAuthorizedAction<
       </>
     )
   }
-  return connect(mapState)(WithAutorizedActionComponent)
+  return connect(mapState, mapDispatch)(WithAutorizedActionComponent)
 }

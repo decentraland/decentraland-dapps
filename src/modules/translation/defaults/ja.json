@@ -138,10 +138,11 @@
       "waiting_confirmation": "許可の処理",
       "done": "終わり",
       "title": "{アクション}を完成させる",
-      "spending_cap_error": "アイテムの価格以上に等しいキャップを設定することを忘れないでください。",
+      "spending_cap_error": "アイテム価格{price} MANA 以上に等しいキャップを設定することを忘れないでください。",
+      "revoke_cap_error": "前のマナを取り消すために、0マナの支出キャップを設定することを忘れないでください。",
       "generic_error": "何かがうまくいかなかった",
       "insufficient_amount_error": {
-        "message": "アイテムの価格以上に等しい支出キャップを設定することを忘れないでください。再び許可する前に、現在の支出キャップを取り消す必要があります。",
+        "message": "アイテム価格{price} MANA 以上に等しいキャップを設定することを忘れないでください。再び許可する前に、現在の支出キャップを取り消す必要があります。",
         "action": "取り消す"
       },
       "authorize_mana": {
@@ -195,6 +196,10 @@
       "sell": {
         "title_action": "販売のリスト",
         "action": "販売のリスト"
+      },
+      "publish_collection": {
+        "title_action": "コレクションを公開する",
+        "action": "コレクションを公開する"
       }
     }
   }

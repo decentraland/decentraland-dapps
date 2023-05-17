@@ -433,7 +433,8 @@ describe('when authorization type is ALLOWANCE', () => {
               authorizationType: AuthorizationType.ALLOWANCE,
               revokeStatus: AuthorizationStepStatus.DONE,
               grantStatus: AuthorizationStepStatus.ALLOWANCE_AMOUNT_ERROR,
-              network: Network.ETHEREUM
+              network: Network.ETHEREUM,
+              requiredAllowance: BigNumber.from('1000000000000000000')
             })
           )
 
@@ -443,7 +444,10 @@ describe('when authorization type is ALLOWANCE', () => {
         it('should show allowance error message', () => {
           expect(
             within(reauthorizeStep).getByText(
-              t('@dapps.authorization_modal.insufficient_amount_error.message')
+              t(
+                '@dapps.authorization_modal.insufficient_amount_error.message',
+                { price: '1' }
+              )
             )
           ).toBeInTheDocument()
         })
