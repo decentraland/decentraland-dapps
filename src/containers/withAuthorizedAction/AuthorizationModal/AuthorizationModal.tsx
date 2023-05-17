@@ -57,7 +57,7 @@ export function AuthorizationModal({
 
   const handleRevokeToken = useCallback(() => {
     onRevoke()
-    analytics.track('[Authorization Flow] Authorize Revoke', {
+    analytics.track('[Authorization Flow] Authorize Revoke Click', {
       action
     })
     setLoading(AuthorizationStepAction.REVOKE)
@@ -65,7 +65,7 @@ export function AuthorizationModal({
 
   const handleGrantToken = useCallback(() => {
     onGrant()
-    analytics.track('[Authorization Flow] Authorize Grant', {
+    analytics.track('[Authorization Flow] Authorize Grant Click', {
       action
     })
     setLoading(AuthorizationStepAction.GRANT)
@@ -73,7 +73,7 @@ export function AuthorizationModal({
 
   const handleAuthorized = useCallback(() => {
     onAuthorized()
-    analytics.track('[Authorization Flow] Confirm Transaction', {
+    analytics.track('[Authorization Flow] Confirm Transaction Click', {
       action
     })
     setLoading(AuthorizationStepAction.CONFIRM)
