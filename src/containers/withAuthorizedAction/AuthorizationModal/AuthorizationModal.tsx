@@ -6,13 +6,13 @@ import {
   AuthorizationModal as BaseAuthorizationModal
 } from 'decentraland-ui'
 import { t } from '../../../modules/translation/utils'
+import { getAnalytics } from '../../../modules/analytics/utils'
 import {
   AuthorizationStepAction,
   AuthorizationStepStatus,
   Props
 } from './AuthorizationModal.types'
 import { getStepMessage, getSteps } from './utils'
-import { getAnalytics } from '../../../modules/analytics/utils'
 
 const LOADING_STATUS = [
   AuthorizationStepStatus.LOADING_INFO,

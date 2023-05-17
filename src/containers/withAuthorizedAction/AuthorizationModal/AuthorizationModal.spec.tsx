@@ -8,6 +8,7 @@ import {
   AuthorizationType
 } from '../../../modules/authorization/types'
 import { t } from '../../../modules/translation/utils'
+import * as analyticsUtils from '../../../modules/analytics/utils'
 import { AuthorizationModal } from './AuthorizationModal'
 import {
   AuthorizationStepStatus,
@@ -17,6 +18,10 @@ import {
 
 jest.mock('../../../containers', () => ({
   TransactionLink: () => 'test'
+}))
+
+jest.mock('../../../modules/analytics/utils', () => ({
+  getAnalytics: jest.fn().mockReturnValue({ track: jest.fn() })
 }))
 
 function getAuthorizationModal(props: Partial<Props>) {
@@ -503,33 +508,66 @@ describe('when authorization type is ALLOWANCE', () => {
 })
 
 describe('when clicking revoke authorization button', () => {
-  it('should call onRevoke callback', async () => {
-    const onRevokeMock = jest.fn()
-    const screen = renderAuthorizationModal({
+  let onRevokeMock: jest.Mock
+  let trackMock: jest.Mock
+  let screen: RenderResult
+
+  beforeEach(async () => {
+    onRevokeMock = jest.fn()
+    trackMock = jest.fn()
+    jest.spyOn(analyticsUtils, 'getAnalytics').mockReturnValue(({
+      track: trackMock
+    } as any) as SegmentAnalytics.AnalyticsJS)
+    screen = renderAuthorizationModal({
       authorizationType: AuthorizationType.ALLOWANCE,
       revokeStatus: AuthorizationStepStatus.PENDING,
       network: Network.ETHEREUM,
+      action: AuthorizedAction.BUY,
       onRevoke: onRevokeMock
     })
+
     const revokeStatusStep = screen.getByTestId('revoke-step')
     await userEvent.click(
       within(revokeStatusStep).getByRole('button', {
         name: t('@dapps.authorization_modal.revoke_cap.action')
       })
     )
+  })
+
+  it('should call onRevoke callback', async () => {
     expect(onRevokeMock).toHaveBeenCalled()
+  })
+
+  it('should track revoke authorization event', () => {
+    expect(trackMock).toHaveBeenCalledWith(
+      '[Authorization Flow] Authorize Revoke Click',
+      {
+        action: AuthorizedAction.BUY
+      }
+    )
   })
 })
 
 describe('when clicking grant authorization button', () => {
-  it('should call onRevoke callback', async () => {
-    const onGrantMock = jest.fn()
-    const screen = renderAuthorizationModal({
+  let onGrantMock: jest.Mock
+  let trackMock: jest.Mock
+  let screen: RenderResult
+
+  beforeEach(async () => {
+    onGrantMock = jest.fn()
+    trackMock = jest.fn()
+
+    jest.spyOn(analyticsUtils, 'getAnalytics').mockReturnValue(({
+      track: trackMock
+    } as any) as SegmentAnalytics.AnalyticsJS)
+
+    screen = renderAuthorizationModal({
       authorizationType: AuthorizationType.ALLOWANCE,
       revokeStatus: AuthorizationStepStatus.PENDING,
       grantStatus: AuthorizationStepStatus.PENDING,
       onGrant: onGrantMock
     })
+
     const revokeStatusStep = screen.getByTestId('revoke-step')
     await userEvent.click(
       within(revokeStatusStep).getByRole('button', {
@@ -541,6 +579,7 @@ describe('when clicking grant authorization button', () => {
         authorizationType: AuthorizationType.ALLOWANCE,
         revokeStatus: AuthorizationStepStatus.DONE,
         grantStatus: AuthorizationStepStatus.PENDING,
+        action: AuthorizedAction.BUY,
         onGrant: onGrantMock
       })
     )
@@ -550,6 +589,18 @@ describe('when clicking grant authorization button', () => {
         name: t('@dapps.authorization_modal.set_cap.action')
       })
     )
+  })
+
+  it('should call onGrant callback', async () => {
     expect(onGrantMock).toHaveBeenCalled()
+  })
+
+  it('should track grant authorization event', () => {
+    expect(trackMock).toHaveBeenCalledWith(
+      '[Authorization Flow] Authorize Grant Click',
+      {
+        action: AuthorizedAction.BUY
+      }
+    )
   })
 })
