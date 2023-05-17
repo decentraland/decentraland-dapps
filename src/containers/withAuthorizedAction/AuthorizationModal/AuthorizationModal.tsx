@@ -12,6 +12,7 @@ import {
   Props
 } from './AuthorizationModal.types'
 import { getStepMessage, getSteps } from './utils'
+import { getAnalytics } from '../../../modules/analytics/utils'
 
 const LOADING_STATUS = [
   AuthorizationStepStatus.LOADING_INFO,
@@ -38,9 +39,17 @@ export function AuthorizationModal({
   onAuthorized,
   onFetchAuthorizations
 }: Props) {
+  const analytics = getAnalytics()
   const [currentStep, setCurrentStep] = useState(0)
   const [loading, setLoading] = useState<AuthorizationStepAction>()
   const [shouldReauthorize, setShouldReauthorize] = useState(false)
+
+  useEffect(() => {
+    analytics.track('[Authorization Flow] Modal Opened', {
+      action,
+      requiredAllowance
+    })
+  }, [])
 
   useEffect(() => {
     onFetchAuthorizations()
@@ -48,16 +57,25 @@ export function AuthorizationModal({
 
   const handleRevokeToken = useCallback(() => {
     onRevoke()
+    analytics.track('[Authorization Flow] Authorize Revoke', {
+      action
+    })
     setLoading(AuthorizationStepAction.REVOKE)
   }, [onRevoke])
 
   const handleGrantToken = useCallback(() => {
     onGrant()
+    analytics.track('[Authorization Flow] Authorize Grant', {
+      action
+    })
     setLoading(AuthorizationStepAction.GRANT)
   }, [onGrant])
 
   const handleAuthorized = useCallback(() => {
     onAuthorized()
+    analytics.track('[Authorization Flow] Confirm Transaction', {
+      action
+    })
     setLoading(AuthorizationStepAction.CONFIRM)
   }, [onAuthorized])
 

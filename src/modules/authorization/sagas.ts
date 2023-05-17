@@ -47,6 +47,7 @@ import {
 } from './actions'
 import { Authorization, AuthorizationAction, AuthorizationType } from './types'
 import { getData } from './selectors'
+import { getAnalytics } from '../analytics/utils'
 
 export function createAuthorizationSaga() {
   return function* authorizationSaga() {
@@ -209,6 +210,13 @@ export function createAuthorizationSaga() {
       if (failure) {
         throw new Error(failure.payload.error)
       }
+
+      const analytics = getAnalytics()
+      analytics.track(
+        `[Authorization Flow] ${
+          isRevoke ? 'Revoke' : 'Grant'
+        } Transaction Approved in Wallet`
+      )
       const txHash = getTransactionFromAction(
         success as RevokeTokenSuccessAction | GrantTokenSuccessAction
       ).hash
