@@ -83,7 +83,7 @@ export default function withAuthorizedAction<
           if (authorizationType === AuthorizationType.ALLOWANCE) {
             const { requiredAllowanceInWei } = authorizeOptions
             if (BigNumber.from(requiredAllowanceInWei).isZero()) {
-              onAuthorized('action')
+              onAuthorized(true)
               setIsLoadingAuthorization(false)
               return
             }
@@ -98,7 +98,7 @@ export default function withAuthorizedAction<
             )
 
             if (allowance.gte(BigNumber.from(requiredAllowanceInWei))) {
-              onAuthorized('action')
+              onAuthorized(true)
               setIsLoadingAuthorization(false)
               return
             }
@@ -111,7 +111,7 @@ export default function withAuthorizedAction<
               authorizationType: authorizationType,
               action,
               network: targetContract.network,
-              onAuthorized: () => onAuthorized('modal'),
+              onAuthorized: () => onAuthorized(false),
               getConfirmationStatus,
               getConfirmationError
             })
@@ -126,7 +126,7 @@ export default function withAuthorizedAction<
             )
 
             if (isApprovedForAll) {
-              onAuthorized('action')
+              onAuthorized(true)
               setIsLoadingAuthorization(false)
               return
             }
@@ -137,7 +137,7 @@ export default function withAuthorizedAction<
               action,
               network: targetContract.network,
               authorizedContractLabel,
-              onAuthorized: () => onAuthorized('modal'),
+              onAuthorized: () => onAuthorized(false),
               getConfirmationStatus,
               getConfirmationError
             })
