@@ -6,6 +6,7 @@ import { ContractData, getContract } from 'decentraland-transactions'
 import { getNetworkProvider } from '../../lib/eth'
 import { sendTransaction } from '../wallet/utils/sendTransaction'
 import { getTransactionFromAction, waitForTx } from '../transaction/utils'
+import { getAnalytics } from '../analytics/utils'
 import {
   AuthorizationError,
   getTokenAmountToApprove,
@@ -209,6 +210,13 @@ export function createAuthorizationSaga() {
       if (failure) {
         throw new Error(failure.payload.error)
       }
+
+      const analytics = getAnalytics()
+      analytics.track(
+        `[Authorization Flow] ${
+          isRevoke ? 'Revoke' : 'Grant'
+        } Transaction Approved in Wallet`
+      )
       const txHash = getTransactionFromAction(
         success as RevokeTokenSuccessAction | GrantTokenSuccessAction
       ).hash

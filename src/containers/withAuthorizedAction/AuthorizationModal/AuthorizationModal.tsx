@@ -6,6 +6,7 @@ import {
   AuthorizationModal as BaseAuthorizationModal
 } from 'decentraland-ui'
 import { t } from '../../../modules/translation/utils'
+import { getAnalytics } from '../../../modules/analytics/utils'
 import {
   AuthorizationStepAction,
   AuthorizationStepStatus,
@@ -38,6 +39,7 @@ export function AuthorizationModal({
   onAuthorized,
   onFetchAuthorizations
 }: Props) {
+  const analytics = getAnalytics()
   const [currentStep, setCurrentStep] = useState(0)
   const [loading, setLoading] = useState<AuthorizationStepAction>()
   const [shouldReauthorize, setShouldReauthorize] = useState(false)
@@ -47,21 +49,37 @@ export function AuthorizationModal({
     : ''
 
   useEffect(() => {
+    analytics.track('[Authorization Flow] Modal Opened', {
+      action,
+      requiredAllowance
+    })
+  }, [])
+
+  useEffect(() => {
     onFetchAuthorizations()
   }, [onFetchAuthorizations])
 
   const handleRevokeToken = useCallback(() => {
     onRevoke()
+    analytics.track('[Authorization Flow] Authorize Revoke Click', {
+      action
+    })
     setLoading(AuthorizationStepAction.REVOKE)
   }, [onRevoke])
 
   const handleGrantToken = useCallback(() => {
     onGrant()
+    analytics.track('[Authorization Flow] Authorize Grant Click', {
+      action
+    })
     setLoading(AuthorizationStepAction.GRANT)
   }, [onGrant])
 
   const handleAuthorized = useCallback(() => {
     onAuthorized()
+    analytics.track('[Authorization Flow] Confirm Transaction Click', {
+      action
+    })
     setLoading(AuthorizationStepAction.CONFIRM)
   }, [onAuthorized])
 

@@ -36,6 +36,10 @@ const authorization: Authorization = {
   chainId: ChainId.ETHEREUM_GOERLI
 }
 
+jest.mock('../analytics/utils', () => ({
+  getAnalytics: jest.fn().mockReturnValue({ track: jest.fn() })
+}))
+
 describe('handleAuthorizationFlowRequest', () => {
   describe('when granting a token', () => {
     describe('and authorization flow finishes successfully', () => {
