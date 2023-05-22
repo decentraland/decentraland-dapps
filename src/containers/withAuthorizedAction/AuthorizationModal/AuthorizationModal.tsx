@@ -43,7 +43,7 @@ export function AuthorizationModal({
   const [loading, setLoading] = useState<AuthorizationStepAction>()
   const [shouldReauthorize, setShouldReauthorize] = useState(false)
 
-  const requiredAllowanceAsEth = requiredAllowance
+  const requiredAllowanceAsEth = getPriceInMana(requiredAllowance)
     ? getPriceInMana(requiredAllowance)
     : ''
 
