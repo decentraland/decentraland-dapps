@@ -1,18 +1,17 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { ethers } from 'ethers'
 import { Network } from '@dcl/schemas'
 import {
   AuthorizationStep,
   AuthorizationModal as BaseAuthorizationModal
 } from 'decentraland-ui'
-import { t } from '../../../modules/translation/utils'
+import { t, t_cond } from '../../../modules/translation/utils'
 import { getAnalytics } from '../../../modules/analytics/utils'
 import {
   AuthorizationStepAction,
   AuthorizationStepStatus,
   Props
 } from './AuthorizationModal.types'
-import { getStepMessage, getSteps } from './utils'
+import { getPriceInMana, getStepMessage, getSteps } from './utils'
 
 const LOADING_STATUS = [
   AuthorizationStepStatus.LOADING_INFO,
@@ -44,9 +43,7 @@ export function AuthorizationModal({
   const [loading, setLoading] = useState<AuthorizationStepAction>()
   const [shouldReauthorize, setShouldReauthorize] = useState(false)
 
-  const requiredAllowanceAsEth = requiredAllowance
-    ? ethers.utils.formatEther(requiredAllowance).replace(/\.0+$/, '')
-    : ''
+  const requiredAllowanceAsEth = getPriceInMana(requiredAllowance)
 
   useEffect(() => {
     analytics.track('[Authorization Flow] Modal Opened', {
@@ -90,14 +87,20 @@ export function AuthorizationModal({
       requiredAllowance,
       currentAllowance,
       authorization,
-      authorizedContractLabel
+      authorizedContractLabel,
+      action
     })
     return [
       ...authSteps,
       {
-        title: t('@dapps.authorization_modal.confirm_transaction.title', {
-          action: t(`@dapps.authorization_modal.${action}.action`)
-        }),
+        // TODO: Move action translations to component
+        title: t_cond(
+          `@dapps.authorization_modal.${action}.confirm_transaction_title`,
+          '@dapps.authorization_modal.confirm_transaction.title',
+          {
+            action: t(`@dapps.authorization_modal.${action}.action`)
+          }
+        ),
         action: t('@dapps.authorization_modal.confirm_transaction.action'),
         status: confirmationStatus,
         actionType: AuthorizationStepAction.CONFIRM,
@@ -114,7 +117,8 @@ export function AuthorizationModal({
           ) {
             return {
               ...step,
-              error: t(
+              error: t_cond(
+                `@dapps.authorization_modal.${action}.insufficient_amount_error_message`,
                 '@dapps.authorization_modal.insufficient_amount_error.message',
                 { price: requiredAllowanceAsEth }
               ),
@@ -122,7 +126,8 @@ export function AuthorizationModal({
               status: revokeStatus,
               message: !LOADING_STATUS.includes(revokeStatus) ? (
                 <div className="authorization-error">
-                  {t(
+                  {t_cond(
+                    `@dapps.authorization_modal.${action}.insufficient_amount_error_message`,
                     '@dapps.authorization_modal.insufficient_amount_error.message',
                     { price: requiredAllowanceAsEth }
                   )}

@@ -162,6 +162,7 @@ export default function withAuthorizedAction<
         <WrappedComponent
           {...props}
           onAuthorizedAction={handleAuthorizedAction}
+          onCloseAuthorization={handleClose}
           isLoadingAuthorization={isLoadingAuthorization}
         />
         {showAuthorizationModal && authModalData ? (

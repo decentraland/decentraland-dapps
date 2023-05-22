@@ -23,7 +23,7 @@ import { isLoadingType } from '../../../modules/loading/selectors'
 import { getType } from '../../../modules/loading/utils'
 import { getTransactions } from '../../../modules/transaction/selectors'
 import { isPending } from '../../../modules/transaction/utils'
-import { t } from '../../../modules/translation/utils'
+import { t, t_cond } from '../../../modules/translation/utils'
 import { getData as getAuthorizations } from '../../../modules/authorization/selectors'
 import {
   AUTHORIZATION_FLOW_REQUEST,
@@ -32,7 +32,8 @@ import {
 } from '../../../modules/authorization/actions'
 import {
   AuthorizationStepAction,
-  AuthorizationStepStatus
+  AuthorizationStepStatus,
+  AuthorizedAction
 } from './AuthorizationModal.types'
 
 const MAX_ERROR_LENGTH = 150
@@ -169,14 +170,23 @@ export function getStepMessage(
   }
 }
 
+export function getPriceInMana(requiredAllowance?: BigNumber): string {
+  if (!requiredAllowance) return ''
+  const mana = Number.parseFloat(ethers.utils.formatEther(requiredAllowance))
+  const twoDecimalsMana = Math.ceil(mana * 100) / 100
+  return twoDecimalsMana.toString().replace(/\.0+$/, '')
+}
+
 export function getSteps({
   authorization,
   authorizationType,
   network,
   requiredAllowance,
   authorizedContractLabel,
-  currentAllowance
+  currentAllowance,
+  action
 }: {
+  action: AuthorizedAction
   authorization: Authorization
   authorizationType: AuthorizationType
   network: Network
@@ -184,9 +194,7 @@ export function getSteps({
   currentAllowance?: BigNumber
   authorizedContractLabel?: string
 }) {
-  const requiredAllowanceAsEth = requiredAllowance
-    ? ethers.utils.formatEther(requiredAllowance).replace(/\.0+$/, '')
-    : ''
+  const requiredAllowanceAsEth = getPriceInMana(requiredAllowance)
   if (
     (!currentAllowance || !currentAllowance.isZero()) &&
     authorizationType === AuthorizationType.ALLOWANCE &&
@@ -202,9 +210,13 @@ export function getSteps({
       },
       {
         title: t('@dapps.authorization_modal.set_cap.title'),
-        description: t('@dapps.authorization_modal.set_cap.description', {
-          price: requiredAllowanceAsEth
-        }),
+        description: t_cond(
+          `@dapps.authorization_modal.${action}.revoke_cap_description`,
+          '@dapps.authorization_modal.set_cap.description',
+          {
+            price: requiredAllowanceAsEth
+          }
+        ),
         actionType: AuthorizationStepAction.GRANT
       }
     ]
@@ -224,7 +236,8 @@ export function getSteps({
             </TransactionLink>
           )
         }),
-        description: t(
+        description: t_cond(
+          `@dapps.authorization_modal.${action}.authorize_mana_description`,
           '@dapps.authorization_modal.authorize_mana.description',
           {
             price: requiredAllowanceAsEth

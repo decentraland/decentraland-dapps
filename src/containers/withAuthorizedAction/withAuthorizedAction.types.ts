@@ -38,6 +38,7 @@ export type AuthorizeActionOptions = ApprovalOptions | AllowanceOptions
 
 export type WithAuthorizedActionProps = {
   onAuthorizedAction: (options: AuthorizeActionOptions) => void
+  onCloseAuthorization: () => void
   isLoadingAuthorization: boolean
 }
 

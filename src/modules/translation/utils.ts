@@ -54,6 +54,14 @@ export function t(id: string, values?: any) {
   return currentLocale.formatMessage({ id }, values)
 }
 
+export function t_cond(id: string, defaultId: string, values?: any) {
+  const message = currentLocale.formatMessage({ id }, values)
+  if (message === id) {
+    return currentLocale.formatMessage({ id: defaultId }, values)
+  }
+  return message
+}
+
 export const T = FormattedMessage
 
 export function mergeTranslations<T extends { [key: string]: T | string }>(
