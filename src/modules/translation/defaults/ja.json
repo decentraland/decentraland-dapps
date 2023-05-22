@@ -169,42 +169,8 @@
         "description": "アイテム価格{price}マナまたはあなたが今またはそれ以降の支出に満足している量を入力してください。いつでも制限を変更できます。",
         "action": "許可"
       },
-      "mint": {
-        "title_action": "購入",
-        "action": "買う"
-      },
-      "buy": {
-        "title_action": "購入",
-        "action": "買う"
-      },
-      "bid": {
-        "title_action": "オファー",
-        "action": "オファー"
-      },
-      "rent": {
-        "title_action": "レンタル",
-        "action": "家賃"
-      },
-      "claim_name": {
-        "title_action": "購入",
-        "action": "請求"
-      },
-      "swap_mana": {
-        "title_action": "スワップ",
-        "action": "スワップ"
-      },
-      "sell": {
-        "title_action": "販売のリスト",
-        "action": "販売のリスト"
-      },
-      "publish_collection": {
-        "title_action": "出版",
-        "action": "コレクションを公開します",
-        "confirm_transaction_title": "コレクションを公開するための完全なトランザクション",
-        "authorize_mana_description": "一部のウォレットには、カスタムマナの支出制限を設定する必要があることに注意してください。価格のボラティリティによる取引の拒否を避けるために、{price}の料金価格またはわずかに高い金額を入力します。いつでも制限を変更できます。",
-        "set_cap_description": "価格のボラティリティによる取引の拒否を避けるために、{price}の料金価格またはわずかに高い金額を入力します。いつでも制限を変更できます。",
-        "insufficient_amount_error_message": "価格のボラティリティのために拒否されないように、料金{price}以下に等しい支出上限を設定することを忘れないでください。現在のキャップを取り消して、もう一度やり直してください."
-      }
+      "action": "アクション",
+      "title_action": "アクション"
     }
   }
 }

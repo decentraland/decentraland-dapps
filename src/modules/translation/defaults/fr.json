@@ -169,42 +169,8 @@
         "description": "Entrez le prix de l'article {price} ou un montant plus élevé avec lequel vous êtes à l'aise pour dépenser maintenant ou plus tard.Vous pouvez modifier la limite à tout moment.",
         "action": "Autoriser"
       },
-      "mint": {
-        "title_action": "achat",
-        "action": "acheter"
-      },
-      "buy": {
-        "title_action": "achat",
-        "action": "acheter"
-      },
-      "bid": {
-        "title_action": "offre",
-        "action": "offre"
-      },
-      "rent": {
-        "title_action": "de location",
-        "action": "louer"
-      },
-      "claim_name": {
-        "title_action": "achat",
-        "action": "réclamation"
-      },
-      "swap_mana": {
-        "title_action": "échanger",
-        "action": "échanger"
-      },
-      "sell": {
-        "title_action": "liste à vendre",
-        "action": "liste à vendre"
-      },
-      "publish_collection": {
-        "title_action": "publication",
-        "action": "Collection de publication",
-        "confirm_transaction_title": "Transaction complète pour publier votre collection",
-        "authorize_mana_description": "Gardez à l'esprit que certains portefeuilles nécessitent de définir une limite de dépenses de mana personnalisée.Entrez un prix des frais de {price} ou un montant légèrement plus élevé pour éviter le rejet des transactions en raison de la volatilité des prix.Vous pouvez modifier la limite à tout moment.",
-        "set_cap_description": "Entrez un prix des frais de {price} ou un montant légèrement plus élevé pour éviter le rejet des transactions en raison de la volatilité des prix.Vous pouvez modifier la limite à tout moment.",
-        "insufficient_amount_error_message": "N'oubliez pas de définir un plafond de dépenses égal au prix des frais {price} ou plus pour éviter d'être rejeté en raison de la volatilité des prix.Révoquez votre capuchon actuel et réessayez."
-      }
+      "action": "action",
+      "title_action": "action"
     }
   }
 }

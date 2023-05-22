@@ -243,42 +243,8 @@
         "description": "Ingrese el precio del artículo {price} MANA o una cantidad más alta con la que se sienta cómodo para gastar ahora o más tarde. Puede cambiar el límite en cualquier momento.",
         "action": "Autorizar"
       },
-      "mint": {
-        "title_action": "compra",
-        "action": "comprar"
-      },
-      "buy": {
-        "title_action": "compra",
-        "action": "comprar"
-      },
-      "bid": {
-        "title_action": "oferta",
-        "action": "oferta"
-      },
-      "rent": {
-        "title_action": "alquiler",
-        "action": "alquilar"
-      },
-      "claim_name": {
-        "title_action": "compra",
-        "action": "afirmar"
-      },
-      "swap_mana": {
-        "title_action": "intercambio",
-        "action": "intercambio"
-      },
-      "sell": {
-        "title_action": "Lista para la venta",
-        "action": "Lista para la venta"
-      },
-      "publish_collection": {
-        "title_action": "publicación",
-        "action": "colección de publicaciones",
-        "confirm_transaction_title": "Transacción completa para publicar su colección",
-        "authorize_mana_description": "Tenga en cuenta que algunas billeteras requieren establecer un límite de gasto de maná personalizado.Ingrese un precio de tarifa de {price} o una cantidad ligeramente mayor para evitar el rechazo de la transacción debido a la volatilidad del precio.Puede cambiar el límite en cualquier momento.",
-        "set_cap_description": "Ingrese un precio de tarifa de {price} o una cantidad ligeramente mayor para evitar el rechazo de la transacción debido a la volatilidad del precio.Puede cambiar el límite en cualquier momento.",
-        "insufficient_amount_error_message": "Recuerde establecer un límite de gasto igual al precio de tarifa {price} o superior para evitar ser rechazado debido a la volatilidad del precio.Revoca su límite actual y vuelve a intentarlo."
-      }
+      "action": "acción",
+      "title_action": "acción"
     }
   }
 }

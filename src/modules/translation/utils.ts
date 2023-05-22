@@ -54,9 +54,17 @@ export function t(id: string, values?: any) {
   return currentLocale.formatMessage({ id }, values)
 }
 
-export function t_cond(id: string, defaultId: string, values?: any) {
+export function t_cond(
+  id: string | undefined,
+  defaultId: string,
+  values?: any
+) {
+  if (!id) {
+    return currentLocale.formatMessage({ id: defaultId }, values)
+  }
+
   const message = currentLocale.formatMessage({ id }, values)
-  if (message === id) {
+  if (message === id || !message) {
     return currentLocale.formatMessage({ id: defaultId }, values)
   }
   return message
