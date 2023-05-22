@@ -37,7 +37,15 @@ type AllowanceOptions = AuthorizeBaseOptions & {
 
 export type AuthorizeActionOptions = ApprovalOptions | AllowanceOptions
 
-export type AuthorizationTranslationKeys = Partial<
+type RecursivePartial<T> = {
+  [P in keyof T]?: T[P] extends (infer U)[]
+    ? RecursivePartial<U>[]
+    : T[P] extends object
+    ? RecursivePartial<T[P]>
+    : T[P]
+}
+
+export type AuthorizationTranslationKeys = RecursivePartial<
   typeof en['@dapps']['authorization_modal']
 >
 
