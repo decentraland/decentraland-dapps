@@ -1,42 +1,50 @@
-import * as React from 'react'
+import React, { useCallback, useEffect, useMemo, useRef } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { Profile as BaseProfile } from 'decentraland-ui/dist/components/Profile/Profile'
+import { loadProfileRequest } from '../../modules/profile/actions'
+import { getData as getProfiles } from '../../modules/profile/selectors'
 import { Props } from './Profile.types'
 
-export default class Profile extends React.PureComponent<Props> {
-  static defaultProps = {
-    inline: true
-  }
+const Profile = function<T extends React.ElementType>(props: Props<T>) {
+  const { address, debounce, inline = true } = props
+  const profiles = useSelector(getProfiles)
+  const dispatch = useDispatch()
 
-  timeout: NodeJS.Timeout | null = null
+  const timeoutRef = useRef<number | null>()
 
-  componentWillMount() {
-    this.fetchProfile(this.props)
-  }
+  const avatar = useMemo(() => {
+    const profile = profiles[address]
+    return profile ? profile.avatars[0] : null
+  }, [address, profiles])
 
-  componentDidUpdate(prevProps: Props) {
-    if (prevProps.address !== this.props.address) {
-      this.fetchProfile(this.props)
-    }
-  }
+  const onLoadProfile: typeof loadProfileRequest = useCallback(
+    (address: string) => dispatch(loadProfileRequest(address)),
+    [address]
+  )
 
-  fetchProfile(props: Props) {
-    const { address, avatar, debounce, onLoadProfile } = props
+  useEffect(() => {
     if (!avatar) {
       if (debounce) {
-        if (this.timeout) {
-          clearTimeout(this.timeout)
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current)
         }
-        this.timeout = setTimeout(() => {
-          onLoadProfile(address)
-          this.timeout = null
-        }, debounce)
+        timeoutRef.current = window.setTimeout(
+          () => onLoadProfile(address),
+          debounce
+        )
       } else {
         onLoadProfile(address)
       }
     }
-  }
 
-  render() {
-    return <BaseProfile {...this.props} />
-  }
+    return () => {
+      if (timeoutRef.current) {
+        window.clearTimeout(timeoutRef.current)
+      }
+    }
+  }, [address])
+
+  return <BaseProfile {...props} avatar={avatar} inline={inline} />
 }
+
+export default Profile

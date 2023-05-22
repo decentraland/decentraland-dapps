@@ -93,7 +93,7 @@ export class Transak {
       [TransakOrderStatus.ON_HOLD_PENDING_DELIVERY_FROM_TRANSAK]:
         PurchaseStatus.PENDING,
       [TransakOrderStatus.COMPLETED]: PurchaseStatus.COMPLETE,
-      [TransakOrderStatus.REFUNDED]: PurchaseStatus.COMPLETE,
+      [TransakOrderStatus.REFUNDED]: PurchaseStatus.REFUNDED,
       [TransakOrderStatus.CANCELLED]: PurchaseStatus.CANCELLED,
       [TransakOrderStatus.FAILED]: PurchaseStatus.FAILED,
       [TransakOrderStatus.EXPIRED]: PurchaseStatus.FAILED

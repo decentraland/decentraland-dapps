@@ -40,7 +40,7 @@ beforeEach(() => {
   jest.clearAllMocks()
 })
 
-describe('when the request fails', () => {
+describe('when the request fails with a server error', () => {
   beforeEach(() => {
     nock(urlTest)
       .get('/test')
@@ -147,6 +147,35 @@ describe('when the request fails', () => {
       expect(setTimeout).toHaveBeenCalledWith(
         expect.anything(),
         config.retryDelay
+      )
+      expect(nock.isDone()).toBeTruthy()
+    })
+  })
+})
+
+describe('when the request fails with a client non-retryable error', () => {
+  beforeEach(() => {
+    nock(urlTest)
+      .get('/test')
+      .reply(422, {})
+      .defaultReplyHeaders({
+        'Access-Control-Allow-Origin': '*'
+      })
+  })
+
+  describe.each([1, 3, 5])('and there is %s attempt left', retries => {
+    beforeEach(() => {
+      config = {
+        ...config,
+        retries,
+        nonRetryableStatuses: [422]
+      }
+      baseClient = new TestBaseClient(urlTest, config)
+    })
+
+    it('should not retry, but throw with the response error as soon as the request fails', async () => {
+      await expect(baseClient.performRequest('/test')).rejects.toThrowError(
+        'Request failed with status code 422'
       )
       expect(nock.isDone()).toBeTruthy()
     })

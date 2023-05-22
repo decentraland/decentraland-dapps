@@ -31,7 +31,6 @@ import {
   ENABLE_WALLET_REQUEST,
   ENABLE_WALLET_SUCCESS,
   DisconnectWalletAction,
-  disconnectWallet,
   DISCONNECT_WALLET,
   FETCH_WALLET_REQUEST,
   FetchWalletRequestAction,
@@ -54,7 +53,7 @@ import {
 import { getTransactionsApiUrl, setTransactionsApiUrl } from './utils'
 import { switchProviderChainId } from './utils/switchProviderChainId'
 import { buildWallet } from './utils/buildWallet'
-import { CreateWalletOptions, Wallet } from './types'
+import { CreateWalletOptions, ProviderType, Wallet } from './types'
 import { getAppChainId, isConnected } from './selectors'
 
 // Patch Samsung's Cucumber provider send to support promises
@@ -72,6 +71,16 @@ if (isCucumberProvider()) {
       return Promise.reject(err)
     }
   }
+}
+
+export async function getAccount(providerType: ProviderType) {
+  if (isCucumberProvider()) {
+    await cucumberProviderSend('eth_requestAccounts')
+  }
+
+  const { account } = await connection.connect(providerType, _getAppChainId())
+
+  return account
 }
 
 // Can be set on createWalletSaga
@@ -116,7 +125,6 @@ function* handleConnectWalletRequest() {
       throw new Error(failure!.payload.error)
     }
   } catch (error) {
-    yield put(disconnectWallet())
     yield put(connectWalletFailure(error.message))
   }
 }
@@ -124,25 +132,13 @@ function* handleConnectWalletRequest() {
 function* handleEnableWalletRequest(action: EnableWalletRequestAction) {
   const { providerType } = action.payload
   try {
-    const account: string = yield call(async () => {
-      if (isCucumberProvider()) {
-        await cucumberProviderSend('eth_requestAccounts')
-      }
-
-      const { account } = await connection.connect(
-        providerType,
-        _getAppChainId()
-      )
-
-      return account
-    })
+    const account: string = yield call(getAccount, providerType)
 
     if (!account) {
       throw new Error('Enable did not return any accounts')
     }
     yield put(enableWalletSuccess(providerType))
   } catch (error) {
-    yield put(disconnectWallet())
     yield put(enableWalletFailure(error.message))
   }
 }

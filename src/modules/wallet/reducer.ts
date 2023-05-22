@@ -83,14 +83,6 @@ export function walletReducer(
       }
     }
 
-    case FETCH_WALLET_FAILURE:
-    case CONNECT_WALLET_FAILURE: {
-      return {
-        ...state,
-        loading: loadingReducer(state.loading, action)
-      }
-    }
-
     case ENABLE_WALLET_SUCCESS: {
       return {
         ...state,
@@ -99,22 +91,31 @@ export function walletReducer(
       }
     }
 
+    case FETCH_WALLET_FAILURE: {
+      return {
+        ...state,
+        loading: loadingReducer(state.loading, action)
+      }
+    }
+
+    case CONNECT_WALLET_FAILURE: {
+      return {
+        ...state,
+        loading: loadingReducer(state.loading, action),
+        data: null
+      }
+    }
+
     case ENABLE_WALLET_FAILURE: {
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
-        error: action.payload.error
+        error: action.payload.error,
+        data: null
       }
     }
 
-    case CHANGE_ACCOUNT: {
-      return {
-        ...state,
-        error: null,
-        data: action.payload.wallet
-      }
-    }
-
+    case CHANGE_ACCOUNT:
     case CHANGE_NETWORK: {
       return {
         ...state,

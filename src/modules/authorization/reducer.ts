@@ -21,7 +21,15 @@ import {
   GRANT_TOKEN_FAILURE,
   REVOKE_TOKEN_REQUEST,
   REVOKE_TOKEN_SUCCESS,
-  REVOKE_TOKEN_FAILURE
+  REVOKE_TOKEN_FAILURE,
+  AUTHORIZATION_FLOW_FAILURE,
+  AuthorizationFlowRequestAction,
+  AuthorizationFlowSuccessAction,
+  AuthorizationFlowFailureAction,
+  AUTHORIZATION_FLOW_REQUEST,
+  AUTHORIZATION_FLOW_SUCCESS,
+  AuthorizationFlowClearAction,
+  AUTHORIZATION_FLOW_CLEAR
 } from './actions'
 import { Authorization } from './types'
 import { areEqual } from './utils'
@@ -30,12 +38,14 @@ export type AuthorizationState = {
   data: Authorization[]
   loading: LoadingState
   error: string | null
+  authorizationFlowError: string | null
 }
 
-const INITIAL_STATE = {
+export const INITIAL_STATE = {
   data: [],
   loading: [],
-  error: null
+  error: null,
+  authorizationFlowError: null
 }
 
 type AuthorizationReducerAction =
@@ -49,6 +59,10 @@ type AuthorizationReducerAction =
   | RevokeTokenSuccessAction
   | RevokeTokenFailureAction
   | FetchTransactionSuccessAction
+  | AuthorizationFlowRequestAction
+  | AuthorizationFlowSuccessAction
+  | AuthorizationFlowFailureAction
+  | AuthorizationFlowClearAction
 
 export function authorizationReducer(
   state: AuthorizationState = INITIAL_STATE,
@@ -62,9 +76,23 @@ export function authorizationReducer(
     case FETCH_AUTHORIZATIONS_REQUEST: {
       return {
         ...state,
+        error: null,
         loading: loadingReducer(state.loading, action)
       }
     }
+    case AUTHORIZATION_FLOW_REQUEST:
+    case AUTHORIZATION_FLOW_SUCCESS:
+      return {
+        ...state,
+        authorizationFlowError: null,
+        loading: loadingReducer(state.loading, action)
+      }
+    case AUTHORIZATION_FLOW_FAILURE:
+      return {
+        ...state,
+        authorizationFlowError: action.payload.error,
+        loading: loadingReducer(state.loading, action)
+      }
     case FETCH_AUTHORIZATIONS_SUCCESS: {
       const { authorizations } = action.payload
 
@@ -85,6 +113,7 @@ export function authorizationReducer(
       }, [] as Authorization[])
 
       return {
+        ...state,
         loading: loadingReducer(state.loading, action),
         error: null,
         // concat the base and new authorizations, without duplications and removing the ones that are now null.
@@ -98,6 +127,13 @@ export function authorizationReducer(
         ...state,
         loading: loadingReducer(state.loading, action),
         error: action.payload.error
+      }
+    }
+    case AUTHORIZATION_FLOW_CLEAR: {
+      return {
+        ...state,
+        loading: loadingReducer(state.loading, action),
+        authorizationFlowError: null
       }
     }
     case FETCH_TRANSACTION_SUCCESS: {
