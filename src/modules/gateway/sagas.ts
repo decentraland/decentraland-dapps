@@ -310,6 +310,7 @@ function* handleFiatGatewayPurchaseCompleted(
 function* handleSetManaPurchase(purchase: Purchase) {
   const finalStatuses = [
     PurchaseStatus.COMPLETE,
+    PurchaseStatus.REFUNDED,
     PurchaseStatus.FAILED,
     PurchaseStatus.CANCELLED
   ]
