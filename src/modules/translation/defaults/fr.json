@@ -198,8 +198,12 @@
         "action": "liste à vendre"
       },
       "publish_collection": {
-        "title_action": "publier une collection",
-        "action": "publier une collection"
+        "title_action": "publication",
+        "action": "Collection de publication",
+        "confirm_transaction_title": "Transaction complète pour publier votre collection",
+        "authorize_mana_description": "Gardez à l'esprit que certains portefeuilles nécessitent de définir une limite de dépenses de mana personnalisée.Entrez un prix des frais de {price} ou un montant légèrement plus élevé pour éviter le rejet des transactions en raison de la volatilité des prix.Vous pouvez modifier la limite à tout moment.",
+        "set_cap_description": "Entrez un prix des frais de {price} ou un montant légèrement plus élevé pour éviter le rejet des transactions en raison de la volatilité des prix.Vous pouvez modifier la limite à tout moment.",
+        "insufficient_amount_error_message": "N'oubliez pas de définir un plafond de dépenses égal au prix des frais {price} ou plus pour éviter d'être rejeté en raison de la volatilité des prix.Révoquez votre capuchon actuel et réessayez."
       }
     }
   }

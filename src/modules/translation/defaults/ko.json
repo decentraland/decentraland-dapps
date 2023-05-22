@@ -198,8 +198,12 @@
         "action": "판매용 목록"
       },
       "publish_collection": {
-        "title_action": "게시 컬렉션",
-        "action": "게시 컬렉션"
+        "title_action": "출판",
+        "action": "컬렉션을 게시하십시오",
+        "confirm_transaction_title": "컬렉션을 게시 할 수있는 거래를 완료하십시오",
+        "authorize_mana_description": "일부 지갑에는 맞춤형 마나 지출 한도를 설정해야합니다.가격 변동성으로 인한 거래 거부를 피하기 위해 {price}의 수수료 가격 또는 약간 더 많은 금액을 입력하십시오.언제든지 한도를 변경할 수 있습니다.",
+        "set_cap_description": "가격 변동성으로 인한 거래 거부를 피하기 위해 {price}의 수수료 가격 또는 약간 더 많은 금액을 입력하십시오.언제든지 한도를 변경할 수 있습니다.",
+        "insufficient_amount_error_message": "가격 변동성으로 인해 거부되지 않도록 수수료 가격 {price} 이상의 지출 한도를 설정해야합니다.현재 캡을 취소하고 다시 시도하십시오."
       }
     }
   }

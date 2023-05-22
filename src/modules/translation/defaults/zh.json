@@ -272,8 +272,12 @@
         "action": "出售列表"
       },
       "publish_collection": {
-        "title_action": "发布收藏",
-        "action": "发布收藏"
+        "title_action": "出版物",
+        "action": "发布集合",
+        "confirm_transaction_title": "完整的交易以发布您的收藏",
+        "authorize_mana_description": "请记住，某些钱包需要设置自定义的法力支出限制。输入{price}的费用或稍高的金额，以避免由于价格波动而拒绝交易。您可以随时更改限制。",
+        "set_cap_description": "输入{price}的费用或稍高的金额，以避免由于价格波动而拒绝交易。您可以随时更改限制。",
+        "insufficient_amount_error_message": "请记住，将支出上限设置为等于费用{price}或更高的费用，以免由于价格波动而被拒绝。撤销当前的帽子然后重试."
       }
     }
   }
