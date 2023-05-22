@@ -48,9 +48,7 @@ export function AuthorizationModal({
   const [loading, setLoading] = useState<AuthorizationStepAction>()
   const [shouldReauthorize, setShouldReauthorize] = useState(false)
 
-  const requiredAllowanceAsEth = requiredAllowance
-    ? getPriceInMana(requiredAllowance)
-    : ''
+  const requiredAllowanceAsEth = getPriceInMana(requiredAllowance)
 
   useEffect(() => {
     analytics.track('[Authorization Flow] Modal Opened', {
