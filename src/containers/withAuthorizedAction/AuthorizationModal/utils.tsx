@@ -32,8 +32,7 @@ import {
 } from '../../../modules/authorization/actions'
 import {
   AuthorizationStepAction,
-  AuthorizationStepStatus,
-  AuthorizedAction
+  AuthorizationStepStatus
 } from './AuthorizationModal.types'
 import { AuthorizationTranslationKeys } from '../withAuthorizedAction.types'
 

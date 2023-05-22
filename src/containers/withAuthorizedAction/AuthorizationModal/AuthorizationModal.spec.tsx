@@ -45,6 +45,7 @@ function getAuthorizationModal(props: Partial<Props>) {
         .mockReturnValue(AuthorizationStepStatus.PENDING)}
       getConfirmationError={jest.fn()}
       error={''}
+      translationKeys={{}}
       {...props}
     />
   )
