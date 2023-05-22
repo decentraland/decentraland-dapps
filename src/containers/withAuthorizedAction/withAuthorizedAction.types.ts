@@ -6,6 +6,7 @@ import {
   authorizationFlowClear
 } from '../../modules/authorization/actions'
 import { AuthorizationType } from '../../modules/authorization/types'
+import { en } from '../../modules/translation/defaults'
 
 type AuthorizeBaseOptions = {
   /**
@@ -35,6 +36,10 @@ type AllowanceOptions = AuthorizeBaseOptions & {
 }
 
 export type AuthorizeActionOptions = ApprovalOptions | AllowanceOptions
+
+export type AuthorizationTranslationKeys = Partial<
+  typeof en['@dapps']['authorization_modal']
+>
 
 export type WithAuthorizedActionProps = {
   onAuthorizedAction: (options: AuthorizeActionOptions) => void

@@ -22,7 +22,8 @@ import {
   MapStateProps,
   AuthorizeActionOptions,
   MapDispatch,
-  MapDispatchProps
+  MapDispatchProps,
+  AuthorizationTranslationKeys
 } from './withAuthorizedAction.types'
 
 const mapState = (state: RootStateOrAny): MapStateProps => ({
@@ -38,6 +39,7 @@ export default function withAuthorizedAction<
 >(
   WrappedComponent: React.ComponentType<P>,
   action: AuthorizedAction,
+  translationKeys: AuthorizationTranslationKeys,
   getConfirmationStatus?: (state: RootStateOrAny) => AuthorizationStepStatus,
   getConfirmationError?: (state: RootStateOrAny) => string | null
 ): React.ComponentType<Omit<P, keyof WithAuthorizedActionProps>> {
@@ -104,6 +106,7 @@ export default function withAuthorizedAction<
             }
 
             setAuthModalData({
+              translationKeys,
               authorization,
               authorizedContractLabel,
               currentAllowance: allowance,
@@ -132,6 +135,7 @@ export default function withAuthorizedAction<
             }
 
             setAuthModalData({
+              translationKeys,
               authorization,
               authorizationType: authorizationType,
               action,

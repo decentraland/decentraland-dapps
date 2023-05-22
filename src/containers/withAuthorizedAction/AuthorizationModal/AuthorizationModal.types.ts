@@ -12,6 +12,7 @@ import {
   Authorization,
   AuthorizationType
 } from '../../../modules/authorization/types'
+import { AuthorizationTranslationKeys } from '../withAuthorizedAction.types'
 
 // Action to perfom after authorization step is finished
 export enum AuthorizedAction {
@@ -40,6 +41,7 @@ export enum AuthorizationStepAction {
   GRANT = 'grant',
   CONFIRM = 'confirm'
 }
+
 export type Props = {
   authorization: Authorization
   requiredAllowance?: BigNumber
@@ -53,6 +55,7 @@ export type Props = {
   confirmationError: string | null
   network: Network
   authorizedContractLabel?: string
+  translationKeys: AuthorizationTranslationKeys
   getConfirmationStatus?: (state: RootStateOrAny) => AuthorizationStepStatus
   getConfirmationError?: (state: RootStateOrAny) => string | null
   onClose: () => void

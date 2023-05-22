@@ -23,7 +23,7 @@ import { isLoadingType } from '../../../modules/loading/selectors'
 import { getType } from '../../../modules/loading/utils'
 import { getTransactions } from '../../../modules/transaction/selectors'
 import { isPending } from '../../../modules/transaction/utils'
-import { t, t_cond } from '../../../modules/translation/utils'
+import { t_cond } from '../../../modules/translation/utils'
 import { getData as getAuthorizations } from '../../../modules/authorization/selectors'
 import {
   AUTHORIZATION_FLOW_REQUEST,
@@ -32,11 +32,36 @@ import {
 } from '../../../modules/authorization/actions'
 import {
   AuthorizationStepAction,
-  AuthorizationStepStatus,
-  AuthorizedAction
+  AuthorizationStepStatus
 } from './AuthorizationModal.types'
+import { AuthorizationTranslationKeys } from '../withAuthorizedAction.types'
 
 const MAX_ERROR_LENGTH = 150
+
+export function safeGet(obj: object, key: string): string | undefined {
+  const keyParts = key.split('.')
+  const value = keyParts.reduce((o, key) => {
+    if (o === undefined) {
+      return undefined
+    }
+
+    return o[key]
+  }, obj)
+
+  return typeof value !== 'string' ? undefined : value
+}
+
+export function getTranslation(
+  translationKeys: AuthorizationTranslationKeys,
+  key: string,
+  values?: any
+) {
+  return t_cond(
+    safeGet(translationKeys, key),
+    `@dapps.authorization_modal.${key}`,
+    values
+  )
+}
 
 export function getStepStatus(
   state: RootStateOrAny,
@@ -116,7 +141,8 @@ export function getStepStatus(
 
 export function getStepError(
   error: string | null,
-  action: AuthorizationStepAction
+  action: AuthorizationStepAction,
+  translationKeys: AuthorizationTranslationKeys
 ) {
   if (!error) {
     return undefined
@@ -124,11 +150,11 @@ export function getStepError(
 
   // When revoke fails always return revoke cap error message
   if (action === AuthorizationStepAction.REVOKE) {
-    return t('@dapps.authorization_modal.revoke_cap_error')
+    return getTranslation(translationKeys, 'revoke_cap_error')
   }
 
   return error.length > MAX_ERROR_LENGTH
-    ? t('@dapps.authorization_modal.generic_error')
+    ? getTranslation(translationKeys, 'generic_error')
     : error
 }
 
@@ -138,33 +164,36 @@ export function getStepMessage(
   error: string | null,
   currentStep: number,
   price: string,
-  action: AuthorizationStepAction
+  action: AuthorizationStepAction,
+  translationKeys: AuthorizationTranslationKeys
 ) {
   if (stepIndex > currentStep) {
     return ''
   }
 
   if (stepIndex < currentStep) {
-    return t('@dapps.authorization_modal.done')
+    return getTranslation(translationKeys, 'done')
   }
 
   switch (stepStatus) {
     case AuthorizationStepStatus.WAITING:
-      return t('@dapps.authorization_modal.waiting_wallet')
+      return getTranslation(translationKeys, 'waiting_wallet')
     case AuthorizationStepStatus.PROCESSING:
-      return t('@dapps.authorization_modal.waiting_confirmation')
+      return getTranslation(translationKeys, 'waiting_confirmation')
     case AuthorizationStepStatus.ERROR:
       return (
-        <div className="authorization-error">{getStepError(error, action)}</div>
+        <div className="authorization-error">
+          {getStepError(error, action, translationKeys)}
+        </div>
       )
     case AuthorizationStepStatus.ALLOWANCE_AMOUNT_ERROR:
       return (
         <div className="authorization-error">
-          {t('@dapps.authorization_modal.spending_cap_error', { price })}
+          {getTranslation(translationKeys, 'spending_cap_error', { price })}
         </div>
       )
     case AuthorizationStepStatus.DONE:
-      return t('@dapps.authorization_modal.done')
+      return getTranslation(translationKeys, 'done')
     default:
       return undefined
   }
@@ -184,9 +213,9 @@ export function getSteps({
   requiredAllowance,
   authorizedContractLabel,
   currentAllowance,
-  action
+  translationKeys
 }: {
-  action: AuthorizedAction
+  translationKeys: AuthorizationTranslationKeys
   authorization: Authorization
   authorizationType: AuthorizationType
   network: Network
@@ -202,21 +231,17 @@ export function getSteps({
   ) {
     return [
       {
-        title: t('@dapps.authorization_modal.revoke_cap.title'),
-        description: t('@dapps.authorization_modal.revoke_cap.description', {
+        title: getTranslation(translationKeys, 'revoke_cap.title'),
+        description: getTranslation(translationKeys, 'revoke_cap.description', {
           price: requiredAllowanceAsEth
         }),
         actionType: AuthorizationStepAction.REVOKE
       },
       {
-        title: t('@dapps.authorization_modal.set_cap.title'),
-        description: t_cond(
-          `@dapps.authorization_modal.${action}.revoke_cap_description`,
-          '@dapps.authorization_modal.set_cap.description',
-          {
-            price: requiredAllowanceAsEth
-          }
-        ),
+        title: getTranslation(translationKeys, 'set_cap.title'),
+        description: getTranslation(translationKeys, 'set_cap.description', {
+          price: requiredAllowanceAsEth
+        }),
         actionType: AuthorizationStepAction.GRANT
       }
     ]
@@ -225,7 +250,7 @@ export function getSteps({
   if (authorizationType === AuthorizationType.ALLOWANCE) {
     return [
       {
-        title: t('@dapps.authorization_modal.authorize_mana.title', {
+        title: getTranslation(translationKeys, 'authorize_mana.title', {
           contract: () => (
             <TransactionLink
               address={authorization.authorizedAddress || ''}
@@ -236,9 +261,9 @@ export function getSteps({
             </TransactionLink>
           )
         }),
-        description: t_cond(
-          `@dapps.authorization_modal.${action}.authorize_mana_description`,
-          '@dapps.authorization_modal.authorize_mana.description',
+        description: getTranslation(
+          translationKeys,
+          'authorize_mana.description',
           {
             price: requiredAllowanceAsEth
           }
@@ -250,7 +275,7 @@ export function getSteps({
 
   return [
     {
-      title: t('@dapps.authorization_modal.authorize_nft.title', {
+      title: getTranslation(translationKeys, 'authorize_nft.title', {
         contract: () => (
           <TransactionLink
             address={authorization.authorizedAddress || ''}

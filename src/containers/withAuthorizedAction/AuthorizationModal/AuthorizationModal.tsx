@@ -4,14 +4,18 @@ import {
   AuthorizationStep,
   AuthorizationModal as BaseAuthorizationModal
 } from 'decentraland-ui'
-import { t, t_cond } from '../../../modules/translation/utils'
 import { getAnalytics } from '../../../modules/analytics/utils'
 import {
   AuthorizationStepAction,
   AuthorizationStepStatus,
   Props
 } from './AuthorizationModal.types'
-import { getPriceInMana, getStepMessage, getSteps } from './utils'
+import {
+  getPriceInMana,
+  getStepMessage,
+  getSteps,
+  getTranslation
+} from './utils'
 
 const LOADING_STATUS = [
   AuthorizationStepStatus.LOADING_INFO,
@@ -32,6 +36,7 @@ export function AuthorizationModal({
   confirmationError,
   network,
   authorizedContractLabel,
+  translationKeys,
   onClose,
   onRevoke,
   onGrant,
@@ -88,20 +93,15 @@ export function AuthorizationModal({
       currentAllowance,
       authorization,
       authorizedContractLabel,
-      action
+      translationKeys
     })
     return [
       ...authSteps,
       {
-        // TODO: Move action translations to component
-        title: t_cond(
-          `@dapps.authorization_modal.${action}.confirm_transaction_title`,
-          '@dapps.authorization_modal.confirm_transaction.title',
-          {
-            action: t(`@dapps.authorization_modal.${action}.action`)
-          }
-        ),
-        action: t('@dapps.authorization_modal.confirm_transaction.action'),
+        title: getTranslation(translationKeys, 'confirm_transaction.title', {
+          action: getTranslation(translationKeys, 'action')
+        }),
+        action: getTranslation(translationKeys, 'confirm_transaction.action'),
         status: confirmationStatus,
         actionType: AuthorizationStepAction.CONFIRM,
         error: confirmationError,
@@ -117,18 +117,20 @@ export function AuthorizationModal({
           ) {
             return {
               ...step,
-              error: t_cond(
-                `@dapps.authorization_modal.${action}.insufficient_amount_error_message`,
-                '@dapps.authorization_modal.insufficient_amount_error.message',
-                { price: requiredAllowanceAsEth }
+              error: getTranslation(
+                translationKeys,
+                'insufficient_amount_error.message',
+                {
+                  price: requiredAllowanceAsEth
+                }
               ),
               action: 'Revoke',
               status: revokeStatus,
               message: !LOADING_STATUS.includes(revokeStatus) ? (
                 <div className="authorization-error">
-                  {t_cond(
-                    `@dapps.authorization_modal.${action}.insufficient_amount_error_message`,
-                    '@dapps.authorization_modal.insufficient_amount_error.message',
+                  {getTranslation(
+                    translationKeys,
+                    'insufficient_amount_error.message',
                     { price: requiredAllowanceAsEth }
                   )}
                 </div>
@@ -145,7 +147,7 @@ export function AuthorizationModal({
             action:
               grantStatus === AuthorizationStepStatus.DONE
                 ? undefined
-                : t('@dapps.authorization_modal.set_cap.action'),
+                : getTranslation(translationKeys, 'set_cap.action'),
             error,
             status: grantStatus,
             onActionClick: handleGrantToken
@@ -158,7 +160,7 @@ export function AuthorizationModal({
             action:
               revokeStatus === AuthorizationStepStatus.DONE
                 ? undefined
-                : t('@dapps.authorization_modal.revoke_cap.action'),
+                : getTranslation(translationKeys, 'revoke_cap.action'),
             error,
             status: revokeStatus,
             onActionClick: handleRevokeToken
@@ -181,7 +183,8 @@ export function AuthorizationModal({
                   step.error,
                   currentStep,
                   requiredAllowanceAsEth,
-                  step.actionType
+                  step.actionType,
+                  translationKeys
                 ),
           testId: 'testId' in step ? step.testId : `${step.actionType}-step`
         }
@@ -237,8 +240,8 @@ export function AuthorizationModal({
       onClose={onClose}
       currentStep={currentStep}
       steps={steps}
-      header={t('@dapps.authorization_modal.title', {
-        action: t(`@dapps.authorization_modal.${action}.title_action`)
+      header={getTranslation(translationKeys, 'title', {
+        action: getTranslation(translationKeys, 'title_action')
       })}
     />
   )
