@@ -36,9 +36,24 @@ export default class LoginModal extends React.PureComponent<Props, State> {
   }
 
   handleOnConnect = (loginType: LoginModalOptionType) => {
-    const onConnect = this.props.metadata?.onConnect ?? this.props.onConnect
-    const providerType: ProviderType = toProviderType(loginType)
-    onConnect(providerType)
+    const { metadata, onConnect, isWalletConnectV2Enabled } = this.props
+
+    let providerType: ProviderType = toProviderType(loginType)
+
+    console.log(isWalletConnectV2Enabled)
+
+    if (
+      isWalletConnectV2Enabled &&
+      providerType === ProviderType.WALLET_CONNECT
+    ) {
+      providerType = ProviderType.WALLET_CONNECT_V2
+    }
+
+    if (metadata?.onConnect) {
+      metadata.onConnect(providerType)
+    } else {
+      onConnect(providerType)
+    }
   }
 
   getModalTranslations = (): LoginModalI18N | undefined => {

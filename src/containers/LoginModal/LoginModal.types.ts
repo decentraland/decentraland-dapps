@@ -11,6 +11,7 @@ export type Props = DefaultProps &
   LoginModalProps & {
     metadata?: Metadata
     hasTranslations?: boolean
+    isWalletConnectV2Enabled: boolean
     onConnect: (providerType: ProviderType) => any
   }
 
@@ -26,7 +27,7 @@ export type Metadata = {
 
 export type MapStateProps = Pick<
   Props,
-  'hasTranslations' | 'isLoading' | 'hasError'
+  'hasTranslations' | 'isLoading' | 'hasError' | 'isWalletConnectV2Enabled'
 >
 export type MapDispatchProps = Pick<Props, 'onConnect'>
 export type MapDispatch = Dispatch<EnableWalletRequestAction>
