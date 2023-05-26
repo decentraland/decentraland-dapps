@@ -40,8 +40,6 @@ export default class LoginModal extends React.PureComponent<Props, State> {
 
     let providerType: ProviderType = toProviderType(loginType)
 
-    console.log(isWalletConnectV2Enabled)
-
     if (
       isWalletConnectV2Enabled &&
       providerType === ProviderType.WALLET_CONNECT
