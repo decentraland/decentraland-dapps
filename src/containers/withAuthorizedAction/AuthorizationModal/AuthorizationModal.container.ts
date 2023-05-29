@@ -52,20 +52,22 @@ const mapDispatch = (
   dispatch: MapDispatch,
   ownProps: OwnProps
 ): MapDispatchProps => ({
-  onRevoke: () =>
+  onRevoke: (traceId: string) =>
     dispatch(
       authorizationFlowRequest(
         ownProps.authorization,
         AuthorizationAction.REVOKE,
-        ''
+        '',
+        traceId
       )
     ),
-  onGrant: () =>
+  onGrant: (traceId: string) =>
     dispatch(
       authorizationFlowRequest(
         ownProps.authorization,
         AuthorizationAction.GRANT,
-        ownProps.requiredAllowance?.toString() || ''
+        ownProps.requiredAllowance?.toString() || '',
+        traceId
       )
     ),
   onFetchAuthorizations: () =>

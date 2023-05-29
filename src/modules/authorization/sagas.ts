@@ -186,7 +186,12 @@ export function createAuthorizationSaga() {
   function* handleAuthorizationFlowRequest(
     action: AuthorizationFlowRequestAction
   ) {
-    const { authorizationAction, authorization, allowance } = action.payload
+    const {
+      authorizationAction,
+      authorization,
+      allowance,
+      traceId
+    } = action.payload
     const isRevoke = authorizationAction === AuthorizationAction.REVOKE
     const tokenRequest = isRevoke
       ? revokeTokenRequest(authorization)
@@ -215,7 +220,8 @@ export function createAuthorizationSaga() {
       analytics.track(
         `[Authorization Flow] ${
           isRevoke ? 'Revoke' : 'Grant'
-        } Transaction Approved in Wallet`
+        } Transaction Approved in Wallet`,
+        { traceId }
       )
       const txHash = getTransactionFromAction(
         success as RevokeTokenSuccessAction | GrantTokenSuccessAction
