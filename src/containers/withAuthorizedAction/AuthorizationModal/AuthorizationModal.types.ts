@@ -60,8 +60,8 @@ export type Props = {
   getConfirmationError?: (state: RootStateOrAny) => string | null
   onClose: () => void
   onAuthorized: () => void
-  onRevoke: () => ReturnType<typeof authorizationFlowRequest>
-  onGrant: () => ReturnType<typeof authorizationFlowRequest>
+  onRevoke: (traceId: string) => ReturnType<typeof authorizationFlowRequest>
+  onGrant: (traceId: string) => ReturnType<typeof authorizationFlowRequest>
   onFetchAuthorizations: () => ReturnType<typeof fetchAuthorizationsRequest>
 }
 

@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import uuid from 'uuid'
 import { Network } from '@dcl/schemas'
 import {
   AuthorizationStep,
@@ -44,6 +45,7 @@ export function AuthorizationModal({
   onFetchAuthorizations
 }: Props) {
   const analytics = getAnalytics()
+  const [analyticsTraceId] = useState(uuid())
   const [currentStep, setCurrentStep] = useState(0)
   const [loading, setLoading] = useState<AuthorizationStepAction>()
   const [shouldReauthorize, setShouldReauthorize] = useState(false)
@@ -53,7 +55,8 @@ export function AuthorizationModal({
   useEffect(() => {
     analytics.track('[Authorization Flow] Modal Opened', {
       action,
-      requiredAllowance
+      requiredAllowance,
+      traceId: analyticsTraceId
     })
   }, [])
 
@@ -62,17 +65,19 @@ export function AuthorizationModal({
   }, [onFetchAuthorizations])
 
   const handleRevokeToken = useCallback(() => {
-    onRevoke()
+    onRevoke(analyticsTraceId)
     analytics.track('[Authorization Flow] Authorize Revoke Click', {
-      action
+      action,
+      traceId: analyticsTraceId
     })
     setLoading(AuthorizationStepAction.REVOKE)
   }, [onRevoke])
 
   const handleGrantToken = useCallback(() => {
-    onGrant()
+    onGrant(analyticsTraceId)
     analytics.track('[Authorization Flow] Authorize Grant Click', {
-      action
+      action,
+      traceId: analyticsTraceId
     })
     setLoading(AuthorizationStepAction.GRANT)
   }, [onGrant])
@@ -80,7 +85,8 @@ export function AuthorizationModal({
   const handleAuthorized = useCallback(() => {
     onAuthorized()
     analytics.track('[Authorization Flow] Confirm Transaction Click', {
-      action
+      action,
+      traceId: analyticsTraceId
     })
     setLoading(AuthorizationStepAction.CONFIRM)
   }, [onAuthorized])
