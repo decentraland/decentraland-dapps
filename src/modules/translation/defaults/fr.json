@@ -142,7 +142,7 @@
       "revoke_cap_error": "N'oubliez pas de définir un plafond de dépenses de 0 MANA afin de révoquer votre précédent.",
       "generic_error": "Quelque chose s'est mal passé",
       "insufficient_amount_error": {
-        "message": "N'oubliez pas de définir un plafond de dépenses égal au prix de l'article {price} MANA ou plus.Vous devrez révoquer votre plafond de dépenses actuel avant de l'autoriser à nouveau.",
+        "message": "Votre plafond de dépenses n'est pas suffisant pour couvrir le montant d'achat de {price} MANA. Pour continuer, veuillez ajuster votre plafond de dépenses égal ou supérieur.Révoquez le plafond de dépenses actuel et réessayez avec une limite appropriée.",
         "action": "Revoke"
       },
       "authorize_mana": {

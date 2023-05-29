@@ -216,7 +216,7 @@
       "revoke_cap_error": "Remember to set a spending cap of 0 MANA in order to revoke your previous one.",
       "generic_error": "Something went wrong",
       "insufficient_amount_error": {
-        "message": "Remember to set a spending cap equal to the item price {price} MANA or higher. You'll have to revoke your current spending cap before authorizing again.",
+        "message": "Your spending cap is not enough to cover the purchase amount of {price} MANA. To proceed, please adjust your spending cap equal or higher. Revoke the current spending cap and retry with an appropriate limit.",
         "action": "Revoke"
       },
       "authorize_mana": {
