@@ -5,7 +5,7 @@ import { ethers } from 'ethers'
 import { ProviderType } from '@dcl/schemas/dist/dapps/provider-type'
 import { getChainConfiguration } from './chainConfiguration'
 import { isMobile } from './utils'
-import { tryPreviousConnectionWrapper } from './TryPreviousConnectionWrapper'
+import { tryPreviousConnection } from './wcv2Utils'
 
 export type EthereumWindow = Window & {
   ethereum?: Provider & {
@@ -62,9 +62,7 @@ export async function getNetworkWeb3Provider(chainId: ChainId) {
 
 export async function getConnectedProvider(): Promise<Provider | null> {
   try {
-    const {
-      provider
-    } = await tryPreviousConnectionWrapper.tryPreviousConnection()
+    const { provider } = await tryPreviousConnection()
     return provider ? provider : null
   } catch (error) {
     return null

@@ -1,11 +1,11 @@
-import { fetchSingleApplicationFeatures } from '../modules/features/utils'
-import { ApplicationName, FeatureName } from '../modules/features/types'
+import { fetchSingleApplicationFeatures } from '../../modules/features/utils'
+import { ApplicationName, FeatureName } from '../../modules/features/types'
 
-class FetchIsWalletConnectV2EnabledWrapper {
+export class FetchIsWalletConnectV2Enabled {
   private isWalletConnectV2Enabled: boolean | null = null
   private fetchIsWalletConnectV2EnabledPromise: Promise<boolean> | null = null
 
-  fetchIsWalletConnectV2Enabled = async (): Promise<boolean> => {
+  exec = async (): Promise<boolean> => {
     if (this.isWalletConnectV2Enabled !== null) {
       return this.isWalletConnectV2Enabled
     }
@@ -25,5 +25,3 @@ class FetchIsWalletConnectV2EnabledWrapper {
     return this.fetchIsWalletConnectV2EnabledPromise
   }
 }
-
-export const fetchIsWalletConnectV2EnabledWrapper = new FetchIsWalletConnectV2EnabledWrapper()
