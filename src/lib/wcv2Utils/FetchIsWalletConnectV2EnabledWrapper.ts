@@ -9,10 +9,13 @@ export class FetchIsWalletConnectV2Enabled {
   private fetchIsWalletConnectV2EnabledPromise: Promise<boolean> | null = null
 
   exec = async (): Promise<boolean> => {
+    // If the result is already in memory, return it immediately.
     if (this.isWalletConnectV2Enabled !== null) {
       return this.isWalletConnectV2Enabled
     }
 
+    // Only fetch the feature flag the first time this function is called.
+    // Any other call will subscribe to the result of a single promise.
     if (!this.fetchIsWalletConnectV2EnabledPromise) {
       this.fetchIsWalletConnectV2EnabledPromise = fetchSingleApplicationFeatures(
         ApplicationName.DAPPS
