@@ -34,4 +34,8 @@ const mergeProps = (
   ...ownProps
 })
 
-export default connect(mapState, mapDispatch, mergeProps)(LoginModal)
+export default connect(
+  mapState,
+  mapDispatch,
+  mergeProps
+)(LoginModal)
