@@ -2,6 +2,9 @@ import { ProviderType } from '@dcl/schemas'
 import { connection } from 'decentraland-connect'
 import { FetchIsWalletConnectV2Enabled } from './FetchIsWalletConnectV2EnabledWrapper'
 
+/**
+ * Depending on the version of Wallet Connect required, it will disconnect the current connection if it is not using the correct version.
+ */
 export class TryPreviousConnection {
   constructor(
     private fetchIsWalletConnectV2Enabled: typeof FetchIsWalletConnectV2Enabled.prototype['exec']

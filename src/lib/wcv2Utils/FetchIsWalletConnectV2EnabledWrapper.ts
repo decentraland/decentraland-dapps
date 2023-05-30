@@ -1,6 +1,9 @@
 import { fetchSingleApplicationFeatures } from '../../modules/features/utils'
 import { ApplicationName, FeatureName } from '../../modules/features/types'
 
+/**
+ * Intended to be used as a singleton so the feature flag is only fetched once.
+ */
 export class FetchIsWalletConnectV2Enabled {
   private isWalletConnectV2Enabled: boolean | null = null
   private fetchIsWalletConnectV2EnabledPromise: Promise<boolean> | null = null
