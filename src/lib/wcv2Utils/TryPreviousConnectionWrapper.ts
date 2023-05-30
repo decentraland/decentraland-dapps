@@ -14,6 +14,8 @@ export class TryPreviousConnection {
     const connectionData = connection.getConnectionData()
     const providerType = connectionData?.providerType
 
+    // The logic is only required when the connected provider is Wallet Connect.
+    // Otherwise, it will just try to reconnect as usual.
     if (
       providerType &&
       (providerType === ProviderType.WALLET_CONNECT ||
@@ -21,6 +23,7 @@ export class TryPreviousConnection {
     ) {
       const isWalletConnectV2Enabled = await this.fetchIsWalletConnectV2Enabled()
 
+      // Disconnect if the current Wallet Connect connection is using a different version.
       if (
         (isWalletConnectV2Enabled &&
           providerType === ProviderType.WALLET_CONNECT) ||
