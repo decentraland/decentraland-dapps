@@ -10,7 +10,7 @@ export const fetchApplicationFeatures = async (apps: ApplicationName[]) => {
   }, {} as Record<ApplicationName, ApplicationFeatures>)
 }
 
-const fetchSingleApplicationFeatures = async (
+export const fetchSingleApplicationFeatures = async (
   app: ApplicationName
 ): Promise<ApplicationFeatures> => {
   const url = `https://feature-flags.decentraland.org/${app}.json`

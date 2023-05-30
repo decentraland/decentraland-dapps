@@ -12,6 +12,7 @@ import {
 } from 'redux-saga/effects'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { connection, Provider } from 'decentraland-connect'
+import { fetchIsWalletConnectV2Enabled } from '../../lib/wcv2Utils'
 import {
   _getAppChainId,
   getConnectedProvider,
@@ -78,7 +79,14 @@ export async function getAccount(providerType: ProviderType) {
     await cucumberProviderSend('eth_requestAccounts')
   }
 
-  const { account } = await connection.connect(providerType, _getAppChainId())
+  const isWalletConnectV2Enabled = await fetchIsWalletConnectV2Enabled()
+
+  const { account } = await connection.connect(
+    providerType === ProviderType.WALLET_CONNECT && isWalletConnectV2Enabled
+      ? ProviderType.WALLET_CONNECT_V2
+      : providerType,
+    _getAppChainId()
+  )
 
   return account
 }
