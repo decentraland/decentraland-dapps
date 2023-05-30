@@ -108,12 +108,14 @@ export const AUTHORIZATION_FLOW_CLEAR = '[Clear] Authorization Flow'
 export const authorizationFlowRequest = (
   authorization: Authorization,
   authorizationAction: AuthorizationAction,
-  allowance?: string
+  allowance?: string,
+  traceId?: string
 ) =>
   action(AUTHORIZATION_FLOW_REQUEST, {
     authorization,
     authorizationAction,
-    allowance
+    allowance,
+    traceId
   })
 
 export const authorizationFlowSuccess = (authorization: Authorization) =>

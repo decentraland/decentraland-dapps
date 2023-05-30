@@ -547,7 +547,8 @@ describe('when clicking revoke authorization button', () => {
     expect(trackMock).toHaveBeenCalledWith(
       '[Authorization Flow] Authorize Revoke Click',
       {
-        action: AuthorizedAction.BUY
+        action: AuthorizedAction.BUY,
+        traceId: expect.any(String)
       }
     )
   })
@@ -604,7 +605,8 @@ describe('when clicking grant authorization button', () => {
     expect(trackMock).toHaveBeenCalledWith(
       '[Authorization Flow] Authorize Grant Click',
       {
-        action: AuthorizedAction.BUY
+        action: AuthorizedAction.BUY,
+        traceId: expect.any(String)
       }
     )
   })
