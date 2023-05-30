@@ -19,6 +19,7 @@ import {
   isValidChainId,
   _setAppChainId
 } from '../../lib/eth'
+import { fetchIsWalletConnectV2EnabledWrapper } from '../../lib/FetchIsWalletConnectV2EnabledWrapper'
 import {
   connectWalletSuccess,
   connectWalletFailure,
@@ -78,7 +79,14 @@ export async function getAccount(providerType: ProviderType) {
     await cucumberProviderSend('eth_requestAccounts')
   }
 
-  const { account } = await connection.connect(providerType, _getAppChainId())
+  const isWalletConnectV2Enabled = await fetchIsWalletConnectV2EnabledWrapper.fetchIsWalletConnectV2Enabled()
+
+  const { account } = await connection.connect(
+    providerType === ProviderType.WALLET_CONNECT && isWalletConnectV2Enabled
+      ? ProviderType.WALLET_CONNECT_V2
+      : providerType,
+    _getAppChainId()
+  )
 
   return account
 }
