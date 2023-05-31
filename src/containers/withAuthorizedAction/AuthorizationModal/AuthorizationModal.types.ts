@@ -55,6 +55,7 @@ export type Props = {
   confirmationError: string | null
   network: Network
   authorizedContractLabel?: string
+  targetContractLabel?: string
   translationKeys: AuthorizationTranslationKeys
   getConfirmationStatus?: (state: RootStateOrAny) => AuthorizationStepStatus
   getConfirmationError?: (state: RootStateOrAny) => string | null
