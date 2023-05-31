@@ -37,6 +37,7 @@ export function AuthorizationModal({
   confirmationError,
   network,
   authorizedContractLabel,
+  targetContractLabel,
   translationKeys,
   onClose,
   onRevoke,
@@ -99,7 +100,8 @@ export function AuthorizationModal({
       currentAllowance,
       authorization,
       authorizedContractLabel,
-      translationKeys
+      translationKeys,
+      targetContractLabel
     })
     return [
       ...authSteps,

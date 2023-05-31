@@ -226,7 +226,7 @@
         "message": "Remember to set a cap equal to the item price {price} MANA or higher."
       },
       "authorize_nft": {
-        "title": "First, authorize the <contract></contract> contract to operate NFT on your behalf in Decentraland",
+        "title": "First, authorize the <contract></contract> contract to operate your <targetContract></targetContract> NFTs on your behalf in Decentraland",
         "action": "Authorize"
       },
       "confirm_transaction": {

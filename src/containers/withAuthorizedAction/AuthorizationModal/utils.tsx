@@ -212,6 +212,7 @@ export function getSteps({
   network,
   requiredAllowance,
   authorizedContractLabel,
+  targetContractLabel,
   currentAllowance,
   translationKeys
 }: {
@@ -222,6 +223,7 @@ export function getSteps({
   requiredAllowance?: BigNumber
   currentAllowance?: BigNumber
   authorizedContractLabel?: string
+  targetContractLabel?: string
 }) {
   const requiredAllowanceAsEth = getPriceInMana(requiredAllowance)
   if (
@@ -283,6 +285,15 @@ export function getSteps({
             txHash=""
           >
             {authorizedContractLabel || authorization.authorizedAddress}
+          </TransactionLink>
+        ),
+        targetContract: () => (
+          <TransactionLink
+            address={authorization.contractAddress || ''}
+            chainId={authorization.chainId}
+            txHash=""
+          >
+            {targetContractLabel || authorization.contractAddress}
           </TransactionLink>
         )
       }),

@@ -134,6 +134,8 @@ export default function withAuthorizedAction<
               return
             }
 
+            const { targetContractLabel } = authorizeOptions
+
             setAuthModalData({
               translationKeys,
               authorization,
@@ -141,6 +143,7 @@ export default function withAuthorizedAction<
               action,
               network: targetContract.network,
               authorizedContractLabel,
+              targetContractLabel,
               onAuthorized: () => onAuthorized(false),
               getConfirmationStatus,
               getConfirmationError

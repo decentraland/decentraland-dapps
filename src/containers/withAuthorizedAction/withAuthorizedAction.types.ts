@@ -27,6 +27,7 @@ type AuthorizeBaseOptions = {
 
 type ApprovalOptions = AuthorizeBaseOptions & {
   authorizationType: AuthorizationType.APPROVAL
+  targetContractLabel?: string
   tokenId: string
 }
 
