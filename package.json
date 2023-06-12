@@ -12,7 +12,7 @@
     "axios": "^0.21.1",
     "date-fns": "^1.29.0",
     "dcl-catalyst-client": "^14.0.9",
-    "decentraland-connect": "^4.0.4",
+    "decentraland-connect": "^4.0.5",
     "decentraland-crypto-fetch": "^1.0.3",
     "decentraland-transactions": "^1.44.0",
     "decentraland-ui": "^3.109.2",
