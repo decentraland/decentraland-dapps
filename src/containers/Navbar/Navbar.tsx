@@ -63,7 +63,8 @@ export default class Navbar extends React.PureComponent<NavbarProps> {
           collections: <T id="@dapps.navbar.menu.builder.collections" />,
           scenes: <T id="@dapps.navbar.menu.builder.scenes" />,
           land: <T id="@dapps.navbar.menu.builder.land" />,
-          names: <T id="@dapps.navbar.menu.builder.names" />
+          names: <T id="@dapps.navbar.menu.builder.names" />,
+          worlds: <T id="@dapps.navbar.menu.builder.worlds" />
         }
       },
       account: {

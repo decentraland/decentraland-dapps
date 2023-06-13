@@ -49,7 +49,8 @@
           "collections": "Collections",
           "scenes": "Scenes",
           "land": "Land",
-          "names": "Names"
+          "names": "Names",
+          "worlds": "Worlds"
         },
         "events": "Events",
         "dao": {
