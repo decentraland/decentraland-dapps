@@ -1,4 +1,5 @@
 import { takeLatest, takeEvery, ForkEffect } from 'redux-saga/effects'
+import { connection } from 'decentraland-connect'
 import { getAnalytics, trackConnectWallet } from './utils'
 import {
   CONNECT_WALLET_SUCCESS,
@@ -34,7 +35,8 @@ function handleConnectWalletSuccess(action: ConnectWalletSuccessAction) {
     // the analytics middleware will call this before the identify.
     trackConnectWallet({
       address: wallet.address,
-      providerType: wallet.providerType
+      providerType: wallet.providerType,
+      walletName: connection.getWalletName()
     })
   }
 }
