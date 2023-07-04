@@ -5,7 +5,7 @@
     "@0xsequence/multicall": "^0.25.1",
     "@0xsequence/relayer": "^0.25.1",
     "@dcl/crypto": "^3.3.1",
-    "@dcl/schemas": "^6.9.0",
+    "@dcl/schemas": "^7.5.0",
     "@transak/transak-sdk": "^1.0.31",
     "@types/flat": "0.0.28",
     "@types/uuid": "^3.4.3",
@@ -78,8 +78,8 @@
     "connected-react-router": "^6.9.1",
     "history": "^4.10.1",
     "react": "^17.0.2",
-    "react-router": "^5.3.4",
     "react-redux": "^7.2.4",
+    "react-router": "^5.3.4",
     "redux": "^4.1.0",
     "redux-saga": "^1.1.3"
   },
