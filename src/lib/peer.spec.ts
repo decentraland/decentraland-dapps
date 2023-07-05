@@ -50,7 +50,7 @@ describe('peerAPI', () => {
           } as Profile
           peerApi.cache = {}
           jest
-            .spyOn(peerApi.lambdasClient, 'fetchProfiles')
+            .spyOn(peerApi.lambdasClient, 'getAvatarsDetailsByPost')
             .mockImplementation(() => Promise.resolve([profileUpdated]))
         })
         it('should fetch the profile', async () => {
@@ -81,7 +81,7 @@ describe('peerAPI', () => {
         } as Profile
         peerApi.cache = {}
         jest
-          .spyOn(peerApi.lambdasClient, 'fetchProfiles')
+          .spyOn(peerApi.lambdasClient, 'getAvatarsDetailsByPost')
           .mockImplementation(() => Promise.resolve([profileUpdated]))
       })
       it('should fetch the profile', async () => {
