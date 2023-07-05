@@ -23,7 +23,6 @@ export class PeerAPI extends BaseAPI {
     address: string,
     options: FetchProfileOptions = { useCache: true }
   ): Promise<Profile> {
-    console.log("> Calling fetchProfile")
     if (options.useCache && address in this.cache) {
       return this.cache[address]
     }
