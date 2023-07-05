@@ -1,27 +1,47 @@
 import { ethers } from 'ethers'
 import { Authenticator, AuthChain } from '@dcl/crypto'
 import { Entity, EntityType } from '@dcl/schemas/dist/platform/entity'
-import { CatalystClient } from 'dcl-catalyst-client/dist/CatalystClient'
-import { BuildEntityWithoutFilesOptions } from 'dcl-catalyst-client/dist/ContentClient'
+import { createCatalystClient } from 'dcl-catalyst-client/dist/client/CatalystClient'
+import { ContentClient } from 'dcl-catalyst-client/dist/client/ContentClient'
+import { BuildEntityWithoutFilesOptions } from 'dcl-catalyst-client/dist/client/types'
 import { getConnectedProvider } from './eth'
 import { ProfileEntity } from './types'
 import { PeerAPI } from './peer'
+import { createFetchComponent } from '@well-known-components/fetch-component'
+import { buildEntityWithoutNewFiles } from 'dcl-catalyst-client/dist/client/utils/DeploymentBuilder'
+
+export async function createEntitiesOperator(peerUrl: string, peerWithNoGbCollectorUrl?: string): Promise<EntitiesOperator> {
+  const catalystClient = await createCatalystClient({ url: peerUrl, fetcher: createFetchComponent() })
+  const catalystContentClient = await catalystClient.getContentClient()
+
+  const catalystClientWithoutGbCollector = 
+    peerWithNoGbCollectorUrl ? 
+    await createCatalystClient({  url: peerWithNoGbCollectorUrl, fetcher: createFetchComponent() }) 
+    : null
+  const catalystContentClientWithoutGbCollector = 
+    catalystClientWithoutGbCollector ?  
+    await catalystClientWithoutGbCollector.getContentClient() 
+    : null
+
+
+  return new EntitiesOperator(
+    catalystContentClient, 
+    catalystContentClientWithoutGbCollector, 
+    new PeerAPI(peerUrl),
+    peerUrl,
+    peerWithNoGbCollectorUrl
+  )
+}
 
 export class EntitiesOperator {
-  private readonly catalystClient: CatalystClient
-  // this is a temporal work-around to fix profile deployment issues on catalysts with Garbage Collector
-  private readonly catalystClientWithoutGbCollector: CatalystClient | null
-  private readonly peerAPI: PeerAPI
-
-  constructor(peerUrl: string, peerWithNoGbCollectorUrl?: string) {
-    this.catalystClient = new CatalystClient({ catalystUrl: peerUrl })
-    this.catalystClientWithoutGbCollector = peerWithNoGbCollectorUrl
-      ? new CatalystClient({
-        catalystUrl: peerWithNoGbCollectorUrl
-      })
-      : null
-    this.peerAPI = new PeerAPI(peerUrl)
-  }
+  constructor(
+    private readonly catalystContentClient: ContentClient,
+    // this is a temporal work-around to fix profile deployment issues on catalysts with Garbage Collector
+    private readonly catalystContentClientWithoutGbCollector: ContentClient | null,
+    private readonly peerAPI: PeerAPI,
+    private readonly peerUrl: string, 
+    private readonly peerWithNoGbCollectorUrl?: string
+    ) {}
 
   /**
    * Uses the provider to request the user for a signature to
@@ -54,7 +74,7 @@ export class EntitiesOperator {
    * @param address - The address that owns the profile entity being retrieved.
    */
   async getProfileEntity(address: string): Promise<ProfileEntity> {
-    const entities: Entity[] = await this.catalystClient.fetchEntitiesByPointers(
+    const entities: Entity[] = await this.catalystContentClient.fetchEntitiesByPointers(
       [address.toLowerCase()]
     )
 
@@ -90,19 +110,17 @@ export class EntitiesOperator {
       timestamp: Date.now()
     }
 
-    const entityToDeploy = await this.catalystClient.buildEntityWithoutNewFiles(
-      options
-    )
+    const catalystClient = this.catalystContentClientWithoutGbCollector ?? this.catalystContentClient
+    const catalystUrl = this.peerWithNoGbCollectorUrl ?? this.peerUrl
+
+    const entityToDeploy = await buildEntityWithoutNewFiles(createFetchComponent(), { contentUrl: catalystUrl, ...options  });
 
     const authChain: AuthChain = await this.authenticateEntityDeployment(
       address,
       entityToDeploy.entityId
     )
 
-    const catalystClient =
-      this.catalystClientWithoutGbCollector ?? this.catalystClient
-
-    return catalystClient.deployEntity({
+    return catalystClient.deploy({
       ...entityToDeploy,
       authChain
     })

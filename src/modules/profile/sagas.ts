@@ -2,7 +2,7 @@ import { takeLatest, put, call, takeEvery } from 'redux-saga/effects'
 import { Avatar } from '@dcl/schemas/dist/platform/profile'
 import { EntityType } from '@dcl/schemas/dist/platform/entity'
 import { PeerAPI } from '../../lib/peer'
-import { EntitiesOperator } from '../../lib/entities'
+import { createEntitiesOperator } from '../../lib/entities'
 import {
   ConnectWalletSuccessAction,
   CONNECT_WALLET_SUCCESS,
@@ -32,12 +32,12 @@ type CreateProfileSagaOptions = {
   peerWithNoGbCollectorUrl?: string
 }
 
-export function createProfileSaga({
+export async function createProfileSaga({
   peerUrl,
   peerWithNoGbCollectorUrl
 }: CreateProfileSagaOptions) {
   const peerApi = new PeerAPI(peerUrl)
-  const entities = new EntitiesOperator(peerUrl, peerWithNoGbCollectorUrl)
+  const entities = await createEntitiesOperator(peerUrl, peerWithNoGbCollectorUrl)
 
   function* profileSaga() {
     yield takeEvery(LOAD_PROFILE_REQUEST, handleLoadProfileRequest)
