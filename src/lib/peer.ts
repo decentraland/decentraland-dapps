@@ -1,8 +1,8 @@
+import { createFetchComponent } from '@well-known-components/fetch-component'
 import { createLambdasClient, LambdasClient } from 'dcl-catalyst-client/dist/client/LambdasClient'
 import { Profile } from '../modules/profile/types'
 import { BaseAPI } from './api'
 import { FetchProfileOptions, ProfileEntity } from './types'
-import { createFetchComponent } from '@well-known-components/fetch-component'
 
 export class PeerAPI extends BaseAPI {
   cache: Record<string, Promise<Profile>> = {}
