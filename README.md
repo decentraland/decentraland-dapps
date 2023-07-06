@@ -1266,11 +1266,11 @@ The `deployEntity` method does everything needed to deploy an entity that doesn'
 
 ```ts
 // lib/entities
-import { createEntitiesOperator } from 'decentraland-dapps/dist/lib/entities'
+import { EntitesOperator } from 'decentraland-dapps/dist/lib/entities'
 
 const URL = 'http://localhost/api'
 const profileEntity = { ... }
-const entitiesOperator = await createEntitiesOperator(URL)
+const entitiesOperator = new EntitesOperator(URL)
 await entitiesOperator.deployEntityWithoutNewFiles(
   entity,
   EntityTypes.PROFILE,
@@ -1282,10 +1282,10 @@ The `getProfileEntity` gets the first profile of all the profiles an address has
 
 ```ts
 // lib/entities
-import { createEntitiesOperator } from 'decentraland-dapps/dist/lib/entities'
+import { EntitesOperator } from 'decentraland-dapps/dist/lib/entities'
 
 const URL = 'http://localhost/api'
-const entitiesOperator = await createEntitiesOperator(URL)
+const entitiesOperator = new EntitesOperator(URL)
 await entitiesOperator.getProfile(anAddress)
 ```
 

@@ -1,8 +1,7 @@
-import { LambdasClient, createLambdasClient } from 'dcl-catalyst-client/dist/client/LambdasClient'
+import { LambdasClient } from 'dcl-catalyst-client/dist/LambdasClient'
 import { Profile } from '../modules/profile/types'
 import { BaseAPI } from './api'
 import { FetchProfileOptions, ProfileEntity } from './types'
-import { createFetchComponent } from '@well-known-components/fetch-component'
 
 export class PeerAPI extends BaseAPI {
   cache: Record<string, Promise<Profile>> = {}
@@ -10,7 +9,7 @@ export class PeerAPI extends BaseAPI {
 
   constructor(url: string) {
     super(url)
-    this.lambdasClient = createLambdasClient({ url: `${url}/lambdas`, fetcher: createFetchComponent() });
+    this.lambdasClient = new LambdasClient({ lambdasUrl: `${url}/lambdas` })
   }
 
   /**
@@ -28,8 +27,10 @@ export class PeerAPI extends BaseAPI {
     }
 
     this.cache[address] = this.lambdasClient
-      .getAvatarsDetailsByPost({ids: [address.toLowerCase()]})
-      .then(profiles => profiles[0] as any) // `as any` instead of mapping the catalasty-client type to dapps Profile
+      .fetchProfiles([address.toLowerCase()], {
+        headers: { 'Cache-Control': 'max-age=0' }
+      })
+      .then(profiles => profiles[0])
 
     return this.cache[address]
   }
