@@ -1,4 +1,5 @@
-import { LambdasClient } from 'dcl-catalyst-client/dist/LambdasClient'
+import { createFetchComponent } from '@well-known-components/fetch-component'
+import { createLambdasClient, LambdasClient } from 'dcl-catalyst-client/dist/client/LambdasClient'
 import { Profile } from '../modules/profile/types'
 import { BaseAPI } from './api'
 import { FetchProfileOptions, ProfileEntity } from './types'
@@ -9,7 +10,7 @@ export class PeerAPI extends BaseAPI {
 
   constructor(url: string) {
     super(url)
-    this.lambdasClient = new LambdasClient({ lambdasUrl: `${url}/lambdas` })
+    this.lambdasClient = createLambdasClient({ url: `${url}/lambdas`, fetcher: createFetchComponent() })
   }
 
   /**
@@ -27,10 +28,8 @@ export class PeerAPI extends BaseAPI {
     }
 
     this.cache[address] = this.lambdasClient
-      .fetchProfiles([address.toLowerCase()], {
-        headers: { 'Cache-Control': 'max-age=0' }
-      })
-      .then(profiles => profiles[0])
+      .getAvatarsDetailsByPost({ ids: [address.toLowerCase()] })
+      .then(profiles => profiles[0] as any)
 
     return this.cache[address]
   }

@@ -1,24 +1,27 @@
 import { ethers } from 'ethers'
 import { Authenticator, AuthChain } from '@dcl/crypto'
 import { Entity, EntityType } from '@dcl/schemas/dist/platform/entity'
-import { CatalystClient } from 'dcl-catalyst-client/dist/CatalystClient'
-import { BuildEntityWithoutFilesOptions } from 'dcl-catalyst-client/dist/ContentClient'
+import { CatalystClient, createCatalystClient } from 'dcl-catalyst-client/dist/client/CatalystClient'
+import { ContentClient } from 'dcl-catalyst-client/dist/client/ContentClient'
+import { BuildEntityWithoutFilesOptions } from 'dcl-catalyst-client/dist/client/types'
+import { buildEntityWithoutNewFiles } from 'dcl-catalyst-client/dist/client/utils/DeploymentBuilder'
 import { getConnectedProvider } from './eth'
 import { ProfileEntity } from './types'
 import { PeerAPI } from './peer'
+import { createFetchComponent } from '@well-known-components/fetch-component'
 
 export class EntitiesOperator {
   private readonly catalystClient: CatalystClient
+  private catalystContentClient: ContentClient // Undefined until initialization
   // this is a temporal work-around to fix profile deployment issues on catalysts with Garbage Collector
   private readonly catalystClientWithoutGbCollector: CatalystClient | null
+  private catalystContentClientWithoutGbCollector: ContentClient | null // Undefined until initialization
   private readonly peerAPI: PeerAPI
 
-  constructor(peerUrl: string, peerWithNoGbCollectorUrl?: string) {
-    this.catalystClient = new CatalystClient({ catalystUrl: peerUrl })
+  constructor(private peerUrl: string, private peerWithNoGbCollectorUrl?: string) {
+    this.catalystClient = createCatalystClient({ url: peerUrl, fetcher: createFetchComponent() })
     this.catalystClientWithoutGbCollector = peerWithNoGbCollectorUrl
-      ? new CatalystClient({
-        catalystUrl: peerWithNoGbCollectorUrl
-      })
+      ? createCatalystClient({ url: peerWithNoGbCollectorUrl, fetcher: createFetchComponent() })
       : null
     this.peerAPI = new PeerAPI(peerUrl)
   }
@@ -54,7 +57,11 @@ export class EntitiesOperator {
    * @param address - The address that owns the profile entity being retrieved.
    */
   async getProfileEntity(address: string): Promise<ProfileEntity> {
-    const entities: Entity[] = await this.catalystClient.fetchEntitiesByPointers(
+    if (!this.catalystContentClient) {
+      this.catalystContentClient = await this.catalystClient.getContentClient();
+    }
+
+    const entities: Entity[] = await this.catalystContentClient.fetchEntitiesByPointers(
       [address.toLowerCase()]
     )
 
@@ -90,19 +97,30 @@ export class EntitiesOperator {
       timestamp: Date.now()
     }
 
-    const entityToDeploy = await this.catalystClient.buildEntityWithoutNewFiles(
-      options
-    )
+    let catalystContentClient: ContentClient;
+    
+    if (this.catalystClientWithoutGbCollector) {
+      if (!this.catalystContentClientWithoutGbCollector) {
+        this.catalystContentClientWithoutGbCollector = await this.catalystClientWithoutGbCollector.getContentClient()
+      }
+      catalystContentClient = this.catalystContentClientWithoutGbCollector
+    } else {
+      if (!this.catalystContentClient) {
+        this.catalystContentClient = await this.catalystClient.getContentClient();
+      }
+      catalystContentClient = this.catalystContentClient;
+    }
+
+    const catalystContentUrl = this.peerWithNoGbCollectorUrl ?? this.peerUrl
+
+    const entityToDeploy = await buildEntityWithoutNewFiles(createFetchComponent(), { contentUrl: catalystContentUrl, ...options  })
 
     const authChain: AuthChain = await this.authenticateEntityDeployment(
       address,
       entityToDeploy.entityId
     )
 
-    const catalystClient =
-      this.catalystClientWithoutGbCollector ?? this.catalystClient
-
-    return catalystClient.deployEntity({
+    return catalystContentClient.deploy({
       ...entityToDeploy,
       authChain
     })

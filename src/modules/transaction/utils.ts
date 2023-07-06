@@ -124,6 +124,8 @@ export function getTransactionOrigin(
       return 'https://rinkeby.etherscan.io'
     case ChainId.ETHEREUM_GOERLI:
       return 'https://goerli.etherscan.io'
+    case ChainId.ETHEREUM_SEPOLIA:
+      return 'https://sepolia.etherscan.io'
     case ChainId.MATIC_MAINNET:
       return 'https://explorer-mainnet.maticvigil.com'
     case ChainId.MATIC_MUMBAI:

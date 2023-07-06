@@ -18,7 +18,7 @@ import {
   setProfileAvatarDescriptionSuccess
 } from './actions'
 
-const profileSagas = createProfileSaga({ peerUrl: 'aURL' })
+const profileSagas = createProfileSaga({ peerUrl: 'aURL' });
 const address = 'anAddress'
 const description = 'aDescription'
 const errorMessage = 'anError'
@@ -115,7 +115,6 @@ describe('when handling the action to set the profile avatar description', () =>
 
 describe('when handling the action to set the profile avatar alias', () => {
   const alias = 'anAlias'
-
   describe('when getting the profile entity fails', () => {
     it('should dispatch an action to signal that the request failed', () => {
       return expectSaga(profileSagas)
