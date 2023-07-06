@@ -18,16 +18,12 @@ import {
   setProfileAvatarDescriptionSuccess
 } from './actions'
 
+const profileSagas = createProfileSaga({ peerUrl: 'aURL' });
 const address = 'anAddress'
 const description = 'aDescription'
 const errorMessage = 'anError'
 
 describe('when handling the action to set the profile avatar description', () => {
-  let profileSagas: Awaited<ReturnType<typeof createProfileSaga>>;
-  beforeAll(async () => {
-    profileSagas = await createProfileSaga({ peerUrl: 'aURL' })
-  })
-
   describe('when getting the profile entity fails', () => {
     it('should dispatch an action to signal that the request failed', () => {
       return expectSaga(profileSagas)
@@ -119,12 +115,7 @@ describe('when handling the action to set the profile avatar description', () =>
 
 describe('when handling the action to set the profile avatar alias', () => {
   const alias = 'anAlias'
-
-  let profileSagas: Awaited<ReturnType<typeof createProfileSaga>>;
-  beforeAll(async () => {
-    profileSagas = await createProfileSaga({ peerUrl: 'aURL' })
-  })
-
+  
   describe('when getting the profile entity fails', () => {
     it('should dispatch an action to signal that the request failed', () => {
       return expectSaga(profileSagas)
