@@ -18,6 +18,7 @@ export const MANA_GRAPH_BY_CHAIN_ID = {
     'https://api.thegraph.com/subgraphs/name/decentraland/mana-ethereum-goerli',
   [ChainId.ETHEREUM_RINKEBY]:
     'https://api.thegraph.com/subgraphs/name/decentraland/mana-ethereum-rinkeby',
+  [ChainId.ETHEREUM_SEPOLIA]: 'https://api.studio.thegraph.com/query/49472/mana-ethereum-sepolia/version/latest',
   [ChainId.MATIC_MAINNET]:
     'https://api.thegraph.com/subgraphs/name/decentraland/mana-matic-mainnet',
   [ChainId.MATIC_MUMBAI]:
