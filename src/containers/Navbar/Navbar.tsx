@@ -39,7 +39,8 @@ export default class Navbar extends React.PureComponent<NavbarProps> {
         places: {
           main: <T id="@dapps.navbar.menu.places.main" />,
           overview: <T id="@dapps.navbar.menu.places.overview" />,
-          allPlaces: <T id="@dapps.navbar.menu.places.allPlaces" />,
+          places: <T id="@dapps.navbar.menu.places.places" />,
+          worlds: <T id="@dapps.navbar.menu.places.worlds" />,
           faq: <T id="@dapps.navbar.menu.places.faq" />
         },
         agora: <T id="@dapps.navbar.menu.agora" />,
