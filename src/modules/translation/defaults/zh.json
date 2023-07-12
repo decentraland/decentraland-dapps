@@ -62,7 +62,8 @@
         "places": {
           "main": "Places",
           "overview": "Overview",
-          "allPlaces": "All Places",
+          "places": "Places",
+          "worlds": "Worlds",
           "faq": "FAQ"
         }
       },
