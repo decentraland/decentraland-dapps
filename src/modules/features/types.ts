@@ -45,6 +45,4 @@ export type StateWithFeatures = {
 }
 
 // Make sure that in order to handle these, the client has to fetch ApplicationName.DAPPS feature flags.
-export enum FeatureName {
-  WALLET_CONNECT_V2 = 'wallet-connect-v2'
-}
+export enum FeatureName {}
