@@ -13,7 +13,10 @@ export type CatalogCardInformation = {
 
 const formatter = Intl.NumberFormat('en', { notation: 'compact' })
 
-function getAlsoAvailableForMintingText(asset: Item, text: React.ReactNode) {
+export function getAlsoAvailableForMintingText(
+  asset: Item,
+  text: React.ReactNode
+) {
   return (
     <span>
       {text}:&nbsp;
@@ -22,11 +25,14 @@ function getAlsoAvailableForMintingText(asset: Item, text: React.ReactNode) {
   )
 }
 
-function getListingsRangePrice(asset: Item) {
+export function getListingsRangePrice(asset: Item) {
   return `${asset.minListingPrice} - ${asset.maxListingPrice}`
 }
 
-function getIsMintPriceInRange(asset: Item, appliedFilters: AssetCardFilters) {
+export function getIsMintPriceInRange(
+  asset: Item,
+  appliedFilters: AssetCardFilters
+) {
   return (
     (!appliedFilters.minPrice ||
       BigNumber.from(asset.price).gte(
@@ -39,7 +45,7 @@ function getIsMintPriceInRange(asset: Item, appliedFilters: AssetCardFilters) {
   )
 }
 
-function getAssetListingsRangeInfoText(
+export function getAssetListingsRangeInfoText(
   asset: Item,
   translations: AssetCardTranslations
 ) {
@@ -58,16 +64,6 @@ function getAssetListingsRangeInfoText(
       </span>
     </span>
   ) : null
-}
-
-export function getAssetImage(asset: Item): string {
-  if ('image' in asset) {
-    return asset.image as string
-  }
-  if ('thumbnail' in asset) {
-    return asset.thumbnail
-  }
-  return ''
 }
 
 export function formatWeiToAssetCardEther(wei: string): string {

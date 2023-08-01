@@ -1,11 +1,10 @@
 import React, { useMemo } from 'react'
 import { Item } from '@dcl/schemas'
+import { formatWeiToAssetCardEther, getCatalogCardInformation } from './utils'
 import {
-  formatWeiToAssetCardEther,
-  getAssetImage,
-  getCatalogCardInformation
-} from './utils'
-import './AssetCard.css'
+  AssetCard as AssetCardUi,
+  AssetCardProps as AssetCardUiProps
+} from 'decentraland-ui'
 
 export type AssetCardTranslations = {
   also_minting: React.ReactNode
@@ -57,20 +56,7 @@ export const AssetCard = (props: AssetCardProps) => {
     ? formatWeiToAssetCardEther(catalogItemInformation.price)
     : undefined
 
-  //TODO: remove this type and import it from ui
-  type AssetCardProps = {
-    asset: Pick<Item, 'id' | 'url' | 'name' | 'rarity' | 'network' | 'creator'>
-    action: React.ReactNode
-    actionIcon?: React.ReactNode
-    imagensrc: string
-    extraInformation: React.ReactNode
-    notForSale: boolean
-    price?: string
-    owners?: string
-    onClickCardURL: string
-  }
-
-  const propsCard: AssetCardProps = {
+  const propsCard: AssetCardUiProps = {
     asset: {
       id: asset.id,
       url: asset.url,
@@ -81,7 +67,7 @@ export const AssetCard = (props: AssetCardProps) => {
     },
     action: catalogItemInformation.action,
     actionIcon: catalogItemInformation.actionIcon,
-    imagensrc: getAssetImage(asset),
+    imagensrc: asset.thumbnail,
     extraInformation: catalogItemInformation.extraInformation,
     notForSale: notForSale,
     price: price,
@@ -89,10 +75,5 @@ export const AssetCard = (props: AssetCardProps) => {
     onClickCardURL: onClickCardURL
   }
 
-  // TODO: remove this console.log
-  console.log(propsCard)
-
-  return <div>ASSET CARD</div>
-  // TODO: it should be call as this imported from ui
-  // return <AssetCard {...propsCard} />
+  return <AssetCardUi {...propsCard} />
 }
