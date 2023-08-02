@@ -12,7 +12,7 @@ import {
 const translations: AssetCardTranslations = {
   listing: 'Listing',
   listings: 'Listings',
-  available_for_mint: 'Buy directly from creator',
+  available_for_mint: 'Buy directly from the creator',
   available_listings_in_range: 'Available listings in this range',
   cheapest_listing: 'Cheapest Listing',
   not_for_sale: 'Not for sale',
@@ -195,7 +195,7 @@ describe('AssetCard utils', () => {
                 actionIcon: null,
                 extraInformation: getAlsoAvailableForMintingText(
                   asset,
-                  translations
+                  translations.also_minting
                 ),
                 price: asset.minPrice
               })
@@ -270,7 +270,7 @@ describe('AssetCard utils', () => {
                 actionIcon: null,
                 extraInformation: getAlsoAvailableForMintingText(
                   asset,
-                  translations
+                  translations.also_minting
                 ),
                 price: asset.minPrice
               })
@@ -581,7 +581,7 @@ describe('AssetCard utils', () => {
                 actionIcon: null,
                 extraInformation: getAlsoAvailableForMintingText(
                   asset,
-                  translations
+                  translations.also_minting
                 ),
                 price: asset.minListingPrice
               })
