@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react'
 import { Item } from '@dcl/schemas'
-import { formatWeiToAssetCardEther, getCatalogCardInformation } from './utils'
 import {
   AssetCard as AssetCardUi,
   AssetCardProps as AssetCardUiProps
-} from 'decentraland-ui'
+} from 'decentraland-ui/dist/components/AssetCard/AssetCard'
+import { formatWeiToAssetCardEther, getCatalogCardInformation } from './utils'
 
 export type AssetCardTranslations = {
   also_minting: React.ReactNode
@@ -46,15 +46,17 @@ export const AssetCard = (props: AssetCardProps) => {
   const isAvailableForMint = asset.isOnSale && asset.available > 0
   const notForSale = !isAvailableForMint && !asset.minListingPrice
 
-  const price = catalogItemInformation.price?.includes('-')
-    ? `${formatWeiToAssetCardEther(
-        catalogItemInformation.price.split(' - ')[0]
-      )} - ${formatWeiToAssetCardEther(
-        catalogItemInformation.price.split(' - ')[1]
-      )}`
-    : catalogItemInformation.price
-    ? formatWeiToAssetCardEther(catalogItemInformation.price)
-    : undefined
+  const price = useMemo(() => {
+    return catalogItemInformation.price?.includes('-')
+      ? `${formatWeiToAssetCardEther(
+          catalogItemInformation.price.split(' - ')[0]
+        )} - ${formatWeiToAssetCardEther(
+          catalogItemInformation.price.split(' - ')[1]
+        )}`
+      : catalogItemInformation.price
+      ? formatWeiToAssetCardEther(catalogItemInformation.price)
+      : undefined
+  }, [catalogItemInformation.price])
 
   const propsCard: AssetCardUiProps = {
     asset: {
