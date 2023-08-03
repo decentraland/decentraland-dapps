@@ -37,7 +37,7 @@ export type AssetCardProps = {
 }
 
 export const AssetCard = (props: AssetCardProps) => {
-  const { asset, onClickCardURL, assetFilters } = props
+  const { asset, assetFilters } = props
 
   const i18n: AssetCardTranslations = {
     listing: t('@dapps.asset_card.listing'),
@@ -91,8 +91,7 @@ export const AssetCard = (props: AssetCardProps) => {
     extraInformation: catalogItemInformation.extraInformation,
     notForSale: notForSale,
     price: price,
-    owners: `${asset.owners} ${asset.owners === 1 ? i18n.owner : i18n.owners}`,
-    onClickCardURL: onClickCardURL
+    owners: `${asset.owners} ${asset.owners === 1 ? i18n.owner : i18n.owners}`
   }
 
   return <AssetCardUi {...propsCard} />
