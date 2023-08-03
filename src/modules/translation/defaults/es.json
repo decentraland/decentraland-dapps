@@ -247,6 +247,20 @@
       },
       "action": "acción",
       "title_action": "acción"
+    },
+    "asset_card": {
+      "listings": "Collecionables",
+      "listing": "Collecionable",
+      "available_for_mint": "Compra directo al creador",
+      "cheapest_listing": "Coleccionable más barato",
+      "not_for_sale": "No disponible para la venta",
+      "owners": "Dueños",
+      "owner": "Dueño",
+      "cheapest_option": "Más barato",
+      "cheapest_option_range": "Más barato en el rango",
+      "most_expensive": "Más Caro",
+      "most_expensive_range": "Más Caro en el rango",
+      "also_minting": "Compra directo al creador"
     }
   }
 }

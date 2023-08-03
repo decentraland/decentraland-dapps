@@ -247,6 +247,21 @@
       },
       "action": "action",
       "title_action": "action"
+    },
+    "asset_card": {
+      "listings": "Listings",
+      "listing": "Listing",
+      "available_for_mint": "Buy directly from creator",
+      "available_listings_in_range": "Available listings in this range",
+      "cheapest_listing": "Cheapest Listing",
+      "not_for_sale": "Not for sale",
+      "owners": "Owners",
+      "owner": "Owner",
+      "cheapest_option": "Cheapest Option",
+      "cheapest_option_range": "Cheapest Option within range",
+      "most_expensive": "Most Expensive",
+      "most_expensive_range": "Most Expensive within range",
+      "also_minting": "Buy directly from the creator"
     }
   }
 }

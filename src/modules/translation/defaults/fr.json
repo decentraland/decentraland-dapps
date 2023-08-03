@@ -173,6 +173,20 @@
       },
       "action": "action",
       "title_action": "action"
+    },
+    "asset_card": {
+      "listings": "Objets de collection",
+      "listing": "Objet de collection",
+      "available_for_mint": "Disponible à l'achat direct auprès du créateur",
+      "cheapest_listing": "Objet de collection le moins cher",
+      "not_for_sale": "Non disponible à la vente",
+      "owners": "Propriétaires",
+      "owner": "Propriétaire",
+      "cheapest_option": "Option la moins chère",
+      "cheapest_option_range": "Option la moins chère dans la fourchette",
+      "most_expensive": "Le plus cher",
+      "most_expensive_range": "Le plus cher dans la fourchette",
+      "also_minting": "Disponible à l'achat direct auprès du créateur"
     }
   }
 }

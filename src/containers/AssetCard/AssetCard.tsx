@@ -5,6 +5,7 @@ import {
   AssetCardProps as AssetCardUiProps
 } from 'decentraland-ui/dist/components/AssetCard/AssetCard'
 import { formatWeiToAssetCardEther, getCatalogCardInformation } from './utils'
+import { t } from '../../modules/translation/utils'
 
 export type AssetCardTranslations = {
   also_minting: React.ReactNode
@@ -30,14 +31,31 @@ export type AssetCardFilters = {
 }
 
 export type AssetCardProps = {
-  i18n: AssetCardTranslations
   asset: Item
   assetFilters: AssetCardFilters
   onClickCardURL: string
 }
 
 export const AssetCard = (props: AssetCardProps) => {
-  const { asset, i18n, onClickCardURL, assetFilters } = props
+  const { asset, onClickCardURL, assetFilters } = props
+
+  const i18n: AssetCardTranslations = {
+    listing: t('@dapps.asset_card.listing'),
+    listings: t('@dapps.asset_card.listings'),
+    available_for_mint: t('@dapps.asset_card.available_for_mint'),
+    available_listings_in_range: t(
+      '@dapps.asset_card.available_listings_in_range'
+    ),
+    cheapest_listing: t('@dapps.asset_card.cheapest_listing'),
+    not_for_sale: t('@dapps.asset_card.not_for_sale'),
+    owner: t('@dapps.asset_card.owner'),
+    owners: t('@dapps.asset_card.owners'),
+    cheapest_option: t('@dapps.asset_card.cheapest_option'),
+    cheapest_option_range: t('@dapps.asset_card.cheapest_option_range'),
+    most_expensive: t('@dapps.asset_card.most_expensive'),
+    most_expensive_range: t('@dapps.asset_card.most_expensive_range'),
+    also_minting: t('@dapps.asset_card.also_minting')
+  }
 
   const catalogItemInformation = useMemo(() => {
     return getCatalogCardInformation(asset, i18n, assetFilters)
