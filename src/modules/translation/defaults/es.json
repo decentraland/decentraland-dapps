@@ -175,7 +175,8 @@
       "sign_out": "Desconectar",
       "guest": "Invitado",
       "settings": "Configuración",
-      "account": "Mi Cuenta"
+      "wallet": "Mi Billetera",
+      "profile": "Perfil"
     },
     "toasts": {
       "meta_transactions": {

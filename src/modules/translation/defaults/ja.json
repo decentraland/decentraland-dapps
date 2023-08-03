@@ -101,7 +101,8 @@
       "sign_out": "サインアウト",
       "guest": "ゲスト",
       "settings": "設定",
-      "account": "アカウント"
+      "wallet": "財布",
+      "profile": "プロフィール"
     },
     "toasts": {
       "meta_transactions": {
