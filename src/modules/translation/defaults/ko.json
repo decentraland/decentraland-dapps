@@ -173,6 +173,20 @@
       },
       "action": "행동",
       "title_action": "행동"
+    },
+    "asset_card": {
+      "listings": "컬렉션 아이템",
+      "listing": "컬렉션 아이템",
+      "available_for_mint": "제작자에게 직접 구매 가능",
+      "cheapest_listing": "가장 저렴한 컬렉션 아이템",
+      "not_for_sale": "판매 불가",
+      "owners": "소유자",
+      "owner": "소유자",
+      "cheapest_option": "가장 저렴한 옵션",
+      "cheapest_option_range": "범위 내 가장 저렴한 옵션",
+      "most_expensive": "가장 비싼 가격",
+      "most_expensive_range": "범위 내 가장 비싼 가격",
+      "also_minting": "제작자에게 직접 구매 가능"
     }
   }
 }

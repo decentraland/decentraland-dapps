@@ -247,6 +247,20 @@
       },
       "action": "行动",
       "title_action": "行动"
+    },
+    "asset_card": {
+      "listings": "收藏品",
+      "listing": "收藏品",
+      "available_for_mint": "直接從創作者那裡購買",
+      "cheapest_listing": "最便宜的收藏品",
+      "not_for_sale": "不可出售",
+      "owners": "所有者",
+      "owner": "所有者",
+      "cheapest_option": "最便宜",
+      "cheapest_option_range": "范围内最便宜的选择",
+      "most_expensive": "最貴",
+      "most_expensive_range": "范围内最贵",
+      "also_minting": "直接從創作者那裡購買"
     }
   }
 }

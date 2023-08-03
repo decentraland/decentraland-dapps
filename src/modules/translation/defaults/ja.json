@@ -173,6 +173,20 @@
       },
       "action": "アクション",
       "title_action": "アクション"
+    },
+    "asset_card": {
+      "listings": "コレクションアイテム",
+      "listing": "コレクションアイテム",
+      "available_for_mint": "クリエイターによる直接購入可能",
+      "cheapest_listing": "最も安いコレクションアイテム",
+      "not_for_sale": "販売不可",
+      "owners": "所有者",
+      "owner": "所有者",
+      "cheapest_option": "最も安いオプション",
+      "cheapest_option_range": "範囲内の最も安いオプション",
+      "most_expensive": "最も高い価格",
+      "most_expensive_range": "範囲内の最も高い価格",
+      "also_minting": "クリエイターによる直接購入可能"
     }
   }
 }
