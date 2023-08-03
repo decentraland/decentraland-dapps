@@ -175,7 +175,8 @@
       "sign_out": "登出",
       "guest": "来宾",
       "settings": "设定值",
-      "account": "帐户"
+      "wallet": "钱包",
+      "profile": "轮廓"
     },
     "toasts": {
       "meta_transactions": {

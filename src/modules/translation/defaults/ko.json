@@ -101,7 +101,8 @@
       "sign_out": "로그 아웃",
       "guest": "손님",
       "settings": "설정",
-      "account": "계정"
+      "wallet": "지갑",
+      "profile": "프로필"
     },
     "toasts": {
       "meta_transactions": {

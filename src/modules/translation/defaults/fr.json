@@ -101,7 +101,8 @@
       "sign_out": "Se Déconnecter",
       "guest": "Invité",
       "settings": "Paramètres",
-      "account": "Compte"
+      "wallet": "Portefeuille",
+      "profile": "Profil"
     },
     "toasts": {
       "meta_transactions": {

@@ -175,7 +175,8 @@
       "sign_out": "Sign Out",
       "guest": "Guest",
       "settings": "Settings",
-      "account": "Account"
+      "wallet": "Wallet",
+      "profile": "Profile"
     },
     "toasts": {
       "meta_transactions": {

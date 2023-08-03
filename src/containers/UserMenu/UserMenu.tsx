@@ -1,5 +1,8 @@
 import * as React from 'react'
-import { UserMenu as UserMenuComponent, UserMenuI18N } from 'decentraland-ui/dist/components/UserMenu/UserMenu'
+import {
+  UserMenu as UserMenuComponent,
+  UserMenuI18N
+} from 'decentraland-ui/dist/components/UserMenu/UserMenu'
 import { T } from '../../modules/translation/utils'
 import { Props } from './UserMenu.types'
 
@@ -13,7 +16,8 @@ export default class UserMenu extends React.Component<Props> {
       signOut: <T id="@dapps.user_menu.sign_out" />,
       guest: <T id="@dapps.user_menu.guest" />,
       settings: <T id="@dapps.user_menu.settings" />,
-      account: <T id="@dapps.user_menu.account" />
+      wallet: <T id="@dapps.user_menu.wallet" />,
+      profile: <T id="@dapps.user_menu.profile" />
     }
   }
 
