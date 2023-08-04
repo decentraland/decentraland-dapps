@@ -176,7 +176,8 @@
       "guest": "Guest",
       "settings": "Settings",
       "wallet": "Wallet",
-      "profile": "Profile"
+      "profile": "Profile",
+      "account": "Account"
     },
     "toasts": {
       "meta_transactions": {
