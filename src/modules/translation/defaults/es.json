@@ -176,7 +176,8 @@
       "guest": "Invitado",
       "settings": "Configuración",
       "wallet": "Mi Billetera",
-      "profile": "Perfil"
+      "profile": "Perfil",
+      "account": "Mi Cuenta"
     },
     "toasts": {
       "meta_transactions": {

@@ -176,7 +176,8 @@
       "guest": "来宾",
       "settings": "设定值",
       "wallet": "钱包",
-      "profile": "轮廓"
+      "profile": "轮廓",
+      "account": "帐户"
     },
     "toasts": {
       "meta_transactions": {

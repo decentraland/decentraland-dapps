@@ -102,7 +102,8 @@
       "guest": "손님",
       "settings": "설정",
       "wallet": "지갑",
-      "profile": "프로필"
+      "profile": "프로필",
+      "account": "계정"
     },
     "toasts": {
       "meta_transactions": {
