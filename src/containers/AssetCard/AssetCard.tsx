@@ -33,7 +33,6 @@ export type AssetCardFilters = {
 export type AssetCardProps = {
   asset: Item
   assetFilters: AssetCardFilters
-  onClickCardURL: string
 }
 
 export const AssetCard = (props: AssetCardProps) => {
