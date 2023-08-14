@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react'
 import { Item } from '@dcl/schemas'
 import {
-  AssetCard as AssetCardUi,
-  AssetCardProps as AssetCardUiProps
-} from 'decentraland-ui/dist/components/AssetCard/AssetCard'
+  CatalogCard as AssetCardUi,
+  CatalogCardProps as AssetCardUiProps
+} from 'decentraland-ui/dist/components/CatalogCard/CatalogCard'
 import { formatWeiToAssetCardEther, getCatalogCardInformation } from './utils'
 import { t } from '../../modules/translation/utils'
 
@@ -32,7 +32,7 @@ export type AssetCardFilters = {
 
 export type AssetCardProps = {
   asset: Item
-  assetFilters: AssetCardFilters
+  assetFilters?: AssetCardFilters
 }
 
 export const AssetCard = (props: AssetCardProps) => {

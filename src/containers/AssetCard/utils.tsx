@@ -88,7 +88,7 @@ export function formatWeiToAssetCardEther(wei: string): string {
 export function getCatalogCardInformation(
   asset: Item,
   translations: AssetCardTranslations,
-  appliedFilters: AssetCardFilters
+  appliedFilters: AssetCardFilters = {}
 ): CatalogCardInformation {
   const { sortBy = CatalogSortBy.CHEAPEST } = appliedFilters
 
