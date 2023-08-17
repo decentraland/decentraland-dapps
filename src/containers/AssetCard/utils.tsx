@@ -51,7 +51,7 @@ export function getAssetListingsRangeInfoText(
 ) {
   return asset.minListingPrice && asset.maxListingPrice ? (
     <span className={'wrapBigText'}>
-      {asset.listings}
+      {asset.listings}&nbsp;
       {asset.listings === 1 ? translations.listing : translations.listings}
       :&nbsp;
       <span>
