@@ -3,7 +3,7 @@ import {
   UserInformationContainer as UserMenuComponent,
   UserInformationComponentI18N
 } from 'decentraland-ui/dist/components/UserInformationContainer/UserInformationContainer'
-import { T } from '../../modules/translation/utils'
+import { t } from '../../modules/translation/utils'
 import { Props } from './UserInformation.types'
 
 export default class UserMenu extends React.Component<Props> {
@@ -12,14 +12,14 @@ export default class UserMenu extends React.Component<Props> {
       return undefined
     }
     return {
-      signIn: <T id="@dapps.user_menu.sign_in" />,
-      signOut: <T id="@dapps.user_menu.sign_out" />,
-      guest: <T id="@dapps.user_menu.guest" />,
-      settings: <T id="@dapps.user_menu.settings" />,
-      wallet: <T id="@dapps.user_menu.wallet" />,
-      profile: <T id="@dapps.user_menu.profile" />,
-      myAssets: <T id="@dapps.user_menu.myAssets" />,
-      myLists: <T id="@dapps.user_menu.myLists" />
+      signIn: t('@dapps.user_menu.sign_in'),
+      signOut: t('@dapps.user_menu.sign_out'),
+      guest: t('@dapps.user_menu.guest'),
+      settings: t('@dapps.user_menu.settings'),
+      wallet: t('@dapps.user_menu.wallet'),
+      profile: t('@dapps.user_menu.profile'),
+      myAssets: t('@dapps.user_menu.myAssets'),
+      myLists: t('@dapps.user_menu.myLists')
     }
   }
 
