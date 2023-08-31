@@ -97,12 +97,14 @@
       }
     },
     "user_menu": {
-      "sign_in": "Se Connecter",
-      "sign_out": "Se Déconnecter",
+      "sign_in": "Se connecter",
+      "sign_out": "Se déconnecter",
       "guest": "Invité",
-      "settings": "Paramètres",
+      "settings": "Paramètres du compte",
       "wallet": "Portefeuille",
-      "profile": "Profil",
+      "profile": "Voir mon profil",
+      "myLists": "Mes listes",
+      "myAssets": "Mes actifs",
       "account": "Compte"
     },
     "toasts": {

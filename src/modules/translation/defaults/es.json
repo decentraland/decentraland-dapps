@@ -171,13 +171,15 @@
       }
     },
     "user_menu": {
-      "sign_in": "Conectar",
-      "sign_out": "Desconectar",
+      "sign_in": "Iniciar sesión",
+      "sign_out": "Cerrar sesión",
       "guest": "Invitado",
-      "settings": "Configuración",
-      "wallet": "Mi Billetera",
-      "profile": "Perfil",
-      "account": "Mi Cuenta"
+      "settings": "Configuración de la cuenta",
+      "wallet": "Billetera",
+      "profile": "Ver mi perfil",
+      "myLists": "Mis listas",
+      "myAssets": "Mis activos",
+      "account": "Cuenta"
     },
     "toasts": {
       "meta_transactions": {
