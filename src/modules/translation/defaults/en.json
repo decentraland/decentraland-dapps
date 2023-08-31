@@ -172,11 +172,13 @@
     },
     "user_menu": {
       "sign_in": "Sign In",
-      "sign_out": "Sign Out",
+      "sign_out": "Log Out",
       "guest": "Guest",
-      "settings": "Settings",
+      "settings": "Account Settings",
       "wallet": "Wallet",
-      "profile": "Profile",
+      "profile": "View My Profile",
+      "myLists": "My Lists",
+      "myAssets": "My Assets",
       "account": "Account"
     },
     "toasts": {

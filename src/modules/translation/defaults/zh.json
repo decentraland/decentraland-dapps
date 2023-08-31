@@ -171,13 +171,15 @@
       }
     },
     "user_menu": {
-      "sign_in": "登入",
-      "sign_out": "登出",
-      "guest": "来宾",
-      "settings": "设定值",
+      "sign_in": "登录",
+      "sign_out": "退出",
+      "guest": "访客",
+      "settings": "账户设置",
       "wallet": "钱包",
-      "profile": "轮廓",
-      "account": "帐户"
+      "profile": "查看我的个人资料",
+      "myLists": "我的列表",
+      "myAssets": "我的资产",
+      "account": "账户"
     },
     "toasts": {
       "meta_transactions": {

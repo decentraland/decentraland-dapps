@@ -98,11 +98,13 @@
     },
     "user_menu": {
       "sign_in": "로그인",
-      "sign_out": "로그 아웃",
+      "sign_out": "로그아웃",
       "guest": "손님",
-      "settings": "설정",
+      "settings": "계정 설정",
       "wallet": "지갑",
-      "profile": "프로필",
+      "profile": "내 프로필 보기",
+      "myLists": "내 목록",
+      "myAssets": "내 자산",
       "account": "계정"
     },
     "toasts": {

@@ -97,12 +97,14 @@
       }
     },
     "user_menu": {
-      "sign_in": "ログイン",
+      "sign_in": "サインイン",
       "sign_out": "サインアウト",
       "guest": "ゲスト",
-      "settings": "設定",
-      "wallet": "財布",
-      "profile": "プロフィール",
+      "settings": "アカウント設定",
+      "wallet": "ウォレット",
+      "profile": "プロフィールを表示",
+      "myLists": "私のリスト",
+      "myAssets": "私の資産",
       "account": "アカウント"
     },
     "toasts": {
