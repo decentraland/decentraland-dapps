@@ -66,7 +66,7 @@ export abstract class BaseClient {
             parsedResponse.message ?? parsedResponse.error
           throw new ClientError(
             errorMessage ??
-              `Request failed with status code ${response.status}`,
+            `Request failed with status code ${response.status}`,
             response.status,
             parsedResponse.data
           )

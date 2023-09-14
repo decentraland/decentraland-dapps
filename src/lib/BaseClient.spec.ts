@@ -1,9 +1,10 @@
+import 'isomorphic-fetch'
 import nock from 'nock'
 import { ethers } from 'ethers'
 import { Wallet } from '@ethersproject/wallet'
 
 import { BaseClient, BaseClientConfig } from './BaseClient'
-import { AuthIdentity, SignedRequestInit } from 'decentraland-crypto-fetch'
+import type { AuthIdentity, SignedRequestInit } from 'decentraland-crypto-fetch'
 import {
   createIdentity,
   firstHeaderValueMatcher,
