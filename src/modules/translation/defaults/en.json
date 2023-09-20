@@ -266,6 +266,21 @@
       "most_expensive": "Most Expensive",
       "most_expensive_range": "Most Expensive within range",
       "also_minting": "Buy directly from the creator"
+    },
+    "rarities_filter": {
+      "title": "Rarity",
+      "tooltip": "The Rarity determines the total number of NFTs that can be minted",
+      "count_items": "{count} {count, plural, one {rarity} other {rarities}}",
+      "all_items": "All rarities"
+    },
+    "rarities": {
+      "unique": "Unique",
+      "mythic": "Mythic",
+      "legendary": "Legendary",
+      "epic": "Epic",
+      "rare": "Rare",
+      "uncommon": "Uncommon",
+      "common": "Common"
     }
   }
 }

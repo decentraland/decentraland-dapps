@@ -191,6 +191,21 @@
       "most_expensive": "가장 비싼 가격",
       "most_expensive_range": "범위 내 가장 비싼 가격",
       "also_minting": "제작자에게 직접 구매 가능"
+    },
+    "rarities_filter": {
+      "title": "희박",
+      "tooltip": "Rarity는 민트를 사용할 수있는 총 NFT의 총 수를 결정합니다.",
+      "count_items": "{count} {count, plural, one {희박} other {희귀 성}}",
+      "all_items": "모든 희귀 성"
+    },
+    "rarities": {
+      "unique": "고유한",
+      "mythic": "신화",
+      "legendary": "전설",
+      "epic": "서사시",
+      "rare": "희귀한",
+      "uncommon": "드문",
+      "common": "흔한"
     }
   }
 }
