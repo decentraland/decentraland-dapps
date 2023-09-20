@@ -265,6 +265,21 @@
       "most_expensive": "最貴",
       "most_expensive_range": "范围内最贵",
       "also_minting": "直接從創作者那裡購買"
+    },
+    "rarities_filter": {
+      "title": "稀有",
+      "tooltip": "稀有性决定了可以铸造的NFT的总数",
+      "count_items": "{count} {count, plural, one {稀有} other {稀有}}",
+      "all_items": "所有稀有物"
+    },
+    "rarities": {
+      "unique": "独特的",
+      "mythic": "神话",
+      "legendary": "传奇的",
+      "epic": "史诗",
+      "rare": "稀有的",
+      "uncommon": "罕见",
+      "common": "常见的"
     }
   }
 }

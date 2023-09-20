@@ -191,6 +191,21 @@
       "most_expensive": "Le plus cher",
       "most_expensive_range": "Le plus cher dans la fourchette",
       "also_minting": "Disponible à l'achat direct auprès du créateur"
+    },
+    "rarities_filter": {
+      "title": "Rareté",
+      "tooltip": "La rareté détermine le nombre total de NFT qui peuvent être frappés",
+      "count_items": "{count} {count, plural, one {rareté} other {raretés}}",
+      "all_items": "Toutes les raretés"
+    },
+    "rarities": {
+      "unique": "unique",
+      "mythic": "Mythique",
+      "legendary": "Légendaire",
+      "epic": "Epic",
+      "rare": "Rare",
+      "uncommon": "Peu commun",
+      "common": "Commun"
     }
   }
 }

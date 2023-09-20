@@ -265,6 +265,21 @@
       "most_expensive": "Más Caro",
       "most_expensive_range": "Más Caro en el rango",
       "also_minting": "Compra directo al creador"
+    },
+    "rarities_filter": {
+      "title": "Rareza",
+      "tooltip": "La rareza determina la cantidad de NFTs que pueden ser minteados",
+      "all_items": "Todas las rarezas",
+      "count_items": "{count} {count, plural, one {rareza} other {rarezas}}"
+    },
+    "rarities": {
+      "unique": "Único",
+      "mythic": "Mítico",
+      "legendary": "Legendario",
+      "epic": "Épico",
+      "rare": "Raro",
+      "uncommon": "Poco común",
+      "common": "Común"
     }
   }
 }

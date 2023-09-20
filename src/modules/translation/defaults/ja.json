@@ -191,6 +191,21 @@
       "most_expensive": "最も高い価格",
       "most_expensive_range": "範囲内の最も高い価格",
       "also_minting": "クリエイターによる直接購入可能"
+    },
+    "rarities_filter": {
+      "title": "珍しい",
+      "tooltip": "希少性により、鋳造できるNFTの総数が決まります",
+      "count_items": "{count} {count, plural, one {珍しい} other {珍しい}}",
+      "all_items": "すべての珍しい"
+    },
+    "rarities": {
+      "unique": "個性的",
+      "mythic": "神話",
+      "legendary": "伝説",
+      "epic": "すごい",
+      "rare": "レア",
+      "uncommon": "珍しい",
+      "common": "一般"
     }
   }
 }
