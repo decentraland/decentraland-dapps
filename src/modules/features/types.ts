@@ -19,6 +19,7 @@ export type ApplicationFeatures = {
 
 export enum ApplicationName {
   EXPLORER = 'explorer',
+  PROFILE = 'profile',
   BUILDER = 'builder',
   MARKETPLACE = 'marketplace',
   ACCOUNT = 'account',
