@@ -269,8 +269,8 @@
     "rarities_filter": {
       "title": "稀有",
       "tooltip": "稀有性决定了可以铸造的NFT的总数",
-      "count_items": "{count} {count, plural, one {稀有} other {稀有}}",
-      "all_items": "所有稀有物"
+      "count_rarities": "{count} {count, plural, one {稀有} other {稀有}}",
+      "all_rarities": "所有稀有物"
     },
     "rarities": {
       "unique": "独特的",

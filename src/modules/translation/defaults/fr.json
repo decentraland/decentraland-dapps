@@ -195,8 +195,8 @@
     "rarities_filter": {
       "title": "Rareté",
       "tooltip": "La rareté détermine le nombre total de NFT qui peuvent être frappés",
-      "count_items": "{count} {count, plural, one {rareté} other {raretés}}",
-      "all_items": "Toutes les raretés"
+      "count_rarities": "{count} {count, plural, one {rareté} other {raretés}}",
+      "all_rarities": "Toutes les raretés"
     },
     "rarities": {
       "unique": "unique",

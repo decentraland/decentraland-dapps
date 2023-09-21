@@ -195,8 +195,8 @@
     "rarities_filter": {
       "title": "희박",
       "tooltip": "Rarity는 민트를 사용할 수있는 총 NFT의 총 수를 결정합니다.",
-      "count_items": "{count} {count, plural, one {희박} other {희귀 성}}",
-      "all_items": "모든 희귀 성"
+      "count_rarities": "{count} {count, plural, one {희박} other {희귀 성}}",
+      "all_rarities": "모든 희귀 성"
     },
     "rarities": {
       "unique": "고유한",
