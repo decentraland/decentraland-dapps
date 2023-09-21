@@ -21,7 +21,6 @@ export const RarityFilter = (props: RarityFilterProps) => {
       t('@dapps.rarities_filter.count_rarities', { count: count }),
     tooltip: t('@dapps.rarities_filter.tooltip')
   }
-  console.log('i18n', i18n)
 
   return <RarityFilterUI i18n={i18n} {...props} />
 }
