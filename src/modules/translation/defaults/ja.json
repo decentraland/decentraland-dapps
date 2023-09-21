@@ -195,8 +195,8 @@
     "rarities_filter": {
       "title": "珍しい",
       "tooltip": "希少性により、鋳造できるNFTの総数が決まります",
-      "count_items": "{count} {count, plural, one {珍しい} other {珍しい}}",
-      "all_items": "すべての珍しい"
+      "count_rarities": "{count} {count, plural, one {珍しい} other {珍しい}}",
+      "all_rarities": "すべての珍しい"
     },
     "rarities": {
       "unique": "個性的",

@@ -270,8 +270,8 @@
     "rarities_filter": {
       "title": "Rarity",
       "tooltip": "The Rarity determines the total number of NFTs that can be minted",
-      "count_items": "{count} {count, plural, one {rarity} other {rarities}}",
-      "all_items": "All rarities"
+      "count_rarities": "{count} {count, plural, one {rarity} other {rarities}}",
+      "all_rarities": "All rarities"
     },
     "rarities": {
       "unique": "Unique",
