@@ -280,6 +280,17 @@
       "rare": "稀有的",
       "uncommon": "罕见",
       "common": "常见的"
+    },
+    "asset_status_filter": {
+      "title": "地位",
+      "on_sale": "特价中",
+      "on_sale_tooltip": "包括可用于铸造和/或具有可用列表的项目。",
+      "only_minting": "仅可用于铸币",
+      "only_minting_tooltip": "仅包括可铸造的物品（直接从创作者处购买）。",
+      "only_listing": "仅列表",
+      "only_listing_tooltip": "仅包括正在转售的项目。",
+      "not_for_sale": "不作为产品销售",
+      "not_for_sale_tooltip": "包括所有不可用于铸造（直接从创建者购买）或有开放式列表的项目。"
     }
   }
 }
