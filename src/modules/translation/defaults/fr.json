@@ -206,6 +206,17 @@
       "rare": "Rare",
       "uncommon": "Peu commun",
       "common": "Commun"
+    },
+    "asset_status_filter": {
+      "title": "Statut",
+      "on_sale": "En soldes",
+      "on_sale_tooltip": "Comprend des articles disponibles pour la frappe et / ou avec les listes disponibles.",
+      "only_minting": "Seulement disponible pour la presse",
+      "only_minting_tooltip": "Ne comprend que des articles disponibles pour la frappe (acheter directement auprès des créateurs).",
+      "only_listing": "Uniquement les listes",
+      "only_listing_tooltip": "Inclut uniquement les articles qui sont en cours de revend.",
+      "not_for_sale": "Pas à vendre",
+      "not_for_sale_tooltip": "Comprend tous les articles qui ne sont pas disponibles pour la frappe (achetant directement auprès des créateurs) ou ont des listes ouvertes."
     }
   }
 }

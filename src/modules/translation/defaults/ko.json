@@ -206,6 +206,17 @@
       "rare": "희귀한",
       "uncommon": "드문",
       "common": "흔한"
+    },
+    "asset_status_filter": {
+      "title": "상태",
+      "on_sale": "판매 중",
+      "on_sale_tooltip": "마이닝 및/또는 사용 가능한 목록이있는 품목이 포함되어 있습니다.",
+      "only_minting": "마이닝에만 사용할 수 있습니다",
+      "only_minting_tooltip": "마이닝에 사용할 수있는 품목 만 포함합니다 (제작자로부터 직접 구매).",
+      "only_listing": "목록 만",
+      "only_listing_tooltip": "재판매중인 항목 만 포함합니다.",
+      "not_for_sale": "비매품",
+      "not_for_sale_tooltip": "마이닝 할 수없는 모든 품목 (제작자로부터 직접 구매) 또는 개방형 목록이 포함되어 있습니다."
     }
   }
 }

@@ -206,6 +206,17 @@
       "rare": "レア",
       "uncommon": "珍しい",
       "common": "一般"
+    },
+    "asset_status_filter": {
+      "title": "状態",
+      "on_sale": "発売中",
+      "on_sale_tooltip": "造りや利用可能なリストを使用できるアイテムが含まれています。",
+      "only_minting": "造りにのみ利用できます",
+      "only_minting_tooltip": "メントに利用できるアイテムのみが含まれています（クリエイターから直接購入）。",
+      "only_listing": "リストのみ",
+      "only_listing_tooltip": "転売されているアイテムのみが含まれます。",
+      "not_for_sale": "非売品",
+      "not_for_sale_tooltip": "造りに使用できないすべてのアイテム（クリエイターから直接購入）またはオープンリスティングが含まれています。"
     }
   }
 }

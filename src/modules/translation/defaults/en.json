@@ -281,6 +281,17 @@
       "rare": "Rare",
       "uncommon": "Uncommon",
       "common": "Common"
+    },
+    "asset_status_filter": {
+      "title": "Status",
+      "on_sale": "On Sale",
+      "on_sale_tooltip": "Includes items available for minting and/or with available listings.",
+      "only_minting": "Only Available For Minting",
+      "only_minting_tooltip": "Only includes items that are available for minting (buying directly from the creators).",
+      "only_listing": "Only Listings",
+      "only_listing_tooltip": "Only includes items that are being resold.",
+      "not_for_sale": "Not For Sale",
+      "not_for_sale_tooltip": "Includes all items that are not available for minting (buying directly from the creators) or have open listings."
     }
   }
 }

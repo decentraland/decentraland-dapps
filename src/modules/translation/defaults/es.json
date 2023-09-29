@@ -280,6 +280,17 @@
       "rare": "Raro",
       "uncommon": "Poco común",
       "common": "Común"
+    },
+    "asset_status_filter": {
+      "title": "Estado",
+      "on_sale": "En venta",
+      "on_sale_tooltip": "Incluye items disponible para mintear o publicaciones disponibles",
+      "only_minting": "Solo disponible para mintear",
+      "only_minting_tooltip": "Solo incluye items disponibles para mintear (comprando directamente al creador).",
+      "only_listing": "Solo publicaciones",
+      "only_listing_tooltip": "Solo incluye items que estan siendo re-vendidos",
+      "not_for_sale": "No a la venta",
+      "not_for_sale_tooltip": "Incluye todos los items que no están disponibles para mintear (comprando directamente al creador) o con publicaciones disponibles."
     }
   }
 }
