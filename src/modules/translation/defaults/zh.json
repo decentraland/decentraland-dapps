@@ -1,7 +1,8 @@
 {
   "@dapps": {
     "button": {
-      "network_not_supported": "您需要连接到 {expectedChainName} 才能执行此操作"
+      "network_not_supported": "您需要连接到 {expectedChainName} 才能执行此操作",
+      "back_to_top": "回到顶部"
     },
     "footer": {
       "dropdown": {

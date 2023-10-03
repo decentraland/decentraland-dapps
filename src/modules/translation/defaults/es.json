@@ -1,7 +1,8 @@
 {
   "@dapps": {
     "button": {
-      "network_not_supported": "Debes conectarte a {expectedChainName} para realizar esta acción"
+      "network_not_supported": "Debes conectarte a {expectedChainName} para realizar esta acción",
+      "back_to_top": "Volver arriba"
     },
     "footer": {
       "dropdown": {
