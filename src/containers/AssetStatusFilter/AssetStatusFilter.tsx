@@ -15,7 +15,7 @@ export const AssetStatusFilter = (props: AssetStatusFilterProps) => {
           '@dapps.asset_status_filter.not_for_sale'
         ),
         [AssetStatus.ONLY_LISTING]: t(
-          '@dapps.asset_status_filter.only_listings'
+          '@dapps.asset_status_filter.only_listing'
         ),
         [AssetStatus.ONLY_MINTING]: t(
           '@dapps.asset_status_filter.only_minting'
