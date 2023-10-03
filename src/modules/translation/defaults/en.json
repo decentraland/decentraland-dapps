@@ -292,6 +292,9 @@
       "only_listing_tooltip": "Only includes items that are being resold.",
       "not_for_sale": "Not For Sale",
       "not_for_sale_tooltip": "Includes all items that are not available for minting (buying directly from the creators) or have open listings."
+    },
+    "back_to_top_button": {
+      "title": "Back to top"
     }
   }
 }

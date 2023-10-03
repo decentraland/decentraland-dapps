@@ -291,6 +291,9 @@
       "only_listing_tooltip": "仅包括正在转售的项目。",
       "not_for_sale": "不作为产品销售",
       "not_for_sale_tooltip": "包括所有不可用于铸造（直接从创建者购买）或有开放式列表的项目。"
+    },
+    "back_to_top_button": {
+      "title": "回到顶部"
     }
   }
 }
