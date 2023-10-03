@@ -1,8 +1,7 @@
 {
   "@dapps": {
     "button": {
-      "network_not_supported": "Debes conectarte a {expectedChainName} para realizar esta acción",
-      "back_to_top": "Volver arriba"
+      "network_not_supported": "Debes conectarte a {expectedChainName} para realizar esta acción"
     },
     "footer": {
       "dropdown": {
@@ -292,6 +291,9 @@
       "only_listing_tooltip": "Solo incluye items que estan siendo re-vendidos",
       "not_for_sale": "No a la venta",
       "not_for_sale_tooltip": "Incluye todos los items que no están disponibles para mintear (comprando directamente al creador) o con publicaciones disponibles."
+    },
+    "back_to_top_button": {
+      "title": "Volver arriba"
     }
   }
 }
