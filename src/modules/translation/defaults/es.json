@@ -266,6 +266,10 @@
       "most_expensive_range": "Más Caro en el rango",
       "also_minting": "Compra directo al creador"
     },
+    "smart_wearables_filter": {
+      "title": "Interactivas",
+      "selected": "Solo Interactivas"
+    },
     "rarities_filter": {
       "title": "Rareza",
       "tooltip": "La rareza determina la cantidad de NFTs que pueden ser minteados",

@@ -266,6 +266,10 @@
       "most_expensive_range": "范围内最贵",
       "also_minting": "直接從創作者那裡購買"
     },
+    "smart_wearables_filter": {
+      "title": "聪明的",
+      "selected": "唯智"
+    },
     "rarities_filter": {
       "title": "稀有",
       "tooltip": "稀有性决定了可以铸造的NFT的总数",

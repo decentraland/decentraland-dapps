@@ -267,6 +267,10 @@
       "most_expensive_range": "Most Expensive within range",
       "also_minting": "Buy directly from the creator"
     },
+    "smart_wearables_filter": {
+      "title": "Smart",
+      "selected": "Only Smart"
+    },
     "rarities_filter": {
       "title": "Rarity",
       "tooltip": "The Rarity determines the total number of NFTs that can be minted",
