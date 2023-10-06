@@ -294,6 +294,40 @@
     },
     "back_to_top_button": {
       "title": "Volver arriba"
+    },
+    "nft_card": {
+      "category": {
+        "body_shape": "Cuerpo",
+        "earring": "Aros",
+        "eyebrows": "Cejas",
+        "eyes": "Ojos",
+        "eyewear": "Gafas",
+        "facial_hair": "Barba",
+        "feet": "Pies",
+        "hair": "Cabello",
+        "head": "Cabeza",
+        "hat": "Sombrero",
+        "helmet": "Cazco",
+        "lower_body": "Piernas",
+        "mask": "Mascara",
+        "mouth": "Boca",
+        "tiara": "Tiara",
+        "top_head": "Cabeza",
+        "upper_body": "Torso",
+        "skin": "Skin",
+        "hands_wear": "Manos"
+      },
+      "with_sound": "Con Sonido",
+      "smart": "Interactivo",
+      "body_shape": {
+        "male": "Hombre",
+        "female": "Mujer",
+        "unisex": "Unisex"
+      },
+      "play_mode": {
+        "simple": "Play once",
+        "loop": "Play loop"
+      }
     }
   }
 }

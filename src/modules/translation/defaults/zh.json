@@ -294,6 +294,39 @@
     },
     "back_to_top_button": {
       "title": "回到顶部"
+    },
+    "nft_card": {
+      "category": {
+        "body_shape": "身材",
+        "earring": "耳环",
+        "eyebrows": "眉毛",
+        "eyes": "眼睛",
+        "eyewear": "眼镜",
+        "facial_hair": "胡子",
+        "feet": "腿部",
+        "hair": "头发",
+        "hat": "帽子",
+        "helmet": "头盔",
+        "lower_body": "下半身",
+        "mask": "面具",
+        "mouth": "嘴巴",
+        "tiara": "头饰",
+        "top_head": "头顶",
+        "upper_body": "上半身",
+        "skin": "皮肤",
+        "hands_wear": "手"
+      },
+      "with_sound": "有声音的",
+      "smart": "聪明的",
+      "body_shape": {
+        "male": "男性",
+        "female": "女性",
+        "unisex": "中性"
+      },
+      "play_mode": {
+        "simple": "播放一次",
+        "loop": "循环播放"
+      }
     }
   }
 }

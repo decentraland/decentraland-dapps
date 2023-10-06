@@ -217,6 +217,40 @@
       "only_listing_tooltip": "転売されているアイテムのみが含まれます。",
       "not_for_sale": "非売品",
       "not_for_sale_tooltip": "造りに使用できないすべてのアイテム（クリエイターから直接購入）またはオープンリスティングが含まれています。"
+    },
+    "nft_card": {
+      "category": {
+        "body_shape": "体型",
+        "earring": "イヤリング",
+        "eyebrows": "眉毛",
+        "eyes": "目",
+        "eyewear": "アイウェア",
+        "facial_hair": "顔の毛",
+        "feet": "足",
+        "head": "頭",
+        "hair": "髪",
+        "hat": "帽子",
+        "helmet": "ヘルメット",
+        "lower_body": "下半身",
+        "mask": "マスク",
+        "mouth": "口",
+        "tiara": "ティアラ",
+        "top_head": "トップヘッド",
+        "upper_body": "上半身",
+        "skin": "肌",
+        "hands_wear": "ハンドウェア"
+      },
+      "with_sound": "音で",
+      "smart": "Smart",
+      "body_shape": {
+        "male": "男",
+        "female": "女性",
+        "unisex": "ユニセックス"
+      },
+      "play_mode": {
+        "simple": "Play once",
+        "loop": "Play loop"
+      }
     }
   }
 }
