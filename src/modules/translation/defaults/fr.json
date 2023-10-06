@@ -217,6 +217,40 @@
       "only_listing_tooltip": "Inclut uniquement les articles qui sont en cours de revend.",
       "not_for_sale": "Pas à vendre",
       "not_for_sale_tooltip": "Comprend tous les articles qui ne sont pas disponibles pour la frappe (achetant directement auprès des créateurs) ou ont des listes ouvertes."
+    },
+    "nft_card": {
+      "category": {
+        "body_shape": "Forme du corps",
+        "earring": "Boucle d'oreille",
+        "eyebrows": "Les sourcils",
+        "eyes": "Yeux",
+        "eyewear": "Lunettes",
+        "facial_hair": "Poils",
+        "feet": "Pieds",
+        "head": "Tête",
+        "hair": "Cheveux",
+        "hat": "Chapeau",
+        "helmet": "Casque",
+        "lower_body": "Bas du corps",
+        "mask": "Masque",
+        "mouth": "Bouche",
+        "tiara": "Tiare",
+        "top_head": "Tête supérieure",
+        "upper_body": "Haut du corps",
+        "skin": "Peau",
+        "hands_wear": "Vêtements à main"
+      },
+      "with_sound": "??",
+      "smart": "Interactive",
+      "body_shape": {
+        "male": "Femelle",
+        "female": "Femelle",
+        "unisex": "Unisexe"
+      },
+      "play_mode": {
+        "simple": "Jouer une fois",
+        "loop": "Boucle de jeu"
+      }
     }
   }
 }

@@ -217,6 +217,40 @@
       "only_listing_tooltip": "재판매중인 항목 만 포함합니다.",
       "not_for_sale": "비매품",
       "not_for_sale_tooltip": "마이닝 할 수없는 모든 품목 (제작자로부터 직접 구매) 또는 개방형 목록이 포함되어 있습니다."
+    },
+    "nft_card": {
+      "category": {
+        "body_shape": "체형",
+        "earring": "귀걸이",
+        "eyebrows": "눈썹",
+        "eyes": "눈",
+        "eyewear": "안경",
+        "facial_hair": "얼굴 털",
+        "feet": "피트",
+        "head": "머리",
+        "hair": "머리카락",
+        "hat": "모자",
+        "helmet": "헬멧",
+        "lower_body": "하체",
+        "mask": "마스크",
+        "mouth": "입",
+        "tiara": "보석 달린 머리 장식",
+        "top_head": "상단 머리",
+        "upper_body": "상체",
+        "skin": "피부",
+        "hands_wear": "핸드웨어"
+      },
+      "with_sound": "??",
+      "smart": "똑똑한",
+      "body_shape": {
+        "male": "남성",
+        "female": "여성",
+        "unisex": "유엔"
+      },
+      "play_mode": {
+        "simple": "한 번 플레이하십시오",
+        "loop": "연주 루프"
+      }
     }
   }
 }

@@ -295,6 +295,40 @@
     },
     "back_to_top_button": {
       "title": "Back to top"
+    },
+    "nft_card": {
+      "category": {
+        "body_shape": "Body Shape",
+        "earring": "Earring",
+        "eyebrows": "Eyebrows",
+        "eyes": "Eyes",
+        "eyewear": "Eyewear",
+        "facial_hair": "Facial Hair",
+        "feet": "Feet",
+        "head": "Head",
+        "hair": "Hair",
+        "hat": "Hat",
+        "helmet": "Helmet",
+        "lower_body": "Lower Body",
+        "mask": "Mask",
+        "mouth": "Mouth",
+        "tiara": "Tiara",
+        "top_head": "Top Head",
+        "upper_body": "Upper Body",
+        "skin": "Skin",
+        "hands_wear": "Handwear"
+      },
+      "with_sound": "??",
+      "smart": "Smart",
+      "body_shape": {
+        "male": "Male",
+        "female": "Female",
+        "unisex": "Unisex"
+      },
+      "play_mode": {
+        "simple": "Play once",
+        "loop": "Play loop"
+      }
     }
   }
 }
