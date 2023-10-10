@@ -1,5 +1,8 @@
 import React, { useCallback, useMemo } from 'react'
-import { UserInformationContainer as UserMenuComponent } from 'decentraland-ui/dist/components/UserInformationContainer/UserInformationContainer'
+import {
+  MenuItemType,
+  UserInformationContainer as UserMenuComponent
+} from 'decentraland-ui/dist/components/UserInformationContainer/UserInformationContainer'
 import { getAnalytics } from '../../modules/analytics/utils'
 import { t } from '../../modules/translation/utils'
 import { Props } from './UserInformation.types'
@@ -13,27 +16,8 @@ export const UserInformation = (props: Props) => {
     onSignIn,
     onOpen,
     onClickBalance,
-    onClickSettings,
-    onClickActivity,
-    onClickMyLists,
-    onClickMyAssets,
-    onClickProfile,
-    onClickAccount,
     ...rest
   } = props
-
-  const trackMethod = useCallback(
-    (method: Function, type: string) => () => {
-      if (analytics) {
-        analytics.track('User Menu', { type })
-      }
-      // Waits for the tracking process to end in case the method redirects the user to another site
-      setTimeout(() => {
-        method()
-      }, 300)
-    },
-    [analytics]
-  )
 
   const translations = useMemo(() => {
     if (!props.hasTranslations) {
@@ -51,21 +35,34 @@ export const UserInformation = (props: Props) => {
     }
   }, [hasTranslations])
 
-  const handleOnOpen = useCallback(() => {
-    if (analytics) {
-      analytics.track('User Menu', { type: 'Open' })
-    }
-    if (onOpen) {
-      setTimeout(() => {
-        onOpen()
-      }, 300)
-    }
-  }, [analytics, onOpen])
+  const trackMenuItemClick = useCallback(
+    (type: MenuItemType, track_uuid: string) => () => {
+      if (analytics) {
+        analytics.track('Unified Dropdown Menu Item Click', {
+          type,
+          track_uuid
+        })
+      }
+    },
+    [analytics]
+  )
 
-  const handleOnClickBalance = useCallback(
+  const handleOpen = useCallback(
+    (track_uuid: string) => {
+      if (analytics) {
+        analytics.track('Unified Dropdown Menu Display', { track_uuid })
+      }
+      if (onOpen) {
+        onOpen(track_uuid)
+      }
+    },
+    [analytics, onOpen]
+  )
+
+  const handleClickBalance = useCallback(
     network => {
       if (analytics) {
-        analytics.track('User Menu', { type: 'Balance', network })
+        analytics.track('Unified Dropdown Menu Balance Click', { network })
       }
       if (onClickBalance) {
         setTimeout(() => {
@@ -76,64 +73,40 @@ export const UserInformation = (props: Props) => {
     [onClickBalance]
   )
 
-  const methodProps: Pick<
-    Props,
-    | 'onSignIn'
-    | 'onSignOut'
-    | 'onClickBalance'
-    | 'onClickSettings'
-    | 'onClickActivity'
-    | 'onClickMyLists'
-    | 'onClickMyAssets'
-    | 'onClickProfile'
-    | 'onClickAccount'
-    | 'onOpen'
-  > = useMemo(() => {
-    const methods: typeof methodProps = {
-      onSignOut: trackMethod(onSignOut, 'Sign out'),
-      onSignIn: trackMethod(onSignIn, 'Sign in')
+  const handleSignOut = useCallback(
+    (track_uuid: string) => {
+      if (analytics) {
+        analytics.track('Unified Dropdown Menu Sign Out', { track_uuid })
+      }
+      if (onSignOut) {
+        setTimeout(() => {
+          onSignOut(track_uuid)
+        }, 300)
+      }
+    },
+    [onSignOut]
+  )
+
+  const handleSignIn = useCallback(() => {
+    if (analytics) {
+      analytics.track('Unified Dropdown Menu Sign In')
     }
-
-    methods.onOpen = handleOnOpen
-    methods.onClickBalance = handleOnClickBalance
-
-    if (onClickSettings) {
-      methods.onClickSettings = trackMethod(onClickSettings, 'Settings')
+    if (onSignIn) {
+      setTimeout(() => {
+        onSignIn()
+      }, 300)
     }
+  }, [onSignIn])
 
-    if (onClickActivity) {
-      methods.onClickActivity = trackMethod(onClickActivity, 'Activity')
-    }
-
-    if (onClickMyLists) {
-      methods.onClickMyLists = trackMethod(onClickMyLists, 'My lists')
-    }
-
-    if (onClickMyAssets) {
-      methods.onClickMyAssets = trackMethod(onClickMyAssets, 'My assets')
-    }
-
-    if (onClickProfile) {
-      methods.onClickProfile = trackMethod(onClickProfile, 'Profile')
-    }
-
-    if (onClickAccount) {
-      methods.onClickAccount = trackMethod(onClickAccount, 'Account')
-    }
-
-    return methods
-  }, [
-    onSignOut,
-    onSignIn,
-    onClickBalance,
-    onClickSettings,
-    onClickActivity,
-    onClickMyLists,
-    onClickMyAssets,
-    onClickProfile,
-    onOpen,
-    onClickAccount
-  ])
-
-  return <UserMenuComponent {...methodProps} {...rest} i18n={translations} />
+  return (
+    <UserMenuComponent
+      onSignOut={handleSignOut}
+      onSignIn={handleSignIn}
+      onClickBalance={handleClickBalance}
+      onOpen={handleOpen}
+      onMenuItemClick={trackMenuItemClick}
+      {...rest}
+      i18n={translations}
+    />
+  )
 }
