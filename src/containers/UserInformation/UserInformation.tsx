@@ -36,7 +36,7 @@ export const UserInformation = (props: Props) => {
   }, [hasTranslations])
 
   const trackMenuItemClick = useCallback(
-    (type: MenuItemType, track_uuid: string) => () => {
+    (type: MenuItemType, track_uuid: string) => {
       if (analytics) {
         analytics.track('Unified Dropdown Menu Item Click', {
           type,
@@ -70,7 +70,7 @@ export const UserInformation = (props: Props) => {
         }, 300)
       }
     },
-    [onClickBalance]
+    [analytics, onClickBalance]
   )
 
   const handleSignOut = useCallback(
@@ -84,7 +84,7 @@ export const UserInformation = (props: Props) => {
         }, 300)
       }
     },
-    [onSignOut]
+    [analytics, onSignOut]
   )
 
   const handleSignIn = useCallback(() => {
@@ -96,7 +96,7 @@ export const UserInformation = (props: Props) => {
         onSignIn()
       }, 300)
     }
-  }, [onSignIn])
+  }, [analytics, onSignIn])
 
   return (
     <UserMenuComponent
