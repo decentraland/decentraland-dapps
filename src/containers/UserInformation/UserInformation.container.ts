@@ -18,7 +18,7 @@ import {
   Props,
   OwnProps
 } from './UserInformation.types'
-import UserInformation from './UserInformation'
+import { UserInformation } from './UserInformation'
 
 const mapState = (state: any): MapStateProps => {
   const isSignedIn = isConnected(state)

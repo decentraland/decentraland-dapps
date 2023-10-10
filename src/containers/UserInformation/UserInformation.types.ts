@@ -5,7 +5,9 @@ import {
   DisconnectWalletAction
 } from '../../modules/wallet/actions'
 
-export type Props = UserInformationComponentProps & { hasTranslations: boolean }
+export type Props = Omit<UserInformationComponentProps, 'i18n'> & {
+  hasTranslations: boolean
+}
 
 export type MapStateProps = Pick<
   Props,
