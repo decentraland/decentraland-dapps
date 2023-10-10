@@ -1,14 +1,42 @@
-import * as React from 'react'
-import {
-  UserInformationContainer as UserMenuComponent,
-  UserInformationComponentI18N
-} from 'decentraland-ui/dist/components/UserInformationContainer/UserInformationContainer'
+import React, { useCallback, useMemo } from 'react'
+import { UserInformationContainer as UserMenuComponent } from 'decentraland-ui/dist/components/UserInformationContainer/UserInformationContainer'
+import { getAnalytics } from '../../modules/analytics/utils'
 import { t } from '../../modules/translation/utils'
 import { Props } from './UserInformation.types'
 
-export default class UserMenu extends React.Component<Props> {
-  getTranslations = (): UserInformationComponentI18N | undefined => {
-    if (!this.props.hasTranslations) {
+export const UserInformation = (props: Props) => {
+  const analytics = getAnalytics()
+
+  const {
+    hasTranslations,
+    onSignOut,
+    onSignIn,
+    onOpen,
+    onClickBalance,
+    onClickSettings,
+    onClickActivity,
+    onClickMyLists,
+    onClickMyAssets,
+    onClickProfile,
+    onClickAccount,
+    ...rest
+  } = props
+
+  const trackMethod = useCallback(
+    (method: Function, type: string) => () => {
+      if (analytics) {
+        analytics.track('User Menu', { type })
+      }
+      // Waits for the tracking process to end in case the method redirects the user to another site
+      setTimeout(() => {
+        method()
+      }, 300)
+    },
+    [analytics]
+  )
+
+  const translations = useMemo(() => {
+    if (!props.hasTranslations) {
       return undefined
     }
     return {
@@ -21,9 +49,91 @@ export default class UserMenu extends React.Component<Props> {
       myAssets: t('@dapps.user_menu.myAssets'),
       myLists: t('@dapps.user_menu.myLists')
     }
-  }
+  }, [hasTranslations])
 
-  render() {
-    return <UserMenuComponent {...this.props} i18n={this.getTranslations()} />
-  }
+  const handleOnOpen = useCallback(() => {
+    if (analytics) {
+      analytics.track('User Menu', { type: 'Open' })
+    }
+    if (onOpen) {
+      setTimeout(() => {
+        onOpen()
+      }, 300)
+    }
+  }, [analytics, onOpen])
+
+  const handleOnClickBalance = useCallback(
+    network => {
+      if (analytics) {
+        analytics.track('User Menu', { type: 'Balance', network })
+      }
+      if (onClickBalance) {
+        setTimeout(() => {
+          onClickBalance(network)
+        }, 300)
+      }
+    },
+    [onClickBalance]
+  )
+
+  const methodProps: Pick<
+    Props,
+    | 'onSignIn'
+    | 'onSignOut'
+    | 'onClickBalance'
+    | 'onClickSettings'
+    | 'onClickActivity'
+    | 'onClickMyLists'
+    | 'onClickMyAssets'
+    | 'onClickProfile'
+    | 'onClickAccount'
+    | 'onOpen'
+  > = useMemo(() => {
+    const methods: typeof methodProps = {
+      onSignOut: trackMethod(onSignOut, 'Sign out'),
+      onSignIn: trackMethod(onSignIn, 'Sign in')
+    }
+
+    methods.onOpen = handleOnOpen
+    methods.onClickBalance = handleOnClickBalance
+
+    if (onClickSettings) {
+      methods.onClickSettings = trackMethod(onClickSettings, 'Settings')
+    }
+
+    if (onClickActivity) {
+      methods.onClickActivity = trackMethod(onClickActivity, 'Activity')
+    }
+
+    if (onClickMyLists) {
+      methods.onClickMyLists = trackMethod(onClickMyLists, 'My lists')
+    }
+
+    if (onClickMyAssets) {
+      methods.onClickMyAssets = trackMethod(onClickMyAssets, 'My assets')
+    }
+
+    if (onClickProfile) {
+      methods.onClickProfile = trackMethod(onClickProfile, 'Profile')
+    }
+
+    if (onClickAccount) {
+      methods.onClickAccount = trackMethod(onClickAccount, 'Account')
+    }
+
+    return methods
+  }, [
+    onSignOut,
+    onSignIn,
+    onClickBalance,
+    onClickSettings,
+    onClickActivity,
+    onClickMyLists,
+    onClickMyAssets,
+    onClickProfile,
+    onOpen,
+    onClickAccount
+  ])
+
+  return <UserMenuComponent {...methodProps} {...rest} i18n={translations} />
 }
