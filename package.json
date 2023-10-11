@@ -9,7 +9,7 @@
     "@transak/transak-sdk": "^1.0.31",
     "@types/flat": "0.0.28",
     "@types/uuid": "^3.4.3",
-    "@well-known-components/fetch-component": "^2.0.3-20230725165816.commit-952c965",
+    "@well-known-components/fetch-component": "^2.0.1",
     "axios": "^0.21.1",
     "date-fns": "^1.29.0",
     "dcl-catalyst-client": "^21.1.0",
