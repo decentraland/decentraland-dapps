@@ -10,7 +10,10 @@ import {
 import { disconnectWallet } from '../../modules/wallet/actions'
 import { getData as getProfiles } from '../../modules/profile/selectors'
 import { isEnabled } from '../../modules/translation/selectors'
-import { getTransactions } from '../../modules/transaction/selectors'
+import {
+  getTransactions,
+  getState as getTransactionsState
+} from '../../modules/transaction/selectors'
 import {
   MapStateProps,
   MapDispatch,
@@ -25,6 +28,7 @@ const mapState = (state: any): MapStateProps => {
   const address = getAddress(state)
   const profile = getProfiles(state)[address!]
   const networks = getNetworks(state)
+  const transactionsState = getTransactionsState(state)
 
   const manaBalances: Props['manaBalances'] = {}
   if (isSignedIn) {
@@ -43,9 +47,9 @@ const mapState = (state: any): MapStateProps => {
     avatar: profile ? profile.avatars[0] : undefined,
     isSignedIn,
     isSigningIn: isConnecting(state),
-    hasActivity: getTransactions(state, address || '').some(tx =>
-      isPending(tx.status)
-    ),
+    hasActivity: transactionsState
+      ? getTransactions(state, address || '').some(tx => isPending(tx.status))
+      : false,
     hasTranslations: isEnabled(state)
   }
 }
