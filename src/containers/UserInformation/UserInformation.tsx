@@ -6,6 +6,13 @@ import {
 import { getAnalytics } from '../../modules/analytics/utils'
 import { t } from '../../modules/translation/utils'
 import { Props } from './UserInformation.types'
+import {
+  DROPDOWN_MENU_BALANCE_CLICK_EVENT,
+  DROPDOWN_MENU_DISPLAY_EVENT,
+  DROPDOWN_MENU_ITEM_CLICK_EVENT,
+  DROPDOWN_MENU_SIGN_IN_EVENT,
+  DROPDOWN_MENU_SIGN_OUT_EVENT
+} from './constants'
 
 export const UserInformation = (props: Props) => {
   const analytics = getAnalytics()
@@ -38,7 +45,7 @@ export const UserInformation = (props: Props) => {
   const trackMenuItemClick = useCallback(
     (type: MenuItemType, track_uuid: string) => {
       if (analytics) {
-        analytics.track('Unified Dropdown Menu Item Click', {
+        analytics.track(DROPDOWN_MENU_ITEM_CLICK_EVENT, {
           type,
           track_uuid
         })
@@ -50,7 +57,7 @@ export const UserInformation = (props: Props) => {
   const handleOpen = useCallback(
     (track_uuid: string) => {
       if (analytics) {
-        analytics.track('Unified Dropdown Menu Display', { track_uuid })
+        analytics.track(DROPDOWN_MENU_DISPLAY_EVENT, { track_uuid })
       }
       if (onOpen) {
         onOpen(track_uuid)
@@ -62,7 +69,7 @@ export const UserInformation = (props: Props) => {
   const handleClickBalance = useCallback(
     network => {
       if (analytics) {
-        analytics.track('Unified Dropdown Menu Balance Click', { network })
+        analytics.track(DROPDOWN_MENU_BALANCE_CLICK_EVENT, { network })
       }
       if (onClickBalance) {
         setTimeout(() => {
@@ -76,7 +83,7 @@ export const UserInformation = (props: Props) => {
   const handleSignOut = useCallback(
     (track_uuid: string) => {
       if (analytics) {
-        analytics.track('Unified Dropdown Menu Sign Out', { track_uuid })
+        analytics.track(DROPDOWN_MENU_SIGN_OUT_EVENT, { track_uuid })
       }
       if (onSignOut) {
         setTimeout(() => {
@@ -89,7 +96,7 @@ export const UserInformation = (props: Props) => {
 
   const handleSignIn = useCallback(() => {
     if (analytics) {
-      analytics.track('Unified Dropdown Menu Sign In')
+      analytics.track(DROPDOWN_MENU_SIGN_IN_EVENT)
     }
     if (onSignIn) {
       setTimeout(() => {
