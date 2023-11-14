@@ -1,7 +1,11 @@
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { isLoadingType } from '../loading/selectors'
-import { CONNECT_WALLET_REQUEST, ENABLE_WALLET_REQUEST } from './actions'
+import {
+  CONNECT_WALLET_REQUEST,
+  ENABLE_WALLET_REQUEST,
+  SWITCH_NETWORK_REQUEST
+} from './actions'
 import { WalletState } from './reducer'
 
 export const getState: (state: any) => WalletState = state => state.wallet
@@ -29,6 +33,9 @@ export const getNetwork = (state: any) =>
 
 export const getNetworks = (state: any) =>
   isConnected(state) ? getData(state)!.networks : undefined
+
+export const isSwitchingNetwork = (state: any) =>
+  isLoadingType(getLoading(state), SWITCH_NETWORK_REQUEST)
 
 // Casting as ChainId since it will be initialized at the beginning
 export const getAppChainId = (state: any) =>

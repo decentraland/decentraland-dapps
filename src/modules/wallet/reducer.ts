@@ -27,7 +27,13 @@ import {
   FETCH_WALLET_SUCCESS,
   FETCH_WALLET_FAILURE,
   SetAppChainIdAction,
-  SET_APP_CHAIN_ID
+  SET_APP_CHAIN_ID,
+  SWITCH_NETWORK_REQUEST,
+  SwitchNetworkRequestAction,
+  SwitchNetworkSuccessAction,
+  SwitchNetworkFailureAction,
+  SWITCH_NETWORK_SUCCESS,
+  SWITCH_NETWORK_FAILURE
 } from './actions'
 
 export type WalletState = {
@@ -48,6 +54,9 @@ export type WalletReducerAction =
   | ConnectWalletRequestAction
   | ConnectWalletSuccessAction
   | ConnectWalletFailureAction
+  | SwitchNetworkRequestAction
+  | SwitchNetworkSuccessAction
+  | SwitchNetworkFailureAction
   | EnableWalletRequestAction
   | EnableWalletSuccessAction
   | EnableWalletFailureAction
@@ -66,6 +75,7 @@ export function walletReducer(
   switch (action.type) {
     case FETCH_WALLET_REQUEST:
     case ENABLE_WALLET_REQUEST:
+    case SWITCH_NETWORK_REQUEST:
     case CONNECT_WALLET_REQUEST: {
       return {
         ...state,
@@ -83,6 +93,7 @@ export function walletReducer(
       }
     }
 
+    case SWITCH_NETWORK_SUCCESS:
     case ENABLE_WALLET_SUCCESS: {
       return {
         ...state,
@@ -91,6 +102,7 @@ export function walletReducer(
       }
     }
 
+    case SWITCH_NETWORK_FAILURE:
     case FETCH_WALLET_FAILURE: {
       return {
         ...state,

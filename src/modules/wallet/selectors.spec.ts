@@ -1,6 +1,10 @@
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { Network } from '@dcl/schemas/dist/dapps/network'
-import { connectWalletRequest, enableWalletRequest } from './actions'
+import {
+  connectWalletRequest,
+  enableWalletRequest,
+  switchNetworkRequest
+} from './actions'
 import { INITIAL_STATE, WalletState } from './reducer'
 import {
   getAddress,
@@ -15,7 +19,8 @@ import {
   getState,
   isConnected,
   isConnecting,
-  isEnabling
+  isEnabling,
+  isSwitchingNetwork
 } from './selectors'
 import { NetworkData, ProviderType, Wallet } from './types'
 import { Networks } from './types'
@@ -196,6 +201,30 @@ describe('Wallet selectors', () => {
       expect(getAppChainId(initialState)).toEqual(
         initialState.wallet.appChainId
       )
+    })
+  })
+
+  describe('when getting if the user is switching network', () => {
+    describe('and switch network request is loading', () => {
+      beforeEach(() => {
+        initialState.wallet.loading = [
+          switchNetworkRequest(ChainId.ETHEREUM_MAINNET)
+        ]
+      })
+
+      it('should return true', () => {
+        expect(isSwitchingNetwork(initialState)).toBe(true)
+      })
+    })
+
+    describe('and switch network request is not loading', () => {
+      beforeEach(() => {
+        initialState.wallet.loading = []
+      })
+
+      it('should return false', () => {
+        expect(isSwitchingNetwork(initialState)).toBe(false)
+      })
     })
   })
 })
