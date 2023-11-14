@@ -8,6 +8,8 @@ import {
   EnableWalletSuccessAction,
   FetchWalletFailureAction,
   FetchWalletRequestAction,
+  SwitchNetworkFailureAction,
+  SwitchNetworkRequestAction,
   changeAccount,
   changeNetwork,
   connectWalletFailure,
@@ -20,7 +22,9 @@ import {
   fetchWalletFailure,
   fetchWalletRequest,
   fetchWalletSuccess,
-  setAppChainId
+  setAppChainId,
+  switchNetworkFailure,
+  switchNetworkRequest
 } from './actions'
 import { INITIAL_STATE, WalletState, walletReducer } from './reducer'
 import { ProviderType, Wallet } from './types'
@@ -33,7 +37,8 @@ const wallet = {} as Wallet
 const requestActions = [
   fetchWalletRequest(),
   enableWalletRequest(providerType),
-  connectWalletRequest()
+  connectWalletRequest(),
+  switchNetworkRequest(chainId)
 ]
 
 beforeEach(() => {})
@@ -183,6 +188,30 @@ describe('when reducing the failure action of enabling the wallet', () => {
       loading: loadingReducer([], requestAction),
       data: wallet
     }
+  })
+
+  describe('when reducing the failure action of switching the wallets network', () => {
+    let initialState: WalletState
+
+    let requestAction: SwitchNetworkRequestAction
+    let failureAction: SwitchNetworkFailureAction
+
+    beforeEach(() => {
+      requestAction = switchNetworkRequest(chainId)
+      failureAction = switchNetworkFailure(chainId, error)
+
+      initialState = {
+        ...INITIAL_STATE,
+        loading: loadingReducer([], requestAction)
+      }
+    })
+
+    it('should return a state with loading state cleared', () => {
+      expect(walletReducer(initialState, failureAction)).toEqual({
+        ...INITIAL_STATE,
+        loading: []
+      })
+    })
   })
 
   it('should return a state with the error set and the loading state and data cleared', () => {
