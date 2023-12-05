@@ -10,8 +10,8 @@ export default class NotificationsAPI extends BaseClient {
     super(url, config)
   }
 
-  async getNotifications() {
-    const notificationsResponse = await this.fetch<{notifications: Array<DCLNotification>}>('/notifications')
+  async getNotifications(from?: number) {
+    const notificationsResponse = await this.fetch<{notifications: Array<DCLNotification>}>(`/notifications${from ? `?from=${from}` : '' }`)
 
     return notificationsResponse
   }
@@ -24,5 +24,5 @@ export default class NotificationsAPI extends BaseClient {
       headers: { "Content-Type": "application/json" }  
     })
   }
-
+  
 }
