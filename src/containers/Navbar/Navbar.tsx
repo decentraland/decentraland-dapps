@@ -14,7 +14,7 @@ import Modal from '../../containers/Modal'
 import ChainProvider from '../ChainProvider'
 import { NavbarProps } from './Navbar.types'
 import Notifications from '../Notifications/Notifications'
-import { NotMobile } from 'decentraland-ui'
+import { NotMobile } from 'decentraland-ui/dist/components/Media'
 
 export default class Navbar extends React.PureComponent<NavbarProps> {
   static defaultProps = {
