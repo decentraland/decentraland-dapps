@@ -5,6 +5,7 @@ import { AuthIdentity } from "@dcl/crypto"
 import NotificationsAPI from "../../modules/notifications"
 import { DCLNotification, NotificationLocale } from "decentraland-ui/dist/components/Notifications/types"
 import { getPreferredLocale } from "../../modules/translation/utils"
+import { checkIsOnboarding, parseNotification } from "./utils"
 
 type NotificationsProps = {
   identity: AuthIdentity | null
@@ -30,10 +31,7 @@ export default function Notifications(props: NotificationsProps) {
     .then((response) => {
       const parsed = response
       .notifications
-      .map((notification) => ({ 
-        ...notification, 
-        timestamp: Number(notification.timestamp) * 1000 
-      }))
+      .map(parseNotification)
 
       setNotifications(parsed)
     })
@@ -47,20 +45,29 @@ export default function Notifications(props: NotificationsProps) {
       const unreadNotifications = notifications.filter((notification) => !notification.read).map(({ id }) => id)
       if (unreadNotifications.length) {
         await client.markNotificationsAsRead(unreadNotifications)
-        fetchNotificationsState()
       }
+    } else {
+      const markCurrentNotificationsAsRead = notifications.map((notification) => {
+        if (notification.read) return notification
+
+        return ({
+          ...notification,
+          read: true
+        })
+      })
+      setNotifications(markCurrentNotificationsAsRead)
     }
   }
 
   useEffect(() => {
-    if (props.identity) {  
-      fetchNotificationsState()    
+    if (props.identity) {
+      fetchNotificationsState()
 
       const interval = setInterval(async () => {
         const response = await client.getNotifications()
-        const parsed = response.notifications.map((notification) => ({ ...notification, timestamp: Number(notification.timestamp) * 1000 }))
+        const parsed = response.notifications.map(parseNotification)
         setNotifications(parsed)
-      }, 60000)
+      }, 20000)
 
       return () => {
         clearInterval(interval)
@@ -70,26 +77,15 @@ export default function Notifications(props: NotificationsProps) {
     }
   }, [props.identity])
   
-
   return <NotificationsUI
     locale={(getPreferredLocale(['en', 'es', 'zh']) as NotificationLocale)|| 'en'}
     isOnboarding={isOnboarding}
     isLoading={isLoading}
     isOpen={isOpen}
-    onClickToggle={handleToggleOpen}
+    onClick={handleToggleOpen}
     activeTab={activeTab} 
     onChangeTab={(_, tab) => setActiveTab(tab)} 
     onBegin={() => setIsOnboarding(false)} 
-    userNotifications={notifications}  
+    items={notifications}  
   />
-}
-
-const checkIsOnboarding = () => {
-  const isOnboarding = localStorage.getItem('dcl_notifications_onboarding')
-  if (isOnboarding) {
-    return false
-  } else {
-    localStorage.setItem('dcl_notifications_onboarding', "true")
-    return true
-  }
 }

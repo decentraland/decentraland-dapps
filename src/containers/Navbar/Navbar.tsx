@@ -49,7 +49,8 @@ export default class Navbar extends React.PureComponent<NavbarProps> {
           main: <T id="@dapps.navbar.menu.dao.main" />,
           overview: <T id="@dapps.navbar.menu.dao.overview" />,
           governance: <T id="@dapps.navbar.menu.dao.governance" />,
-          transparency: <T id="@dapps.navbar.menu.dao.transparency" />
+          transparency: <T id="@dapps.navbar.menu.dao.transparency" />,
+          grants: <T id="@dapps.navbar.menu.dao.grants" />,
         },
         docs: {
           main: <T id="@dapps.navbar.menu.docs.main" />,
