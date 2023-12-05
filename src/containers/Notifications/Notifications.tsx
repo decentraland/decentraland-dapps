@@ -67,7 +67,7 @@ export default function Notifications(props: NotificationsProps) {
         const response = await client.getNotifications()
         const parsed = response.notifications.map(parseNotification)
         setNotifications(parsed)
-      }, 20000)
+      }, 60000)
 
       return () => {
         clearInterval(interval)
