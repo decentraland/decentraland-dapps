@@ -13,6 +13,8 @@ import { t, T } from '../../modules/translation/utils'
 import Modal from '../../containers/Modal'
 import ChainProvider from '../ChainProvider'
 import { NavbarProps } from './Navbar.types'
+import Notifications from '../Notifications/Notifications'
+import { NotMobile } from 'decentraland-ui/dist/components/Media'
 
 export default class Navbar extends React.PureComponent<NavbarProps> {
   static defaultProps = {
@@ -48,7 +50,8 @@ export default class Navbar extends React.PureComponent<NavbarProps> {
           main: <T id="@dapps.navbar.menu.dao.main" />,
           overview: <T id="@dapps.navbar.menu.dao.overview" />,
           governance: <T id="@dapps.navbar.menu.dao.governance" />,
-          transparency: <T id="@dapps.navbar.menu.dao.transparency" />
+          transparency: <T id="@dapps.navbar.menu.dao.transparency" />,
+          grants: <T id="@dapps.navbar.menu.dao.grants" />,
         },
         docs: {
           main: <T id="@dapps.navbar.menu.docs.main" />,
@@ -91,6 +94,27 @@ export default class Navbar extends React.PureComponent<NavbarProps> {
     })
   }
 
+  renderRightMenu() {
+    if (this.props.withNotifications) {
+      if (this.props.isConnected) {
+        return (
+          <>
+            <NotMobile>
+              <div style={{ marginRight: "10px" }}>
+                <Notifications 
+                  identity={this.props.identity!} 
+                />
+              </div>
+            </NotMobile>
+            {this.props.rightMenu || <></>}
+          </>
+        )
+      }
+    }
+
+    return this.props.rightMenu
+  }
+
   render() {
     const { appChainId, docsUrl, enablePartialSupportAlert } = this.props
     const expectedChainName = getChainName(appChainId)
@@ -121,8 +145,8 @@ export default class Navbar extends React.PureComponent<NavbarProps> {
               ) : null}
               <NavbarComponent
                 {...this.props}
+                rightMenu={this.renderRightMenu()}
                 i18n={this.getTranslations()}
-                onClickMenuOption={this.handleClickMenuOption}
               />
               {isUnsupported ? (
                 <Modal open size="tiny">

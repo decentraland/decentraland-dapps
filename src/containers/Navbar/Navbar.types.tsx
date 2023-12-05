@@ -6,6 +6,7 @@ import {
   switchNetworkRequest,
   SwitchNetworkRequestAction
 } from '../../modules/wallet/actions'
+import { AuthIdentity } from 'decentraland-crypto-fetch'
 
 export type NavbarProps = NavbarComponentProps & {
   chainId?: ChainId
@@ -15,6 +16,8 @@ export type NavbarProps = NavbarComponentProps & {
   enablePartialSupportAlert?: boolean
   onSwitchNetwork: typeof switchNetworkRequest
   onSignOut: typeof disconnectWallet
+  withNotifications?: boolean
+  identity?: AuthIdentity
 }
 
 export type MapStateProps = Pick<

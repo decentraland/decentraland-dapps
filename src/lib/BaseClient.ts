@@ -18,7 +18,7 @@ export type BaseClientConfig = {
 }
 
 export abstract class BaseClient {
-  private readonly baseUrl: string
+  protected readonly baseUrl: string
   private readonly retries: number
   private readonly retryDelay: number
   private readonly nonRetryableStatuses: number[]
@@ -40,7 +40,7 @@ export abstract class BaseClient {
       setTimeout(resolve, delay)
     })
 
-  private getIdentity = () =>
+  protected getIdentity = () =>
     this.identity instanceof Function ? this.identity() : this.identity
 
   protected rawFetch = (path: string, init?: SignedRequestInit): Promise<Response> => {
