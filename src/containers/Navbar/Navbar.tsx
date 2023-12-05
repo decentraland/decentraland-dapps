@@ -14,6 +14,7 @@ import Modal from '../../containers/Modal'
 import ChainProvider from '../ChainProvider'
 import { NavbarProps } from './Navbar.types'
 import Notifications from '../Notifications/Notifications'
+import { NotMobile } from 'decentraland-ui'
 
 export default class Navbar extends React.PureComponent<NavbarProps> {
   static defaultProps = {
@@ -98,11 +99,13 @@ export default class Navbar extends React.PureComponent<NavbarProps> {
       if (this.props.isConnected) {
         return (
           <>
-            <div style={{ marginRight: "10px" }}>
-              <Notifications 
-                identity={this.props.identity!} 
-              />
-            </div>
+            <NotMobile>
+              <div style={{ marginRight: "10px" }}>
+                <Notifications 
+                  identity={this.props.identity!} 
+                />
+              </div>
+            </NotMobile>
             {this.props.rightMenu || <></>}
           </>
         )
