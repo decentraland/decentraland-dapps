@@ -5,7 +5,7 @@ import { DCLNotification } from "decentraland-ui/dist/components/Notifications/t
 
 export class NotificationsAPI extends BaseClient {
   constructor(config: BaseClientConfig) {
-    const url = [Env.DEVELOPMENT, Env.STAGING].includes(getEnv()) ? "https://notifications.decentraland.zone" : "https://notifications.decentraland.org"
+    const url = getEnv() === Env.DEVELOPMENT ? "https://notifications.decentraland.zone" : "https://notifications.decentraland.org"
 
     super(url, config)
   }
