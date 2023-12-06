@@ -35,8 +35,8 @@ export const UserInformation = (props: Props) => {
     activeTab: 'newest' as 'newest' | 'read',
     isLoading: false,
     isOnboarding: checkIsOnboarding(),
-    isOpen: false
   })
+  const [notificationsModalOpen, setNotificationsModalOpen] = useState(false)
 
   let client: NotificationsAPI
   if (identity) {
@@ -133,10 +133,9 @@ export const UserInformation = (props: Props) => {
   }
 
   const handleNotificationsOpen = async () => {
-    let currentState = notificationsState.isOpen
-    console.log("current state clicks > ", currentState)
+    let currentState = notificationsModalOpen
     
-    setNotificationsState({ ...notificationsState, isOpen: !currentState })
+    setNotificationsModalOpen(!currentState)
     
     if (!currentState) {
       const unreadNotifications = notificationsState.notifications.filter((notification) => !notification.read).map(({ id }) => id)
@@ -162,6 +161,28 @@ export const UserInformation = (props: Props) => {
     }
   }, [identity])
 
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      const element = document.querySelector(".notifications-feed")
+      if (element && !element.contains(event.target as Node)) {
+        event.preventDefault()
+        event.stopPropagation()
+        handleNotificationsOpen()
+      }
+    }
+
+    if (notificationsModalOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+
+  }, [notificationsModalOpen])
+
   return (
     <UserMenuComponent
       notifications={
@@ -169,7 +190,7 @@ export const UserInformation = (props: Props) => {
           locale: props.locale as NotificationLocale,
           isLoading: notificationsState.isLoading,
           isOnboarding: notificationsState.isOnboarding,
-          isOpen: notificationsState.isOpen,
+          isOpen: notificationsModalOpen,
           items: notificationsState.notifications,
           activeTab: notificationsState.activeTab,
           onClick: handleNotificationsOpen,
