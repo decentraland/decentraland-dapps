@@ -3,9 +3,9 @@ import { BaseClient, BaseClientConfig } from "../lib/BaseClient";
 import { DCLNotification } from "decentraland-ui/dist/components/Notifications/types"
 
 
-export default class NotificationsAPI extends BaseClient {
+export class NotificationsAPI extends BaseClient {
   constructor(config: BaseClientConfig) {
-    const url = getEnv() === Env.DEVELOPMENT || Env.STAGING ? "https://notifications.decentraland.zone" : "https://notifications.decentraland.org"
+    const url = [Env.DEVELOPMENT, Env.STAGING].includes(getEnv()) ? "https://notifications.decentraland.zone" : "https://notifications.decentraland.org"
 
     super(url, config)
   }
@@ -21,7 +21,7 @@ export default class NotificationsAPI extends BaseClient {
       params.append("from", `${from}`)
     }
 
-    const notificationsResponse = await this.fetch<{notifications: Array<DCLNotification>}>(`/notifications${params.size ? `?${params.toString()}` : ''}`)
+    const notificationsResponse = await this.fetch<{notifications: Array<DCLNotification>}>(`/notifications${params.toString().length ? `?${params.toString()}` : ''}`)
 
     return notificationsResponse
   }
@@ -35,4 +35,21 @@ export default class NotificationsAPI extends BaseClient {
     })
   }
   
+}
+
+export const checkIsOnboarding = () => {
+  const isOnboarding = localStorage.getItem('dcl_notifications_onboarding')
+  if (isOnboarding) {
+    return false
+  } else {
+    localStorage.setItem('dcl_notifications_onboarding', "true")
+    return true
+  }
+}
+
+export const parseNotification = (notification: DCLNotification): DCLNotification => {
+  return ({
+    ...notification,
+    timestamp: Number(notification.timestamp) * 1000
+  })
 }
