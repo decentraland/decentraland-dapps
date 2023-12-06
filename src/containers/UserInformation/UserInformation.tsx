@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   MenuItemType,
   UserInformationContainer as UserMenuComponent
@@ -13,6 +13,8 @@ import {
   DROPDOWN_MENU_SIGN_IN_EVENT,
   DROPDOWN_MENU_SIGN_OUT_EVENT
 } from './constants'
+import { NotificationsAPI, checkIsOnboarding, parseNotification} from '../../modules/notifications'
+import { DCLNotification, NotificationLocale } from 'decentraland-ui/dist/components/Notifications/types'
 
 export const UserInformation = (props: Props) => {
   const analytics = getAnalytics()
@@ -23,8 +25,23 @@ export const UserInformation = (props: Props) => {
     onSignIn,
     onOpen,
     onClickBalance,
+    withNotifications,
+    identity,
     ...rest
   } = props
+
+  const [notificationsState, setNotificationsState] = useState({
+    notifications: [] as DCLNotification[],
+    activeTab: 'newest' as 'newest' | 'read',
+    isLoading: false,
+    isOnboarding: checkIsOnboarding(),
+    isOpen: false
+  })
+
+  let client: NotificationsAPI
+  if (identity) {
+    client = new NotificationsAPI({ identity })
+  }
 
   const translations = useMemo(() => {
     if (!props.hasTranslations) {
@@ -105,8 +122,63 @@ export const UserInformation = (props: Props) => {
     }
   }, [analytics, onSignIn])
 
+  const fetchNotificationsState = () => {
+    setNotificationsState({ ...notificationsState, isLoading: true })
+    client.getNotifications(50)
+    .then((response) => {
+      const parsed = response.notifications.map(parseNotification)
+
+      setNotificationsState({ ...notificationsState, notifications: parsed, isLoading: false })
+    })
+  }
+
+  const handleNotificationsOpen = async () => {
+    let currentState = notificationsState.isOpen
+    console.log("current state clicks > ", currentState)
+    
+    setNotificationsState({ ...notificationsState, isOpen: !currentState })
+    
+    if (!currentState) {
+      const unreadNotifications = notificationsState.notifications.filter((notification) => !notification.read).map(({ id }) => id)
+      if (unreadNotifications.length) {
+        await client.markNotificationsAsRead(unreadNotifications)
+      }
+    }
+  }
+
+  useEffect(() => {
+    if (identity && withNotifications) {
+      fetchNotificationsState()
+
+      const interval = setInterval(() => {
+        fetchNotificationsState()
+      }, 60000)
+
+      return () => {
+        clearInterval(interval)
+      }
+    } else {
+      return () => {}
+    }
+  }, [identity])
+
   return (
     <UserMenuComponent
+      notifications={
+        withNotifications ? {
+          locale: props.locale as NotificationLocale,
+          isLoading: notificationsState.isLoading,
+          isOnboarding: notificationsState.isOnboarding,
+          isOpen: notificationsState.isOpen,
+          items: notificationsState.notifications,
+          activeTab: notificationsState.activeTab,
+          onClick: handleNotificationsOpen,
+          onCloseModalMobile: handleNotificationsOpen,
+          onBegin: () => setNotificationsState({ ...notificationsState, isOnboarding: false }),
+          onChangeTab: (_, tab) => setNotificationsState({  ...notificationsState, activeTab: tab }),
+        } 
+        : undefined
+      }
       onSignOut={handleSignOut}
       onSignIn={handleSignIn}
       onClickBalance={handleClickBalance}

@@ -9,7 +9,7 @@ import {
 } from '../../modules/wallet/selectors'
 import { disconnectWallet } from '../../modules/wallet/actions'
 import { getData as getProfiles } from '../../modules/profile/selectors'
-import { isEnabled } from '../../modules/translation/selectors'
+import { getLocale, isEnabled } from '../../modules/translation/selectors'
 import {
   getTransactions,
   getState as getTransactionsState
@@ -44,6 +44,7 @@ const mapState = (state: any): MapStateProps => {
   return {
     address,
     manaBalances,
+    locale: getLocale(state),
     avatar: profile ? profile.avatars[0] : undefined,
     isSignedIn,
     isSigningIn: isConnecting(state),
