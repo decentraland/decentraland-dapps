@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react"
 
-import NotificationsUI from "decentraland-ui/dist/components/Notifications/Notifications"
 import { AuthIdentity } from "@dcl/crypto"
-import NotificationsAPI from "../../modules/notifications"
+import NotificationsUI from "decentraland-ui/dist/components/Notifications/Notifications"
 import { DCLNotification, NotificationLocale } from "decentraland-ui/dist/components/Notifications/types"
+import NotificationsAPI from "../../modules/notifications"
 import { getPreferredLocale } from "../../modules/translation/utils"
 import { checkIsOnboarding, parseNotification } from "./utils"
 
@@ -15,11 +15,9 @@ export default function Notifications(props: NotificationsProps) {
   const [notifications, setNotifications] = useState<DCLNotification[]>([])
   const [activeTab, setActiveTab] = useState<'newest' | 'read'>('newest')
   const [isLoading, setIsLoading] = useState(false)
-
   const [isOnboarding, setIsOnboarding] = useState(checkIsOnboarding())
-
   const [isOpen, setIsOpen] = useState(false)
-
+  
   let client: NotificationsAPI
   if (props.identity) {
     client = new NotificationsAPI({ identity: props.identity })
@@ -27,7 +25,7 @@ export default function Notifications(props: NotificationsProps) {
 
   const fetchNotificationsState = () => {
     setIsLoading(true)
-    client.getNotifications()
+    client.getNotifications(50)
     .then((response) => {
       const parsed = response
       .notifications
@@ -63,10 +61,8 @@ export default function Notifications(props: NotificationsProps) {
     if (props.identity) {
       fetchNotificationsState()
 
-      const interval = setInterval(async () => {
-        const response = await client.getNotifications()
-        const parsed = response.notifications.map(parseNotification)
-        setNotifications(parsed)
+      const interval = setInterval(() => {
+        fetchNotificationsState()
       }, 60000)
 
       return () => {

@@ -10,8 +10,18 @@ export default class NotificationsAPI extends BaseClient {
     super(url, config)
   }
 
-  async getNotifications(from?: number) {
-    const notificationsResponse = await this.fetch<{notifications: Array<DCLNotification>}>(`/notifications${from ? `?from=${from}` : '' }`)
+  async getNotifications(limit?: number, from?: number) {
+    const params = new URLSearchParams()
+
+    if (limit) {
+      params.append("limit", `${limit}`)
+    }
+
+    if (from) {
+      params.append("from", `${from}`)
+    }
+
+    const notificationsResponse = await this.fetch<{notifications: Array<DCLNotification>}>(`/notifications${params.size ? `?${params.toString()}` : ''}`)
 
     return notificationsResponse
   }
