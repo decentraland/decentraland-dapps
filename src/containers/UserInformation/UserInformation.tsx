@@ -34,9 +34,9 @@ export const UserInformation = (props: UserInformationProps) => {
     ...rest
   } = props
 
-  const [{ isLoading, notifications }, setUserNotifications] = useState({
+  const [{ isLoading, notifications }, setUserNotifications] = useState<{ isLoading: boolean, notifications: DCLNotification[] }>({
     isLoading: false,
-    notifications: [] as DCLNotification[]
+    notifications: []
   })
   const [notificationsState, setNotificationsState] = useState({
     activeTab: NotificationActiveTab.NEWEST,
