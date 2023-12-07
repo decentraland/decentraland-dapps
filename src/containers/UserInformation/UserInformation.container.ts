@@ -18,7 +18,7 @@ import {
   MapStateProps,
   MapDispatch,
   MapDispatchProps,
-  Props,
+  UserInformationProps,
   OwnProps
 } from './UserInformation.types'
 import { UserInformation } from './UserInformation'
@@ -30,7 +30,7 @@ const mapState = (state: any): MapStateProps => {
   const networks = getNetworks(state)
   const transactionsState = getTransactionsState(state)
 
-  const manaBalances: Props['manaBalances'] = {}
+  const manaBalances: UserInformationProps['manaBalances'] = {}
   if (isSignedIn) {
     const networkList = Object.values(Network) as Network[]
     for (const network of networkList) {

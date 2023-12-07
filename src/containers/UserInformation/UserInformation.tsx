@@ -8,7 +8,7 @@ import { DCLNotification, NotificationActiveTab, NotificationLocale } from 'dece
 
 import { getAnalytics } from '../../modules/analytics/utils'
 import { t } from '../../modules/translation/utils'
-import { Props } from './UserInformation.types'
+import { UserInformationProps } from './UserInformation.types'
 import {
   DROPDOWN_MENU_BALANCE_CLICK_EVENT,
   DROPDOWN_MENU_DISPLAY_EVENT,
@@ -20,7 +20,7 @@ import { NotificationsAPI, checkIsOnboarding, parseNotification} from '../../mod
 
 const NOTIFICATIONS_QUERY_INTERVAL = 60000;
 
-export const UserInformation = (props: Props) => {
+export const UserInformation = (props: UserInformationProps) => {
   const analytics = getAnalytics()
 
   const {
