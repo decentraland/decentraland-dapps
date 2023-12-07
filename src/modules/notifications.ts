@@ -2,6 +2,7 @@ import { getEnv, Env } from "@dcl/ui-env";
 import { BaseClient, BaseClientConfig } from "../lib/BaseClient";
 import { DCLNotification } from "decentraland-ui/dist/components/Notifications/types"
 
+export const NOTIFICATIONS_LIMIT = 50;
 
 export class NotificationsAPI extends BaseClient {
   constructor(config: BaseClientConfig) {
@@ -10,7 +11,7 @@ export class NotificationsAPI extends BaseClient {
     super(url, config)
   }
 
-  async getNotifications(limit?: number, from?: number) {
+  async getNotifications(limit: number = NOTIFICATIONS_LIMIT, from?: number) {
     const params = new URLSearchParams()
 
     if (limit) {

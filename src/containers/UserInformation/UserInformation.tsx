@@ -18,6 +18,8 @@ import {
 } from './constants'
 import { NotificationsAPI, checkIsOnboarding, parseNotification} from '../../modules/notifications'
 
+const NOTIFICATIONS_QUERY_INTERVAL = 60000;
+
 export const UserInformation = (props: Props) => {
   const analytics = getAnalytics()
 
@@ -32,9 +34,9 @@ export const UserInformation = (props: Props) => {
     ...rest
   } = props
 
-  const [{ isLoading, notifications }, setUserNotifications] = useState<{ notifications: DCLNotification[], isLoading: boolean}>({
+  const [{ isLoading, notifications }, setUserNotifications] = useState({
     isLoading: false,
-    notifications: []
+    notifications: [] as DCLNotification[]
   })
   const [notificationsState, setNotificationsState] = useState({
     activeTab: NotificationActiveTab.NEWEST,
@@ -129,7 +131,7 @@ export const UserInformation = (props: Props) => {
 
   const fetchNotificationsState = () => {
     setUserNotifications({ notifications, isLoading: true })
-    client.getNotifications(50)
+    client.getNotifications()
     .then((response) => {
       const parsed = response.notifications.map(parseNotification)
 
@@ -166,7 +168,7 @@ export const UserInformation = (props: Props) => {
     if (identity && withNotifications) {
       const interval = setInterval(() => {
         fetchNotificationsState()
-      }, 60000)
+      }, NOTIFICATIONS_QUERY_INTERVAL)
   
       return () => {
         clearInterval(interval)
