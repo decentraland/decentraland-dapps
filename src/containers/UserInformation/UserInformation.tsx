@@ -1,8 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { diff } from 'radash/dist/array'
 import {
   MenuItemType,
   UserInformationContainer as UserMenuComponent
 } from 'decentraland-ui/dist/components/UserInformationContainer/UserInformationContainer'
+import { DCLNotification, NotificationActiveTab, NotificationLocale } from 'decentraland-ui/dist/components/Notifications/types'
+
 import { getAnalytics } from '../../modules/analytics/utils'
 import { t } from '../../modules/translation/utils'
 import { Props } from './UserInformation.types'
@@ -14,7 +17,6 @@ import {
   DROPDOWN_MENU_SIGN_OUT_EVENT
 } from './constants'
 import { NotificationsAPI, checkIsOnboarding, parseNotification} from '../../modules/notifications'
-import { DCLNotification, NotificationLocale } from 'decentraland-ui/dist/components/Notifications/types'
 
 export const UserInformation = (props: Props) => {
   const analytics = getAnalytics()
@@ -30,13 +32,16 @@ export const UserInformation = (props: Props) => {
     ...rest
   } = props
 
+  const [{ isLoading, notifications }, setUserNotifications] = useState<{ notifications: DCLNotification[], isLoading: boolean}>({
+    isLoading: false,
+    notifications: []
+  })
   const [notificationsState, setNotificationsState] = useState({
-    notifications: [] as DCLNotification[],
-    activeTab: 'newest' as 'newest' | 'read',
+    activeTab: NotificationActiveTab.NEWEST,
     isLoading: false,
     isOnboarding: checkIsOnboarding(),
+    isOpen: false,
   })
-  const [notificationsModalOpen, setNotificationsModalOpen] = useState(false)
 
   let client: NotificationsAPI
   if (identity) {
@@ -123,22 +128,27 @@ export const UserInformation = (props: Props) => {
   }, [analytics, onSignIn])
 
   const fetchNotificationsState = () => {
-    setNotificationsState({ ...notificationsState, isLoading: true })
+    setUserNotifications({ notifications, isLoading: true })
     client.getNotifications(50)
     .then((response) => {
       const parsed = response.notifications.map(parseNotification)
 
-      setNotificationsState({ ...notificationsState, notifications: parsed, isLoading: false })
+      // check if needed to update notifications state
+      if(diff(notifications, parsed).length) {
+        setUserNotifications({ isLoading: false, notifications: parsed })
+      } else {
+        setUserNotifications({ notifications, isLoading: false })
+      }
     })
   }
 
   const handleNotificationsOpen = async () => {
-    let currentState = notificationsModalOpen
+    const currentOpenState = notificationsState.isOpen
     
-    setNotificationsModalOpen(!currentState)
+    setNotificationsState({ ...notificationsState, isOpen: !currentOpenState})
     
-    if (!currentState) {
-      const unreadNotifications = notificationsState.notifications.filter((notification) => !notification.read).map(({ id }) => id)
+    if (!currentOpenState) {
+      const unreadNotifications = notifications.filter((notification) => !notification.read).map(({ id }) => id)
       if (unreadNotifications.length) {
         await client.markNotificationsAsRead(unreadNotifications)
       }
@@ -148,53 +158,36 @@ export const UserInformation = (props: Props) => {
   useEffect(() => {
     if (identity && withNotifications) {
       fetchNotificationsState()
+    }
+  }, [identity])
 
+
+  useEffect(() => {
+    if (identity && withNotifications) {
       const interval = setInterval(() => {
         fetchNotificationsState()
       }, 60000)
-
+  
       return () => {
         clearInterval(interval)
       }
     } else {
       return () => {}
     }
-  }, [identity])
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      const element = document.querySelector(".notifications-feed")
-      if (element && !element.contains(event.target as Node)) {
-        event.preventDefault()
-        event.stopPropagation()
-        handleNotificationsOpen()
-      }
-    }
-
-    if (notificationsModalOpen) {
-      document.addEventListener('mousedown', handleClickOutside)
-    } else {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-
-  }, [notificationsModalOpen])
+  }, [identity, notifications])
 
   return (
     <UserMenuComponent
       notifications={
         withNotifications ? {
           locale: props.locale as NotificationLocale,
-          isLoading: notificationsState.isLoading,
+          isLoading,
           isOnboarding: notificationsState.isOnboarding,
-          isOpen: notificationsModalOpen,
-          items: notificationsState.notifications,
+          isOpen: notificationsState.isOpen,
+          items: notifications,
           activeTab: notificationsState.activeTab,
           onClick: handleNotificationsOpen,
-          onCloseModalMobile: handleNotificationsOpen,
+          onClose: handleNotificationsOpen,
           onBegin: () => setNotificationsState({ ...notificationsState, isOnboarding: false }),
           onChangeTab: (_, tab) => setNotificationsState({  ...notificationsState, activeTab: tab }),
         } 
