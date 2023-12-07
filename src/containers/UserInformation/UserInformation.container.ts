@@ -9,7 +9,7 @@ import {
 } from '../../modules/wallet/selectors'
 import { disconnectWallet } from '../../modules/wallet/actions'
 import { getData as getProfiles } from '../../modules/profile/selectors'
-import { isEnabled } from '../../modules/translation/selectors'
+import { getLocale, isEnabled } from '../../modules/translation/selectors'
 import {
   getTransactions,
   getState as getTransactionsState
@@ -18,7 +18,7 @@ import {
   MapStateProps,
   MapDispatch,
   MapDispatchProps,
-  Props,
+  UserInformationProps,
   OwnProps
 } from './UserInformation.types'
 import { UserInformation } from './UserInformation'
@@ -30,7 +30,7 @@ const mapState = (state: any): MapStateProps => {
   const networks = getNetworks(state)
   const transactionsState = getTransactionsState(state)
 
-  const manaBalances: Props['manaBalances'] = {}
+  const manaBalances: UserInformationProps['manaBalances'] = {}
   if (isSignedIn) {
     const networkList = Object.values(Network) as Network[]
     for (const network of networkList) {
@@ -44,6 +44,7 @@ const mapState = (state: any): MapStateProps => {
   return {
     address,
     manaBalances,
+    locale: getLocale(state),
     avatar: profile ? profile.avatars[0] : undefined,
     isSignedIn,
     isSigningIn: isConnecting(state),

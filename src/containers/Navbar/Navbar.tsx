@@ -13,8 +13,6 @@ import { t, T } from '../../modules/translation/utils'
 import Modal from '../../containers/Modal'
 import ChainProvider from '../ChainProvider'
 import { NavbarProps } from './Navbar.types'
-import Notifications from '../Notifications/Notifications'
-import { NotMobile } from 'decentraland-ui/dist/components/Media'
 
 export default class Navbar extends React.PureComponent<NavbarProps> {
   static defaultProps = {
@@ -94,26 +92,6 @@ export default class Navbar extends React.PureComponent<NavbarProps> {
     })
   }
 
-  renderRightMenu() {
-    if (this.props.withNotifications) {
-      if (this.props.isConnected) {
-        return (
-          <>
-            <NotMobile>
-              <div style={{ marginRight: "10px" }}>
-                <Notifications 
-                  identity={this.props.identity!} 
-                />
-              </div>
-            </NotMobile>
-            {this.props.rightMenu || <></>}
-          </>
-        )
-      }
-    }
-
-    return this.props.rightMenu
-  }
 
   render() {
     const { appChainId, docsUrl, enablePartialSupportAlert } = this.props
@@ -145,7 +123,6 @@ export default class Navbar extends React.PureComponent<NavbarProps> {
               ) : null}
               <NavbarComponent
                 {...this.props}
-                rightMenu={this.renderRightMenu()}
                 i18n={this.getTranslations()}
               />
               {isUnsupported ? (
