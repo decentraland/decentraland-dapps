@@ -22,9 +22,10 @@ export class NotificationsAPI extends BaseClient {
       params.append("from", `${from}`)
     }
 
-    const notificationsResponse = await this.fetch<{notifications: Array<DCLNotification>}>(`/notifications${params.toString().length ? `?${params.toString()}` : ''}`)
+    const { notifications } = await this
+    .fetch<{notifications: Array<DCLNotification>}>(`/notifications${params.toString().length ? `?${params.toString()}` : ''}`)
 
-    return notificationsResponse
+    return notifications.map(parseNotification)
   }
 
   async markNotificationsAsRead(ids: string[]) {
@@ -48,9 +49,9 @@ export const checkIsOnboarding = () => {
   }
 }
 
-export const parseNotification = (notification: DCLNotification): DCLNotification => {
+const parseNotification = (notification: DCLNotification): DCLNotification => {
   return ({
     ...notification,
-    timestamp: Number(notification.timestamp) * 1000
+    timestamp: Number(notification.timestamp)
   })
 }
