@@ -15,7 +15,7 @@ import {
   DROPDOWN_MENU_SIGN_IN_EVENT,
   DROPDOWN_MENU_SIGN_OUT_EVENT
 } from './constants'
-import { NotificationsAPI, checkIsOnboarding} from '../../modules/notifications'
+import { NotificationsAPI, checkIsOnboarding, setOnboardingDone} from '../../modules/notifications'
 
 const NOTIFICATIONS_QUERY_INTERVAL = 60000;
 
@@ -39,7 +39,6 @@ export const UserInformation = (props: UserInformationProps) => {
   })
   const [notificationsState, setNotificationsState] = useState({
     activeTab: NotificationActiveTab.NEWEST,
-    isLoading: false,
     isOnboarding: checkIsOnboarding(),
     isOpen: false,
   })
@@ -138,15 +137,33 @@ export const UserInformation = (props: UserInformationProps) => {
 
   const handleNotificationsOpen = async () => {
     const currentOpenState = notificationsState.isOpen
-    
-    setNotificationsState({ ...notificationsState, isOpen: !currentOpenState})
+  
+    setNotificationsState((prevState) => {
+      return ({ ...prevState, isOpen: !prevState.isOpen})
+    })
     
     if (!currentOpenState) {
       const unreadNotifications = notifications.filter((notification) => !notification.read).map(({ id }) => id)
       if (unreadNotifications.length) {
         await client.markNotificationsAsRead(unreadNotifications)
       }
+    } else {
+      // update state when closes the modal
+      const markNotificationAsReadInState = notifications.map((notification) => {
+        if (notification.read) return notification
+        
+        return ({
+          ...notification,
+          read: true
+        })
+      })
+      setUserNotifications({ isLoading, notifications: markNotificationAsReadInState })
     }
+  }
+
+  const handleOnBegin = () => {
+    setOnboardingDone()
+    setNotificationsState((prevState) => ({ ...prevState, isOnboarding: false }))
   }
 
   useEffect(() => {
@@ -177,8 +194,8 @@ export const UserInformation = (props: UserInformationProps) => {
           activeTab: notificationsState.activeTab,
           onClick: handleNotificationsOpen,
           onClose: handleNotificationsOpen,
-          onBegin: () => setNotificationsState({ ...notificationsState, isOnboarding: false }),
-          onChangeTab: (_, tab) => setNotificationsState({  ...notificationsState, activeTab: tab }),
+          onBegin: handleOnBegin,
+          onChangeTab: (_, tab) => setNotificationsState((prevState) => ({ ...prevState, activeTab: tab }),)
         } 
         : undefined
       }
