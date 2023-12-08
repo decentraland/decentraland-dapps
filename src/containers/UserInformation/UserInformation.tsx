@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { diff } from 'radash/dist/array'
 import {
   MenuItemType,
   UserInformationContainer as UserMenuComponent
@@ -16,7 +15,7 @@ import {
   DROPDOWN_MENU_SIGN_IN_EVENT,
   DROPDOWN_MENU_SIGN_OUT_EVENT
 } from './constants'
-import { NotificationsAPI, checkIsOnboarding, parseNotification} from '../../modules/notifications'
+import { NotificationsAPI, checkIsOnboarding} from '../../modules/notifications'
 
 const NOTIFICATIONS_QUERY_INTERVAL = 60000;
 
@@ -130,17 +129,10 @@ export const UserInformation = (props: UserInformationProps) => {
   }, [analytics, onSignIn])
 
   const fetchNotificationsState = () => {
-    setUserNotifications({ notifications, isLoading: true })
+    setUserNotifications({ notifications: [], isLoading: true })
     client.getNotifications()
-    .then((response) => {
-      const parsed = response.notifications.map(parseNotification)
-
-      // check if needed to update notifications state
-      if(diff(notifications, parsed).length) {
-        setUserNotifications({ isLoading: false, notifications: parsed })
-      } else {
-        setUserNotifications({ notifications, isLoading: false })
-      }
+    .then((retrievedNotifications) => {
+      setUserNotifications({ isLoading: false, notifications: retrievedNotifications })
     })
   }
 
@@ -160,12 +152,7 @@ export const UserInformation = (props: UserInformationProps) => {
   useEffect(() => {
     if (identity && withNotifications) {
       fetchNotificationsState()
-    }
-  }, [identity])
 
-
-  useEffect(() => {
-    if (identity && withNotifications) {
       const interval = setInterval(() => {
         fetchNotificationsState()
       }, NOTIFICATIONS_QUERY_INTERVAL)
@@ -176,7 +163,7 @@ export const UserInformation = (props: UserInformationProps) => {
     } else {
       return () => {}
     }
-  }, [identity, notifications])
+  }, [identity])
 
   return (
     <UserMenuComponent
