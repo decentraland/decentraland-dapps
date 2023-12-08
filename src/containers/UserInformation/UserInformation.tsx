@@ -146,6 +146,17 @@ export const UserInformation = (props: UserInformationProps) => {
       if (unreadNotifications.length) {
         await client.markNotificationsAsRead(unreadNotifications)
       }
+    } else {
+      // update state when closes the modal
+      const markNotificationAsReadInState = notifications.map((notification) => {
+        if (notification.read) return notification
+        
+        return ({
+          ...notification,
+          read: true
+        })
+      })
+      setUserNotifications({ isLoading, notifications: markNotificationAsReadInState })
     }
   }
 
