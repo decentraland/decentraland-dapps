@@ -1,4 +1,5 @@
 import { takeLatest, put, call, takeEvery } from 'redux-saga/effects'
+import { AuthIdentity } from '@dcl/crypto'
 import { Avatar } from '@dcl/schemas/dist/platform/profile'
 import { EntityType } from '@dcl/schemas/dist/platform/entity'
 import { PeerAPI } from '../../lib/peer'
@@ -28,11 +29,13 @@ import { getHashesByKeyMap, lambdaProfileToContentProfile } from './utils'
 import { Profile } from './types'
 
 type CreateProfileSagaOptions = {
+  getIdentity: () => AuthIdentity | undefined
   peerUrl: string
   peerWithNoGbCollectorUrl?: string
 }
 
 export function createProfileSaga({
+  getIdentity,
   peerUrl,
   peerWithNoGbCollectorUrl
 }: CreateProfileSagaOptions) {
@@ -134,15 +137,18 @@ export function createProfileSaga({
     const profileMetadata: Profile = {
       avatars: [newAvatar, ...profileWithContentHashes.avatars.slice(1)]
     }
+    const identity = getIdentity()
 
-    yield call(
-      [entities, 'deployEntityWithoutNewFiles'],
-      profileMetadata,
-      getHashesByKeyMap(newAvatar),
-      EntityType.PROFILE,
-      address,
-      address
-    )
+    if (identity) {
+      yield call(
+        [entities, 'deployEntityWithoutNewFiles'],
+        profileMetadata,
+        getHashesByKeyMap(newAvatar),
+        EntityType.PROFILE,
+        address,
+        identity
+      )
+    }
 
     return newAvatar
   }

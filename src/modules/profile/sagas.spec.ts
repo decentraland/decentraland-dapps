@@ -1,3 +1,4 @@
+import { AuthIdentity } from '@dcl/crypto'
 import { Avatar } from '@dcl/schemas/dist/platform/profile'
 import { EntityType } from '@dcl/schemas/dist/platform/entity'
 import { expectSaga } from 'redux-saga-test-plan'
@@ -18,7 +19,12 @@ import {
   setProfileAvatarDescriptionSuccess
 } from './actions'
 
-const profileSagas = createProfileSaga({ peerUrl: 'aURL' });
+const mockAuthIdentity: AuthIdentity = {} as AuthIdentity
+
+const profileSagas = createProfileSaga({
+  getIdentity: () => mockAuthIdentity,
+  peerUrl: 'aURL'
+})
 const address = 'anAddress'
 const description = 'aDescription'
 const errorMessage = 'anError'
@@ -94,7 +100,7 @@ describe('when handling the action to set the profile avatar description', () =>
                 getHashesByKeyMap(newAvatar),
                 EntityType.PROFILE,
                 address,
-                address
+                mockAuthIdentity
               ],
               Promise.resolve(undefined)
             )
@@ -186,7 +192,7 @@ describe('when handling the action to set the profile avatar alias', () => {
                 getHashesByKeyMap(newAvatar),
                 EntityType.PROFILE,
                 address,
-                address
+                mockAuthIdentity
               ],
               Promise.resolve(undefined)
             )
