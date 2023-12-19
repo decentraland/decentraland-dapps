@@ -1,5 +1,4 @@
-import { ethers } from 'ethers'
-import { Authenticator, AuthChain, AuthIdentity } from '@dcl/crypto'
+import { Authenticator, AuthIdentity } from '@dcl/crypto'
 import { Entity, EntityType } from '@dcl/schemas/dist/platform/entity'
 import {
   ContentClient,
@@ -7,7 +6,6 @@ import {
 } from 'dcl-catalyst-client/dist/client/ContentClient'
 import { BuildEntityWithoutFilesOptions } from 'dcl-catalyst-client/dist/client/types'
 import { buildEntityWithoutNewFiles } from 'dcl-catalyst-client/dist/client/utils/DeploymentBuilder'
-import { getConnectedProvider } from './eth'
 import { ProfileEntity } from './types'
 import { PeerAPI } from './peer'
 import { createFetchComponent } from '@well-known-components/fetch-component'
