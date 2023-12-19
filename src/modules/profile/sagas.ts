@@ -28,6 +28,8 @@ import {
 import { getHashesByKeyMap, lambdaProfileToContentProfile } from './utils'
 import { Profile } from './types'
 
+export const NO_IDENTITY_FOUND_ERROR_MESSAGE = 'No identity found'
+
 type CreateProfileSagaOptions = {
   getIdentity: () => AuthIdentity | undefined
   peerUrl: string
@@ -148,6 +150,8 @@ export function createProfileSaga({
         address,
         identity
       )
+    } else {
+      throw new Error(NO_IDENTITY_FOUND_ERROR_MESSAGE)
     }
 
     return newAvatar

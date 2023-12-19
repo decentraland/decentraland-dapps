@@ -8,7 +8,7 @@ import { profileFromLambda } from '../../tests/profileMocks'
 import { ProfileEntity } from '../../lib/types'
 import { PeerAPI } from '../../lib/peer'
 import { dynamicDeepParametersEquality } from '../../tests/sagas'
-import { createProfileSaga } from './sagas'
+import { NO_IDENTITY_FOUND_ERROR_MESSAGE, createProfileSaga } from './sagas'
 import { getHashesByKeyMap, lambdaProfileToContentProfile } from './utils'
 import {
   setProfileAvatarAliasFailure,
@@ -19,7 +19,7 @@ import {
   setProfileAvatarDescriptionSuccess
 } from './actions'
 
-const mockAuthIdentity: AuthIdentity = {} as AuthIdentity
+let mockAuthIdentity: AuthIdentity | undefined = {} as AuthIdentity
 
 const profileSagas = createProfileSaga({
   getIdentity: () => mockAuthIdentity,
@@ -131,6 +131,32 @@ describe('when handling the action to set the profile avatar alias', () => {
           ]
         ])
         .put(setProfileAvatarAliasFailure(address, errorMessage))
+        .dispatch(setProfileAvatarAliasRequest(address, alias))
+        .silentRun()
+    })
+  })
+
+  describe('when there is no identity available', () => {
+    beforeEach(() => {
+      mockAuthIdentity = undefined
+    })
+    afterAll(() => {
+      mockAuthIdentity = {} as AuthIdentity
+    })
+    it('should dispatch an action to signal that the request failed', () => {
+      return expectSaga(profileSagas)
+        .provide([
+          [
+            matchers.call.fn(PeerAPI.prototype.fetchProfile),
+            dynamicDeepParametersEquality(
+              [address, { useCache: false }],
+              Promise.resolve(profileFromLambda)
+            )
+          ]
+        ])
+        .put(
+          setProfileAvatarAliasFailure(address, NO_IDENTITY_FOUND_ERROR_MESSAGE)
+        )
         .dispatch(setProfileAvatarAliasRequest(address, alias))
         .silentRun()
     })

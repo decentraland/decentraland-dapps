@@ -36,30 +36,6 @@ export class EntitiesOperator {
   }
 
   /**
-   * Uses the provider to request the user for a signature to
-   * deploy an entity.
-   *
-   * @param address - The address of the deployer of the entity.
-   * @param entityId - The entity id that it's going to be deployed.
-   */
-  private async authenticateEntityDeployment(
-    address: string,
-    entityId: string
-  ): Promise<AuthChain> {
-    const provider = await getConnectedProvider()
-    if (!provider)
-      throw new Error(
-        "The provider couldn't be retrieved when creating the auth chain"
-      )
-    const eth = new ethers.providers.Web3Provider(provider)
-
-    const personal = eth.getSigner(address)
-    const signature = await personal.signMessage(entityId)
-
-    return Authenticator.createSimpleAuthChain(entityId, address, signature)
-  }
-
-  /**
    * Gets the first {@link ProfileEntity} out of multiple possible profile entities or
    * returns the last one in case the given address has no profile entities.
    *
