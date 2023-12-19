@@ -57,7 +57,8 @@
           "main": "DAO",
           "overview": "Overview",
           "governance": "Governance",
-          "transparency": "Transparency"
+          "transparency": "Transparency",
+          "grants": "Grants"
         },
         "places": {
           "main": "Places",
