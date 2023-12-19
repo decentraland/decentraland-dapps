@@ -1,10 +1,11 @@
-import { ethers } from 'ethers'
-import { Authenticator, AuthChain } from '@dcl/crypto'
+import { Authenticator, AuthIdentity } from '@dcl/crypto'
 import { Entity, EntityType } from '@dcl/schemas/dist/platform/entity'
-import { ContentClient, createContentClient } from 'dcl-catalyst-client/dist/client/ContentClient'
+import {
+  ContentClient,
+  createContentClient
+} from 'dcl-catalyst-client/dist/client/ContentClient'
 import { BuildEntityWithoutFilesOptions } from 'dcl-catalyst-client/dist/client/types'
 import { buildEntityWithoutNewFiles } from 'dcl-catalyst-client/dist/client/utils/DeploymentBuilder'
-import { getConnectedProvider } from './eth'
 import { ProfileEntity } from './types'
 import { PeerAPI } from './peer'
 import { createFetchComponent } from '@well-known-components/fetch-component'
@@ -15,36 +16,21 @@ export class EntitiesOperator {
   private catalystContentClientWithoutGbCollector: ContentClient | null // Undefined until initialization
   private readonly peerAPI: PeerAPI
 
-  constructor(private peerUrl: string, private peerWithNoGbCollectorUrl?: string) {
-    this.catalystContentClient = createContentClient({ url: `${peerUrl}/content`, fetcher: createFetchComponent() })
+  constructor(
+    private peerUrl: string,
+    private peerWithNoGbCollectorUrl?: string
+  ) {
+    this.catalystContentClient = createContentClient({
+      url: `${peerUrl}/content`,
+      fetcher: createFetchComponent()
+    })
     this.catalystContentClientWithoutGbCollector = peerWithNoGbCollectorUrl
-      ? createContentClient({ url: `${peerUrl}/content`, fetcher: createFetchComponent() })
+      ? createContentClient({
+          url: `${peerUrl}/content`,
+          fetcher: createFetchComponent()
+        })
       : null
     this.peerAPI = new PeerAPI(peerUrl)
-  }
-
-  /**
-   * Uses the provider to request the user for a signature to
-   * deploy an entity.
-   *
-   * @param address - The address of the deployer of the entity.
-   * @param entityId - The entity id that it's going to be deployed.
-   */
-  private async authenticateEntityDeployment(
-    address: string,
-    entityId: string
-  ): Promise<AuthChain> {
-    const provider = await getConnectedProvider()
-    if (!provider)
-      throw new Error(
-        "The provider couldn't be retrieved when creating the auth chain"
-      )
-    const eth = new ethers.providers.Web3Provider(provider)
-
-    const personal = eth.getSigner(address)
-    const signature = await personal.signMessage(entityId)
-
-    return Authenticator.createSimpleAuthChain(entityId, address, signature)
   }
 
   /**
@@ -80,7 +66,7 @@ export class EntitiesOperator {
     hashesByKey: Map<string, string>,
     entityType: EntityType,
     pointer: string,
-    address: string
+    identity: AuthIdentity
   ): Promise<any> {
     const options: BuildEntityWithoutFilesOptions = {
       type: entityType,
@@ -90,13 +76,17 @@ export class EntitiesOperator {
       timestamp: Date.now()
     }
 
-    const catalystContentClient = this.catalystContentClientWithoutGbCollector ?? this.catalystContentClient
+    const catalystContentClient =
+      this.catalystContentClientWithoutGbCollector ?? this.catalystContentClient
     const contentUrl = this.peerWithNoGbCollectorUrl ?? this.peerUrl
 
-    const entityToDeploy = await buildEntityWithoutNewFiles(createFetchComponent(), { contentUrl: `${contentUrl}/content`, ...options  })
+    const entityToDeploy = await buildEntityWithoutNewFiles(
+      createFetchComponent(),
+      { contentUrl: `${contentUrl}/content`, ...options }
+    )
 
-    const authChain: AuthChain = await this.authenticateEntityDeployment(
-      address,
+    const authChain = Authenticator.signPayload(
+      identity,
       entityToDeploy.entityId
     )
 
