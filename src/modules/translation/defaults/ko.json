@@ -98,15 +98,18 @@
       }
     },
     "user_menu": {
+      "guest": "게스트",
+      "settings": "계정 설정",
+      "my_lists": "내 목록",
+      "my_assets": "내 자산",
+      "account": "계정",
+      "activity": "활동",
+      "profile": "프로필",
+      "view_profile": "프로필 보기",
       "sign_in": "로그인",
       "sign_out": "로그아웃",
-      "guest": "손님",
-      "settings": "계정 설정",
-      "wallet": "지갑",
-      "profile": "내 프로필 보기",
-      "myLists": "내 목록",
-      "myAssets": "내 자산",
-      "account": "계정"
+      "wallet": "지갑 관리",
+      "jump_in": "점프 인"
     },
     "toasts": {
       "meta_transactions": {

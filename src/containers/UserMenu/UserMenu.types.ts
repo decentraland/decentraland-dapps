@@ -1,5 +1,5 @@
 import { Dispatch } from 'redux'
-import { UserMenuProps } from 'decentraland-ui/dist/components/UserMenu/UserMenu'
+import { UserMenuProps } from 'decentraland-ui/dist/components/UserMenu/UserMenu.types'
 import {
   ConnectWalletRequestAction,
   DisconnectWalletAction
@@ -17,7 +17,7 @@ export type MapStateProps = Pick<
   | 'hasActivity'
   | 'hasTranslations'
 >
-export type MapDispatchProps = Pick<Props, 'onSignOut'>
+export type MapDispatchProps = Pick<Props, 'onClickSignOut'>
 export type MapDispatch = Dispatch<
   ConnectWalletRequestAction | DisconnectWalletAction
 >
