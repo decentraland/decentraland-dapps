@@ -51,7 +51,7 @@ const mapState = (state: any): MapStateProps => {
 }
 
 const mapDispatch = (dispatch: MapDispatch): MapDispatchProps => ({
-  onSignOut: () => dispatch(disconnectWallet())
+  onClickSignOut: () => dispatch(disconnectWallet())
 })
 
 const mergeProps = (
@@ -64,8 +64,4 @@ const mergeProps = (
   ...ownProps
 })
 
-export default connect(
-  mapState,
-  mapDispatch,
-  mergeProps
-)(UserMenu)
+export default connect(mapState, mapDispatch, mergeProps)(UserMenu)

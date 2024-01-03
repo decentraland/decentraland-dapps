@@ -172,15 +172,18 @@
       }
     },
     "user_menu": {
-      "sign_in": "Iniciar sesión",
-      "sign_out": "Cerrar sesión",
       "guest": "Invitado",
       "settings": "Configuración de la cuenta",
-      "wallet": "Billetera",
-      "profile": "Ver mi perfil",
-      "myLists": "Mis listas",
-      "myAssets": "Mis activos",
-      "account": "Cuenta"
+      "my_lists": "Mis listas",
+      "my_assets": "Mis activos",
+      "account": "Cuenta",
+      "activity": "Actividad",
+      "profile": "Perfil",
+      "view_profile": "Ver perfil",
+      "sign_in": "Iniciar sesión",
+      "sign_out": "Cerrar sesión",
+      "wallet": "Gestionar cartera",
+      "jump_in": "Entrar"
     },
     "toasts": {
       "meta_transactions": {

@@ -172,15 +172,18 @@
       }
     },
     "user_menu": {
-      "sign_in": "登录",
-      "sign_out": "退出",
-      "guest": "访客",
+      "guest": "客人",
       "settings": "账户设置",
-      "wallet": "钱包",
-      "profile": "查看我的个人资料",
-      "myLists": "我的列表",
-      "myAssets": "我的资产",
-      "account": "账户"
+      "my_lists": "我的列表",
+      "my_assets": "我的资产",
+      "account": "账户",
+      "activity": "活动",
+      "profile": "配置文件",
+      "view_profile": "查看简介",
+      "sign_in": "登录",
+      "sign_out": "签出",
+      "wallet": "管理钱包",
+      "jump_in": "跳入"
     },
     "toasts": {
       "meta_transactions": {
