@@ -98,7 +98,7 @@
       }
     },
     "user_menu": {
-      "guest": "게스트",
+      "guest": "이름이 없습니다",
       "settings": "계정 설정",
       "my_lists": "내 목록",
       "my_assets": "내 자산",
