@@ -3,7 +3,11 @@ import {
   MenuItemType,
   UserInformationContainer as UserMenuComponent
 } from 'decentraland-ui/dist/components/UserInformationContainer/UserInformationContainer'
-import { DCLNotification, NotificationActiveTab, NotificationLocale } from 'decentraland-ui/dist/components/Notifications/types'
+import {
+  DCLNotification,
+  NotificationActiveTab,
+  NotificationLocale
+} from 'decentraland-ui/dist/components/Notifications/types'
 
 import { getAnalytics } from '../../modules/analytics/utils'
 import { t } from '../../modules/translation/utils'
@@ -15,9 +19,13 @@ import {
   DROPDOWN_MENU_SIGN_IN_EVENT,
   DROPDOWN_MENU_SIGN_OUT_EVENT
 } from './constants'
-import { NotificationsAPI, checkIsOnboarding, setOnboardingDone} from '../../modules/notifications'
+import {
+  NotificationsAPI,
+  checkIsOnboarding,
+  setOnboardingDone
+} from '../../modules/notifications'
 
-const NOTIFICATIONS_QUERY_INTERVAL = 60000;
+const NOTIFICATIONS_QUERY_INTERVAL = 60000
 
 export const UserInformation = (props: UserInformationProps) => {
   const analytics = getAnalytics()
@@ -33,14 +41,17 @@ export const UserInformation = (props: UserInformationProps) => {
     ...rest
   } = props
 
-  const [{ isLoading, notifications }, setUserNotifications] = useState<{ isLoading: boolean, notifications: DCLNotification[] }>({
+  const [{ isLoading, notifications }, setUserNotifications] = useState<{
+    isLoading: boolean
+    notifications: DCLNotification[]
+  }>({
     isLoading: false,
     notifications: []
   })
   const [notificationsState, setNotificationsState] = useState({
     activeTab: NotificationActiveTab.NEWEST,
     isOnboarding: checkIsOnboarding(),
-    isOpen: false,
+    isOpen: false
   })
 
   let client: NotificationsAPI
@@ -59,8 +70,8 @@ export const UserInformation = (props: UserInformationProps) => {
       settings: t('@dapps.user_menu.settings'),
       wallet: t('@dapps.user_menu.wallet'),
       profile: t('@dapps.user_menu.profile'),
-      myAssets: t('@dapps.user_menu.myAssets'),
-      myLists: t('@dapps.user_menu.myLists')
+      myAssets: t('@dapps.user_menu.my_assets'),
+      myLists: t('@dapps.user_menu.my_lists')
     }
   }, [hasTranslations])
 
@@ -129,41 +140,48 @@ export const UserInformation = (props: UserInformationProps) => {
 
   const fetchNotificationsState = () => {
     setUserNotifications({ notifications: [], isLoading: true })
-    client.getNotifications()
-    .then((retrievedNotifications) => {
-      setUserNotifications({ isLoading: false, notifications: retrievedNotifications })
+    client.getNotifications().then(retrievedNotifications => {
+      setUserNotifications({
+        isLoading: false,
+        notifications: retrievedNotifications
+      })
     })
   }
 
   const handleNotificationsOpen = async () => {
     const currentOpenState = notificationsState.isOpen
-  
-    setNotificationsState((prevState) => {
-      return ({ ...prevState, isOpen: !prevState.isOpen})
+
+    setNotificationsState(prevState => {
+      return { ...prevState, isOpen: !prevState.isOpen }
     })
-    
+
     if (!currentOpenState) {
-      const unreadNotifications = notifications.filter((notification) => !notification.read).map(({ id }) => id)
+      const unreadNotifications = notifications
+        .filter(notification => !notification.read)
+        .map(({ id }) => id)
       if (unreadNotifications.length) {
         await client.markNotificationsAsRead(unreadNotifications)
       }
     } else {
       // update state when closes the modal
-      const markNotificationAsReadInState = notifications.map((notification) => {
+      const markNotificationAsReadInState = notifications.map(notification => {
         if (notification.read) return notification
-        
-        return ({
+
+        return {
           ...notification,
           read: true
-        })
+        }
       })
-      setUserNotifications({ isLoading, notifications: markNotificationAsReadInState })
+      setUserNotifications({
+        isLoading,
+        notifications: markNotificationAsReadInState
+      })
     }
   }
 
   const handleOnBegin = () => {
     setOnboardingDone()
-    setNotificationsState((prevState) => ({ ...prevState, isOnboarding: false }))
+    setNotificationsState(prevState => ({ ...prevState, isOnboarding: false }))
   }
 
   useEffect(() => {
@@ -173,7 +191,7 @@ export const UserInformation = (props: UserInformationProps) => {
       const interval = setInterval(() => {
         fetchNotificationsState()
       }, NOTIFICATIONS_QUERY_INTERVAL)
-  
+
       return () => {
         clearInterval(interval)
       }
@@ -185,19 +203,24 @@ export const UserInformation = (props: UserInformationProps) => {
   return (
     <UserMenuComponent
       notifications={
-        withNotifications ? {
-          locale: props.locale as NotificationLocale,
-          isLoading,
-          isOnboarding: notificationsState.isOnboarding,
-          isOpen: notificationsState.isOpen,
-          items: notifications,
-          activeTab: notificationsState.activeTab,
-          onClick: handleNotificationsOpen,
-          onClose: handleNotificationsOpen,
-          onBegin: handleOnBegin,
-          onChangeTab: (_, tab) => setNotificationsState((prevState) => ({ ...prevState, activeTab: tab }),)
-        } 
-        : undefined
+        withNotifications
+          ? {
+              locale: props.locale as NotificationLocale,
+              isLoading,
+              isOnboarding: notificationsState.isOnboarding,
+              isOpen: notificationsState.isOpen,
+              items: notifications,
+              activeTab: notificationsState.activeTab,
+              onClick: handleNotificationsOpen,
+              onClose: handleNotificationsOpen,
+              onBegin: handleOnBegin,
+              onChangeTab: (_, tab) =>
+                setNotificationsState(prevState => ({
+                  ...prevState,
+                  activeTab: tab
+                }))
+            }
+          : undefined
       }
       onSignOut={handleSignOut}
       onSignIn={handleSignIn}
