@@ -38,7 +38,7 @@ const Navbar: React.FC<NavbarProps> = ({
         isExternal: options.isExternal
       })
     },
-    []
+    [analytics]
   )
 
   const handleClickUserMenuItem = useCallback(
@@ -51,7 +51,7 @@ const Navbar: React.FC<NavbarProps> = ({
         trackingId: options.trackingId
       })
     },
-    []
+    [analytics]
   )
 
   return (
