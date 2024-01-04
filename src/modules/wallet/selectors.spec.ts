@@ -17,6 +17,7 @@ import {
   getNetworks,
   getProviderType,
   getState,
+  getManaBalances,
   isConnected,
   isConnecting,
   isEnabling,
@@ -224,6 +225,46 @@ describe('Wallet selectors', () => {
 
       it('should return false', () => {
         expect(isSwitchingNetwork(initialState)).toBe(false)
+      })
+    })
+  })
+
+  describe('when getting mana balances', () => {
+    describe('and the user is connected', () => {
+      it('should return the mana balances', () => {
+        const state = {
+          wallet: {
+            data: {
+              networks: {
+                [Network.ETHEREUM]: {
+                  mana: 100
+                },
+                [Network.MATIC]: {
+                  mana: 200
+                }
+              }
+            }
+          }
+        }
+
+        const expectedManaBalances = {
+          [Network.ETHEREUM]: 100,
+          [Network.MATIC]: 200
+        }
+
+        expect(getManaBalances(state)).toEqual(expectedManaBalances)
+      })
+    })
+
+    describe('and the user is not connected', () => {
+      it('should return undefined', () => {
+        const state = {
+          wallet: {
+            data: null
+          }
+        }
+
+        expect(getManaBalances(state)).toBeUndefined()
       })
     })
   })
