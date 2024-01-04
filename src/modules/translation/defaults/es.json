@@ -172,7 +172,7 @@
       }
     },
     "user_menu": {
-      "guest": "Invitado",
+      "guest": "Sin nombre",
       "settings": "Configuración de la cuenta",
       "my_lists": "Mis listas",
       "my_assets": "Mis activos",

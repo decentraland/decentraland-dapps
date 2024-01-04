@@ -98,7 +98,7 @@
       }
     },
     "user_menu": {
-      "guest": "ゲスト",
+      "guest": "名前なし",
       "settings": "「アカウント設定",
       "my_lists": "マイ・リスト",
       "my_assets": "マイ資産",

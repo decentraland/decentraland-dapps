@@ -172,7 +172,7 @@
       }
     },
     "user_menu": {
-      "guest": "Guest",
+      "guest": "Unnamed",
       "settings": "Account Settings",
       "my_lists": "My Lists",
       "my_assets": "My Assets",

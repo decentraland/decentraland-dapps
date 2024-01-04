@@ -98,7 +98,7 @@
       }
     },
     "user_menu": {
-      "guest": "Guest",
+      "guest": "Anonyme",
       "settings": "Paramètres du compte",
       "my_lists": "Mes listes",
       "my_assets": "Mes actifs",
