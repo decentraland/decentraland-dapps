@@ -49,7 +49,7 @@ export default class Navbar extends React.PureComponent<NavbarProps> {
           overview: <T id="@dapps.navbar.menu.dao.overview" />,
           governance: <T id="@dapps.navbar.menu.dao.governance" />,
           transparency: <T id="@dapps.navbar.menu.dao.transparency" />,
-          grants: <T id="@dapps.navbar.menu.dao.grants" />,
+          grants: <T id="@dapps.navbar.menu.dao.grants" />
         },
         docs: {
           main: <T id="@dapps.navbar.menu.docs.main" />,
@@ -92,9 +92,13 @@ export default class Navbar extends React.PureComponent<NavbarProps> {
     })
   }
 
-
   render() {
-    const { appChainId, docsUrl, enablePartialSupportAlert } = this.props
+    const {
+      appChainId,
+      docsUrl,
+      enablePartialSupportAlert,
+      isSwitchingNetwork
+    } = this.props
     const expectedChainName = getChainName(appChainId)
     return (
       <>
@@ -121,10 +125,7 @@ export default class Navbar extends React.PureComponent<NavbarProps> {
                   onSwitchNetwork={this.handleSwitchNetwork}
                 />
               ) : null}
-              <NavbarComponent
-                {...this.props}
-                i18n={this.getTranslations()}
-              />
+              <NavbarComponent {...this.props} i18n={this.getTranslations()} />
               {isUnsupported ? (
                 <Modal open size="tiny">
                   <ModalNavigation
@@ -149,7 +150,12 @@ export default class Navbar extends React.PureComponent<NavbarProps> {
                     )}
                   </Modal.Content>
                   <Modal.Actions>
-                    <Button primary onClick={this.handleSwitchNetwork}>
+                    <Button
+                      primary
+                      disabled={isSwitchingNetwork}
+                      loading={isSwitchingNetwork}
+                      onClick={this.handleSwitchNetwork}
+                    >
                       <T
                         id="@dapps.navbar.wrong_network.switch_button"
                         values={{
