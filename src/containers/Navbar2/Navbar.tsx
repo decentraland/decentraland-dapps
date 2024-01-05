@@ -1,14 +1,11 @@
 import React, { useCallback } from 'react'
 
-import { Button } from 'decentraland-ui/dist/components/Button/Button'
 import { NetworkAlert } from 'decentraland-ui/dist/components/NetworkAlert/NetworkAlert'
-import { ModalNavigation } from 'decentraland-ui/dist/components/ModalNavigation/ModalNavigation'
 import { Navbar2 as NavbarComponent } from 'decentraland-ui/dist/components/Navbar2/Navbar2'
 import { getChainName } from '@dcl/schemas/dist/dapps/chain-id'
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { getAnalytics } from '../../modules/analytics/utils'
-import { t, T } from '../../modules/translation/utils'
-import Modal from '../../containers/Modal'
+import { t } from '../../modules/translation/utils'
 import { getBaseUrl } from '../../lib/utils'
 import ChainProvider from '../ChainProvider'
 import {
@@ -18,6 +15,7 @@ import {
 } from '../UserInformation/constants'
 import { NavbarProps } from './Navbar.types'
 import { NAVBAR_CLICK_EVENT } from './constants'
+import UnsupportedNetworkModal from '../UnsupportedNetworkModal'
 
 const BASE_URL = getBaseUrl()
 
@@ -25,6 +23,7 @@ const Navbar: React.FC<NavbarProps> = ({
   appChainId,
   docsUrl = 'https://docs.decentraland.org',
   enablePartialSupportAlert = true,
+  isSwitchingNetwork,
   ...props
 }: NavbarProps) => {
   const expectedChainName = getChainName(appChainId)
@@ -128,39 +127,12 @@ const Navbar: React.FC<NavbarProps> = ({
               onClickSignOut={handleClickSignOut}
             />
             {isUnsupported ? (
-              <Modal open size="tiny">
-                <ModalNavigation
-                  title={<T id="@dapps.navbar.wrong_network.header" />}
-                />
-                <Modal.Content>
-                  {!getChainName(chainId!) ? (
-                    <T
-                      id="@dapps.navbar.wrong_network.message_unknown_network"
-                      values={{
-                        expectedChainName: <b>{expectedChainName}</b>
-                      }}
-                    />
-                  ) : (
-                    <T
-                      id="@dapps.navbar.wrong_network.message"
-                      values={{
-                        currentChainName: <b>{getChainName(chainId!)}</b>,
-                        expectedChainName: <b>{expectedChainName}</b>
-                      }}
-                    />
-                  )}
-                </Modal.Content>
-                <Modal.Actions>
-                  <Button primary onClick={handleSwitchNetwork}>
-                    <T
-                      id="@dapps.navbar.wrong_network.switch_button"
-                      values={{
-                        chainName: <b>{expectedChainName}</b>
-                      }}
-                    />
-                  </Button>
-                </Modal.Actions>
-              </Modal>
+              <UnsupportedNetworkModal
+                chainName={getChainName(chainId!)}
+                expectedChainName={expectedChainName!}
+                isSwitchingNetwork={isSwitchingNetwork}
+                onSwitchNetwork={handleSwitchNetwork}
+              />
             ) : null}
           </>
         )}

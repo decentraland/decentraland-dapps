@@ -13,6 +13,7 @@ export type NavbarProps = NavbarComponentProps & {
   hasTranslations?: boolean
   docsUrl?: string
   enablePartialSupportAlert?: boolean
+  isSwitchingNetwork?: boolean
   onSwitchNetwork: typeof switchNetworkRequest
   onSignOut: typeof disconnectWallet
   onSignIn: () => void
@@ -27,6 +28,7 @@ export type MapStateProps = Pick<
   | 'hasTranslations'
   | 'chainId'
   | 'appChainId'
+  | 'isSwitchingNetwork'
 >
 
 export type MapDispatchProps = Pick<
