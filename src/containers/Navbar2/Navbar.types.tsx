@@ -15,6 +15,7 @@ export type NavbarProps = NavbarComponentProps & {
   enablePartialSupportAlert?: boolean
   onSwitchNetwork: typeof switchNetworkRequest
   onSignOut: typeof disconnectWallet
+  onSignIn: () => void
 }
 
 export type MapStateProps = Pick<
