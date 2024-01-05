@@ -41,7 +41,8 @@
           "overview": "Overview",
           "collectibles": "Collectibles",
           "land": "LAND",
-          "myAssets": "My Assets"
+          "myAssets": "My Assets",
+          "names": "NAMEs"
         },
         "builder": {
           "main": "Builder",
