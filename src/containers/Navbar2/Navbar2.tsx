@@ -13,19 +13,19 @@ import {
   DROPDOWN_MENU_DISPLAY_EVENT,
   DROPDOWN_MENU_SIGN_OUT_EVENT
 } from '../UserInformation/constants'
-import { NavbarProps } from './Navbar.types'
+import { Navbar2Props } from './Navbar2.types'
 import { NAVBAR_CLICK_EVENT } from './constants'
 import UnsupportedNetworkModal from '../UnsupportedNetworkModal'
 
 const BASE_URL = getBaseUrl()
 
-const Navbar: React.FC<NavbarProps> = ({
+const Navbar2: React.FC<Navbar2Props> = ({
   appChainId,
   docsUrl = 'https://docs.decentraland.org',
   enablePartialSupportAlert = true,
   isSwitchingNetwork,
   ...props
-}: NavbarProps) => {
+}: Navbar2Props) => {
   const expectedChainName = getChainName(appChainId)
   const analytics = getAnalytics()
 
@@ -141,4 +141,4 @@ const Navbar: React.FC<NavbarProps> = ({
   )
 }
 
-export default React.memo(Navbar)
+export default React.memo(Navbar2)
