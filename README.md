@@ -73,6 +73,7 @@ This is an example of how you can wait for the `CONNECT_WALLET_SUCCESS` action t
 
 ```tsx
 // modules/something/sagas.ts
+
 import {
   CONNECT_WALLET_SUCCESS,
   ConnectWalletSuccessAction
