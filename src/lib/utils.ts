@@ -1,5 +1,6 @@
 import dateFnsFormat from 'date-fns/format'
 import dateFnsDistanceInWordsToNow from 'date-fns/distance_in_words_to_now'
+import { getEnv, Env } from '@dcl/ui-env'
 import { Model, ModelById, DataByKey } from './types'
 import { getCurrentLocale } from '../modules/translation/utils'
 
@@ -73,4 +74,15 @@ export function formatDateTime(
 
 export function formatNumber(amount: number = 0, digits: number = 2) {
   return parseFloat((+amount).toFixed(digits)).toLocaleString()
+}
+
+export function getBaseUrl() {
+  const env = getEnv()
+  if (env === Env.DEVELOPMENT) {
+    return 'https://decentraland.zone'
+  } else if (env === Env.STAGING) {
+    return 'https://decentraland.today'
+  } else {
+    return 'https://decentraland.org'
+  }
 }
