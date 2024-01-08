@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { NetworkAlert } from 'decentraland-ui/dist/components/NetworkAlert/NetworkAlert'
 import { Navbar2 as NavbarComponent } from 'decentraland-ui/dist/components/Navbar2/Navbar2'
@@ -15,7 +15,7 @@ import {
   checkIsOnboarding,
   setOnboardingDone
 } from '../../modules/notifications'
-import { t } from '../../modules/translation/utils'
+import { getCurrentLocale, t } from '../../modules/translation/utils'
 import { getBaseUrl } from '../../lib/utils'
 import ChainProvider from '../ChainProvider'
 import {
@@ -52,9 +52,11 @@ const Navbar2: React.FC<Navbar2Props> = ({
   })
   const expectedChainName = getChainName(appChainId)
   const analytics = getAnalytics()
-  const client: NotificationsAPI | null = identity
-    ? new NotificationsAPI({ identity })
-    : null
+  const client: NotificationsAPI | null = useMemo(() => {
+    if (identity) return new NotificationsAPI({ identity })
+    return null
+  }, [identity])
+  const currentLocale = getCurrentLocale().locale
 
   const handleSwitchNetwork = useCallback(() => {
     props.onSwitchNetwork(appChainId)
@@ -211,7 +213,7 @@ const Navbar2: React.FC<Navbar2Props> = ({
               notifications={
                 withNotifications
                   ? {
-                      locale: 'en' as NotificationLocale,
+                      locale: currentLocale as NotificationLocale,
                       isLoading,
                       isOnboarding: notificationsState.isOnboarding,
                       isOpen: notificationsState.isOpen,
