@@ -9,6 +9,7 @@ import {
   isSwitchingNetwork
 } from '../../modules/wallet/selectors'
 import { getData as getProfiles } from '../../modules/profile/selectors'
+import { getLocale } from '../../modules/translation/selectors'
 import {
   disconnectWallet,
   switchNetworkRequest
@@ -25,6 +26,7 @@ const mapState = (state: any): MapStateProps => {
     chainId: getChainId(state),
     manaBalances: getManaBalances(state),
     address: getAddress(state),
+    locale: getLocale(state),
     isSignedIn: isConnected(state),
     isSigningIn: isConnecting(state),
     appChainId: getAppChainId(state),

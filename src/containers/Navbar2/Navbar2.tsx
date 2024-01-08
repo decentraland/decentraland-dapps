@@ -15,7 +15,7 @@ import {
   checkIsOnboarding,
   setOnboardingDone
 } from '../../modules/notifications'
-import { getCurrentLocale, t } from '../../modules/translation/utils'
+import { t } from '../../modules/translation/utils'
 import { getBaseUrl } from '../../lib/utils'
 import ChainProvider from '../ChainProvider'
 import {
@@ -56,7 +56,6 @@ const Navbar2: React.FC<Navbar2Props> = ({
     if (identity) return new NotificationsAPI({ identity })
     return null
   }, [identity])
-  const currentLocale = getCurrentLocale().locale
 
   const handleSwitchNetwork = useCallback(() => {
     props.onSwitchNetwork(appChainId)
@@ -213,7 +212,7 @@ const Navbar2: React.FC<Navbar2Props> = ({
               notifications={
                 withNotifications
                   ? {
-                      locale: currentLocale as NotificationLocale,
+                      locale: props.locale as NotificationLocale,
                       isLoading,
                       isOnboarding: notificationsState.isOnboarding,
                       isOpen: notificationsState.isOpen,
