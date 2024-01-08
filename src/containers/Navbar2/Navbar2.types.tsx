@@ -30,6 +30,7 @@ export type MapStateProps = Pick<
   | 'chainId'
   | 'appChainId'
   | 'isSwitchingNetwork'
+  | 'avatar'
 >
 
 export type MapDispatchProps = Pick<

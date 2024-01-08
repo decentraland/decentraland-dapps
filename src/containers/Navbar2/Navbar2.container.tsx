@@ -8,6 +8,7 @@ import {
   getManaBalances,
   isSwitchingNetwork
 } from '../../modules/wallet/selectors'
+import { getData as getProfiles } from '../../modules/profile/selectors'
 import {
   disconnectWallet,
   switchNetworkRequest
@@ -17,7 +18,10 @@ import { Navbar2Props, MapStateProps, MapDispatchProps } from './Navbar2.types'
 import Navbar2 from './Navbar2'
 
 const mapState = (state: any): MapStateProps => {
+  const address = getAddress(state)
+  const profile = address ? getProfiles(state)[address] : undefined
   return {
+    avatar: profile ? profile.avatars[0] : undefined,
     chainId: getChainId(state),
     manaBalances: getManaBalances(state),
     address: getAddress(state),
