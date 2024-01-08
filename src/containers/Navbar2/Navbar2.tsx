@@ -1,10 +1,20 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import { NetworkAlert } from 'decentraland-ui/dist/components/NetworkAlert/NetworkAlert'
 import { Navbar2 as NavbarComponent } from 'decentraland-ui/dist/components/Navbar2/Navbar2'
+import {
+  DCLNotification,
+  NotificationActiveTab,
+  NotificationLocale
+} from 'decentraland-ui/dist/components/Notifications/types'
 import { getChainName } from '@dcl/schemas/dist/dapps/chain-id'
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { getAnalytics } from '../../modules/analytics/utils'
+import {
+  NotificationsAPI,
+  checkIsOnboarding,
+  setOnboardingDone
+} from '../../modules/notifications'
 import { t } from '../../modules/translation/utils'
 import { getBaseUrl } from '../../lib/utils'
 import ChainProvider from '../ChainProvider'
@@ -14,20 +24,37 @@ import {
   DROPDOWN_MENU_SIGN_OUT_EVENT
 } from '../UserInformation/constants'
 import { Navbar2Props } from './Navbar2.types'
-import { NAVBAR_CLICK_EVENT } from './constants'
+import { NAVBAR_CLICK_EVENT, NOTIFICATIONS_QUERY_INTERVAL } from './constants'
 import UnsupportedNetworkModal from '../UnsupportedNetworkModal'
 
 const BASE_URL = getBaseUrl()
 
 const Navbar2: React.FC<Navbar2Props> = ({
   appChainId,
+  isSwitchingNetwork,
+  withNotifications,
+  identity,
   docsUrl = 'https://docs.decentraland.org',
   enablePartialSupportAlert = true,
-  isSwitchingNetwork,
   ...props
 }: Navbar2Props) => {
+  const [{ isLoading, notifications }, setUserNotifications] = useState<{
+    isLoading: boolean
+    notifications: DCLNotification[]
+  }>({
+    isLoading: false,
+    notifications: []
+  })
+  const [notificationsState, setNotificationsState] = useState({
+    activeTab: NotificationActiveTab.NEWEST,
+    isOnboarding: checkIsOnboarding(),
+    isOpen: false
+  })
   const expectedChainName = getChainName(appChainId)
   const analytics = getAnalytics()
+  const client: NotificationsAPI | null = identity
+    ? new NotificationsAPI({ identity })
+    : null
 
   const handleSwitchNetwork = useCallback(() => {
     props.onSwitchNetwork(appChainId)
@@ -92,6 +119,68 @@ const Navbar2: React.FC<Navbar2Props> = ({
     [analytics]
   )
 
+  const handleOnBegin = () => {
+    setOnboardingDone()
+    setNotificationsState(prevState => ({ ...prevState, isOnboarding: false }))
+  }
+
+  const handleNotificationsOpen = async () => {
+    const currentOpenState = notificationsState.isOpen
+
+    setNotificationsState(prevState => {
+      return { ...prevState, isOpen: !prevState.isOpen }
+    })
+
+    if (!currentOpenState) {
+      const unreadNotifications = notifications
+        .filter(notification => !notification.read)
+        .map(({ id }) => id)
+      if (unreadNotifications.length) {
+        await client?.markNotificationsAsRead(unreadNotifications)
+      }
+    } else {
+      // update state when closes the modal
+      const markNotificationAsReadInState = notifications.map(notification => {
+        if (notification.read) return notification
+
+        return {
+          ...notification,
+          read: true
+        }
+      })
+      setUserNotifications({
+        isLoading,
+        notifications: markNotificationAsReadInState
+      })
+    }
+  }
+
+  const fetchNotificationsState = () => {
+    setUserNotifications({ notifications: [], isLoading: true })
+    client?.getNotifications().then(retrievedNotifications => {
+      setUserNotifications({
+        isLoading: false,
+        notifications: retrievedNotifications
+      })
+    })
+  }
+
+  useEffect(() => {
+    if (identity && withNotifications) {
+      fetchNotificationsState()
+
+      const interval = setInterval(() => {
+        fetchNotificationsState()
+      }, NOTIFICATIONS_QUERY_INTERVAL)
+
+      return () => {
+        clearInterval(interval)
+      }
+    } else {
+      return () => {}
+    }
+  }, [identity])
+
   return (
     <>
       <ChainProvider>
@@ -119,6 +208,26 @@ const Navbar2: React.FC<Navbar2Props> = ({
             ) : null}
             <NavbarComponent
               {...props}
+              notifications={
+                withNotifications
+                  ? {
+                      locale: 'en' as NotificationLocale,
+                      isLoading,
+                      isOnboarding: notificationsState.isOnboarding,
+                      isOpen: notificationsState.isOpen,
+                      items: notifications,
+                      activeTab: notificationsState.activeTab,
+                      onClick: handleNotificationsOpen,
+                      onClose: handleNotificationsOpen,
+                      onBegin: handleOnBegin,
+                      onChangeTab: (_, tab) =>
+                        setNotificationsState(prevState => ({
+                          ...prevState,
+                          activeTab: tab
+                        }))
+                    }
+                  : undefined
+              }
               onClickBalance={handleClickBalance}
               onClickNavbarItem={handleClickNavbarItem}
               onClickUserMenuItem={handleClickUserMenuItem}

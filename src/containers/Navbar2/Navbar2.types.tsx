@@ -1,5 +1,6 @@
 import { Dispatch } from 'redux'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
+import { AuthIdentity } from '@dcl/crypto'
 import { Navbar2Props as NavbarComponentProps } from 'decentraland-ui/dist/components/Navbar2/Navbar2.types'
 import {
   disconnectWallet,
@@ -13,6 +14,8 @@ export type Navbar2Props = NavbarComponentProps & {
   docsUrl?: string
   enablePartialSupportAlert?: boolean
   isSwitchingNetwork?: boolean
+  withNotifications?: boolean
+  identity?: AuthIdentity
   onSwitchNetwork: typeof switchNetworkRequest
   onSignOut: typeof disconnectWallet
   onSignIn: () => void
