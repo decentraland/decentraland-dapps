@@ -16,6 +16,7 @@ export type Navbar2Props = NavbarComponentProps & {
   isSwitchingNetwork?: boolean
   withNotifications?: boolean
   identity?: AuthIdentity
+  locale: string
   onSwitchNetwork: typeof switchNetworkRequest
   onSignOut: typeof disconnectWallet
   onSignIn: () => void
@@ -31,6 +32,7 @@ export type MapStateProps = Pick<
   | 'appChainId'
   | 'isSwitchingNetwork'
   | 'avatar'
+  | 'locale'
 >
 
 export type MapDispatchProps = Pick<
