@@ -1,7 +1,7 @@
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { isLoadingType } from '../loading/selectors'
-import { UserInformationProps } from '../../containers/UserInformation/UserInformation.types'
+import { Props as UserMenuProps } from '../../containers/UserMenu/UserMenu.types'
 import {
   CONNECT_WALLET_REQUEST,
   ENABLE_WALLET_REQUEST,
@@ -58,7 +58,7 @@ export const getManaBalances = (state: any) => {
     return undefined
   }
 
-  const manaBalances: UserInformationProps['manaBalances'] = {}
+  const manaBalances: UserMenuProps['manaBalances'] = {}
   const networkList = Object.values(Network) as Network[]
   const networks = getNetworks(state)!
   for (const network of networkList) {
