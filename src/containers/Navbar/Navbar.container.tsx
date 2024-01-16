@@ -15,8 +15,8 @@ import {
   switchNetworkRequest
 } from '../../modules/wallet/actions'
 import { RootDispatch } from '../../types'
-import { Navbar2Props, MapStateProps, MapDispatchProps } from './Navbar2.types'
-import Navbar2 from './Navbar2'
+import { Navbar2Props, MapStateProps, MapDispatchProps } from './Navbar.types'
+import Navbar2 from './Navbar'
 import { ChainId } from '@dcl/schemas'
 
 const mapState = (state: any): MapStateProps => {

@@ -23,7 +23,7 @@ import {
   DROPDOWN_MENU_DISPLAY_EVENT,
   DROPDOWN_MENU_SIGN_OUT_EVENT
 } from '../UserInformation/constants'
-import { Navbar2Props } from './Navbar2.types'
+import { Navbar2Props } from './Navbar.types'
 import { NAVBAR_CLICK_EVENT, NOTIFICATIONS_QUERY_INTERVAL } from './constants'
 import UnsupportedNetworkModal from '../UnsupportedNetworkModal'
 
