@@ -1,7 +1,7 @@
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { isLoadingType } from '../loading/selectors'
-import { Props as UserMenuProps } from '../../containers/UserMenu/UserMenu.types'
+import { UserMenuProps } from 'decentraland-ui/dist/components/UserMenu/UserMenu.types'
 import {
   CONNECT_WALLET_REQUEST,
   ENABLE_WALLET_REQUEST,
