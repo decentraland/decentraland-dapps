@@ -8,7 +8,7 @@ import {
   SwitchNetworkRequestAction
 } from '../../modules/wallet/actions'
 
-export type Navbar2Props = NavbarComponentProps & {
+export type NavbarProps = NavbarComponentProps & {
   chainId?: ChainId
   appChainId: ChainId
   docsUrl?: string
@@ -23,7 +23,7 @@ export type Navbar2Props = NavbarComponentProps & {
 }
 
 export type MapStateProps = Pick<
-  Navbar2Props,
+  NavbarProps,
   | 'manaBalances'
   | 'address'
   | 'isSignedIn'
@@ -36,7 +36,7 @@ export type MapStateProps = Pick<
 >
 
 export type MapDispatchProps = Pick<
-  Navbar2Props,
+  NavbarProps,
   'onSwitchNetwork' | 'onSignOut'
 >
 export type MapDispatch = Dispatch<SwitchNetworkRequestAction>

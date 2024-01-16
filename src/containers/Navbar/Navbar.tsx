@@ -23,13 +23,13 @@ import {
   DROPDOWN_MENU_DISPLAY_EVENT,
   DROPDOWN_MENU_SIGN_OUT_EVENT
 } from './constants'
-import { Navbar2Props } from './Navbar.types'
+import { NavbarProps } from './Navbar.types'
 import { NAVBAR_CLICK_EVENT, NOTIFICATIONS_QUERY_INTERVAL } from './constants'
 import UnsupportedNetworkModal from '../UnsupportedNetworkModal'
 
 const BASE_URL = getBaseUrl()
 
-const Navbar2: React.FC<Navbar2Props> = ({
+const Navbar: React.FC<NavbarProps> = ({
   appChainId,
   isSwitchingNetwork,
   withNotifications,
@@ -37,7 +37,7 @@ const Navbar2: React.FC<Navbar2Props> = ({
   docsUrl = 'https://docs.decentraland.org',
   enablePartialSupportAlert = true,
   ...props
-}: Navbar2Props) => {
+}: NavbarProps) => {
   const [{ isLoading, notifications }, setUserNotifications] = useState<{
     isLoading: boolean
     notifications: DCLNotification[]
@@ -251,4 +251,4 @@ const Navbar2: React.FC<Navbar2Props> = ({
   )
 }
 
-export default React.memo(Navbar2)
+export default React.memo(Navbar)

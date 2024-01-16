@@ -15,8 +15,8 @@ import {
   switchNetworkRequest
 } from '../../modules/wallet/actions'
 import { RootDispatch } from '../../types'
-import { Navbar2Props, MapStateProps, MapDispatchProps } from './Navbar.types'
-import Navbar2 from './Navbar'
+import { NavbarProps, MapStateProps, MapDispatchProps } from './Navbar.types'
+import Navbar from './Navbar'
 import { ChainId } from '@dcl/schemas'
 
 const mapState = (state: any): MapStateProps => {
@@ -43,11 +43,11 @@ const mapDispatch = (dispatch: RootDispatch): MapDispatchProps => ({
 const mergeProps = (
   stateProps: MapStateProps,
   dispatchProps: MapDispatchProps,
-  ownProps: Navbar2Props
-): Navbar2Props => ({
+  ownProps: NavbarProps
+): NavbarProps => ({
   ...stateProps,
   ...dispatchProps,
   ...ownProps
 })
 
-export default connect(mapState, mapDispatch, mergeProps)(Navbar2) as any
+export default connect(mapState, mapDispatch, mergeProps)(Navbar) as any
