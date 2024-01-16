@@ -17,6 +17,7 @@ import {
 import { RootDispatch } from '../../types'
 import { Navbar2Props, MapStateProps, MapDispatchProps } from './Navbar2.types'
 import Navbar2 from './Navbar2'
+import { ChainId } from '@dcl/schemas'
 
 const mapState = (state: any): MapStateProps => {
   const address = getAddress(state)
@@ -35,7 +36,7 @@ const mapState = (state: any): MapStateProps => {
 }
 
 const mapDispatch = (dispatch: RootDispatch): MapDispatchProps => ({
-  onSwitchNetwork: chainId => dispatch(switchNetworkRequest(chainId)),
+  onSwitchNetwork: (chainId: ChainId) => dispatch(switchNetworkRequest(chainId)),
   onSignOut: () => dispatch(disconnectWallet())
 })
 
