@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { NetworkAlert } from 'decentraland-ui/dist/components/NetworkAlert/NetworkAlert'
-import { Navbar2 as NavbarComponent } from 'decentraland-ui/dist/components/Navbar2/Navbar2'
+import { Navbar as NavbarComponent } from 'decentraland-ui/dist/components/Navbar/Navbar'
 import {
   DCLNotification,
   NotificationActiveTab,

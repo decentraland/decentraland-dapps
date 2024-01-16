@@ -1,7 +1,7 @@
 import { Dispatch } from 'redux'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { AuthIdentity } from '@dcl/crypto'
-import { Navbar2Props as NavbarComponentProps } from 'decentraland-ui/dist/components/Navbar2/Navbar2.types'
+import { NavbarProps as NavbarComponentProps } from 'decentraland-ui/dist/components/Navbar/Navbar.types'
 import {
   disconnectWallet,
   switchNetworkRequest,
