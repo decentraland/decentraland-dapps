@@ -1310,6 +1310,7 @@ This is an example of a `SomePage` component that uses the `<Navbar>` container:
 import * as React from 'react'
 
 import { Container } from 'decentraland-ui/dist/components/Container/Container'
+import { NavbarPages } from 'decentraland-ui/dist/components/Navbar/Navbar.types'
 import Navbar from 'decentraland-dapps/dist/containers/Navbar'
 
 import './SomePage.css'
@@ -1324,7 +1325,7 @@ export default class SomePage extends React.PureComponent {
 
     return (
       <>
-        <Navbar />
+        <Navbar activePage={NavbarPages.MARKETPLACE} />
         <div className="SomePage">
           <Container>{children}</Container>
         </div>
