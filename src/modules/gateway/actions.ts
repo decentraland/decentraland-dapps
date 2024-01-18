@@ -8,8 +8,7 @@ import {
   FiatGateway,
   FiatGatewayListeners,
   FiatGatewayOptions,
-  Purchase,
-  WertOptions
+  Purchase
 } from './types'
 
 // Open MANA-FIAT Gateway
