@@ -36,7 +36,6 @@ beforeEach(() => {
 describe('when handling the wallet connection success', () => {
   let wallet: Wallet
   let windowLocation: Location
-  let isAuthDappEnabled: boolean
 
   beforeEach(() => {
     wallet = {
