@@ -29,7 +29,7 @@ import { Provider } from '../wallet/types'
 
 type IdentitySagaConfig = {
   authURL: string
-  getIsAuthDappEnabled: () => boolean
+  getIsAuthDappEnabled: (state: any) => boolean
   identityExpirationInMinutes?: string
 }
 
@@ -108,7 +108,7 @@ export function createIdentitySaga(options: IdentitySagaConfig) {
 
     yield call(setAuxAddress, address)
 
-    const isAuthDappEnabled: boolean = getIsAuthDappEnabled()
+    const isAuthDappEnabled: boolean = yield select(getIsAuthDappEnabled)
 
     if (isAuthDappEnabled) {
       const identity: AuthIdentity | null = localStorageGetIdentity(address)
