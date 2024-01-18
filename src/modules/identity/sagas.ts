@@ -30,7 +30,7 @@ import { Provider } from '../wallet/types'
 type IdentitySagaConfig = {
   authURL: string
   getIsAuthDappEnabled: () => boolean
-  identityExpirationInMinutes?: string
+  identityExpirationInMinutes?: number
 }
 
 // Persist the address of the connected wallet.
