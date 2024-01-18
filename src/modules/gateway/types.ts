@@ -1,6 +1,39 @@
 import { Network } from '@dcl/schemas/dist/dapps/network'
+import { Options, WidgetEvents } from '@wert-io/widget-initializer/types'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 import { TradeType } from './transak/types'
+
+export enum FiatGateway {
+  WERT = 'wert'
+}
+
+export type WertOptions = Options
+
+export type FiatGatewayOptions = WertOptions // will be adding more options as we add more providers
+
+export type FiatGatewayOnPendingListener = (event: WidgetEvents) => void
+export type FiatGatewayOnSuccessListener = (event: WidgetEvents) => void
+export type FiatGatewayOnLoadedListener = () => void
+
+export type FiatGatewayListeners = {
+  onLoaded?: FiatGatewayOnLoadedListener
+  onPending?: FiatGatewayOnPendingListener
+  onSuccess?: FiatGatewayOnSuccessListener
+}
+
+export type WertMessage = {
+  address: string
+  commodity: string
+  commodity_amount: number
+  network: string
+  sc_address: string
+  sc_input_data: string
+}
+
+export type WertConfig = {
+  url: string
+  apiKey: string
+}
 
 export type MoonPayConfig = {
   apiBaseUrl: string
@@ -23,6 +56,10 @@ export type TransakConfig = {
 export type ManaFiatGatewaySagasConfig = {
   [NetworkGatewayType.MOON_PAY]: MoonPayConfig
   [NetworkGatewayType.TRANSAK]: TransakConfig
+}
+
+export type ClaimNameFiatGatewaySagasConfig = {
+  [FiatGateway.WERT]: WertConfig
 }
 
 export enum PurchaseStatus {
