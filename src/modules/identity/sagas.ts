@@ -16,9 +16,6 @@ import {
 } from '../wallet/actions'
 import { ConnectWalletSuccessAction } from '../wallet/actions'
 import { isErrorWithMessage } from '../../lib/error'
-// import { config } from '../../config'
-// import { getIsAuthDappEnabled } from '../features/selectors'
-// import { getEth } from '../wallet/utils'
 
 import {
   GENERATE_IDENTITY_REQUEST,
@@ -40,9 +37,17 @@ type IdentitySagaConfig = {
 // This is a workaround for when the user disconnects as there is no selector that provides the address at that point
 let auxAddress: string | null = null
 
-export function* identitySaga(identitySagaConfig: IdentitySagaConfig) {
+export function createIdentitySaga(options: IdentitySagaConfig) {
+  function* identitySaga() {
+    yield takeLatest(GENERATE_IDENTITY_REQUEST, handleGenerateIdentityRequest)
+    yield takeLatest(CONNECT_WALLET_SUCCESS, handleConnectWalletSuccess)
+    yield takeLatest(DISCONNECT_WALLET, handleDisconnect)
+  }
+
+  const { identityExpirationInMinutes, authURL, getIsAuthDappEnabled } = options
+
   const IDENTITY_EXPIRATION_IN_MINUTES = (() => {
-    const expiration = identitySagaConfig.identityExpirationInMinutes
+    const expiration = identityExpirationInMinutes
 
     if (!expiration) {
       const ONE_MONTH_IN_MINUTES = 31 * 24 * 60
@@ -52,18 +57,12 @@ export function* identitySaga(identitySagaConfig: IdentitySagaConfig) {
     return Number(expiration)
   })()
 
-  const { authURL, getIsAuthDappEnabled } = identitySagaConfig
-  yield takeLatest(GENERATE_IDENTITY_REQUEST, handleGenerateIdentityRequest)
-  yield takeLatest(CONNECT_WALLET_SUCCESS, handleConnectWalletSuccess)
-  yield takeLatest(DISCONNECT_WALLET, handleDisconnect)
-
   function* handleGenerateIdentityRequest(
     action: GenerateIdentityRequestAction
   ) {
     const address = action.payload.address.toLowerCase()
 
     try {
-      // const eth: ethers.providers.Web3Provider = yield call(getEth)
       const provider: Provider | null = yield call(getConnectedProvider)
 
       if (!provider) {
@@ -109,7 +108,7 @@ export function* identitySaga(identitySagaConfig: IdentitySagaConfig) {
 
     yield call(setAuxAddress, address)
 
-    const isAuthDappEnabled: boolean = yield select(getIsAuthDappEnabled)
+    const isAuthDappEnabled: boolean = getIsAuthDappEnabled()
 
     if (isAuthDappEnabled) {
       const identity: AuthIdentity | null = localStorageGetIdentity(address)
@@ -148,6 +147,8 @@ export function* identitySaga(identitySagaConfig: IdentitySagaConfig) {
       }
     }
   }
+
+  return identitySaga
 }
 
 export function setAuxAddress(address: string | null) {
