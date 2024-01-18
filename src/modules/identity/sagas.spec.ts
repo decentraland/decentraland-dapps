@@ -10,7 +10,7 @@ import {
   localStorageGetIdentity
 } from '@dcl/single-sign-on-client'
 import { createIdentitySaga, setAuxAddress } from './sagas'
-import { generateIdentityRequest, generateIdentitySuccess } from './actions'
+import { generateIdentitySuccess } from './actions'
 
 jest.mock('@dcl/single-sign-on-client', () => {
   return {
@@ -80,44 +80,6 @@ describe('when handling the wallet connection success', () => {
       })
     })
   })
-
-  describe('and the auth dapp is not enabled', () => {
-    let getIsAuthDappEnabled: () => boolean
-    beforeEach(() => {
-      getIsAuthDappEnabled = () => false
-    })
-    describe("and there's no identity", () => {
-      it('should put an action to generate the identity', () => {
-        return expectSaga(
-          createIdentitySaga({
-            ...baseIdentitySagasConfig,
-            getIsAuthDappEnabled
-          })
-        )
-          .provide([[call(getIdentity, wallet.address), null]])
-          .put(generateIdentityRequest(wallet.address))
-          .dispatch(connectWalletSuccess(wallet))
-          .run({ silenceTimeout: true })
-      })
-    })
-
-    describe("and there's an identity", () => {
-      it('should put an action to store the identity', () => {
-        const identity = {} as any
-
-        return expectSaga(
-          createIdentitySaga({
-            ...baseIdentitySagasConfig,
-            getIsAuthDappEnabled
-          })
-        )
-          .provide([[call(getIdentity, wallet.address), identity]])
-          .put(generateIdentitySuccess(wallet.address, identity))
-          .dispatch(connectWalletSuccess(wallet))
-          .run({ silenceTimeout: true })
-      })
-    })
-  })
 })
 
 describe('when handling the disconnect', () => {
@@ -135,25 +97,6 @@ describe('when handling the disconnect', () => {
           .run({ silenceTimeout: true })
 
         expect(localStorageClearIdentity).toHaveBeenCalledWith(address)
-      })
-    })
-
-    let getIsAuthDappEnabled: () => boolean
-    describe('and the auth dapp is not enabled', () => {
-      beforeEach(() => {
-        getIsAuthDappEnabled = () => false
-      })
-      it('should call the sso client to clear the identity', async () => {
-        await expectSaga(
-          createIdentitySaga({
-            ...baseIdentitySagasConfig,
-            getIsAuthDappEnabled
-          })
-        )
-          .dispatch(disconnectWallet())
-          .run({ silenceTimeout: true })
-
-        expect(clearIdentity).toHaveBeenCalledWith(address)
       })
     })
   })
