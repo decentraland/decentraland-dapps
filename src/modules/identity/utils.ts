@@ -7,7 +7,6 @@ import {
   ConnectWalletSuccessAction
 } from '../wallet/actions'
 import { getAddress } from '../wallet/selectors'
-// import { config } from '../../config'
 import { getCurrentIdentity } from './selectors'
 import {
   generateIdentityRequest,
@@ -15,18 +14,6 @@ import {
   GENERATE_IDENTITY_FAILURE,
   GENERATE_IDENTITY_SUCCESS
 } from './actions'
-
-const ONE_MONTH_IN_MINUTES = 31 * 24 * 60
-
-// export const IDENTITY_EXPIRATION_IN_MINUTES = ((expiration: string) => {
-//   // const expiration = config.get('IDENTITY_EXPIRATION_MINUTES')
-
-//   if (!expiration) {
-//     return ONE_MONTH_IN_MINUTES
-//   }
-
-//   return Number(expiration)
-// })()
 
 const IDENTITY_ERROR = 'Could not get identity'
 

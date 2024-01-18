@@ -1,4 +1,3 @@
-// import { createSelector } from 'reselect'
 import { getAddress } from '../wallet/selectors'
 import { isValid } from './utils'
 

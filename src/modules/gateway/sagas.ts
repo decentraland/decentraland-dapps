@@ -8,14 +8,11 @@ import {
   takeLatest
 } from 'redux-saga/effects'
 import { LOAD } from 'redux-persistence'
-import { ethers } from 'ethers'
-import { v4 as uuidv4 } from 'uuid'
-import { getEnv, Env } from '@dcl/ui-env'
 import { AuthIdentity } from 'decentraland-crypto-fetch'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
-import { getChainIdByNetwork, getSigner } from '../../lib/eth'
+import { getChainIdByNetwork } from '../../lib/eth'
 import {
   pollPurchaseStatusFailure,
   pollPurchaseStatusRequest,
@@ -25,8 +22,6 @@ import {
   setPurchase,
   SetPurchaseAction,
   SET_PURCHASE,
-  OPEN_CLAIM_NAME_WITH_FIAT_MODAL_REQUEST,
-  OpenClaimNameWithFiatModalRequestAction,
   OPEN_FIAT_GATEWAY_WIDGET_REQUEST,
   OpenFiatGatewayWidgetRequestAction
 } from '../gateway/actions'
@@ -109,7 +104,6 @@ function* handleOpenFiatGatewayWidget(
   action: OpenFiatGatewayWidgetRequestAction
 ) {
   const {
-    // SCInputData,
     data,
     gateway,
     listeners: { onLoaded, onPending, onSuccess }
@@ -119,59 +113,9 @@ function* handleOpenFiatGatewayWidget(
       const wallet: Wallet | null = yield select(getWalletData)
       const identity: AuthIdentity | null = yield select(getIdentity)
       if (wallet && identity) {
-        const signer: ethers.Signer = yield call(getSigner)
-        // const factory = await DCLController__factory.connect(
-        //   CONTROLLER_V2_ADDRESS,
-        //   signer
-        // )
-
-        // const sc_input_data = factory.interface.encodeFunctionData('register', [
-        //   ENSName,
-        //   wallet.address
-        // ])
-
-        // const data = {
-        //   address: wallet.address,
-        //   commodity: getEnv() === Env.DEVELOPMENT ? 'TTS' : 'MANA', // will be MANA later on
-        //   commodity_amount: Number(PRICE),
-        //   network: getEnv() === Env.DEVELOPMENT ? 'sepolia' : 'ethereum', // will be wallet.network
-        //   sc_address: '0x39421866645065c8d53e2d36906946f33465743d',
-        //   sc_input_data: SCInputData
-        // }
-
         if (identity) {
-          // const signature = await marketplaceAPI.signWertMessage(data, identity)
-
-          // const signedData = {
-          //   ...data,
-          //   signature
-          // }
-
-          // const nftOptions = {
-          //   extra: {
-          //     item_info: {
-          //       category: 'Decentraland NAME',
-          //       author: 'Decentraland',
-          //       image_url: `${MARKETPLACE_SERVER_URL}/ens/generate?ens=${ENSName}&width=330&height=330`,
-          //       ENSName,
-          //       seller: 'DCL Names'
-          //     }
-          //   }
-          // }
-
           const wertWidget = new WertWidget({
             ...data,
-            ...{
-              partner_id: '01HGFWXR5CQMYHYSR9KVTKWDT5', // your partner id
-              origin:
-                getEnv() === Env.DEVELOPMENT
-                  ? 'https://sandbox.wert.io'
-                  : 'https://widget.wert.io',
-              lang: 'en',
-              click_id: uuidv4(), // unique id of purchase in your system
-              widgetLayoutMode: 'Modal'
-            },
-            // ...nftOptions,
             listeners: {
               loaded: onLoaded,
               'payment-status': options => {
