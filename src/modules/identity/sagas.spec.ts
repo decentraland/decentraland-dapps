@@ -1,6 +1,6 @@
 import { expectSaga } from 'redux-saga-test-plan'
 import { AuthIdentity } from '@dcl/crypto'
-import { call, select } from 'redux-saga/effects'
+import { call } from 'redux-saga/effects'
 import { Wallet } from '../wallet/types'
 import { connectWalletSuccess, disconnectWallet } from '../wallet/actions'
 import {
