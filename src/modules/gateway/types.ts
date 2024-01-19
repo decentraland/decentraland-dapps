@@ -32,7 +32,7 @@ export type WertMessage = {
 
 export type WertConfig = {
   url: string
-  apiKey: string
+  marketplaceServerURL: string
 }
 
 export type MoonPayConfig = {
@@ -58,9 +58,12 @@ export type ManaFiatGatewaySagasConfig = {
   [NetworkGatewayType.TRANSAK]: TransakConfig
 }
 
-export type ClaimNameFiatGatewaySagasConfig = {
+export type FiatGatewaySagasConfig = {
   [FiatGateway.WERT]: WertConfig
 }
+
+export type GatewaySagasConfig = FiatGatewaySagasConfig &
+  ManaFiatGatewaySagasConfig
 
 export enum PurchaseStatus {
   PENDING = 'pending',
