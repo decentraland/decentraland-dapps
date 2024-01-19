@@ -100,14 +100,11 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
   function* handleOpenFiatGatewayWidget(
     action: OpenFiatGatewayWidgetRequestAction
   ) {
-    const {
-      data,
-      gateway,
-      listeners: { onLoaded, onPending, onSuccess }
-    } = action.payload
+    const { data, gateway, listeners } = action.payload
     try {
       switch (gateway) {
         case FiatGateway.WERT:
+          const { onLoaded, onPending, onSuccess } = listeners || {}
           const { marketplaceServerURL } = config[FiatGateway.WERT]
 
           const wallet: Wallet | null = yield select(getWalletData)
@@ -125,8 +122,7 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
                 commodity,
                 commodity_amount,
                 sc_address,
-                sc_input_data,
-                ...restOfData
+                sc_input_data
               } = data
               if (
                 commodity &&
@@ -152,8 +148,8 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
                 )
 
                 const wertWidget = new WertWidget({
+                  ...data,
                   ...dataToSign,
-                  ...restOfData,
                   signature,
                   listeners: {
                     loaded: onLoaded,

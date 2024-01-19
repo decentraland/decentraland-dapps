@@ -161,33 +161,6 @@ export type PollPurchaseStatusFailureAction = ReturnType<
   typeof pollPurchaseStatusFailure
 >
 
-// Open NAMES-FIAT Gateway
-export const OPEN_CLAIM_NAME_WITH_FIAT_MODAL_REQUEST =
-  '[Request] Open CLAIM_NAME with FIAT Modal'
-export const OPEN_CLAIM_NAME_WITH_FIAT_MODAL_SUCCESS =
-  '[Success] Open Buy MANA with FIAT Modal'
-export const OPEN_CLAIM_NAME_WITH_FIAT_MODAL_FAILURE =
-  '[Failure] Open CLAIM_NAME with FIAT Modal'
-
-export const openClaimNameWithFiatModalRequest = (selectedNetwork?: Network) =>
-  action(OPEN_CLAIM_NAME_WITH_FIAT_MODAL_REQUEST, { selectedNetwork })
-
-export const openClaimNameWithFiatModalSuccess = () =>
-  action(OPEN_CLAIM_NAME_WITH_FIAT_MODAL_SUCCESS)
-
-export const openClaimNameWithFiatModalFailure = (error: string) =>
-  action(OPEN_CLAIM_NAME_WITH_FIAT_MODAL_FAILURE, { error })
-
-export type OpenClaimNameWithFiatModalRequestAction = ReturnType<
-  typeof openClaimNameWithFiatModalRequest
->
-export type OpenClaimNameWithFiatModalSuccessAction = ReturnType<
-  typeof openClaimNameWithFiatModalSuccess
->
-export type OpenClaimNameWithFiatModalFailureAction = ReturnType<
-  typeof openClaimNameWithFiatModalFailure
->
-
 // Open FIAT Gateway
 export const OPEN_FIAT_GATEWAY_WIDGET_REQUEST =
   '[Request] Open FIAT Gateway Widget'
@@ -199,7 +172,7 @@ export const OPEN_FIAT_GATEWAY_WIDGET_FAILURE =
 export const openFiatGatewayWidgetRequest = (
   gateway: FiatGateway,
   data: FiatGatewayOptions,
-  listeners: FiatGatewayListeners
+  listeners?: FiatGatewayListeners
 ) =>
   action(OPEN_FIAT_GATEWAY_WIDGET_REQUEST, {
     gateway,

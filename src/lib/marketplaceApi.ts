@@ -1,30 +1,24 @@
-import { BaseAPI } from './api'
-import signedFetch, { AuthIdentity } from 'decentraland-crypto-fetch'
+import { AuthIdentity } from 'decentraland-crypto-fetch'
 import { WertMessage } from '../modules/gateway/types'
+import { BaseClient } from './BaseClient'
 
-export class MarketplaceAPI extends BaseAPI {
+export class MarketplaceAPI extends BaseClient {
   signWertMessage = async (
     message: WertMessage,
     identity: AuthIdentity
   ): Promise<string> => {
-    const url = `${this.url}/wert/sign`
-    const response = await signedFetch(url, {
-      method: 'POST',
-      identity,
-      body: JSON.stringify(message),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
     try {
-      const json = await response.json()
-      if (json.ok) {
-        return json.data
-      } else {
-        throw new Error(json.message)
-      }
+      const response = await this.fetch<string>('/v1/wert/sign', {
+        method: 'POST',
+        identity,
+        body: JSON.stringify(message),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      console.log('response: ', response)
+      return response
     } catch (error) {
-      console.log('error: ', error)
       throw new Error((error as Error).message)
     }
   }
