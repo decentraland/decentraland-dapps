@@ -1,3 +1,4 @@
+import { AuthIdentity } from 'decentraland-crypto-fetch'
 import { load } from 'redux-persistence'
 import { call, select } from 'redux-saga/effects'
 import { expectSaga } from 'redux-saga-test-plan'
@@ -6,8 +7,11 @@ import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 import { getChainIdByNetwork } from '../../lib/eth'
-import { getAddress } from '../wallet/selectors'
+import { getAddress, getData } from '../wallet/selectors'
 import {
+  openFiatGatewayWidgetFailure,
+  openFiatGatewayWidgetRequest,
+  openFiatGatewayWidgetSuccess,
   pollPurchaseStatusFailure,
   pollPurchaseStatusRequest,
   pollPurchaseStatusSuccess,
@@ -15,6 +19,9 @@ import {
 } from '../gateway/actions'
 import { openModal } from '../modal/actions'
 import { fetchWalletRequest } from '../wallet/actions'
+import { MarketplaceAPI } from '../../lib/marketplaceApi'
+import { Wallet } from '../wallet/types'
+import { getIdentityOrRedirect } from '../identity/sagas'
 import {
   addManaPurchaseAsTransaction,
   manaFiatGatewayPurchaseCompleted,
@@ -28,19 +35,32 @@ import {
 } from './actions'
 import { MoonPay } from './moonpay'
 import { MoonPayTransaction, MoonPayTransactionStatus } from './moonpay/types'
-import { createGatewaySaga } from './sagas'
+import { NO_IDENTITY_ERROR, createGatewaySaga } from './sagas'
 import { Transak } from './transak'
-import { ManaFiatGatewaySagasConfig, Purchase, PurchaseStatus } from './types'
+import {
+  FiatGateway,
+  GatewaySagasConfig,
+  Purchase,
+  PurchaseStatus,
+  WertOptions
+} from './types'
 import { getPendingManaPurchase, getPendingPurchases } from './selectors'
 import { OrderResponse, TransakOrderStatus } from './transak/types'
 
+jest.mock('@wert-io/widget-initializer')
+jest.mock('../../lib/marketplaceApi')
+jest.mock('../../lib/baseClient')
 jest.mock('../../lib/eth')
 
 const mockGetChainIdByNetwork = getChainIdByNetwork as jest.MockedFunction<
   typeof getChainIdByNetwork
 >
 
-const mockConfig: ManaFiatGatewaySagasConfig = {
+const mockConfig: GatewaySagasConfig = {
+  [FiatGateway.WERT]: {
+    url: 'http://wert-url.xyz',
+    marketplaceServerURL: 'http://marketplace-server-url.xyz'
+  },
   [NetworkGatewayType.MOON_PAY]: {
     apiKey: 'api-key',
     apiBaseUrl: 'http://moonpay-base.url.xyz',
@@ -837,6 +857,126 @@ describe('when handling the action signaling the load of the local storage into 
         return expectSaga(gatewaySaga)
           .put(pollPurchaseStatusFailure(error))
           .dispatch(pollPurchaseStatusRequest(transakPurchase))
+          .silentRun()
+      })
+    })
+  })
+})
+
+describe('when handling the action signaling the opening of the fiat gateway widget', () => {
+  let wallet: Wallet
+  let wertOptions: WertOptions
+  let identity: AuthIdentity
+  let signedMessage: string
+  describe('when it is the WERT gateway', () => {
+    beforeEach(() => {
+      signedMessage = 'signedMessage'
+      wallet = {} as Wallet
+    })
+
+    describe('and there is identity', () => {
+      beforeEach(() => {
+        identity = {} as AuthIdentity
+      })
+      describe('and the marketplace server api call succeeds', () => {
+        beforeEach(() => {
+          ;(MarketplaceAPI.prototype
+            .signWertMessage as jest.Mock).mockResolvedValue({
+            data: signedMessage
+          })
+        })
+        describe('and has all the required data to sign', () => {
+          beforeEach(() => {
+            wertOptions = {
+              commodity: 'MANA',
+              commodity_amount: 100,
+              sc_address: '0x0',
+              sc_input_data: '0x0'
+            } as WertOptions
+          })
+          it('should put the success action', () => {
+            return expectSaga(gatewaySaga)
+              .put(openFiatGatewayWidgetSuccess())
+              .provide([
+                [select(getData), [wallet]],
+                [call(getIdentityOrRedirect), identity]
+              ])
+              .dispatch(
+                openFiatGatewayWidgetRequest(FiatGateway.WERT, wertOptions)
+              )
+              .silentRun()
+          })
+        })
+        describe('and does not have all the required data to sign', () => {
+          beforeEach(() => {
+            wertOptions = {} as WertOptions
+          })
+          it('should put the failure action', () => {
+            return expectSaga(gatewaySaga)
+              .put(
+                openFiatGatewayWidgetFailure(
+                  'Missing data needed for the message to sign'
+                )
+              )
+              .provide([
+                [select(getData), [wallet]],
+                [call(getIdentityOrRedirect), identity]
+              ])
+              .dispatch(
+                openFiatGatewayWidgetRequest(FiatGateway.WERT, wertOptions)
+              )
+              .silentRun()
+          })
+        })
+      })
+      describe('and the marketplace server api call fails', () => {
+        let error: string
+        beforeEach(() => {
+          error = 'error'
+          wertOptions = {
+            commodity: 'MANA',
+            commodity_amount: 100,
+            sc_address: '0x0',
+            sc_input_data: '0x0'
+          } as WertOptions
+          ;(MarketplaceAPI.prototype
+            .signWertMessage as jest.Mock).mockRejectedValue({ message: error })
+        })
+        it('should put the failure action', () => {
+          return expectSaga(gatewaySaga)
+            .put(openFiatGatewayWidgetFailure(error))
+            .provide([
+              [select(getData), [wallet]],
+              [call(getIdentityOrRedirect), identity]
+            ])
+            .dispatch(
+              openFiatGatewayWidgetRequest(FiatGateway.WERT, wertOptions)
+            )
+            .silentRun()
+        })
+      })
+    })
+
+    describe('and there is no identity', () => {
+      let error: string
+      beforeEach(() => {
+        wertOptions = {
+          commodity: 'MANA',
+          commodity_amount: 100,
+          sc_address: '0x0',
+          sc_input_data: '0x0'
+        } as WertOptions
+        ;(MarketplaceAPI.prototype
+          .signWertMessage as jest.Mock).mockRejectedValue(error)
+      })
+      it('should put the failure action', () => {
+        return expectSaga(gatewaySaga)
+          .put(openFiatGatewayWidgetFailure(NO_IDENTITY_ERROR))
+          .provide([
+            [select(getData), [wallet]],
+            [call(getIdentityOrRedirect), undefined]
+          ])
+          .dispatch(openFiatGatewayWidgetRequest(FiatGateway.WERT, wertOptions))
           .silentRun()
       })
     })

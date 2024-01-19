@@ -3,10 +3,10 @@ import { WertMessage } from '../modules/gateway/types'
 import { BaseClient } from './BaseClient'
 
 export class MarketplaceAPI extends BaseClient {
-  signWertMessage = async (
+  async signWertMessage(
     message: WertMessage,
     identity: AuthIdentity
-  ): Promise<string> => {
+  ): Promise<string> {
     try {
       const response = await this.fetch<string>('/v1/wert/sign', {
         method: 'POST',

@@ -7,6 +7,7 @@ import {
   takeEvery,
   takeLatest
 } from 'redux-saga/effects'
+import WertWidget from '@wert-io/widget-initializer'
 import { LOAD } from 'redux-persistence'
 import { Env, getEnv } from '@dcl/ui-env'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
@@ -63,10 +64,13 @@ import {
 } from './types'
 import { isManaPurchase, purchaseEventsChannel } from './utils'
 import { Wallet } from '../wallet/types'
-import WertWidget from '@wert-io/widget-initializer'
+import { isErrorWithMessage } from '../../lib/error'
 
 const DEFAULT_POLLING_DELAY = 3000
 const BUY_MANA_WITH_FIAT_FEEDBACK_MODAL_NAME = 'BuyManaWithFiatFeedbackModal'
+
+export const NO_IDENTITY_ERROR = 'No identity found'
+export const MISSING_DATA_ERROR = 'Missing data needed for the message to sign'
 
 export function createGatewaySaga(config: GatewaySagasConfig) {
   function* gatewaySaga(): IterableIterator<ForkEffect> {
@@ -114,7 +118,7 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
             )
 
             if (!identity) {
-              yield put(openFiatGatewayWidgetFailure('No identity found'))
+              yield put(openFiatGatewayWidgetFailure(NO_IDENTITY_ERROR))
               return
             } else if (identity) {
               const isDev = getEnv() === Env.DEVELOPMENT
@@ -167,20 +171,15 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
                 wertWidget.open()
                 yield put(openFiatGatewayWidgetSuccess())
               } else {
-                yield put(
-                  openFiatGatewayWidgetFailure(
-                    'Missing data needed for the message to sign'
-                  )
-                )
+                yield put(openFiatGatewayWidgetFailure(MISSING_DATA_ERROR))
               }
             }
           }
       }
     } catch (error) {
-      console.log('error: ', error)
       yield put(
         openFiatGatewayWidgetFailure(
-          'Error openiing fiat gateway widget: ' + error.message
+          isErrorWithMessage(error) ? error.message : 'Unknown'
         )
       )
     }
