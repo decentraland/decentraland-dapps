@@ -11,7 +11,8 @@ import { getChainId } from '../../wallet/selectors'
 import { Transak } from '../transak/Transak'
 import { createGatewaySaga } from '../sagas'
 import {
-  ManaFiatGatewaySagasConfig,
+  FiatGateway,
+  GatewaySagasConfig,
   NFTPurchase,
   Purchase,
   PurchaseStatus
@@ -24,7 +25,11 @@ const mockGetChainIdByNetwork = getChainIdByNetwork as jest.MockedFunction<
   typeof getChainIdByNetwork
 >
 
-const mockConfig: ManaFiatGatewaySagasConfig = {
+const mockConfig: GatewaySagasConfig = {
+  [FiatGateway.WERT]: {
+    url: 'http://wert-base.url.xyz',
+    marketplaceServerURL: 'http://marketplace-server.url.xyz'
+  },
   [NetworkGatewayType.MOON_PAY]: {
     apiKey: 'api-key',
     apiBaseUrl: 'http://moonpay-base.url.xyz',

@@ -49,7 +49,6 @@ import { OrderResponse, TransakOrderStatus } from './transak/types'
 
 jest.mock('@wert-io/widget-initializer')
 jest.mock('../../lib/marketplaceApi')
-jest.mock('../../lib/baseClient')
 jest.mock('../../lib/eth')
 
 const mockGetChainIdByNetwork = getChainIdByNetwork as jest.MockedFunction<
