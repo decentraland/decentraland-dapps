@@ -4,7 +4,12 @@ import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithF
 import { getChainIdByNetwork } from '../../lib/eth'
 import { buildTransactionWithFromPayload } from '../transaction/utils'
 import { MoonPayTransactionStatus } from './moonpay/types'
-import { Purchase } from './types'
+import {
+  FiatGateway,
+  FiatGatewayListeners,
+  FiatGatewayOptions,
+  Purchase
+} from './types'
 
 // Open MANA-FIAT Gateway
 export const OPEN_BUY_MANA_WITH_FIAT_MODAL_REQUEST =
@@ -154,4 +159,39 @@ export type PollPurchaseStatusSuccessAction = ReturnType<
 >
 export type PollPurchaseStatusFailureAction = ReturnType<
   typeof pollPurchaseStatusFailure
+>
+
+// Open FIAT Gateway
+export const OPEN_FIAT_GATEWAY_WIDGET_REQUEST =
+  '[Request] Open FIAT Gateway Widget'
+export const OPEN_FIAT_GATEWAY_WIDGET_SUCCESS =
+  '[Success] Open FIAT Gateway Widget'
+export const OPEN_FIAT_GATEWAY_WIDGET_FAILURE =
+  '[Failure] Open FIAT Gateway Widget'
+
+export const openFiatGatewayWidgetRequest = (
+  gateway: FiatGateway,
+  data: FiatGatewayOptions,
+  listeners?: FiatGatewayListeners
+) =>
+  action(OPEN_FIAT_GATEWAY_WIDGET_REQUEST, {
+    gateway,
+    data,
+    listeners
+  })
+
+export const openFiatGatewayWidgetSuccess = () =>
+  action(OPEN_FIAT_GATEWAY_WIDGET_SUCCESS)
+
+export const openFiatGatewayWidgetFailure = (error: string) =>
+  action(OPEN_FIAT_GATEWAY_WIDGET_FAILURE, { error })
+
+export type OpenFiatGatewayWidgetRequestAction = ReturnType<
+  typeof openFiatGatewayWidgetRequest
+>
+export type OpenFiatGatewayWidgetSuccessAction = ReturnType<
+  typeof openFiatGatewayWidgetSuccess
+>
+export type OpenFiatGatewayWidgetFailureAction = ReturnType<
+  typeof openFiatGatewayWidgetFailure
 >
