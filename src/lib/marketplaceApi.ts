@@ -16,7 +16,6 @@ export class MarketplaceAPI extends BaseClient {
           'Content-Type': 'application/json'
         }
       })
-      console.log('response: ', response)
       return response
     } catch (error) {
       throw new Error((error as Error).message)

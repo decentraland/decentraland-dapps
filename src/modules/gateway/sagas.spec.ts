@@ -878,12 +878,6 @@ describe('when handling the action signaling the opening of the fiat gateway wid
         identity = {} as AuthIdentity
       })
       describe('and the marketplace server api call succeeds', () => {
-        beforeEach(() => {
-          ;(MarketplaceAPI.prototype
-            .signWertMessage as jest.Mock).mockResolvedValue({
-            data: signedMessage
-          })
-        })
         describe('and has all the required data to sign', () => {
           beforeEach(() => {
             wertOptions = {
@@ -898,7 +892,11 @@ describe('when handling the action signaling the opening of the fiat gateway wid
               .put(openFiatGatewayWidgetSuccess())
               .provide([
                 [select(getData), [wallet]],
-                [call(getIdentityOrRedirect), identity]
+                [call(getIdentityOrRedirect), identity],
+                [
+                  matchers.call.fn(MarketplaceAPI.prototype.signWertMessage),
+                  signedMessage
+                ]
               ])
               .dispatch(
                 openFiatGatewayWidgetRequest(FiatGateway.WERT, wertOptions)

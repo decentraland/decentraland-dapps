@@ -120,59 +120,54 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
             if (!identity) {
               yield put(openFiatGatewayWidgetFailure(NO_IDENTITY_ERROR))
               return
-            } else if (identity) {
-              const isDev = getEnv() === Env.DEVELOPMENT
-              const {
+            }
+
+            const isDev = getEnv() === Env.DEVELOPMENT
+            const {
+              commodity,
+              commodity_amount,
+              sc_address,
+              sc_input_data
+            } = data
+            if (commodity && commodity_amount && sc_address && sc_input_data) {
+              const dataToSign: WertMessage = {
+                address: wallet.address,
                 commodity,
                 commodity_amount,
+                network: isDev ? 'sepolia' : 'ethereum', // will be wallet.network
                 sc_address,
                 sc_input_data
-              } = data
-              if (
-                commodity &&
-                commodity_amount &&
-                sc_address &&
-                sc_input_data
-              ) {
-                const dataToSign: WertMessage = {
-                  address: wallet.address,
-                  commodity,
-                  commodity_amount,
-                  network: isDev ? 'sepolia' : 'ethereum', // will be wallet.network
-                  sc_address,
-                  sc_input_data
-                }
+              }
 
-                const marketplaceAPI = new MarketplaceAPI(marketplaceServerURL)
+              const marketplaceAPI = new MarketplaceAPI(marketplaceServerURL)
 
-                const signature: string = yield call(
-                  [marketplaceAPI, 'signWertMessage'],
-                  dataToSign,
-                  identity
-                )
+              const signature: string = yield call(
+                [marketplaceAPI, 'signWertMessage'],
+                dataToSign,
+                identity
+              )
 
-                const wertWidget = new WertWidget({
-                  ...data,
-                  ...dataToSign,
-                  signature,
-                  listeners: {
-                    loaded: onLoaded,
-                    'payment-status': options => {
-                      if (options.tx_id) {
-                        // it's a success event
-                        onSuccess?.({ data: options, type: 'payment-status' })
-                      } else {
-                        onPending?.({ data: options, type: 'payment-status' })
-                      }
+              const wertWidget = new WertWidget({
+                ...data,
+                ...dataToSign,
+                signature,
+                listeners: {
+                  loaded: onLoaded,
+                  'payment-status': options => {
+                    if (options.tx_id) {
+                      // it's a success event
+                      onSuccess?.({ data: options, type: 'payment-status' })
+                    } else {
+                      onPending?.({ data: options, type: 'payment-status' })
                     }
                   }
-                })
+                }
+              })
 
-                wertWidget.open()
-                yield put(openFiatGatewayWidgetSuccess())
-              } else {
-                yield put(openFiatGatewayWidgetFailure(MISSING_DATA_ERROR))
-              }
+              wertWidget.open()
+              yield put(openFiatGatewayWidgetSuccess())
+            } else {
+              yield put(openFiatGatewayWidgetFailure(MISSING_DATA_ERROR))
             }
           }
       }
