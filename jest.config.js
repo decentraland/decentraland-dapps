@@ -9,6 +9,8 @@ module.exports = {
   transform: {
     '^.+\\.(t|j)sx?$': 'ts-jest'
   },
-  transformIgnorePatterns: ['node_modules/(?!(decentraland-connect)/)'],
+  transformIgnorePatterns: [
+    'node_modules/(?!(decentraland-connect|@0xsquid|axios)/)'
+  ],
   setupFilesAfterEnv: ['<rootDir>/src/tests/setupTests.ts']
 }
