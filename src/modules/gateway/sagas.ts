@@ -154,11 +154,14 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
                 listeners: {
                   loaded: onLoaded,
                   'payment-status': options => {
-                    if (options.tx_id) {
-                      // it's a success event
+                    const { status, tx_id } = options
+                    if (status === 'pending' && tx_id) {
+                      onPending?.({
+                        data: options,
+                        type: 'payment-status'
+                      })
+                    } else if (status === 'success') {
                       onSuccess?.({ data: options, type: 'payment-status' })
-                    } else {
-                      onPending?.({ data: options, type: 'payment-status' })
                     }
                   }
                 }
