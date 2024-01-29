@@ -1,8 +1,9 @@
 import { ethers } from 'ethers'
+import { ChainId } from '@dcl/schemas'
 import { Provider } from '@ethersproject/providers'
 import { namehash } from 'ethers/lib/utils'
 import { getConnectedProvider } from '../../lib/eth'
-import { ChainId } from '@dcl/schemas'
+import { getAnalytics } from '../../modules/analytics/utils'
 
 function getResolverContract(contractAddress: string, provider: Provider) {
   return new ethers.Contract(
@@ -32,6 +33,14 @@ export async function resolveName(name: string) {
   const resolverContract = getResolverContract(resolverAddress, provider)
   const resolvedAddress: string = await resolverContract.addr(nodehash)
   if (resolvedAddress !== ethers.constants.AddressZero) {
+    const analytics = getAnalytics()
+    if (analytics) {
+      analytics.track('Resolve Address from Name', {
+        name,
+        address: resolvedAddress
+      })
+    }
+
     return resolvedAddress
   }
 
