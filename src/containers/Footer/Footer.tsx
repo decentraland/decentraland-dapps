@@ -1,6 +1,9 @@
 import * as React from 'react'
 
-import { Footer as FooterComponent, FooterI18N } from 'decentraland-ui/dist/components/Footer/Footer'
+import {
+  Footer as FooterComponent,
+  FooterI18N
+} from 'decentraland-ui/dist/components/Footer/Footer'
 
 import { FooterProps } from './Footer.types'
 import { T } from '../../modules/translation/utils'
@@ -24,7 +27,8 @@ export default class Footer extends React.PureComponent<FooterProps> {
         privacy: <T id="@dapps.footer.links.privacy" />,
         terms: <T id="@dapps.footer.links.terms" />,
         content: <T id="@dapps.footer.links.content" />,
-        ethics: <T id="@dapps.footer.links.ethics" />
+        ethics: <T id="@dapps.footer.links.ethics" />,
+        feature: <T id="@dapps.footer.links.feature" />
       }
     }
   }
