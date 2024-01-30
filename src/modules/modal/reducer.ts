@@ -66,7 +66,7 @@ export function modalReducer(
       }
     }
     case CLOSE_ALL_MODALS: {
-      const newState = {}
+      const newState: ModalState = {}
       for (const name in state) {
         newState[name] = { ...state[name], open: false }
       }

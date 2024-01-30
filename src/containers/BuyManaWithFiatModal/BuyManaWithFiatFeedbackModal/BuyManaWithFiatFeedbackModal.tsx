@@ -15,7 +15,8 @@ const transactionStatuses = {
   [PurchaseStatus.PENDING]: TransactionStatus.PENDING,
   [PurchaseStatus.COMPLETE]: TransactionStatus.SUCCESS,
   [PurchaseStatus.FAILED]: TransactionStatus.FAILURE,
-  [PurchaseStatus.CANCELLED]: TransactionStatus.FAILURE
+  [PurchaseStatus.CANCELLED]: TransactionStatus.FAILURE,
+  [PurchaseStatus.REFUNDED]: TransactionStatus.FAILURE
 }
 
 const camelToSnakeCase = (str: string) =>

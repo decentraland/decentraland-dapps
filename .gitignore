@@ -1,6 +1,8 @@
 .DS_Store
 node_modules
 dist
+esm
+cjs
 .nyc_output
 coverage
 .vscode
