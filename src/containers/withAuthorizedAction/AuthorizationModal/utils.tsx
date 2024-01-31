@@ -38,14 +38,17 @@ import { AuthorizationTranslationKeys } from '../withAuthorizedAction.types'
 
 const MAX_ERROR_LENGTH = 150
 
-export function safeGet(obj: object, key: string): string | undefined {
+export function safeGet(
+  obj: AuthorizationTranslationKeys,
+  key: string
+): string | undefined {
   const keyParts = key.split('.')
   const value = keyParts.reduce((o, key) => {
     if (o === undefined) {
       return undefined
     }
 
-    return o[key]
+    return o[key as keyof AuthorizationTranslationKeys]
   }, obj)
 
   return typeof value !== 'string' ? undefined : value

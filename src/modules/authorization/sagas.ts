@@ -1,7 +1,7 @@
 import { put, call, takeEvery, take, select, race } from 'redux-saga/effects'
 import { providers } from '@0xsequence/multicall'
 import { ethers } from 'ethers'
-import { Provider } from 'decentraland-connect/dist/types'
+import { Provider } from 'decentraland-connect'
 import { ContractData, getContract } from 'decentraland-transactions'
 import { getNetworkProvider } from '../../lib/eth'
 import { sendTransaction } from '../wallet/utils/sendTransaction'
