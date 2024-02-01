@@ -14,7 +14,7 @@ interface Response {
 }
 
 export interface RetryParams {
-  /** Amount of retry attempts for request, default in 0 */
+  /** Number of retry attempts for request, default in 0 */
   attempts: number
   delay: number
 }
