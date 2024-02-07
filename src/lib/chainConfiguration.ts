@@ -5,6 +5,7 @@ import {
 } from '@dcl/schemas/dist/dapps/chain-id'
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { ProviderType } from '@dcl/schemas/dist/dapps/provider-type'
+import { Env, getEnv } from '@dcl/ui-env'
 import { getRpcUrls } from 'decentraland-connect'
 
 const RPC_URLS = getRpcUrls(ProviderType.NETWORK)
@@ -24,14 +25,22 @@ export const MANA_GRAPH_BY_CHAIN_ID = {
     'https://api.thegraph.com/subgraphs/name/decentraland/mana-matic-mainnet',
   [ChainId.MATIC_MUMBAI]:
     'https://api.thegraph.com/subgraphs/name/decentraland/mana-matic-mumbai',
-  [ChainId.ETHEREUM_KOVAN]: ''
+  [ChainId.ETHEREUM_KOVAN]: '',
+  [ChainId.BSC_MAINNET]: '',
+  [ChainId.OPTIMISM_MAINNET]: '',
+  [ChainId.ARBITRUM_MAINNET]: '',
+  [ChainId.FANTOM_MAINNET]: '',
+  [ChainId.AVALANCHE_MAINNET]: ''
 }
 
 type ChainConfiguration = {
   network: Network
   manaGraphURL: string
   rpcURL: string
-  networkMapping: Record<Network, ChainId>
+  networkMapping: {
+    [Network.ETHEREUM]: ChainId
+    [Network.MATIC]: ChainId
+  }
 }
 
 export function getChainConfiguration(chainId: ChainId): ChainConfiguration {
@@ -41,4 +50,19 @@ export function getChainConfiguration(chainId: ChainId): ChainConfiguration {
     rpcURL: RPC_URLS[chainId],
     networkMapping: getNetworkMapping(chainId)
   }
+}
+
+export function getAvailableChains(): ChainId[] {
+  const isDev = getEnv() === Env.DEVELOPMENT
+  return isDev
+    ? [ChainId.ETHEREUM_SEPOLIA, ChainId.MATIC_MUMBAI]
+    : [
+        ChainId.ETHEREUM_MAINNET,
+        ChainId.MATIC_MAINNET,
+        ChainId.OPTIMISM_MAINNET,
+        ChainId.ARBITRUM_MAINNET,
+        ChainId.FANTOM_MAINNET,
+        ChainId.AVALANCHE_MAINNET,
+        ChainId.BSC_MAINNET
+      ]
 }

@@ -11,21 +11,35 @@ import ChainProvider from './ChainProvider'
 
 const mapState = (state: any): MapStateProps => {
   const chainId = getChainId(state) || null
+  console.log('chainId: ', chainId)
   const chainName = chainId ? getChainName(chainId) : null
+  console.log('chainName: ', chainName)
   const network = chainId && getChainConfiguration(chainId).network
+  console.log('network: ', network)
   const appChainId = getAppChainId(state)
+  console.log('appChainId: ', appChainId)
   const appConfig = getChainConfiguration(appChainId)
+  console.log('appConfig: ', appConfig)
   const appChainName = getChainName(appChainId)!
+  console.log('appChainName: ', appChainName)
   const appNetwork = appConfig.network
+  console.log('appNetwork: ', appNetwork)
   const isConnected = !!chainId && !!appConfig
-  const isSupported = isConnected && chainId === appChainId
-  const isPartiallySupported =
-    isConnected &&
-    !isSupported &&
-    Object.values(appConfig.networkMapping).some(
-      mappedChainId => mappedChainId === chainId
-    )
-  const isUnsupported = isConnected && !isSupported && !isPartiallySupported
+  console.log('isConnected: ', isConnected)
+  const isSupported =
+    isConnected && Object.values(appConfig.networkMapping).includes(chainId)
+  // const isSupported = isConnected && chainId === appChainId
+  // console.log('isSupported: ', isSupported)
+  // const isPartiallySupported =
+  //   isConnected &&
+  //   !isSupported &&
+  //   Object.values(appConfig.networkMapping).some(
+  //     mappedChainId => mappedChainId === chainId
+  //   )
+  // console.log('isPartiallySupported: ', isPartiallySupported)
+  const isUnsupported = isConnected && !isSupported
+  // const isUnsupported = isConnected && !isSupported && !isPartiallySupported
+  console.log('isUnsupported: ', isUnsupported)
   return {
     chainId,
     chainName,
@@ -35,7 +49,7 @@ const mapState = (state: any): MapStateProps => {
     appNetwork,
     isConnected,
     isSupported,
-    isPartiallySupported,
+    // isPartiallySupported,
     isUnsupported
   }
 }
