@@ -11,7 +11,6 @@ export type ChainData = {
   appNetwork: Network
   isConnected: boolean
   isSupported: boolean
-  // isPartiallySupported: boolean
   isUnsupported: boolean
 }
 
@@ -29,7 +28,6 @@ export type MapStateProps = Pick<
   | 'appNetwork'
   | 'isConnected'
   | 'isSupported'
-  // | 'isPartiallySupported'
   | 'isUnsupported'
 >
 export type MapDispatchProps = {}

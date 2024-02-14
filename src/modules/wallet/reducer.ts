@@ -117,7 +117,6 @@ export function walletReducer(
     }
 
     case SWITCH_NETWORK_FAILURE: {
-      console.log('inside SWITCH_NETWORK_FAILURE')
       console.log('action.payload.error: ', action.payload.error)
       return {
         ...state,
