@@ -1,6 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-
-// import { NetworkAlert } from 'decentraland-ui/dist/components/NetworkAlert/NetworkAlert'
 import { Navbar as NavbarComponent } from 'decentraland-ui/dist/components/Navbar/Navbar'
 import {
   DCLNotification,
@@ -15,7 +13,6 @@ import {
   checkIsOnboarding,
   setOnboardingDone
 } from '../../modules/notifications'
-// import { t } from '../../modules/translation/utils'
 import { getBaseUrl } from '../../lib/utils'
 import ChainProvider from '../ChainProvider'
 import {
@@ -34,9 +31,11 @@ const Navbar: React.FC<NavbarProps> = ({
   appChainId,
   isSwitchingNetwork,
   withNotifications,
+  withChainSelector,
   identity,
   docsUrl = 'https://docs.decentraland.org',
   enablePartialSupportAlert = true,
+  walletError,
   ...props
 }: NavbarProps) => {
   const [{ isLoading, notifications }, setUserNotifications] = useState<{
@@ -65,6 +64,12 @@ const Navbar: React.FC<NavbarProps> = ({
   const [chainSelected, setChainSelected] = useState<ChainId | undefined>(
     undefined
   )
+
+  useEffect(() => {
+    if (walletError && chainSelected && withChainSelector) {
+      setChainSelected(undefined)
+    }
+  }, [walletError, withChainSelector])
 
   const handleSwitchChain = useCallback((chainId: ChainId) => {
     setChainSelected(chainId)
@@ -197,26 +202,6 @@ const Navbar: React.FC<NavbarProps> = ({
       <ChainProvider>
         {({ chainId, isUnsupported }) => (
           <>
-            {/* {isPartiallySupported && enablePartialSupportAlert ? (
-              <NetworkAlert
-                i18n={{
-                  title: t('@dapps.network_alert.title'),
-                  content: t('@dapps.network_alert.content', {
-                    link: (children: React.ReactElement) => (
-                      <a
-                        href={`${docsUrl}/player/blockchain-integration/transactions-in-polygon/`}
-                        target="_blank"
-                        rel="noreferrer noopener"
-                      >
-                        {children}
-                      </a>
-                    )
-                  }),
-                  action: t('@dapps.network_alert.action')
-                }}
-                onSwitchNetwork={handleSwitchNetwork}
-              />
-            ) : null} */}
             <NavbarComponent
               {...props}
               notifications={
@@ -245,12 +230,13 @@ const Navbar: React.FC<NavbarProps> = ({
               onClickOpen={handleClickOpen}
               onClickSignIn={handleClickSignIn}
               onClickSignOut={handleClickSignOut}
-              chains={getAvailableChains()}
-              selectedChain={chainId ?? undefined}
-              chainBeingConfirmed={
-                chainSelected !== chainId ? chainSelected : undefined
-              }
-              onSelectChain={handleSwitchChain}
+              {...(withChainSelector && {
+                chains: getAvailableChains(),
+                selectedChain: chainId ?? undefined,
+                chainBeingConfirmed:
+                  chainSelected !== chainId ? chainSelected : undefined,
+                onSelectChain: handleSwitchChain
+              })}
             />
             {isUnsupported ? (
               <UnsupportedNetworkModal

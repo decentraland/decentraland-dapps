@@ -75,11 +75,18 @@ export function walletReducer(
   switch (action.type) {
     case FETCH_WALLET_REQUEST:
     case ENABLE_WALLET_REQUEST:
-    case SWITCH_NETWORK_REQUEST:
     case CONNECT_WALLET_REQUEST: {
       return {
         ...state,
         loading: loadingReducer(state.loading, action)
+      }
+    }
+
+    case SWITCH_NETWORK_REQUEST: {
+      return {
+        ...state,
+        loading: loadingReducer(state.loading, action),
+        error: null
       }
     }
 
@@ -102,10 +109,19 @@ export function walletReducer(
       }
     }
 
-    case SWITCH_NETWORK_FAILURE:
     case FETCH_WALLET_FAILURE: {
       return {
         ...state,
+        loading: loadingReducer(state.loading, action)
+      }
+    }
+
+    case SWITCH_NETWORK_FAILURE: {
+      console.log('inside SWITCH_NETWORK_FAILURE')
+      console.log('action.payload.error: ', action.payload.error)
+      return {
+        ...state,
+        error: action.payload.error,
         loading: loadingReducer(state.loading, action)
       }
     }

@@ -9,6 +9,7 @@ import {
 } from '../../modules/wallet/actions'
 
 export type NavbarProps = NavbarComponentProps & {
+  withChainSelector?: boolean
   chainId?: ChainId
   appChainId: ChainId
   docsUrl?: string
@@ -17,6 +18,7 @@ export type NavbarProps = NavbarComponentProps & {
   withNotifications?: boolean
   identity?: AuthIdentity
   locale: string
+  walletError: string | null
   onSwitchNetwork: typeof switchNetworkRequest
   onSignOut: typeof disconnectWallet
   onSignIn: () => void
@@ -33,6 +35,7 @@ export type MapStateProps = Pick<
   | 'isSwitchingNetwork'
   | 'avatar'
   | 'locale'
+  | 'walletError'
 >
 
 export type MapDispatchProps = Pick<

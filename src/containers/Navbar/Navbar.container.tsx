@@ -9,6 +9,7 @@ import {
   isSwitchingNetwork
 } from '../../modules/wallet/selectors'
 import { getData as getProfiles } from '../../modules/profile/selectors'
+import { getError as getWalletError } from '../../modules/wallet/selectors'
 import { getLocale } from '../../modules/translation/selectors'
 import {
   disconnectWallet,
@@ -31,12 +32,14 @@ const mapState = (state: any): MapStateProps => {
     isSignedIn: isConnected(state),
     isSigningIn: isConnecting(state),
     appChainId: getAppChainId(state),
-    isSwitchingNetwork: isSwitchingNetwork(state)
+    isSwitchingNetwork: isSwitchingNetwork(state),
+    walletError: getWalletError(state)
   }
 }
 
 const mapDispatch = (dispatch: RootDispatch): MapDispatchProps => ({
-  onSwitchNetwork: (chainId: ChainId) => dispatch(switchNetworkRequest(chainId)),
+  onSwitchNetwork: (chainId: ChainId) =>
+    dispatch(switchNetworkRequest(chainId)),
   onSignOut: () => dispatch(disconnectWallet())
 })
 

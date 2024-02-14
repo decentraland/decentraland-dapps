@@ -206,10 +206,11 @@ describe('when reducing the failure action of enabling the wallet', () => {
       }
     })
 
-    it('should return a state with loading state cleared', () => {
+    it('should return a state with loading state cleared and update the error', () => {
       expect(walletReducer(initialState, failureAction)).toEqual({
         ...INITIAL_STATE,
-        loading: []
+        loading: [],
+        error
       })
     })
   })

@@ -78,7 +78,7 @@ export function configure(params: { transformPayload?: TransformPayload }) {
  * and want to manually track this event the same way as if the saga was integrated.
  */
 export function trackConnectWallet(
-  props: Pick<Wallet, 'address' | 'providerType'> & {
+  props: Pick<Wallet, 'address' | 'providerType' | 'chainId'> & {
     // The name of the wallet used to connect. Not to be confused with the providerType.
     // This would be, for example, "Trust Wallet" when connecting via WalletConnect.
     walletName?: string
