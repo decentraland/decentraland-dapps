@@ -18,14 +18,9 @@ const mapState = (state: any): MapStateProps => {
   const appChainName = getChainName(appChainId)!
   const appNetwork = appConfig.network
   const isConnected = !!chainId && !!appConfig
-  const isSupported = isConnected && chainId === appChainId
-  const isPartiallySupported =
-    isConnected &&
-    !isSupported &&
-    Object.values(appConfig.networkMapping).some(
-      mappedChainId => mappedChainId === chainId
-    )
-  const isUnsupported = isConnected && !isSupported && !isPartiallySupported
+  const isSupported =
+    isConnected && Object.values(appConfig.networkMapping).includes(chainId)
+  const isUnsupported = isConnected && !isSupported
   return {
     chainId,
     chainName,
@@ -35,7 +30,6 @@ const mapState = (state: any): MapStateProps => {
     appNetwork,
     isConnected,
     isSupported,
-    isPartiallySupported,
     isUnsupported
   }
 }

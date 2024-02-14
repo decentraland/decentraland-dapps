@@ -31,9 +31,10 @@ export async function buildWallet(appChainId: ChainId): Promise<Wallet> {
   const appChainConfig = getChainConfiguration(appChainId)
   const networks: Partial<Networks> = {}
 
-  for (const network of Object.keys(
-    appChainConfig.networkMapping
-  ) as Network[]) {
+  for (const network of Object.keys(appChainConfig.networkMapping) as (
+    | Network.ETHEREUM
+    | Network.MATIC
+  )[]) {
     const networkChainId = appChainConfig.networkMapping[network]
     networks[network] = {
       chainId: networkChainId,

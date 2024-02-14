@@ -113,5 +113,7 @@ export function getChainIdByNetwork(network: Network) {
     throw new Error('Could not get app chain id')
   }
   const config = getChainConfiguration(appChainId)
-  return config.networkMapping[network]
+  return network === Network.ETHEREUM || network === Network.MATIC
+    ? config.networkMapping[network]
+    : ChainId.ETHEREUM_MAINNET
 }

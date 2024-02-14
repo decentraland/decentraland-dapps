@@ -38,6 +38,9 @@ export const getNetworks = (state: any) =>
 export const isSwitchingNetwork = (state: any) =>
   isLoadingType(getLoading(state), SWITCH_NETWORK_REQUEST)
 
+export const getSwitchingNetworkChain = (state: any) =>
+  getLoading(state).find(loading => loading.type === SWITCH_NETWORK_REQUEST)
+
 // Casting as ChainId since it will be initialized at the beginning
 export const getAppChainId = (state: any) =>
   getState(state).appChainId as ChainId
@@ -53,13 +56,13 @@ export const getMana = (state: any) => {
   return networks[Network.ETHEREUM].mana
 }
 
-export const getManaBalances = (state: any) => {
+export const getManaBalances = (state: any): any => {
   if (!isConnected(state)) {
     return undefined
   }
 
   const manaBalances: UserMenuProps['manaBalances'] = {}
-  const networkList = Object.values(Network) as Network[]
+  const networkList = [Network.ETHEREUM, Network.MATIC]
   const networks = getNetworks(state)!
   for (const network of networkList) {
     const networkData = networks[network]
