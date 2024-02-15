@@ -64,7 +64,7 @@ export const getManaBalances = (state: any): any => {
   const manaBalances: UserMenuProps['manaBalances'] = {}
   const networkList = [Network.ETHEREUM, Network.MATIC]
   const networks = getNetworks(state)!
-  for (const network of networkList) {
+  for (const network of networkList as [Network.ETHEREUM, Network.MATIC]) {
     const networkData = networks[network]
     if (networkData) {
       manaBalances[network] = networks[network].mana
