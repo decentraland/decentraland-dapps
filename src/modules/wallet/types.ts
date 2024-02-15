@@ -9,7 +9,10 @@ export type NetworkData = {
   mana: number
   chainId: ChainId
 }
-export type Networks = Record<Network, NetworkData>
+export type Networks = {
+  [Network.ETHEREUM]: NetworkData
+  [Network.MATIC]: NetworkData
+}
 
 export interface Wallet {
   address: string
