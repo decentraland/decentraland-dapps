@@ -73,7 +73,11 @@ const Navbar: React.FC<NavbarProps> = ({
 
   const handleSwitchChain = useCallback((chainId: ChainId) => {
     setChainSelected(chainId)
-    props.onSwitchNetwork(chainId)
+    props.onSwitchNetwork(chainId, props.chainId)
+    analytics.track('change_network', {
+      from_chain_id: props.chainId,
+      to_chain_id: chainId
+    })
   }, [])
 
   const handleClickBalance = useCallback(
