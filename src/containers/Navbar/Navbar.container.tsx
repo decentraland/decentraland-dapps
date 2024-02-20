@@ -38,8 +38,8 @@ const mapState = (state: any): MapStateProps => {
 }
 
 const mapDispatch = (dispatch: RootDispatch): MapDispatchProps => ({
-  onSwitchNetwork: (chainId: ChainId) =>
-    dispatch(switchNetworkRequest(chainId)),
+  onSwitchNetwork: (chainId: ChainId, fromChainId: ChainId) =>
+    dispatch(switchNetworkRequest(chainId, fromChainId)),
   onSignOut: () => dispatch(disconnectWallet())
 })
 
