@@ -210,6 +210,10 @@
           "body": "Polygon Network <a>gas prices</a> are too high! Please wait and try again later, or switch your Network to Polygon and pay for the gas fee with MATIC."
         }
       },
+      "switch_network_error": {
+        "title": "Network switch error",
+        "body": "There was an error switching to {network}."
+      },
       "switch_network": "Switch to {network}",
       "learn_more": "Learn more"
     },

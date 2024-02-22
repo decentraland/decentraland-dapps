@@ -210,6 +210,10 @@
           "body": "多边形网络 <a>费用价格</a> 太高！请稍后重试，或将您的网络切换到 Polygon 并使用 MATIC 支付费用。"
         }
       },
+      "switch_network_error": {
+        "title": "网络交换机错误",
+        "body": "切换到 {network} 时出错。"
+      },
       "switch_network": "切换到 {network}",
       "learn_more": "了解更多"
     },
