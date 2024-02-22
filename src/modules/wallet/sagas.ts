@@ -209,13 +209,8 @@ function* handleSwitchNetworkRequest(action: SwitchNetworkRequestAction) {
       })
 
       if (timeout) {
-        yield put(
-          switchNetworkFailure(
-            chainId,
-            'Error switching network: Operation timed out'
-          )
-        )
         yield put(showToast(getSwitchChainErrorToast(chainId)))
+        throw new Error('Error switching network: Operation timed out')
       } else {
         yield put(switchNetworkSuccess(chainId))
       }
