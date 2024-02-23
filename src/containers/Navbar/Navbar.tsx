@@ -72,7 +72,7 @@ const Navbar: React.FC<NavbarProps> = ({
     if (walletError && chainSelected && withChainSelector) {
       setChainSelected(undefined)
     }
-  }, [walletError, withChainSelector])
+  }, [walletError, chainSelected, withChainSelector])
 
   const handleSwitchChain = useCallback(
     (chainId: ChainId) => {
