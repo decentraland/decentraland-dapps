@@ -74,14 +74,17 @@ const Navbar: React.FC<NavbarProps> = ({
     }
   }, [walletError, withChainSelector])
 
-  const handleSwitchChain = useCallback((chainId: ChainId) => {
-    setChainSelected(chainId)
-    props.onSwitchNetwork(chainId, props.chainId)
-    analytics.track('change_network', {
-      from_chain_id: props.chainId,
-      to_chain_id: chainId
-    })
-  }, [])
+  const handleSwitchChain = useCallback(
+    (chainId: ChainId) => {
+      setChainSelected(chainId)
+      props.onSwitchNetwork(chainId, props.chainId)
+      analytics.track('change_network', {
+        from_chain_id: props.chainId,
+        to_chain_id: chainId
+      })
+    },
+    [analytics]
+  )
 
   const handleClickBalance = useCallback(
     (e: React.MouseEvent, network: Network) => {
