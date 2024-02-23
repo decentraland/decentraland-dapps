@@ -6,13 +6,18 @@ import {
   NotificationLocale
 } from 'decentraland-ui/dist/components/Notifications/types'
 import { ChainId, getChainName } from '@dcl/schemas/dist/dapps/chain-id'
+import { ProviderType } from '@dcl/schemas'
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { getAnalytics } from '../../modules/analytics/utils'
+import { t } from '../../modules/translation'
 import {
   NotificationsAPI,
   checkIsOnboarding,
   setOnboardingDone
 } from '../../modules/notifications'
+import UnsupportedNetworkModal from '../UnsupportedNetworkModal'
+import { getAvailableChains } from '../../lib/chainConfiguration'
+import { getConnectedProviderType } from '../../lib'
 import { getBaseUrl } from '../../lib/utils'
 import ChainProvider from '../ChainProvider'
 import {
@@ -22,8 +27,6 @@ import {
 } from './constants'
 import { NavbarProps } from './Navbar.types'
 import { NAVBAR_CLICK_EVENT, NOTIFICATIONS_QUERY_INTERVAL } from './constants'
-import UnsupportedNetworkModal from '../UnsupportedNetworkModal'
-import { getAvailableChains } from '../../lib/chainConfiguration'
 
 const BASE_URL = getBaseUrl()
 
@@ -239,7 +242,15 @@ const Navbar: React.FC<NavbarProps> = ({
                 selectedChain: chainId ?? undefined,
                 chainBeingConfirmed:
                   chainSelected !== chainId ? chainSelected : undefined,
-                onSelectChain: handleSwitchChain
+                onSelectChain: handleSwitchChain,
+                i18nChainSelector: {
+                  title: t('@dapps.chain_selector.title'),
+                  connected: t('@dapps.chain_selector.connected'),
+                  confirmInWallet:
+                    getConnectedProviderType() === ProviderType.INJECTED // for injected ones, show label to confirm in wallet, the rest won't ask for confirmation
+                      ? t('@dapps.chain_selector.confirm_in_wallet')
+                      : t('@dapps.chain_selector.switching')
+                }
               })}
             />
             {isUnsupported ? (

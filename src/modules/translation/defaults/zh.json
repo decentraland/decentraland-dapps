@@ -341,6 +341,12 @@
         "simple": "播放一次",
         "loop": "循环播放"
       }
+    },
+    "chain_selector": {
+      "title": "选择网络",
+      "connected": "已连接",
+      "confirm_in_wallet": "请在您的钱包中确认",
+      "switching": "切换中..."
     }
   }
 }
