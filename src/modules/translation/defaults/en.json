@@ -343,6 +343,12 @@
         "simple": "Play once",
         "loop": "Play loop"
       }
+    },
+    "chain_selector": {
+      "title": "Select a network",
+      "connected": "Connected",
+      "confirm_in_wallet": "Confirm in wallet",
+      "switching": "Switching..."
     }
   }
 }

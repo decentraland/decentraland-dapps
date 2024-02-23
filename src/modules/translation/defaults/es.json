@@ -342,6 +342,12 @@
         "simple": "Play once",
         "loop": "Play loop"
       }
+    },
+    "chain_selector": {
+      "title": "Selecciona una red",
+      "connected": "Conectado",
+      "confirm_in_wallet": "Confirma en tu billetera",
+      "switching": "Cambiando..."
     }
   }
 }
