@@ -10,8 +10,14 @@ import {
 import { ethers } from 'ethers'
 import { TransactionResponse } from '@ethersproject/providers'
 import { BlockWithTransactions } from '@ethersproject/abstract-provider'
+import { StatusResponse } from 'decentraland-transactions/esm/crossChain/types'
 import { getNetworkWeb3Provider } from '../../lib/eth'
-import { Transaction, TransactionStatus, AnyTransaction } from './types'
+import {
+  Transaction,
+  TransactionStatus,
+  AnyTransaction,
+  TransactionsConfig
+} from './types'
 import {
   fetchTransactionFailure,
   fetchTransactionSuccess,
@@ -31,7 +37,11 @@ import {
   watchRevertedTransaction,
   WatchRevertedTransactionAction,
   WATCH_REVERTED_TRANSACTION,
-  fixRevertedTransaction
+  fixRevertedTransaction,
+  FetchCrossChainTransactionRequestAction,
+  FETCH_CROSS_CHAIN_TRANSACTION_REQUEST,
+  fetchCrossChainTransactionSuccess,
+  fetchCrossChainTransactionFailure
 } from './actions'
 import {
   CONNECT_WALLET_SUCCESS,
@@ -46,13 +56,100 @@ import { isPending, buildActionRef } from './utils'
 import { getTransaction as getTransactionFromChain } from './txUtils'
 import { getAddress } from '../wallet/selectors'
 
-export function* transactionSaga(): IterableIterator<ForkEffect> {
+export function* transactionSaga(
+  config?: TransactionsConfig
+): IterableIterator<ForkEffect> {
   yield takeEvery(FETCH_TRANSACTION_REQUEST, handleFetchTransactionRequest)
   yield takeEvery(REPLACE_TRANSACTION_REQUEST, handleReplaceTransactionRequest)
   yield takeEvery(WATCH_PENDING_TRANSACTIONS, handleWatchPendingTransactions)
   yield takeEvery(WATCH_DROPPED_TRANSACTIONS, handleWatchDroppedTransactions)
   yield takeEvery(WATCH_REVERTED_TRANSACTION, handleWatchRevertedTransaction)
   yield takeEvery(CONNECT_WALLET_SUCCESS, handleConnectWalletSuccess)
+  if (config?.squidUrl) {
+    yield takeEvery(
+      FETCH_CROSS_CHAIN_TRANSACTION_REQUEST,
+      handleFetchCrossChainTransactionRequest
+    )
+  }
+
+  function* handleFetchCrossChainTransactionRequest(
+    action: FetchCrossChainTransactionRequestAction
+  ) {
+    if (!config?.squidUrl) {
+      throw new Error('Squid URL not set')
+    }
+
+    const crossChainModule = import(
+      'decentraland-transactions/crossChain' as any
+    )
+    // const {
+    //   AxelarProvider
+    // }: Awaited<typeof crossChainModule> = yield crossChainModule
+    const { AxelarProvider }: { AxelarProvider: any } = yield crossChainModule
+    const crossChainProvider = new AxelarProvider(config.squidUrl)
+
+    let statusResponse: StatusResponse | undefined
+    let txInState: Transaction
+    while (
+      !statusResponse ||
+      statusResponse.squidTransactionStatus === 'ongoing' ||
+      statusResponse.squidTransactionStatus === 'not_found'
+    ) {
+      // wrapping in try-catch since it throws an error if the tx is not found (the first seconds after triggering it)
+      try {
+        statusResponse = yield call(
+          [crossChainProvider, 'getStatus'],
+          action.payload.requestId,
+          action.payload.hash
+        )
+        txInState = yield select(state =>
+          getTransactionInState(state, action.payload.hash)
+        )
+        if (
+          statusResponse &&
+          statusResponse.squidTransactionStatus === 'ongoing' &&
+          txInState.status !== TransactionStatus.PENDING
+        ) {
+          yield put(
+            updateTransactionStatus(
+              action.payload.hash,
+              TransactionStatus.PENDING
+            )
+          )
+        }
+      } catch (_e) {}
+      yield delay(config.squidRetryDelay ?? 1000)
+    }
+
+    txInState = yield select(state =>
+      getTransactionInState(state, action.payload.hash)
+    )
+    switch (statusResponse.squidTransactionStatus) {
+      case 'success':
+        yield put(
+          fetchCrossChainTransactionSuccess({
+            ...txInState,
+            status: TransactionStatus.CONFIRMED
+          })
+        )
+        break
+      case 'partial_success':
+      case 'needs_gas':
+        const error = (
+          statusResponse.error ??
+          `Transaction errored due to: ${statusResponse.squidTransactionStatus}`
+        ).toString()
+        yield put(
+          fetchCrossChainTransactionFailure(
+            action.payload.hash,
+            TransactionStatus.REVERTED,
+            error,
+            txInState
+          )
+        )
+        break
+    }
+  }
 }
 
 const BLOCKS_DEPTH = 100

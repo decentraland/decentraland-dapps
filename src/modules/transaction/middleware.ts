@@ -1,8 +1,11 @@
-import { fetchTransactionRequest } from './actions'
+import {
+  fetchCrossChainTransactionRequest,
+  fetchTransactionRequest
+} from './actions'
 import {
   isTransactionAction,
   getTransactionAddressFromAction,
-  getTransactionHashFromAction
+  getTransactionPayloadFromAction
 } from './utils'
 import { getAddress } from '../wallet/selectors'
 import { RootMiddleware } from '../../types'
@@ -12,10 +15,25 @@ export const createTransactionMiddleware = () => {
     if (isTransactionAction(action)) {
       const address =
         getTransactionAddressFromAction(action) || getAddress(store.getState())
-      const hash = getTransactionHashFromAction(action)
+      const transaction = getTransactionPayloadFromAction(action)
 
       if (address) {
-        store.dispatch(fetchTransactionRequest(address, hash, action))
+        if (transaction.chainId === transaction.toChainId) {
+          store.dispatch(
+            fetchTransactionRequest(address, transaction.hash, action)
+          )
+        } else if (transaction.requestId) {
+          store.dispatch(
+            fetchCrossChainTransactionRequest(
+              address,
+              transaction.hash,
+              transaction.requestId,
+              transaction.chainId,
+              transaction.toChainId,
+              action
+            )
+          )
+        }
       }
     }
 

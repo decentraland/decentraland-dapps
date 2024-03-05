@@ -1,13 +1,14 @@
 import { AnyAction } from 'redux'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
-import { race, take } from 'redux-saga/effects'
+import { fork, race, take } from 'redux-saga/effects'
 import {
   Transaction,
   TransactionPayload,
   FINISHED_STATUS,
   TransactionStatus,
   FAILED_STATUS,
-  SUCCESS_STATUS
+  SUCCESS_STATUS,
+  ActionWithPayload
 } from './types'
 import {
   FetchTransactionFailureAction,
@@ -19,7 +20,11 @@ import {
   REPLACE_TRANSACTION_SUCCESS,
   UPDATE_TRANSACTION_STATUS,
   FetchTransactionRequestAction,
-  UpdateTransactionStatusAction
+  UpdateTransactionStatusAction,
+  FETCH_CROSS_CHAIN_TRANSACTION_SUCCESS,
+  FetchCrossChainTransactionSuccessAction,
+  FetchCrossChainTransactionFailureAction,
+  FETCH_CROSS_CHAIN_TRANSACTION_FAILURE
 } from './actions'
 
 // Special flag used to determine transaction hashes to be monitored
@@ -32,42 +37,96 @@ export function buildActionRef(transaction: Transaction) {
     : buildTransactionPayload
   return {
     type: actionType,
-    payload: buildFunction(transaction.chainId, transaction.hash, payload)
+    payload: buildFunction(
+      transaction.chainId,
+      transaction.hash,
+      payload,
+      transaction.chainId
+    )
   }
 }
 
-export function isTransactionAction(action: AnyAction): boolean {
-  return !!getTransactionFromAction(action)
-}
-
-export function getTransactionFromAction(action: AnyAction): Transaction {
+export function isTransactionAction(
+  action: AnyAction
+): action is ActionWithPayload {
   return action.payload && action.payload[TRANSACTION_ACTION_FLAG]
 }
 
+export function getTransactionPayloadFromAction(
+  action: ActionWithPayload
+): TransactionPayload['_watch_tx'] {
+  return action.payload[TRANSACTION_ACTION_FLAG]
+}
+
+export function getTransactionFromAction(action: AnyAction): Transaction {
+  const transactionPayload: TransactionPayload['_watch_tx'] =
+    action.payload[TRANSACTION_ACTION_FLAG]
+  const isCrossChain =
+    transactionPayload.chainId !== transactionPayload.toChainId
+  return {
+    events: [],
+    hash: transactionPayload.hash,
+    timestamp: Date.now(),
+    from: transactionPayload.from?.toLowerCase() || '',
+    actionType: action.type,
+    url: getTransactionHref(
+      {
+        txHash: transactionPayload.hash,
+        address: transactionPayload.from,
+        isCrossChain
+      },
+      transactionPayload.chainId
+    ),
+    isCrossChain,
+    requestId: transactionPayload.requestId,
+    withReceipt: transactionPayload.withReceipt,
+    payload: transactionPayload.payload,
+    chainId: transactionPayload.chainId,
+    // these always start as null, and they get updated by the saga
+    status: null,
+    nonce: null,
+    replacedBy: null
+  }
+}
+
 export function getTransactionHashFromAction(
-  action: AnyAction
+  action: ActionWithPayload
 ): Transaction['hash'] {
-  return getTransactionFromAction(action).hash
+  return getTransactionPayloadFromAction(action).hash
 }
 
 export function getTransactionAddressFromAction(
-  action: AnyAction
+  action: ActionWithPayload
 ): Transaction['from'] | undefined {
-  return getTransactionFromAction(action).from
+  return getTransactionPayloadFromAction(action).from
 }
 
 export function buildTransactionPayload(
   chainId: ChainId,
   hash: string,
-  payload = {}
+  payload = {},
+  toChainId?: ChainId
 ): TransactionPayload {
   return {
     [TRANSACTION_ACTION_FLAG]: {
       chainId,
+      toChainId: toChainId ?? chainId,
       hash,
       payload
     }
   }
+}
+
+export function buildCrossChainTransactionFromPayload(
+  chainId: ChainId,
+  toChainId: ChainId,
+  hash: string,
+  requestId: string,
+  payload = {}
+) {
+  const txPayload = buildTransactionPayload(chainId, hash, payload, toChainId)
+  txPayload[TRANSACTION_ACTION_FLAG].requestId = requestId
+  return txPayload
 }
 
 export function buildTransactionWithReceiptPayload(
@@ -75,7 +134,7 @@ export function buildTransactionWithReceiptPayload(
   hash: string,
   payload = {}
 ): TransactionPayload {
-  const txPayload = buildTransactionPayload(chainId, hash, payload)
+  const txPayload = buildTransactionPayload(chainId, hash, payload, chainId)
 
   txPayload[TRANSACTION_ACTION_FLAG].withReceipt = true
 
@@ -88,7 +147,7 @@ export function buildTransactionWithFromPayload(
   from: string,
   payload = {}
 ): TransactionPayload {
-  const txPayload = buildTransactionPayload(chainId, hash, payload)
+  const txPayload = buildTransactionPayload(chainId, hash, payload, chainId)
 
   txPayload[TRANSACTION_ACTION_FLAG].from = from
 
@@ -98,13 +157,18 @@ export function buildTransactionWithFromPayload(
 export type TransactionHrefOptions = {
   txHash?: string
   address?: string
+  isCrossChain?: boolean
   blockNumber?: number
 }
 
 export function getTransactionHref(
-  { txHash, address, blockNumber }: TransactionHrefOptions,
+  { txHash, address, blockNumber, isCrossChain }: TransactionHrefOptions,
   network?: number
 ) {
+  if (isCrossChain) {
+    return `https://axelarscan.io/gmp/${txHash}`
+  }
+
   const pathname = address
     ? `/address/${address}`
     : blockNumber
@@ -160,11 +224,23 @@ export function* waitForTx(txHash: string) {
       success,
       failure
     }: {
-      success: FetchTransactionSuccessAction | undefined
-      failure: FetchTransactionFailureAction | undefined
+      success:
+        | FetchTransactionSuccessAction
+        | FetchCrossChainTransactionSuccessAction
+        | undefined
+      failure:
+        | FetchTransactionFailureAction
+        | FetchCrossChainTransactionFailureAction
+        | undefined
     } = yield race({
-      success: take(FETCH_TRANSACTION_SUCCESS),
-      failure: take(FETCH_TRANSACTION_FAILURE)
+      success: take([
+        FETCH_TRANSACTION_SUCCESS,
+        FETCH_CROSS_CHAIN_TRANSACTION_SUCCESS
+      ]),
+      failure: take([
+        FETCH_TRANSACTION_FAILURE,
+        FETCH_CROSS_CHAIN_TRANSACTION_FAILURE
+      ])
     })
 
     if (success?.payload.transaction.hash === txHashToWaitFor) {
@@ -224,3 +300,21 @@ export function* waitForTx(txHash: string) {
     }
   }
 }
+
+export const takeEverySuccessfulTx = (
+  actionType: string,
+  worker: (...args: any[]) => any,
+  ...args: Parameters<(...args: any[]) => any>
+) =>
+  fork(function*() {
+    while (true) {
+      const action: FetchTransactionSuccessAction = yield take([
+        FETCH_TRANSACTION_SUCCESS,
+        FETCH_CROSS_CHAIN_TRANSACTION_SUCCESS
+      ])
+
+      if (action.payload.transaction.actionType === actionType) {
+        yield fork(worker, ...args.concat(action))
+      }
+    }
+  })

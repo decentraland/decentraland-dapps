@@ -1,5 +1,9 @@
 import { Transaction, TransactionStatus } from './types'
-import { getTransactionFromAction, isPending } from './utils'
+import {
+  getTransactionFromAction,
+  getTransactionHref,
+  isPending
+} from './utils'
 import { loadingReducer, LoadingState } from '../loading/reducer'
 import {
   FetchTransactionRequestAction,
@@ -19,7 +23,13 @@ import {
   CLEAR_TRANSACTIONS,
   CLEAR_TRANSACTION,
   FixRevertedTransactionAction,
-  FIX_REVERTED_TRANSACTION
+  FIX_REVERTED_TRANSACTION,
+  FETCH_CROSS_CHAIN_TRANSACTION_SUCCESS,
+  FetchCrossChainTransactionRequestAction,
+  FetchCrossChainTransactionFailureAction,
+  FetchCrossChainTransactionSuccessAction,
+  FETCH_CROSS_CHAIN_TRANSACTION_FAILURE,
+  FETCH_CROSS_CHAIN_TRANSACTION_REQUEST
 } from './actions'
 
 export type TransactionState = {
@@ -38,6 +48,9 @@ export type TransactionReducerAction =
   | FetchTransactionRequestAction
   | FetchTransactionSuccessAction
   | FetchTransactionFailureAction
+  | FetchCrossChainTransactionRequestAction
+  | FetchCrossChainTransactionFailureAction
+  | FetchCrossChainTransactionSuccessAction
   | UpdateTransactionStatusAction
   | UpdateTransactionNonceAction
   | ReplaceTransactionSuccessAction
@@ -50,6 +63,7 @@ export function transactionReducer(
   action: TransactionReducerAction
 ): TransactionState {
   switch (action.type) {
+    case FETCH_CROSS_CHAIN_TRANSACTION_REQUEST:
     case FETCH_TRANSACTION_REQUEST: {
       const actionRef = action.payload.action
       const transaction = getTransactionFromAction(actionRef)
@@ -74,6 +88,7 @@ export function transactionReducer(
         ]
       }
     }
+    case FETCH_CROSS_CHAIN_TRANSACTION_SUCCESS:
     case FETCH_TRANSACTION_SUCCESS: {
       const actionTransaction = action.payload.transaction
       return {
@@ -90,6 +105,7 @@ export function transactionReducer(
         )
       }
     }
+    case FETCH_CROSS_CHAIN_TRANSACTION_FAILURE:
     case FETCH_TRANSACTION_FAILURE: {
       const { hash, status, message } = action.payload
       return {
@@ -159,6 +175,10 @@ export function transactionReducer(
             ? {
                 ...transaction,
                 status: TransactionStatus.REPLACED,
+                url: getTransactionHref(
+                  { txHash: action.payload.replaceBy },
+                  transaction.chainId
+                ),
                 replacedBy: action.payload.replaceBy
               }
             : transaction

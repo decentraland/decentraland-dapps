@@ -3,6 +3,7 @@ import {
   TransactionReceipt
 } from '@ethersproject/providers'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
+import { AnyAction } from 'redux'
 
 export enum TransactionStatus {
   QUEUED = 'queued',
@@ -78,6 +79,9 @@ export type Transaction = {
   from: string
   actionType: string
   status: AnyTransaction['status'] | null
+  url: string
+  isCrossChain: boolean
+  requestId?: string
   withReceipt?: boolean
   receipt?: { logs: TransactionReceipt['logs'] }
   payload?: any
@@ -85,14 +89,18 @@ export type Transaction = {
 }
 
 export type TransactionPayload = {
-  [hash: string]: {
+  ['_watch_tx']: {
     chainId: ChainId
+    toChainId: ChainId
     hash: string
     payload: any
+    requestId?: string
     withReceipt?: boolean
     from?: string // This could be undefined depending if its needed in the action
   }
 }
+
+export type ActionWithPayload = AnyAction & { payload: TransactionPayload }
 
 export type Arg = {
   name: string
@@ -104,4 +112,9 @@ export type Log = {
   events: Arg[]
   name: string
   [key: string]: any
+}
+
+export type TransactionsConfig = {
+  squidUrl: string
+  squidRetryDelay: number
 }
