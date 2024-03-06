@@ -1,9 +1,9 @@
 import { expectSaga } from 'redux-saga-test-plan'
 import * as matchers from 'redux-saga-test-plan/matchers'
-import { call, put, take } from 'redux-saga/effects'
+import { call, delay, put, race, take } from 'redux-saga/effects'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { Provider } from 'decentraland-connect'
-import { createWalletSaga, getAccount } from './sagas'
+import { SWITCH_NETWORK_TIMEOUT, createWalletSaga, getAccount } from './sagas'
 import {
   FETCH_WALLET_FAILURE,
   FETCH_WALLET_SUCCESS,
@@ -124,8 +124,15 @@ describe('Wallet sagas', () => {
                 Promise.resolve(mockProvider)
               ],
               [
-                call(switchProviderChainId, mockProvider, 1),
-                Promise.resolve(void 0)
+                race({
+                  switched: call(
+                    switchProviderChainId,
+                    mockProvider,
+                    ChainId.ETHEREUM_MAINNET
+                  ),
+                  timeout: delay(SWITCH_NETWORK_TIMEOUT)
+                }),
+                { switched: true }
               ]
             ])
             .put(switchNetworkSuccess(ChainId.ETHEREUM_MAINNET))
@@ -133,7 +140,7 @@ describe('Wallet sagas', () => {
             .run({ silenceTimeout: true })
         })
       })
-      describe('when wallet_switchEthereumChain fails', () => {
+      describe('when wallet_switchEthereumChain fails with code 4902', () => {
         it('should should try to use wallet_addEthereumChain instead', () => {
           const switchError = new Error('Could not switch') as Error & {
             code: number
@@ -152,6 +159,36 @@ describe('Wallet sagas', () => {
             ])
             .put(
               switchNetworkFailure(ChainId.ETHEREUM_MAINNET, 'Could not switch')
+            )
+            .dispatch(switchNetworkRequest(ChainId.ETHEREUM_MAINNET))
+            .run({ silenceTimeout: true })
+        })
+      })
+      describe('when switchProviderChainId timeouts', () => {
+        it('should put the failure action', () => {
+          return expectSaga(walletSaga)
+            .provide([
+              [
+                matchers.call.fn(getConnectedProvider),
+                Promise.resolve(mockProvider)
+              ],
+              [
+                race({
+                  switched: call(
+                    switchProviderChainId,
+                    mockProvider,
+                    ChainId.ETHEREUM_MAINNET
+                  ),
+                  timeout: delay(SWITCH_NETWORK_TIMEOUT)
+                }),
+                { timeout: true }
+              ]
+            ])
+            .put(
+              switchNetworkFailure(
+                ChainId.ETHEREUM_MAINNET,
+                'Error switching network: Operation timed out'
+              )
             )
             .dispatch(switchNetworkRequest(ChainId.ETHEREUM_MAINNET))
             .run({ silenceTimeout: true })

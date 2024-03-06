@@ -210,6 +210,10 @@
           "body": "Los <a>precios de las tarifas de transacción</a> en la red de Polygon estan muy altos! Por favor espere un momento e intentelo nuevamente, o puede cambiar la red a Polygon y pagar la tarifa de la transacción con MATIC."
         }
       },
+      "switch_network_error": {
+        "title": "Cambio de red fallido",
+        "body": "No se pudo cambiar a la red {network}."
+      },
       "switch_network": "Cambiar a {network}",
       "learn_more": "Mas información"
     },
@@ -338,6 +342,12 @@
         "simple": "Play once",
         "loop": "Play loop"
       }
+    },
+    "chain_selector": {
+      "title": "Selecciona una red",
+      "connected": "Conectado",
+      "confirm_in_wallet": "Confirma en tu billetera",
+      "switching": "Cambiando..."
     }
   }
 }
