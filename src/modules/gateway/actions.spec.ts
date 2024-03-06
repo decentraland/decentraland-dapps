@@ -216,6 +216,7 @@ describe('when creating the action to signal the addition of a MANA purchase as 
       payload: {
         _watch_tx: {
           chainId: 5,
+          toChainId: 5,
           from: 'mock-address',
           hash: 'mock-tx-hash',
           payload: {

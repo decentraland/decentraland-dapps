@@ -1,7 +1,9 @@
-import { AnyAction } from 'redux'
 import { action } from 'typesafe-actions'
-import { Transaction, AnyTransaction } from './types'
-import { ChainId } from '@dcl/schemas'
+import {
+  Transaction,
+  AnyTransaction,
+  ActionWithTransactionPayload
+} from './types'
 
 // Fetch transaction
 
@@ -12,7 +14,7 @@ export const FETCH_TRANSACTION_FAILURE = '[Failure] Fetch Transaction'
 export const fetchTransactionRequest = (
   address: string,
   hash: string,
-  actionObject: AnyAction
+  actionObject: ActionWithTransactionPayload
 ) =>
   action(FETCH_TRANSACTION_REQUEST, {
     address,
@@ -44,58 +46,6 @@ export type FetchTransactionSuccessAction = ReturnType<
 >
 export type FetchTransactionFailureAction = ReturnType<
   typeof fetchTransactionFailure
->
-
-// Fetch cross chain transaction
-
-export const FETCH_CROSS_CHAIN_TRANSACTION_REQUEST =
-  '[Request] Fetch Cross Transaction'
-export const FETCH_CROSS_CHAIN_TRANSACTION_SUCCESS =
-  '[Success] Fetch Cross Transaction'
-export const FETCH_CROSS_CHAIN_TRANSACTION_FAILURE =
-  '[Failure] Fetch Cross Transaction'
-
-export const fetchCrossChainTransactionRequest = (
-  address: string,
-  hash: string,
-  requestId: string,
-  fromChain: ChainId,
-  toChain: ChainId,
-  actionObject: AnyAction
-) =>
-  action(FETCH_CROSS_CHAIN_TRANSACTION_REQUEST, {
-    address,
-    hash,
-    fromChain,
-    toChain,
-    requestId,
-    action: actionObject
-  })
-
-export const fetchCrossChainTransactionSuccess = (transaction: Transaction) =>
-  action(FETCH_CROSS_CHAIN_TRANSACTION_SUCCESS, { transaction })
-
-export const fetchCrossChainTransactionFailure = (
-  hash: string,
-  status: AnyTransaction['status'],
-  message: string,
-  transaction: Transaction
-) =>
-  action(FETCH_CROSS_CHAIN_TRANSACTION_FAILURE, {
-    hash,
-    status,
-    message,
-    transaction
-  })
-
-export type FetchCrossChainTransactionRequestAction = ReturnType<
-  typeof fetchCrossChainTransactionRequest
->
-export type FetchCrossChainTransactionSuccessAction = ReturnType<
-  typeof fetchCrossChainTransactionSuccess
->
-export type FetchCrossChainTransactionFailureAction = ReturnType<
-  typeof fetchCrossChainTransactionFailure
 >
 
 // Watch pending transactions
