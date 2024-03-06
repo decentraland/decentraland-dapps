@@ -80,6 +80,7 @@ export function* transactionSaga(
 }
 
 const BLOCKS_DEPTH = 100
+const TRANSACTION_FETCH_RETIES = 120
 const PENDING_TRANSACTION_THRESHOLD = 72 * 60 * 60 * 1000 // 72 hours
 const REVERTED_TRANSACTION_THRESHOLD = 24 * 60 * 60 * 1000 // 24 hours
 const TRANSACTION_FETCH_DELAY = 2 * 1000 // 2 seconds
@@ -128,7 +129,7 @@ function* handleCrossChainTransactionRequest(
   let statusResponse: StatusResponse | undefined
   let txInState: Transaction
   let squidNotFoundRetries: number =
-    config.crossChainProviderNotFoundRetries ?? 10
+    config.crossChainProviderNotFoundRetries ?? TRANSACTION_FETCH_RETIES
   while (
     !statusResponse ||
     statusResponse.squidTransactionStatus === 'ongoing' ||
@@ -166,7 +167,7 @@ function* handleCrossChainTransactionRequest(
     }
 
     if (
-      squidNotFoundRetries === 0 &&
+      squidNotFoundRetries <= 0 &&
       (!statusResponse || statusResponse.squidTransactionStatus === 'not_found')
     ) {
       yield put(
@@ -174,7 +175,7 @@ function* handleCrossChainTransactionRequest(
       )
       return
     }
-    yield delay(config.crossChainProviderRetryDelay ?? 1000)
+    yield delay(config.crossChainProviderRetryDelay ?? TRANSACTION_FETCH_DELAY)
   }
 
   txInState = yield select(state =>
