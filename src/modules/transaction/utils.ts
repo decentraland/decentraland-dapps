@@ -348,10 +348,9 @@ export const takeEverySuccessfulTx = (
 ) =>
   fork(function*() {
     while (true) {
-      const action: FetchTransactionSuccessAction = yield take([
+      const action: FetchTransactionSuccessAction = yield take(
         FETCH_TRANSACTION_SUCCESS
-        // FETCH_CROSS_CHAIN_TRANSACTION_SUCCESS
-      ])
+      )
 
       if (action.payload.transaction.actionType === actionType) {
         yield fork(worker, ...args.concat(action))
