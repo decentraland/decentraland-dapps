@@ -264,23 +264,11 @@ export function* waitForTx(txHash: string) {
       success,
       failure
     }: {
-      success:
-        | FetchTransactionSuccessAction
-        // | FetchCrossChainTransactionSuccessAction
-        | undefined
-      failure:
-        | FetchTransactionFailureAction
-        // | FetchCrossChainTransactionFailureAction
-        | undefined
+      success: FetchTransactionSuccessAction | undefined
+      failure: FetchTransactionFailureAction | undefined
     } = yield race({
-      success: take([
-        FETCH_TRANSACTION_SUCCESS
-        // FETCH_CROSS_CHAIN_TRANSACTION_SUCCESS
-      ]),
-      failure: take([
-        FETCH_TRANSACTION_FAILURE
-        // FETCH_CROSS_CHAIN_TRANSACTION_FAILURE
-      ])
+      success: take(FETCH_TRANSACTION_SUCCESS),
+      failure: take(FETCH_TRANSACTION_FAILURE)
     })
 
     if (success?.payload.transaction.hash === txHashToWaitFor) {
