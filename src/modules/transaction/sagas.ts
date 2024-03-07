@@ -69,7 +69,7 @@ export function* transactionSaga(
 
   function* handleFetchTransactionRequest(
     action: FetchTransactionRequestAction
-  ): any {
+  ): unknown {
     const isCrossChain = isTransactionActionCrossChain(action.payload.action)
     if (isCrossChain) {
       yield call(handleCrossChainTransactionRequest, action, config)
