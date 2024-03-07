@@ -75,12 +75,12 @@ export function getTransactionPayloadFromAction(
 }
 
 export function isTransactionActionCrossChain(action: AnyAction): boolean {
-  return (
-    isTransactionAction(action) &&
-    getTransactionPayloadFromAction(action).chainId !==
-      getTransactionPayloadFromAction(action).toChainId &&
-    getTransactionPayloadFromAction(action).toChainId !== undefined
-  )
+  if (isTransactionAction(action)) {
+    const { chainId, toChainId } = getTransactionPayloadFromAction(action)
+    return chainId !== toChainId && toChainId !== undefined
+  }
+
+  return false
 }
 
 export function getTransactionFromAction(action: AnyAction): Transaction {
