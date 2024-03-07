@@ -1,5 +1,6 @@
-import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
+import { AnyAction } from 'redux'
 import { expectSaga } from 'redux-saga-test-plan'
+import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import {
   fetchTransactionFailure,
   fetchTransactionRequest,
@@ -7,32 +8,52 @@ import {
   replaceTransactionSuccess,
   updateTransactionStatus
 } from './actions'
-import { Transaction, TransactionStatus } from './types'
 import {
-  TRANSACTION_ACTION_FLAG,
+  ActionWithTransactionPayload,
+  CrossChainProviderType,
+  Transaction,
+  TransactionPayload,
+  TransactionStatus,
+  TRANSACTION_ACTION_FLAG
+} from './types'
+import {
   buildTransactionPayload,
   buildTransactionWithReceiptPayload,
   isTransactionAction,
   getTransactionFromAction,
   getTransactionHashFromAction,
   waitForTx,
-  buildTransactionWithFromPayload
+  buildTransactionWithFromPayload,
+  getTransactionHref,
+  isTransactionActionCrossChain,
+  buildCrossChainTransactionFromPayload
 } from './utils'
 
-describe('modules', function() {
-  describe('transaction', function() {
-    describe('utils', function() {
-      const hash = '0xdeadbeef'
-      const payload = { some: 'data' }
-      const chainId = ChainId.ETHEREUM_MAINNET
-      const from = '0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2'
+describe('modules', () => {
+  let tx: TransactionPayload['_watch_tx']
+  let hash: string
+  let from: string
+  let payload: any
+  let chainId: ChainId
 
-      const tx = { hash, payload, chainId }
-      const txWithReceipt = { hash, payload, chainId, withReceipt: true }
-      const txWithFrom = { hash, payload, chainId, from }
+  beforeEach(() => {
+    hash = '0xdeadbeef'
+    payload = { some: 'data' }
+    chainId = ChainId.ETHEREUM_MAINNET
+    from = '0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2'
+    tx = { hash, payload, chainId, toChainId: chainId }
+  })
 
-      describe('buildTransactionPayload', function() {
-        it('should return a new object with the transaction flag an the action inside', function() {
+  describe('transaction', () => {
+    describe('utils', () => {
+      describe('buildTransactionPayload', () => {
+        let tx: TransactionPayload['_watch_tx']
+
+        beforeEach(() => {
+          tx = { hash, payload, chainId, toChainId: chainId }
+        })
+
+        it('should return a new object with the transaction flag an the action inside', () => {
           const txPayload = buildTransactionPayload(
             chainId,
             tx.hash,
@@ -43,64 +64,51 @@ describe('modules', function() {
             [TRANSACTION_ACTION_FLAG]: tx
           })
         })
-        it('should support only supplying the transaction hash', function() {
-          const tx = { hash }
-          const txPayload = buildTransactionPayload(chainId, tx.hash)
-
-          expect(txPayload).toEqual({
-            [TRANSACTION_ACTION_FLAG]: {
-              ...tx,
-              chainId,
-              payload: {}
-            }
-          })
-        })
       })
 
-      describe('buildTransactionWithReceiptPayload', function() {
-        it('should return a new object with the transaction flag an the action inside', function() {
+      describe('buildTransactionWithReceiptPayload', () => {
+        let txWithReceipt: TransactionPayload['_watch_tx']
+
+        beforeEach(() => {
+          txWithReceipt = {
+            hash,
+            payload,
+            chainId,
+            toChainId: chainId,
+            withReceipt: true
+          }
+        })
+
+        it('should return a new object with the transaction flag an the action inside', () => {
           const txPayload = buildTransactionWithReceiptPayload(
             chainId,
-            tx.hash,
-            tx.payload
+            txWithReceipt.hash,
+            txWithReceipt.payload
           )
 
           expect(txPayload).toEqual({
             [TRANSACTION_ACTION_FLAG]: txWithReceipt
           })
         })
-        it('should support only supplying the transaction hash', function() {
-          const tx = { hash }
-          const txPayload = buildTransactionWithReceiptPayload(chainId, tx.hash)
-
-          expect(txPayload).toEqual({
-            [TRANSACTION_ACTION_FLAG]: {
-              ...txWithReceipt,
-              payload: {}
-            }
-          })
-        })
       })
 
-      describe('buildTransactionWithFromPayload', function() {
-        it('should return a new object with the transaction flag an the action inside', function() {
-          const txPayload = buildTransactionWithFromPayload(
-            chainId,
-            tx.hash,
-            from,
-            payload
-          )
+      describe('buildTransactionWithFromPayload', () => {
+        let txWithFrom: TransactionPayload['_watch_tx']
 
-          expect(txPayload).toEqual({
-            [TRANSACTION_ACTION_FLAG]: txWithFrom
-          })
+        beforeEach(() => {
+          txWithFrom = {
+            hash,
+            payload,
+            chainId,
+            from,
+            toChainId: chainId
+          }
         })
 
-        it('should support only supplying the transaction hash', function() {
-          const tx = { hash }
+        it('should return a new object with the transaction flag and the action inside', function() {
           const txPayload = buildTransactionWithFromPayload(
             chainId,
-            tx.hash,
+            txWithFrom.hash,
             from,
             payload
           )
@@ -111,8 +119,8 @@ describe('modules', function() {
         })
       })
 
-      describe('isTransactionAction', function() {
-        it('should return true if the action was built with buildTransactionPayload', function() {
+      describe('isTransactionAction', () => {
+        it('should return true if the action was built with buildTransactionPayload', () => {
           const txPayload = buildTransactionPayload(
             chainId,
             tx.hash,
@@ -158,56 +166,150 @@ describe('modules', function() {
         })
       })
 
-      describe('getTransactionFromAction', function() {
-        it('should return the transaction from a built transaction action with buildTransactionPayload', function() {
-          const txPayload = buildTransactionWithReceiptPayload(
-            chainId,
-            tx.hash,
-            tx.payload
-          )
-          const action = {
-            type: '[Success] Transaction action',
-            payload: {
-              this: 'is',
-              more: 2,
-              data: ['a', 3],
-              ...txPayload
-            }
-          }
+      describe('getTransactionFromAction', () => {
+        let expectedTx: Transaction
+        let action: ActionWithTransactionPayload
 
-          expect(getTransactionFromAction(action)).toEqual(txWithReceipt)
+        beforeEach(() => {
+          expectedTx = {
+            actionType: '[Success] Transaction action',
+            hash: '0xdeadbeef',
+            chainId: ChainId.ETHEREUM_MAINNET,
+            events: [],
+            from: '',
+            isCrossChain: false,
+            nonce: null,
+            replacedBy: null,
+            requestId: undefined,
+            status: null,
+            timestamp: expect.any(Number),
+            url: ''
+          }
         })
 
-        it('should return the transaction from a built transaction action with buildTransactionWithReceiptPayload', function() {
-          const txPayload = buildTransactionPayload(
-            chainId,
-            tx.hash,
-            tx.payload
-          )
-          const action = {
-            type: '[Success] Transaction action',
-            payload: {
-              this: 'is',
-              more: 2,
-              data: ['a', 3],
-              ...txPayload
+        describe('when building a transaction with buildTransactionWithReceiptPayload', () => {
+          beforeEach(() => {
+            const txPayload = buildTransactionWithReceiptPayload(
+              chainId,
+              tx.hash,
+              tx.payload
+            )
+            action = {
+              type: '[Success] Transaction action',
+              payload: {
+                this: 'is',
+                more: 2,
+                data: ['a', 3],
+                ...txPayload
+              }
             }
-          }
+            expectedTx = {
+              ...expectedTx,
+              actionType: action.type,
+              hash: action.payload._watch_tx.hash,
+              url: getTransactionHref(
+                { txHash: action.payload._watch_tx.hash },
+                chainId
+              ),
+              payload: action.payload._watch_tx.payload,
+              toChainId: action.payload._watch_tx.toChainId,
+              withReceipt: action.payload._watch_tx.withReceipt
+            }
+          })
 
-          expect(getTransactionFromAction(action)).toEqual(tx)
+          it('should return the transaction with the receipt flag set', () => {
+            expect(getTransactionFromAction(action)).toEqual(expectedTx)
+          })
         })
 
-        it('should return undefined for a normal action', function() {
-          const action = {
-            type: '[Success] Transaction action',
-            payload: { this: 'is', more: 2, data: ['a', 3] }
-          }
+        describe('when building a transaction with buildTransactionPayload', () => {
+          beforeEach(() => {
+            const txPayload = buildTransactionPayload(
+              chainId,
+              tx.hash,
+              tx.payload
+            )
+            action = {
+              type: '[Success] Transaction action',
+              payload: {
+                this: 'is',
+                more: 2,
+                data: ['a', 3],
+                ...txPayload
+              }
+            }
+            expectedTx = {
+              ...expectedTx,
+              actionType: action.type,
+              hash: action.payload._watch_tx.hash,
+              url: getTransactionHref(
+                { txHash: action.payload._watch_tx.hash },
+                chainId
+              ),
+              toChainId: action.payload._watch_tx.toChainId,
+              payload: action.payload._watch_tx.payload
+            }
+          })
 
-          expect(getTransactionFromAction(action)).toBe(undefined)
+          it('should return the transaction', () => {
+            expect(getTransactionFromAction(action)).toEqual(expectedTx)
+          })
+        })
+
+        describe('when building a transaction with buildCrossChainTransactionPayload', () => {
+          let crossChainProviderType: CrossChainProviderType
+          let requestId: string
+          let toChainId: ChainId
+
+          beforeEach(() => {
+            toChainId = ChainId.ARBITRUM_MAINNET
+            requestId = 'aRequestId'
+            crossChainProviderType = CrossChainProviderType.SQUID
+
+            const txPayload = buildCrossChainTransactionFromPayload(
+              chainId,
+              toChainId,
+              tx.hash,
+              tx.payload,
+              requestId,
+              crossChainProviderType
+            )
+            action = {
+              type: '[Success] Transaction action',
+              payload: {
+                this: 'is',
+                more: 2,
+                data: ['a', 3],
+                ...txPayload
+              }
+            }
+            expectedTx = {
+              ...expectedTx,
+              actionType: action.type,
+              hash: action.payload._watch_tx.hash,
+              url: getTransactionHref(
+                {
+                  txHash: action.payload._watch_tx.hash,
+                  crossChainProviderType
+                },
+                chainId
+              ),
+              isCrossChain: true,
+              requestId: action.payload._watch_tx.requestId,
+              toChainId: action.payload._watch_tx.toChainId,
+              crossChainProviderType:
+                action.payload._watch_tx.crossChainProviderType,
+              payload: action.payload._watch_tx.payload
+            }
+          })
+
+          it('should return a transaction with the toChain and crossChainProviderType set', () => {
+            expect(getTransactionFromAction(action)).toEqual(expectedTx)
+          })
         })
       })
 
-      describe('getTransactionHashFromAction', function() {
+      describe('getTransactionHashFromAction', () => {
         it('should return the transaction hash from a built transaction action with buildTransactionPayload', function() {
           const txPayload = buildTransactionPayload(
             chainId,
@@ -242,7 +344,7 @@ describe('modules', function() {
             payload: { more: 2 }
           }
 
-          expect(() => getTransactionHashFromAction(action)).toThrow()
+          expect(() => getTransactionHashFromAction(action as any)).toThrow()
         })
       })
     })
@@ -267,6 +369,8 @@ describe('when waiting for a transaction to be completed', () => {
       from: senderAddress,
       actionType: 'anActionType',
       status: null,
+      url: '',
+      isCrossChain: false,
       chainId: ChainId.ETHEREUM_GOERLI
     }
 
@@ -378,7 +482,7 @@ describe('when waiting for a transaction to be completed', () => {
           .dispatch(
             fetchTransactionRequest('anAddress', txHash, {
               type: 'SomeAction',
-              payload: { hash: txHash }
+              payload: { _watch_tx: { hash: txHash } } as TransactionPayload
             })
           )
           .dispatch(
@@ -410,7 +514,7 @@ describe('when waiting for a transaction to be completed', () => {
           .dispatch(
             fetchTransactionRequest('anAddress', txHash, {
               type: 'SomeAction',
-              payload: { hash: txHash }
+              payload: { _watch_tx: { hash: txHash } } as TransactionPayload
             })
           )
           .dispatch(fetchTransactionSuccess(transaction))
@@ -441,6 +545,174 @@ describe('when waiting for a transaction to be completed', () => {
         .dispatch(fetchTransactionSuccess(anotherTransaction))
         .dispatch(fetchTransactionSuccess(transaction))
         .silentRun()
+    })
+  })
+})
+
+describe('when getting the transaction href', () => {
+  let txHash: string | undefined
+  let address: string | undefined
+  let blockNumber: number | undefined
+  let network: ChainId | undefined
+  let crossChainProviderType: CrossChainProviderType | undefined
+
+  beforeEach(() => {
+    network = ChainId.ETHEREUM_MAINNET
+    txHash = '0xdeadbeef'
+  })
+
+  describe('and the transaction comes from a cross chain one', () => {
+    describe('and the provider type is squid', () => {
+      beforeEach(() => {
+        crossChainProviderType = CrossChainProviderType.SQUID
+      })
+
+      it('should return the link to the Axelar site', () => {
+        expect(getTransactionHref({ txHash, crossChainProviderType })).toBe(
+          `https://axelarscan.io/gmp/${txHash}`
+        )
+      })
+    })
+
+    describe('and the provider type is unknown', () => {
+      beforeEach(() => {
+        crossChainProviderType = 'Unknown' as CrossChainProviderType
+      })
+
+      it('should return the link to the Axelar site', () => {
+        expect(getTransactionHref({ txHash, crossChainProviderType })).toBe('')
+      })
+    })
+  })
+
+  describe('and the transaction comes from a regular chain', () => {
+    beforeEach(() => {
+      crossChainProviderType = undefined
+    })
+
+    describe('and the address is set', () => {
+      beforeEach(() => {
+        address = '0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2'
+      })
+
+      it('should return the link to the Etherscan site pointing to the address', () => {
+        expect(getTransactionHref({ address })).toBe(
+          `https://etherscan.io/address/${address}`
+        )
+      })
+    })
+
+    describe('and the address is not set', () => {
+      beforeEach(() => {
+        address = undefined
+      })
+
+      describe('and the block number is set', () => {
+        beforeEach(() => {
+          blockNumber = 123
+        })
+
+        it('should return the link to the Etherscan site pointing to the block number', () => {
+          expect(getTransactionHref({ blockNumber })).toBe(
+            `https://etherscan.io/block/${blockNumber}`
+          )
+        })
+      })
+
+      describe('and the block number is not set', () => {
+        beforeEach(() => {
+          blockNumber = undefined
+        })
+
+        it('should return the link to the Etherscan site pointing to the transaction', () => {
+          expect(getTransactionHref({ txHash })).toBe(
+            `https://etherscan.io/tx/${txHash}`
+          )
+        })
+      })
+    })
+
+    describe('and the chain is set as sepolia', () => {
+      beforeEach(() => {
+        network = ChainId.ETHEREUM_SEPOLIA
+      })
+
+      it('should return the link to the Sepolia site', () => {
+        expect(getTransactionHref({ txHash }, network)).toBe(
+          `https://sepolia.etherscan.io/tx/${txHash}`
+        )
+      })
+    })
+  })
+})
+
+describe('when getting if an action is a cross chain transaction action', () => {
+  let action: AnyAction
+
+  beforeEach(() => {
+    action = {
+      type: 'SomeAction'
+    }
+  })
+
+  describe('and the action has no transactional information', () => {
+    it('should return false', () => {
+      expect(isTransactionActionCrossChain(action)).toBe(false)
+    })
+  })
+
+  describe('and the action has transactional information', () => {
+    beforeEach(() => {
+      action = {
+        ...action,
+        payload: {
+          _watch_tx: {
+            chainId: ChainId.ETHEREUM_MAINNET,
+            hash: '0xdeadbeef',
+            payload: { some: 'data' }
+          }
+        }
+      }
+    })
+
+    describe('and the information belongs to a cross chain transaction', () => {
+      beforeEach(() => {
+        action = {
+          ...action,
+          payload: {
+            ...action.payload,
+            _watch_tx: {
+              ...action.payload._watch_tx,
+              toChainId: ChainId.AVALANCHE_MAINNET,
+              crossChainProviderType: CrossChainProviderType.SQUID
+            }
+          }
+        }
+      })
+
+      it('should return true', () => {
+        expect(isTransactionActionCrossChain(action)).toBe(true)
+      })
+    })
+
+    describe('and the information belongs to a non-cross chain transaction', () => {
+      beforeEach(() => {
+        action = {
+          ...action,
+          payload: {
+            ...action.payload,
+            _watch_tx: {
+              ...action.payload._watch_tx,
+              toChainId: undefined,
+              crossChainProviderType: undefined
+            }
+          }
+        }
+      })
+
+      it('should return false', () => {
+        expect(isTransactionActionCrossChain(action)).toBe(false)
+      })
     })
   })
 })

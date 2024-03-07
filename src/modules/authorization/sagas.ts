@@ -5,7 +5,7 @@ import { Provider } from 'decentraland-connect'
 import { ContractData, getContract } from 'decentraland-transactions'
 import { getNetworkProvider } from '../../lib/eth'
 import { sendTransaction } from '../wallet/utils/sendTransaction'
-import { getTransactionFromAction, waitForTx } from '../transaction/utils'
+import { getTransactionHashFromAction, waitForTx } from '../transaction/utils'
 import { getAnalytics } from '../analytics/utils'
 import {
   AuthorizationError,
@@ -223,9 +223,9 @@ export function createAuthorizationSaga() {
         } Transaction Approved in Wallet`,
         { traceId }
       )
-      const txHash = getTransactionFromAction(
+      const txHash = getTransactionHashFromAction(
         success as RevokeTokenSuccessAction | GrantTokenSuccessAction
-      ).hash
+      )
 
       yield call(waitForTx, txHash)
 

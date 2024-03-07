@@ -1,6 +1,9 @@
-import { AnyAction } from 'redux'
 import { action } from 'typesafe-actions'
-import { Transaction, AnyTransaction } from './types'
+import {
+  Transaction,
+  AnyTransaction,
+  ActionWithTransactionPayload
+} from './types'
 
 // Fetch transaction
 
@@ -11,7 +14,7 @@ export const FETCH_TRANSACTION_FAILURE = '[Failure] Fetch Transaction'
 export const fetchTransactionRequest = (
   address: string,
   hash: string,
-  actionObject: AnyAction
+  actionObject: ActionWithTransactionPayload
 ) =>
   action(FETCH_TRANSACTION_REQUEST, {
     address,

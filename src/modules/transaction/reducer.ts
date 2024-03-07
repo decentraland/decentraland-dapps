@@ -1,5 +1,9 @@
 import { Transaction, TransactionStatus } from './types'
-import { getTransactionFromAction, isPending } from './utils'
+import {
+  getTransactionFromAction,
+  getTransactionHref,
+  isPending
+} from './utils'
 import { loadingReducer, LoadingState } from '../loading/reducer'
 import {
   FetchTransactionRequestAction,
@@ -63,9 +67,7 @@ export function transactionReducer(
           ...otherTransactions,
           {
             ...transaction,
-            timestamp: Date.now(),
             from: action.payload.address.toLowerCase(),
-            actionType: actionRef.type,
             // these always start as null, and they get updated by the saga
             status: null,
             nonce: null,
@@ -159,6 +161,10 @@ export function transactionReducer(
             ? {
                 ...transaction,
                 status: TransactionStatus.REPLACED,
+                url: getTransactionHref(
+                  { txHash: action.payload.replaceBy },
+                  transaction.chainId
+                ),
                 replacedBy: action.payload.replaceBy
               }
             : transaction
