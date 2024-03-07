@@ -32,9 +32,9 @@ export function buildActionRef(transaction: Transaction) {
 
   if (
     isCrossChain &&
-    transaction.toChainId &&
-    transaction.requestId &&
-    transaction.crossChainProviderType
+    transaction.toChainId !== undefined &&
+    transaction.requestId !== undefined &&
+    transaction.crossChainProviderType !== undefined
   ) {
     transactionPayload = buildCrossChainTransactionFromPayload(
       transaction.chainId,

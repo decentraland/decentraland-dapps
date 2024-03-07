@@ -103,7 +103,7 @@ export type TransactionPayload = {
   [key: string]: any,
   [TRANSACTION_ACTION_FLAG]: {
     chainId: ChainId
-    toChainId: ChainId
+    toChainId?: ChainId
     hash: string
     payload: any
     requestId?: string
