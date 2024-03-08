@@ -108,8 +108,13 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
     try {
       switch (gateway) {
         case FiatGateway.WERT:
+          const wertConfig = config[FiatGateway.WERT]
+          if (!wertConfig) {
+            throw new Error('Wert config not found')
+          }
+
           const { onLoaded, onPending, onSuccess } = listeners || {}
-          const { marketplaceServerURL } = config[FiatGateway.WERT]
+          const { marketplaceServerURL } = wertConfig
 
           const wallet: Wallet | null = yield select(getWalletData)
           if (wallet) {
@@ -196,7 +201,12 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
         let goToUrl: string | undefined
 
         if (pendingManaPurchase.gateway === NetworkGatewayType.MOON_PAY) {
-          goToUrl = new MoonPay(config.moonPay).getTransactionReceiptUrl(
+          const moonPayConfig = config[NetworkGatewayType.MOON_PAY]
+          if (!moonPayConfig) {
+            throw new Error('MoonPay config not found')
+          }
+
+          goToUrl = new MoonPay(moonPayConfig).getTransactionReceiptUrl(
             pendingManaPurchase.id
           )
         }
@@ -223,6 +233,10 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
     try {
       switch (gateway) {
         case NetworkGatewayType.TRANSAK:
+          if (!transakConfig) {
+            throw new Error('Transak config not found')
+          }
+
           const address: string = yield select(getAddress)
           const customizationOptions: Partial<CustomizationOptions> = {
             defaultCryptoCurrency: 'MANA',
@@ -235,6 +249,10 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
           transak.openWidget(address, network)
           break
         case NetworkGatewayType.MOON_PAY:
+          if (!moonPayConfig) {
+            throw new Error('MoonPay config not found')
+          }
+
           const moonPay: MoonPay = new MoonPay(moonPayConfig)
           const widgetUrl = moonPay.getWidgetUrl(network)
           window.open(widgetUrl, '_blank', 'noopener,noreferrer')
@@ -297,6 +315,10 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
       switch (gateway) {
         case NetworkGatewayType.TRANSAK:
           const { transak: transakConfig } = config
+          if (!transakConfig) {
+            throw new Error('Transak config not found')
+          }
+
           const transak = new Transak(transakConfig)
           let statusHasChanged = false
 
@@ -342,6 +364,10 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
       switch (gateway) {
         case NetworkGatewayType.MOON_PAY:
           const { moonPay: moonPayConfig } = config
+          if (!moonPayConfig) {
+            throw new Error('MoonPay config not found')
+          }
+
           const finalStatuses = [
             MoonPayTransactionStatus.COMPLETED,
             MoonPayTransactionStatus.FAILED
