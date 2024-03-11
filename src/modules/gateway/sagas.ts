@@ -132,14 +132,15 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
               commodity,
               commodity_amount,
               sc_address,
-              sc_input_data
+              sc_input_data,
+              network
             } = data
             if (commodity && commodity_amount && sc_address && sc_input_data) {
               const dataToSign: WertMessage = {
                 address: wallet.address,
                 commodity,
                 commodity_amount,
-                network: isDev ? 'sepolia' : 'ethereum', // will be wallet.network
+                network: network ? network : isDev ? 'sepolia' : 'ethereum', // will be wallet.network
                 sc_address,
                 sc_input_data
               }
