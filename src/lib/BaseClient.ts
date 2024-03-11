@@ -1,4 +1,4 @@
-import signedFetch, { type AuthIdentity, type SignedRequestInit } from 'decentraland-crypto-fetch'
+import { signedFetchFactory, type AuthIdentity, type SignedRequestInit } from 'decentraland-crypto-fetch'
 import * as nodeURL from 'url'
 import { ClientError } from './ClientError'
 
@@ -46,6 +46,7 @@ export abstract class BaseClient {
   protected rawFetch = (path: string, init?: SignedRequestInit): Promise<Response> => {
     const fullUrl = new URL(path, this.baseUrl)
     const identity = init?.identity ?? this.getIdentity()
+    const signedFetch = signedFetchFactory()
     return signedFetch(fullUrl.toString(), { ...init, identity })
   }
 
