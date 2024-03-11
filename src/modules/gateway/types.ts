@@ -54,12 +54,12 @@ export type TransakConfig = {
 }
 
 export type ManaFiatGatewaySagasConfig = {
-  [NetworkGatewayType.MOON_PAY]: MoonPayConfig
-  [NetworkGatewayType.TRANSAK]: TransakConfig
+  [NetworkGatewayType.MOON_PAY]?: MoonPayConfig
+  [NetworkGatewayType.TRANSAK]?: TransakConfig
 }
 
 export type FiatGatewaySagasConfig = {
-  [FiatGateway.WERT]: WertConfig
+  [FiatGateway.WERT]?: WertConfig
 }
 
 export type GatewaySagasConfig = FiatGatewaySagasConfig &
