@@ -17,7 +17,8 @@
         "ethics": "Code d'éthique",
         "home": "Accueil",
         "privacy": "Confidentialité",
-        "terms": "Conditions d'utilisation"
+        "terms": "Conditions d'utilisation",
+        "feature": "Demande de fonctionnalité"
       }
     },
     "navbar": {
@@ -41,6 +42,7 @@
           "overview": "Overview",
           "collectibles": "Collectibles",
           "land": "LAND",
+          "names": "NAMEs",
           "myAssets": "My Assets"
         },
         "builder": {
@@ -98,15 +100,18 @@
       }
     },
     "user_menu": {
-      "sign_in": "Se connecter",
-      "sign_out": "Se déconnecter",
-      "guest": "Invité",
+      "guest": "Anonyme",
       "settings": "Paramètres du compte",
-      "wallet": "Portefeuille",
-      "profile": "Voir mon profil",
-      "myLists": "Mes listes",
-      "myAssets": "Mes actifs",
-      "account": "Compte"
+      "my_lists": "Mes listes",
+      "my_assets": "Mes actifs",
+      "account": "Compte",
+      "activity": "Activité",
+      "profile": "Profil",
+      "view_profile": "Voir le profil",
+      "sign_in": "Sign In",
+      "sign_out": "Sign out",
+      "wallet": "Gérer le portefeuille",
+      "jump_in": "Jump In"
     },
     "toasts": {
       "meta_transactions": {

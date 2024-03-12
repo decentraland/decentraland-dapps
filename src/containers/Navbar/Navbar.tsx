@@ -1,169 +1,274 @@
-import * as React from 'react'
-
-import { Button } from 'decentraland-ui/dist/components/Button/Button'
-import { NetworkAlert } from 'decentraland-ui/dist/components/NetworkAlert/NetworkAlert'
-import { ModalNavigation } from 'decentraland-ui/dist/components/ModalNavigation/ModalNavigation'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { Navbar as NavbarComponent } from 'decentraland-ui/dist/components/Navbar/Navbar'
 import {
-  Navbar as NavbarComponent,
-  NavbarI18N
-} from 'decentraland-ui/dist/components/Navbar/Navbar'
-import { getChainName } from '@dcl/schemas/dist/dapps/chain-id'
+  DCLNotification,
+  NotificationActiveTab,
+  NotificationLocale
+} from 'decentraland-ui/dist/components/Notifications/types'
+import { ChainId, getChainName } from '@dcl/schemas/dist/dapps/chain-id'
+import { ProviderType } from '@dcl/schemas'
+import { Network } from '@dcl/schemas/dist/dapps/network'
 import { getAnalytics } from '../../modules/analytics/utils'
-import { t, T } from '../../modules/translation/utils'
-import Modal from '../../containers/Modal'
+import { t } from '../../modules/translation'
+import {
+  NotificationsAPI,
+  checkIsOnboarding,
+  setOnboardingDone
+} from '../../modules/notifications'
+import UnsupportedNetworkModal from '../UnsupportedNetworkModal'
+import { getAvailableChains } from '../../lib/chainConfiguration'
+import { getConnectedProviderType } from '../../lib'
+import { getBaseUrl } from '../../lib/utils'
 import ChainProvider from '../ChainProvider'
+import {
+  DROPDOWN_MENU_BALANCE_CLICK_EVENT,
+  DROPDOWN_MENU_DISPLAY_EVENT,
+  DROPDOWN_MENU_SIGN_OUT_EVENT
+} from './constants'
 import { NavbarProps } from './Navbar.types'
+import { NAVBAR_CLICK_EVENT, NOTIFICATIONS_QUERY_INTERVAL } from './constants'
 
-export default class Navbar extends React.PureComponent<NavbarProps> {
-  static defaultProps = {
-    docsUrl: 'https://docs.decentraland.org',
-    enablePartialSupportAlert: true
+const BASE_URL = getBaseUrl()
+
+const Navbar: React.FC<NavbarProps> = ({
+  appChainId,
+  isSwitchingNetwork,
+  withNotifications,
+  withChainSelector,
+  identity,
+  docsUrl = 'https://docs.decentraland.org',
+  enablePartialSupportAlert = true,
+  walletError,
+  ...props
+}: NavbarProps) => {
+  const [{ isLoading, notifications }, setUserNotifications] = useState<{
+    isLoading: boolean
+    notifications: DCLNotification[]
+  }>({
+    isLoading: false,
+    notifications: []
+  })
+  const [notificationsState, setNotificationsState] = useState({
+    activeTab: NotificationActiveTab.NEWEST,
+    isOnboarding: checkIsOnboarding(),
+    isOpen: false
+  })
+  const expectedChainName = getChainName(appChainId)
+  const analytics = getAnalytics()
+  const client: NotificationsAPI | null = useMemo(() => {
+    if (identity) return new NotificationsAPI({ identity })
+    return null
+  }, [identity])
+
+  const handleSwitchNetwork = useCallback(() => {
+    props.onSwitchNetwork(appChainId)
+  }, [])
+
+  const [chainSelected, setChainSelected] = useState<ChainId | undefined>(
+    undefined
+  )
+
+  useEffect(() => {
+    if (walletError && chainSelected && withChainSelector) {
+      setChainSelected(undefined)
+    }
+  }, [walletError, chainSelected, withChainSelector])
+
+  const handleSwitchChain = useCallback(
+    (chainId: ChainId) => {
+      setChainSelected(chainId)
+      props.onSwitchNetwork(chainId, props.chainId)
+      analytics.track('change_network', {
+        from_chain_id: props.chainId,
+        to_chain_id: chainId
+      })
+    },
+    [analytics]
+  )
+
+  const handleClickBalance = useCallback(
+    (e: React.MouseEvent, network: Network) => {
+      e.preventDefault()
+      analytics.track(DROPDOWN_MENU_BALANCE_CLICK_EVENT, { network })
+
+      setTimeout(() => {
+        window.open(`${BASE_URL}/account`, '_blank', 'noopener')
+      }, 300)
+    },
+    [analytics]
+  )
+
+  const handleClickNavbarItem = useCallback(
+    (
+      _e: React.MouseEvent,
+      options: { eventTrackingName: string; url?: string; isExternal?: boolean }
+    ) => {
+      analytics.track(NAVBAR_CLICK_EVENT, options)
+    },
+    [analytics]
+  )
+
+  const handleClickUserMenuItem = useCallback(
+    (
+      _e: React.MouseEvent,
+      options: { eventTrackingName: string; url?: string; trackingId?: string }
+    ) => {
+      analytics.track(options.eventTrackingName, {
+        url: options.url,
+        trackingId: options.trackingId
+      })
+    },
+    [analytics]
+  )
+
+  const handleClickOpen = useCallback(
+    (_e: React.MouseEvent, track_uuid: string) => {
+      analytics.track(DROPDOWN_MENU_DISPLAY_EVENT, { track_uuid })
+    },
+    [analytics]
+  )
+
+  const handleClickSignIn = useCallback(
+    (_e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+      props.onSignIn()
+    },
+    [analytics]
+  )
+
+  const handleClickSignOut = useCallback(
+    (_e: React.MouseEvent<HTMLElement, MouseEvent>, track_uuid: string) => {
+      analytics.track(DROPDOWN_MENU_SIGN_OUT_EVENT, { track_uuid })
+      setTimeout(() => {
+        props.onSignOut()
+      }, 300)
+    },
+    [analytics]
+  )
+
+  const handleOnBegin = () => {
+    setOnboardingDone()
+    setNotificationsState(prevState => ({ ...prevState, isOnboarding: false }))
   }
 
-  analytics = getAnalytics()
+  const handleNotificationsOpen = async () => {
+    const currentOpenState = notificationsState.isOpen
 
-  getTranslations = (): NavbarI18N | undefined => {
-    if (!this.props.hasTranslations) {
-      return undefined
-    }
-    return {
-      menu: {
-        marketplace: {
-          main: <T id="@dapps.navbar.menu.marketplace.main" />,
-          overview: <T id="@dapps.navbar.menu.marketplace.overview" />,
-          collectibles: <T id="@dapps.navbar.menu.marketplace.collectibles" />,
-          land: <T id="@dapps.navbar.menu.marketplace.land" />,
-          myAssets: <T id="@dapps.navbar.menu.marketplace.myAssets" />
-        },
-        events: <T id="@dapps.navbar.menu.events" />,
-        places: {
-          main: <T id="@dapps.navbar.menu.places.main" />,
-          overview: <T id="@dapps.navbar.menu.places.overview" />,
-          places: <T id="@dapps.navbar.menu.places.places" />,
-          worlds: <T id="@dapps.navbar.menu.places.worlds" />,
-          faq: <T id="@dapps.navbar.menu.places.faq" />
-        },
-        agora: <T id="@dapps.navbar.menu.agora" />,
-        dao: {
-          main: <T id="@dapps.navbar.menu.dao.main" />,
-          overview: <T id="@dapps.navbar.menu.dao.overview" />,
-          governance: <T id="@dapps.navbar.menu.dao.governance" />,
-          transparency: <T id="@dapps.navbar.menu.dao.transparency" />,
-          grants: <T id="@dapps.navbar.menu.dao.grants" />,
-        },
-        docs: {
-          main: <T id="@dapps.navbar.menu.docs.main" />,
-          players: <T id="@dapps.navbar.menu.docs.players" />,
-          creators: <T id="@dapps.navbar.menu.docs.creators" />,
-          contributors: <T id="@dapps.navbar.menu.docs.contributors" />,
-          studios: <T id="@dapps.navbar.menu.docs.studios" />
-        },
-        blog: <T id="@dapps.navbar.menu.blog" />,
-        builder: {
-          main: <T id="@dapps.navbar.menu.builder.main" />,
-          overview: <T id="@dapps.navbar.menu.builder.overview" />,
-          collections: <T id="@dapps.navbar.menu.builder.collections" />,
-          scenes: <T id="@dapps.navbar.menu.builder.scenes" />,
-          land: <T id="@dapps.navbar.menu.builder.land" />,
-          names: <T id="@dapps.navbar.menu.builder.names" />,
-          worlds: <T id="@dapps.navbar.menu.builder.worlds" />
-        }
-      },
-      account: {
-        connecting: <T id="@dapps.navbar.account.connecting" />,
-        signIn: <T id="@dapps.navbar.account.signIn" />
+    setNotificationsState(prevState => {
+      return { ...prevState, isOpen: !prevState.isOpen }
+    })
+
+    if (!currentOpenState) {
+      const unreadNotifications = notifications
+        .filter(notification => !notification.read)
+        .map(({ id }) => id)
+      if (unreadNotifications.length) {
+        await client?.markNotificationsAsRead(unreadNotifications)
       }
+    } else {
+      // update state when closes the modal
+      const markNotificationAsReadInState = notifications.map(notification => {
+        if (notification.read) return notification
+
+        return {
+          ...notification,
+          read: true
+        }
+      })
+      setUserNotifications({
+        isLoading,
+        notifications: markNotificationAsReadInState
+      })
     }
   }
 
-  handleSwitchNetwork = () => {
-    this.props.onSwitchNetwork(this.props.appChainId)
-  }
-
-  handleSignOut = () => {
-    this.props.onSignOut()
-  }
-
-  handleClickMenuOption = (_e: React.MouseEvent, section: string) => {
-    const [menuSection, subMenuSection = undefined] = section.split('_')
-    this.analytics.track('Click on Navbar', {
-      section: menuSection,
-      submenu: subMenuSection
+  const fetchNotificationsState = () => {
+    setUserNotifications({ notifications: [], isLoading: true })
+    client?.getNotifications().then(retrievedNotifications => {
+      setUserNotifications({
+        isLoading: false,
+        notifications: retrievedNotifications
+      })
     })
   }
 
+  useEffect(() => {
+    if (identity && withNotifications) {
+      fetchNotificationsState()
 
-  render() {
-    const { appChainId, docsUrl, enablePartialSupportAlert } = this.props
-    const expectedChainName = getChainName(appChainId)
-    return (
-      <>
-        <ChainProvider>
-          {({ chainId, isUnsupported, isPartiallySupported }) => (
-            <>
-              {isPartiallySupported && enablePartialSupportAlert ? (
-                <NetworkAlert
-                  i18n={{
-                    title: t('@dapps.network_alert.title'),
-                    content: t('@dapps.network_alert.content', {
-                      link: (children: React.ReactElement) => (
-                        <a
-                          href={`${docsUrl}/player/blockchain-integration/transactions-in-polygon/`}
-                          target="_blank"
-                          rel="noreferrer noopener"
-                        >
-                          {children}
-                        </a>
-                      )
-                    }),
-                    action: t('@dapps.network_alert.action')
-                  }}
-                  onSwitchNetwork={this.handleSwitchNetwork}
-                />
-              ) : null}
-              <NavbarComponent
-                {...this.props}
-                i18n={this.getTranslations()}
+      const interval = setInterval(() => {
+        fetchNotificationsState()
+      }, NOTIFICATIONS_QUERY_INTERVAL)
+
+      return () => {
+        clearInterval(interval)
+      }
+    } else {
+      return () => {}
+    }
+  }, [identity])
+
+  return (
+    <>
+      <ChainProvider>
+        {({ chainId, isUnsupported }) => (
+          <>
+            <NavbarComponent
+              {...props}
+              notifications={
+                withNotifications
+                  ? {
+                      locale: props.locale as NotificationLocale,
+                      isLoading,
+                      isOnboarding: notificationsState.isOnboarding,
+                      isOpen: notificationsState.isOpen,
+                      items: notifications,
+                      activeTab: notificationsState.activeTab,
+                      onClick: handleNotificationsOpen,
+                      onClose: handleNotificationsOpen,
+                      onBegin: handleOnBegin,
+                      onChangeTab: (_, tab) =>
+                        setNotificationsState(prevState => ({
+                          ...prevState,
+                          activeTab: tab
+                        }))
+                    }
+                  : undefined
+              }
+              onClickBalance={handleClickBalance}
+              onClickNavbarItem={handleClickNavbarItem}
+              onClickUserMenuItem={handleClickUserMenuItem}
+              onClickOpen={handleClickOpen}
+              onClickSignIn={handleClickSignIn}
+              onClickSignOut={handleClickSignOut}
+              {...(withChainSelector && {
+                chains: getAvailableChains(),
+                selectedChain: chainId ?? undefined,
+                chainBeingConfirmed:
+                  chainSelected !== chainId ? chainSelected : undefined,
+                onSelectChain: handleSwitchChain,
+                i18nChainSelector: {
+                  title: t('@dapps.chain_selector.title'),
+                  connected: t('@dapps.chain_selector.connected'),
+                  confirmInWallet:
+                    getConnectedProviderType() === ProviderType.INJECTED // for injected ones, show label to confirm in wallet, the rest won't ask for confirmation
+                      ? t('@dapps.chain_selector.confirm_in_wallet')
+                      : t('@dapps.chain_selector.switching')
+                }
+              })}
+            />
+            {isUnsupported ? (
+              <UnsupportedNetworkModal
+                chainName={getChainName(chainId!)}
+                expectedChainName={expectedChainName!}
+                isSwitchingNetwork={isSwitchingNetwork}
+                onSwitchNetwork={handleSwitchNetwork}
               />
-              {isUnsupported ? (
-                <Modal open size="tiny">
-                  <ModalNavigation
-                    title={<T id="@dapps.navbar.wrong_network.header" />}
-                  />
-                  <Modal.Content>
-                    {!getChainName(chainId!) ? (
-                      <T
-                        id="@dapps.navbar.wrong_network.message_unknown_network"
-                        values={{
-                          expectedChainName: <b>{expectedChainName}</b>
-                        }}
-                      />
-                    ) : (
-                      <T
-                        id="@dapps.navbar.wrong_network.message"
-                        values={{
-                          currentChainName: <b>{getChainName(chainId!)}</b>,
-                          expectedChainName: <b>{expectedChainName}</b>
-                        }}
-                      />
-                    )}
-                  </Modal.Content>
-                  <Modal.Actions>
-                    <Button primary onClick={this.handleSwitchNetwork}>
-                      <T
-                        id="@dapps.navbar.wrong_network.switch_button"
-                        values={{
-                          chainName: <b>{expectedChainName}</b>
-                        }}
-                      />
-                    </Button>
-                  </Modal.Actions>
-                </Modal>
-              ) : null}
-            </>
-          )}
-        </ChainProvider>
-      </>
-    )
-  }
+            ) : null}
+          </>
+        )}
+      </ChainProvider>
+    </>
+  )
 }
+
+export default React.memo(Navbar)

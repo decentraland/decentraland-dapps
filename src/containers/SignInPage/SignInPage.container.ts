@@ -26,10 +26,12 @@ const mapDispatch = (
   dispatch: MapDispatch,
   ownProps: SignInPageProps
 ): MapDispatchProps => ({
-  onConnect: () =>
-    dispatch(
-      openModal('LoginModal', { onConnect: ownProps.handleLoginConnect })
-    )
+  onConnect: ownProps.onConnect
+    ? ownProps.onConnect
+    : () =>
+        dispatch(
+          openModal('LoginModal', { onConnect: ownProps.handleLoginConnect })
+        )
 })
 
 const mergeProps = (

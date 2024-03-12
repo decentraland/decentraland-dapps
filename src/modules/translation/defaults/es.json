@@ -17,7 +17,8 @@
         "ethics": "Código de Ética",
         "home": "Inicio",
         "privacy": "Política de privacidad",
-        "terms": "Términos de Uso"
+        "terms": "Términos de Uso",
+        "feature": "Solicitud de funcionalidad"
       }
     },
     "navbar": {
@@ -41,6 +42,7 @@
           "overview": "Overview",
           "collectibles": "Collectibles",
           "land": "LAND",
+          "names": "NAMEs",
           "myAssets": "My Assets"
         },
         "builder": {
@@ -172,15 +174,18 @@
       }
     },
     "user_menu": {
+      "guest": "Sin nombre",
+      "settings": "Configuración de la cuenta",
+      "my_lists": "Mis listas",
+      "my_assets": "Mis activos",
+      "account": "Cuenta",
+      "activity": "Actividad",
+      "profile": "Perfil",
+      "view_profile": "Ver perfil",
       "sign_in": "Iniciar sesión",
       "sign_out": "Cerrar sesión",
-      "guest": "Invitado",
-      "settings": "Configuración de la cuenta",
-      "wallet": "Billetera",
-      "profile": "Ver mi perfil",
-      "myLists": "Mis listas",
-      "myAssets": "Mis activos",
-      "account": "Cuenta"
+      "wallet": "Gestionar cartera",
+      "jump_in": "Entrar"
     },
     "toasts": {
       "meta_transactions": {
@@ -204,6 +209,10 @@
           "title": "Alta demanda",
           "body": "Los <a>precios de las tarifas de transacción</a> en la red de Polygon estan muy altos! Por favor espere un momento e intentelo nuevamente, o puede cambiar la red a Polygon y pagar la tarifa de la transacción con MATIC."
         }
+      },
+      "switch_network_error": {
+        "title": "Cambio de red fallido",
+        "body": "No se pudo cambiar a la red {network}."
       },
       "switch_network": "Cambiar a {network}",
       "learn_more": "Mas información"
@@ -333,6 +342,12 @@
         "simple": "Play once",
         "loop": "Play loop"
       }
+    },
+    "chain_selector": {
+      "title": "Selecciona una red",
+      "connected": "Conectado",
+      "confirm_in_wallet": "Confirma en tu billetera",
+      "switching": "Cambiando..."
     }
   }
 }

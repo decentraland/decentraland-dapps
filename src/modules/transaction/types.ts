@@ -1,8 +1,14 @@
+import type { AnyAction } from 'redux'
+import type { CrossChainProvider } from 'decentraland-transactions/esm/crossChain/types'
+import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import {
   TransactionResponse,
   TransactionReceipt
 } from '@ethersproject/providers'
-import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
+
+// Special flag used to determine transaction hashes to be monitored
+export const TRANSACTION_ACTION_FLAG = '_watch_tx'
+export type TRANSACTION_ACTION_FLAG = typeof TRANSACTION_ACTION_FLAG
 
 export enum TransactionStatus {
   QUEUED = 'queued',
@@ -11,6 +17,10 @@ export enum TransactionStatus {
   PENDING = 'pending',
   REVERTED = 'reverted',
   CONFIRMED = 'confirmed'
+}
+
+export enum CrossChainProviderType {
+  SQUID = 'squid'
 }
 
 export type DroppedTransaction = {
@@ -78,6 +88,11 @@ export type Transaction = {
   from: string
   actionType: string
   status: AnyTransaction['status'] | null
+  url: string
+  isCrossChain: boolean
+  requestId?: string
+  toChainId?: ChainId
+  crossChainProviderType?: CrossChainProviderType
   withReceipt?: boolean
   receipt?: { logs: TransactionReceipt['logs'] }
   payload?: any
@@ -85,14 +100,20 @@ export type Transaction = {
 }
 
 export type TransactionPayload = {
-  [hash: string]: {
+  [key: string]: any,
+  [TRANSACTION_ACTION_FLAG]: {
     chainId: ChainId
+    toChainId?: ChainId
     hash: string
     payload: any
+    requestId?: string
     withReceipt?: boolean
+    crossChainProviderType?: CrossChainProviderType
     from?: string // This could be undefined depending if its needed in the action
   }
 }
+
+export type ActionWithTransactionPayload = AnyAction & { payload: TransactionPayload }
 
 export type Arg = {
   name: string
@@ -104,4 +125,11 @@ export type Log = {
   events: Arg[]
   name: string
   [key: string]: any
+}
+
+export type TransactionsConfig = {
+  crossChainProviderUrl: string
+  getCrossChainProvider: () => Promise<new (...args: any[]) => CrossChainProvider>
+  crossChainProviderRetryDelay?: number
+  crossChainProviderNotFoundRetries?: number
 }

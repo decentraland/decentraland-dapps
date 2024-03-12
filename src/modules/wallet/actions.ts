@@ -64,8 +64,8 @@ export const SWITCH_NETWORK_REQUEST = '[Request] Switch Network'
 export const SWITCH_NETWORK_SUCCESS = '[Success] Switch Network'
 export const SWITCH_NETWORK_FAILURE = '[Failure] Switch Network'
 
-export const switchNetworkRequest = (chainId: ChainId) =>
-  action(SWITCH_NETWORK_REQUEST, { chainId })
+export const switchNetworkRequest = (chainId: ChainId, fromChainId?: ChainId) =>
+  action(SWITCH_NETWORK_REQUEST, { chainId, fromChainId })
 export const switchNetworkSuccess = (chainId: ChainId) =>
   action(SWITCH_NETWORK_SUCCESS, { chainId })
 export const switchNetworkFailure = (chainId: ChainId, error: string) =>

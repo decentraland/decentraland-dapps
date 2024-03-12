@@ -50,6 +50,8 @@ import {
   SwitchNetworkSuccessAction,
   setAppChainId
 } from './actions'
+import { showToast } from '../toast'
+import { getSwitchChainErrorToast } from '../toast/toasts'
 import { getTransactionsApiUrl, setTransactionsApiUrl } from './utils'
 import { switchProviderChainId } from './utils/switchProviderChainId'
 import { buildWallet } from './utils/buildWallet'
@@ -58,6 +60,8 @@ import { getAppChainId, isConnected } from './selectors'
 
 // Patch Samsung's Cucumber provider send to support promises
 const provider = (window as any).ethereum as ethers.providers.Web3Provider
+
+export const SWITCH_NETWORK_TIMEOUT = 10000 // 10 seconds
 
 let cucumberProviderSend: (...args: any[]) => Promise<string[]>
 if (isCucumberProvider()) {
@@ -199,8 +203,17 @@ function* handleSwitchNetworkRequest(action: SwitchNetworkRequestAction) {
     )
   } else {
     try {
-      yield call(switchProviderChainId, provider, chainId)
-      yield put(switchNetworkSuccess(chainId))
+      const { timeout } = yield race({
+        switched: call(switchProviderChainId, provider, chainId),
+        timeout: delay(SWITCH_NETWORK_TIMEOUT) // 10 seconds timeout
+      })
+
+      if (timeout) {
+        yield put(showToast(getSwitchChainErrorToast(chainId)))
+        throw new Error('Error switching network: Operation timed out')
+      } else {
+        yield put(switchNetworkSuccess(chainId))
+      }
     } catch (switchError) {
       yield put(switchNetworkFailure(chainId, switchError.message))
     }

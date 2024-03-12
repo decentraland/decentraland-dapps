@@ -17,7 +17,8 @@
         "ethics": "道德准则",
         "home": "主页",
         "privacy": "隐私政策",
-        "terms": "使用条款"
+        "terms": "使用条款",
+        "feature": "功能要求"
       }
     },
     "navbar": {
@@ -41,6 +42,7 @@
           "overview": "Overview",
           "collectibles": "Collectibles",
           "land": "LAND",
+          "names": "NAMEs",
           "myAssets": "My Assets"
         },
         "builder": {
@@ -172,15 +174,18 @@
       }
     },
     "user_menu": {
-      "sign_in": "登录",
-      "sign_out": "退出",
-      "guest": "访客",
+      "guest": "未命名",
       "settings": "账户设置",
-      "wallet": "钱包",
-      "profile": "查看我的个人资料",
-      "myLists": "我的列表",
-      "myAssets": "我的资产",
-      "account": "账户"
+      "my_lists": "我的列表",
+      "my_assets": "我的资产",
+      "account": "账户",
+      "activity": "活动",
+      "profile": "配置文件",
+      "view_profile": "查看简介",
+      "sign_in": "登录",
+      "sign_out": "签出",
+      "wallet": "管理钱包",
+      "jump_in": "跳入"
     },
     "toasts": {
       "meta_transactions": {
@@ -204,6 +209,10 @@
           "title": "高度拥堵",
           "body": "多边形网络 <a>费用价格</a> 太高！请稍后重试，或将您的网络切换到 Polygon 并使用 MATIC 支付费用。"
         }
+      },
+      "switch_network_error": {
+        "title": "网络交换机错误",
+        "body": "切换到 {network} 时出错。"
       },
       "switch_network": "切换到 {network}",
       "learn_more": "了解更多"
@@ -332,6 +341,12 @@
         "simple": "播放一次",
         "loop": "循环播放"
       }
+    },
+    "chain_selector": {
+      "title": "选择网络",
+      "connected": "已连接",
+      "confirm_in_wallet": "请在您的钱包中确认",
+      "switching": "切换中..."
     }
   }
 }

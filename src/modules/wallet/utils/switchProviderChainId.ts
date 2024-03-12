@@ -1,7 +1,8 @@
-import { Provider } from 'decentraland-connect';
+import { Provider, connection } from 'decentraland-connect';
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id';
+import { ProviderType } from '@dcl/schemas';
 import { getProviderChainId } from './getProviderChainId';
-import { getAddEthereumChainParameters } from "./getAddEthereumChainParameters";
+import { getAddEthereumChainParameters } from './getAddEthereumChainParameters';
 import { JsonRPCInvalidResponseError } from './JsonRPCInvalidResponseError';
 
 /**
@@ -24,8 +25,13 @@ export async function switchProviderChainId(
 
     return chainId;
   } catch (switchError) {
+    const isMetamaskDesktopError = switchError?.code === 4902;
+    const isWalletConnectError =
+      switchError?.code === 5000 &&
+      connection.getConnectionData()?.providerType ===
+        ProviderType.WALLET_CONNECT_V2;
     // This error code indicates that the chain has not been added to MetaMask.
-    if (provider && switchError?.code === 4902) {
+    if (provider && (isMetamaskDesktopError || isWalletConnectError)) {
       try {
         await provider.request({
           method: 'wallet_addEthereumChain',
@@ -40,7 +46,7 @@ export async function switchProviderChainId(
       } catch (addError) {
         throw new Error(`Error adding network: ${addError.message}`);
       }
-    }// We're throwing specific error for this message because we don't know how to reproduce it and we don't want to get logged
+    } // We're throwing specific error for this message because we don't know how to reproduce it and we don't want to get logged
     else if (switchError?.message === 'JSON RPC response format is invalid') {
       throw new JsonRPCInvalidResponseError(switchError?.message)
     }

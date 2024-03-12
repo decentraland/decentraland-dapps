@@ -1,13 +1,16 @@
 import { AnyAction } from 'redux'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
-import { race, take } from 'redux-saga/effects'
+import { fork, race, take } from 'redux-saga/effects'
 import {
   Transaction,
   TransactionPayload,
   FINISHED_STATUS,
   TransactionStatus,
   FAILED_STATUS,
-  SUCCESS_STATUS
+  SUCCESS_STATUS,
+  ActionWithTransactionPayload,
+  CrossChainProviderType,
+  TRANSACTION_ACTION_FLAG
 } from './types'
 import {
   FetchTransactionFailureAction,
@@ -22,52 +25,137 @@ import {
   UpdateTransactionStatusAction
 } from './actions'
 
-// Special flag used to determine transaction hashes to be monitored
-export const TRANSACTION_ACTION_FLAG = '_watch_tx'
-
 export function buildActionRef(transaction: Transaction) {
-  const { actionType, withReceipt, payload } = transaction
-  const buildFunction = withReceipt
-    ? buildTransactionWithReceiptPayload
-    : buildTransactionPayload
+  const { actionType, withReceipt, isCrossChain, payload } = transaction
+
+  let transactionPayload: TransactionPayload
+
+  if (
+    isCrossChain &&
+    transaction.toChainId !== undefined &&
+    transaction.requestId !== undefined &&
+    transaction.crossChainProviderType !== undefined
+  ) {
+    transactionPayload = buildCrossChainTransactionFromPayload(
+      transaction.chainId,
+      transaction.toChainId,
+      transaction.hash,
+      transaction.requestId,
+      payload,
+      transaction.crossChainProviderType
+    )
+  } else {
+    const buildFunction = withReceipt
+      ? buildTransactionWithReceiptPayload
+      : buildTransactionPayload
+    transactionPayload = buildFunction(
+      transaction.chainId,
+      transaction.hash,
+      payload,
+      transaction.chainId
+    )
+  }
+
   return {
     type: actionType,
-    payload: buildFunction(transaction.chainId, transaction.hash, payload)
+    payload: transactionPayload
   }
 }
 
-export function isTransactionAction(action: AnyAction): boolean {
-  return !!getTransactionFromAction(action)
+export function isTransactionAction(
+  action: AnyAction
+): action is ActionWithTransactionPayload {
+  return Boolean(action.payload && action.payload[TRANSACTION_ACTION_FLAG])
+}
+
+export function getTransactionPayloadFromAction(
+  action: ActionWithTransactionPayload
+): TransactionPayload['_watch_tx'] {
+  return action.payload[TRANSACTION_ACTION_FLAG]
+}
+
+export function isTransactionActionCrossChain(action: AnyAction): boolean {
+  if (isTransactionAction(action)) {
+    const { chainId, toChainId } = getTransactionPayloadFromAction(action)
+    return chainId !== toChainId && toChainId !== undefined
+  }
+
+  return false
 }
 
 export function getTransactionFromAction(action: AnyAction): Transaction {
-  return action.payload && action.payload[TRANSACTION_ACTION_FLAG]
+  const transactionPayload: TransactionPayload['_watch_tx'] =
+    action.payload[TRANSACTION_ACTION_FLAG]
+  const isCrossChain =
+    transactionPayload.chainId !== transactionPayload.toChainId
+  return {
+    events: [],
+    hash: transactionPayload.hash,
+    timestamp: Date.now(),
+    from: transactionPayload.from?.toLowerCase() || '',
+    actionType: action.type,
+    url: getTransactionHref(
+      {
+        txHash: transactionPayload.hash,
+        address: transactionPayload.from,
+        crossChainProviderType: transactionPayload.crossChainProviderType
+      },
+      transactionPayload.chainId
+    ),
+    isCrossChain,
+    crossChainProviderType: transactionPayload.crossChainProviderType,
+    requestId: transactionPayload.requestId,
+    withReceipt: transactionPayload.withReceipt,
+    payload: transactionPayload.payload,
+    chainId: transactionPayload.chainId,
+    toChainId: transactionPayload.toChainId,
+    // these always start as null, and they get updated by the saga
+    status: null,
+    nonce: null,
+    replacedBy: null
+  }
 }
 
 export function getTransactionHashFromAction(
-  action: AnyAction
+  action: ActionWithTransactionPayload
 ): Transaction['hash'] {
-  return getTransactionFromAction(action).hash
+  return getTransactionPayloadFromAction(action).hash
 }
 
 export function getTransactionAddressFromAction(
-  action: AnyAction
+  action: ActionWithTransactionPayload
 ): Transaction['from'] | undefined {
-  return getTransactionFromAction(action).from
+  return getTransactionPayloadFromAction(action).from
 }
 
 export function buildTransactionPayload(
   chainId: ChainId,
   hash: string,
-  payload = {}
+  payload = {},
+  toChainId?: ChainId
 ): TransactionPayload {
   return {
     [TRANSACTION_ACTION_FLAG]: {
       chainId,
+      toChainId: toChainId ?? chainId,
       hash,
       payload
     }
   }
+}
+
+export function buildCrossChainTransactionFromPayload(
+  chainId: ChainId,
+  toChainId: ChainId,
+  hash: string,
+  requestId: string,
+  payload = {},
+  providerType: CrossChainProviderType = CrossChainProviderType.SQUID
+) {
+  const txPayload = buildTransactionPayload(chainId, hash, payload, toChainId)
+  txPayload[TRANSACTION_ACTION_FLAG].requestId = requestId
+  txPayload[TRANSACTION_ACTION_FLAG].crossChainProviderType = providerType
+  return txPayload
 }
 
 export function buildTransactionWithReceiptPayload(
@@ -75,7 +163,7 @@ export function buildTransactionWithReceiptPayload(
   hash: string,
   payload = {}
 ): TransactionPayload {
-  const txPayload = buildTransactionPayload(chainId, hash, payload)
+  const txPayload = buildTransactionPayload(chainId, hash, payload, chainId)
 
   txPayload[TRANSACTION_ACTION_FLAG].withReceipt = true
 
@@ -88,7 +176,7 @@ export function buildTransactionWithFromPayload(
   from: string,
   payload = {}
 ): TransactionPayload {
-  const txPayload = buildTransactionPayload(chainId, hash, payload)
+  const txPayload = buildTransactionPayload(chainId, hash, payload, chainId)
 
   txPayload[TRANSACTION_ACTION_FLAG].from = from
 
@@ -98,13 +186,29 @@ export function buildTransactionWithFromPayload(
 export type TransactionHrefOptions = {
   txHash?: string
   address?: string
+  crossChainProviderType?: CrossChainProviderType
   blockNumber?: number
 }
 
 export function getTransactionHref(
-  { txHash, address, blockNumber }: TransactionHrefOptions,
+  {
+    txHash,
+    address,
+    blockNumber,
+    crossChainProviderType
+  }: TransactionHrefOptions,
   network?: number
 ) {
+  if (crossChainProviderType) {
+    switch (crossChainProviderType) {
+      case CrossChainProviderType.SQUID:
+        return `https://axelarscan.io/gmp/${txHash}`
+      default:
+        console.error('getTransactionHref: Unknown cross chain provider')
+        return ''
+    }
+  }
+
   const pathname = address
     ? `/address/${address}`
     : blockNumber
@@ -224,3 +328,20 @@ export function* waitForTx(txHash: string) {
     }
   }
 }
+
+export const takeEverySuccessfulTx = (
+  actionType: string,
+  worker: (...args: any[]) => any,
+  ...args: Parameters<(...args: any[]) => any>
+) =>
+  fork(function*() {
+    while (true) {
+      const action: FetchTransactionSuccessAction = yield take(
+        FETCH_TRANSACTION_SUCCESS
+      )
+
+      if (action.payload.transaction.actionType === actionType) {
+        yield fork(worker, ...args.concat(action))
+      }
+    }
+  })

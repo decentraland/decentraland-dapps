@@ -4,7 +4,7 @@ import { SignInProps } from 'decentraland-ui/dist/components/SignIn/SignIn'
 import { openModal, OpenModalAction } from '../../modules/modal/actions'
 
 export type SignInPageProps = Omit<SignInProps, 'onConnect'> & {
-  onConnect: () => ReturnType<typeof openModal>
+  onConnect: () => void | ReturnType<typeof openModal>
   handleLoginConnect?: (providerType: ProviderType) => any
   hasTranslations?: boolean
 }

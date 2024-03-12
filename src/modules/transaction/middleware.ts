@@ -12,10 +12,12 @@ export const createTransactionMiddleware = () => {
     if (isTransactionAction(action)) {
       const address =
         getTransactionAddressFromAction(action) || getAddress(store.getState())
-      const hash = getTransactionHashFromAction(action)
+      const transactionHash = getTransactionHashFromAction(action)
 
       if (address) {
-        store.dispatch(fetchTransactionRequest(address, hash, action))
+        store.dispatch(
+          fetchTransactionRequest(address, transactionHash, action)
+        )
       }
     }
 

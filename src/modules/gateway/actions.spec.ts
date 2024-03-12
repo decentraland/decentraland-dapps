@@ -29,9 +29,20 @@ import {
   POLL_PURCHASE_STATUS_REQUEST,
   POLL_PURCHASE_STATUS_SUCCESS,
   setPurchase,
-  SET_PURCHASE
+  SET_PURCHASE,
+  openFiatGatewayWidgetRequest,
+  OPEN_FIAT_GATEWAY_WIDGET_REQUEST,
+  openFiatGatewayWidgetSuccess,
+  OPEN_FIAT_GATEWAY_WIDGET_SUCCESS,
+  openFiatGatewayWidgetFailure,
+  OPEN_FIAT_GATEWAY_WIDGET_FAILURE
 } from './actions'
-import { Purchase, PurchaseStatus } from './types'
+import {
+  FiatGateway,
+  FiatGatewayOptions,
+  Purchase,
+  PurchaseStatus
+} from './types'
 
 jest.mock('../../lib/eth')
 
@@ -205,6 +216,7 @@ describe('when creating the action to signal the addition of a MANA purchase as 
       payload: {
         _watch_tx: {
           chainId: 5,
+          toChainId: 5,
           from: 'mock-address',
           hash: 'mock-tx-hash',
           payload: {
@@ -258,6 +270,50 @@ describe('when creating the action that signals failure in the poll purchase sta
         error: defaultError
       },
       type: POLL_PURCHASE_STATUS_FAILURE
+    })
+  })
+})
+
+describe('when creating the action that signals the start of the fiat gateway widget request', () => {
+  let gateway: FiatGateway
+  let data: FiatGatewayOptions
+  beforeEach(() => {
+    gateway = FiatGateway.WERT
+    data = {} as FiatGatewayOptions
+  })
+  it('should return an action signaling the rquest of the fiat gawteway widget opening', () => {
+    expect(openFiatGatewayWidgetRequest(gateway, data)).toEqual({
+      meta: undefined,
+      payload: {
+        gateway,
+        data
+      },
+      type: OPEN_FIAT_GATEWAY_WIDGET_REQUEST
+    })
+  })
+})
+
+describe('when creating the action that signals the success of the fiat gateway widget request', () => {
+  it('should return an action signaling the rquest of the fiat gawteway widget opening', () => {
+    expect(openFiatGatewayWidgetSuccess()).toEqual({
+      meta: undefined,
+      type: OPEN_FIAT_GATEWAY_WIDGET_SUCCESS
+    })
+  })
+})
+
+describe('when creating the action that signals the failure of the fiat gateway widget request', () => {
+  let error: string
+  beforeEach(() => {
+    error = 'error'
+  })
+  it('should return an action signaling the rquest of the fiat gawteway widget opening', () => {
+    expect(openFiatGatewayWidgetFailure(error)).toEqual({
+      meta: undefined,
+      payload: {
+        error
+      },
+      type: OPEN_FIAT_GATEWAY_WIDGET_FAILURE
     })
   })
 })

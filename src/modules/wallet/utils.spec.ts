@@ -1,3 +1,4 @@
+import { ChainId } from '@dcl/schemas'
 import { ethers } from 'ethers'
 import { ContractData, sendMetaTransaction } from 'decentraland-transactions'
 import { getConnectedProvider, getNetworkProvider } from '../../lib/eth'
@@ -380,7 +381,7 @@ describe('when switching the chain id from a provider', () => {
 
     it('should try to use wallet_addEthereumChain and fails comparing chain requested with new chain', () => {
       return expect(
-        switchProviderChainId(provider as any, 123)
+        switchProviderChainId(provider as any, 123 as ChainId)
       ).rejects.toThrow(
         'Error adding network: chainId did not change after adding network'
       )

@@ -1,6 +1,7 @@
 import { Dispatch } from 'redux'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
-import { NavbarProps as NavbarComponentProps } from 'decentraland-ui/dist/components/Navbar/Navbar'
+import { AuthIdentity } from '@dcl/crypto'
+import { NavbarProps as NavbarComponentProps } from 'decentraland-ui/dist/components/Navbar/Navbar.types'
 import {
   disconnectWallet,
   switchNetworkRequest,
@@ -8,24 +9,33 @@ import {
 } from '../../modules/wallet/actions'
 
 export type NavbarProps = NavbarComponentProps & {
+  withChainSelector?: boolean
   chainId?: ChainId
   appChainId: ChainId
-  hasTranslations?: boolean
   docsUrl?: string
   enablePartialSupportAlert?: boolean
+  isSwitchingNetwork?: boolean
+  withNotifications?: boolean
+  identity?: AuthIdentity
+  locale: string
+  walletError: string | null
   onSwitchNetwork: typeof switchNetworkRequest
   onSignOut: typeof disconnectWallet
+  onSignIn: () => void
 }
 
 export type MapStateProps = Pick<
   NavbarProps,
-  | 'mana'
+  | 'manaBalances'
   | 'address'
-  | 'isConnected'
-  | 'isConnecting'
-  | 'hasTranslations'
+  | 'isSignedIn'
+  | 'isSigningIn'
   | 'chainId'
   | 'appChainId'
+  | 'isSwitchingNetwork'
+  | 'avatar'
+  | 'locale'
+  | 'walletError'
 >
 
 export type MapDispatchProps = Pick<

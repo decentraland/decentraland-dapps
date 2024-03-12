@@ -1,6 +1,7 @@
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { isLoadingType } from '../loading/selectors'
+import { UserMenuProps } from 'decentraland-ui/dist/components/UserMenu/UserMenu.types'
 import {
   CONNECT_WALLET_REQUEST,
   ENABLE_WALLET_REQUEST,
@@ -37,6 +38,9 @@ export const getNetworks = (state: any) =>
 export const isSwitchingNetwork = (state: any) =>
   isLoadingType(getLoading(state), SWITCH_NETWORK_REQUEST)
 
+export const getSwitchingNetworkChain = (state: any) =>
+  getLoading(state).find(loading => loading.type === SWITCH_NETWORK_REQUEST)
+
 // Casting as ChainId since it will be initialized at the beginning
 export const getAppChainId = (state: any) =>
   getState(state).appChainId as ChainId
@@ -50,4 +54,22 @@ export const getMana = (state: any) => {
   }
   const networks = getNetworks(state)!
   return networks[Network.ETHEREUM].mana
+}
+
+export const getManaBalances = (state: any): any => {
+  if (!isConnected(state)) {
+    return undefined
+  }
+
+  const manaBalances: UserMenuProps['manaBalances'] = {}
+  const networkList = [Network.ETHEREUM, Network.MATIC]
+  const networks = getNetworks(state)!
+  for (const network of networkList as [Network.ETHEREUM, Network.MATIC]) {
+    const networkData = networks[network]
+    if (networkData) {
+      manaBalances[network] = networks[network].mana
+    }
+  }
+
+  return manaBalances
 }

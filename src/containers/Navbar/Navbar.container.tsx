@@ -3,11 +3,14 @@ import {
   isConnected,
   isConnecting,
   getAddress,
-  getMana,
   getChainId,
-  getAppChainId
+  getAppChainId,
+  getManaBalances,
+  isSwitchingNetwork
 } from '../../modules/wallet/selectors'
-import { isEnabled } from '../../modules/translation/selectors'
+import { getData as getProfiles } from '../../modules/profile/selectors'
+import { getError as getWalletError } from '../../modules/wallet/selectors'
+import { getLocale } from '../../modules/translation/selectors'
 import {
   disconnectWallet,
   switchNetworkRequest
@@ -15,19 +18,28 @@ import {
 import { RootDispatch } from '../../types'
 import { NavbarProps, MapStateProps, MapDispatchProps } from './Navbar.types'
 import Navbar from './Navbar'
+import { ChainId } from '@dcl/schemas'
 
-const mapState = (state: any): MapStateProps => ({
-  chainId: getChainId(state),
-  mana: getMana(state),
-  address: getAddress(state),
-  isConnected: isConnected(state),
-  isConnecting: isConnecting(state),
-  hasTranslations: isEnabled(state),
-  appChainId: getAppChainId(state)
-})
+const mapState = (state: any): MapStateProps => {
+  const address = getAddress(state)
+  const profile = address ? getProfiles(state)[address] : undefined
+  return {
+    avatar: profile ? profile.avatars[0] : undefined,
+    chainId: getChainId(state),
+    manaBalances: getManaBalances(state),
+    address: getAddress(state),
+    locale: getLocale(state),
+    isSignedIn: isConnected(state),
+    isSigningIn: isConnecting(state),
+    appChainId: getAppChainId(state),
+    isSwitchingNetwork: isSwitchingNetwork(state),
+    walletError: getWalletError(state)
+  }
+}
 
 const mapDispatch = (dispatch: RootDispatch): MapDispatchProps => ({
-  onSwitchNetwork: chainId => dispatch(switchNetworkRequest(chainId)),
+  onSwitchNetwork: (chainId: ChainId, fromChainId: ChainId) =>
+    dispatch(switchNetworkRequest(chainId, fromChainId)),
   onSignOut: () => dispatch(disconnectWallet())
 })
 

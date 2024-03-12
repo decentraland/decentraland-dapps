@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
     "outDir": "dist",
-    "module": "commonjs",
-    "target": "es6",
-    "lib": ["es2017", "dom"],
+    "lib": ["es2020", "dom"],
     "sourceMap": true,
+    "module": "esnext",
+    "target": "esnext",
     "jsx": "react",
     "moduleResolution": "node",
     "forceConsistentCasingInFileNames": true,
@@ -13,7 +13,6 @@
     "noImplicitAny": true,
     "strictNullChecks": true,
     "allowJs": true,
-    "suppressImplicitAnyIndexErrors": true,
     "noUnusedParameters": true,
     "noUnusedLocals": true,
     "plugins": [{ "name": "tslint-language-service" }],
@@ -26,7 +25,7 @@
   "exclude": [
     "node_modules",
     "dist",
-    "scripts",
+    "jest.config.cjs",
     "src/setupTests.ts",
     "src/tests",
     "src/**/*.spec.ts",

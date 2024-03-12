@@ -28,13 +28,14 @@ function handleConnectWalletSuccess(action: ConnectWalletSuccessAction) {
 
   if (analytics) {
     // Identify the user that has just connected.
-    analytics.identify({ ethAddress: wallet.address })
+    analytics.identify({ ethAddress: wallet.address, chainId: wallet.chainId })
 
     // Track useful connection data.
     // Not using the add function from utils to track the action automatically because
     // the analytics middleware will call this before the identify.
     trackConnectWallet({
       address: wallet.address,
+      chainId: wallet.chainId,
       providerType: wallet.providerType,
       walletName: connection.getWalletName()
     })

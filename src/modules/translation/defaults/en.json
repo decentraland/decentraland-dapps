@@ -17,7 +17,8 @@
         "ethics": "Code of Ethics",
         "home": "Home",
         "privacy": "Privacy Policy",
-        "terms": "Terms of Use"
+        "terms": "Terms of Use",
+        "feature": "Feature Request"
       }
     },
     "navbar": {
@@ -41,6 +42,7 @@
           "overview": "Overview",
           "collectibles": "Collectibles",
           "land": "LAND",
+          "names": "NAMEs",
           "myAssets": "My Assets"
         },
         "builder": {
@@ -172,15 +174,18 @@
       }
     },
     "user_menu": {
-      "sign_in": "Sign In",
-      "sign_out": "Log Out",
-      "guest": "Guest",
+      "guest": "Unnamed",
       "settings": "Account Settings",
-      "wallet": "Wallet",
-      "profile": "View My Profile",
-      "myLists": "My Lists",
-      "myAssets": "My Assets",
-      "account": "Account"
+      "my_lists": "My Lists",
+      "my_assets": "My Assets",
+      "account": "Account",
+      "activity": "Activity",
+      "profile": "Profile",
+      "view_profile": "View Profile",
+      "sign_in": "Sign In",
+      "sign_out": "Sign out",
+      "wallet": "Manage Wallet",
+      "jump_in": "Jump In"
     },
     "toasts": {
       "meta_transactions": {
@@ -204,6 +209,10 @@
           "title": "High congestion",
           "body": "Polygon Network <a>gas prices</a> are too high! Please wait and try again later, or switch your Network to Polygon and pay for the gas fee with MATIC."
         }
+      },
+      "switch_network_error": {
+        "title": "Network switch error",
+        "body": "There was an error switching to {network}."
       },
       "switch_network": "Switch to {network}",
       "learn_more": "Learn more"
@@ -334,6 +343,12 @@
         "simple": "Play once",
         "loop": "Play loop"
       }
+    },
+    "chain_selector": {
+      "title": "Select a network",
+      "connected": "Connected",
+      "confirm_in_wallet": "Confirm in wallet",
+      "switching": "Switching..."
     }
   }
 }
