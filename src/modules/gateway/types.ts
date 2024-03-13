@@ -7,7 +7,12 @@ export enum FiatGateway {
   WERT = 'wert'
 }
 
-export type WertOptions = Options
+export enum WertTarget {
+  DEFAULT = 'default',
+  PUBLICATION_FEES = 'publicationFees'
+}
+
+export type WertOptions = Options & { target?: WertTarget }
 
 export type FiatGatewayOptions = WertOptions // will be adding more options as we add more providers
 
