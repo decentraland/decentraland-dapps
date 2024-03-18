@@ -1,21 +1,11 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Navbar as NavbarComponent } from 'decentraland-ui/dist/components/Navbar/Navbar'
-import {
-  DCLNotification,
-  NotificationActiveTab,
-  NotificationLocale
-} from 'decentraland-ui/dist/components/Notifications/types'
-import { CURRENT_AVAILABLE_NOTIFICATIONS } from 'decentraland-ui/dist/components/Notifications/utils'
+import {  NotificationLocale } from 'decentraland-ui/dist/components/Notifications/types'
 import { ChainId, getChainName } from '@dcl/schemas/dist/dapps/chain-id'
 import { ProviderType } from '@dcl/schemas'
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { getAnalytics } from '../../modules/analytics/utils'
 import { t } from '../../modules/translation'
-import {
-  NotificationsAPI,
-  checkIsOnboarding,
-  setOnboardingDone
-} from '../../modules/notifications'
 import UnsupportedNetworkModal from '../UnsupportedNetworkModal'
 import { getAvailableChains } from '../../lib/chainConfiguration'
 import { getConnectedProviderType } from '../../lib'
@@ -27,8 +17,8 @@ import {
   DROPDOWN_MENU_SIGN_OUT_EVENT
 } from './constants'
 import { NavbarProps } from './Navbar.types'
-import { NAVBAR_CLICK_EVENT, NOTIFICATIONS_QUERY_INTERVAL } from './constants'
-import Profile from '../Profile'
+import { NAVBAR_CLICK_EVENT } from './constants'
+import useNotifications from '../../hooks/useNotifications'
 
 const BASE_URL = getBaseUrl()
 
@@ -43,24 +33,19 @@ const Navbar: React.FC<NavbarProps> = ({
   walletError,
   ...props
 }: NavbarProps) => {
-  const [{ isLoading, notifications }, setUserNotifications] = useState<{
-    isLoading: boolean
-    notifications: DCLNotification[]
-  }>({
-    isLoading: false,
-    notifications: []
-  })
-  const [notificationsState, setNotificationsState] = useState({
-    activeTab: NotificationActiveTab.NEWEST,
-    isOnboarding: checkIsOnboarding(),
-    isOpen: false
-  })
   const expectedChainName = getChainName(appChainId)
   const analytics = getAnalytics()
-  const client: NotificationsAPI | null = useMemo(() => {
-    if (identity) return new NotificationsAPI({ identity })
-    return null
-  }, [identity])
+
+  const { 
+    isModalOpen, 
+    isNotificationsOnboarding, 
+    modalActiveTab, 
+    isLoading, 
+    notifications, 
+    handleNotificationsOpen, 
+    handleOnBegin, 
+    handleOnChangeModalTab 
+  } = useNotifications(identity, withNotifications || false)
 
   const handleSwitchNetwork = useCallback(() => {
     props.onSwitchNetwork(appChainId)
@@ -147,81 +132,6 @@ const Navbar: React.FC<NavbarProps> = ({
     [analytics]
   )
 
-  const handleOnBegin = () => {
-    setOnboardingDone()
-    setNotificationsState(prevState => ({ ...prevState, isOnboarding: false }))
-  }
-
-  const handleNotificationsOpen = async () => {
-    const currentOpenState = notificationsState.isOpen
-
-    setNotificationsState(prevState => {
-      return { ...prevState, isOpen: !prevState.isOpen }
-    })
-
-    if (!currentOpenState) {
-      const unreadNotifications = notifications
-        .filter(notification => !notification.read)
-        .map(({ id }) => id)
-      if (unreadNotifications.length) {
-        await client?.markNotificationsAsRead(unreadNotifications)
-      }
-    } else {
-      // update state when closes the modal
-      const markNotificationAsReadInState = notifications.map(notification => {
-        if (notification.read) return notification
-
-        return {
-          ...notification,
-          read: true
-        }
-      })
-      setUserNotifications({
-        isLoading,
-        notifications: markNotificationAsReadInState
-      })
-    }
-  }
-
-  const fetchNotificationsState = () => {
-    setUserNotifications({ notifications: [], isLoading: true })
-    client?.getNotifications().then(retrievedNotifications => {
-      setUserNotifications({
-        isLoading: false,
-        notifications: retrievedNotifications.filter(notification =>
-          CURRENT_AVAILABLE_NOTIFICATIONS.includes(notification.type)
-        )
-      })
-    })
-  }
-
-  const handleRenderProfile = useCallback((address: string) => {
-    return (
-      <Profile
-        address={address}
-        as="a"
-        href={`${getBaseUrl()}/profile/accounts/${address}`}
-        style={{ fontWeight: 500, color: 'white', textDecoration: 'none' }}
-        target="_blank"
-      />
-    )
-  }, [])
-
-  useEffect(() => {
-    if (identity && withNotifications) {
-      fetchNotificationsState()
-
-      const interval = setInterval(() => {
-        fetchNotificationsState()
-      }, NOTIFICATIONS_QUERY_INTERVAL)
-
-      return () => {
-        clearInterval(interval)
-      }
-    } else {
-      return () => {}
-    }
-  }, [identity])
 
   return (
     <>
@@ -235,19 +145,14 @@ const Navbar: React.FC<NavbarProps> = ({
                   ? {
                       locale: props.locale as NotificationLocale,
                       isLoading,
-                      isOnboarding: notificationsState.isOnboarding,
-                      isOpen: notificationsState.isOpen,
+                      isOnboarding: isNotificationsOnboarding,
+                      isOpen: isModalOpen,
                       items: notifications,
-                      activeTab: notificationsState.activeTab,
+                      activeTab: modalActiveTab,
                       onClick: handleNotificationsOpen,
                       onClose: handleNotificationsOpen,
                       onBegin: handleOnBegin,
-                      onChangeTab: (_, tab) =>
-                        setNotificationsState(prevState => ({
-                          ...prevState,
-                          activeTab: tab
-                        })),
-                      renderProfile: handleRenderProfile
+                      onChangeTab: (_, tab) => handleOnChangeModalTab(tab)
                     }
                   : undefined
               }
