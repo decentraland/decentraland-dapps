@@ -113,7 +113,7 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
             throw new Error('Wert config not found')
           }
 
-          const { onLoaded, onPending, onSuccess } = listeners || {}
+          const { onLoaded, onPending, onSuccess, onClose } = listeners || {}
           const { marketplaceServerURL } = wertConfig
 
           const wallet: Wallet | null = yield select(getWalletData)
@@ -159,6 +159,7 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
                 signature,
                 listeners: {
                   loaded: onLoaded,
+                  close: onClose,
                   'payment-status': options => {
                     const { status, tx_id } = options
                     if (status === 'pending' && tx_id) {

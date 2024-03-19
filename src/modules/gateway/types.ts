@@ -19,11 +19,13 @@ export type FiatGatewayOptions = WertOptions // will be adding more options as w
 export type FiatGatewayOnPendingListener = (event: WidgetEvents) => void
 export type FiatGatewayOnSuccessListener = (event: WidgetEvents) => void
 export type FiatGatewayOnLoadedListener = () => void
+export type FiatGatewayOnCloseListener = () => void
 
 export type FiatGatewayListeners = {
   onLoaded?: FiatGatewayOnLoadedListener
   onPending?: FiatGatewayOnPendingListener
   onSuccess?: FiatGatewayOnSuccessListener
+  onClose?: FiatGatewayOnCloseListener
 }
 
 export type WertMessage = {
