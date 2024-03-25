@@ -5,6 +5,7 @@ import {
   NotificationActiveTab,
   NotificationLocale
 } from 'decentraland-ui/dist/components/Notifications/types'
+import { CURRENT_AVAILABLE_NOTIFICATIONS } from 'decentraland-ui/dist/components/Notifications/utils'
 import { ChainId, getChainName } from '@dcl/schemas/dist/dapps/chain-id'
 import { ProviderType } from '@dcl/schemas'
 import { Network } from '@dcl/schemas/dist/dapps/network'
@@ -27,6 +28,7 @@ import {
 } from './constants'
 import { NavbarProps } from './Navbar.types'
 import { NAVBAR_CLICK_EVENT, NOTIFICATIONS_QUERY_INTERVAL } from './constants'
+import Profile from '../Profile'
 
 const BASE_URL = getBaseUrl()
 
@@ -186,10 +188,24 @@ const Navbar: React.FC<NavbarProps> = ({
     client?.getNotifications().then(retrievedNotifications => {
       setUserNotifications({
         isLoading: false,
-        notifications: retrievedNotifications
+        notifications: retrievedNotifications.filter(notification =>
+          CURRENT_AVAILABLE_NOTIFICATIONS.includes(notification.type)
+        )
       })
     })
   }
+
+  const handleRenderProfile = useCallback((address: string) => {
+    return (
+      <Profile
+        address={address}
+        as="a"
+        href={`${getBaseUrl()}/profile/accounts/${address}`}
+        style={{ fontWeight: 500, color: 'white', textDecoration: 'none' }}
+        target="_blank"
+      />
+    )
+  }, [])
 
   useEffect(() => {
     if (identity && withNotifications) {
@@ -230,7 +246,8 @@ const Navbar: React.FC<NavbarProps> = ({
                         setNotificationsState(prevState => ({
                           ...prevState,
                           activeTab: tab
-                        }))
+                        })),
+                      renderProfile: handleRenderProfile
                     }
                   : undefined
               }
