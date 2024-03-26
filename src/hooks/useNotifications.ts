@@ -87,9 +87,10 @@ const useNotifications = (identity: AuthIdentity | undefined, isNotificationsEna
       return () => {
         clearInterval(interval)
       }
-    } else {
-      return () => {}
     }
+    
+    return () => {}
+
   }, [identity])
 
 
