@@ -3,6 +3,7 @@ import { NotificationsAPI, checkIsOnboarding, setOnboardingDone } from "../modul
 import { AuthIdentity } from "decentraland-crypto-fetch"
 import { DCLNotification, NotificationActiveTab } from "decentraland-ui/dist/components/Notifications/types"
 import { NOTIFICATIONS_QUERY_INTERVAL } from "../containers/Navbar/constants"
+import { CURRENT_AVAILABLE_NOTIFICATIONS } from "decentraland-ui/dist/components/Notifications/utils"
 
 const useNotifications = (identity: AuthIdentity | undefined, isNotificationsEnabled: boolean) => {
   const [{ isLoading, notifications }, setUserNotifications] = useState<{
@@ -70,7 +71,7 @@ const useNotifications = (identity: AuthIdentity | undefined, isNotificationsEna
     notificationsClient?.getNotifications().then(retrievedNotifications => {
       setUserNotifications({
         isLoading: false,
-        notifications: retrievedNotifications
+        notifications: retrievedNotifications.filter(notification => CURRENT_AVAILABLE_NOTIFICATIONS.includes(notification.type))
       })
     })
   }
