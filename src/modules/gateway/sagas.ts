@@ -104,7 +104,8 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
   function* handleOpenFiatGatewayWidget(
     action: OpenFiatGatewayWidgetRequestAction
   ) {
-    const { data, gateway, listeners } = action.payload
+    const { gateway, listeners } = action.payload
+    const { target, ...data } = action.payload.data
     try {
       switch (gateway) {
         case FiatGateway.WERT:
@@ -140,7 +141,7 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
                 address: wallet.address,
                 commodity,
                 commodity_amount,
-                network: network ? network : isDev ? 'sepolia' : 'ethereum', // will be wallet.network
+                network: network ? network : isDev ? 'sepolia' : 'ethereum',
                 sc_address,
                 sc_input_data
               }
@@ -149,7 +150,7 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
 
               const signature: string = yield call(
                 [marketplaceAPI, 'signWertMessage'],
-                dataToSign,
+                { ...dataToSign, target },
                 identity
               )
 

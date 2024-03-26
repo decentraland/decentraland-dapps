@@ -1,10 +1,10 @@
 import { AuthIdentity } from 'decentraland-crypto-fetch'
-import { WertMessage } from '../modules/gateway/types'
+import { WertMessageWithTarget } from '../modules/gateway/types'
 import { BaseClient } from './BaseClient'
 
 export class MarketplaceAPI extends BaseClient {
   async signWertMessage(
-    message: WertMessage,
+    message: WertMessageWithTarget,
     identity: AuthIdentity
   ): Promise<string> {
     try {
