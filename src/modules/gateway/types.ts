@@ -37,6 +37,8 @@ export type WertMessage = {
   sc_input_data: string
 }
 
+export type WertMessageWithTarget = WertMessage & { target?: WertTarget }
+
 export type WertConfig = {
   url: string
   marketplaceServerURL: string
