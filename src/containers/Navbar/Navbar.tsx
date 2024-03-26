@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Navbar as NavbarComponent } from 'decentraland-ui/dist/components/Navbar/Navbar'
-import {  NotificationLocale } from 'decentraland-ui/dist/components/Notifications/types'
+import { NotificationLocale } from 'decentraland-ui/dist/components/Notifications/types'
 import { ChainId, getChainName } from '@dcl/schemas/dist/dapps/chain-id'
 import { ProviderType } from '@dcl/schemas'
 import { Network } from '@dcl/schemas/dist/dapps/network'
@@ -36,15 +36,16 @@ const Navbar: React.FC<NavbarProps> = ({
   const expectedChainName = getChainName(appChainId)
   const analytics = getAnalytics()
 
-  const { 
-    isModalOpen, 
-    isNotificationsOnboarding, 
-    modalActiveTab, 
-    isLoading, 
-    notifications, 
-    handleNotificationsOpen, 
-    handleOnBegin, 
-    handleOnChangeModalTab 
+  const {
+    isModalOpen,
+    isNotificationsOnboarding,
+    modalActiveTab,
+    isLoading,
+    notifications,
+    handleNotificationsOpen,
+    handleOnBegin,
+    handleOnChangeModalTab,
+    handleRenderProfile
   } = useNotifications(identity, withNotifications || false)
 
   const handleSwitchNetwork = useCallback(() => {
@@ -132,7 +133,6 @@ const Navbar: React.FC<NavbarProps> = ({
     [analytics]
   )
 
-
   return (
     <>
       <ChainProvider>
@@ -152,7 +152,8 @@ const Navbar: React.FC<NavbarProps> = ({
                       onClick: handleNotificationsOpen,
                       onClose: handleNotificationsOpen,
                       onBegin: handleOnBegin,
-                      onChangeTab: (_, tab) => handleOnChangeModalTab(tab)
+                      onChangeTab: (_, tab) => handleOnChangeModalTab(tab),
+                      renderProfile: handleRenderProfile
                     }
                   : undefined
               }
