@@ -42,18 +42,22 @@ export class NotificationsAPI extends BaseClient {
 const ONBOARDING_KEY = "dcl_notifications_onboarding"
 
 export const checkIsOnboarding = () => {
-  const isOnboarding = localStorage.getItem(ONBOARDING_KEY)
-  if (isOnboarding) {
-    const value = JSON.parse(isOnboarding)
-    return value
-  } else {
-    localStorage.setItem(ONBOARDING_KEY, "true")
-    return true
+  if (typeof window !== "undefined") {    
+    const isOnboarding = localStorage.getItem(ONBOARDING_KEY)
+    if (isOnboarding) {
+      const value = JSON.parse(isOnboarding)
+      return value
+    } else {
+      localStorage.setItem(ONBOARDING_KEY, "true")
+      return true
+    }
   }
 }
 
 export const setOnboardingDone  = () => {
-  localStorage.setItem(ONBOARDING_KEY, "false")
+  if (typeof window !== "undefined") {
+    localStorage.setItem(ONBOARDING_KEY, "false")
+  }
 }
 
 const parseNotification = (notification: DCLNotification): DCLNotification => {
