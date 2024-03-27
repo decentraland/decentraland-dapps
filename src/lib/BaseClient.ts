@@ -1,5 +1,5 @@
 import { signedFetchFactory, type AuthIdentity, type SignedRequestInit } from 'decentraland-crypto-fetch'
-import * as nodeURL from 'url'
+import nodeURL from 'url'
 import { ClientError } from './ClientError'
 
 const DEFAULT_RETRIES = 3
