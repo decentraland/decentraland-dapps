@@ -234,6 +234,8 @@ export function getTransactionOrigin(
       return 'https://explorer-mainnet.maticvigil.com'
     case ChainId.MATIC_MUMBAI:
       return 'https://explorer-mumbai.maticvigil.com'
+    case ChainId.MATIC_AMOY:
+      return 'https://www.oklink.com/es-la/amoy'
     default:
       return 'https://etherscan.io'
   }

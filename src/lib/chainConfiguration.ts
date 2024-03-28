@@ -25,6 +25,8 @@ export const MANA_GRAPH_BY_CHAIN_ID = {
     'https://api.thegraph.com/subgraphs/name/decentraland/mana-matic-mainnet',
   [ChainId.MATIC_MUMBAI]:
     'https://api.thegraph.com/subgraphs/name/decentraland/mana-matic-mumbai',
+  [ChainId.MATIC_AMOY]:
+    'https://api.thegraph.com/subgraphs/name/decentraland/mana-matic-amoy',
   [ChainId.ETHEREUM_KOVAN]: '',
   [ChainId.BSC_MAINNET]: '',
   [ChainId.OPTIMISM_MAINNET]: '',
@@ -55,7 +57,7 @@ export function getChainConfiguration(chainId: ChainId): ChainConfiguration {
 export function getAvailableChains(): ChainId[] {
   const isDev = getEnv() === Env.DEVELOPMENT
   return isDev
-    ? [ChainId.ETHEREUM_SEPOLIA, ChainId.MATIC_MUMBAI]
+    ? [ChainId.ETHEREUM_SEPOLIA, ChainId.MATIC_MUMBAI, ChainId.MATIC_AMOY]
     : [
         ChainId.ETHEREUM_MAINNET,
         ChainId.MATIC_MAINNET,

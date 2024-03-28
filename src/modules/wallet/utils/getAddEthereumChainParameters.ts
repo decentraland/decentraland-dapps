@@ -33,6 +33,18 @@ export function getAddEthereumChainParameters(
         rpcUrls: ['https://rpc-mumbai.maticvigil.com/'],
         blockExplorerUrls: ['https://mumbai.polygonscan.com/']
       }
+    case ChainId.MATIC_AMOY:
+      return {
+        chainId: hexChainId,
+        chainName,
+        nativeCurrency: {
+          name: 'MATIC',
+          symbol: 'MATIC',
+          decimals: 18
+        },
+        rpcUrls: ['https://rpc-amoy.polygon.technology/'],
+        blockExplorerUrls: ['https://www.oklink.com/es-la/amoy']
+      }
     case ChainId.BSC_MAINNET:
       return {
         chainId: hexChainId,
