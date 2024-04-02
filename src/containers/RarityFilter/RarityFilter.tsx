@@ -9,6 +9,7 @@ export const RarityFilter = (props: RarityFilterProps) => {
     rarities: {
       [Rarity.UNIQUE]: t('@dapps.rarities.unique'),
       [Rarity.MYTHIC]: t('@dapps.rarities.mythic'),
+      [Rarity.EXOTIC]: t('@dapps.rarities.exotic'),
       [Rarity.LEGENDARY]: t('@dapps.rarities.legendary'),
       [Rarity.EPIC]: t('@dapps.rarities.epic'),
       [Rarity.RARE]: t('@dapps.rarities.rare'),
