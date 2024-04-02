@@ -289,6 +289,7 @@
     "rarities": {
       "unique": "Único",
       "mythic": "Mítico",
+      "exotic": "Exótico",
       "legendary": "Legendario",
       "epic": "Épico",
       "rare": "Raro",

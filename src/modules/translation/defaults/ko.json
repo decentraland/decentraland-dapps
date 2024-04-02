@@ -207,6 +207,7 @@
     "rarities": {
       "unique": "고유한",
       "mythic": "신화",
+      "exotic": "이국적인",
       "legendary": "전설",
       "epic": "서사시",
       "rare": "희귀한",

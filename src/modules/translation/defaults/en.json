@@ -290,6 +290,7 @@
     "rarities": {
       "unique": "Unique",
       "mythic": "Mythic",
+      "exotic": "Exotic",
       "legendary": "Legendary",
       "epic": "Epic",
       "rare": "Rare",
