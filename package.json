@@ -17,7 +17,7 @@
     "@types/flat": "0.0.28",
     "@types/segment-analytics": "^0.0.38",
     "@well-known-components/fetch-component": "^2.0.1",
-    "@wert-io/widget-initializer": "^6.1.0",
+    "@wert-io/widget-initializer": "^6.1.1",
     "axios": "^0.21.1",
     "date-fns": "^1.29.0",
     "dcl-catalyst-client": "^21.1.0",
