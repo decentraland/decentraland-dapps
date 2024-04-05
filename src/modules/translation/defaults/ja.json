@@ -214,6 +214,16 @@
       "uncommon": "珍しい",
       "common": "一般"
     },
+    "rarities_description": {
+      "unique": "聖杯のようなもの: 唯一無二の",
+      "mythic": "幸運な少数の場合: 最大 10",
+      "exotic": "数量限定：最大50個",
+      "legendary": "数量限定：最大100個",
+      "epic": "最大供給量: 1000",
+      "rare": "最大供給数: 5000",
+      "uncommon": "最大供給数: 10,000",
+      "common": "最大供給量: 100,000"
+    },
     "asset_status_filter": {
       "title": "状態",
       "on_sale": "発売中",

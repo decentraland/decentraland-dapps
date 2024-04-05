@@ -214,6 +214,16 @@
       "uncommon": "드문",
       "common": "흔한"
     },
+    "rarities_description": {
+      "unique": "성배 같은: 독특한",
+      "mythic": "운이 좋은 소수의 경우: 최대 10",
+      "exotic": "한정 공급: 최대 50개",
+      "legendary": "한정 공급: 최대 100개",
+      "epic": "최대 공급량: 1000",
+      "rare": "최대 공급량: 5000",
+      "uncommon": "최대 공급량: 10,000",
+      "common": "최대 공급량: 100,000"
+    },
     "asset_status_filter": {
       "title": "상태",
       "on_sale": "판매 중",
