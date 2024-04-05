@@ -214,6 +214,16 @@
       "uncommon": "Peu commun",
       "common": "Commun"
     },
+    "rarities_description": {
+      "unique": "Comme le Graal : unique en son genre",
+      "mythic": "Pour les plus chanceux : max 10",
+      "exotic": "Quantité limitée : max 50",
+      "legendary": "Quantité limitée : max 100",
+      "epic": "Approvisionnement maximum : 1000",
+      "rare": "Approvisionnement maximum : 5000",
+      "uncommon": "Approvisionnement maximum : 100 000",
+      "common": "Approvisionnement maximum : 100 000"
+    },
     "asset_status_filter": {
       "title": "Statut",
       "on_sale": "En soldes",
