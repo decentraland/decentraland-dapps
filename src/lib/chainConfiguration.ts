@@ -57,14 +57,14 @@ export function getChainConfiguration(chainId: ChainId): ChainConfiguration {
 export function getAvailableChains(): ChainId[] {
   const isDev = getEnv() === Env.DEVELOPMENT
   return isDev
-    ? [ChainId.ETHEREUM_SEPOLIA, ChainId.MATIC_MUMBAI, ChainId.MATIC_AMOY]
+    ? [ChainId.ETHEREUM_SEPOLIA, ChainId.MATIC_AMOY]
     : [
-        ChainId.ETHEREUM_MAINNET,
-        ChainId.MATIC_MAINNET,
-        ChainId.OPTIMISM_MAINNET,
-        ChainId.ARBITRUM_MAINNET,
-        ChainId.FANTOM_MAINNET,
-        ChainId.AVALANCHE_MAINNET,
-        ChainId.BSC_MAINNET
-      ]
+      ChainId.ETHEREUM_MAINNET,
+      ChainId.MATIC_MAINNET,
+      ChainId.OPTIMISM_MAINNET,
+      ChainId.ARBITRUM_MAINNET,
+      ChainId.FANTOM_MAINNET,
+      ChainId.AVALANCHE_MAINNET,
+      ChainId.BSC_MAINNET
+    ]
 }

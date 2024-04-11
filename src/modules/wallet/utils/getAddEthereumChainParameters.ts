@@ -43,7 +43,7 @@ export function getAddEthereumChainParameters(
           decimals: 18
         },
         rpcUrls: ['https://rpc-amoy.polygon.technology/'],
-        blockExplorerUrls: ['https://www.oklink.com/es-la/amoy']
+        blockExplorerUrls: ['https://www.oklink.com/amoy']
       }
     case ChainId.BSC_MAINNET:
       return {
