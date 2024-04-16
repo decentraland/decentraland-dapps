@@ -10,7 +10,7 @@
     "@0xsequence/multicall": "^0.25.1",
     "@0xsequence/relayer": "^0.25.1",
     "@dcl/crypto": "^3.3.1",
-    "@dcl/schemas": "^11.4.1-20240412130706.commit-0f2e689",
+    "@dcl/schemas": "^11.5.0",
     "@dcl/single-sign-on-client": "^0.1.0",
     "@dcl/ui-env": "^1.5.0",
     "@transak/transak-sdk": "^1.0.31",
