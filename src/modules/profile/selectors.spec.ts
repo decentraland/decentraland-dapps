@@ -1,9 +1,11 @@
 import { profile } from '../../tests/profileMocks'
 import {
+  loadProfileRequest,
+  loadProfilesRequest,
   setProfileAvatarAliasRequest,
   setProfileAvatarDescriptionRequest
 } from './actions'
-import { INITIAL_STATE } from './reducer'
+import { INITIAL_STATE, ProfileState } from './reducer'
 import {
   getData,
   getState,
@@ -12,10 +14,16 @@ import {
   getProfileOfAddress,
   isLoadingSetProfileAvatarDescription,
   getProfileError,
-  isLoadingSetProfileAvatarAlias
+  isLoadingSetProfileAvatarAlias,
+  getProfileOfAddresses,
+  getProfilesBeingLoaded,
+  isLoadingProfile,
+  isLoadingSomeProfiles,
+  isLoadingAllProfiles
 } from './selectors'
+import { Profile } from './types'
 
-let profileState: any
+let profileState: { profile: ProfileState }
 
 describe('Profile selectors', () => {
   beforeEach(() => {
@@ -123,7 +131,7 @@ describe('Profile selectors', () => {
     })
   })
 
-  describe('when getting the profile o an address', () => {
+  describe('when getting the profile of an address', () => {
     describe('when the address exists', () => {
       beforeEach(() => {
         profileState = {
@@ -166,6 +174,250 @@ describe('Profile selectors', () => {
 
     it('should return the error', () => {
       expect(getProfileError(profileState)).toEqual(profileState.profile.error)
+    })
+  })
+
+  describe('when getting multiple profiles', () => {
+    let addresses: string[]
+    let profiles: Profile[]
+
+    beforeEach(() => {
+      addresses = ['anAddress']
+      profiles = [{ ...profile }]
+      profileState = {
+        ...profileState,
+        profile: {
+          ...profileState.profile,
+          data: {
+            [addresses[0]]: profiles[0]
+          }
+        }
+      }
+    })
+
+    it("should return the profiles associated with the addresses if they're found", () => {
+      expect(getProfileOfAddresses(profileState, addresses)).toEqual(profiles)
+    })
+  })
+
+  describe('when getting the profiles being loaded', () => {
+    let addresses: string[]
+
+    describe('and the profiles being loaded come from single profile requests', () => {
+      beforeEach(() => {
+        addresses = ['anAddress', 'anotherAddress']
+        profileState = {
+          ...profileState,
+          profile: {
+            ...profileState.profile,
+            loading: [
+              loadProfileRequest(addresses[0]),
+              loadProfileRequest(addresses[1])
+            ]
+          }
+        }
+      })
+
+      it('should return the addresses of the profiles being loaded', () => {
+        expect(getProfilesBeingLoaded(profileState)).toEqual(addresses)
+      })
+    })
+
+    describe('and the profiles being loaded come from multiple profile requests', () => {
+      beforeEach(() => {
+        addresses = ['anAddress', 'anotherAddress', 'someOtherAddress']
+        profileState = {
+          ...profileState,
+          profile: {
+            ...profileState.profile,
+            loading: [
+              loadProfilesRequest([addresses[0], addresses[1]]),
+              loadProfilesRequest([addresses[2]])
+            ]
+          }
+        }
+      })
+
+      it('should return the addresses of the profiles being loaded', () => {
+        expect(getProfilesBeingLoaded(profileState)).toEqual(addresses)
+      })
+    })
+
+    describe('and the profiles being loaded come from both single and multiple profile requests', () => {
+      beforeEach(() => {
+        addresses = ['anAddress', 'anotherAddress', 'someOtherAddress']
+        profileState = {
+          ...profileState,
+          profile: {
+            ...profileState.profile,
+            loading: [
+              loadProfileRequest(addresses[0]),
+              loadProfilesRequest([addresses[1], addresses[2]])
+            ]
+          }
+        }
+      })
+
+      it('should return the addresses of the profiles being loaded', () => {
+        expect(getProfilesBeingLoaded(profileState)).toEqual(addresses)
+      })
+    })
+  })
+
+  describe('when getting if a profile is being loaded', () => {
+    let address: string
+
+    beforeEach(() => {
+      address = 'anAddress'
+    })
+
+    describe('and the profile is not being loaded', () => {
+      beforeEach(() => {
+        profileState = {
+          ...profileState,
+          profile: { ...profileState.profile, loading: [] }
+        }
+      })
+
+      it('should return false', () => {
+        expect(isLoadingProfile(profileState, address)).toBe(false)
+      })
+    })
+
+    describe('and the profile is being loaded from a single profile request', () => {
+      beforeEach(() => {
+        profileState = {
+          ...profileState,
+          profile: {
+            ...profileState.profile,
+            loading: [loadProfileRequest(address.toLowerCase())]
+          }
+        }
+      })
+
+      it('should return true', () => {
+        expect(isLoadingProfile(profileState, address)).toBe(true)
+      })
+    })
+
+    describe('and the profile is being loaded from a multiple profile request', () => {
+      beforeEach(() => {
+        profileState = {
+          ...profileState,
+          profile: {
+            ...profileState.profile,
+            loading: [loadProfilesRequest([address.toLowerCase()])]
+          }
+        }
+      })
+
+      it('should return true', () => {
+        expect(isLoadingProfile(profileState, address)).toBe(true)
+      })
+    })
+  })
+
+  describe('when getting if some of the profiles are being loaded', () => {
+    let addresses: string[]
+
+    beforeEach(() => {
+      addresses = ['anAddress', 'anotherAddress'].map(address =>
+        address.toLowerCase()
+      )
+    })
+
+    describe('and none of the profiles are being loaded', () => {
+      beforeEach(() => {
+        profileState = {
+          ...profileState,
+          profile: {
+            ...profileState.profile,
+            loading: [
+              loadProfileRequest('anAddressThatsNotPartOfTheRequestedAddresses')
+            ]
+          }
+        }
+      })
+
+      it('should return false', () => {
+        expect(isLoadingSomeProfiles(profileState, addresses)).toBe(false)
+      })
+    })
+
+    describe('and some of the profiles are being loaded from single profile requests', () => {
+      beforeEach(() => {
+        profileState = {
+          ...profileState,
+          profile: {
+            ...profileState.profile,
+            loading: [loadProfileRequest(addresses[0])]
+          }
+        }
+      })
+
+      it('should return true', () => {
+        expect(isLoadingSomeProfiles(profileState, addresses)).toBe(true)
+      })
+    })
+  })
+
+  describe('when getting if all of the profiles are being loaded', () => {
+    let addresses: string[]
+
+    beforeEach(() => {
+      addresses = ['anAddress', 'anotherAddress'].map(address =>
+        address.toLowerCase()
+      )
+    })
+
+    describe('and none of the profiles are being loaded', () => {
+      beforeEach(() => {
+        profileState = {
+          ...profileState,
+          profile: {
+            ...profileState.profile,
+            loading: [
+              loadProfileRequest('anAddressThatsNotPartOfTheRequestedAddresses')
+            ]
+          }
+        }
+      })
+
+      it('should return false', () => {
+        expect(isLoadingAllProfiles(profileState, addresses)).toBe(false)
+      })
+    })
+
+    describe('and some of the profiles are being loaded', () => {
+      beforeEach(() => {
+        profileState = {
+          ...profileState,
+          profile: {
+            ...profileState.profile,
+            loading: [loadProfileRequest(addresses[0])]
+          }
+        }
+      })
+
+      it('should return false', () => {
+        expect(isLoadingAllProfiles(profileState, addresses)).toBe(false)
+      })
+    })
+
+    describe('and all of the profiles are being loaded', () => {
+      beforeEach(() => {
+        profileState = {
+          ...profileState,
+          profile: {
+            ...profileState.profile,
+            loading: [loadProfilesRequest(addresses)]
+          }
+        }
+      })
+
+      it('should return true', () => {
+        expect(isLoadingAllProfiles(profileState, addresses)).toBe(true)
+      })
     })
   })
 })

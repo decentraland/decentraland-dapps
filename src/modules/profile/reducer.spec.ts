@@ -7,6 +7,9 @@ import {
   loadProfileFailure,
   loadProfileRequest,
   loadProfileSuccess,
+  loadProfilesFailure,
+  loadProfilesRequest,
+  loadProfilesSuccess,
   setProfileAvatarAliasFailure,
   setProfileAvatarAliasRequest,
   setProfileAvatarAliasSuccess,
@@ -15,6 +18,7 @@ import {
   setProfileAvatarDescriptionSuccess
 } from './actions'
 import { INITIAL_STATE, profileReducer, ProfileState } from './reducer'
+import { Profile } from './types'
 
 const alias = 'anAlias'
 const address = 'anAddress'
@@ -25,7 +29,8 @@ const version = 1234
 const requestActions = [
   setProfileAvatarDescriptionRequest(address, 'aDescription'),
   setProfileAvatarAliasRequest(address, alias),
-  loadProfileRequest(address)
+  loadProfileRequest(address),
+  loadProfilesRequest([address])
 ]
 
 requestActions.forEach(action => {
@@ -58,6 +63,10 @@ const failureActions = [
   {
     request: loadProfileRequest(address),
     failure: loadProfileFailure(address, error)
+  },
+  {
+    request: loadProfilesRequest([address]),
+    failure: loadProfilesFailure(error)
   }
 ]
 
@@ -198,6 +207,45 @@ describe('when reducing the action to change the profile', () => {
           [address]: profile
         }
       })
+    })
+  })
+})
+
+describe('when reducing the action that signals a successful load of multiple profiles', () => {
+  let profiles: Profile[]
+  let addresses: string[]
+
+  beforeEach(() => {
+    addresses = ['aUserId', 'anotherUserId']
+
+    profiles = [
+      {
+        ...profile,
+        avatars: [{ ...profile.avatars[0], userId: addresses[0] }]
+      },
+      {
+        ...profile,
+        avatars: [{ ...profile.avatars[0], userId: addresses[1] }]
+      }
+    ]
+  })
+
+  it('should return a state with the profiles set and the loading state cleared', () => {
+    const request = loadProfilesRequest(addresses)
+    const success = loadProfilesSuccess(profiles)
+    const initialState = {
+      ...INITIAL_STATE,
+      loading: loadingReducer([], request)
+    }
+
+    expect(profileReducer(initialState, success)).toEqual({
+      ...INITIAL_STATE,
+      loading: [],
+      data: {
+        ...initialState.data,
+        [addresses[0]]: profiles[0],
+        [addresses[1]]: profiles[1]
+      }
     })
   })
 })

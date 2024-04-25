@@ -11,6 +11,11 @@ import { dynamicDeepParametersEquality } from '../../tests/sagas'
 import { NO_IDENTITY_FOUND_ERROR_MESSAGE, createProfileSaga } from './sagas'
 import { getHashesByKeyMap, lambdaProfileToContentProfile } from './utils'
 import {
+  LOAD_PROFILES_FAILURE,
+  LOAD_PROFILES_REQUEST,
+  loadProfilesFailure,
+  loadProfilesRequest,
+  loadProfilesSuccess,
   setProfileAvatarAliasFailure,
   setProfileAvatarAliasRequest,
   setProfileAvatarAliasSuccess,
@@ -226,6 +231,40 @@ describe('when handling the action to set the profile avatar alias', () => {
         ])
         .put(setProfileAvatarAliasSuccess(address, alias, newAvatar.version))
         .dispatch(setProfileAvatarAliasRequest(address, alias))
+        .silentRun()
+    })
+  })
+})
+
+describe('when handling the action to load multiple profiles', () => {
+  describe('and the fetching of the profiles fails', () => {
+    it('should put the load profiles failure action with the error', () => {
+      const error = new Error('anError')
+      return expectSaga(profileSagas)
+        .provide([
+          [
+            matchers.call.fn(PeerAPI.prototype.fetchProfiles),
+            Promise.reject(error)
+          ]
+        ])
+        .put(loadProfilesFailure(error.message))
+        .dispatch(loadProfilesRequest(['anAddress']))
+        .silentRun()
+    })
+  })
+
+  describe('and the fetching of the profiles is successful', () => {
+    it('should put the load profiles success action with the profiles', () => {
+      const profiles = [profileFromLambda]
+      return expectSaga(profileSagas)
+        .provide([
+          [
+            matchers.call.fn(PeerAPI.prototype.fetchProfiles),
+            Promise.resolve(profiles)
+          ]
+        ])
+        .put(loadProfilesSuccess(profiles))
+        .dispatch(loadProfilesRequest([profiles[0].avatars[0].userId]))
         .silentRun()
     })
   })
