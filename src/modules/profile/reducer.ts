@@ -4,6 +4,9 @@ import {
   LoadProfileRequestAction,
   LoadProfileSuccessAction,
   LoadProfileFailureAction,
+  LoadProfilesRequestAction,
+  LoadProfilesFailureAction,
+  LoadProfilesSuccessAction,
   LOAD_PROFILE_REQUEST,
   LOAD_PROFILE_SUCCESS,
   LOAD_PROFILE_FAILURE,
@@ -22,7 +25,10 @@ import {
   SET_PROFILE_AVATAR_ALIAS_REQUEST,
   SetProfileAvatarAliasFailureAction,
   SetProfileAvatarAliasRequestAction,
-  SetProfileAvatarAliasSuccessAction
+  SetProfileAvatarAliasSuccessAction,
+  LOAD_PROFILES_REQUEST,
+  LOAD_PROFILES_FAILURE,
+  LOAD_PROFILES_SUCCESS
 } from './actions'
 
 export type ProfileState = {
@@ -41,6 +47,9 @@ export type ProfileReducerAction =
   | LoadProfileRequestAction
   | LoadProfileSuccessAction
   | LoadProfileFailureAction
+  | LoadProfilesRequestAction
+  | LoadProfilesFailureAction
+  | LoadProfilesSuccessAction
   | ChangeProfileAction
   | SetProfileAvatarDescriptionRequestAction
   | SetProfileAvatarDescriptionSuccessAction
@@ -64,8 +73,22 @@ export const profileReducer = (
         error: null
       }
     }
+    case LOAD_PROFILES_REQUEST: {
+      return {
+        ...state,
+        loading: loadingReducer(state.loading, action),
+        error: null
+      }
+    }
     case SET_PROFILE_AVATAR_DESCRIPTION_FAILURE:
     case SET_PROFILE_AVATAR_ALIAS_FAILURE:
+    case LOAD_PROFILES_FAILURE: {
+      return {
+        ...state,
+        loading: loadingReducer(state.loading, action),
+        error: action.payload.error
+      }
+    }
     case LOAD_PROFILE_FAILURE: {
       return {
         ...state,
@@ -121,6 +144,24 @@ export const profileReducer = (
         data: {
           ...state.data,
           [address]: profile
+        },
+        loading: loadingReducer(state.loading, action)
+      }
+    }
+    case LOAD_PROFILES_SUCCESS: {
+      const profiles = action.payload.profiles
+      const data = profiles.reduce(
+        (acc, profile) => ({
+          ...acc,
+          [profile.avatars[0].userId]: profile
+        }),
+        {}
+      )
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          ...data
         },
         loading: loadingReducer(state.loading, action)
       }

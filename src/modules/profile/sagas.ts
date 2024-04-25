@@ -23,7 +23,11 @@ import {
   SetProfileAvatarAliasRequestAction,
   SET_PROFILE_AVATAR_ALIAS_REQUEST,
   setProfileAvatarAliasFailure,
-  setProfileAvatarAliasSuccess
+  setProfileAvatarAliasSuccess,
+  LoadProfilesRequestAction,
+  loadProfilesSuccess,
+  loadProfilesFailure,
+  LOAD_PROFILES_REQUEST
 } from './actions'
 import { getHashesByKeyMap, lambdaProfileToContentProfile } from './utils'
 import { Profile } from './types'
@@ -46,6 +50,7 @@ export function createProfileSaga({
 
   function* profileSaga() {
     yield takeEvery(LOAD_PROFILE_REQUEST, handleLoadProfileRequest)
+    yield takeEvery(LOAD_PROFILES_REQUEST, handleLoadProfilesRequest)
     yield takeEvery(
       SET_PROFILE_AVATAR_DESCRIPTION_REQUEST,
       handleSetProfileDescription
@@ -62,6 +67,19 @@ export function createProfileSaga({
       yield put(loadProfileSuccess(address, profile))
     } catch (error) {
       yield put(loadProfileFailure(address, error.message))
+    }
+  }
+
+  function* handleLoadProfilesRequest(action: LoadProfilesRequestAction) {
+    const { addresses } = action.payload
+    try {
+      const profiles: Profile[] = yield call(
+        [peerApi, 'fetchProfiles'],
+        addresses
+      )
+      yield put(loadProfilesSuccess(profiles))
+    } catch (error) {
+      yield put(loadProfilesFailure(error.message))
     }
   }
 

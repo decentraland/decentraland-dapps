@@ -1,5 +1,8 @@
 import { createFetchComponent } from '@well-known-components/fetch-component'
-import { createLambdasClient, LambdasClient } from 'dcl-catalyst-client/dist/client/LambdasClient'
+import {
+  createLambdasClient,
+  LambdasClient
+} from 'dcl-catalyst-client/dist/client/LambdasClient'
 import { Profile } from '../modules/profile/types'
 import { BaseAPI } from './api'
 import { FetchProfileOptions, ProfileEntity } from './types'
@@ -10,7 +13,10 @@ export class PeerAPI extends BaseAPI {
 
   constructor(url: string) {
     super(url)
-    this.lambdasClient = createLambdasClient({ url: `${url}/lambdas`, fetcher: createFetchComponent() })
+    this.lambdasClient = createLambdasClient({
+      url: `${url}/lambdas`,
+      fetcher: createFetchComponent()
+    })
   }
 
   /**
@@ -34,6 +40,16 @@ export class PeerAPI extends BaseAPI {
     return this.cache[address]
   }
 
+  public async fetchProfiles(addresses: string[]): Promise<Profile[]> {
+    if (addresses.length === 0) {
+      return []
+    }
+
+    return (this.lambdasClient.getAvatarsDetailsByPost({
+      ids: addresses.map(address => address.toLowerCase())
+    }) as unknown) as Promise<Profile[]>
+  }
+
   /**
    * Gets the default entity structure for a profile.
    */
@@ -41,7 +57,7 @@ export class PeerAPI extends BaseAPI {
     const profile = await this.request(
       'GET',
       '/content/entities/profile?pointer=default' +
-      Math.floor(Math.random() * 128 + 1)
+        Math.floor(Math.random() * 128 + 1)
     )
     return profile[0]
   }

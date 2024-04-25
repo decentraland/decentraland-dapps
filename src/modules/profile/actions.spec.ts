@@ -19,8 +19,15 @@ import {
   SET_PROFILE_AVATAR_ALIAS_FAILURE,
   SET_PROFILE_AVATAR_ALIAS_SUCCESS,
   setProfileAvatarAliasSuccess,
-  setProfileAvatarAliasFailure
+  setProfileAvatarAliasFailure,
+  loadProfilesRequest,
+  LOAD_PROFILES_REQUEST,
+  LOAD_PROFILES_FAILURE,
+  loadProfilesFailure,
+  loadProfilesSuccess,
+  LOAD_PROFILES_SUCCESS
 } from './actions'
+import { Profile } from './types'
 
 const alias = 'anAlias'
 const address = 'anAddress'
@@ -64,6 +71,48 @@ describe('when creating the action to signal a successful profile request', () =
       type: LOAD_PROFILE_SUCCESS,
       meta: undefined,
       payload: { address, profile }
+    })
+  })
+})
+
+describe('when creating the action to signal the start of the request of multiple profiles', () => {
+  let addresses: string[]
+
+  beforeEach(() => {
+    addresses = [address]
+  })
+
+  it('should return an object representing the action', () => {
+    expect(loadProfilesRequest([address])).toEqual({
+      type: LOAD_PROFILES_REQUEST,
+      meta: undefined,
+      payload: { addresses }
+    })
+  })
+})
+
+describe('when creating the action to signal a failure in the request of multiple profiles', () => {
+  it('should return an object representing the action', () => {
+    expect(loadProfilesFailure(error)).toEqual({
+      type: LOAD_PROFILES_FAILURE,
+      meta: undefined,
+      payload: { error }
+    })
+  })
+})
+
+describe('when creating the action to signal a successful request of multiple profiles', () => {
+  let profiles: Profile[]
+
+  beforeEach(() => {
+    profiles = [profile]
+  })
+
+  it('should return an object representing the action', () => {
+    expect(loadProfilesSuccess([profile])).toEqual({
+      type: LOAD_PROFILES_SUCCESS,
+      meta: undefined,
+      payload: { profiles }
     })
   })
 })

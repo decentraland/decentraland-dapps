@@ -82,8 +82,9 @@ describe('peerAPI', () => {
         peerApi.cache = {}
         jest
           .spyOn(peerApi.lambdasClient, 'getAvatarsDetailsByPost')
-          .mockImplementation(() => Promise.resolve([profileUpdated]))
+          .mockImplementationOnce(() => Promise.resolve([profileUpdated]))
       })
+
       it('should fetch the profile', async () => {
         expect(await peerApi.fetchProfile(address, { useCache: false })).toBe(
           profileUpdated
@@ -92,6 +93,37 @@ describe('peerAPI', () => {
           profileUpdated
         )
       })
+    })
+  })
+
+  describe('when fetching the profiles of multiple users', () => {
+    let profiles: Profile[]
+    let addresses: string[]
+
+    beforeEach(() => {
+      addresses = ['anAddress']
+
+      profiles = [
+        {
+          avatars: [
+            {
+              userId: 'anAddress',
+              avatar: {
+                bodyShape: ''
+              },
+              description: 'aDescription',
+              name: 'aNewName'
+            }
+          ]
+        } as Profile
+      ]
+      jest
+        .spyOn(peerApi.lambdasClient, 'getAvatarsDetailsByPost')
+        .mockImplementationOnce(() => Promise.resolve(profiles))
+    })
+
+    it('should return fetch and return the profiles', async () => {
+      expect(await peerApi.fetchProfiles(addresses)).toBe(profiles)
     })
   })
 })

@@ -18,6 +18,23 @@ export type LoadProfileRequestAction = ReturnType<typeof loadProfileRequest>
 export type LoadProfileSuccessAction = ReturnType<typeof loadProfileSuccess>
 export type LoadProfileFailureAction = ReturnType<typeof loadProfileFailure>
 
+// Load profiles request
+
+export const LOAD_PROFILES_REQUEST = '[Request] Load profiles'
+export const LOAD_PROFILES_SUCCESS = '[Success] Load profiles'
+export const LOAD_PROFILES_FAILURE = '[Failure] Load profiles'
+
+export const loadProfilesRequest = (addresses: string[]) =>
+  action(LOAD_PROFILES_REQUEST, { addresses })
+export const loadProfilesSuccess = (profiles: Profile[]) =>
+  action(LOAD_PROFILES_SUCCESS, { profiles })
+export const loadProfilesFailure = (error: string) =>
+  action(LOAD_PROFILES_FAILURE, { error })
+
+export type LoadProfilesRequestAction = ReturnType<typeof loadProfilesRequest>
+export type LoadProfilesSuccessAction = ReturnType<typeof loadProfilesSuccess>
+export type LoadProfilesFailureAction = ReturnType<typeof loadProfilesFailure>
+
 // Set profile alias
 
 export const SET_PROFILE_AVATAR_ALIAS_REQUEST =
