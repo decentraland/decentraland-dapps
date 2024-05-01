@@ -10,7 +10,7 @@
     "@0xsequence/multicall": "^0.25.1",
     "@0xsequence/relayer": "^0.25.1",
     "@dcl/crypto": "^3.3.1",
-    "@dcl/schemas": "https://sdk-team-cdn.decentraland.org/@dcl/schemas/branch/feat/subscription-notification-schema/dcl-schemas-11.5.1-8898422082.commit-9cb7476.tgz",
+    "@dcl/schemas": "^11.6.0",
     "@dcl/single-sign-on-client": "^0.1.0",
     "@dcl/ui-env": "^1.5.0",
     "@transak/transak-sdk": "^1.0.31",
