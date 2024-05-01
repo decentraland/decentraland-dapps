@@ -1,5 +1,5 @@
 import { getEnv, Env } from '@dcl/ui-env'
-import { SubscriptionDetails } from '@dcl/schemas'
+import { Subscription, SubscriptionDetails } from '@dcl/schemas'
 import { DCLNotification } from 'decentraland-ui/dist/components/Notifications/types'
 
 import { BaseClient, BaseClientConfig } from '../lib/BaseClient'
@@ -46,11 +46,11 @@ export class NotificationsAPI extends BaseClient {
   }
 
   async getSubscriptionSettings() {
-    await this.fetch('/subscription')
+    return await this.fetch<Subscription>('/subscription')
   }
 
   async putSubscriptionSettings(subscriptionDetails: SubscriptionDetails) {
-    await this.fetch('/subscription', {
+    return await this.fetch<Subscription>('/subscription', {
       method: 'PUT',
       body: JSON.stringify(subscriptionDetails),
       headers: { 'Content-Type': 'application/json' }
