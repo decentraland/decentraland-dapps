@@ -1,12 +1,5 @@
 import { getEnv, Env } from '@dcl/ui-env'
-import {
-  Entity,
-  Scene,
-  NotificationChannelType,
-  NotificationType,
-  Subscription,
-  SubscriptionDetails
-} from '@dcl/schemas'
+import { SubscriptionDetails } from '@dcl/schemas'
 import { DCLNotification } from 'decentraland-ui/dist/components/Notifications/types'
 
 import { BaseClient, BaseClientConfig } from '../lib/BaseClient'
