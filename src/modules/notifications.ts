@@ -45,12 +45,12 @@ export class NotificationsAPI extends BaseClient {
     })
   }
 
-  async getSubscriptionSettings() {
-    return await this.fetch<Subscription>('/subscription')
+  async getSubscription() {
+    return this.fetch<Subscription>('/subscription')
   }
 
-  async putSubscriptionSettings(subscriptionDetails: SubscriptionDetails) {
-    return await this.fetch<Subscription>('/subscription', {
+  async putSubscription(subscriptionDetails: SubscriptionDetails) {
+    return this.fetch<Subscription>('/subscription', {
       method: 'PUT',
       body: JSON.stringify(subscriptionDetails),
       headers: { 'Content-Type': 'application/json' }
