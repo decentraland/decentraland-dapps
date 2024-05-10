@@ -234,7 +234,7 @@ describe('when the request is successful', () => {
     })
   })
 
-  describe("and the response return without content", () => {
+  describe("and the response has no body", () => {
     beforeEach(() => {
       nock.cleanAll()
       config = {
@@ -251,7 +251,7 @@ describe('when the request is successful', () => {
         })
     })
 
-    it('should resolve with the response', async () => {
+    it('should resolve as null', async () => {
       await expect(baseClient.performRequest('/test')).resolves.toEqual(null)
       expect(nock.isDone()).toBeTruthy()
     })
