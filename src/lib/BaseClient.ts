@@ -57,7 +57,12 @@ export abstract class BaseClient {
         let parsedResponse: any
         try {
           response = await this.rawFetch(path, init)
-          parsedResponse = await response.json()
+          const bodyText = await response.text()
+          if(bodyText.length === 0) {
+            parsedResponse = {ok: true, data: null}
+          } else {
+            parsedResponse = JSON.parse(bodyText)
+          }
         } catch (error) {
           throw new ClientError(error.message, undefined, null)
         }
