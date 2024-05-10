@@ -233,6 +233,29 @@ describe('when the request is successful', () => {
       expect(nock.isDone()).toBeTruthy()
     })
   })
+
+  describe("and the response return without content", () => {
+    beforeEach(() => {
+      nock.cleanAll()
+      config = {
+        ...config,
+        retries: 0
+      }
+      baseClient = new TestBaseClient(urlTest, config)
+
+      nock(urlTest)
+        .get('/test')
+        .reply(204)
+        .defaultReplyHeaders({
+          'Access-Control-Allow-Origin': '*'
+        })
+    })
+
+    it('should resolve with the response', async () => {
+      await expect(baseClient.performRequest('/test')).resolves.toEqual(null)
+      expect(nock.isDone()).toBeTruthy()
+    })
+  })
 })
 
 describe('when the client is authenticated', () => {
