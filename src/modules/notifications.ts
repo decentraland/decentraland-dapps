@@ -46,13 +46,33 @@ export class NotificationsAPI extends BaseClient {
   }
 
   async getSubscription() {
-    return this.fetch<Subscription>('/subscription')
+    return this.fetch<
+      Subscription & {
+        unconfirmedEmail?: string
+      }
+    >('/subscription')
   }
 
   async putSubscription(subscriptionDetails: SubscriptionDetails) {
     return this.fetch<Subscription>('/subscription', {
       method: 'PUT',
       body: JSON.stringify(subscriptionDetails),
+      headers: { 'Content-Type': 'application/json' }
+    })
+  }
+
+  async putEmail(email: string) {
+    return this.fetch<Subscription>('/set-email', {
+      method: 'PUT',
+      body: JSON.stringify(email),
+      headers: { 'Content-Type': 'application/json' }
+    })
+  }
+
+  async postEmailConfirmationCode(body: { address: string; code: string }) {
+    return this.fetch<Subscription>('/confirm-email', {
+      method: 'POST',
+      body: JSON.stringify(body),
       headers: { 'Content-Type': 'application/json' }
     })
   }
