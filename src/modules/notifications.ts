@@ -71,7 +71,7 @@ export class NotificationsAPI extends BaseClient {
 
   async postEmailConfirmationCode(body: { address: string; code: string }) {
     return this.fetch<Subscription>('/confirm-email', {
-      method: 'POST',
+      method: 'PUT',
       body: JSON.stringify(body),
       headers: { 'Content-Type': 'application/json' }
     })
