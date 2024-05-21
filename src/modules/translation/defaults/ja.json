@@ -101,16 +101,15 @@
     },
     "user_menu": {
       "guest": "名前なし",
-      "settings": "「アカウント設定",
       "my_lists": "マイ・リスト",
       "my_assets": "マイ資産",
-      "account": "「アカウント",
+      "account": "「アカウント設定",
       "activity": "「アクティビティ",
       "profile": "「プロフィール",
       "view_profile": "「プロフィールを見る",
       "sign_in": "「サインイン",
       "sign_out": "「サインアウト",
-      "wallet": "「ウォレットの管理",
+      "marketplace_authorizations": "マーケットプレイスの承認",
       "jump_in": "ジャンプイン"
     },
     "toasts": {

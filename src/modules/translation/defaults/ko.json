@@ -101,16 +101,15 @@
     },
     "user_menu": {
       "guest": "이름이 없습니다",
-      "settings": "계정 설정",
       "my_lists": "내 목록",
       "my_assets": "내 자산",
-      "account": "계정",
+      "account": "계정 설정",
       "activity": "활동",
       "profile": "프로필",
       "view_profile": "프로필 보기",
       "sign_in": "로그인",
       "sign_out": "로그아웃",
-      "wallet": "지갑 관리",
+      "marketplace_authorizations": "마켓플레이스의 승인",
       "jump_in": "점프 인"
     },
     "toasts": {

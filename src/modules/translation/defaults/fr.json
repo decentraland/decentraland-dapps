@@ -101,16 +101,15 @@
     },
     "user_menu": {
       "guest": "Anonyme",
-      "settings": "Paramètres du compte",
       "my_lists": "Mes listes",
       "my_assets": "Mes actifs",
-      "account": "Compte",
+      "account": "Paramètres du compte",
       "activity": "Activité",
       "profile": "Profil",
       "view_profile": "Voir le profil",
       "sign_in": "Sign In",
       "sign_out": "Sign out",
-      "wallet": "Gérer le portefeuille",
+      "marketplace_authorizations": "Autorisations de la Marketplace",
       "jump_in": "Jump In"
     },
     "toasts": {

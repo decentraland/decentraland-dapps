@@ -175,16 +175,15 @@
     },
     "user_menu": {
       "guest": "Unnamed",
-      "settings": "Account Settings",
       "my_lists": "My Lists",
       "my_assets": "My Assets",
-      "account": "Account",
+      "account": "Account Settings",
       "activity": "Activity",
       "profile": "Profile",
       "view_profile": "View Profile",
       "sign_in": "Sign In",
       "sign_out": "Sign out",
-      "wallet": "Manage Wallet",
+      "marketplace_authorizations": "Marketplace Authorizations",
       "jump_in": "Jump In"
     },
     "toasts": {
