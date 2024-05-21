@@ -12,8 +12,10 @@ import { getConnectedProviderType } from '../../lib'
 import { getBaseUrl } from '../../lib/utils'
 import ChainProvider from '../ChainProvider'
 import {
+  CHANGE_NETWORK,
   DROPDOWN_MENU_BALANCE_CLICK_EVENT,
   DROPDOWN_MENU_DISPLAY_EVENT,
+  DROPDOWN_MENU_ITEM_CLICK_EVENT,
   DROPDOWN_MENU_SIGN_OUT_EVENT
 } from './constants'
 import { NavbarProps } from './Navbar.types'
@@ -66,7 +68,7 @@ const Navbar: React.FC<NavbarProps> = ({
     (chainId: ChainId) => {
       setChainSelected(chainId)
       props.onSwitchNetwork(chainId, props.chainId)
-      analytics.track('change_network', {
+      analytics.track(CHANGE_NETWORK, {
         from_chain_id: props.chainId,
         to_chain_id: chainId
       })
@@ -99,12 +101,9 @@ const Navbar: React.FC<NavbarProps> = ({
   const handleClickUserMenuItem = useCallback(
     (
       _e: React.MouseEvent,
-      options: { eventTrackingName: string; url?: string; trackingId?: string }
+      options: { type: string; url?: string; track_uuid?: string }
     ) => {
-      analytics.track(options.eventTrackingName, {
-        url: options.url,
-        trackingId: options.trackingId
-      })
+      analytics.track(DROPDOWN_MENU_ITEM_CLICK_EVENT, options)
     },
     [analytics]
   )
