@@ -175,16 +175,15 @@
     },
     "user_menu": {
       "guest": "Sin nombre",
-      "settings": "Configuración de la cuenta",
       "my_lists": "Mis listas",
       "my_assets": "Mis activos",
-      "account": "Cuenta",
+      "account": "Configuración de la cuenta",
       "activity": "Actividad",
       "profile": "Perfil",
       "view_profile": "Ver perfil",
       "sign_in": "Iniciar sesión",
       "sign_out": "Cerrar sesión",
-      "wallet": "Gestionar cartera",
+      "marketplace_authorizations": "Autorizaciones de Marketplace",
       "jump_in": "Entrar"
     },
     "toasts": {
