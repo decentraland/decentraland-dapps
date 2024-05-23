@@ -8,8 +8,6 @@ import {
   CONNECT_WALLET_REQUEST,
   CONNECT_WALLET_SUCCESS,
   CONNECT_WALLET_FAILURE,
-  DisconnectWalletAction,
-  DISCONNECT_WALLET,
   ChangeAccountAction,
   ChangeNetworkAction,
   CHANGE_ACCOUNT,
@@ -33,7 +31,13 @@ import {
   SwitchNetworkSuccessAction,
   SwitchNetworkFailureAction,
   SWITCH_NETWORK_SUCCESS,
-  SWITCH_NETWORK_FAILURE
+  SWITCH_NETWORK_FAILURE,
+  DISCONNECT_WALLET_SUCCESS,
+  DISCONNECT_WALLET_REQUEST,
+  DisconnectWalletSuccessAction,
+  DisconnectWalletFailureAction,
+  DisconnectWalletRequestAction,
+  DISCONNECT_WALLET_FAILURE
 } from './actions'
 
 export type WalletState = {
@@ -60,7 +64,9 @@ export type WalletReducerAction =
   | EnableWalletRequestAction
   | EnableWalletSuccessAction
   | EnableWalletFailureAction
-  | DisconnectWalletAction
+  | DisconnectWalletRequestAction
+  | DisconnectWalletSuccessAction
+  | DisconnectWalletFailureAction
   | ChangeAccountAction
   | ChangeNetworkAction
   | FetchWalletRequestAction
@@ -75,6 +81,7 @@ export function walletReducer(
   switch (action.type) {
     case FETCH_WALLET_REQUEST:
     case ENABLE_WALLET_REQUEST:
+    case DISCONNECT_WALLET_REQUEST:
     case CONNECT_WALLET_REQUEST: {
       return {
         ...state,
@@ -109,6 +116,7 @@ export function walletReducer(
       }
     }
 
+    case DISCONNECT_WALLET_FAILURE:
     case FETCH_WALLET_FAILURE: {
       return {
         ...state,
@@ -117,7 +125,6 @@ export function walletReducer(
     }
 
     case SWITCH_NETWORK_FAILURE: {
-      console.log('action.payload.error: ', action.payload.error)
       return {
         ...state,
         error: action.payload.error,
@@ -151,9 +158,10 @@ export function walletReducer(
       }
     }
 
-    case DISCONNECT_WALLET: {
+    case DISCONNECT_WALLET_SUCCESS: {
       return {
         ...state,
+        loading: loadingReducer(state.loading, action),
         error: null,
         data: null
       }

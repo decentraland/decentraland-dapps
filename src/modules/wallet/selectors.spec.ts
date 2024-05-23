@@ -268,4 +268,26 @@ describe('Wallet selectors', () => {
       })
     })
   })
+
+  describe('when getting if the wallet is being disconnected', () => {
+    describe("and the wallet isn't being disconnected", () => {
+      beforeEach(() => {
+        initialState.wallet.loading = []
+      })
+
+      it('should return false', () => {
+        expect(getLoading(initialState)).toEqual([])
+      })
+    })
+
+    describe('and the wallet is being disconnected', () => {
+      beforeEach(() => {
+        initialState.wallet.loading = [connectWalletRequest()]
+      })
+
+      it('should return true', () => {
+        expect(isConnecting(initialState)).toBe(true)
+      })
+    })
+  })
 })

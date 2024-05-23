@@ -6,8 +6,8 @@ import {
 } from '@dcl/single-sign-on-client'
 import {
   CONNECT_WALLET_SUCCESS,
-  DISCONNECT_WALLET,
-  DisconnectWalletAction
+  DISCONNECT_WALLET_SUCCESS,
+  DisconnectWalletSuccessAction
 } from '../wallet/actions'
 import { ConnectWalletSuccessAction } from '../wallet/actions'
 import {
@@ -30,7 +30,7 @@ export function createIdentitySaga(options: IdentitySagaConfig) {
   function* identitySaga() {
     yield takeLatest(GENERATE_IDENTITY_REQUEST, handleGetIdentity)
     yield takeLatest(CONNECT_WALLET_SUCCESS, handleConnectWalletSuccess)
-    yield takeLatest(DISCONNECT_WALLET, handleDisconnect)
+    yield takeLatest(DISCONNECT_WALLET_SUCCESS, handleDisconnect)
   }
 
   const { authURL } = options
@@ -63,7 +63,7 @@ export function createIdentitySaga(options: IdentitySagaConfig) {
     }
   }
 
-  function* handleDisconnect(_action: DisconnectWalletAction) {
+  function* handleDisconnect(_action: DisconnectWalletSuccessAction) {
     if (auxAddress) {
       localStorageClearIdentity(auxAddress)
     }

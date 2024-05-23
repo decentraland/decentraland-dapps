@@ -30,8 +30,8 @@ import {
   connectWalletRequest,
   ENABLE_WALLET_REQUEST,
   ENABLE_WALLET_SUCCESS,
-  DisconnectWalletAction,
-  DISCONNECT_WALLET,
+  DisconnectWalletRequestAction,
+  DISCONNECT_WALLET_REQUEST,
   FETCH_WALLET_REQUEST,
   FetchWalletRequestAction,
   fetchWalletSuccess,
@@ -48,7 +48,9 @@ import {
   switchNetworkFailure,
   SWITCH_NETWORK_SUCCESS,
   SwitchNetworkSuccessAction,
-  setAppChainId
+  setAppChainId,
+  disconnectWalletSuccess,
+  disconnectWalletFailure
 } from './actions'
 import { showToast } from '../toast'
 import { getSwitchChainErrorToast } from '../toast/toasts'
@@ -57,6 +59,7 @@ import { switchProviderChainId } from './utils/switchProviderChainId'
 import { buildWallet } from './utils/buildWallet'
 import { CreateWalletOptions, ProviderType, Wallet } from './types'
 import { getAppChainId, isConnected } from './selectors'
+import { isErrorWithMessage } from '../../lib'
 
 // Patch Samsung's Cucumber provider send to support promises
 const provider = (window as any).ethereum as ethers.providers.Web3Provider
@@ -103,7 +106,7 @@ export function* walletSaga() {
     takeEvery(ENABLE_WALLET_REQUEST, handleEnableWalletRequest),
     takeEvery(ENABLE_WALLET_SUCCESS, handleEnableWalletSuccess),
     takeEvery(FETCH_WALLET_REQUEST, handleFetchWalletRequest),
-    takeEvery(DISCONNECT_WALLET, handleDisconnectWallet),
+    takeEvery(DISCONNECT_WALLET_REQUEST, handleDisconnectWalletRequest),
     takeEvery(CONNECT_WALLET_SUCCESS, handleConnectWalletSuccess),
     takeEvery(SWITCH_NETWORK_REQUEST, handleSwitchNetworkRequest),
     takeEvery(SWITCH_NETWORK_SUCCESS, handleSwitchNetworkSuccess)
@@ -156,11 +159,18 @@ function* handleEnableWalletSuccess(_action: EnableWalletSuccessAction) {
   yield put(connectWalletRequest())
 }
 
-function* handleDisconnectWallet(_action: DisconnectWalletAction) {
+function* handleDisconnectWalletRequest(
+  _action: DisconnectWalletRequestAction
+) {
   try {
-    yield call(() => connection.disconnect())
+    yield call([connection, 'disconnect'])
+    yield put(disconnectWalletSuccess())
   } catch (error) {
-    console.error(error)
+    yield put(
+      disconnectWalletFailure(
+        isErrorWithMessage(error) ? error.message : 'Error disconnecting wallet'
+      )
+    )
   }
   // stop polling wallet balances
   polling = false

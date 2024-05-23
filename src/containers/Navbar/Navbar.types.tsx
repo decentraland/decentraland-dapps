@@ -3,7 +3,7 @@ import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { AuthIdentity } from '@dcl/crypto'
 import { NavbarProps as NavbarComponentProps } from 'decentraland-ui/dist/components/Navbar/Navbar.types'
 import {
-  disconnectWallet,
+  disconnectWalletRequest,
   switchNetworkRequest,
   SwitchNetworkRequestAction
 } from '../../modules/wallet/actions'
@@ -20,7 +20,7 @@ export type NavbarProps = NavbarComponentProps & {
   locale: string
   walletError: string | null
   onSwitchNetwork: typeof switchNetworkRequest
-  onSignOut: typeof disconnectWallet
+  onSignOut: typeof disconnectWalletRequest
   onSignIn: () => void
 }
 
@@ -29,6 +29,7 @@ export type MapStateProps = Pick<
   | 'manaBalances'
   | 'address'
   | 'isSignedIn'
+  | 'isDisconnecting'
   | 'isSigningIn'
   | 'chainId'
   | 'appChainId'

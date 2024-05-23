@@ -61,10 +61,14 @@ export async function getNetworkWeb3Provider(chainId: ChainId) {
 
 export async function getConnectedProvider(): Promise<Provider | null> {
   try {
-    const { provider } = await connection.tryPreviousConnection()
-    return provider ? provider : null
-  } catch (error) {
-    return null
+    return await connection.getProvider()
+  } catch (_e) {
+    try {
+      const { provider } = await connection.tryPreviousConnection()
+      return provider
+    } catch (error) {
+      return null
+    }
   }
 }
 
