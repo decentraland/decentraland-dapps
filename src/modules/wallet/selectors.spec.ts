@@ -2,6 +2,7 @@ import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import {
   connectWalletRequest,
+  disconnectWalletRequest,
   enableWalletRequest,
   switchNetworkRequest
 } from './actions'
@@ -21,7 +22,8 @@ import {
   isConnected,
   isConnecting,
   isEnabling,
-  isSwitchingNetwork
+  isSwitchingNetwork,
+  isDisconnecting
 } from './selectors'
 import { NetworkData, ProviderType, Wallet } from './types'
 import { Networks } from './types'
@@ -276,17 +278,17 @@ describe('Wallet selectors', () => {
       })
 
       it('should return false', () => {
-        expect(getLoading(initialState)).toEqual([])
+        expect(isDisconnecting(initialState)).toBe(false)
       })
     })
 
     describe('and the wallet is being disconnected', () => {
       beforeEach(() => {
-        initialState.wallet.loading = [connectWalletRequest()]
+        initialState.wallet.loading = [disconnectWalletRequest()]
       })
 
       it('should return true', () => {
-        expect(isConnecting(initialState)).toBe(true)
+        expect(isDisconnecting(initialState)).toBe(true)
       })
     })
   })
