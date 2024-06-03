@@ -5,7 +5,9 @@ import {
   CONNECT_WALLET_FAILURE,
   CONNECT_WALLET_REQUEST,
   CONNECT_WALLET_SUCCESS,
-  DISCONNECT_WALLET,
+  DISCONNECT_WALLET_FAILURE,
+  DISCONNECT_WALLET_REQUEST,
+  DISCONNECT_WALLET_SUCCESS,
   ENABLE_WALLET_FAILURE,
   ENABLE_WALLET_REQUEST,
   ENABLE_WALLET_SUCCESS,
@@ -21,7 +23,9 @@ import {
   connectWalletFailure,
   connectWalletRequest,
   connectWalletSuccess,
-  disconnectWallet,
+  disconnectWalletFailure,
+  disconnectWalletRequest,
+  disconnectWalletSuccess,
   enableWalletFailure,
   enableWalletRequest,
   enableWalletSuccess,
@@ -127,10 +131,30 @@ describe('when creating the action to signal a change network', () => {
   })
 })
 
-describe('when creating the action to signal a disconnect wallet', () => {
+describe('when creating the action to signal the start of a disconnect wallet request', () => {
   it('should return an object representing the action', () => {
-    expect(disconnectWallet()).toEqual({
-      type: DISCONNECT_WALLET,
+    expect(disconnectWalletRequest()).toEqual({
+      type: DISCONNECT_WALLET_REQUEST,
+      meta: undefined,
+      payload: undefined
+    })
+  })
+})
+
+describe('when creating the action to signal the failure of a disconnect wallet request', () => {
+  it('should return an object representing the action', () => {
+    expect(disconnectWalletFailure(error)).toEqual({
+      type: DISCONNECT_WALLET_FAILURE,
+      meta: undefined,
+      payload: { error }
+    })
+  })
+})
+
+describe('when creating the action to signal the success of a disconnect wallet request', () => {
+  it('should return an object representing the action', () => {
+    expect(disconnectWalletSuccess()).toEqual({
+      type: DISCONNECT_WALLET_SUCCESS,
       meta: undefined,
       payload: undefined
     })

@@ -6,13 +6,14 @@ import {
   getChainId,
   getAppChainId,
   getManaBalances,
-  isSwitchingNetwork
+  isSwitchingNetwork,
+  isDisconnecting
 } from '../../modules/wallet/selectors'
 import { getData as getProfiles } from '../../modules/profile/selectors'
 import { getError as getWalletError } from '../../modules/wallet/selectors'
 import { getLocale } from '../../modules/translation/selectors'
 import {
-  disconnectWallet,
+  disconnectWalletRequest,
   switchNetworkRequest
 } from '../../modules/wallet/actions'
 import { RootDispatch } from '../../types'
@@ -30,6 +31,7 @@ const mapState = (state: any): MapStateProps => {
     address: getAddress(state),
     locale: getLocale(state),
     isSignedIn: isConnected(state),
+    isDisconnecting: isDisconnecting(state),
     isSigningIn: isConnecting(state),
     appChainId: getAppChainId(state),
     isSwitchingNetwork: isSwitchingNetwork(state),
@@ -40,7 +42,7 @@ const mapState = (state: any): MapStateProps => {
 const mapDispatch = (dispatch: RootDispatch): MapDispatchProps => ({
   onSwitchNetwork: (chainId: ChainId, fromChainId: ChainId) =>
     dispatch(switchNetworkRequest(chainId, fromChainId)),
-  onSignOut: () => dispatch(disconnectWallet())
+  onSignOut: () => dispatch(disconnectWalletRequest())
 })
 
 const mergeProps = (

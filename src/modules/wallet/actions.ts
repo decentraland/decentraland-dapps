@@ -42,9 +42,24 @@ export const changeNetwork = (wallet: Wallet) =>
   action(CHANGE_NETWORK, { wallet })
 export type ChangeNetworkAction = ReturnType<typeof changeNetwork>
 
-export const DISCONNECT_WALLET = 'Disconnect'
-export const disconnectWallet = () => action(DISCONNECT_WALLET)
-export type DisconnectWalletAction = ReturnType<typeof disconnectWallet>
+export const DISCONNECT_WALLET_REQUEST = '[Request] Disconnect Wallet'
+export const DISCONNECT_WALLET_SUCCESS = '[Success] Disconnect Wallet'
+export const DISCONNECT_WALLET_FAILURE = '[Failure] Disconnect Wallet'
+
+export const disconnectWalletRequest = () => action(DISCONNECT_WALLET_REQUEST)
+export const disconnectWalletSuccess = () => action(DISCONNECT_WALLET_SUCCESS)
+export const disconnectWalletFailure = (error: string) =>
+  action(DISCONNECT_WALLET_FAILURE, { error })
+
+export type DisconnectWalletRequestAction = ReturnType<
+  typeof disconnectWalletRequest
+>
+export type DisconnectWalletSuccessAction = ReturnType<
+  typeof disconnectWalletSuccess
+>
+export type DisconnectWalletFailureAction = ReturnType<
+  typeof disconnectWalletFailure
+>
 
 export const FETCH_WALLET_REQUEST = '[Request] Fetch Wallet'
 export const FETCH_WALLET_SUCCESS = '[Success] Fetch Wallet'

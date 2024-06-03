@@ -4,6 +4,7 @@ import { isLoadingType } from '../loading/selectors'
 import { UserMenuProps } from 'decentraland-ui/dist/components/UserMenu/UserMenu.types'
 import {
   CONNECT_WALLET_REQUEST,
+  DISCONNECT_WALLET_REQUEST,
   ENABLE_WALLET_REQUEST,
   SWITCH_NETWORK_REQUEST
 } from './actions'
@@ -19,6 +20,8 @@ export const isConnecting = (state: any) =>
   isLoadingType(getLoading(state), CONNECT_WALLET_REQUEST)
 export const isEnabling = (state: any) =>
   isLoadingType(getLoading(state), ENABLE_WALLET_REQUEST)
+export const isDisconnecting = (state: any) =>
+  isLoadingType(getLoading(state), DISCONNECT_WALLET_REQUEST)
 
 export const getAddress = (state: any) =>
   isConnected(state) ? getData(state)!.address : undefined

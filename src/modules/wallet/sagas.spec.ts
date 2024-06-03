@@ -2,7 +2,7 @@ import { expectSaga } from 'redux-saga-test-plan'
 import * as matchers from 'redux-saga-test-plan/matchers'
 import { call, delay, put, race, take } from 'redux-saga/effects'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
-import { Provider } from 'decentraland-connect'
+import { Provider, connection } from 'decentraland-connect'
 import { SWITCH_NETWORK_TIMEOUT, createWalletSaga, getAccount } from './sagas'
 import {
   FETCH_WALLET_FAILURE,
@@ -10,6 +10,9 @@ import {
   connectWalletFailure,
   connectWalletRequest,
   connectWalletSuccess,
+  disconnectWalletFailure,
+  disconnectWalletRequest,
+  disconnectWalletSuccess,
   enableWalletFailure,
   enableWalletRequest,
   enableWalletSuccess,
@@ -193,6 +196,35 @@ describe('Wallet sagas', () => {
             .dispatch(switchNetworkRequest(ChainId.ETHEREUM_MAINNET))
             .run({ silenceTimeout: true })
         })
+      })
+    })
+  })
+
+  describe('when handling the request action to disconnect a wallet', () => {
+    describe('and the disconnection fails', () => {
+      let error: string
+      beforeEach(() => {
+        error = 'Could not disconnect wallet'
+      })
+
+      it('should dispatch an action to signal the failure', () => {
+        return expectSaga(walletSaga)
+          .provide([
+            [call([connection, 'disconnect']), Promise.reject(new Error(error))]
+          ])
+          .put(disconnectWalletFailure(error))
+          .dispatch(disconnectWalletRequest())
+          .run({ silenceTimeout: true })
+      })
+    })
+
+    describe('and the disconnection succeeds', () => {
+      it('should dispatch an action to signal the success', () => {
+        return expectSaga(walletSaga)
+          .provide([[call([connection, 'disconnect']), Promise.resolve()]])
+          .put(disconnectWalletSuccess())
+          .dispatch(disconnectWalletRequest())
+          .run({ silenceTimeout: true })
       })
     })
   })
