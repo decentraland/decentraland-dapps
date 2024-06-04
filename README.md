@@ -851,7 +851,7 @@ export function* rootSaga() {
 
 ### Page tracking
 
-In order to track all page change you will need to use analytics `page` function. There is already an exported hook you can use the will be triggered everytime a location change in the app
+In order to track all page change you will need to use the analytics `page` function. There is already an exported hook you can use the will be triggered everytime a location change in the app
 
 Note: It is important that this hook is triggered in any component inside the router provider.
 

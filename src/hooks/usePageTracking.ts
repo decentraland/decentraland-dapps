@@ -8,7 +8,6 @@ export function usePageTracking() {
   useEffect(() => {
     const analytics = getAnalytics()
     if (analytics) {
-      console.log({ location })
       analytics.page()
     }
   }, [location])
