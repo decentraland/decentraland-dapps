@@ -849,21 +849,18 @@ export function* rootSaga() {
 }
 ```
 
-This uses by default the `'@@router/LOCATION_CHANGE'` action type to track page changes. If you need to use a different action type, you can do the following:
+### Page tracking
+
+In order to track all page change you will need to use analytics `page` function. There is already an exported hook you can use the will be triggered everytime a location change in the app
+
+Note: It is important that this hook is triggered in any component inside the router provider.
 
 ```ts
-import { all } from 'redux-saga/effects'
-import { createAnalyticsSaga } from 'decentraland-dapps/dist/modules/analytics/sagas'
+import usePageTracking from 'decentraland-dapps/dist/hooks/usePageTracking'
 
-const analyticsSaga = createAnalyticsSaga({
-  LOCATION_CHANGE: 'custom action type'
-})
-
-export function* rootSaga() {
-  yield all([
-    analyticsSaga()
-    // your other sagas
-  ])
+function Routes() {
+  usePageTracking()
+  /// Route rendering
 }
 ```
 
@@ -1600,4 +1597,3 @@ export default class MyComponent extends React.PureComponent {
   }
 }
 ```
-

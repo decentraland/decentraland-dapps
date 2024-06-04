@@ -1,4 +1,4 @@
-import { takeLatest, takeEvery, ForkEffect } from 'redux-saga/effects'
+import { takeLatest, ForkEffect } from 'redux-saga/effects'
 import { connection } from 'decentraland-connect'
 import { getAnalytics, trackConnectWallet } from './utils'
 import {
@@ -6,19 +6,9 @@ import {
   ConnectWalletSuccessAction
 } from '../wallet/actions'
 
-export type AnalyticsSagaOptions = {
-  LOCATION_CHANGE: string
-}
-
-export function createAnalyticsSaga(
-  options: AnalyticsSagaOptions = {
-    LOCATION_CHANGE: '@@router/LOCATION_CHANGE'
-  }
-) {
-  const { LOCATION_CHANGE } = options
+export function createAnalyticsSaga() {
   return function* analyticsSaga(): IterableIterator<ForkEffect> {
     yield takeLatest(CONNECT_WALLET_SUCCESS, handleConnectWalletSuccess)
-    yield takeEvery(LOCATION_CHANGE, handleLocationChange)
   }
 }
 
@@ -39,14 +29,5 @@ function handleConnectWalletSuccess(action: ConnectWalletSuccessAction) {
       providerType: wallet.providerType,
       walletName: connection.getWalletName()
     })
-  }
-}
-
-// Track pages
-function handleLocationChange() {
-  const analytics = getAnalytics()
-
-  if (analytics) {
-    analytics.page()
   }
 }
