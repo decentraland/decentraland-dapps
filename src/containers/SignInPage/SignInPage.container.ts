@@ -4,6 +4,7 @@ import { isEnabled } from '../../modules/translation/selectors'
 import {
   isConnecting,
   isConnected,
+  getData as getWallet,
   getError
 } from '../../modules/wallet/selectors'
 import {
@@ -14,13 +15,18 @@ import {
 } from './SignInPage.types'
 import SignInPage from './SignInPage'
 import { openModal } from '../../modules/modal/actions'
+import { localStorageGetIdentity } from '@dcl/single-sign-on-client'
 
-const mapState = (state: any): MapStateProps => ({
-  isConnecting: isConnecting(state),
-  isConnected: isConnected(state),
-  hasError: !!getError(state),
-  hasTranslations: isEnabled(state)
-})
+const mapState = (state: any): MapStateProps => {
+  const wallet = getWallet(state)
+  const identity = wallet ? localStorageGetIdentity(wallet?.address) : null
+  return {
+    isConnecting: isConnecting(state),
+    isConnected: isConnected(state) && !!identity,
+    hasError: !!getError(state),
+    hasTranslations: isEnabled(state)
+  }
+}
 
 const mapDispatch = (
   dispatch: MapDispatch,
