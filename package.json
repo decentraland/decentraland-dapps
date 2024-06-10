@@ -61,7 +61,6 @@
     "@types/redux-storage-engine-localstorage": "^1.1.1",
     "@types/uuid": "^9.0.5",
     "@types/ws": "^8.5.3",
-    "connected-react-router": "^6.9.1",
     "dcl-tslint-config-standard": "^1.0.1",
     "history": "^4.10.1",
     "husky": "^0.14.3",
@@ -90,7 +89,6 @@
     "validate-commit-message": "^3.0.1"
   },
   "peerDependencies": {
-    "connected-react-router": "^6.9.1",
     "history": "^4.10.1",
     "react": "^17.0.2",
     "react-redux": "^7.2.4",

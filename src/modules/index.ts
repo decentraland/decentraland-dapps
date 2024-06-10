@@ -4,7 +4,6 @@ import * as features from './features'
 import * as gateway from './gateway'
 import * as identity from './identity'
 import * as loading from './loading'
-import * as location from './location'
 import * as modal from './modal'
 import * as profile from './profile'
 import * as toast from './toast'
@@ -19,7 +18,6 @@ export {
   gateway,
   identity,
   loading,
-  location,
   modal,
   profile,
   toast,
