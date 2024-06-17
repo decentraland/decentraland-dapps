@@ -30,7 +30,15 @@ export class NotificationsAPI extends BaseClient {
     const { notifications } = await this.fetch<{
       notifications: Array<DCLNotification>
     }>(
-      `/notifications${params.toString().length ? `?${params.toString()}` : ''}`
+      `/notifications${
+        params.toString().length ? `?${params.toString()}` : ''
+      }`,
+      {
+        metadata: {
+          signer: 'dcl:navbar',
+          intent: 'dcl:navbar:see-notifications'
+        }
+      }
     )
 
     return notifications.map(parseNotification)
@@ -40,7 +48,11 @@ export class NotificationsAPI extends BaseClient {
     await this.fetch('/notifications/read', {
       method: 'PUT',
       body: JSON.stringify({ notificationIds: ids }),
-      metadata: { notificationIds: ids },
+      metadata: {
+        notificationIds: ids,
+        signer: 'dcl:navbar',
+        intent: 'dcl:navbar:read-notifications'
+      },
       headers: { 'Content-Type': 'application/json' }
     })
   }
@@ -50,14 +62,23 @@ export class NotificationsAPI extends BaseClient {
       Subscription & {
         unconfirmedEmail?: string
       }
-    >('/subscription')
+    >('/subscription', {
+      metadata: {
+        signer: 'dcl:account',
+        intent: 'dcl:account:manage-subscription'
+      }
+    })
   }
 
   async putSubscription(subscriptionDetails: SubscriptionDetails) {
     return this.fetch<Subscription>('/subscription', {
       method: 'PUT',
       body: JSON.stringify(subscriptionDetails),
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
+      metadata: {
+        signer: 'dcl:account',
+        intent: 'dcl:account:manage-subscription'
+      }
     })
   }
 
@@ -65,7 +86,11 @@ export class NotificationsAPI extends BaseClient {
     return this.fetch('/set-email', {
       method: 'PUT',
       body: JSON.stringify({ email }),
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
+      metadata: {
+        signer: 'dcl:account',
+        intent: 'dcl:account:manage-subscription'
+      }
     })
   }
 
