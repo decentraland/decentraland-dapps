@@ -1,0 +1,272 @@
+{
+  "@dapps": {
+    "button": {
+      "network_not_supported": "이 작업을 수행하려면 {expectedChainName}에 연결해야 합니다."
+    },
+    "footer": {
+      "dropdown": {
+        "en": "영어",
+        "es": "스페인 사람",
+        "fr": "프랑스 국민",
+        "ja": "일본어",
+        "ko": "한국어",
+        "zh": "중국말"
+      },
+      "links": {
+        "content": "콘텐츠 정책",
+        "ethics": "윤리 강령",
+        "home": "집",
+        "privacy": "개인 정보 정책",
+        "terms": "이용 약관",
+        "feature": "기능 요청"
+      }
+    },
+    "navbar": {
+      "account": {
+        "connecting": "연결 중 ...",
+        "signIn": "로그인"
+      },
+      "menu": {
+        "avatars": "Avatars",
+        "agora": "Agora",
+        "blog": "Blog",
+        "docs": {
+          "main": "Docs",
+          "players": "Players",
+          "creators": "Content Creators",
+          "contributors": "Contributors",
+          "studios": "Studios"
+        },
+        "marketplace": {
+          "main": "Marketplace",
+          "overview": "Overview",
+          "collectibles": "Collectibles",
+          "land": "LAND",
+          "names": "NAMEs",
+          "myAssets": "My Assets"
+        },
+        "builder": {
+          "main": "Builder",
+          "overview": "Overview",
+          "collections": "Collections",
+          "scenes": "Scenes",
+          "land": "Land",
+          "names": "Names",
+          "worlds": "Worlds"
+        },
+        "events": "Events",
+        "dao": {
+          "main": "DAO",
+          "overview": "Overview",
+          "governance": "Governance",
+          "transparency": "Transparency",
+          "grants": "Grants"
+        },
+        "places": {
+          "main": "Places",
+          "overview": "Overview",
+          "places": "Genesis City",
+          "worlds": "Worlds",
+          "faq": "FAQ"
+        }
+      },
+      "wrong_network": {
+        "header": "잘못된 네트워크",
+        "message": "이 앱을 사용하려면 {expectedChainName} 네트워크에 연결되어 있어야하지만 현재 {currentChainName} 네트워크에 연결되어 있습니다.",
+        "message_unknown_network": "이 앱을 사용하려면 {expectedChainName}에 연결해야 합니다. 계속하려면 네트워크를 전환하세요.",
+        "switch_button": "{chainName}(으)로 전환"
+      }
+    },
+    "sign_in": {
+      "connect": "잇다",
+      "connected": "연결됨",
+      "connecting": "연결 중 ...",
+      "error": "지갑에 연결할 수 없습니다.",
+      "get_started": "시작하다",
+      "options": {
+        "desktop": "{metamask_link} 확장 또는 {ledger_nano_link}과 같은 하드웨어 지갑을 사용할 수 있습니다.",
+        "mobile": "{coinbase_link} 또는 {imtoken_link}과 같은 모바일 브라우저를 사용할 수 있습니다.",
+        "samsung": "{samsung_link}를 사용할 수 있습니다."
+      },
+      "modal": {
+        "title": "로그인",
+        "subtitle": "연결할 방법 선택",
+        "using": {
+          "browser_extension": "브라우저 확장 사용",
+          "email": "이메일 사용",
+          "mobile": "모바일 지갑 사용",
+          "metamask_mobile": "메타마스크 앱 사용"
+        }
+      }
+    },
+    "user_menu": {
+      "guest": "이름이 없습니다",
+      "my_lists": "내 목록",
+      "my_assets": "내 자산",
+      "account": "계정 설정",
+      "activity": "활동",
+      "profile": "프로필",
+      "view_profile": "프로필 보기",
+      "sign_in": "로그인",
+      "sign_out": "로그아웃",
+      "marketplace_authorizations": "마켓플레이스의 승인",
+      "jump_in": "점프 인"
+    },
+    "toasts": {
+      "meta_transactions": {
+        "contract_account_error": {
+          "title": "지갑이 지원되지 않음",
+          "body": "스마트 계약 지갑은 메타 거래를 지원하지 않습니다. 네트워크를 Polygon으로 전환하고 일반 거래를 보낼 수 있습니다."
+        },
+        "invalid_address_error": {
+          "제목": "잘못된 주소",
+          "body": "메타 트랜잭션에 사용할 수 있는 계약 주소가 없습니다. 네트워크를 Polygon으로 전환하고 일반 트랜잭션을 보낼 수 있습니다."
+        },
+        "sale_price_too_low_error": {
+          "title": "가격이 너무 저렴하다",
+          "body": "이 메타 거래에 대한 가격이 너무 낮습니다. 네트워크를 Polygon으로 전환하고 일반 트랜잭션을 보낼 수 있습니다."
+        },
+        "unknown_error": {
+          "title": "문제가 발생했습니다",
+          "body": "메타 트랜잭션을 보내는 동안 예기치 않은 오류가 발생했습니다. 네트워크를 Polygon으로 전환하고 일반 트랜잭션을 보내보십시오."
+        },
+        "high_congestion_error": {
+          "title": "높은 혼잡",
+          "body": "Polygon Network <a>가스 가격</a>이 너무 높습니다! 나중에 다시 시도하거나 네트워크를 Polygon으로 전환하고 MATIC으로 네트워크 수수료를 지불하십시오."
+        }
+      },
+      "switch_network": "{네트워크}로 전환",
+      "learn_more": "자세히 알아보기"
+    },
+    "network_alert": {
+      "title": "지갑이 Polygon에 연결되었습니다",
+      "content": "이 네트워크를 사용하여 거래의 가스를 처리합니다(예: 1 MANA 미만의 항목을 구매할 때). 끝나면 다시 전환하십시오. <link>자세히 알아보기</link>",
+      "action": "이더리움 메인넷으로 전환"
+    },
+    "authorization_modal": {
+      "close": "Close",
+      "waiting_wallet": "지갑의 거래를 확인하십시오",
+      "waiting_confirmation": "처리 승인",
+      "done": "완료",
+      "title": "당신을 완성하십시오 {action}",
+      "spending_cap_error": "품목 가격 {price} MANA 이상과 동일한 캡을 설정해야합니다.",
+      "revoke_cap_error": "이전 제품을 취소하기 위해 0 마나의 지출 한도를 설정해야합니다.",
+      "generic_error": "뭔가 잘못되었습니다",
+      "insufficient_amount_error": {
+        "message": "지출 한도는 {price} 마나의 구매 금액을 충당하기에 충분하지 않습니다.진행하려면 지출 한도를 동일하거나 더 높은 조정하십시오.현재 지출 한도를 취소하고 적절한 한도로 다시 시도하십시오.",
+        "action": "취소"
+      },
+      "authorize_mana": {
+        "title": "먼저 승인하십시오<contract></contract> Decentraland에서 귀하를 대신하여 Mana를 운영하는 계약.",
+        "description": "일부 지갑에는 맞춤형 마나 지출 한도를 설정해야합니다.품목 가격 {price} mana 또는 지금 또는 나중에 지출하기에 편안한 금액을 입력하십시오.언제든지 한도를 변경할 수 있습니다.",
+        "action": "승인",
+        "message": "품목 가격 {price} 마나 이상과 동일한 캡을 설정해야합니다."
+      },
+      "authorize_nft": {
+        "title": "먼저 승인하십시오<contract></contract> Decentraland에서 귀하를 대신하여 NFT를 운영하는 계약",
+        "action": "승인"
+      },
+      "confirm_transaction": {
+        "title": "{action} 항목에 대한 트랜잭션을 확인하십시오",
+        "action": "거래 확인"
+      },
+      "revoke_cap": {
+        "title": "현재 지출 한도를 취소하십시오",
+        "description": "현재 지출 한도는 {price} Mana보다 낮습니다.새로운 지출 한도를 만들기 전에 현재 지출 한도를 취소해야합니다.",
+        "action": "승인"
+      },
+      "set_cap": {
+        "title": "새로운 지출 한도를 설정하십시오",
+        "description": "품목 가격 {price} mana 또는 지금 또는 나중에 지출하기에 편안한 금액을 입력하십시오.언제든지 한도를 변경할 수 있습니다.",
+        "action": "승인"
+      },
+      "action": "행동",
+      "title_action": "행동"
+    },
+    "asset_card": {
+      "listings": "컬렉션 아이템",
+      "listing": "컬렉션 아이템",
+      "available_for_mint": "제작자에게 직접 구매 가능",
+      "cheapest_listing": "가장 저렴한 컬렉션 아이템",
+      "not_for_sale": "판매 불가",
+      "owners": "소유자",
+      "owner": "소유자",
+      "cheapest_option": "가장 저렴한 옵션",
+      "cheapest_option_range": "범위 내 가장 저렴한 옵션",
+      "most_expensive": "가장 비싼 가격",
+      "most_expensive_range": "범위 내 가장 비싼 가격",
+      "also_minting": "제작자에게 직접 구매 가능"
+    },
+    "rarities_filter": {
+      "title": "희박",
+      "tooltip": "Rarity는 민트를 사용할 수있는 총 NFT의 총 수를 결정합니다.",
+      "count_rarities": "{count} {count, plural, one {희박} other {희귀 성}}",
+      "all_rarities": "모든 희귀 성"
+    },
+    "rarities": {
+      "unique": "고유한",
+      "mythic": "신화",
+      "exotic": "이국적인",
+      "legendary": "전설",
+      "epic": "서사시",
+      "rare": "희귀한",
+      "uncommon": "드문",
+      "common": "흔한"
+    },
+    "rarities_description": {
+      "unique": "성배 같은: 독특한",
+      "mythic": "운이 좋은 소수의 경우: 최대 10",
+      "exotic": "한정 공급: 최대 50개",
+      "legendary": "한정 공급: 최대 100개",
+      "epic": "최대 공급량: 1000",
+      "rare": "최대 공급량: 5000",
+      "uncommon": "최대 공급량: 10,000",
+      "common": "최대 공급량: 100,000"
+    },
+    "asset_status_filter": {
+      "title": "상태",
+      "on_sale": "판매 중",
+      "on_sale_tooltip": "마이닝 및/또는 사용 가능한 목록이있는 품목이 포함되어 있습니다.",
+      "only_minting": "마이닝에만 사용할 수 있습니다",
+      "only_minting_tooltip": "마이닝에 사용할 수있는 품목 만 포함합니다 (제작자로부터 직접 구매).",
+      "only_listing": "목록 만",
+      "only_listing_tooltip": "재판매중인 항목 만 포함합니다.",
+      "not_for_sale": "비매품",
+      "not_for_sale_tooltip": "마이닝 할 수없는 모든 품목 (제작자로부터 직접 구매) 또는 개방형 목록이 포함되어 있습니다."
+    },
+    "nft_card": {
+      "category": {
+        "body_shape": "체형",
+        "earring": "귀걸이",
+        "eyebrows": "눈썹",
+        "eyes": "눈",
+        "eyewear": "안경",
+        "facial_hair": "얼굴 털",
+        "feet": "피트",
+        "head": "머리",
+        "hair": "머리카락",
+        "hat": "모자",
+        "helmet": "헬멧",
+        "lower_body": "하체",
+        "mask": "마스크",
+        "mouth": "입",
+        "tiara": "보석 달린 머리 장식",
+        "top_head": "상단 머리",
+        "upper_body": "상체",
+        "skin": "피부",
+        "hands_wear": "핸드웨어"
+      },
+      "with_sound": "음악 들으면서",
+      "smart": "똑똑한",
+      "body_shape": {
+        "male": "남성",
+        "female": "여성",
+        "unisex": "유엔"
+      },
+      "play_mode": {
+        "simple": "한 번 플레이하십시오",
+        "loop": "연주 루프"
+      }
+    }
+  }
+}

@@ -1,0 +1,272 @@
+{
+  "@dapps": {
+    "footer": {
+      "button": {
+        "network_not_supported": "Vous devez être connecté à {expectedChainName} pour effectuer cette action"
+      },
+      "dropdown": {
+        "en": "Anglais",
+        "es": "Espanol",
+        "fr": "Français",
+        "ja": "Japonais",
+        "ko": "Coréen",
+        "zh": "Chinois"
+      },
+      "links": {
+        "content": "Contenu",
+        "ethics": "Code d'éthique",
+        "home": "Accueil",
+        "privacy": "Confidentialité",
+        "terms": "Conditions d'utilisation",
+        "feature": "Demande de fonctionnalité"
+      }
+    },
+    "navbar": {
+      "account": {
+        "connecting": "De liaison...",
+        "signIn": "Se connecter"
+      },
+      "menu": {
+        "avatars": "Avatars",
+        "agora": "Agora",
+        "blog": "Blog",
+        "docs": {
+          "main": "Docs",
+          "players": "Players",
+          "creators": "Content Creators",
+          "contributors": "Contributors",
+          "studios": "Studios"
+        },
+        "marketplace": {
+          "main": "Marketplace",
+          "overview": "Overview",
+          "collectibles": "Collectibles",
+          "land": "LAND",
+          "names": "NAMEs",
+          "myAssets": "My Assets"
+        },
+        "builder": {
+          "main": "Builder",
+          "overview": "Overview",
+          "collections": "Collections",
+          "scenes": "Scenes",
+          "land": "Land",
+          "names": "Names",
+          "worlds": "Worlds"
+        },
+        "events": "Events",
+        "dao": {
+          "main": "DAO",
+          "overview": "Overview",
+          "governance": "Governance",
+          "transparency": "Transparency",
+          "grants": "Grants"
+        },
+        "places": {
+          "main": "Places",
+          "overview": "Overview",
+          "places": "Genesis City",
+          "worlds": "Worlds",
+          "faq": "FAQ"
+        }
+      },
+      "wrong_network": {
+        "header": "Mauvais réseau",
+        "message": "Vous devez être connecté au réseau {expectedChainName} pour utiliser cette application, mais vous êtes actuellement connecté au réseau {currentChainName}.",
+        "message_unknown_network": "Vous devez être connecté à {expectedChainName} pour utiliser cette application, veuillez changer de réseau pour continuer.",
+        "switch_button": "Passer à {chainName}"
+      }
+    },
+    "sign_in": {
+      "connect": "Relier",
+      "connected": "Connecté",
+      "connecting": "De liaison...",
+      "error": "Impossible de se connecter au portefeuille.",
+      "get_started": "Commencer",
+      "options": {
+        "desktop": "Vous pouvez utiliser l'extension {metamask_link} ou un portefeuille matériel comme {ledger_nano_link}.",
+        "mobile": "Vous pouvez utiliser des navigateurs mobiles tels que {coinbase_link} ou {imtoken_link}.",
+        "samsung": "Vous pouvez utiliser {samsung_link}."
+      },
+      "modal": {
+        "title": "Se connecter",
+        "subtitle": "Choisissez une méthode de connexion",
+        "using": {
+          "browser_extension": "Utiliser une extension de navigateur",
+          "email": "Utiliser votre email",
+          "mobile": "Utiliser votre portefeuille mobile",
+          "metamask_mobile": "Utilisation de l'application MetaMask"
+        }
+      }
+    },
+    "user_menu": {
+      "guest": "Anonyme",
+      "my_lists": "Mes listes",
+      "my_assets": "Mes actifs",
+      "account": "Paramètres du compte",
+      "activity": "Activité",
+      "profile": "Profil",
+      "view_profile": "Voir le profil",
+      "sign_in": "Sign In",
+      "sign_out": "Sign out",
+      "marketplace_authorizations": "Autorisations de la Marketplace",
+      "jump_in": "Jump In"
+    },
+    "toasts": {
+      "meta_transactions": {
+        "contract_account_error": {
+          "title": "Portefeuille non pris en charge",
+          "body": "Les portefeuilles de contrats intelligents ne sont pas pris en charge pour les méta-transations. Vous pouvez basculer votre réseau vers Polygon et envoyer une transaction régulière."
+        },
+        "invalid_address_error": {
+          "title": "Adresse invalide",
+          "body": "L'adresse du contrat n'est pas disponible pour les méta-transactions. Vous pouvez basculer votre réseau vers Polygon et envoyer une transaction régulière."
+        },
+        "sale_price_too_low_error": {
+          "title": "Prix trop bas",
+          "body": "Le prix est trop bas pour cette méta-transaction. Vous pouvez basculer votre réseau vers Polygon et envoyer une transaction régulière."
+        },
+        "unknown_error": {
+          "title": "Quelque chose s'est mal passé",
+          "body": "Une erreur inattendue s'est produite lors de l'envoi de la méta-transaction. Vous pouvez basculer votre réseau vers Polygon et essayer d'envoyer une transaction normale."
+        },
+        "high_congestion_error": {
+          "title": "Forte congestion",
+          "body": "Les <a>prix du gaz</a> du réseau Polygon sont trop élevés! Veuillez patienter et réessayer plus tard, ou basculez votre réseau vers Polygon et payez les frais de gaz avec MATIC."
+        }
+      },
+      "switch_network": "Passer à {network}",
+      "learn_more": "En savoir plus"
+    },
+    "network_alert": {
+      "title": "Votre portefeuille est connecté au Polygon",
+      "content": "Utilisez ce réseau pour couvrir le gaz d'une transaction (comme lors de l'achat d'articles inférieurs à 1 MANA). Revenez en arrière lorsque vous avez terminé. <link>En savoir plus</link>",
+      "action": "Passer à Ethereum Mainnet"
+    },
+    "authorization_modal": {
+      "close": "Fermer",
+      "waiting_wallet": "Confirmez la transaction sur votre portefeuille",
+      "waiting_confirmation": "Autorisation de traitement",
+      "done": "Fait",
+      "title": "Complétez votre {action}",
+      "spending_cap_error": "N'oubliez pas de définir un plafond égal au prix de l'article {price} MANA ou plus.",
+      "revoke_cap_error": "N'oubliez pas de définir un plafond de dépenses de 0 MANA afin de révoquer votre précédent.",
+      "generic_error": "Quelque chose s'est mal passé",
+      "insufficient_amount_error": {
+        "message": "Votre plafond de dépenses n'est pas suffisant pour couvrir le montant d'achat de {price} MANA. Pour continuer, veuillez ajuster votre plafond de dépenses égal ou supérieur.Révoquez le plafond de dépenses actuel et réessayez avec une limite appropriée.",
+        "action": "Revoke"
+      },
+      "authorize_mana": {
+        "title": "Tout d'abord, autorisez le <contract></contract> Contrat pour opérer MANA en votre nom à Decentraland. ",
+        "description": "Gardez à l'esprit que certains portefeuilles nécessitent de définir une limite de dépenses de mana personnalisée.Entrez le prix de l'article{price} Mana ou une quantité plus élevée avec laquelle vous êtes à l'aise pour dépenser maintenant ou plus tard.Vous pouvez modifier la limite à tout moment.",
+        "action": "Autoriser",
+        "message": "N'oubliez pas de définir un plafond égal au prix de l'article {price} Mana ou plus."
+      },
+      "authorize_nft": {
+        "title": "Tout d'abord, autorisez le <contract></contract> Contrat pour exploiter NFT en votre nom à Decentraland",
+        "action": "Autoriser"
+      },
+      "confirm_transaction": {
+        "title": "Confirmer la transaction à {action}l'articlem",
+        "action": "Confirmer la transaction"
+      },
+      "revoke_cap": {
+        "title": "Révoquez votre plafond de dépenses actuel",
+        "description": "Votre plafond de dépenses actuel est inférieur à {price} mana.Vous devrez révoquer votre plafond de dépenses actuel avant d'en faire un nouveau.",
+        "action": "Autoriser"
+      },
+      "set_cap": {
+        "title": "Définir un nouveau plafond de dépenses",
+        "description": "Entrez le prix de l'article {price} ou un montant plus élevé avec lequel vous êtes à l'aise pour dépenser maintenant ou plus tard.Vous pouvez modifier la limite à tout moment.",
+        "action": "Autoriser"
+      },
+      "action": "action",
+      "title_action": "action"
+    },
+    "asset_card": {
+      "listings": "Objets de collection",
+      "listing": "Objet de collection",
+      "available_for_mint": "Disponible à l'achat direct auprès du créateur",
+      "cheapest_listing": "Objet de collection le moins cher",
+      "not_for_sale": "Non disponible à la vente",
+      "owners": "Propriétaires",
+      "owner": "Propriétaire",
+      "cheapest_option": "Option la moins chère",
+      "cheapest_option_range": "Option la moins chère dans la fourchette",
+      "most_expensive": "Le plus cher",
+      "most_expensive_range": "Le plus cher dans la fourchette",
+      "also_minting": "Disponible à l'achat direct auprès du créateur"
+    },
+    "rarities_filter": {
+      "title": "Rareté",
+      "tooltip": "La rareté détermine le nombre total de NFT qui peuvent être frappés",
+      "count_rarities": "{count} {count, plural, one {rareté} other {raretés}}",
+      "all_rarities": "Toutes les raretés"
+    },
+    "rarities": {
+      "unique": "unique",
+      "mythic": "Mythique",
+      "exotic": "Exotique",
+      "legendary": "Légendaire",
+      "epic": "Epic",
+      "rare": "Rare",
+      "uncommon": "Peu commun",
+      "common": "Commun"
+    },
+    "rarities_description": {
+      "unique": "Comme le Graal : unique en son genre",
+      "mythic": "Pour les plus chanceux : max 10",
+      "exotic": "Quantité limitée : max 50",
+      "legendary": "Quantité limitée : max 100",
+      "epic": "Approvisionnement maximum : 1000",
+      "rare": "Approvisionnement maximum : 5000",
+      "uncommon": "Approvisionnement maximum : 100 000",
+      "common": "Approvisionnement maximum : 100 000"
+    },
+    "asset_status_filter": {
+      "title": "Statut",
+      "on_sale": "En soldes",
+      "on_sale_tooltip": "Comprend des articles disponibles pour la frappe et / ou avec les listes disponibles.",
+      "only_minting": "Seulement disponible pour la presse",
+      "only_minting_tooltip": "Ne comprend que des articles disponibles pour la frappe (acheter directement auprès des créateurs).",
+      "only_listing": "Uniquement les listes",
+      "only_listing_tooltip": "Inclut uniquement les articles qui sont en cours de revend.",
+      "not_for_sale": "Pas à vendre",
+      "not_for_sale_tooltip": "Comprend tous les articles qui ne sont pas disponibles pour la frappe (achetant directement auprès des créateurs) ou ont des listes ouvertes."
+    },
+    "nft_card": {
+      "category": {
+        "body_shape": "Forme du corps",
+        "earring": "Boucle d'oreille",
+        "eyebrows": "Les sourcils",
+        "eyes": "Yeux",
+        "eyewear": "Lunettes",
+        "facial_hair": "Poils",
+        "feet": "Pieds",
+        "head": "Tête",
+        "hair": "Cheveux",
+        "hat": "Chapeau",
+        "helmet": "Casque",
+        "lower_body": "Bas du corps",
+        "mask": "Masque",
+        "mouth": "Bouche",
+        "tiara": "Tiare",
+        "top_head": "Tête supérieure",
+        "upper_body": "Haut du corps",
+        "skin": "Peau",
+        "hands_wear": "Vêtements à main"
+      },
+      "with_sound": "Avec son",
+      "smart": "Interactive",
+      "body_shape": {
+        "male": "Femelle",
+        "female": "Femelle",
+        "unisex": "Unisexe"
+      },
+      "play_mode": {
+        "simple": "Jouer une fois",
+        "loop": "Boucle de jeu"
+      }
+    }
+  }
+}
