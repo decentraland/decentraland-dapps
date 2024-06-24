@@ -1,0 +1,363 @@
+{
+  "@dapps": {
+    "button": {
+      "network_not_supported": "Debes conectarte a {expectedChainName} para realizar esta acción"
+    },
+    "footer": {
+      "dropdown": {
+        "en": "Inglés",
+        "es": "Español",
+        "fr": "Francés",
+        "ja": "Japonés",
+        "ko": "Coreano",
+        "zh": "Chino"
+      },
+      "links": {
+        "content": "Política de contenido",
+        "ethics": "Código de Ética",
+        "home": "Inicio",
+        "privacy": "Política de privacidad",
+        "terms": "Términos de Uso",
+        "feature": "Solicitud de funcionalidad"
+      }
+    },
+    "navbar": {
+      "account": {
+        "connecting": "Conectando...",
+        "signIn": "Conectar"
+      },
+      "menu": {
+        "avatars": "Avatars",
+        "agora": "Agora",
+        "blog": "Blog",
+        "docs": {
+          "main": "Docs",
+          "players": "Players",
+          "creators": "Content Creators",
+          "contributors": "Contributors",
+          "studios": "Studios"
+        },
+        "marketplace": {
+          "main": "Marketplace",
+          "overview": "Overview",
+          "collectibles": "Collectibles",
+          "land": "LAND",
+          "names": "NAMEs",
+          "myAssets": "My Assets"
+        },
+        "builder": {
+          "main": "Builder",
+          "overview": "Overview",
+          "collections": "Collections",
+          "scenes": "Scenes",
+          "land": "Land",
+          "names": "Names",
+          "worlds": "Worlds"
+        },
+        "events": "Events",
+        "dao": {
+          "main": "DAO",
+          "overview": "Overview",
+          "governance": "Governance",
+          "transparency": "Transparency",
+          "grants": "Grants"
+        },
+        "places": {
+          "main": "Places",
+          "overview": "Overview",
+          "places": "Genesis City",
+          "worlds": "Worlds",
+          "faq": "FAQ"
+        }
+      },
+      "wrong_network": {
+        "header": "Red incorrecta",
+        "message": "Necesita conectarse a la Red {expectedChainName} para usar esta app, pero actualmente esta conectado a la Red {currentChainName}.",
+        "message_unknown_network": "Debes estar conectado a {expectedChainName} para usar esta aplicación, cambia tu red para continuar.",
+        "switch_button": "Cambiar a {chainName}",
+        "sign_out": "Desconectar"
+      }
+    },
+    "sign_in": {
+      "connect": "Conectar",
+      "connected": "Conectado",
+      "connecting": "Conectando...",
+      "error": "No se pudo conectar a la billetera.",
+      "get_started": "Comenzar",
+      "options": {
+        "connected": "Conectado correctamente!",
+        "desktop": "Puedes usar la extensión {metamask_link} o tu cuenta de mail.",
+        "mobile": "Puedes utilizar navegadores móviles como {coinbase_link} o {imtoken_link}.",
+        "samsung": "Puedes utilizar {samsung_link}."
+      }
+    },
+    "login": {
+      "modal": {
+        "title": "Conectar",
+        "subtitle": "Elige como quieres conectarte.",
+        "error": "No se pudo conectar a la billetera.",
+        "supported_wallets": "Los Trezor y billeteras basadas en smart contracts (como Dapper o Argent) no pueden interactuar con Polygon. Lea más sobre el soporte de Trezor {trezor_link}",
+        "trezor_link": "aquí"
+      },
+      "option": {
+        "browser_extension": "Usando una extensión de navegador",
+        "email": "Usando tu cuenta de email",
+        "mobile": "Usando un navegador móvil",
+        "mobile_and_browser": "Usando tu móvil o extensión de navegador",
+        "metamask_mobile": "Usando la aplicación de MetaMask"
+      }
+    },
+    "buyManaWithFiat": {
+      "modal": {
+        "title": "Comprar MANA",
+        "subtitle": "Selecciona que MANA quieres comprar:",
+        "error": "No se pudo comprar MANA."
+      },
+      "feedback_modal": {
+        "pending": {
+          "title": "Compre {network} MANA",
+          "status_title": "La transacción está siendo procesada",
+          "description": "Espere unos minutos mientras la transacción está siendo procesada",
+          "go_to_text": "Ir a {gateway}"
+        },
+        "success": {
+          "title": "¡La compra de {network} MANA ha sido completada!",
+          "description": "El {network} MANA comprado ha sido agregado a su cuenta. Si todavía no lo ve reflejado en su balande, recargue la página.",
+          "cta": "Listo",
+          "view_transaction": "Ver la transacción en el explorador"
+        },
+        "failure": {
+          "title": "Compre {network} MANA",
+          "description": "Puede intentarlo de nuevo en {gateway} o seleccionar otro proveedor",
+          "status_title": "La transacción falló",
+          "cta": "Inténtelo de nuevo",
+          "secondary_cta": "Seleccione otro proveedor"
+        }
+      },
+      "network": {
+        "ethereum": {
+          "cta": "Ethereum MANA",
+          "ctaSubtitle": "Úselo para comprar terrenos, nombres y wearables específicos en Ethereum.",
+          "title": "Compre Ethereum MANA",
+          "error": "No se pudo realizar la compre de Ethereum MANA",
+          "moonPay": {
+            "title": "Compre Ethereum MANA con MoonPay",
+            "subtitle": "Puedes comprar con tarjetas de débito y crédito, Apple Pay, Google Pay o mediante transferencia bancaria.",
+            "continueButtonText": "Continuar con MoonPay",
+            "learnMoreText": "Más información sobre MoonPay"
+          },
+          "transak": {
+            "title": "Compre Ethereum MANA con Transak",
+            "subtitle": "Puedes comprar con tarjetas de débito y crédito, Apple Pay, Google Pay o mediante transferencia bancaria.",
+            "continueButtonText": "Continuar con Transak",
+            "learnMoreText": "Más información sobre Transak"
+          }
+        },
+        "matic": {
+          "cta": "Maná polígono",
+          "ctaSubtitle": "Úselo para comprar la mayoría de los dispositivos portátiles y emotes en Polygon.",
+          "title": "Compra Polygon MANA",
+          "error": "No se pudo realizar la compra de Polygon MANA",
+          "moonPay": {
+            "title": "Compra Polygon MANA con MoonPay",
+            "subtitle": "Puedes comprar con tarjetas de débito y crédito, Apple Pay, Google Pay o mediante transferencia bancaria.",
+            "continueButtonText": "Continuar con MoonPay",
+            "learnMoreText": "Más información sobre MoonPay"
+          },
+          "transak": {
+            "title": "Compra Polygon MANA con Transak",
+            "subtitle": "Puedes comprar con tarjetas de débito y crédito, Apple Pay, Google Pay o mediante transferencia bancaria.",
+            "continueButtonText": "Continuar con Transak",
+            "learnMoreText": "Más información sobre Transak"
+          }
+        }
+      }
+    },
+    "user_menu": {
+      "guest": "Sin nombre",
+      "my_lists": "Mis listas",
+      "my_assets": "Mis activos",
+      "account": "Configuración de la cuenta",
+      "activity": "Actividad",
+      "profile": "Perfil",
+      "view_profile": "Ver perfil",
+      "sign_in": "Iniciar sesión",
+      "sign_out": "Cerrar sesión",
+      "marketplace_authorizations": "Autorizaciones de Marketplace",
+      "jump_in": "Entrar"
+    },
+    "toasts": {
+      "meta_transactions": {
+        "contract_account_error": {
+          "title": "Billetera no soportada",
+          "body": "Las billeteras basadas en smart contracts no están soportadas para hacer meta-transacciones. Puedes cambiar la red a Polygon y enviar una transacción común."
+        },
+        "invalid_address_error": {
+          "title": "Dirección inválida",
+          "body": "La dirección del contrato no está soportada para hacer meta-transacciones. Puedes cambiar la red a Polygon y enviar una transacción común."
+        },
+        "sale_price_too_low_error": {
+          "title": "Precio muy bajo",
+          "body": "El precio es demasiado bajo para esta meta-transacción. Puedes cambiar la red a Polygon y enviar una transacción común."
+        },
+        "unknown_error": {
+          "title": "Ha ocurrido un error",
+          "body": "Algo salio mal enviando la meta-transacción. Puedes cambiar la red a Polygon e intentar mandar una transacción común."
+        },
+        "high_congestion_error": {
+          "title": "Alta demanda",
+          "body": "Los <a>precios de las tarifas de transacción</a> en la red de Polygon estan muy altos! Por favor espere un momento e intentelo nuevamente, o puede cambiar la red a Polygon y pagar la tarifa de la transacción con MATIC."
+        }
+      },
+      "switch_network_error": {
+        "title": "Cambio de red fallido",
+        "body": "No se pudo cambiar a la red {network}."
+      },
+      "switch_network": "Cambiar a {network}",
+      "learn_more": "Mas información"
+    },
+    "network_alert": {
+      "title": "Su billetera está conectada a Polygon",
+      "content": "Use esta red para cubrir el gas de una transacción (como cuando compra artículos por debajo de 1 MANA). Vuelva a cambiar cuando termine. <link>Ver más</link>",
+      "action": "Cambiar a Ethereum Mainnet"
+    },
+    "authorization_modal": {
+      "close": "Cerrar",
+      "waiting_wallet": "Confirme la transacción en su billetera",
+      "waiting_confirmation": "Autorización de procesamiento",
+      "done": "Hecho",
+      "title": "Completa tu {action}",
+      "spending_cap_error": "Recuerde establecer un límite igual al precio del artículo {price} MANA o superior.",
+      "revoke_cap_error": "Recuerde establecer un límite de gasto de 0 MANA para revocar su anterior.",
+      "generic_error": "Algo salió mal",
+      "insufficient_amount_error": {
+        "message": "Su límite de gasto actual no es suficiente para cubrir la cantidad de compra de {price} MANA. Para continuar, ajuste su limite a un valor igual o superior. Para continuar tendrá que revocar el límite de gasto actual y volver a intentarlo con un límite apropiado.",
+        "action": "Revocar"
+      },
+      "authorize_mana": {
+        "title": "Primero, autorice el contrato <contract></contract>  para operar MANA en su nombre en Decentraland. ",
+        "description": "Tenga en cuenta que algunas billeteras requieren establecer un límite de gasto de MANA personalizado. Ingrese el precio del artículo {price} MANA o una cantidad más alta con la que se sienta cómodo para gastar ahora o más tarde. Puede cambiar el límite en cualquier momento.",
+        "action": "Autorizar",
+        "message": "Recuerde establecer un límite igual al precio del artículo {price} MANA o superior."
+      },
+      "authorize_nft": {
+        "title": "Primero, autorice el contrato <Cract> </Contract> para operar NFT en su nombre en Decentraland",
+        "action": "Autorizar"
+      },
+      "confirm_transaction": {
+        "title": "Confirmar la transacción a {action} el elemento",
+        "action": "Confirmar transacción"
+      },
+      "revoke_cap": {
+        "title": "Revocar su límite de gasto actual",
+        "description": "Su límite de gasto actual es más bajo que {price} maná.Tendrá que revocar su límite de gasto actual antes de hacer uno nuevo.",
+        "action": "Autorizar"
+      },
+      "set_cap": {
+        "title": "Establecer una nueva tapa de gasto",
+        "description": "Ingrese el precio del artículo {price} MANA o una cantidad más alta con la que se sienta cómodo para gastar ahora o más tarde. Puede cambiar el límite en cualquier momento.",
+        "action": "Autorizar"
+      },
+      "action": "acción",
+      "title_action": "acción"
+    },
+    "asset_card": {
+      "listings": "Collecionables",
+      "listing": "Collecionable",
+      "available_for_mint": "Compra directo al creador",
+      "cheapest_listing": "Coleccionable más barato",
+      "not_for_sale": "No disponible para la venta",
+      "owners": "Dueños",
+      "owner": "Dueño",
+      "cheapest_option": "Más barato",
+      "cheapest_option_range": "Más barato en el rango",
+      "most_expensive": "Más Caro",
+      "most_expensive_range": "Más Caro en el rango",
+      "also_minting": "Compra directo al creador"
+    },
+    "smart_wearables_filter": {
+      "title": "Interactivas",
+      "selected": "Solo Interactivas"
+    },
+    "rarities_filter": {
+      "title": "Rareza",
+      "tooltip": "La rareza determina la cantidad de NFTs que pueden ser minteados",
+      "all_rarities": "Todas las rarezas",
+      "count_rarities": "{count} {count, plural, one {rareza} other {rarezas}}"
+    },
+    "rarities": {
+      "unique": "Único",
+      "mythic": "Mítico",
+      "exotic": "Exótico",
+      "legendary": "Legendario",
+      "epic": "Épico",
+      "rare": "Raro",
+      "uncommon": "Poco común",
+      "common": "Común"
+    },
+    "rarity_description": {
+      "unique": "Único en su tipo: uno solo en existencia",
+      "mythic": "Para algunos pocos: máximo 10",
+      "exotic": "Edición limitada: máximo 50",
+      "legendary": "Edición limitada: máximo 100",
+      "epic": "Suministro máximo: 1000",
+      "rare": "Suministro máximo: 5000",
+      "uncommon": "Suministro máximo: 10.000",
+      "common": "Suministro máximo: 100.000"
+    },
+    "asset_status_filter": {
+      "title": "Estado",
+      "on_sale": "En venta",
+      "on_sale_tooltip": "Incluye items disponible para mintear o publicaciones disponibles",
+      "only_minting": "Solo disponible para mintear",
+      "only_minting_tooltip": "Solo incluye items disponibles para mintear (comprando directamente al creador).",
+      "only_listing": "Solo publicaciones",
+      "only_listing_tooltip": "Solo incluye items que estan siendo re-vendidos",
+      "not_for_sale": "No a la venta",
+      "not_for_sale_tooltip": "Incluye todos los items que no están disponibles para mintear (comprando directamente al creador) o con publicaciones disponibles."
+    },
+    "back_to_top_button": {
+      "title": "Volver arriba"
+    },
+    "nft_card": {
+      "category": {
+        "body_shape": "Cuerpo",
+        "earring": "Aros",
+        "eyebrows": "Cejas",
+        "eyes": "Ojos",
+        "eyewear": "Gafas",
+        "facial_hair": "Barba",
+        "feet": "Pies",
+        "hair": "Cabello",
+        "head": "Cabeza",
+        "hat": "Sombrero",
+        "helmet": "Cazco",
+        "lower_body": "Piernas",
+        "mask": "Mascara",
+        "mouth": "Boca",
+        "tiara": "Tiara",
+        "top_head": "Cabeza",
+        "upper_body": "Torso",
+        "skin": "Skin",
+        "hands_wear": "Manos"
+      },
+      "with_sound": "Con Sonido",
+      "smart": "Interactivo",
+      "body_shape": {
+        "male": "Hombre",
+        "female": "Mujer",
+        "unisex": "Unisex"
+      },
+      "play_mode": {
+        "simple": "Play once",
+        "loop": "Play loop"
+      }
+    },
+    "chain_selector": {
+      "title": "Selecciona una red",
+      "connected": "Conectado",
+      "confirm_in_wallet": "Confirma en tu billetera",
+      "switching": "Cambiando..."
+    }
+  }
+}

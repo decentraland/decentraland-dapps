@@ -9,6 +9,7 @@ import * as profile from './profile'
 import * as toast from './toast'
 import * as transaction from './transaction'
 import * as translation from './translation'
+import * as transactionV2 from './translation-v2'
 import * as wallet from './wallet'
 
 export {
@@ -23,5 +24,6 @@ export {
   toast,
   transaction,
   translation,
+  transactionV2,
   wallet
 }

@@ -1,4 +1,5 @@
 export { default as ModalProvider } from './ModalProvider'
 export { default as ToastProvider } from './ToastProvider'
 export { default as TranslationProvider } from './TranslationProvider'
+export { TranslationProvider as TranslationProviderV2 } from './TranslationProvider-v2'
 export { default as WalletProvider } from './WalletProvider'
