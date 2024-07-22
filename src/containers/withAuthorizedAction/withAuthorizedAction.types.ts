@@ -36,7 +36,15 @@ type AllowanceOptions = AuthorizeBaseOptions & {
   requiredAllowanceInWei: string
 }
 
-export type AuthorizeActionOptions = ApprovalOptions | AllowanceOptions
+type MintOptions = AuthorizeBaseOptions & {
+  authorizationType: AuthorizationType.MINT
+  targetContractLabel?: string
+}
+
+export type AuthorizeActionOptions =
+  | ApprovalOptions
+  | AllowanceOptions
+  | MintOptions
 
 type RecursivePartial<T> = {
   [P in keyof T]?: T[P] extends (infer U)[]

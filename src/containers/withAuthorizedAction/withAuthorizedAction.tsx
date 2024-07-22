@@ -6,6 +6,7 @@ import {
   AuthorizationType
 } from '../../modules/authorization/types'
 import {
+  getCollectionV2ContractInstance,
   getERC20ContractInstance,
   getERC721ContractInstance
 } from '../../modules/authorization/utils'
@@ -118,7 +119,7 @@ export default function withAuthorizedAction<
               getConfirmationStatus,
               getConfirmationError
             })
-          } else {
+          } else if (authorizationType === AuthorizationType.APPROVAL) {
             const contract = getERC721ContractInstance(
               targetContract.address,
               provider
@@ -148,7 +149,37 @@ export default function withAuthorizedAction<
               getConfirmationStatus,
               getConfirmationError
             })
+          } else {
+            const contract = getCollectionV2ContractInstance(
+              targetContract.address,
+              provider
+            )
+            const isMintingAllowed = await contract.globalMinters(
+              authorizedAddress
+            )
+
+            const { targetContractLabel } = authorizeOptions
+
+            if (isMintingAllowed) {
+              onAuthorized(true)
+              setIsLoadingAuthorization(false)
+              return
+            }
+
+            setAuthModalData({
+              translationKeys,
+              authorization,
+              authorizationType: authorizationType,
+              action,
+              network: targetContract.network,
+              targetContractLabel: targetContractLabel,
+              authorizedContractLabel,
+              onAuthorized: () => onAuthorized(false),
+              getConfirmationStatus,
+              getConfirmationError
+            })
           }
+
           setShowAuthorizationModal(true)
         } catch (error) {
           // TODO: handle error scenario

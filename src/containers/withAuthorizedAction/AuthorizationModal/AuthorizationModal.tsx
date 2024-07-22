@@ -208,6 +208,7 @@ export function AuthorizationModal({
     confirmationStatus,
     confirmationError,
     authorizedContractLabel,
+    targetContractLabel,
     shouldReauthorize,
     currentStep,
     error,

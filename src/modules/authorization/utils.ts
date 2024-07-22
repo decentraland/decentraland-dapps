@@ -96,3 +96,14 @@ export function getERC721ContractInstance(
     provider
   )
 }
+
+export function getCollectionV2ContractInstance(
+  contractAddress: string,
+  provider: Provider
+) {
+  return new ethers.Contract(
+    contractAddress,
+    ['function globalMinters(address) view returns (bool)'],
+    provider
+  )
+}

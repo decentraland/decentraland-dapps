@@ -278,9 +278,13 @@ export function getSteps({
     ]
   }
 
+  const title =
+    authorizationType === AuthorizationType.APPROVAL
+      ? 'authorize_nft.title'
+      : 'authorize_item.title'
   return [
     {
-      title: getTranslation(translationKeys, 'authorize_nft.title', {
+      title: getTranslation(translationKeys, title, {
         contract: () => (
           <TransactionLink
             address={authorization.authorizedAddress || ''}
