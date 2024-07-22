@@ -512,6 +512,67 @@ describe('when authorization type is ALLOWANCE', () => {
   })
 })
 
+describe('when authorization type is MINT', () => {
+  let screen: RenderResult
+  describe('basic rendering', () => {
+    beforeEach(() => {
+      screen = renderAuthorizationModal({
+        authorizationType: AuthorizationType.MINT
+      })
+    })
+
+    it('should render two steps', () => {
+      expect(screen.getByTestId('multi-step').children.length).toBe(2)
+    })
+
+    it('should render authorization step', () => {
+      expect(
+        screen.getByRole('button', {
+          name: t('@dapps.authorization_modal.authorize_item.action')
+        })
+      ).toBeInTheDocument()
+    })
+
+    it('should render confirm action step', () => {
+      expect(
+        screen.getByRole('button', {
+          name: t('@dapps.authorization_modal.confirm_transaction.action')
+        })
+      ).toBeInTheDocument()
+    })
+
+    it('should show only first step enabled', () => {
+      expect(
+        screen.getByRole('button', {
+          name: t('@dapps.authorization_modal.authorize_item.action')
+        })
+      ).toBeEnabled()
+
+      expect(
+        screen.getByRole('button', {
+          name: t('@dapps.authorization_modal.confirm_transaction.action')
+        })
+      ).toBeDisabled()
+    })
+  })
+
+  describe('when clicking on authorize button', () => {
+    it('should call onGrant callback', async () => {
+      const onGrantMock = jest.fn()
+      const screen = renderAuthorizationModal({
+        authorizationType: AuthorizationType.APPROVAL,
+        onGrant: onGrantMock
+      })
+      await userEvent.click(
+        screen.getByRole('button', {
+          name: t('@dapps.authorization_modal.authorize_nft.action')
+        })
+      )
+      expect(onGrantMock).toHaveBeenCalled()
+    })
+  })
+})
+
 describe('when clicking revoke authorization button', () => {
   let onRevokeMock: jest.Mock
   let trackMock: jest.Mock

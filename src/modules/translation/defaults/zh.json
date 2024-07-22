@@ -244,6 +244,10 @@
         "title": "首先，授权 <contract></contract> 代表您在去居中的NFT的合同",
         "action": "授权"
       },
+      "authorize_item": {
+        "title": "首先，授权 <contract></contract> 与您收藏的薄荷商品合同 <targetContract></targetContract> 在分散",
+        "action": "授权"
+      },
       "confirm_transaction": {
         "title": "确认交易到 {action} 项目",
         "action": "确认交易"
