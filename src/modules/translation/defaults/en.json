@@ -244,6 +244,10 @@
         "title": "First, authorize the <contract></contract> contract to operate your <targetContract></targetContract> NFTs on your behalf in Decentraland",
         "action": "Authorize"
       },
+      "authorize_item": {
+        "title": "First, authorize the <contract></contract> contract to mint items from your collection <targetContract></targetContract> in Decentraland",
+        "action": "Authorize"
+      },
       "confirm_transaction": {
         "title": "Confirm transaction to {action} the item",
         "action": "Confirm transaction"

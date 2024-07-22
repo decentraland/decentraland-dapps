@@ -166,6 +166,10 @@
         "title": "Tout d'abord, autorisez le <contract></contract> Contrat pour exploiter NFT en votre nom à Decentraland",
         "action": "Autoriser"
       },
+      "authorize_item": {
+        "title": "Tout d'abord, autorisez le <contract></contract> Contrat avec les articles de la menthe de votre collection <targetContract></targetContract> en décentral et",
+        "action": "Authorize"
+      },
       "confirm_transaction": {
         "title": "Confirmer la transaction à {action}l'articlem",
         "action": "Confirmer la transaction"

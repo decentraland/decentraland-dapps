@@ -9,6 +9,7 @@ import { getTransactionHashFromAction, waitForTx } from '../transaction/utils'
 import { getAnalytics } from '../analytics/utils'
 import {
   AuthorizationError,
+  getCollectionV2ContractInstance,
   getTokenAmountToApprove,
   hasAuthorization,
   hasAuthorizationAndEnoughAllowance,
@@ -141,6 +142,24 @@ export function createAuthorizationSaga() {
                 })
             )
             break
+          case AuthorizationType.MINT:
+            const collectionContract = getCollectionV2ContractInstance(
+              authorization.contractAddress,
+              multicallProviders[chainId]
+            )
+
+            promises.push(
+              collectionContract
+                .globalMinters(authorization.authorizedAddress)
+                .then((isMinter: boolean) => [
+                  authorization,
+                  isMinter ? authorization : null
+                ])
+                .catch((error: Error) => {
+                  console.error(`Error fetching minters`, authorization, error)
+                  return [authorization, null]
+                })
+            )
         }
       }
 
@@ -270,7 +289,8 @@ export function createAuthorizationSaga() {
         }
 
         if (
-          authorization.type === AuthorizationType.APPROVAL &&
+          (authorization.type === AuthorizationType.APPROVAL ||
+            authorization.type === AuthorizationType.MINT) &&
           !hasAuthorization(authorizations, authorization)
         ) {
           throw new Error(AuthorizationError.GRANT_FAILED)
@@ -309,6 +329,11 @@ export function createAuthorizationSaga() {
         const isApproved = action === AuthorizationAction.GRANT
         return sendTransaction(contract, erc712 =>
           erc712.setApprovalForAll(authorization.authorizedAddress, isApproved)
+        )
+      case AuthorizationType.MINT:
+        const isMinter = action === AuthorizationAction.GRANT
+        return sendTransaction(contract, collection =>
+          collection.setMinters([authorization.authorizedAddress], [isMinter])
         )
     }
   }

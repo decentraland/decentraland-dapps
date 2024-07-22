@@ -3,7 +3,8 @@ import { ContractName } from 'decentraland-transactions'
 
 export enum AuthorizationType {
   ALLOWANCE = 'allowance',
-  APPROVAL = 'approval'
+  APPROVAL = 'approval',
+  MINT = 'mint'
 }
 
 export enum AuthorizationAction {

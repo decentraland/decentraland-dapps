@@ -166,6 +166,10 @@
         "title": "まず、<契約> </契約>契約を承認して、Decentralandでお客様に代わってNFTを操作する",
         "action": "許可"
       },
+      "authorize_item": {
+        "title": "まず、を認可します<contract></contract> コレクションのアイテムをミントする契約<targetContract></targetContract> Decentralandで",
+        "action": "許可"
+      },
       "confirm_transaction": {
         "title": "{action}アイテムへのトランザクションを確認します",
         "action": "トランザクションを確認します"

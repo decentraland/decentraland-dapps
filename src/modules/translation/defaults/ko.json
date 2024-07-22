@@ -166,6 +166,10 @@
         "title": "먼저 승인하십시오<contract></contract> Decentraland에서 귀하를 대신하여 NFT를 운영하는 계약",
         "action": "승인"
       },
+      "authorize_item": {
+        "title": "먼저 승인하십시오 <contract></contract> 컬렉션에서 Mint 품목에 계약을 체결하십시오 <targetContract></targetContract> Decentraland에서",
+        "action": "승인"
+      },
       "confirm_transaction": {
         "title": "{action} 항목에 대한 트랜잭션을 확인하십시오",
         "action": "거래 확인"

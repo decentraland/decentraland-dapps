@@ -241,7 +241,11 @@
         "message": "Recuerde establecer un límite igual al precio del artículo {price} MANA o superior."
       },
       "authorize_nft": {
-        "title": "Primero, autorice el contrato <Cract> </Contract> para operar NFT en su nombre en Decentraland",
+        "title": "Primero, autorice el contrato <contract></contract> para operar NFT en su nombre en Decentraland",
+        "action": "Autorizar"
+      },
+      "authorize_item": {
+        "title": "Primero, autorice el contrato <contract></contract> a mintear NFTs desde su colección <targetContract></targetContract> en Decentraland",
         "action": "Autorizar"
       },
       "confirm_transaction": {

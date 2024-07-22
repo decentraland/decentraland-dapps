@@ -121,7 +121,7 @@ export function getStepStatus(
         allowance.toString()
       )
     }
-  } else {
+  } else if (authorization.type === AuthorizationType.APPROVAL) {
     isDone = hasAuthorization(authorizations, authorization)
   }
 
@@ -278,9 +278,36 @@ export function getSteps({
     ]
   }
 
+  if (authorizationType === AuthorizationType.APPROVAL) {
+    return [
+      {
+        title: getTranslation(translationKeys, 'authorize_nft.title', {
+          contract: () => (
+            <TransactionLink
+              address={authorization.authorizedAddress || ''}
+              chainId={authorization.chainId}
+              txHash=""
+            >
+              {authorizedContractLabel || authorization.authorizedAddress}
+            </TransactionLink>
+          ),
+          targetContract: () => (
+            <TransactionLink
+              address={authorization.contractAddress || ''}
+              chainId={authorization.chainId}
+              txHash=""
+            >
+              {targetContractLabel || authorization.contractAddress}
+            </TransactionLink>
+          )
+        }),
+        actionType: AuthorizationStepAction.GRANT
+      }
+    ]
+  }
   return [
     {
-      title: getTranslation(translationKeys, 'authorize_nft.title', {
+      title: getTranslation(translationKeys, 'authorize_item.title', {
         contract: () => (
           <TransactionLink
             address={authorization.authorizedAddress || ''}
