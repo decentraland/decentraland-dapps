@@ -1,0 +1,362 @@
+{
+  "@dapps": {
+    "button": {
+      "network_not_supported": "您需要连接到 {expectedChainName} 才能执行此操作"
+    },
+    "footer": {
+      "dropdown": {
+        "en": "英语",
+        "es": "西班牙语",
+        "fr": "法语",
+        "ja": "日语",
+        "ko": "韩文",
+        "zh": "中文"
+      },
+      "links": {
+        "content": "内容政策",
+        "ethics": "道德准则",
+        "home": "主页",
+        "privacy": "隐私政策",
+        "terms": "使用条款",
+        "feature": "功能要求"
+      }
+    },
+    "navbar": {
+      "account": {
+        "connecting": "正在连接...",
+        "signIn": "登陆"
+      },
+      "menu": {
+        "avatars": "Avatars",
+        "agora": "Agora",
+        "blog": "Blog",
+        "docs": {
+          "main": "Docs",
+          "players": "Players",
+          "creators": "Content Creators",
+          "contributors": "Contributors",
+          "studios": "Studios"
+        },
+        "marketplace": {
+          "main": "Marketplace",
+          "overview": "Overview",
+          "collectibles": "Collectibles",
+          "land": "LAND",
+          "names": "NAMEs",
+          "myAssets": "My Assets"
+        },
+        "builder": {
+          "main": "Builder",
+          "overview": "Overview",
+          "collections": "Collections",
+          "scenes": "Scenes",
+          "land": "Land",
+          "names": "Names",
+          "worlds": "Worlds"
+        },
+        "events": "Events",
+        "dao": {
+          "main": "DAO",
+          "overview": "Overview",
+          "governance": "Governance",
+          "transparency": "Transparency",
+          "grants": "Grants"
+        },
+        "places": {
+          "main": "Places",
+          "overview": "Overview",
+          "places": "Genesis City",
+          "worlds": "Worlds",
+          "faq": "FAQ"
+        }
+      },
+      "wrong_network": {
+        "header": "网络错误",
+        "message": "您需要连接到{expectedChainName}网络才能使用此应用，但您当前已连接到{currentChainName}网络。",
+        "message_unknown_network": "您需要连接到 {expectedChainName} 才能使用此应用，请切换您的网络以继续。",
+        "switch_button": "切换到 {chainName}",
+        "sign_out": "登出"
+      }
+    },
+    "sign_in": {
+      "connect": "连接",
+      "connected": "已连接",
+      "connecting": "连接中 ...",
+      "error": "无法连接到钱包。",
+      "get_started": "开始",
+      "options": {
+        "connected": "您已经连接！",
+        "desktop": "您可以使用{metamask_link}扩展名或您的电子邮件帐户",
+        "mobile": "您可以使用移动浏览器，如 {coinbase_link} 或 {imtoken_link}。",
+        "samsung": "您可使用{samsung_link}。"
+      }
+    },
+    "login": {
+      "modal": {
+        "title": "登入",
+        "subtitle": "选择一种连接方式",
+        "error": "无法连接到钱包。",
+        "supported_wallets": "不支持 Contract 和 Trezor 钱包与 Polygon 交互。阅读有关 Trezor 集成的更多信息 {trezor_link}",
+        "trezor_link": "这里"
+      },
+      "option": {
+        "browser_extension": "使用浏览器扩展",
+        "email": "使用您的电子邮件",
+        "mobile": "使用您的手机钱包",
+        "mobile_and_browser": "使用您的移动或浏览器扩展程序",
+        "metamask_mobile": "使用 MetaMask 應用程序"
+      }
+    },
+    "buyManaWithFiat": {
+      "modal": {
+        "title": "购买法力值",
+        "subtitle": "选择您要购买的 MANA：",
+        "error": "无法购买 MANA。"
+      },
+      "feedback_modal": {
+        "pending": {
+          "title": "购买 {network} MANA",
+          "status_title": "交易正在处理中",
+          "description": "在处理交易时等待几分钟",
+          "go_to_text": "转到{网关}标签"
+        },
+        "success": {
+          "title": "{network} MANA 购买完成！",
+          "description": "{network} MANA 已添加到您的帐户。 如果您仍然没有在余额中看到它，请刷新此页面。",
+          "cta": "完毕",
+          "view_transaction": "在资源管理器中查看交易"
+        },
+        "failure": {
+          "title": "购买 {network} MANA",
+          "description": "您可以使用{gateway} 重试或选择其他提供商",
+          "status_title": "交易失败",
+          "cta": "再试一次",
+          "secondary_cta": "选择其他供应商"
+        }
+      },
+      "network": {
+        "ethereum": {
+          "cta": "以太坊 MANA",
+          "ctaSubtitle": "用它在以太坊中购买 LAND、名称和特定的可穿戴设备。",
+          "title": "购买以太坊 MANA",
+          "error": "无法购买以太坊 MANA",
+          "moonPay": {
+            "title": "使用 MoonPay 购买以太坊 MANA",
+            "subtitle": "您可以使用借记卡和信用卡、Apple Pay、Google Pay 或通过银行转帐进行购买。",
+            "continueButtonText": "继续使用 MoonPay",
+            "learnMoreText": "了解有关 MoonPay 的更多信息"
+          },
+          "transak": {
+            "title": "使用 Transak 购买以太坊 MANA",
+            "subtitle": "您可以使用借记卡和信用卡、Apple Pay、Google Pay 或通过银行转帐进行购买。",
+            "continueButtonText": "继续 Transak",
+            "learnMoreText": "了解有关 Transak 的更多信息"
+          }
+        },
+        "matic": {
+          "cta": "多边形 MANA",
+          "ctaSubtitle": "用它来购买 Polygon 中的大多数可穿戴设备和表情。",
+          "title": "购买多边形 MANA",
+          "error": "无法购买多边形 MANA",
+          "moonPay": {
+            "title": "使用 MoonPay 购买 Polygon MANA",
+            "subtitle": "您可以使用借记卡和信用卡、Apple Pay、Google Pay 或通过银行转帐进行购买。",
+            "continueButtonText": "继续使用 MoonPay",
+            "learnMoreText": "了解有关 MoonPay 的更多信息"
+          },
+          "transak": {
+            "title": "使用 Transak 购买 Polygon MANA",
+            "subtitle": "您可以使用借记卡和信用卡、Apple Pay、Google Pay 或通过银行转帐进行购买。",
+            "continueButtonText": "继续 Transak",
+            "learnMoreText": "了解有关 Transak 的更多信息"
+          }
+        }
+      }
+    },
+    "user_menu": {
+      "guest": "未命名",
+      "my_lists": "我的列表",
+      "my_assets": "我的资产",
+      "account": "账户设置",
+      "activity": "活动",
+      "profile": "配置文件",
+      "view_profile": "查看简介",
+      "sign_in": "登录",
+      "sign_out": "签出",
+      "marketplace_authorizations": "市场的授权",
+      "jump_in": "跳入"
+    },
+    "toasts": {
+      "meta_transactions": {
+        "contract_account_error": {
+          "title": "不支持钱包",
+          "body": "元交易不支持智能合约钱包。您可以将网络切换到 Polygon 并发送常规交易。"
+        },
+        "invalid_address_error": {
+          "title": "无效地址",
+          "body": "合约地址不可用于元交易。您可以将您的网络切换到 Polygon 并发送常规交易。"
+        },
+        "sale_price_too_low_error": {
+          "title": "价格太低了",
+          "body": "这个元交易的价格太低了。您可以将您的网络切换到 Polygon 并发送常规交易。"
+        },
+        "unknown_error": {
+          "title": "出了点问题",
+          "body": "发送元交易时出现意外错误。您可以将网络切换到 Polygon 并尝试发送常规交易。"
+        },
+        "high_congestion_error": {
+          "title": "高度拥堵",
+          "body": "多边形网络 <a>费用价格</a> 太高！请稍后重试，或将您的网络切换到 Polygon 并使用 MATIC 支付费用。"
+        }
+      },
+      "switch_network_error": {
+        "title": "网络交换机错误",
+        "body": "切换到 {network} 时出错。"
+      },
+      "switch_network": "切换到 {network}",
+      "learn_more": "了解更多"
+    },
+    "network_alert": {
+      "title": "您的钱包已连接到 Polygon",
+      "content": "使用此网络来支付交易的费用（例如购买低于 1 MANA 的物品时）。 完成后切换回去。 <link>了解更多</link>",
+      "action": "切换到以太坊主网"
+    },
+    "authorization_modal": {
+      "close": "关闭",
+      "waiting_wallet": "确认钱包上的交易",
+      "waiting_confirmation": "处理授权",
+      "done": "完毕",
+      "title": "完成您的 {action}",
+      "spending_cap_error": "请记住，设置一个等于物品价格{price} MANA 或更高的帽子。",
+      "revoke_cap_error": "请记住，设置一个0法力的支出上限，以撤销您以前的支出。",
+      "generic_error": "出了些问题",
+      "insufficient_amount_error": {
+        "message": "请记住，设置一个等于物品价格 {price} MANA 或更高的帽子。在再次授权之前，您必须撤销当前的支出上限。",
+        "action": "撤销"
+      },
+      "authorize_mana": {
+        "title": "首先，授权<contract></contract> 合同运营 MANA 代表您在分权中。 ",
+        "description": "请记住，某些钱包需要设置自定义 MANA 支出限制.输入商品价格 {price} MANA 或您现在或以后花费更高的钱。您可以随时更改限制。",
+        "action": "授权",
+        "message": "切记设置一个等于物品价格的上限{price} MANA 或更高。"
+      },
+      "authorize_nft": {
+        "title": "首先，授权 <contract></contract> 代表您在去居中的NFT的合同",
+        "action": "授权"
+      },
+      "confirm_transaction": {
+        "title": "确认交易到 {action} 项目",
+        "action": "确认交易"
+      },
+      "revoke_cap": {
+        "title": "撤销您当前的支出上限",
+        "description": "您目前的支出限额低于{price} MANA. 在制作新的支出之前，您必须撤销当前的支出上限。",
+        "action": "授权"
+      },
+      "set_cap": {
+        "title": "设置新的支出帽",
+        "description": "输入商品价格{price} MANA 或您现在或以后花费更高的钱。您可以随时更改限制。",
+        "action": "授权"
+      },
+      "action": "行动",
+      "title_action": "行动"
+    },
+    "asset_card": {
+      "listings": "收藏品",
+      "listing": "收藏品",
+      "available_for_mint": "直接從創作者那裡購買",
+      "cheapest_listing": "最便宜的收藏品",
+      "not_for_sale": "不可出售",
+      "owners": "所有者",
+      "owner": "所有者",
+      "cheapest_option": "最便宜",
+      "cheapest_option_range": "范围内最便宜的选择",
+      "most_expensive": "最貴",
+      "most_expensive_range": "范围内最贵",
+      "also_minting": "直接從創作者那裡購買"
+    },
+    "smart_wearables_filter": {
+      "title": "聪明的",
+      "selected": "唯智"
+    },
+    "rarities_filter": {
+      "title": "稀有",
+      "tooltip": "稀有性决定了可以铸造的NFT的总数",
+      "count_rarities": "{count} {count, plural, one {稀有} other {稀有}}",
+      "all_rarities": "所有稀有物"
+    },
+    "rarities": {
+      "unique": "独特的",
+      "mythic": "神话",
+      "exotic": "异国情调",
+      "legendary": "传奇的",
+      "epic": "史诗",
+      "rare": "稀有的",
+      "uncommon": "罕见",
+      "common": "常见的"
+    },
+    "rarity_description": {
+      "unique": "像圣杯一样：独一无二",
+      "mythic": "给幸运的人：最多10个",
+      "exotic": "限量供应：最多50个",
+      "legendary": "限量供应：最多100个",
+      "epic": "最大供应量：1000个",
+      "rare": "最大供应量：5000个",
+      "uncommon": "最大供应量：10,000个",
+      "common": "最大供应量：100,000个"
+    },
+    "asset_status_filter": {
+      "title": "地位",
+      "on_sale": "特价中",
+      "on_sale_tooltip": "包括可用于铸造和/或具有可用列表的项目。",
+      "only_minting": "仅可用于铸币",
+      "only_minting_tooltip": "仅包括可铸造的物品（直接从创作者处购买）。",
+      "only_listing": "仅列表",
+      "only_listing_tooltip": "仅包括正在转售的项目。",
+      "not_for_sale": "不作为产品销售",
+      "not_for_sale_tooltip": "包括所有不可用于铸造（直接从创建者购买）或有开放式列表的项目。"
+    },
+    "back_to_top_button": {
+      "title": "回到顶部"
+    },
+    "nft_card": {
+      "category": {
+        "body_shape": "身材",
+        "earring": "耳环",
+        "eyebrows": "眉毛",
+        "eyes": "眼睛",
+        "eyewear": "眼镜",
+        "facial_hair": "胡子",
+        "feet": "腿部",
+        "hair": "头发",
+        "hat": "帽子",
+        "helmet": "头盔",
+        "lower_body": "下半身",
+        "mask": "面具",
+        "mouth": "嘴巴",
+        "tiara": "头饰",
+        "top_head": "头顶",
+        "upper_body": "上半身",
+        "skin": "皮肤",
+        "hands_wear": "手"
+      },
+      "with_sound": "有声音的",
+      "smart": "聪明的",
+      "body_shape": {
+        "male": "男性",
+        "female": "女性",
+        "unisex": "中性"
+      },
+      "play_mode": {
+        "simple": "播放一次",
+        "loop": "循环播放"
+      }
+    },
+    "chain_selector": {
+      "title": "选择网络",
+      "connected": "已连接",
+      "confirm_in_wallet": "请在您的钱包中确认",
+      "switching": "切换中..."
+    }
+  }
+}

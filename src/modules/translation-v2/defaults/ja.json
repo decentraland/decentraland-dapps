@@ -1,0 +1,272 @@
+{
+  "@dapps": {
+    "button": {
+      "network_not_supported": "このアクションを実行するには、{expectedChainName}に接続する必要があります"
+    },
+    "footer": {
+      "dropdown": {
+        "en": "英語",
+        "es": "スペイン語",
+        "fr": "フランス語",
+        "ja": "日本語",
+        "ko": "韓国語",
+        "zh": "中国語"
+      },
+      "links": {
+        "content": "コンテンツポリシー",
+        "ethics": "倫理規定",
+        "home": "ホーム",
+        "privacy": "個人情報保護方針",
+        "terms": "利用規約",
+        "feature": "機能リクエスト"
+      }
+    },
+    "navbar": {
+      "account": {
+        "connecting": "接続中...",
+        "signIn": "サインイン"
+      },
+      "menu": {
+        "avatars": "Avatars",
+        "agora": "Agora",
+        "blog": "Blog",
+        "docs": {
+          "main": "Docs",
+          "players": "Players",
+          "creators": "Content Creators",
+          "contributors": "Contributors",
+          "studios": "Studios"
+        },
+        "marketplace": {
+          "main": "Marketplace",
+          "overview": "Overview",
+          "collectibles": "Collectibles",
+          "land": "LAND",
+          "names": "NAMEs",
+          "myAssets": "My Assets"
+        },
+        "builder": {
+          "main": "Builder",
+          "overview": "Overview",
+          "collections": "Collections",
+          "scenes": "Scenes",
+          "land": "Land",
+          "names": "Names",
+          "worlds": "Worlds"
+        },
+        "events": "Events",
+        "dao": {
+          "main": "DAO",
+          "overview": "Overview",
+          "governance": "Governance",
+          "transparency": "Transparency",
+          "grants": "Grants"
+        },
+        "places": {
+          "main": "Places",
+          "overview": "Overview",
+          "places": "Genesis City",
+          "worlds": "Worlds",
+          "faq": "FAQ"
+        }
+      },
+      "wrong_network": {
+        "header": "間違ったネットワーク",
+        "message": "このアプリを使用するには、{expectedChainName}ネットワークに接続する必要がありますが、現在は{currentChainName}ネットワークに接続しています。",
+        "message_unknown_network": "このアプリを使用するには、{expectedChainName}に接続する必要があります。続行するには、ネットワークを切り替えてください。",
+        "switch_button": "{chainName}に切り替えます"
+      }
+    },
+    "sign_in": {
+      "connect": "接続する",
+      "connected": "接続済み",
+      "connecting": "接続中...",
+      "error": "ウォレットに接続できませんでした。",
+      "get_started": "開始する",
+      "options": {
+        "desktop": "{metamask_link}拡張や{ledger_nano_link}のようなハードウェアウォレットを使用できます。",
+        "mobile": "{coinbase_link}や{imtoken_link}などのモバイルブラウザを使用できます。",
+        "samsung": "{samsung_link}を使用できます。"
+      },
+      "modal": {
+        "title": "サインイン",
+        "subtitle": "接続する方法を選択してください",
+        "using": {
+          "browser_extension": "ブラウザ拡張機能の使用",
+          "email": "メールを使用する",
+          "mobile": "モバイルウォレットの使用",
+          "metamask_mobile": "メタマスク アプリの使用"
+        }
+      }
+    },
+    "user_menu": {
+      "guest": "名前なし",
+      "my_lists": "マイ・リスト",
+      "my_assets": "マイ資産",
+      "account": "「アカウント設定",
+      "activity": "「アクティビティ",
+      "profile": "「プロフィール",
+      "view_profile": "「プロフィールを見る",
+      "sign_in": "「サインイン",
+      "sign_out": "「サインアウト",
+      "marketplace_authorizations": "マーケットプレイスの承認",
+      "jump_in": "ジャンプイン"
+    },
+    "toasts": {
+      "meta_transactions": {
+        "contract_account_error": {
+          "タイトル": "ウォレットはサポートされていません",
+          "body": "スマートコントラクトウォレットはメタトランザクションではサポートされていません。ネットワークをPolygonに切り替えて,通常のトランザクションを送信できます。"
+        },
+        "invalid_address_error": {
+          "タイトル": "無効なアドレス",
+          "body": "契約アドレスはメタトランザクションには使用できません。ネットワークをPolygonに切り替えて,通常のトランザクションを送信できます。"
+        },
+        "sale_price_too_low_error": {
+          "title": "価格も",
+          "body": "このメタトランザクションには価格が低すぎます。ネットワークをPolygonに切り替えて,通常のトランザクションを送信できます。"
+        },
+        "unknown_error": {
+          "title": "「問題が発生しました」",
+          "body": "メタトランザクションの送信中に予期しないエラーが発生しました。ネットワークをPolygonに切り替えて,通常のトランザクションを送信してみてください。"
+        },
+        "high_congestion_error": {
+          "title": "高い混雑",
+          "body": "ポリゴン ネットワークの<a>ガス価格</a>が高すぎます! しばらく待ってからもう一度お試しいただくか、ネットワークを Polygon に切り替えてネットワーク料金を MATIC でお支払いください。"
+        }
+      },
+      "switch_network": "{network}に切り替え",
+      "learn_more": "詳細"
+    },
+    "network_alert": {
+      "title": "あなたのウォレットは Polygon に接続されています",
+      "content": "このネットワークを使用して、トランザクションのガスをカバーします (1 MANA 未満のアイテムを購入する場合など)。 終わったらスイッチバック。 <link>詳細</link>",
+      "action": "「イーサリアムメインネット」に切り替え"
+    },
+    "authorization_modal": {
+      "close": "近い",
+      "waiting_wallet": "ウォレットのトランザクションを確認します",
+      "waiting_confirmation": "許可の処理",
+      "done": "終わり",
+      "title": "{アクション}を完成させる",
+      "spending_cap_error": "アイテム価格{price} MANA 以上に等しいキャップを設定することを忘れないでください。",
+      "revoke_cap_error": "前のマナを取り消すために、0マナの支出キャップを設定することを忘れないでください。",
+      "generic_error": "何かがうまくいかなかった",
+      "insufficient_amount_error": {
+        "message": "支出上限は、{price}マナの購入額をカバーするのに十分ではありません。続行するには、支出キャップを等しく調整してください。現在の支出キャップを取り消し、適切な制限で再試行します。",
+        "action": "取り消す"
+      },
+      "authorize_mana": {
+        "title": "まず、<contract> </contract>契約を承認して、Decentralandであなたに代わってManaを運用します。 ",
+        "description": "一部のウォレットには、カスタムマナの支出制限を設定する必要があることに注意してください。アイテム価格{price}マナまたはあなたが今またはそれ以降の支出に満足している量を入力してください。いつでも制限を変更できます。",
+        "action": "許可",
+        "message": "アイテム価格{price}マナ以上に等しいキャップを設定することを忘れないでください。"
+      },
+      "authorize_nft": {
+        "title": "まず、<契約> </契約>契約を承認して、Decentralandでお客様に代わってNFTを操作する",
+        "action": "許可"
+      },
+      "confirm_transaction": {
+        "title": "{action}アイテムへのトランザクションを確認します",
+        "action": "トランザクションを確認します"
+      },
+      "revoke_cap": {
+        "title": "現在の支出キャップを取り消します",
+        "description": "現在の支出キャップは{price}マナよりも低いです。新しいものを作成する前に、現在の支出キャップを取り消す必要があります。",
+        "action": "許可"
+      },
+      "set_cap": {
+        "title": "新しい支出キャップを設定します",
+        "description": "アイテム価格{price}マナまたはあなたが今またはそれ以降の支出に満足している量を入力してください。いつでも制限を変更できます。",
+        "action": "許可"
+      },
+      "action": "アクション",
+      "title_action": "アクション"
+    },
+    "asset_card": {
+      "listings": "コレクションアイテム",
+      "listing": "コレクションアイテム",
+      "available_for_mint": "クリエイターによる直接購入可能",
+      "cheapest_listing": "最も安いコレクションアイテム",
+      "not_for_sale": "販売不可",
+      "owners": "所有者",
+      "owner": "所有者",
+      "cheapest_option": "最も安いオプション",
+      "cheapest_option_range": "範囲内の最も安いオプション",
+      "most_expensive": "最も高い価格",
+      "most_expensive_range": "範囲内の最も高い価格",
+      "also_minting": "クリエイターによる直接購入可能"
+    },
+    "rarities_filter": {
+      "title": "珍しい",
+      "tooltip": "希少性により、鋳造できるNFTの総数が決まります",
+      "count_rarities": "{count} {count, plural, one {珍しい} other {珍しい}}",
+      "all_rarities": "すべての珍しい"
+    },
+    "rarities": {
+      "unique": "個性的",
+      "mythic": "神話",
+      "exotic": "エキゾチック",
+      "legendary": "伝説",
+      "epic": "すごい",
+      "rare": "レア",
+      "uncommon": "珍しい",
+      "common": "一般"
+    },
+    "rarities_description": {
+      "unique": "聖杯のようなもの: 唯一無二の",
+      "mythic": "幸運な少数の場合: 最大 10",
+      "exotic": "数量限定：最大50個",
+      "legendary": "数量限定：最大100個",
+      "epic": "最大供給量: 1000",
+      "rare": "最大供給数: 5000",
+      "uncommon": "最大供給数: 10,000",
+      "common": "最大供給量: 100,000"
+    },
+    "asset_status_filter": {
+      "title": "状態",
+      "on_sale": "発売中",
+      "on_sale_tooltip": "造りや利用可能なリストを使用できるアイテムが含まれています。",
+      "only_minting": "造りにのみ利用できます",
+      "only_minting_tooltip": "メントに利用できるアイテムのみが含まれています（クリエイターから直接購入）。",
+      "only_listing": "リストのみ",
+      "only_listing_tooltip": "転売されているアイテムのみが含まれます。",
+      "not_for_sale": "非売品",
+      "not_for_sale_tooltip": "造りに使用できないすべてのアイテム（クリエイターから直接購入）またはオープンリスティングが含まれています。"
+    },
+    "nft_card": {
+      "category": {
+        "body_shape": "体型",
+        "earring": "イヤリング",
+        "eyebrows": "眉毛",
+        "eyes": "目",
+        "eyewear": "アイウェア",
+        "facial_hair": "顔の毛",
+        "feet": "足",
+        "head": "頭",
+        "hair": "髪",
+        "hat": "帽子",
+        "helmet": "ヘルメット",
+        "lower_body": "下半身",
+        "mask": "マスク",
+        "mouth": "口",
+        "tiara": "ティアラ",
+        "top_head": "トップヘッド",
+        "upper_body": "上半身",
+        "skin": "肌",
+        "hands_wear": "ハンドウェア"
+      },
+      "with_sound": "音で",
+      "smart": "Smart",
+      "body_shape": {
+        "male": "男",
+        "female": "女性",
+        "unisex": "ユニセックス"
+      },
+      "play_mode": {
+        "simple": "Play once",
+        "loop": "Play loop"
+      }
+    }
+  }
+}
