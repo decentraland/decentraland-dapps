@@ -20,7 +20,7 @@ describe('when adding a new trade', () => {
       body: JSON.stringify(trade),
       metadata: {
         signer: 'dcl:test',
-        intent: 'dcl:test:create-trade'
+        intent: 'dcl:create-trade'
       },
       headers: {
         'Content-Type': 'application/json'
