@@ -15,7 +15,7 @@ export class TradesAPI extends BaseClient {
       body: JSON.stringify(trade),
       metadata: {
         signer: this.signer,
-        intent: `${this.signer}:create-trade`
+        intent: 'dcl:create-trade'
       },
       headers: {
         'Content-Type': 'application/json'
