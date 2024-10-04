@@ -1,4 +1,7 @@
-import transakSDK from '@transak/transak-sdk'
+import {
+  Transak as TransakSDK,
+  TransakConfig as TransakSDKConfig
+} from '@transak/transak-sdk'
 import Pusher from 'pusher-js'
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui'
@@ -12,7 +15,6 @@ import {
   OrderResponse,
   TradeType,
   TransakOrderStatus,
-  TransakSDK,
   WebSocketEvents
 } from './types'
 
@@ -47,8 +49,8 @@ export class Transak {
    * @param network - Network in which the trasanctions will be done
    */
   private suscribeToEvents(network: Network) {
-    this.sdk.on(
-      this.sdk.EVENTS.TRANSAK_ORDER_CREATED,
+    TransakSDK.on(
+      TransakSDK.EVENTS.TRANSAK_ORDER_CREATED,
       (orderData: OrderData) => {
         const events = [
           WebSocketEvents.ORDER_PAYMENT_VERIFYING,
@@ -75,7 +77,7 @@ export class Transak {
       }
     )
 
-    this.sdk.on(this.sdk.EVENTS.TRANSAK_WIDGET_CLOSE, () => {
+    TransakSDK.on(TransakSDK.EVENTS.TRANSAK_WIDGET_CLOSE, () => {
       setTimeout(() => {
         document.querySelector('html')?.style.removeProperty('overflow')
       }, 1000)
@@ -105,7 +107,9 @@ export class Transak {
   ): DefaultCustomizationOptions {
     return {
       apiKey: this.config.key, // Your API Key
-      environment: this.config.env || 'STAGING', // STAGING/PRODUCTION
+      // environment: this.config.env || TransakSDK.ENVIRONMENTS.STAGING,
+      environment: (this.config.env ||
+        'STAGING') as TransakSDKConfig['environment'], // STAGING/PRODUCTION
       networks: 'ethereum,matic',
       walletAddress: address, // Your customer's wallet address
       hostURL: window.location.origin,
@@ -193,12 +197,19 @@ export class Transak {
       ...this.defaultCustomizationOptions(address),
       ...this.customizationOptions
     }
-    this.sdk = new transakSDK(customizationOptions) as TransakSDK
+    const config = {
+      ...customizationOptions,
+      defaultNetwork: transakNetwork,
+      walletAddress: address,
+      networks: transakNetwork
+    }
+    this.sdk = new TransakSDK(config) as TransakSDK
+    console.log('config in dapps: ', config)
     this.suscribeToEvents(network)
 
-    this.sdk.partnerData.walletAddress = address
-    this.sdk.partnerData.defaultNetwork = transakNetwork
-    this.sdk.partnerData.networks = transakNetwork
+    // this.sdk.partnerData.walletAddress = address
+    // this.sdk.partnerData.defaultNetwork = transakNetwork
+    // this.sdk.partnerData.networks = transakNetwork
     this.sdk.init()
   }
 
