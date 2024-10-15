@@ -53,6 +53,9 @@ export class Transak {
    * @param network - Network in which the trasanctions will be done
    */
   private suscribeToEvents(network: Network) {
+    if (!TransakSDK.EVENTS) {
+      return
+    }
     TransakSDK.on(
       TransakSDK.EVENTS.TRANSAK_ORDER_CREATED,
       (orderData: OrderData) => {

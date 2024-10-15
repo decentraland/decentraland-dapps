@@ -1,6 +1,5 @@
 import { select } from 'redux-saga/effects'
 import { expectSaga } from 'redux-saga-test-plan'
-import transakSDK from '@transak/transak-sdk'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui'
@@ -21,6 +20,21 @@ import { OrderData, TradeType, TransakOrderStatus } from './types'
 
 jest.mock('../../../lib/eth')
 
+let initMock
+jest.mock('@transak/transak-sdk', () => {
+  const actualTransakSDK = jest.requireActual('@transak/transak-sdk')
+
+  return {
+    __esModule: true,
+    ...actualTransakSDK,
+    Transak: jest.fn().mockImplementation(config => {
+      return {
+        init: initMock
+      }
+    })
+  }
+})
+
 const mockGetChainIdByNetwork = getChainIdByNetwork as jest.MockedFunction<
   typeof getChainIdByNetwork
 >
@@ -37,6 +51,7 @@ const mockConfig: GatewaySagasConfig = {
     pollingDelay: 50
   },
   [NetworkGatewayType.TRANSAK]: {
+    marketplaceServerURL: 'https://marketplace-server.decentraland.zone',
     apiBaseUrl: 'http://transak-base.url.xyz',
     key: 'transak-key',
     env: 'TEST',
@@ -85,8 +100,8 @@ const mockOrderDataWithNftAssetInfo = {
     ...mockOrderData.status,
     isNFTOrder: true,
     nftAssetInfo: {
-      contractAddress: 'contractAddress',
-      tokenId: 'anId',
+      collection: 'contractAddress',
+      tokenId: '123',
       tradeType: TradeType.PRIMARY
     }
   }
@@ -108,9 +123,9 @@ const mockNftPurchase: NFTPurchase = {
   ...mockManaPurchase,
   nft: {
     contractAddress: 'contractAddress',
-    itemId: 'anId',
-    tokenId: undefined,
-    tradeType: TradeType.PRIMARY,
+    tokenId: '123',
+    itemId: null,
+    tradeType: TradeType.SECONDARY,
     cryptoAmount: 10
   }
 }
@@ -163,12 +178,37 @@ describe('when interacting with Transak', () => {
     })
 
     describe('when purchasing an NFT', () => {
+      let originalHref
+      beforeEach(() => {
+        jest.clearAllMocks()
+        originalHref = window.location.href
+        Object.defineProperty(window, 'location', {
+          writable: true, // Allow href to be writable
+          value: {
+            href: originalHref
+          }
+        })
+      })
       describe('when it belongs to the primary market', () => {
+        beforeEach(() => {
+          Object.defineProperty(window, 'location', {
+            value: {
+              href:
+                'https://decentraland.zone/contracts/contractAddress/tokens/123'
+            }
+          })
+        })
+
         it('should put a new message in the channel signaling the set of the purchase with the nft info and the item id', () => {
           transak.emitPurchaseEvent(
             mockOrderDataWithNftAssetInfo.status,
             Network.ETHEREUM
           )
+
+          console.log('{ ...mockNftPurchase, amount: 1 }: ', {
+            ...mockNftPurchase,
+            amount: 1
+          })
           return expectSaga(gatewaySaga)
             .put(setPurchase({ ...mockNftPurchase, amount: 1 }))
             .silentRun()
@@ -176,13 +216,21 @@ describe('when interacting with Transak', () => {
       })
 
       describe('when it belongs to the primary market', () => {
+        beforeEach(() => {
+          Object.defineProperty(window, 'location', {
+            value: {
+              href:
+                'https://decentraland.zone/contracts/contractAddress/items/234'
+            }
+          })
+        })
         it('should put a new message in the channel signaling the set of the purchase with the nft info and the item id', () => {
           transak.emitPurchaseEvent(
             {
               ...mockOrderDataWithNftAssetInfo.status,
               nftAssetInfo: {
                 ...mockOrderDataWithNftAssetInfo.status.nftAssetInfo,
-                tradeType: TradeType.SECONDARY
+                tradeType: TradeType.PRIMARY
               }
             },
             Network.ETHEREUM
@@ -194,9 +242,9 @@ describe('when interacting with Transak', () => {
                 amount: 1,
                 nft: {
                   ...mockNftPurchase.nft,
-                  tradeType: TradeType.SECONDARY,
-                  itemId: undefined,
-                  tokenId: 'anId'
+                  tokenId: null,
+                  itemId: '234',
+                  tradeType: TradeType.PRIMARY
                 }
               })
             )
@@ -206,14 +254,14 @@ describe('when interacting with Transak', () => {
     })
   })
 
-  describe('when opnening the widget', () => {
+  describe('when opening the widget', () => {
     beforeEach(() => {
-      jest.spyOn(transakSDK.prototype, 'init').mockImplementation(() => {})
+      initMock = jest.fn()
     })
 
     it('should call the method init from the Transak SDK', () => {
       transak.openWidget(mockAddress, Network.ETHEREUM)
-      return expect(transakSDK.prototype.init).toHaveBeenCalled()
+      expect(initMock).toHaveBeenCalled()
     })
   })
 })

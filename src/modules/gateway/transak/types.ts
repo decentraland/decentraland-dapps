@@ -44,7 +44,6 @@ export type CustomizationOptions = {
   redirectURL?: string
   contractAddress?: string // NFT Contract address
   tradeType?: TradeType // Can be primary in case of minting and secondary in case of secondary sale
-  // tokenId?: string // Decentraland tokenId in case of secondary sale and item id in case of primary sale (minting)
   productsAvailed?: ProductsAvailed // Would be BUY as NFT checkout is a special case of on ramping
   isNFT?: boolean // Will be true in case the bought assset is an NFT
 }
