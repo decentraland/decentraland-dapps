@@ -330,7 +330,6 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
           }
 
           let identity: AuthIdentity | null = yield call(getIdentityOrRedirect)
-          console.log('identity: ', identity)
 
           if (!identity) {
             const { success } = (yield race({
@@ -338,11 +337,9 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
               failure: take(GENERATE_IDENTITY_FAILURE)
             })) as { success: GenerateIdentitySuccessAction }
 
-            console.log('success: ', success)
             if (success) {
               identity = (yield call(getIdentityOrRedirect)) as AuthIdentity
             } else {
-              console.log('throws')
               throw new Error(NO_IDENTITY_ERROR)
             }
           }

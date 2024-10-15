@@ -112,7 +112,6 @@ export class Transak {
   ): DefaultCustomizationOptions {
     return {
       apiKey: this.config.key, // Your API Key
-      // environment: this.config.env || TransakSDK.ENVIRONMENTS.STAGING,
       environment: (this.config.env ||
         'STAGING') as TransakSDKConfig['environment'], // STAGING/PRODUCTION
       networks: 'ethereum,matic',
@@ -231,10 +230,6 @@ export class Transak {
     this.sdk = new TransakSDK(config) as TransakSDK
     console.log('config in dapps: ', config)
     this.suscribeToEvents(network)
-
-    // this.sdk.partnerData.walletAddress = address
-    // this.sdk.partnerData.defaultNetwork = transakNetwork
-    // this.sdk.partnerData.networks = transakNetwork
     this.sdk.init()
   }
 
