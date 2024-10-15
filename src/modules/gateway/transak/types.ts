@@ -82,9 +82,8 @@ export type OrderData = {
     transactionHash?: string
     network: 'ethereum' | 'matic'
     nftAssetInfo?: {
-      contractAddress: string
-      tokenId: string
-      tradeType: TradeType
+      collection: string
+      tokenId: string[]
     }
     paymentOptionId: string
     quoteId: string
@@ -106,15 +105,3 @@ export type OrderResponse = {
     errorMessage: string | null
   }
 }
-
-// export type TransakSDK = EventEmitter & {
-//   init: () => void
-//   close: () => void
-//   partnerData: {
-//     defaultNetwork: string
-//     walletAddress: string
-//     partnerOrderId: string
-//     networks: string
-//   }
-//   EVENTS: Record<string, string>
-// }

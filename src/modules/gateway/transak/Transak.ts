@@ -2,6 +2,7 @@ import {
   Transak as TransakSDK,
   TransakConfig as TransakSDKConfig
 } from '@transak/transak-sdk'
+import { AuthIdentity } from 'decentraland-crypto-fetch'
 import Pusher from 'pusher-js'
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui'
@@ -25,11 +26,13 @@ export class Transak {
   private readonly customizationOptions: Partial<CustomizationOptions>
   private readonly pusher: Pusher
   private readonly transakAPI: BaseAPI
+  private readonly identity: AuthIdentity | undefined
   private sdk: TransakSDK
 
   constructor(
     config: TransakConfig,
-    customizationOptions?: Partial<CustomizationOptions>
+    customizationOptions?: Partial<CustomizationOptions>,
+    identity?: AuthIdentity
   ) {
     const {
       apiBaseUrl,
@@ -41,6 +44,7 @@ export class Transak {
       cluster: appCluster
     })
     this.transakAPI = new BaseAPI(apiBaseUrl)
+    this.identity = identity
   }
 
   /**
@@ -60,6 +64,7 @@ export class Transak {
         ]
 
         const channel = this.pusher.subscribe(orderData.status.id)
+        this.emitPurchaseEvent(orderData.status, network)
 
         events.forEach(event => {
           channel.bind(event, (orderData: OrderData['status']) => {
@@ -118,6 +123,28 @@ export class Transak {
     }
   }
 
+  getItemIdFromUrl(url: string): string | null {
+    const itemRegex = /\/items\/(\d+)/
+    const itemMatch = url.match(itemRegex)
+
+    if (itemMatch) {
+      return itemMatch[1] // Return the item id
+    }
+
+    return null // Return null if no item id is found
+  }
+
+  getTokenIdFromUrl(url: string): string | null {
+    const tokenRegex = /\/tokens\/(\d+)/
+    const tokenMatch = url.match(tokenRegex)
+
+    if (tokenMatch) {
+      return tokenMatch[1] // Return the token id
+    }
+
+    return null // Return null if no token id is found
+  }
+
   /**
    * Given the data of the order and its status, returns an object with the relevant information of the purchase.
    *
@@ -140,6 +167,10 @@ export class Transak {
       paymentOptionId
     } = orderData
 
+    // read if there's item in the URL and set the item id otherwise set the token id
+    const itemId = this.getItemIdFromUrl(window.location.href)
+    const tokenId = this.getTokenIdFromUrl(window.location.href)
+
     return {
       id,
       network,
@@ -153,16 +184,10 @@ export class Transak {
       ...(isNFTOrder && nftAssetInfo
         ? {
             nft: {
-              contractAddress: nftAssetInfo.contractAddress,
-              tokenId:
-                nftAssetInfo.tradeType === TradeType.SECONDARY
-                  ? nftAssetInfo.tokenId
-                  : undefined,
-              itemId:
-                nftAssetInfo.tradeType === TradeType.PRIMARY
-                  ? nftAssetInfo.tokenId
-                  : undefined,
-              tradeType: nftAssetInfo.tradeType,
+              contractAddress: nftAssetInfo.collection,
+              tokenId,
+              itemId,
+              tradeType: itemId ? TradeType.PRIMARY : TradeType.SECONDARY,
               cryptoAmount
             }
           }
@@ -219,9 +244,15 @@ export class Transak {
    * @param orderId - Transak Order ID.
    */
   async getOrder(orderId: string): Promise<OrderResponse> {
-    return await this.transakAPI.request('GET', '/v2/order', {
-      apiKey: this.config.key,
-      orderId
-    })
+    return await this.transakAPI.request(
+      'GET',
+      `/transak/orders/${orderId}`,
+      { identity: this.identity },
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    )
   }
 }

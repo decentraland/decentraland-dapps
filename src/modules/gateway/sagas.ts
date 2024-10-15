@@ -3,7 +3,9 @@ import {
   delay,
   ForkEffect,
   put,
+  race,
   select,
+  take,
   takeEvery,
   takeLatest
 } from 'redux-saga/effects'
@@ -65,6 +67,11 @@ import {
 import { isManaPurchase, purchaseEventsChannel } from './utils'
 import { Wallet } from '../wallet/types'
 import { isErrorWithMessage } from '../../lib/error'
+import {
+  GENERATE_IDENTITY_FAILURE,
+  GENERATE_IDENTITY_SUCCESS,
+  GenerateIdentitySuccessAction
+} from '../identity'
 
 const DEFAULT_POLLING_DELAY = 3000
 const BUY_MANA_WITH_FIAT_FEEDBACK_MODAL_NAME = 'BuyManaWithFiatFeedbackModal'
@@ -322,13 +329,38 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
             throw new Error('Transak config not found')
           }
 
-          const transak = new Transak(transakConfig)
+          let identity: AuthIdentity | null = yield call(getIdentityOrRedirect)
+          console.log('identity: ', identity)
+
+          if (!identity) {
+            const { success } = (yield race({
+              success: take(GENERATE_IDENTITY_SUCCESS),
+              failure: take(GENERATE_IDENTITY_FAILURE)
+            })) as { success: GenerateIdentitySuccessAction }
+
+            console.log('success: ', success)
+            if (success) {
+              identity = (yield call(getIdentityOrRedirect)) as AuthIdentity
+            } else {
+              console.log('throws')
+              throw new Error(NO_IDENTITY_ERROR)
+            }
+          }
+
+          const marketplaceAPI = new MarketplaceAPI(
+            transakConfig.marketplaceServerURL
+          )
+          const transak = new Transak(transakConfig, {}, identity)
           let statusHasChanged = false
 
           while (!statusHasChanged) {
             const {
               data: { status, transactionHash, errorMessage }
-            }: OrderResponse = yield call([transak, transak.getOrder], id)
+            }: OrderResponse = yield call(
+              [marketplaceAPI, 'getOrder'],
+              id,
+              identity
+            )
             const newStatus: PurchaseStatus = yield call(
               [transak, transak.getPurchaseStatus],
               status
