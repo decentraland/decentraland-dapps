@@ -205,10 +205,6 @@ describe('when interacting with Transak', () => {
             Network.ETHEREUM
           )
 
-          console.log('{ ...mockNftPurchase, amount: 1 }: ', {
-            ...mockNftPurchase,
-            amount: 1
-          })
           return expectSaga(gatewaySaga)
             .put(setPurchase({ ...mockNftPurchase, amount: 1 }))
             .silentRun()

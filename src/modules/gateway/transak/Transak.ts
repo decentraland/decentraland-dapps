@@ -231,7 +231,6 @@ export class Transak {
       networks: transakNetwork
     }
     this.sdk = new TransakSDK(config) as TransakSDK
-    console.log('config in dapps: ', config)
     this.suscribeToEvents(network)
     this.sdk.init()
   }
