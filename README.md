@@ -1448,7 +1448,7 @@ Say you want to override some translations in English, just include any or all o
 
 ## SignInPage
 
-The `<SignInPage>` container can be used in the same way as the `<SignIn>` component from [decentraland-ui](https://github.com/decentraland/ui) but it's already connected to the redux store. You can override any `SignInProp` if you want to connect differently, and you can pass all the regular `SignInProps` to it.
+The `<SignInPage>` container can be used in the same way as the `<SignIn>` component from [decentraland-ui](https://github.com/decentraland/ui), but it's already connected to the redux store. You can override any `SignInProp` if you want to connect differently, and you can pass all the regular `SignInProps` to it.
 
 ### Dependencies
 
