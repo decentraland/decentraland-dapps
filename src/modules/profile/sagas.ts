@@ -4,6 +4,7 @@ import { Avatar } from '@dcl/schemas/dist/platform/profile'
 import { EntityType } from '@dcl/schemas/dist/platform/entity'
 import { PeerAPI } from '../../lib/peer'
 import { EntitiesOperator } from '../../lib/entities'
+import { getIdentityOrRedirect } from '../identity/sagas'
 import {
   ConnectWalletSuccessAction,
   CONNECT_WALLET_SUCCESS,
@@ -35,13 +36,11 @@ import { Profile } from './types'
 export const NO_IDENTITY_FOUND_ERROR_MESSAGE = 'No identity found'
 
 type CreateProfileSagaOptions = {
-  getIdentity: () => AuthIdentity | undefined
   peerUrl: string
   peerWithNoGbCollectorUrl?: string
 }
 
 export function createProfileSaga({
-  getIdentity,
   peerUrl,
   peerWithNoGbCollectorUrl
 }: CreateProfileSagaOptions) {
@@ -157,7 +156,7 @@ export function createProfileSaga({
     const profileMetadata: Profile = {
       avatars: [newAvatar, ...profileWithContentHashes.avatars.slice(1)]
     }
-    const identity = getIdentity()
+    const identity: AuthIdentity | null = yield call(getIdentityOrRedirect)
 
     if (identity) {
       yield call(
