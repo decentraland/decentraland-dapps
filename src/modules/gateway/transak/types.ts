@@ -1,4 +1,4 @@
-import { EventEmitter } from 'ws'
+import { TransakConfig } from '@transak/transak-sdk'
 
 export enum WebSocketEvents {
   ORDER_PAYMENT_VERIFYING = 'ORDER_PAYMENT_VERIFYING',
@@ -31,7 +31,7 @@ export enum ProductsAvailed {
 
 export type CustomizationOptions = {
   apiKey: string // Your API Key
-  environment: string // PRODUCTION/STAGING
+  environment: TransakConfig['environment'] // PRODUCTION/STAGING
   networks: string
   walletAddress: string // Your customer's wallet address
   hostURL: string
@@ -44,7 +44,6 @@ export type CustomizationOptions = {
   redirectURL?: string
   contractAddress?: string // NFT Contract address
   tradeType?: TradeType // Can be primary in case of minting and secondary in case of secondary sale
-  tokenId?: string // Decentraland tokenId in case of secondary sale and item id in case of primary sale (minting)
   productsAvailed?: ProductsAvailed // Would be BUY as NFT checkout is a special case of on ramping
   isNFT?: boolean // Will be true in case the bought assset is an NFT
 }
@@ -82,9 +81,8 @@ export type OrderData = {
     transactionHash?: string
     network: 'ethereum' | 'matic'
     nftAssetInfo?: {
-      contractAddress: string
-      tokenId: string
-      tradeType: TradeType
+      collection: string
+      tokenId: string[]
     }
     paymentOptionId: string
     quoteId: string
@@ -105,16 +103,4 @@ export type OrderResponse = {
   data: Pick<OrderData['status'], 'id' | 'status' | 'transactionHash'> & {
     errorMessage: string | null
   }
-}
-
-export type TransakSDK = EventEmitter & {
-  init: () => void
-  close: () => void
-  partnerData: {
-    defaultNetwork: string
-    walletAddress: string
-    partnerOrderId: string
-    networks: string
-  }
-  EVENTS: Record<string, string>
 }
