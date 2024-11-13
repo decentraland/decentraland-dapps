@@ -51,6 +51,7 @@ const mockConfig: GatewaySagasConfig = {
     pollingDelay: 50
   },
   [NetworkGatewayType.TRANSAK]: {
+    marketplaceServerURL: 'https://marketplace-server.decentraland.zone',
     apiBaseUrl: 'http://transak-base.url.xyz',
     key: 'transak-key',
     env: 'TEST',

@@ -344,7 +344,9 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
             }
           }
 
-          const marketplaceAPI = new MarketplaceAPI(transakConfig.apiBaseUrl)
+          const marketplaceAPI = new MarketplaceAPI(
+            transakConfig.marketplaceServerURL
+          )
           const transak = new Transak(transakConfig, {}, identity)
           let statusHasChanged = false
 
