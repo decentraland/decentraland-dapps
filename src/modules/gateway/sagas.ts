@@ -3,9 +3,7 @@ import {
   delay,
   ForkEffect,
   put,
-  race,
   select,
-  take,
   takeEvery,
   takeLatest
 } from 'redux-saga/effects'
@@ -67,11 +65,6 @@ import {
 import { isManaPurchase, purchaseEventsChannel } from './utils'
 import { Wallet } from '../wallet/types'
 import { isErrorWithMessage } from '../../lib/error'
-import {
-  GENERATE_IDENTITY_FAILURE,
-  GENERATE_IDENTITY_SUCCESS,
-  GenerateIdentitySuccessAction
-} from '../identity'
 
 const DEFAULT_POLLING_DELAY = 3000
 const BUY_MANA_WITH_FIAT_FEEDBACK_MODAL_NAME = 'BuyManaWithFiatFeedbackModal'
@@ -329,35 +322,13 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
             throw new Error('Transak config not found')
           }
 
-          let identity: AuthIdentity | null = yield call(getIdentityOrRedirect)
-
-          if (!identity) {
-            const { success } = (yield race({
-              success: take(GENERATE_IDENTITY_SUCCESS),
-              failure: take(GENERATE_IDENTITY_FAILURE)
-            })) as { success: GenerateIdentitySuccessAction }
-
-            if (success) {
-              identity = (yield call(getIdentityOrRedirect)) as AuthIdentity
-            } else {
-              throw new Error(NO_IDENTITY_ERROR)
-            }
-          }
-
-          const marketplaceAPI = new MarketplaceAPI(
-            transakConfig.marketplaceServerURL
-          )
-          const transak = new Transak(transakConfig, {}, identity)
+          const transak = new Transak(transakConfig)
           let statusHasChanged = false
 
           while (!statusHasChanged) {
             const {
               data: { status, transactionHash, errorMessage }
-            }: OrderResponse = yield call(
-              [marketplaceAPI, 'getOrder'],
-              id,
-              identity
-            )
+            }: OrderResponse = yield call([transak, transak.getOrder], id)
             const newStatus: PurchaseStatus = yield call(
               [transak, transak.getPurchaseStatus],
               status
