@@ -46,6 +46,7 @@ import {
 } from './types'
 import { getPendingManaPurchase, getPendingPurchases } from './selectors'
 import { OrderResponse, TransakOrderStatus } from './transak/types'
+import { generateIdentityFailure } from '../identity'
 
 jest.mock('@wert-io/widget-initializer')
 jest.mock('../../lib/marketplaceApi')
@@ -788,27 +789,65 @@ describe('when handling the action signaling the load of the local storage into 
           .mockResolvedValue(mockTransakOrderResponse)
       })
 
-      it('should put the action signaling the start pof the purchase status polling request', async () => {
-        const transakPurchase = {
-          ...mockPurchase,
-          id: mockTransakOrderResponse.data.id,
-          gateway: NetworkGatewayType.TRANSAK
-        }
+      describe("and there is no identity and it's generate function failed", () => {
+        it('should put the action signaling the failure of the poll purchase status request', async () => {
+          const transakPurchase = {
+            ...mockPurchase,
+            id: mockTransakOrderResponse.data.id,
+            gateway: NetworkGatewayType.TRANSAK
+          }
 
-        return expectSaga(gatewaySaga)
-          .provide([[select(getPendingPurchases), [transakPurchase]]])
-          .dispatch(load({}))
-          .put(pollPurchaseStatusRequest(transakPurchase))
-          .put(
-            setPurchase({
-              ...transakPurchase,
-              status: PurchaseStatus.COMPLETE,
-              txHash: mockTransakOrderResponse.data.transactionHash!,
-              failureReason: null
-            })
-          )
-          .put(pollPurchaseStatusSuccess())
-          .silentRun()
+          return expectSaga(gatewaySaga)
+            .provide([[select(getPendingPurchases), [transakPurchase]]])
+            .dispatch(load({}))
+            .dispatch(generateIdentityFailure('', ''))
+            .put(pollPurchaseStatusRequest(transakPurchase))
+
+            .not.put(
+              setPurchase({
+                ...transakPurchase,
+                status: PurchaseStatus.COMPLETE,
+                txHash: mockTransakOrderResponse.data.transactionHash!,
+                failureReason: null
+              })
+            )
+            .put(pollPurchaseStatusFailure(NO_IDENTITY_ERROR))
+            .silentRun()
+        })
+      })
+
+      describe('and there is identity', () => {
+        beforeEach(() => {
+          jest
+            .spyOn(MarketplaceAPI.prototype, 'getOrder')
+            .mockResolvedValue(mockTransakOrderResponse)
+        })
+        it('should put the action signaling the start pof the purchase status polling request', async () => {
+          const transakPurchase = {
+            ...mockPurchase,
+            id: mockTransakOrderResponse.data.id,
+            gateway: NetworkGatewayType.TRANSAK
+          }
+
+          return expectSaga(gatewaySaga)
+            .provide([
+              [select(getPendingPurchases), [transakPurchase]],
+              [call(getIdentityOrRedirect), {}]
+            ])
+            .dispatch(load({}))
+            .dispatch(generateIdentityFailure('', ''))
+            .put(pollPurchaseStatusRequest(transakPurchase))
+            .put(
+              setPurchase({
+                ...transakPurchase,
+                status: PurchaseStatus.COMPLETE,
+                txHash: mockTransakOrderResponse.data.transactionHash!,
+                failureReason: null
+              })
+            )
+            .put(pollPurchaseStatusSuccess())
+            .silentRun()
+        })
       })
     })
   })
@@ -825,12 +864,13 @@ describe('when handling the action signaling the load of the local storage into 
     describe('when it is possible to get the order from Transak API', () => {
       beforeEach(() => {
         jest
-          .spyOn(Transak.prototype, 'getOrder')
+          .spyOn(MarketplaceAPI.prototype, 'getOrder')
           .mockResolvedValue(mockTransakOrderResponse)
       })
 
       it('should get the order, put the action signaling the set of updated purchase, and the action signaling the success of the poll purchase status request', async () => {
         return expectSaga(gatewaySaga)
+          .provide([[call(getIdentityOrRedirect), {}]])
           .put(
             setPurchase({
               ...transakPurchase,
@@ -848,12 +888,13 @@ describe('when handling the action signaling the load of the local storage into 
     describe('when it is not possible to get the order from Transak API because the request fails', () => {
       beforeEach(() => {
         jest
-          .spyOn(Transak.prototype, 'getOrder')
+          .spyOn(MarketplaceAPI.prototype, 'getOrder')
           .mockRejectedValue(new Error(error))
       })
 
       it('should get the order, put the action signaling the set of updated purchase, and the action signaling the success of the poll purchase status request', async () => {
         return expectSaga(gatewaySaga)
+          .provide([[call(getIdentityOrRedirect), {}]])
           .put(pollPurchaseStatusFailure(error))
           .dispatch(pollPurchaseStatusRequest(transakPurchase))
           .silentRun()
