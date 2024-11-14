@@ -1,6 +1,5 @@
 import { AuthIdentity } from 'decentraland-crypto-fetch'
 import { WertMessageWithTarget } from '../modules/gateway/types'
-import { OrderResponse } from '../modules/gateway/transak/types'
 import { BaseClient } from './BaseClient'
 
 export class MarketplaceAPI extends BaseClient {
@@ -21,18 +20,5 @@ export class MarketplaceAPI extends BaseClient {
     } catch (error) {
       throw new Error((error as Error).message)
     }
-  }
-  /**
-   * Given the order id, returns relevant data related to status changes (status & tx hash).
-   *
-   * @param orderId - Transak Order ID.
-   */
-  async getOrder(
-    orderId: string,
-    identity: AuthIdentity
-  ): Promise<OrderResponse> {
-    return await this.fetch<OrderResponse>(`/v1/transak/orders/${orderId}`, {
-      identity
-    })
   }
 }
