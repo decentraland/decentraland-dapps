@@ -52,7 +52,6 @@ export type MoonPayConfig = {
 }
 
 export type TransakConfig = {
-  marketplaceServerURL: string
   apiBaseUrl: string
   key: string
   env: string
