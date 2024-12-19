@@ -14,6 +14,6 @@ export type DefaultProps = {
   settings: IntercomSettings
 }
 
-export type Props = DefaultProps & {
+export type Props = Partial<DefaultProps> & {
   appId: string
 }
