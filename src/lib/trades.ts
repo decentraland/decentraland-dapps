@@ -161,8 +161,8 @@ export async function getTradeSignature(
   const domain: TypedDataDomain = {
     name: marketplaceContract.name,
     version: marketplaceContract.version,
-    verifyingContract: marketplaceContract.address,
-    salt: SALT
+    salt: SALT,
+    verifyingContract: marketplaceContract.address
   }
 
   const signature = await signer._signTypedData(
