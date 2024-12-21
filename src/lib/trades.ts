@@ -97,9 +97,8 @@ export function generateTradeValues(trade: Omit<TradeCreation, 'signature'>) {
       externalChecks: trade.checks.externalChecks?.map(externalCheck => ({
         contractAddress: externalCheck.contractAddress,
         selector: externalCheck.selector,
-        value: ethers.utils.hexlify(
-          ethers.utils.toUtf8Bytes(externalCheck.value)
-        ),
+        // '0x' is the default value for value bytes (0 bytes)
+        value: externalCheck.value ? externalCheck.value : '0x',
         required: externalCheck.required
       }))
     },
@@ -107,13 +106,15 @@ export function generateTradeValues(trade: Omit<TradeCreation, 'signature'>) {
       assetType: asset.assetType,
       contractAddress: asset.contractAddress,
       value: getValueForTradeAsset(asset),
-      extra: ethers.utils.hexlify(ethers.utils.toUtf8Bytes(asset.extra))
+      // '0x' is the default value for value bytes (0 bytes)
+      extra: asset.extra ? asset.extra : '0x'
     })),
     received: trade.received.map(asset => ({
       assetType: asset.assetType,
       contractAddress: asset.contractAddress,
       value: getValueForTradeAsset(asset),
-      extra: ethers.utils.hexlify(ethers.utils.toUtf8Bytes(asset.extra)),
+      // '0x' is the default value for value bytes (0 bytes)
+      extra: asset.extra ? asset.extra : '0x',
       beneficiary: asset.beneficiary
     }))
   }
@@ -160,8 +161,8 @@ export async function getTradeSignature(
   const domain: TypedDataDomain = {
     name: marketplaceContract.name,
     version: marketplaceContract.version,
-    salt: SALT,
-    verifyingContract: marketplaceContract.address
+    verifyingContract: marketplaceContract.address,
+    salt: SALT
   }
 
   const signature = await signer._signTypedData(
