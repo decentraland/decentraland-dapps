@@ -166,8 +166,8 @@ describe('when getting the trade signature', () => {
       domain = {
         name: offchainMarketplaceContract.name,
         version: offchainMarketplaceContract.version,
-        salt: SALT,
-        verifyingContract: offchainMarketplaceContract.address
+        verifyingContract: offchainMarketplaceContract.address,
+        salt: SALT
       }
 
       values = {
@@ -182,7 +182,7 @@ describe('when getting the trade signature', () => {
           externalChecks: trade.checks.externalChecks?.map(externalCheck => ({
             contractAddress: externalCheck.contractAddress,
             selector: externalCheck.selector,
-            value: externalCheck.value,
+            value: '0x',
             required: externalCheck.required
           }))
         },
@@ -190,13 +190,13 @@ describe('when getting the trade signature', () => {
           assetType: asset.assetType,
           contractAddress: asset.contractAddress,
           value: getValueForTradeAsset(asset),
-          extra: ethers.utils.hexlify(ethers.utils.toUtf8Bytes(asset.extra))
+          extra: '0x'
         })),
         received: trade.received.map(asset => ({
           assetType: asset.assetType,
           contractAddress: asset.contractAddress,
           value: getValueForTradeAsset(asset),
-          extra: ethers.utils.hexlify(ethers.utils.toUtf8Bytes(asset.extra)),
+          extra: '0x',
           beneficiary: asset.beneficiary
         }))
       }
@@ -274,14 +274,14 @@ describe('when getting the trade to accept', () => {
         assetType: asset.assetType,
         contractAddress: asset.contractAddress,
         value: getValueForTradeAsset(asset),
-        extra: ethers.utils.hexlify(ethers.utils.toUtf8Bytes(asset.extra)),
+        extra: '0x',
         beneficiary: beneficiaryAddress
       })),
       received: trade.received.map(asset => ({
         assetType: asset.assetType,
         contractAddress: asset.contractAddress,
         value: getValueForTradeAsset(asset),
-        extra: ethers.utils.hexlify(ethers.utils.toUtf8Bytes(asset.extra)),
+        extra: '0x',
         beneficiary: asset.beneficiary
       }))
     })
