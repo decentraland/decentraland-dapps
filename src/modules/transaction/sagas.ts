@@ -79,12 +79,12 @@ export function* transactionSaga(
   }
 }
 
-const BLOCKS_DEPTH = 100
-const TRANSACTION_FETCH_RETIES = 120
-const PENDING_TRANSACTION_THRESHOLD = 72 * 60 * 60 * 1000 // 72 hours
-const REVERTED_TRANSACTION_THRESHOLD = 24 * 60 * 60 * 1000 // 24 hours
-const DROPPED_TRANSACTION_THRESHOLD = 24 * 60 * 60 * 1000 // 24 hours
-const INITIAL_BACKOFF_DELAY = 2 * 1000 // 2 seconds
+export const BLOCKS_DEPTH = 100
+export const TRANSACTION_FETCH_RETIES = 120
+export const PENDING_TRANSACTION_THRESHOLD = 72 * 60 * 60 * 1000 // 72 hours
+export const REVERTED_TRANSACTION_THRESHOLD = 24 * 60 * 60 * 1000 // 24 hours
+export const DROPPED_TRANSACTION_THRESHOLD = 24 * 60 * 60 * 1000 // 24 hours
+export const INITIAL_BACKOFF_DELAY = 2 * 1000 // 2 seconds
 
 const isExpired = (transaction: Transaction, threshold: number) =>
   Date.now() - transaction.timestamp > threshold
@@ -108,7 +108,7 @@ export class FailedTransactionError extends Error {
   }
 }
 
-function* handleCrossChainTransactionRequest(
+export function* handleCrossChainTransactionRequest(
   action: FetchTransactionRequestAction,
   config?: TransactionsConfig
 ) {
@@ -213,7 +213,7 @@ function* handleCrossChainTransactionRequest(
   }
 }
 
-function* handleRegularTransactionRequest(
+export function* handleRegularTransactionRequest(
   action: FetchTransactionRequestAction
 ) {
   const { hash, address } = action.payload
@@ -317,7 +317,7 @@ function* handleRegularTransactionRequest(
   }
 }
 
-function* getFibonacciDelay(attempt: number) {
+export function* getFibonacciDelay(attempt: number) {
   if (attempt <= 1) return INITIAL_BACKOFF_DELAY
 
   let prev = 1
@@ -330,7 +330,7 @@ function* getFibonacciDelay(attempt: number) {
   return current * INITIAL_BACKOFF_DELAY
 }
 
-function* handleReplaceTransactionRequest(
+export function* handleReplaceTransactionRequest(
   action: ReplaceTransactionRequestAction
 ) {
   const { hash, nonce, address: account } = action.payload
@@ -451,7 +451,7 @@ function* handleReplaceTransactionRequest(
   delete watchDroppedIndex[action.payload.hash]
 }
 
-function* handleWatchPendingTransactions() {
+export function* handleWatchPendingTransactions() {
   const transactions: Transaction[] = yield select(getData)
   const pendingTransactions = transactions.filter(transaction =>
     isPending(transaction.status)
@@ -473,7 +473,7 @@ function* handleWatchPendingTransactions() {
   }
 }
 
-function* handleWatchDroppedTransactions() {
+export function* handleWatchDroppedTransactions() {
   const transactions: Transaction[] = yield select(getData)
   const droppedTransactions = transactions.filter(
     transaction =>
@@ -492,7 +492,7 @@ function* handleWatchDroppedTransactions() {
   }
 }
 
-function* handleWatchRevertedTransaction(
+export function* handleWatchRevertedTransaction(
   action: WatchRevertedTransactionAction
 ) {
   const { hash } = action.payload
@@ -532,7 +532,7 @@ function* handleWatchRevertedTransaction(
   } while (!isExpired(txInState, REVERTED_TRANSACTION_THRESHOLD))
 }
 
-function* handleConnectWalletSuccess(_: ConnectWalletSuccessAction) {
+export function* handleConnectWalletSuccess(_: ConnectWalletSuccessAction) {
   yield put(watchPendingTransactions())
   yield put(watchDroppedTransactions())
 
