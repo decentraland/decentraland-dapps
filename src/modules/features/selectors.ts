@@ -5,7 +5,8 @@ import { FeaturesState } from './reducer'
 import {
   ApplicationName,
   ApplicationFeatures,
-  StateWithFeatures
+  StateWithFeatures,
+  Variant
 } from './types'
 
 export const getState = (state: StateWithFeatures): FeaturesState => {
@@ -73,6 +74,34 @@ export const isLoadingFeatureFlags = (state: StateWithFeatures) => {
   return isLoadingType(getLoading(state), FETCH_APPLICATION_FEATURES_REQUEST)
 }
 
+export const getFeatureVariant = (state: StateWithFeatures, app: ApplicationName, feature: string): Variant | null => {
+  const variant = getVariantFromEnv(app, feature)
+
+  // Return the flag variant if it has been defined in the env.
+  // If flag variants are only defined in the env, there is no need to implement the features reducer.
+  if (variant !== null) {
+    // Build the variant object
+    return {
+      name: 'Local variant',
+      enabled: true,
+      payload: {
+        type: 'string',
+        value: variant
+      }
+    }
+  }
+
+  const appFeatures = getData(state)[app]
+
+  // The app might not be defined in the store because the flag variants might not have been fetched yet.
+  // We suggest using isLoadingFeatureFlags and hasLoadedInitialFlags to handle this first.
+  if (!appFeatures) {
+    return null
+  }
+
+  return appFeatures.variants[`${app}-${feature}`] || null
+}
+
 export const hasLoadedInitialFlags = (state: StateWithFeatures) => {
   return getState(state).hasLoadedInitialFlags
 }
@@ -86,4 +115,15 @@ const getFromEnv = (
   const value = process.env[key]
 
   return !value || value === '' ? null : value === '1' ? true : false
+}
+
+const getVariantFromEnv = (
+  application: ApplicationName,
+  flag: string
+): string | null => {
+  const envify = (word: string) => word.toUpperCase().replace(/-/g, '_')
+  const key = `REACT_APP_FF_VARIANT_${envify(application)}_${envify(flag)}`
+  const value = process.env[key]
+
+  return !value || value === '' ? null : value
 }
