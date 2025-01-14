@@ -79,11 +79,12 @@ export function* transactionSaga(
   }
 }
 
-const BLOCKS_DEPTH = 100
-const TRANSACTION_FETCH_RETIES = 120
-const PENDING_TRANSACTION_THRESHOLD = 72 * 60 * 60 * 1000 // 72 hours
-const REVERTED_TRANSACTION_THRESHOLD = 24 * 60 * 60 * 1000 // 24 hours
-const TRANSACTION_FETCH_DELAY = 2 * 1000 // 2 seconds
+export const BLOCKS_DEPTH = 100
+export const TRANSACTION_FETCH_RETIES = 120
+export const PENDING_TRANSACTION_THRESHOLD = 72 * 60 * 60 * 1000 // 72 hours
+export const REVERTED_TRANSACTION_THRESHOLD = 24 * 60 * 60 * 1000 // 24 hours
+export const DROPPED_TRANSACTION_THRESHOLD = 24 * 60 * 60 * 1000 // 24 hours
+export const BACKOFF_DELAY_MULTIPLIER = 1
 
 const isExpired = (transaction: Transaction, threshold: number) =>
   Date.now() - transaction.timestamp > threshold
@@ -107,7 +108,7 @@ export class FailedTransactionError extends Error {
   }
 }
 
-function* handleCrossChainTransactionRequest(
+export function* handleCrossChainTransactionRequest(
   action: FetchTransactionRequestAction,
   config?: TransactionsConfig
 ) {
@@ -128,6 +129,7 @@ function* handleCrossChainTransactionRequest(
 
   let statusResponse: StatusResponse | undefined
   let txInState: Transaction
+  let attempt = 0
   let squidNotFoundRetries: number =
     config.crossChainProviderNotFoundRetries ?? TRANSACTION_FETCH_RETIES
   while (
@@ -175,7 +177,10 @@ function* handleCrossChainTransactionRequest(
       )
       return
     }
-    yield delay(config.crossChainProviderRetryDelay ?? TRANSACTION_FETCH_DELAY)
+
+    const fibonacciDelay: number = yield call(getFibonacciDelay, attempt)
+    yield delay(config.crossChainProviderRetryDelay ?? fibonacciDelay)
+    attempt++
   }
 
   txInState = yield select(state =>
@@ -208,7 +213,7 @@ function* handleCrossChainTransactionRequest(
   }
 }
 
-function* handleRegularTransactionRequest(
+export function* handleRegularTransactionRequest(
   action: FetchTransactionRequestAction
 ) {
   const { hash, address } = action.payload
@@ -222,6 +227,7 @@ function* handleRegularTransactionRequest(
 
   try {
     watchPendingIndex[hash] = true
+    let attempt = 0
 
     let tx: AnyTransaction = yield call(
       getTransactionFromChain,
@@ -266,8 +272,10 @@ function* handleRegularTransactionRequest(
         yield put(updateTransactionStatus(hash, statusInNetwork))
       }
 
-      // sleep
-      yield delay(TRANSACTION_FETCH_DELAY)
+      // Apply fibonacci backoff delay before next iteration
+      const fibonacciDelay: number = yield call(getFibonacciDelay, attempt)
+      yield delay(fibonacciDelay)
+      attempt++
 
       // update tx status from network
       tx = yield call(
@@ -309,7 +317,20 @@ function* handleRegularTransactionRequest(
   }
 }
 
-function* handleReplaceTransactionRequest(
+export function* getFibonacciDelay(attempt: number) {
+  if (attempt <= 1) return 1000 * BACKOFF_DELAY_MULTIPLIER
+
+  let prev = 1
+  let current = 1
+  for (let i = 2; i <= attempt; i++) {
+    const next = prev + current
+    prev = current
+    current = next
+  }
+  return current * 1000 * BACKOFF_DELAY_MULTIPLIER
+}
+
+export function* handleReplaceTransactionRequest(
   action: ReplaceTransactionRequestAction
 ) {
   const { hash, nonce, address: account } = action.payload
@@ -321,10 +342,25 @@ function* handleReplaceTransactionRequest(
     return
   }
 
+  // Check if transaction is already expired before starting to poll
+  if (isExpired(transaction, DROPPED_TRANSACTION_THRESHOLD)) {
+    yield put(updateTransactionStatus(hash, TransactionStatus.DROPPED))
+    return
+  }
+
   let checkpoint = null
+  let attempt = 0
   watchDroppedIndex[hash] = true
 
+  const startTime = Date.now()
+
   while (true) {
+    // Check if we've exceeded the time threshold during polling
+    if (Date.now() - startTime > DROPPED_TRANSACTION_THRESHOLD) {
+      yield put(updateTransactionStatus(hash, TransactionStatus.DROPPED))
+      break
+    }
+
     const eth: ethers.providers.Web3Provider = yield call(
       getNetworkWeb3Provider,
       transaction.chainId
@@ -398,7 +434,7 @@ function* handleReplaceTransactionRequest(
       break
     }
 
-    // if there was nonce higher to than the one in the tx, we can mark it as replaced (altough we don't know which tx replaced it)
+    // if there was nonce higher to than the one in the tx, we can mark it as replaced (although we don't know which tx replaced it)
     if (highestNonce >= nonce) {
       yield put(
         updateTransactionStatus(action.payload.hash, TransactionStatus.REPLACED)
@@ -406,14 +442,16 @@ function* handleReplaceTransactionRequest(
       break
     }
 
-    // sleep
-    yield delay(TRANSACTION_FETCH_DELAY)
+    // Apply fibonacci backoff delay before next iteration
+    const fibonacciDelay: number = yield call(getFibonacciDelay, attempt)
+    yield delay(fibonacciDelay)
+    attempt++
   }
 
   delete watchDroppedIndex[action.payload.hash]
 }
 
-function* handleWatchPendingTransactions() {
+export function* handleWatchPendingTransactions() {
   const transactions: Transaction[] = yield select(getData)
   const pendingTransactions = transactions.filter(transaction =>
     isPending(transaction.status)
@@ -435,12 +473,13 @@ function* handleWatchPendingTransactions() {
   }
 }
 
-function* handleWatchDroppedTransactions() {
+export function* handleWatchDroppedTransactions() {
   const transactions: Transaction[] = yield select(getData)
   const droppedTransactions = transactions.filter(
     transaction =>
       transaction.status === TransactionStatus.DROPPED &&
-      transaction.nonce != null
+      transaction.nonce != null &&
+      !isExpired(transaction, DROPPED_TRANSACTION_THRESHOLD)
   )
 
   for (const tx of droppedTransactions) {
@@ -453,7 +492,7 @@ function* handleWatchDroppedTransactions() {
   }
 }
 
-function* handleWatchRevertedTransaction(
+export function* handleWatchRevertedTransaction(
   action: WatchRevertedTransactionAction
 ) {
   const { hash } = action.payload
@@ -468,9 +507,13 @@ function* handleWatchRevertedTransaction(
   }
 
   const address: string = yield select(state => getAddress(state))
+  let attempt = 0
 
   do {
-    yield delay(TRANSACTION_FETCH_DELAY)
+    const fibonacciDelay: number = yield call(getFibonacciDelay, attempt)
+    yield delay(fibonacciDelay)
+    attempt++
+
     const txInNetwork: AnyTransaction | null = yield call(() =>
       getTransactionFromChain(address, txInState.chainId, hash)
     )
@@ -489,7 +532,7 @@ function* handleWatchRevertedTransaction(
   } while (!isExpired(txInState, REVERTED_TRANSACTION_THRESHOLD))
 }
 
-function* handleConnectWalletSuccess(_: ConnectWalletSuccessAction) {
+export function* handleConnectWalletSuccess(_: ConnectWalletSuccessAction) {
   yield put(watchPendingTransactions())
   yield put(watchDroppedTransactions())
 
