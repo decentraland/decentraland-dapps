@@ -84,7 +84,7 @@ export const TRANSACTION_FETCH_RETIES = 120
 export const PENDING_TRANSACTION_THRESHOLD = 72 * 60 * 60 * 1000 // 72 hours
 export const REVERTED_TRANSACTION_THRESHOLD = 24 * 60 * 60 * 1000 // 24 hours
 export const DROPPED_TRANSACTION_THRESHOLD = 24 * 60 * 60 * 1000 // 24 hours
-export const INITIAL_BACKOFF_DELAY = 2 * 1000 // 2 seconds
+export const BACKOFF_DELAY_MULTIPLIER = 1
 
 const isExpired = (transaction: Transaction, threshold: number) =>
   Date.now() - transaction.timestamp > threshold
@@ -318,7 +318,7 @@ export function* handleRegularTransactionRequest(
 }
 
 export function* getFibonacciDelay(attempt: number) {
-  if (attempt <= 1) return INITIAL_BACKOFF_DELAY
+  if (attempt <= 1) return 1000 * BACKOFF_DELAY_MULTIPLIER
 
   let prev = 1
   let current = 1
@@ -327,7 +327,7 @@ export function* getFibonacciDelay(attempt: number) {
     prev = current
     current = next
   }
-  return current * INITIAL_BACKOFF_DELAY
+  return current * 1000 * BACKOFF_DELAY_MULTIPLIER
 }
 
 export function* handleReplaceTransactionRequest(

@@ -12,7 +12,7 @@ jest.mock('./sagas', () => {
   const actual = jest.requireActual('./sagas')
   return {
     ...actual,
-    INITIAL_BACKOFF_DELAY: 100,
+    BACKOFF_DELAY_MULTIPLIER: 0.01,
     getFibonacciDelay: function*(attempt: number) {
       const fib = [1, 1]
       for (let i = 2; i <= attempt + 1; i++) {
@@ -34,35 +34,26 @@ import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import {
   getFibonacciDelay,
   handleRegularTransactionRequest,
-  handleWatchRevertedTransaction,
-  INITIAL_BACKOFF_DELAY
+  handleWatchRevertedTransaction
 } from './sagas'
-import {
-  fetchTransactionRequest,
-  fixRevertedTransaction,
-  WATCH_REVERTED_TRANSACTION,
-  fetchTransactionSuccess,
-  updateTransactionStatus
-} from './actions'
-import { getAddress } from '../wallet/selectors'
+import { fetchTransactionSuccess, watchRevertedTransaction } from './actions'
 import { getTransaction as getTransactionInState } from './selectors'
 import { buildTransactionPayload } from './utils'
 import { getTransaction as getTransactionFromChain } from './txUtils'
-import { FETCH_TRANSACTION_REQUEST } from './actions'
 
 describe('when using fibonacci backoff for transaction polling', () => {
-  const MOCK_INITIAL_DELAY = 100 // 100ms for testing
+  const MOCK_DELAY_MULTIPLIER = 100 // 100ms for testing
   jest.setTimeout(20000) // Increase global timeout
 
   describe('when calculating fibonacci delay', () => {
     const cases = [
-      { attempt: 0, expected: MOCK_INITIAL_DELAY },
-      { attempt: 1, expected: MOCK_INITIAL_DELAY },
-      { attempt: 2, expected: MOCK_INITIAL_DELAY * 2 },
-      { attempt: 3, expected: MOCK_INITIAL_DELAY * 3 },
-      { attempt: 4, expected: MOCK_INITIAL_DELAY * 5 },
-      { attempt: 5, expected: MOCK_INITIAL_DELAY * 8 },
-      { attempt: 6, expected: MOCK_INITIAL_DELAY * 13 }
+      { attempt: 0, expected: MOCK_DELAY_MULTIPLIER },
+      { attempt: 1, expected: MOCK_DELAY_MULTIPLIER },
+      { attempt: 2, expected: MOCK_DELAY_MULTIPLIER * 2 },
+      { attempt: 3, expected: MOCK_DELAY_MULTIPLIER * 3 },
+      { attempt: 4, expected: MOCK_DELAY_MULTIPLIER * 5 },
+      { attempt: 5, expected: MOCK_DELAY_MULTIPLIER * 8 },
+      { attempt: 6, expected: MOCK_DELAY_MULTIPLIER * 13 }
     ]
 
     cases.forEach(({ attempt, expected }) => {
@@ -103,7 +94,7 @@ describe('when using fibonacci backoff for transaction polling', () => {
     })
 
     describe('and the transaction becomes confirmed', () => {
-      test('should use fibonacci backoff until confirmation and fix the transaction', async () => {
+      it('should use fibonacci backoff until confirmation and fix the transaction', async () => {
         const { hash } = transaction
         const mockReceipt = { logs: [] }
         const revertedTx = {
@@ -197,10 +188,10 @@ describe('when using fibonacci backoff for transaction polling', () => {
           timestamp: Date.now() - 25 * 60 * 60 * 1000 // 25 hours ago
         }
 
-        return expectSaga(handleWatchRevertedTransaction, {
-          type: WATCH_REVERTED_TRANSACTION,
-          payload: { hash }
-        })
+        return expectSaga(
+          handleWatchRevertedTransaction,
+          watchRevertedTransaction(hash)
+        )
           .provide([
             [matchers.select(getTransactionInState, hash), expiredTransaction]
           ])
