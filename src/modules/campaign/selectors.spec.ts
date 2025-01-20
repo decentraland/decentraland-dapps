@@ -225,8 +225,8 @@ describe('Campaign selectors', () => {
         mockState.campaign.data = null
       })
 
-      it('should return null', () => {
-        expect(getAdditionalTags(mockState)).toBeNull()
+      it('should return an empty array', () => {
+        expect(getAdditionalTags(mockState)).toEqual([])
       })
     })
   })
@@ -363,7 +363,7 @@ describe('Campaign selectors', () => {
 
   describe('when getting banner assets', () => {
     describe('and the banner exists with assets', () => {
-      it('should return assets associated with the banner', () => {
+      it('should return the assets associated with the banner', () => {
         expect(getBannerAssets(mockState, 'banner1')).toEqual({
           asset1: mockAsset
         })

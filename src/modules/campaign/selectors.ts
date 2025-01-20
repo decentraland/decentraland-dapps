@@ -11,10 +11,11 @@ export const getError = (state: any): string | null => getState(state).error
 export const isLoading = (state: any): boolean => isLoadingType(getLoading(state), FETCH_CAMPAIGN_REQUEST)
 export const getMainTag = (state: any): string | undefined => getData(state)?.mainTag
 export const getCampaignName = (state: any): LocalizedField<string> | null => getData(state)?.name || null
-export const getAdditionalTags = (state: any): string[] | null => getData(state)?.additionalTags || null
+export const getAdditionalTags = (state: any): string[] => getData(state)?.additionalTags ?? []
 export const getAllTags = (state: any): string[] => {
-  const data = getData(state)
-  return [data?.mainTag, ...(data?.additionalTags ?? [])].filter(Boolean) as string[]
+  const mainTag = getMainTag(state)
+  const additionalTags = getAdditionalTags(state)
+  return [mainTag, ...additionalTags].filter(Boolean) as string[]
 }
 export const getAssets = (state: any): Record<string, ContentfulAsset> | null => getData(state)?.assets || null
 export const getTabName = (state: any): LocalizedField<string> | null => getData(state)?.tabName || null
