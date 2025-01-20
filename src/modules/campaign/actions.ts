@@ -1,16 +1,14 @@
 import { action } from 'typesafe-actions'
-import type { IBannerFields } from 'decentraland-ui2'
-import { LocalizedField, ContentfulAsset } from './types'
+import { BannerFields, ContentfulAsset, LocalizedField } from '@dcl/schemas'
 
 export const FETCH_CAMPAIGN_REQUEST = '[Request] Fetch Campaign'
 export const FETCH_CAMPAIGN_SUCCESS = '[Success] Fetch Campaign'
 export const FETCH_CAMPAIGN_FAILURE = '[Failure] Fetch Campaign'
 
-export const fetchCampaignRequest = () =>
-  action(FETCH_CAMPAIGN_REQUEST)
+export const fetchCampaignRequest = () => action(FETCH_CAMPAIGN_REQUEST)
 
 export const fetchCampaignSuccess = (
-  banners: Record<string, IBannerFields>,
+  banners: Record<string, BannerFields>,
   assets: Record<string, ContentfulAsset>,
   name?: LocalizedField<string>,
   tabName?: LocalizedField<string>,
@@ -28,7 +26,6 @@ export const fetchCampaignSuccess = (
 
 export const fetchCampaignFailure = (error: string) =>
   action(FETCH_CAMPAIGN_FAILURE, { error })
-
 
 export type FetchCampaignRequestAction = ReturnType<typeof fetchCampaignRequest>
 export type FetchCampaignSuccessAction = ReturnType<typeof fetchCampaignSuccess>
