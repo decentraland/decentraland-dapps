@@ -1,6 +1,6 @@
 {
   "name": "decentraland-dapps",
-  "version": "27.0.2",
+  "version": "0.0.0-development",
   "type": "module",
   "main": "dist/index.js",
   "files": [
