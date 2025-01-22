@@ -65,7 +65,10 @@ describe('when handling the fetch campaign request', () => {
         .put(
           fetchCampaignSuccess(
             {
-              marketplaceHomepageBanner: { ...mockHomepageBannerEntry.fields }
+              marketplaceHomepageBanner: {
+                ...mockHomepageBannerEntry.fields,
+                id: mockHomepageBannerEntry.sys.id
+              }
             },
             {
               [marketplaceHomepageBannerAssets[0].sys.id]:

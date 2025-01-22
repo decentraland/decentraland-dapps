@@ -1,6 +1,6 @@
 {
   "name": "decentraland-dapps",
-  "version": "0.0.0-development",
+  "version": "27.0.2",
   "type": "module",
   "main": "dist/index.js",
   "files": [
@@ -25,7 +25,7 @@
     "decentraland-crypto-fetch": "^2.0.1",
     "decentraland-transactions": "^2.18.0",
     "decentraland-ui": "^6.11.0",
-    "decentraland-ui2": "^0.9.2",
+    "decentraland-ui2": "^0.10.0",
     "ethers": "^5.6.8",
     "events": "^3.3.0",
     "flat": "^5.0.2",

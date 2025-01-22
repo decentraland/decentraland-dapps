@@ -9,7 +9,7 @@ export type CampaignState = {
     tabName?: LocalizedField<string>
     mainTag?: string
     additionalTags?: string[]
-    banners: Record<string, BannerFields>
+    banners: Record<string, BannerFields & { id: string }>
     assets: Record<string, ContentfulAsset>
   } | null
   loading: LoadingState

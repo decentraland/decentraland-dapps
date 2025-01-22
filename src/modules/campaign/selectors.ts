@@ -4,6 +4,8 @@ import { isLoadingType, type LoadingState } from '../loading'
 import { CampaignState } from './types'
 import { FETCH_CAMPAIGN_REQUEST } from './actions'
 
+const isLocalizedField = (value: any): value is LocalizedField<any> => typeof value === 'object' && value !== null && 'en-US' in value
+
 export const getState = (state: any): CampaignState => state.campaign
 export const getData = (state: any): CampaignState['data'] | null => getState(state).data
 export const getLoading = (state: any): LoadingState => getState(state).loading
@@ -19,7 +21,7 @@ export const getAllTags = (state: any): string[] => {
 }
 export const getAssets = (state: any): Record<string, ContentfulAsset> | null => getData(state)?.assets || null
 export const getTabName = (state: any): LocalizedField<string> | null => getData(state)?.tabName || null
-export const getBanner = (state: any, id: string): BannerFields | null => {
+export const getBanner = (state: any, id: string): BannerFields & { id: string } | null => {
   return getData(state)?.banners[id] ?? null
 }
 export const getBannerAssets = (state: any, bannerId: string): Record<string, ContentfulAsset> => {
@@ -29,10 +31,13 @@ export const getBannerAssets = (state: any, bannerId: string): Record<string, Co
   if (!banner) return {}
 
   return Object.entries(banner).reduce((acc, [_, value]) => {
-    if (isSysLink(value['en-US'])) {
-      const asset = assets?.[value['en-US'].sys.id]
-      if (asset) {
-        acc[value['en-US'].sys.id] = asset
+    if (isLocalizedField(value)) {
+      const usLocalizedValue = value['en-US']
+      if (isSysLink(usLocalizedValue)) {
+        const asset = assets?.[usLocalizedValue.sys.id]
+        if (asset) {
+          acc[usLocalizedValue.sys.id] = asset
+        }
       }
     }
     return acc

@@ -26,7 +26,7 @@ type MockState = {
 
 let mockState: MockState
 let mockAsset: ContentfulAsset
-let mockBanner: BannerFields
+let mockBanner: BannerFields & { id: string }
 
 describe('Campaign selectors', () => {
   beforeEach(() => {
@@ -68,6 +68,7 @@ describe('Campaign selectors', () => {
     }
 
     mockBanner = {
+      id: 'someId',
       fullSizeBackground: {
         'en-US': {
           sys: {
@@ -77,7 +78,7 @@ describe('Campaign selectors', () => {
           }
         }
       }
-    } as BannerFields
+    } as BannerFields & { id: string }
 
     mockState = {
       campaign: {
