@@ -8,7 +8,7 @@ export const FETCH_CAMPAIGN_FAILURE = '[Failure] Fetch Campaign'
 export const fetchCampaignRequest = () => action(FETCH_CAMPAIGN_REQUEST)
 
 export const fetchCampaignSuccess = (
-  banners: Record<string, BannerFields>,
+  banners: Record<string, BannerFields & { id: string }>,
   assets: Record<string, ContentfulAsset>,
   name?: LocalizedField<string>,
   tabName?: LocalizedField<string>,

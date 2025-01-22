@@ -67,12 +67,15 @@ export function* campaignSagas(
               bannerEntry &&
               bannerEntry.sys.contentType.sys.id === BANNER_CONTENT_TYPE
             ) {
-              acc[key] = (bannerEntry.fields as unknown) as BannerFields
+              acc[key] = {
+                ...bannerEntry.fields,
+                id: linkedEntryId
+              } as BannerFields & { id: string }
             }
           }
           return acc
         },
-        {} as Record<string, BannerFields>
+        {} as Record<string, BannerFields & { id: string }>
       )
 
       const campaignField = Object.values(items[0].fields).find(field => {

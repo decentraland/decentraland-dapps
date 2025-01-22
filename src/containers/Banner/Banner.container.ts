@@ -1,5 +1,4 @@
 import { connect } from 'react-redux'
-import { Banner } from 'decentraland-ui2'
 import {
   getBanner,
   getBannerAssets,
@@ -7,6 +6,7 @@ import {
   isLoading
 } from '../../modules/campaign'
 import { MapStateProps, OwnProps } from './Banner.types'
+import { Banner } from './Banner'
 
 const mapState = (state: any, ownProps: OwnProps): MapStateProps => ({
   fields: getBanner(state, ownProps.id) ?? null,
