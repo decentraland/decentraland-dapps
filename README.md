@@ -1465,7 +1465,6 @@ import { Switch, Route } from 'react-router-dom'
 import SignInPage from 'decentraland-dapps/dist/containers/SignInPage'
 
 //...
-
 <Switch>
   <Route exact path='/' component={...} />
   {/* your dapps routes... */}
