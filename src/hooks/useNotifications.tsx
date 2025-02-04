@@ -53,26 +53,32 @@ const useNotifications = (
     })
 
     if (!currentOpenState) {
-      const unreadNotifications = notifications
-        .filter(notification => !notification.read)
-        .map(({ id }) => id)
-      if (unreadNotifications.length) {
-        await notificationsClient?.markNotificationsAsRead(unreadNotifications)
-      }
-    } else {
-      // update state when closes the modal
-      const markNotificationAsReadInState = notifications.map(notification => {
-        if (notification.read) return notification
-
-        return {
-          ...notification,
-          read: true
+      try {
+        const unreadNotifications = notifications
+          .filter(notification => !notification.read)
+          .map(({ id }) => id)
+        
+        if (unreadNotifications.length) {
+          await notificationsClient?.markNotificationsAsRead(unreadNotifications)
+          
+          // update local state after successful API call
+          const markNotificationAsReadInState = notifications.map(notification => {
+            if (notification.read) return notification
+            return {
+              ...notification,
+              read: true
+            }
+          })
+          setUserNotifications({
+            isLoading,
+            notifications: markNotificationAsReadInState
+          })
         }
-      })
-      setUserNotifications({
-        isLoading,
-        notifications: markNotificationAsReadInState
-      })
+      } catch (error) {
+        console.error('Failed to mark notifications as read:', error)
+        // refresh notifications state by fetching the server if something went wrong
+        fetchNotificationsState()
+      }
     }
   }
 
