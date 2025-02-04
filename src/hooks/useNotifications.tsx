@@ -88,29 +88,20 @@ const useNotifications = (
       activeTab: tab
     }))
 
-  const fetchNotificationsState = () => {
+  const fetchNotificationsState = useCallback(() => {
     setUserNotifications({ notifications: [], isLoading: true })
     notificationsClient?.getNotifications().then(retrievedNotifications => {
+      const filteredNotifications = retrievedNotifications.filter(notification =>
+        CURRENT_AVAILABLE_NOTIFICATIONS.includes(notification.type)
+      )
       setUserNotifications({
         isLoading: false,
-        notifications: retrievedNotifications.filter(notification =>
-          CURRENT_AVAILABLE_NOTIFICATIONS.includes(notification.type)
-        )
+        notifications: filteredNotifications
       })
+    }).catch(error => {
+      console.error('Failed to fetch notifications:', error)
     })
-  }
-
-  const handleRenderProfile = useCallback((address: string) => {
-    return (
-      <Profile
-        address={address}
-        as="a"
-        href={`${getBaseUrl()}/profile/accounts/${address}`}
-        style={{ fontWeight: 500, color: 'white', textDecoration: 'none' }}
-        target="_blank"
-      />
-    )
-  }, [])
+  }, [notificationsClient])
 
   useEffect(() => {
     if (identity && isNotificationsEnabled) {
@@ -126,7 +117,23 @@ const useNotifications = (
     }
 
     return () => {}
-  }, [identity])
+  }, [identity, isNotificationsEnabled, fetchNotificationsState])
+
+  const handleRenderProfile = useCallback((address: string) => {
+    return (
+      <Profile
+        address={address}
+        as="a"
+        href={`${getBaseUrl()}/profile/accounts/${address}`}
+        style={{ fontWeight: 500, color: 'white', textDecoration: 'none' }}
+        target="_blank"
+      />
+    )
+  }, [])
+
+  useEffect(() => {
+    console.log('Debug - Notifications state changed:', notifications)
+  }, [notifications])
 
   return {
     notificationsClient,
