@@ -119,7 +119,7 @@ describe('Wallet sagas', () => {
     })
     describe('when getting the connected provider succeeds', () => {
       describe('when wallet_switchEthereumChain succeeds', () => {
-        it('should dispatch an action to signal that the request succeded', () => {
+        it('should dispatch an action to signal that the request succeeded', () => {
           return expectSaga(walletSaga)
             .provide([
               [
@@ -136,6 +136,14 @@ describe('Wallet sagas', () => {
                   timeout: delay(SWITCH_NETWORK_TIMEOUT)
                 }),
                 { switched: true }
+              ],
+              [put(fetchWalletRequest()), undefined],
+              [
+                race({
+                  success: take(FETCH_WALLET_SUCCESS),
+                  failure: take(FETCH_WALLET_FAILURE)
+                }),
+                { success: true }
               ]
             ])
             .put(switchNetworkSuccess(ChainId.ETHEREUM_MAINNET))
