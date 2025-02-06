@@ -1,5 +1,4 @@
-import React from 'react'
-import { useMemo, useState, useEffect, useCallback } from 'react'
+import React, { useMemo, useState, useEffect, useCallback, useRef } from 'react'
 import {
   NotificationsAPI,
   checkIsOnboarding,
@@ -27,18 +26,53 @@ const useNotifications = (
     notifications: []
   })
 
-  const [{ activeTab, isOnboarding, isOpen }, setNotificationsState] = useState(
-    {
-      activeTab: NotificationActiveTab.NEWEST,
-      isOnboarding: checkIsOnboarding(),
-      isOpen: false
+  const [{ activeTab, isOnboarding, isOpen }, setNotificationsState] = useState({
+    activeTab: NotificationActiveTab.NEWEST,
+    isOnboarding: checkIsOnboarding(),
+    isOpen: false
+  })
+
+  const latestIdentityRef = useRef<AuthIdentity | undefined>(identity)
+  const clientRef = useRef<NotificationsAPI | null>(null)
+
+  useEffect(() => {
+    if (identity) {
+      latestIdentityRef.current = identity
     }
-  )
+  }, [identity])
 
   const notificationsClient: NotificationsAPI | null = useMemo(() => {
-    if (identity) return new NotificationsAPI({ identity })
+    if (identity) {
+      const client = new NotificationsAPI({ identity })
+      clientRef.current = client
+      return client
+    }
     return null
   }, [identity])
+
+  const fetchNotificationsState = async () => {
+    const client = clientRef.current
+    if (!client) return []
+
+    setUserNotifications(prev => ({ ...prev, isLoading: true }))
+
+    try {
+      const retrievedNotifications = await client.getNotifications()
+      const filteredNotifications = retrievedNotifications?.filter(notification =>
+        CURRENT_AVAILABLE_NOTIFICATIONS.includes(notification.type)
+      ) || []
+
+      setUserNotifications({
+        isLoading: false,
+        notifications: filteredNotifications
+      })
+
+      return filteredNotifications
+    } catch {
+      setUserNotifications(prev => ({ ...prev, isLoading: false }))
+      return []
+    }
+  }
 
   const handleOnBegin = () => {
     setOnboardingDone()
@@ -47,33 +81,31 @@ const useNotifications = (
 
   const handleNotificationsOpen = async () => {
     const currentOpenState = isOpen
+    const currentIdentity = identity || latestIdentityRef.current
+    const client = clientRef.current
 
-    setNotificationsState(prevState => {
-      return { ...prevState, isOpen: !prevState.isOpen }
-    })
-
-    if (!currentOpenState) {
-      const unreadNotifications = notifications
+    if (!currentOpenState && currentIdentity && client) {
+      const freshNotifications = await fetchNotificationsState()
+      const unreadNotifications = freshNotifications
         .filter(notification => !notification.read)
         .map(({ id }) => id)
-      if (unreadNotifications.length) {
-        await notificationsClient?.markNotificationsAsRead(unreadNotifications)
-      }
-    } else {
-      // update state when closes the modal
-      const markNotificationAsReadInState = notifications.map(notification => {
-        if (notification.read) return notification
 
-        return {
-          ...notification,
-          read: true
-        }
-      })
-      setUserNotifications({
-        isLoading,
-        notifications: markNotificationAsReadInState
-      })
+      if (unreadNotifications.length) {
+        await client.markNotificationsAsRead(unreadNotifications)
+        setUserNotifications(prevState => ({
+          ...prevState,
+          notifications: prevState.notifications.map(notification => ({
+            ...notification,
+            read: unreadNotifications.includes(notification.id) ? true : notification.read
+          }))
+        }))
+      }
     }
+
+    setNotificationsState(prevState => ({
+      ...prevState,
+      isOpen: !prevState.isOpen
+    }))
   }
 
   const handleOnChangeModalTab = (tab: NotificationActiveTab) =>
@@ -82,45 +114,22 @@ const useNotifications = (
       activeTab: tab
     }))
 
-  const fetchNotificationsState = () => {
-    setUserNotifications({ notifications: [], isLoading: true })
-    notificationsClient?.getNotifications().then(retrievedNotifications => {
-      setUserNotifications({
-        isLoading: false,
-        notifications: retrievedNotifications.filter(notification =>
-          CURRENT_AVAILABLE_NOTIFICATIONS.includes(notification.type)
-        )
-      })
-    })
-  }
+  const handleRenderProfile = useCallback((address: string) => (
+    <Profile
+      address={address}
+      href={`${getBaseUrl()}/profile/accounts/${address}`}
+      style={{ fontWeight: 500, color: 'white', textDecoration: 'none' }}
+      target="_blank"
+    />
+  ), [])
 
-  const handleRenderProfile = useCallback((address: string) => {
-    return (
-      <Profile
-        address={address}
-        as="a"
-        href={`${getBaseUrl()}/profile/accounts/${address}`}
-        style={{ fontWeight: 500, color: 'white', textDecoration: 'none' }}
-        target="_blank"
-      />
-    )
-  }, [])
-
-  useEffect(() => {
+  useEffect((): any => {
     if (identity && isNotificationsEnabled) {
       fetchNotificationsState()
-
-      const interval = setInterval(() => {
-        fetchNotificationsState()
-      }, NOTIFICATIONS_QUERY_INTERVAL)
-
-      return () => {
-        clearInterval(interval)
-      }
+      const interval = setInterval(fetchNotificationsState, NOTIFICATIONS_QUERY_INTERVAL)
+      return () => clearInterval(interval)
     }
-
-    return () => {}
-  }, [identity])
+  }, [identity, isNotificationsEnabled])
 
   return {
     notificationsClient,
