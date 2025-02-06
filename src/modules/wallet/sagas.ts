@@ -46,8 +46,6 @@ import {
   SwitchNetworkRequestAction,
   switchNetworkSuccess,
   switchNetworkFailure,
-  SWITCH_NETWORK_SUCCESS,
-  SwitchNetworkSuccessAction,
   setAppChainId,
   disconnectWalletSuccess,
   disconnectWalletFailure
@@ -108,8 +106,7 @@ export function* walletSaga() {
     takeEvery(FETCH_WALLET_REQUEST, handleFetchWalletRequest),
     takeEvery(DISCONNECT_WALLET_REQUEST, handleDisconnectWalletRequest),
     takeEvery(CONNECT_WALLET_SUCCESS, handleConnectWalletSuccess),
-    takeEvery(SWITCH_NETWORK_REQUEST, handleSwitchNetworkRequest),
-    takeEvery(SWITCH_NETWORK_SUCCESS, handleSwitchNetworkSuccess)
+    takeEvery(SWITCH_NETWORK_REQUEST, handleSwitchNetworkRequest)
   ])
 }
 
@@ -222,16 +219,17 @@ function* handleSwitchNetworkRequest(action: SwitchNetworkRequestAction) {
         yield put(showToast(getSwitchChainErrorToast(chainId)))
         throw new Error('Error switching network: Operation timed out')
       } else {
+        yield put(fetchWalletRequest())
+        yield race({
+          success: take(FETCH_WALLET_SUCCESS),
+          failure: take(FETCH_WALLET_FAILURE)
+        })
         yield put(switchNetworkSuccess(chainId))
       }
     } catch (switchError) {
       yield put(switchNetworkFailure(chainId, switchError.message))
     }
   }
-}
-
-function* handleSwitchNetworkSuccess(_action: SwitchNetworkSuccessAction) {
-  yield put(fetchWalletRequest())
 }
 
 export function createWalletSaga(options: CreateWalletOptions) {
