@@ -1,6 +1,6 @@
 import { getTransactionsByType } from '../transaction/selectors'
 import { getAddress } from '../wallet/selectors'
-import { GRANT_TOKEN_SUCCESS } from './actions'
+import { AUTHORIZATION_FLOW_REQUEST, GRANT_TOKEN_SUCCESS } from './actions'
 import { AuthorizationState } from './reducer'
 import { AuthorizationType } from './types'
 
@@ -26,4 +26,9 @@ export const getApproveTransactions = (state: any) =>
   getTransactions(state).filter(
     transaction =>
       transaction.payload.authorization.type === AuthorizationType.APPROVAL
+  )
+
+export const isAuthorizing = (state: any) =>
+  getState(state).loading.some(
+    loading => loading.type === AUTHORIZATION_FLOW_REQUEST
   )
