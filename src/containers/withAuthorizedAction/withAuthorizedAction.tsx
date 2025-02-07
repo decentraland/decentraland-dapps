@@ -41,11 +41,13 @@ import {
   AuthorizationTranslationKeys
 } from './withAuthorizedAction.types'
 
+const MAGIC_AUTO_SIGN_FEATURE = 'magic-auto-sign'
+
 const mapState = (state: RootStateOrAny): MapStateProps => ({
   isMagicAutoSignEnabled: getIsFeatureEnabled(
     state,
     ApplicationName.DAPPS,
-    'magic-auto-sign'
+    MAGIC_AUTO_SIGN_FEATURE
   ),
   authorizationError: getAuthorizationFlowError(state),
   wallet: getWallet(state),
