@@ -21,3 +21,10 @@ export type Authorization = {
   chainId: ChainId
   allowance?: string
 }
+
+export type AuthorizationOptions = {
+  requiredAllowance?: string
+  currentAllowance?: string
+  onAuthorized?: () => void
+  traceId?: string
+}
