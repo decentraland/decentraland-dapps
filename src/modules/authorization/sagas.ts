@@ -8,7 +8,7 @@ import {
   fork
 } from 'redux-saga/effects'
 import { providers } from '@0xsequence/multicall'
-import { ethers } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 import { Provider } from 'decentraland-connect'
 import { ContractData, getContract } from 'decentraland-transactions'
 import { getNetworkProvider } from '../../lib/eth'
@@ -223,7 +223,6 @@ export function createAuthorizationSaga() {
     const TOKEN_FAILURE = isRevoke ? REVOKE_TOKEN_FAILURE : GRANT_TOKEN_FAILURE
 
     yield put(tokenRequest)
-    console.log('Token request put')
 
     const {
       success,
@@ -235,7 +234,6 @@ export function createAuthorizationSaga() {
       success: take(TOKEN_SUCCESS),
       failure: take(TOKEN_FAILURE)
     })
-    console.log('Token race', success, failure)
     if (failure) {
       throw new Error(failure.payload.error)
     }
@@ -250,7 +248,6 @@ export function createAuthorizationSaga() {
     const txHash = getTransactionHashFromAction(
       success as RevokeTokenSuccessAction | GrantTokenSuccessAction
     )
-    console.log('Waiting for tx hash', txHash)
     yield call(waitForTx, txHash)
   }
 
@@ -265,23 +262,19 @@ export function createAuthorizationSaga() {
       traceId,
       onAuthorized
     } = action.payload
-    console.log('Handling the authorization flow request', authorizationAction)
-    console.log('Required allowance', requiredAllowance)
-    console.log('Current allowance', currentAllowance)
 
     try {
-      // If we're building an allowance request, we need to check if the current allowance is enough
-      // If not, we need to set the allowance to 0 before setting it to the required allowance
+      // If we're building an allowance request, we need to check if the user has any allowance set
+      // If they have it already set, we need to revoke it before granting the new allowance
       if (
         authorizationAction === AuthorizationAction.GRANT &&
         authorization.type === AuthorizationType.ALLOWANCE &&
         requiredAllowance !== undefined &&
         currentAllowance !== undefined &&
-        BigInt(requiredAllowance) > BigInt(currentAllowance) &&
+        !BigNumber.from(currentAllowance).isZero() &&
         onAuthorized
       ) {
         // Build revoke request
-        console.log('Building revoke request')
         yield call(
           authorizeAndWaitForTx,
           authorization,
@@ -297,9 +290,7 @@ export function createAuthorizationSaga() {
         authorizationAction,
         traceId ?? 'Unknown trace id'
       )
-
       yield put(fetchAuthorizationsRequest([authorization]))
-      console.log('Fetching authorizations')
 
       const {
         fetchFailure
@@ -317,9 +308,7 @@ export function createAuthorizationSaga() {
             AuthorizationError.FETCH_AUTHORIZATIONS_FAILURE
         )
       }
-      console.log('Fetch success')
       const authorizations: Authorization[] = yield select(getData)
-      console.log('Authorizations', authorizations)
 
       if (
         authorizationAction === AuthorizationAction.REVOKE &&
@@ -350,9 +339,7 @@ export function createAuthorizationSaga() {
         }
       }
 
-      console.log('Finishing doing the authorization')
       if (onAuthorized) {
-        console.log('Forking the onAuthorized')
         yield fork(onAuthorized)
       }
 

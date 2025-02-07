@@ -5,7 +5,6 @@ import { BigNumber, ethers } from 'ethers'
 import {
   Authorization,
   AuthorizationAction,
-  AuthorizationOptions,
   AuthorizationType
 } from '../../modules/authorization/types'
 import {

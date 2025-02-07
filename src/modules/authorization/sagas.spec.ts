@@ -1,6 +1,6 @@
 import { expectSaga } from 'redux-saga-test-plan'
 import * as matchers from 'redux-saga-test-plan/matchers'
-import { put, call, select, fork } from 'redux-saga/effects'
+import { put, call, select, fork, race, take } from 'redux-saga/effects'
 import { ContractName } from 'decentraland-transactions'
 import { ChainId } from '@dcl/schemas'
 import { fetchTransactionSuccess } from '../transaction/actions'
@@ -16,9 +16,13 @@ import {
   fetchAuthorizationsFailure,
   fetchAuthorizationsRequest,
   fetchAuthorizationsSuccess,
+  GRANT_TOKEN_FAILURE,
+  GRANT_TOKEN_SUCCESS,
   grantTokenFailure,
   grantTokenRequest,
   grantTokenSuccess,
+  REVOKE_TOKEN_FAILURE,
+  REVOKE_TOKEN_SUCCESS,
   revokeTokenFailure,
   revokeTokenRequest,
   revokeTokenSuccess
@@ -46,43 +50,110 @@ describe('handleAuthorizationFlowRequest', () => {
       let onAuthorized: (() => void) | undefined
 
       describe('and onAuthorized is defined', () => {
+        let currentAllowance: string
         beforeEach(() => {
           onAuthorized = () => undefined
         })
 
-        it('should put the success action and fork the onAuthorized callback', () => {
-          return expectSaga(authorizationSaga)
-            .provide([
-              [put(fetchAuthorizationsRequest([authorization])), undefined],
-              [put(grantTokenRequest(authorization)), undefined],
-              [call(waitForTx, 'tx-hash'), undefined],
-              [select(getData), [{ ...authorization, allowance: '10000' }]],
-              [fork(onAuthorized!), undefined]
-            ])
-            .put(authorizationFlowSuccess(authorization))
-            .fork(onAuthorized!)
-            .dispatch(
-              authorizationFlowRequest(
-                authorization,
-                AuthorizationAction.GRANT,
-                {
-                  requiredAllowance: '10',
-                  onAuthorized
-                }
-              )
-            )
-            .dispatch(
-              grantTokenSuccess(authorization, authorization.chainId, 'tx-hash')
-            )
-            .dispatch(
-              fetchAuthorizationsSuccess([
-                [authorization, { ...authorization, allowance: '10000' }]
+        describe('and the user already has an allowance set which is not zero', () => {
+          beforeEach(() => {
+            currentAllowance = '10000'
+          })
+
+          it('should revoke the allowance before granting the new one and fork the onAuthorized callback', () => {
+            return expectSaga(authorizationSaga)
+              .provide([
+                [put(fetchAuthorizationsRequest([authorization])), undefined],
+                [put(grantTokenRequest(authorization)), undefined],
+                [put(revokeTokenRequest(authorization)), undefined],
+                [
+                  race({
+                    success: take(REVOKE_TOKEN_SUCCESS),
+                    failure: take(REVOKE_TOKEN_FAILURE)
+                  }),
+                  { success: { payload: { _watch_tx: { hash: 'tx-hash' } } } }
+                ],
+                [
+                  race({
+                    success: take(GRANT_TOKEN_SUCCESS),
+                    failure: take(GRANT_TOKEN_FAILURE)
+                  }),
+                  { success: { payload: { _watch_tx: { hash: 'tx-hash' } } } }
+                ],
+                [call(waitForTx, 'tx-hash'), undefined],
+                [select(getData), [{ ...authorization, allowance: '10000' }]],
+                [fork(onAuthorized!), undefined]
               ])
-            )
-            .dispatch(
-              fetchTransactionSuccess({ hash: 'tx-hash' } as Transaction)
-            )
-            .run({ silenceTimeout: true })
+              .put(revokeTokenRequest(authorization))
+              .put(grantTokenRequest(authorization))
+              .put(authorizationFlowSuccess(authorization))
+              .fork(onAuthorized!)
+              .dispatch(
+                authorizationFlowRequest(
+                  authorization,
+                  AuthorizationAction.GRANT,
+                  {
+                    requiredAllowance: '10',
+                    currentAllowance,
+                    onAuthorized
+                  }
+                )
+              )
+              .dispatch(
+                fetchAuthorizationsSuccess([
+                  [authorization, { ...authorization, allowance: '10000' }]
+                ])
+              )
+              .run({ silenceTimeout: true })
+          })
+        })
+
+        describe('and the user already has an allowance set which is zero', () => {
+          beforeEach(() => {
+            currentAllowance = '0'
+          })
+
+          it('should put only the grant token request and the success action and fork the onAuthorized callback', () => {
+            return expectSaga(authorizationSaga)
+              .provide([
+                [put(fetchAuthorizationsRequest([authorization])), undefined],
+                [put(grantTokenRequest(authorization)), undefined],
+                [call(waitForTx, 'tx-hash'), undefined],
+                [select(getData), [{ ...authorization, allowance: '10000' }]],
+                [fork(onAuthorized!), undefined]
+              ])
+              .put(authorizationFlowSuccess(authorization))
+              .put(grantTokenRequest(authorization))
+              .not.put(revokeTokenRequest(authorization))
+              .fork(onAuthorized!)
+              .dispatch(
+                authorizationFlowRequest(
+                  authorization,
+                  AuthorizationAction.GRANT,
+                  {
+                    requiredAllowance: '10',
+                    currentAllowance,
+                    onAuthorized
+                  }
+                )
+              )
+              .dispatch(
+                grantTokenSuccess(
+                  authorization,
+                  authorization.chainId,
+                  'tx-hash'
+                )
+              )
+              .dispatch(
+                fetchAuthorizationsSuccess([
+                  [authorization, { ...authorization, allowance: '10000' }]
+                ])
+              )
+              .dispatch(
+                fetchTransactionSuccess({ hash: 'tx-hash' } as Transaction)
+              )
+              .run({ silenceTimeout: true })
+          })
         })
       })
 
