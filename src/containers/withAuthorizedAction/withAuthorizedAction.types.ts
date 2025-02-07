@@ -1,13 +1,19 @@
 import { Dispatch } from 'redux'
 import { ContractName } from 'decentraland-transactions'
 import { Contract } from '@dcl/schemas'
+import { Wallet } from '../../modules/wallet/types'
 import {
   AuthorizationFlowClearAction,
-  authorizationFlowClear
+  AuthorizationFlowRequestAction,
+  authorizationFlowClear,
+  authorizationFlowRequest,
+  FetchAuthorizationsRequestAction
 } from '../../modules/authorization/actions'
-import { AuthorizationType } from '../../modules/authorization/types'
+import {
+  Authorization,
+  AuthorizationType
+} from '../../modules/authorization/types'
 import { en } from '../../modules/translation/defaults'
-
 type AuthorizeBaseOptions = {
   /**
    * callback to run when authorization process is completed
@@ -62,10 +68,30 @@ export type WithAuthorizedActionProps = {
   onAuthorizedAction: (options: AuthorizeActionOptions) => void
   onCloseAuthorization: () => void
   isLoadingAuthorization: boolean
+  authorizationError: string | null
+  wallet: Wallet
+  isMagicAutoSignEnabled: boolean
 }
 
-export type MapStateProps = { address: string | undefined }
-export type MapDispatch = Dispatch<AuthorizationFlowClearAction>
+export type MapStateProps = {
+  wallet: Wallet | null
+  isAuthorizing: boolean
+  authorizationError: string | null
+  isMagicAutoSignEnabled: boolean
+}
+export type MapDispatch = Dispatch<
+  | AuthorizationFlowClearAction
+  | AuthorizationFlowRequestAction
+  | FetchAuthorizationsRequestAction
+>
 export type MapDispatchProps = {
   onClearAuthorizationFlow: typeof authorizationFlowClear
+  onRevoke: (
+    traceId: string,
+    authorization: Authorization
+  ) => ReturnType<typeof authorizationFlowRequest>
+  onGrant: (
+    traceId: string,
+    authorization: Authorization
+  ) => ReturnType<typeof authorizationFlowRequest>
 }

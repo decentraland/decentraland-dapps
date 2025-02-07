@@ -3,7 +3,6 @@ import { BigNumber } from 'ethers'
 import { Network } from '@dcl/schemas'
 import { RootStateOrAny } from 'react-redux'
 import {
-  authorizationFlowRequest,
   AuthorizationFlowRequestAction,
   fetchAuthorizationsRequest,
   FetchAuthorizationsRequestAction
@@ -42,6 +41,13 @@ export enum AuthorizationStepAction {
   CONFIRM = 'confirm'
 }
 
+export type HandleGrantOptions = {
+  requiredAllowance?: BigNumber
+  currentAllowance?: BigNumber
+  onAuthorized?: () => void
+  traceId?: string
+}
+
 export type Props = {
   authorization: Authorization
   requiredAllowance?: BigNumber
@@ -61,15 +67,12 @@ export type Props = {
   getConfirmationError?: (state: RootStateOrAny) => string | null
   onClose: () => void
   onAuthorized: () => void
-  onRevoke: (traceId: string) => ReturnType<typeof authorizationFlowRequest>
-  onGrant: (traceId: string) => ReturnType<typeof authorizationFlowRequest>
   onFetchAuthorizations: () => ReturnType<typeof fetchAuthorizationsRequest>
+  onRevoke: (authorization: Authorization, analyticsTraceId: string) => void
+  onGrant: (authorization: Authorization, options?: HandleGrantOptions) => void
 }
 
-export type MapDispatchProps = Pick<
-  Props,
-  'onRevoke' | 'onGrant' | 'onFetchAuthorizations'
->
+export type MapDispatchProps = Pick<Props, 'onFetchAuthorizations'>
 export type MapDispatch = Dispatch<
   AuthorizationFlowRequestAction | FetchAuthorizationsRequestAction
 >
@@ -79,6 +82,16 @@ export type OwnProps = Pick<
   | 'requiredAllowance'
   | 'getConfirmationStatus'
   | 'getConfirmationError'
+  | 'translationKeys'
+  | 'targetContractLabel'
+  | 'authorizedContractLabel'
+  | 'currentAllowance'
+  | 'authorizationType'
+  | 'action'
+  | 'network'
+  | 'onAuthorized'
+  | 'onGrant'
+  | 'onRevoke'
 >
 export type MapStateProps = Pick<
   Props,

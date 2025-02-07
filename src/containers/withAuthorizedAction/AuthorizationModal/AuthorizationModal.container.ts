@@ -1,20 +1,17 @@
 import { RootStateOrAny, connect } from 'react-redux'
-import {
-  authorizationFlowRequest,
-  fetchAuthorizationsRequest
-} from '../../../modules/authorization/actions'
 import { AuthorizationAction } from '../../../modules/authorization/types'
 import {
   getAuthorizationFlowError,
   getError
 } from '../../../modules/authorization/selectors'
+import { fetchAuthorizationsRequest } from '../../../modules/authorization/actions'
 import { AuthorizationModal } from './AuthorizationModal'
 import {
   AuthorizationStepStatus,
-  MapDispatch,
-  MapDispatchProps,
   MapStateProps,
-  OwnProps
+  OwnProps,
+  MapDispatch,
+  MapDispatchProps
 } from './AuthorizationModal.types'
 import { getStepStatus } from './utils'
 
@@ -52,24 +49,6 @@ const mapDispatch = (
   dispatch: MapDispatch,
   ownProps: OwnProps
 ): MapDispatchProps => ({
-  onRevoke: (traceId: string) =>
-    dispatch(
-      authorizationFlowRequest(
-        ownProps.authorization,
-        AuthorizationAction.REVOKE,
-        '',
-        traceId
-      )
-    ),
-  onGrant: (traceId: string) =>
-    dispatch(
-      authorizationFlowRequest(
-        ownProps.authorization,
-        AuthorizationAction.GRANT,
-        ownProps.requiredAllowance?.toString() || '',
-        traceId
-      )
-    ),
   onFetchAuthorizations: () =>
     dispatch(fetchAuthorizationsRequest([ownProps.authorization]))
 })

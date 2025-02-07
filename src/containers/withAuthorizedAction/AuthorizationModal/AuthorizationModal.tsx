@@ -5,7 +5,7 @@ import {
   AuthorizationStep,
   AuthorizationModal as BaseAuthorizationModal
 } from 'decentraland-ui'
-import { getAnalytics } from '../../../modules/analytics/utils'
+import { getAnalytics } from '../../../modules/analytics'
 import {
   AuthorizationStepAction,
   AuthorizationStepStatus,
@@ -45,16 +45,15 @@ export function AuthorizationModal({
   onAuthorized,
   onFetchAuthorizations
 }: Props) {
-  const analytics = getAnalytics()
-  const [analyticsTraceId] = useState(uuid())
   const [currentStep, setCurrentStep] = useState(0)
   const [loading, setLoading] = useState<AuthorizationStepAction>()
   const [shouldReauthorize, setShouldReauthorize] = useState(false)
+  const [analyticsTraceId] = useState(uuid())
 
   const requiredAllowanceAsEth = getPriceInMana(requiredAllowance)
 
   useEffect(() => {
-    analytics.track('[Authorization Flow] Modal Opened', {
+    getAnalytics().track('[Authorization Flow] Modal Opened', {
       action,
       requiredAllowance,
       traceId: analyticsTraceId
@@ -63,34 +62,30 @@ export function AuthorizationModal({
 
   useEffect(() => {
     onFetchAuthorizations()
-  }, [onFetchAuthorizations])
+  }, [onFetchAuthorizations, authorization])
 
   const handleRevokeToken = useCallback(() => {
-    onRevoke(analyticsTraceId)
-    analytics.track('[Authorization Flow] Authorize Revoke Click', {
+    onRevoke(authorization, analyticsTraceId)
+    getAnalytics().track('[Authorization Flow] Authorize Grant Click', {
       action,
       traceId: analyticsTraceId
     })
     setLoading(AuthorizationStepAction.REVOKE)
-  }, [onRevoke])
+  }, [onRevoke, authorization, analyticsTraceId])
 
   const handleGrantToken = useCallback(() => {
-    onGrant(analyticsTraceId)
-    analytics.track('[Authorization Flow] Authorize Grant Click', {
-      action,
-      traceId: analyticsTraceId
-    })
+    onGrant(authorization, { traceId: analyticsTraceId, requiredAllowance })
     setLoading(AuthorizationStepAction.GRANT)
-  }, [onGrant])
+  }, [onGrant, authorization, analyticsTraceId, requiredAllowance])
 
   const handleAuthorized = useCallback(() => {
     onAuthorized()
-    analytics.track('[Authorization Flow] Confirm Transaction Click', {
+    getAnalytics().track('[Authorization Flow] Confirm Transaction Click', {
       action,
       traceId: analyticsTraceId
     })
     setLoading(AuthorizationStepAction.CONFIRM)
-  }, [onAuthorized])
+  }, [onAuthorized, authorization, analyticsTraceId])
 
   const steps = useMemo(() => {
     const authSteps = getSteps({

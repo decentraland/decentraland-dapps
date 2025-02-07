@@ -1,7 +1,11 @@
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { action } from 'typesafe-actions'
 import { buildTransactionPayload } from '../transaction/utils'
-import { Authorization, AuthorizationAction } from './types'
+import {
+  Authorization,
+  AuthorizationAction,
+  AuthorizationOptions
+} from './types'
 
 // Fetch authorizations
 
@@ -108,14 +112,15 @@ export const AUTHORIZATION_FLOW_CLEAR = '[Clear] Authorization Flow'
 export const authorizationFlowRequest = (
   authorization: Authorization,
   authorizationAction: AuthorizationAction,
-  allowance?: string,
-  traceId?: string
+  options?: AuthorizationOptions
 ) =>
   action(AUTHORIZATION_FLOW_REQUEST, {
     authorization,
     authorizationAction,
-    allowance,
-    traceId
+    requiredAllowance: options?.requiredAllowance,
+    currentAllowance: options?.currentAllowance,
+    traceId: options?.traceId,
+    onAuthorized: options?.onAuthorized
   })
 
 export const authorizationFlowSuccess = (authorization: Authorization) =>
