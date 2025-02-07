@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import {
   NotificationsAPI,
   checkIsOnboarding,
@@ -19,17 +19,6 @@ const useNotifications = (
   identity: AuthIdentity | undefined,
   isNotificationsEnabled: boolean
 ) => {
-  // Prevent unnecessary re-renders by storing the identity boolean state
-  const wasIdentityPresent = useRef(false)
-  
-  console.log('[DEBUG][useNotifications] Hook called with identity:', !!identity, 'enabled:', isNotificationsEnabled, 'Previous identity state:', wasIdentityPresent.current)
-  
-  // Keep a ref to the current notifications client to prevent stale closures
-  const notificationsClientRef = useRef<NotificationsAPI | null>(null)
-  
-  // Keep notifications in ref to ensure we always have access to latest state
-  const notificationsRef = useRef<DCLNotification[]>([])
-  
   const [{ isLoading, notifications }, setUserNotifications] = useState<{
     isLoading: boolean
     notifications: DCLNotification[]
@@ -46,132 +35,74 @@ const useNotifications = (
     }
   )
 
-  // Update notifications ref whenever state changes
-  useEffect(() => {
-    notificationsRef.current = notifications
-    console.log('[DEBUG][useNotifications] Notifications state updated:', {
-      count: notifications.length,
-      unread: notifications.filter(n => !n.read).length
-    })
-  }, [notifications])
+  const [notificationsClient, setNotificationsClient] = useState<NotificationsAPI | null>(null)
 
-  // Create notifications client and store in ref
+  const handleOnBegin = () => {
+    setOnboardingDone()
+    setNotificationsState(prevState => ({ ...prevState, isOnboarding: false }))
+  }
+
+  async function fetchAndUpdateNotifications(scopedNotificationsClient: NotificationsAPI) {
+    return scopedNotificationsClient.getNotifications().then((notificationsFetched) => {
+      const filteredNotifications = notificationsFetched
+        .filter((notification => 
+          CURRENT_AVAILABLE_NOTIFICATIONS.includes(notification.type)
+      ))
+
+    setUserNotifications(prevState => ({
+      ...prevState,
+      isLoading: false,
+      notifications: filteredNotifications
+      }))
+    })
+  }
+  
   useEffect(() => {
-    const hasIdentityChanged = !!identity !== wasIdentityPresent.current
-    console.log('[DEBUG][useNotifications] Setting up notifications client. Identity present:', !!identity, 'Changed:', hasIdentityChanged)
-    
-    if (hasIdentityChanged) {
-      wasIdentityPresent.current = !!identity
-      if (identity) {
-        notificationsClientRef.current = new NotificationsAPI({ identity })
-      } else {
-        notificationsClientRef.current = null
+    if (identity) {
+      const notificationsClient = new NotificationsAPI({ identity })
+      setNotificationsClient(notificationsClient)
+
+      if (isNotificationsEnabled) {
+        setUserNotifications(prevState => ({ ...prevState, isLoading: true }))
+
+        fetchAndUpdateNotifications(notificationsClient)
+
+        const interval = setInterval(() => {
+          fetchAndUpdateNotifications(notificationsClient)
+        }, NOTIFICATIONS_QUERY_INTERVAL)
+        return () => clearInterval(interval)
       }
+    } else {
+      setNotificationsClient(null)
     }
+    return () => {}
   }, [identity])
 
-  const handleNotificationsOpen = useCallback(async () => {
-    const client = notificationsClientRef.current
-    const currentNotifications = notificationsRef.current
-    
-    console.log('[DEBUG][useNotifications] handleNotificationsOpen called. Client exists:', !!client, 'Current state:', { 
-      isOpen, 
-      notifications: currentNotifications.length,
-      client: !!client
-    })
-    
-    const currentOpenState = isOpen
-
-    setNotificationsState(prevState => {
-      return { ...prevState, isOpen: !prevState.isOpen }
-    })
-
-    if (!currentOpenState) {
-      const unreadNotifications = currentNotifications
-        .filter(notification => !notification.read)
-        .map(({ id }) => id)
-      console.log('[DEBUG][useNotifications] Unread notifications to mark:', unreadNotifications.length, 'IDs:', unreadNotifications)
-      if (unreadNotifications.length) {
-        if (!client) {
-          console.warn('[DEBUG][useNotifications] Cannot mark as read - notificationsClient is null')
-          return
-        }
+  useEffect(() => {
+    const isClosing = !isOpen
+    if (isClosing) {
+      const unreadNotificationsIds = notifications.filter(notification => !notification.read).map(notification => notification.id)
+      if (unreadNotificationsIds.length && notificationsClient) {
         try {
-          await client.markNotificationsAsRead(unreadNotifications)
-          console.log('[DEBUG][useNotifications] Successfully marked notifications as read:', unreadNotifications)
-          
-          // Update local state after successful server update
-          setUserNotifications(prev => ({
-            ...prev,
-            notifications: prev.notifications.map(notification => ({
+          notificationsClient.markNotificationsAsRead(unreadNotificationsIds)
+          setUserNotifications(prevState => ({
+            ...prevState,
+            notifications: prevState.notifications.map(notification => ({
               ...notification,
-              read: unreadNotifications.includes(notification.id) ? true : notification.read
+              read: unreadNotificationsIds.includes(notification.id) ? true : notification.read
             }))
           }))
         } catch (error) {
-          console.error('[DEBUG][useNotifications] Error marking notifications as read:', error)
+          console.error('Error marking notifications as read:', error)
         }
       }
     }
   }, [isOpen])
 
-  const fetchNotificationsState = useCallback(async () => {
-    const client = notificationsClientRef.current
-    console.log('[DEBUG][useNotifications] Fetching notifications. Client exists:', !!client)
-    
-    if (!client) {
-      console.log('[DEBUG][useNotifications] Skipping fetch - no client available')
-      return
-    }
-
-    setUserNotifications(prev => ({ ...prev, isLoading: true }))
-    
-    try {
-      const retrievedNotifications = await client.getNotifications()
-      
-      const filteredNotifications = retrievedNotifications
-        .filter(notification => CURRENT_AVAILABLE_NOTIFICATIONS.includes(notification.type))
-        .map((notification, index) => ({
-          ...notification,
-          read: index % 2 === 0 // Mark every other notification as unread for testing
-        }))
-      
-      console.log('[DEBUG][useNotifications] Notifications retrieved:', {
-        total: filteredNotifications.length,
-        unread: filteredNotifications.filter(n => !n.read).length,
-        status: filteredNotifications.map(n => ({ id: n.id, read: n.read }))
-      })
-      
-      setUserNotifications({
-        isLoading: false,
-        notifications: filteredNotifications
-      })
-    } catch (error) {
-      console.error('[DEBUG][useNotifications] Error fetching notifications:', error)
-      setUserNotifications(prev => ({ ...prev, isLoading: false }))
-    }
-  }, [])
-
-  // Setup polling effect
-  useEffect(() => {
-    console.log('[DEBUG][useNotifications] Effect triggered. Identity:', !!identity, 'Enabled:', isNotificationsEnabled)
-    if (identity && isNotificationsEnabled) {
-      fetchNotificationsState()
-
-      const interval = setInterval(fetchNotificationsState, NOTIFICATIONS_QUERY_INTERVAL)
-
-      return () => {
-        console.log('[DEBUG][useNotifications] Cleaning up interval')
-        clearInterval(interval)
-      }
-    }
-
-    return () => {}
-  }, [identity, isNotificationsEnabled, fetchNotificationsState])
-
-  const handleOnBegin = () => {
-    setOnboardingDone()
-    setNotificationsState(prevState => ({ ...prevState, isOnboarding: false }))
+  const handleNotificationsOpen = () => {
+    setNotificationsState(prevState => {
+      return { ...prevState, isOpen: !prevState.isOpen }
+    })
   }
 
   const handleOnChangeModalTab = (tab: NotificationActiveTab) =>
@@ -179,7 +110,7 @@ const useNotifications = (
       ...prevState,
       activeTab: tab
     }))
-
+  
   const handleRenderProfile = useCallback((address: string) => {
     return (
       <Profile
@@ -192,8 +123,8 @@ const useNotifications = (
     )
   }, [])
 
-  return {
-    notificationsClient: notificationsClientRef.current,
+  return { 
+    notificationsClient,
     notifications,
     isLoading,
     isModalOpen: isOpen,
