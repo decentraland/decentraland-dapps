@@ -1,5 +1,5 @@
 import React from 'react'
-import { useMemo, useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import {
   NotificationsAPI,
   checkIsOnboarding,
@@ -35,45 +35,74 @@ const useNotifications = (
     }
   )
 
-  const notificationsClient: NotificationsAPI | null = useMemo(() => {
-    if (identity) return new NotificationsAPI({ identity })
-    return null
-  }, [identity])
+  const [notificationsClient, setNotificationsClient] = useState<NotificationsAPI | null>(null)
 
   const handleOnBegin = () => {
     setOnboardingDone()
     setNotificationsState(prevState => ({ ...prevState, isOnboarding: false }))
   }
 
-  const handleNotificationsOpen = async () => {
-    const currentOpenState = isOpen
+  const fetchAndUpdateNotifications = useCallback(async (scopedNotificationsClient: NotificationsAPI) => {
+    return scopedNotificationsClient.getNotifications().then((notificationsFetched) => {
+      const filteredNotifications = notificationsFetched
+        .filter((notification => 
+          CURRENT_AVAILABLE_NOTIFICATIONS.includes(notification.type)
+        ))
 
+      setUserNotifications(prevState => ({
+        ...prevState,
+        isLoading: false,
+        notifications: filteredNotifications
+      }))
+    })
+  }, [])
+  
+  useEffect(() => {
+    if (identity) {
+      const notificationsClient = new NotificationsAPI({ identity })
+      setNotificationsClient(notificationsClient)
+
+      if (isNotificationsEnabled) {
+        setUserNotifications(prevState => ({ ...prevState, isLoading: true }))
+
+        fetchAndUpdateNotifications(notificationsClient)
+
+        const interval = setInterval(() => {
+          fetchAndUpdateNotifications(notificationsClient)
+        }, NOTIFICATIONS_QUERY_INTERVAL)
+        return () => clearInterval(interval)
+      }
+    } else {
+      setNotificationsClient(null)
+    }
+    return () => {}
+  }, [identity])
+
+  useEffect(() => {
+    const isClosing = !isOpen
+    if (isClosing) {
+      const unreadNotificationsIds = notifications.filter(notification => !notification.read).map(notification => notification.id)
+      if (unreadNotificationsIds.length && notificationsClient) {
+        try {
+          notificationsClient.markNotificationsAsRead(unreadNotificationsIds)
+          setUserNotifications(prevState => ({
+            ...prevState,
+            notifications: prevState.notifications.map(notification => ({
+              ...notification,
+              read: unreadNotificationsIds.includes(notification.id) ? true : notification.read
+            }))
+          }))
+        } catch (error) {
+          console.error('Error marking notifications as read:', error)
+        }
+      }
+    }
+  }, [isOpen])
+
+  const handleNotificationsOpen = () => {
     setNotificationsState(prevState => {
       return { ...prevState, isOpen: !prevState.isOpen }
     })
-
-    if (!currentOpenState) {
-      const unreadNotifications = notifications
-        .filter(notification => !notification.read)
-        .map(({ id }) => id)
-      if (unreadNotifications.length) {
-        await notificationsClient?.markNotificationsAsRead(unreadNotifications)
-      }
-    } else {
-      // update state when closes the modal
-      const markNotificationAsReadInState = notifications.map(notification => {
-        if (notification.read) return notification
-
-        return {
-          ...notification,
-          read: true
-        }
-      })
-      setUserNotifications({
-        isLoading,
-        notifications: markNotificationAsReadInState
-      })
-    }
   }
 
   const handleOnChangeModalTab = (tab: NotificationActiveTab) =>
@@ -81,19 +110,7 @@ const useNotifications = (
       ...prevState,
       activeTab: tab
     }))
-
-  const fetchNotificationsState = () => {
-    setUserNotifications({ notifications: [], isLoading: true })
-    notificationsClient?.getNotifications().then(retrievedNotifications => {
-      setUserNotifications({
-        isLoading: false,
-        notifications: retrievedNotifications.filter(notification =>
-          CURRENT_AVAILABLE_NOTIFICATIONS.includes(notification.type)
-        )
-      })
-    })
-  }
-
+  
   const handleRenderProfile = useCallback((address: string) => {
     return (
       <Profile
@@ -106,23 +123,7 @@ const useNotifications = (
     )
   }, [])
 
-  useEffect(() => {
-    if (identity && isNotificationsEnabled) {
-      fetchNotificationsState()
-
-      const interval = setInterval(() => {
-        fetchNotificationsState()
-      }, NOTIFICATIONS_QUERY_INTERVAL)
-
-      return () => {
-        clearInterval(interval)
-      }
-    }
-
-    return () => {}
-  }, [identity])
-
-  return {
+  return { 
     notificationsClient,
     notifications,
     isLoading,
