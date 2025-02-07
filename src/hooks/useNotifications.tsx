@@ -42,20 +42,20 @@ const useNotifications = (
     setNotificationsState(prevState => ({ ...prevState, isOnboarding: false }))
   }
 
-  async function fetchAndUpdateNotifications(scopedNotificationsClient: NotificationsAPI) {
+  const fetchAndUpdateNotifications = useCallback(async (scopedNotificationsClient: NotificationsAPI) => {
     return scopedNotificationsClient.getNotifications().then((notificationsFetched) => {
       const filteredNotifications = notificationsFetched
         .filter((notification => 
           CURRENT_AVAILABLE_NOTIFICATIONS.includes(notification.type)
-      ))
+        ))
 
-    setUserNotifications(prevState => ({
-      ...prevState,
-      isLoading: false,
-      notifications: filteredNotifications
+      setUserNotifications(prevState => ({
+        ...prevState,
+        isLoading: false,
+        notifications: filteredNotifications
       }))
     })
-  }
+  }, [])
   
   useEffect(() => {
     if (identity) {
