@@ -55,7 +55,6 @@ export function AuthorizationModal({
   useEffect(() => {
     getAnalytics().track('[Authorization Flow] Modal Opened', {
       action,
-      requiredAllowance,
       traceId: analyticsTraceId
     })
   }, [])
@@ -66,7 +65,7 @@ export function AuthorizationModal({
 
   const handleRevokeToken = useCallback(() => {
     onRevoke(authorization, analyticsTraceId)
-    getAnalytics().track('[Authorization Flow] Authorize Grant Click', {
+    getAnalytics().track('[Authorization Flow] Authorize Revoke Click', {
       action,
       traceId: analyticsTraceId
     })
@@ -75,6 +74,10 @@ export function AuthorizationModal({
 
   const handleGrantToken = useCallback(() => {
     onGrant(authorization, { traceId: analyticsTraceId, requiredAllowance })
+    getAnalytics().track('[Authorization Flow] Authorize Grant Click', {
+      action,
+      traceId: analyticsTraceId
+    })
     setLoading(AuthorizationStepAction.GRANT)
   }, [onGrant, authorization, analyticsTraceId, requiredAllowance])
 

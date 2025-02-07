@@ -196,11 +196,6 @@ export default function withAuthorizedAction<
             }
 
             if (isMagicAutoSignEnabled && isUserLoggedInWithMagic) {
-              // TODO: call the magic auto sign
-              console.log(
-                'Calling the magic auto sign allowance grant',
-                onAuthorized
-              )
               handleGrant(authorization, {
                 requiredAllowance: BigNumber.from(requiredAllowanceInWei),
                 currentAllowance: currentAllowance,
@@ -242,11 +237,6 @@ export default function withAuthorizedAction<
             const { targetContractLabel } = authorizeOptions
 
             if (isMagicAutoSignEnabled && isUserLoggedInWithMagic) {
-              // TODO: call the magic auto sign
-              console.log(
-                'Calling the magic auto sign approval grant',
-                onAuthorized
-              )
               handleGrant(authorization, {
                 onAuthorized: () => onAuthorized(false)
               })
@@ -284,11 +274,6 @@ export default function withAuthorizedAction<
             }
 
             if (isMagicAutoSignEnabled && isUserLoggedInWithMagic) {
-              // TODO: call the magic auto sign
-              console.log(
-                'Calling the magic auto sign mint grant',
-                onAuthorized
-              )
               handleGrant(authorization, {
                 onAuthorized: () => onAuthorized(false)
               })
