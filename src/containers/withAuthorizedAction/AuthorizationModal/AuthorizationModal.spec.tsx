@@ -587,6 +587,7 @@ describe('when clicking revoke authorization button', () => {
     screen = renderAuthorizationModal({
       authorizationType: AuthorizationType.ALLOWANCE,
       revokeStatus: AuthorizationStepStatus.PENDING,
+      requiredAllowance: BigNumber.from('10'),
       network: Network.ETHEREUM,
       action: AuthorizedAction.BUY,
       onRevoke: onRevokeMock

@@ -1,6 +1,14 @@
-import { put, call, takeEvery, take, select, race } from 'redux-saga/effects'
+import {
+  put,
+  call,
+  takeEvery,
+  take,
+  select,
+  race,
+  fork
+} from 'redux-saga/effects'
 import { providers } from '@0xsequence/multicall'
-import { ethers } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 import { Provider } from 'decentraland-connect'
 import { ContractData, getContract } from 'decentraland-transactions'
 import { getNetworkProvider } from '../../lib/eth'
@@ -202,15 +210,11 @@ export function createAuthorizationSaga() {
     }
   }
 
-  function* handleAuthorizationFlowRequest(
-    action: AuthorizationFlowRequestAction
+  function* authorizeAndWaitForTx(
+    authorization: Authorization,
+    authorizationAction: AuthorizationAction,
+    traceId: string
   ) {
-    const {
-      authorizationAction,
-      authorization,
-      allowance,
-      traceId
-    } = action.payload
     const isRevoke = authorizationAction === AuthorizationAction.REVOKE
     const tokenRequest = isRevoke
       ? revokeTokenRequest(authorization)
@@ -220,34 +224,72 @@ export function createAuthorizationSaga() {
 
     yield put(tokenRequest)
 
+    const {
+      success,
+      failure
+    }: {
+      success: RevokeTokenSuccessAction | GrantTokenSuccessAction | undefined
+      failure: RevokeTokenFailureAction | RevokeTokenFailureAction | undefined
+    } = yield race({
+      success: take(TOKEN_SUCCESS),
+      failure: take(TOKEN_FAILURE)
+    })
+    if (failure) {
+      throw new Error(failure.payload.error)
+    }
+
+    const analytics = getAnalytics()
+    analytics.track(
+      `[Authorization Flow] ${
+        isRevoke ? 'Revoke' : 'Grant'
+      } Transaction Approved in Wallet`,
+      { traceId }
+    )
+    const txHash = getTransactionHashFromAction(
+      success as RevokeTokenSuccessAction | GrantTokenSuccessAction
+    )
+    yield call(waitForTx, txHash)
+  }
+
+  function* handleAuthorizationFlowRequest(
+    action: AuthorizationFlowRequestAction
+  ) {
+    const {
+      authorizationAction,
+      authorization,
+      requiredAllowance,
+      currentAllowance,
+      traceId,
+      onAuthorized
+    } = action.payload
+
     try {
-      const {
-        success,
-        failure
-      }: {
-        success: RevokeTokenSuccessAction | GrantTokenSuccessAction | undefined
-        failure: RevokeTokenFailureAction | RevokeTokenFailureAction | undefined
-      } = yield race({
-        success: take(TOKEN_SUCCESS),
-        failure: take(TOKEN_FAILURE)
-      })
-      if (failure) {
-        throw new Error(failure.payload.error)
+      // If we're building an allowance request, we need to check if the user has any allowance set
+      // If they have it already set, we need to revoke it before granting the new allowance
+      if (
+        authorizationAction === AuthorizationAction.GRANT &&
+        authorization.type === AuthorizationType.ALLOWANCE &&
+        requiredAllowance !== undefined &&
+        currentAllowance !== undefined &&
+        !BigNumber.from(currentAllowance).isZero() &&
+        onAuthorized
+      ) {
+        // Build revoke request
+        yield call(
+          authorizeAndWaitForTx,
+          authorization,
+          AuthorizationAction.REVOKE,
+          traceId ?? 'Unknown trace id'
+        )
       }
 
-      const analytics = getAnalytics()
-      analytics.track(
-        `[Authorization Flow] ${
-          isRevoke ? 'Revoke' : 'Grant'
-        } Transaction Approved in Wallet`,
-        { traceId }
+      // Perform the solicited action
+      yield call(
+        authorizeAndWaitForTx,
+        authorization,
+        authorizationAction,
+        traceId ?? 'Unknown trace id'
       )
-      const txHash = getTransactionHashFromAction(
-        success as RevokeTokenSuccessAction | GrantTokenSuccessAction
-      )
-
-      yield call(waitForTx, txHash)
-
       yield put(fetchAuthorizationsRequest([authorization]))
 
       const {
@@ -278,11 +320,11 @@ export function createAuthorizationSaga() {
       if (authorizationAction === AuthorizationAction.GRANT) {
         if (
           authorization.type === AuthorizationType.ALLOWANCE &&
-          allowance &&
+          requiredAllowance &&
           !hasAuthorizationAndEnoughAllowance(
             authorizations,
             authorization,
-            allowance
+            requiredAllowance
           )
         ) {
           throw new Error(AuthorizationError.INSUFFICIENT_ALLOWANCE)
@@ -295,6 +337,10 @@ export function createAuthorizationSaga() {
         ) {
           throw new Error(AuthorizationError.GRANT_FAILED)
         }
+      }
+
+      if (onAuthorized) {
+        yield fork(onAuthorized)
       }
 
       yield put(authorizationFlowSuccess(authorization))

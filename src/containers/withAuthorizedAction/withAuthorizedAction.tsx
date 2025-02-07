@@ -1,8 +1,10 @@
 import { RootStateOrAny, connect } from 'react-redux'
-import React, { ComponentProps, useCallback, useState } from 'react'
+import { v4 as uuid } from 'uuid'
+import React, { useCallback, useEffect, useState } from 'react'
 import { BigNumber, ethers } from 'ethers'
 import {
   Authorization,
+  AuthorizationAction,
   AuthorizationType
 } from '../../modules/authorization/types'
 import {
@@ -11,12 +13,24 @@ import {
   getERC721ContractInstance
 } from '../../modules/authorization/utils'
 import { getNetworkProvider } from '../../lib/eth'
-import { getAddress } from '../../modules/wallet/selectors'
-import { authorizationFlowClear } from '../../modules/authorization/actions'
+import { getData as getWallet } from '../../modules/wallet/selectors'
+import {
+  authorizationFlowClear,
+  authorizationFlowRequest
+} from '../../modules/authorization/actions'
+import { getIsFeatureEnabled } from '../../modules/features/selectors'
+import { ApplicationName } from '../../modules/features'
+import { isWeb2Wallet } from '../../modules/wallet/utils/providerChecks'
+import {
+  getAuthorizationFlowError,
+  isAuthorizing
+} from '../../modules/authorization/selectors'
 import {
   AuthorizationModal,
   AuthorizationStepStatus,
-  AuthorizedAction
+  AuthorizedAction,
+  OwnProps as AuthorizationModalOwnProps,
+  HandleGrantOptions
 } from './AuthorizationModal'
 import {
   WithAuthorizedActionProps,
@@ -27,12 +41,47 @@ import {
   AuthorizationTranslationKeys
 } from './withAuthorizedAction.types'
 
+const MAGIC_AUTO_SIGN_FEATURE = 'magic-auto-sign'
+
 const mapState = (state: RootStateOrAny): MapStateProps => ({
-  address: getAddress(state)
+  isMagicAutoSignEnabled: getIsFeatureEnabled(
+    state,
+    ApplicationName.DAPPS,
+    MAGIC_AUTO_SIGN_FEATURE
+  ),
+  authorizationError: getAuthorizationFlowError(state),
+  wallet: getWallet(state),
+  isAuthorizing: isAuthorizing(state)
 })
 
 const mapDispatch = (dispatch: MapDispatch): MapDispatchProps => ({
-  onClearAuthorizationFlow: () => dispatch(authorizationFlowClear())
+  onClearAuthorizationFlow: () => dispatch(authorizationFlowClear()),
+  onRevoke: (
+    traceId: string,
+    authorization: Authorization,
+    onAuthorized?: () => void
+  ) =>
+    dispatch(
+      authorizationFlowRequest(authorization, AuthorizationAction.REVOKE, {
+        traceId,
+        onAuthorized
+      })
+    ),
+  onGrant: (
+    traceId: string,
+    authorization: Authorization,
+    requiredAllowance?: BigNumber,
+    currentAllowance?: BigNumber,
+    onAuthorized?: () => void
+  ) =>
+    dispatch(
+      authorizationFlowRequest(authorization, AuthorizationAction.GRANT, {
+        requiredAllowance: requiredAllowance?.toString(),
+        currentAllowance: currentAllowance?.toString(),
+        traceId,
+        onAuthorized
+      })
+    )
 })
 
 export default function withAuthorizedAction<
@@ -45,20 +94,62 @@ export default function withAuthorizedAction<
   getConfirmationError?: (state: RootStateOrAny) => string | null
 ): React.ComponentType<Omit<P, keyof WithAuthorizedActionProps>> {
   // TODO: Remove any type
-  const WithAutorizedActionComponent = (props: MapStateProps & any) => {
+  const WithAuthorizedActionComponent = (
+    props: MapStateProps & MapDispatchProps & any
+  ) => {
+    const {
+      wallet,
+      onClearAuthorizationFlow,
+      onRevoke,
+      onGrant,
+      isMagicAutoSignEnabled,
+      isAuthorizing,
+      authorizationError
+    } = props
     const [showAuthorizationModal, setShowAuthorizationModal] = useState(false)
     const [authModalData, setAuthModalData] = useState<
-      Omit<ComponentProps<typeof AuthorizationModal>, 'onClose'>
+      Omit<AuthorizationModalOwnProps, 'onGrant' | 'onRevoke'>
     >()
     const [isLoadingAuthorization, setIsLoadingAuthorization] = useState(false)
-    const { address, onClearAuthorizationFlow } = props
+    const isUserLoggedInWithMagic = wallet && isWeb2Wallet(wallet)
+    const userAddress = wallet?.address
+
+    // Clear the authorization flow error when the component unmounts
+    useEffect(() => {
+      return () => {
+        onClearAuthorizationFlow()
+      }
+    }, [onClearAuthorizationFlow])
+
+    const handleRevoke = useCallback(
+      (
+        authorization: Authorization,
+        analyticsTraceId: string,
+        onAuthorized?: () => void
+      ) => {
+        onRevoke(analyticsTraceId, authorization, onAuthorized)
+      },
+      [onRevoke]
+    )
+
+    const handleGrant = useCallback(
+      (authorization: Authorization, options?: HandleGrantOptions) => {
+        onGrant(
+          options?.traceId ?? uuid(),
+          authorization,
+          options?.requiredAllowance,
+          options?.currentAllowance,
+          options?.onAuthorized
+        )
+      },
+      [onGrant]
+    )
 
     const handleAuthorizedAction = useCallback(
       async (authorizeOptions: AuthorizeActionOptions) => {
-        if (!address) {
+        if (!userAddress) {
           return
         }
-
         setIsLoadingAuthorization(true)
 
         const {
@@ -75,7 +166,7 @@ export default function withAuthorizedAction<
 
         const authorization: Authorization = {
           type: authorizationType,
-          address,
+          address: userAddress,
           authorizedAddress,
           contractAddress: targetContract.address,
           chainId: targetContract.chainId,
@@ -95,13 +186,23 @@ export default function withAuthorizedAction<
               targetContract.address,
               provider
             )
-            const allowance: BigNumber = await contract.allowance(
-              address,
+            const currentAllowance: BigNumber = await contract.allowance(
+              userAddress,
               authorizedAddress
             )
 
-            if (allowance.gte(BigNumber.from(requiredAllowanceInWei))) {
+            if (currentAllowance.gte(BigNumber.from(requiredAllowanceInWei))) {
               onAuthorized(true)
+              setIsLoadingAuthorization(false)
+              return
+            }
+
+            if (isMagicAutoSignEnabled && isUserLoggedInWithMagic) {
+              handleGrant(authorization, {
+                requiredAllowance: BigNumber.from(requiredAllowanceInWei),
+                currentAllowance: currentAllowance,
+                onAuthorized: () => onAuthorized(false)
+              })
               setIsLoadingAuthorization(false)
               return
             }
@@ -110,7 +211,7 @@ export default function withAuthorizedAction<
               translationKeys,
               authorization,
               authorizedContractLabel,
-              currentAllowance: allowance,
+              currentAllowance,
               requiredAllowance: BigNumber.from(requiredAllowanceInWei),
               authorizationType: authorizationType,
               action,
@@ -125,7 +226,7 @@ export default function withAuthorizedAction<
               provider
             )
             const isApprovedForAll = await contract.isApprovedForAll(
-              address,
+              userAddress,
               authorizedAddress
             )
 
@@ -136,6 +237,14 @@ export default function withAuthorizedAction<
             }
 
             const { targetContractLabel } = authorizeOptions
+
+            if (isMagicAutoSignEnabled && isUserLoggedInWithMagic) {
+              handleGrant(authorization, {
+                onAuthorized: () => onAuthorized(false)
+              })
+              setIsLoadingAuthorization(false)
+              return
+            }
 
             setAuthModalData({
               translationKeys,
@@ -166,6 +275,14 @@ export default function withAuthorizedAction<
               return
             }
 
+            if (isMagicAutoSignEnabled && isUserLoggedInWithMagic) {
+              handleGrant(authorization, {
+                onAuthorized: () => onAuthorized(false)
+              })
+              setIsLoadingAuthorization(false)
+              return
+            }
+
             setAuthModalData({
               translationKeys,
               authorization,
@@ -186,14 +303,20 @@ export default function withAuthorizedAction<
           console.error(error)
         }
       },
-      [address]
+      [
+        userAddress,
+        isMagicAutoSignEnabled,
+        isUserLoggedInWithMagic,
+        handleGrant,
+        handleRevoke
+      ]
     )
 
     const handleClose = useCallback(() => {
       setIsLoadingAuthorization(false)
       setShowAuthorizationModal(false)
       onClearAuthorizationFlow()
-    }, [])
+    }, [onClearAuthorizationFlow])
 
     return (
       <>
@@ -201,13 +324,19 @@ export default function withAuthorizedAction<
           {...props}
           onAuthorizedAction={handleAuthorizedAction}
           onCloseAuthorization={handleClose}
-          isLoadingAuthorization={isLoadingAuthorization}
+          authorizationError={authorizationError}
+          isLoadingAuthorization={isLoadingAuthorization || isAuthorizing}
         />
         {showAuthorizationModal && authModalData ? (
-          <AuthorizationModal onClose={handleClose} {...authModalData} />
+          <AuthorizationModal
+            onGrant={handleGrant}
+            onRevoke={handleRevoke}
+            onClose={handleClose}
+            {...authModalData}
+          />
         ) : null}
       </>
     )
   }
-  return connect(mapState, mapDispatch)(WithAutorizedActionComponent)
+  return connect(mapState, mapDispatch)(WithAuthorizedActionComponent)
 }

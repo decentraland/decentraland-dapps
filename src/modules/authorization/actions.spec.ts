@@ -18,15 +18,18 @@ describe('authorization flow actions', () => {
   describe('when calling authorizationFlowRequest action', () => {
     it('should return the correct action type and payload', () => {
       const authorizationAction = AuthorizationAction.GRANT
-      const allowance = '10'
+      const options = { requiredAllowance: '10' }
       expect(
-        authorizationFlowRequest(authorization, authorizationAction, allowance)
+        authorizationFlowRequest(authorization, authorizationAction, options)
       ).toEqual({
         type: AUTHORIZATION_FLOW_REQUEST,
         payload: {
           authorization,
           authorizationAction,
-          allowance
+          requiredAllowance: options.requiredAllowance,
+          traceId: undefined,
+          onAuthorized: undefined,
+          currentAllowance: undefined
         }
       })
     })

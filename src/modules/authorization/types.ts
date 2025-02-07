@@ -23,8 +23,12 @@ export type Authorization = {
 }
 
 export type AuthorizationOptions = {
+  /** The minimum allowance amount required for the authorization in wei */
   requiredAllowance?: string
+  /** The current allowance amount that has been already approved in wei */
   currentAllowance?: string
+  /** Callback function to be executed when the authorization is granted */
   onAuthorized?: () => void
+  /** Unique identifier for tracking the authorization process */
   traceId?: string
 }
