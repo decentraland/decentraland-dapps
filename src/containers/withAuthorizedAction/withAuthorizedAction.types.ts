@@ -69,7 +69,7 @@ export type WithAuthorizedActionProps = {
   onCloseAuthorization: () => void
   isLoadingAuthorization: boolean
   authorizationError: string | null
-  wallet: Wallet
+  isUsingMagic: boolean
   isMagicAutoSignEnabled: boolean
 }
 

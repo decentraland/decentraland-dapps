@@ -104,7 +104,8 @@ export default function withAuthorizedAction<
       onGrant,
       isMagicAutoSignEnabled,
       isAuthorizing,
-      authorizationError
+      authorizationError,
+      ...rest
     } = props
     const [showAuthorizationModal, setShowAuthorizationModal] = useState(false)
     const [authModalData, setAuthModalData] = useState<
@@ -321,11 +322,13 @@ export default function withAuthorizedAction<
     return (
       <>
         <WrappedComponent
-          {...props}
+          {...rest}
           onAuthorizedAction={handleAuthorizedAction}
           onCloseAuthorization={handleClose}
-          authorizationError={authorizationError}
           isLoadingAuthorization={isLoadingAuthorization || isAuthorizing}
+          authorizationError={authorizationError}
+          isMagicAutoSignEnabled={isMagicAutoSignEnabled}
+          isUsingMagic={isUserLoggedInWithMagic}
         />
         {showAuthorizationModal && authModalData ? (
           <AuthorizationModal
