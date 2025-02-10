@@ -74,7 +74,7 @@ export type WithAuthorizedActionProps = {
 }
 
 export type MapStateProps = {
-  wallet: Wallet | null
+  authorizerWallet: Wallet | null
   isAuthorizing: boolean
   authorizationError: string | null
   isMagicAutoSignEnabled: boolean

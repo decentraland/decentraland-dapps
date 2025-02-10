@@ -50,7 +50,7 @@ const mapState = (state: RootStateOrAny): MapStateProps => ({
     MAGIC_AUTO_SIGN_FEATURE
   ),
   authorizationError: getAuthorizationFlowError(state),
-  wallet: getWallet(state),
+  authorizerWallet: getWallet(state),
   isAuthorizing: isAuthorizing(state)
 })
 
@@ -98,7 +98,7 @@ export default function withAuthorizedAction<
     props: MapStateProps & MapDispatchProps & any
   ) => {
     const {
-      wallet,
+      authorizerWallet,
       onClearAuthorizationFlow,
       onRevoke,
       onGrant,
@@ -112,8 +112,9 @@ export default function withAuthorizedAction<
       Omit<AuthorizationModalOwnProps, 'onGrant' | 'onRevoke'>
     >()
     const [isLoadingAuthorization, setIsLoadingAuthorization] = useState(false)
-    const isUserLoggedInWithMagic = wallet && isWeb2Wallet(wallet)
-    const userAddress = wallet?.address
+    const isUserLoggedInWithMagic =
+      authorizerWallet && isWeb2Wallet(authorizerWallet)
+    const userAddress = authorizerWallet?.address
 
     // Clear the authorization flow error when the component unmounts
     useEffect(() => {
