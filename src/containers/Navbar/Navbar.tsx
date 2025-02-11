@@ -68,7 +68,7 @@ const Navbar: React.FC<NavbarProps> = ({
     (chainId: ChainId) => {
       setChainSelected(chainId)
       props.onSwitchNetwork(chainId, props.chainId)
-      analytics.track(CHANGE_NETWORK, {
+      analytics?.track(CHANGE_NETWORK, {
         from_chain_id: props.chainId,
         to_chain_id: chainId
       })
@@ -79,7 +79,7 @@ const Navbar: React.FC<NavbarProps> = ({
   const handleClickBalance = useCallback(
     (e: React.MouseEvent, network: Network) => {
       e.preventDefault()
-      analytics.track(DROPDOWN_MENU_BALANCE_CLICK_EVENT, { network })
+      analytics?.track(DROPDOWN_MENU_BALANCE_CLICK_EVENT, { network })
 
       setTimeout(() => {
         window.open(`${BASE_URL}/account`, '_blank', 'noopener')
@@ -93,7 +93,7 @@ const Navbar: React.FC<NavbarProps> = ({
       _e: React.MouseEvent,
       options: { eventTrackingName: string; url?: string; isExternal?: boolean }
     ) => {
-      analytics.track(NAVBAR_CLICK_EVENT, options)
+      analytics?.track(NAVBAR_CLICK_EVENT, options)
     },
     [analytics]
   )
@@ -103,14 +103,14 @@ const Navbar: React.FC<NavbarProps> = ({
       _e: React.MouseEvent,
       options: { type: string; url?: string; track_uuid?: string }
     ) => {
-      analytics.track(DROPDOWN_MENU_ITEM_CLICK_EVENT, options)
+      analytics?.track(DROPDOWN_MENU_ITEM_CLICK_EVENT, options)
     },
     [analytics]
   )
 
   const handleClickOpen = useCallback(
     (_e: React.MouseEvent, track_uuid: string) => {
-      analytics.track(DROPDOWN_MENU_DISPLAY_EVENT, { track_uuid })
+      analytics?.track(DROPDOWN_MENU_DISPLAY_EVENT, { track_uuid })
     },
     [analytics]
   )
@@ -124,7 +124,7 @@ const Navbar: React.FC<NavbarProps> = ({
 
   const handleClickSignOut = useCallback(
     (_e: React.MouseEvent<HTMLElement, MouseEvent>, track_uuid: string) => {
-      analytics.track(DROPDOWN_MENU_SIGN_OUT_EVENT, { track_uuid })
+      analytics?.track(DROPDOWN_MENU_SIGN_OUT_EVENT, { track_uuid })
       setTimeout(() => {
         props.onSignOut()
       }, 300)

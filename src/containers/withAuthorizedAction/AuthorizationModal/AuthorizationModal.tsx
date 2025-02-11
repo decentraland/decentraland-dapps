@@ -53,7 +53,7 @@ export function AuthorizationModal({
   const requiredAllowanceAsEth = getPriceInMana(requiredAllowance)
 
   useEffect(() => {
-    getAnalytics().track('[Authorization Flow] Modal Opened', {
+    getAnalytics()?.track('[Authorization Flow] Modal Opened', {
       action,
       traceId: analyticsTraceId
     })
@@ -65,7 +65,7 @@ export function AuthorizationModal({
 
   const handleRevokeToken = useCallback(() => {
     onRevoke(authorization, analyticsTraceId)
-    getAnalytics().track('[Authorization Flow] Authorize Revoke Click', {
+    getAnalytics()?.track('[Authorization Flow] Authorize Revoke Click', {
       action,
       traceId: analyticsTraceId
     })
@@ -74,7 +74,7 @@ export function AuthorizationModal({
 
   const handleGrantToken = useCallback(() => {
     onGrant(authorization, { traceId: analyticsTraceId, requiredAllowance })
-    getAnalytics().track('[Authorization Flow] Authorize Grant Click', {
+    getAnalytics()?.track('[Authorization Flow] Authorize Grant Click', {
       action,
       traceId: analyticsTraceId
     })
@@ -83,7 +83,7 @@ export function AuthorizationModal({
 
   const handleAuthorized = useCallback(() => {
     onAuthorized()
-    getAnalytics().track('[Authorization Flow] Confirm Transaction Click', {
+    getAnalytics()?.track('[Authorization Flow] Confirm Transaction Click', {
       action,
       traceId: analyticsTraceId
     })
