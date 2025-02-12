@@ -69,7 +69,7 @@ export function getAnalytics() {
 
   const isBot = isbot(userAgent)
   if (isBot) {
-    return null
+    return undefined
   }
 
   return (window as AnalyticsWindow).analytics
