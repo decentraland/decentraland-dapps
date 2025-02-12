@@ -77,7 +77,7 @@ const BuyManaWithFiatFeedbackModal = ({
         break
 
       case TransactionStatus.FAILURE:
-        analytics.track('Try again with same Gateway', { network, gateway })
+        analytics?.track('Try again with same Gateway', { network, gateway })
         onTryAgain(network, gateway)
         onClose()
         break
@@ -89,7 +89,7 @@ const BuyManaWithFiatFeedbackModal = ({
 
   const handleSecondaryCtaClick = useCallback(() => {
     if (transactionStatus === TransactionStatus.FAILURE) {
-      analytics.track('Select other gateway', {
+      analytics?.track('Select other gateway', {
         network,
         previousGateway: gateway
       })

@@ -29,6 +29,7 @@
     "ethers": "^5.7.2",
     "events": "^3.3.0",
     "flat": "^5.0.2",
+    "isbot": "^5.1.22",
     "pusher-js": "^8.0.1",
     "react-intl": "^5.20.7",
     "redux-persistence": "^1.2.0",

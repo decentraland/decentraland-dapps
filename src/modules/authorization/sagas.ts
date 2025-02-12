@@ -239,12 +239,14 @@ export function createAuthorizationSaga() {
     }
 
     const analytics = getAnalytics()
-    analytics.track(
-      `[Authorization Flow] ${
-        isRevoke ? 'Revoke' : 'Grant'
-      } Transaction Approved in Wallet`,
-      { traceId }
-    )
+    if (analytics) {
+      analytics.track(
+        `[Authorization Flow] ${
+          isRevoke ? 'Revoke' : 'Grant'
+        } Transaction Approved in Wallet`,
+        { traceId }
+      )
+    }
     const txHash = getTransactionHashFromAction(
       success as RevokeTokenSuccessAction | GrantTokenSuccessAction
     )

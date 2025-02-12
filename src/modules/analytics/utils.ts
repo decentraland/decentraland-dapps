@@ -8,6 +8,7 @@ import {
   AnalyticsWindow,
   TransformPayload
 } from './types'
+import { isbot } from 'isbot'
 
 export const trackedActions: { [key: string]: AnalyticsAction } = {}
 
@@ -64,6 +65,13 @@ export function isTrackable(action: AnyAction) {
 }
 
 export function getAnalytics() {
+  const userAgent = window.navigator.userAgent
+
+  const isBot = isbot(userAgent)
+  if (isBot) {
+    return undefined
+  }
+
   return (window as AnalyticsWindow).analytics
 }
 

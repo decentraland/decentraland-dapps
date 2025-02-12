@@ -103,30 +103,30 @@ export default class BuyManaWithFiatModal extends React.PureComponent<
 
     return networks.map(
       network =>
-      ({
-        type: network,
-        i18n: this.getDefaultNetworkTranslations(network),
-        gateways: gateways
-          .filter(gateway => !isDisabled(network, gateway))
-          .map(gateway => ({
-            type: gateway,
-            i18n: this.getDefaultGatewayTranslations(network, gateway),
-            learnMoreLink: gatewayLearnMoreLink[gateway],
-            onContinue: () => this.handleOnContinue(network, gateway)
-          })),
-        onClick: () => this.handleNetworkOnClick(network)
-      } as BuyManaWithFiatModalNetworkProps & BuyWithFiatNetworkProps)
+        ({
+          type: network,
+          i18n: this.getDefaultNetworkTranslations(network),
+          gateways: gateways
+            .filter(gateway => !isDisabled(network, gateway))
+            .map(gateway => ({
+              type: gateway,
+              i18n: this.getDefaultGatewayTranslations(network, gateway),
+              learnMoreLink: gatewayLearnMoreLink[gateway],
+              onContinue: () => this.handleOnContinue(network, gateway)
+            })),
+          onClick: () => this.handleNetworkOnClick(network)
+        } as BuyManaWithFiatModalNetworkProps & BuyWithFiatNetworkProps)
     )
   }
 
   handleOnContinue(network: Network, gateway: NetworkGatewayType) {
-    this.analytics.track('Choose Gateway', { network, gateway })
+    this.analytics?.track('Choose Gateway', { network, gateway })
     this.props.onContinue(network, gateway)
     this.props.onClose()
   }
 
   handleNetworkOnClick(network: Network) {
-    this.analytics.track('Choose Network', { network })
+    this.analytics?.track('Choose Network', { network })
   }
 
   render() {
@@ -142,8 +142,8 @@ export default class BuyManaWithFiatModal extends React.PureComponent<
         networks={
           metadata?.selectedNetwork
             ? networks.filter(
-              network => network.type === metadata.selectedNetwork
-            )
+                network => network.type === metadata.selectedNetwork
+              )
             : networks
         }
         loading={isLoading}
