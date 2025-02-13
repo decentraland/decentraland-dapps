@@ -8,3 +8,5 @@ export const DROPDOWN_MENU_BALANCE_CLICK_EVENT =
 export const DROPDOWN_MENU_SIGN_OUT_EVENT = 'Unified Dropdown Menu Sign Out'
 export const DROPDOWN_MENU_SIGN_IN_EVENT = 'Unified Dropdown Menu Sign In'
 export const CHANGE_NETWORK = 'Change Network'
+export const NAVBAR_DOWNLOAD_EVENT = 'Download'
+export const NAVBAR_DOWNLOAD_EVENT_PLACE = 'Navbar'
