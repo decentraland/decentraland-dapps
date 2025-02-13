@@ -13,10 +13,12 @@ import { getBaseUrl } from '../../lib/utils'
 import ChainProvider from '../ChainProvider'
 import {
   CHANGE_NETWORK,
+  NAVBAR_DOWNLOAD_EVENT,
   DROPDOWN_MENU_BALANCE_CLICK_EVENT,
   DROPDOWN_MENU_DISPLAY_EVENT,
   DROPDOWN_MENU_ITEM_CLICK_EVENT,
-  DROPDOWN_MENU_SIGN_OUT_EVENT
+  DROPDOWN_MENU_SIGN_OUT_EVENT,
+  NAVBAR_DOWNLOAD_EVENT_PLACE
 } from './constants'
 import { NavbarProps2 } from './Navbar.types'
 import { NAVBAR_CLICK_EVENT } from './constants'
@@ -112,6 +114,16 @@ const Navbar2: React.FC<NavbarProps2> = ({
     [analytics]
   )
 
+  const handleClickDownload = useCallback(
+    (_e: React.MouseEvent, options: { href: string }) => {
+      analytics?.track(NAVBAR_DOWNLOAD_EVENT, {
+        ...options,
+        place: NAVBAR_DOWNLOAD_EVENT_PLACE
+      })
+    },
+    [analytics]
+  )
+
   const handleClickOpen = useCallback(
     (_e: React.MouseEvent, track_uuid: string) => {
       analytics?.track(DROPDOWN_MENU_DISPLAY_EVENT, { track_uuid })
@@ -166,6 +178,7 @@ const Navbar2: React.FC<NavbarProps2> = ({
               onClickOpen={handleClickOpen}
               onClickSignIn={handleClickSignIn}
               onClickSignOut={handleClickSignOut}
+              onClickDownload={handleClickDownload}
               {...(withChainSelector && {
                 chains: getAvailableChains(),
                 selectedChain: chainId ?? undefined,
