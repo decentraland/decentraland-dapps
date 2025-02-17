@@ -4,15 +4,13 @@ import { EntityType } from '@dcl/schemas/dist/platform/entity'
 import { expectSaga } from 'redux-saga-test-plan'
 import * as matchers from 'redux-saga-test-plan/matchers'
 import { EntitiesOperator } from '../../lib/entities'
-import { profileFromLambda } from '../../tests/profileMocks'
+import { profileFromLambda, profileFromContent } from '../../tests/profileMocks'
 import { ProfileEntity } from '../../lib/types'
 import { PeerAPI } from '../../lib/peer'
 import { dynamicDeepParametersEquality } from '../../tests/sagas'
 import { NO_IDENTITY_FOUND_ERROR_MESSAGE, createProfileSaga } from './sagas'
-import { getHashesByKeyMap, lambdaProfileToContentProfile } from './utils'
+import { getHashesByKeyMap } from './utils'
 import {
-  LOAD_PROFILES_FAILURE,
-  LOAD_PROFILES_REQUEST,
   loadProfilesFailure,
   loadProfilesRequest,
   loadProfilesSuccess,
@@ -40,7 +38,7 @@ describe('when handling the action to set the profile avatar description', () =>
       return expectSaga(profileSagas)
         .provide([
           [
-            matchers.call.fn(PeerAPI.prototype.fetchProfile),
+            matchers.call.fn(EntitiesOperator.prototype.getProfileEntity),
             Promise.reject(new Error(errorMessage))
           ]
         ])
@@ -55,8 +53,8 @@ describe('when handling the action to set the profile avatar description', () =>
       return expectSaga(profileSagas)
         .provide([
           [
-            matchers.call.fn(PeerAPI.prototype.fetchProfile),
-            Promise.resolve(profileFromLambda)
+            matchers.call.fn(EntitiesOperator.prototype.getProfileEntity),
+            Promise.resolve(profileFromContent)
           ],
           [
             matchers.call.fn(
@@ -73,26 +71,23 @@ describe('when handling the action to set the profile avatar description', () =>
 
   describe('when the deployment is successful', () => {
     it('should deploy the new entity with the description and the version changed', () => {
-      const transformedProfile = lambdaProfileToContentProfile(
-        profileFromLambda
-      )
       const newAvatar: Avatar = {
-        ...transformedProfile.avatars[0],
-        version: transformedProfile.avatars[0].version + 1,
+        ...profileFromContent.metadata.avatars[0],
+        version: profileFromContent.metadata.avatars[0].version + 1,
         description
       }
 
       const newProfileMetadata: ProfileEntity['metadata'] = {
-        avatars: [newAvatar, ...transformedProfile.avatars.slice(1)]
+        avatars: [newAvatar, ...profileFromContent.metadata.avatars.slice(1)]
       }
 
       return expectSaga(profileSagas)
         .provide([
           [
-            matchers.call.fn(PeerAPI.prototype.fetchProfile),
+            matchers.call.fn(EntitiesOperator.prototype.getProfileEntity),
             dynamicDeepParametersEquality(
-              [address, { useCache: false }],
-              Promise.resolve(profileFromLambda)
+              [address],
+              Promise.resolve(profileFromContent)
             )
           ],
           [
@@ -131,7 +126,7 @@ describe('when handling the action to set the profile avatar alias', () => {
       return expectSaga(profileSagas)
         .provide([
           [
-            matchers.call.fn(PeerAPI.prototype.fetchProfile),
+            matchers.call.fn(EntitiesOperator.prototype.getProfileEntity),
             Promise.reject(new Error(errorMessage))
           ]
         ])
@@ -152,10 +147,10 @@ describe('when handling the action to set the profile avatar alias', () => {
       return expectSaga(profileSagas)
         .provide([
           [
-            matchers.call.fn(PeerAPI.prototype.fetchProfile),
+            matchers.call.fn(EntitiesOperator.prototype.getProfileEntity),
             dynamicDeepParametersEquality(
-              [address, { useCache: false }],
-              Promise.resolve(profileFromLambda)
+              [address],
+              Promise.resolve(profileFromContent)
             )
           ]
         ])
@@ -172,8 +167,8 @@ describe('when handling the action to set the profile avatar alias', () => {
       return expectSaga(profileSagas)
         .provide([
           [
-            matchers.call.fn(PeerAPI.prototype.fetchProfile),
-            Promise.resolve(profileFromLambda)
+            matchers.call.fn(EntitiesOperator.prototype.getProfileEntity),
+            Promise.resolve(profileFromContent)
           ],
           [
             matchers.call.fn(
@@ -190,27 +185,24 @@ describe('when handling the action to set the profile avatar alias', () => {
 
   describe('when the deployment is successful', () => {
     it('should deploy the new entity with the alias and the version changed', () => {
-      const transformedProfile = lambdaProfileToContentProfile(
-        profileFromLambda
-      )
       const newAvatar: Avatar = {
-        ...transformedProfile.avatars[0],
-        version: transformedProfile.avatars[0].version + 1,
+        ...profileFromContent.metadata.avatars[0],
+        version: profileFromContent.metadata.avatars[0].version + 1,
         hasClaimedName: true,
         name: alias
       }
 
       const newProfileMetadata: ProfileEntity['metadata'] = {
-        avatars: [newAvatar, ...transformedProfile.avatars.slice(1)]
+        avatars: [newAvatar, ...profileFromContent.metadata.avatars.slice(1)]
       }
 
       return expectSaga(profileSagas)
         .provide([
           [
-            matchers.call.fn(PeerAPI.prototype.fetchProfile),
+            matchers.call.fn(EntitiesOperator.prototype.getProfileEntity),
             dynamicDeepParametersEquality(
-              [address, { useCache: false }],
-              Promise.resolve(profileFromLambda)
+              [address],
+              Promise.resolve(profileFromContent)
             )
           ],
           [
