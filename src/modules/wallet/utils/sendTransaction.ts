@@ -1,3 +1,4 @@
+import { BigNumber, utils } from 'ethers'
 import { ContractData, sendMetaTransaction } from 'decentraland-transactions'
 import { Contract, PopulatedTransaction } from '@ethersproject/contracts'
 import { getConnectedProvider } from '../../../lib/eth'
@@ -6,7 +7,6 @@ import { transactionEvents } from './transactionEvents'
 import { TransactionEventData, TransactionEventType } from './types'
 import { getTransactionsApiUrl } from './urls'
 import { getProviderChainId } from './getProviderChainId'
-import { BigNumber } from 'ethers'
 
 const acceptOrRejectTransaction = () => {
   return new Promise((resolve, reject) => {
@@ -105,8 +105,8 @@ export async function sendTransaction(...args: any[]) {
           const acceptOrRejectPromise = acceptOrRejectTransaction()
           const userBalance = await signer.getBalance()
           transactionEvents.emit(TransactionEventType.PROMPT, {
-            transactionGasPrice,
-            userBalance,
+            transactionGasPrice: utils.formatEther(transactionGasPrice),
+            userBalance: utils.formatEther(userBalance),
             chainId: contract.chainId
           })
           // Wait for the user to accept or reject the transaction in the Web2TransactionModal

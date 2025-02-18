@@ -3,12 +3,11 @@ import { Web2TransactionModal as UIWeb2TransactionModal } from 'decentraland-ui/
 import { transactionEvents } from '../../modules/wallet/utils/transactionEvents'
 import { TransactionEventType } from '../../modules/wallet/utils/types'
 import { isWeb2Wallet } from '../../modules/wallet/utils/providerChecks'
-import { BigNumber } from 'ethers'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { Web2TransactionModalProps } from './Web2TransactionsModal.types'
 type EventData = {
-  transactionGasPrice: BigNumber
-  userBalance: BigNumber
+  transactionGasPrice: string
+  userBalance: string
   chainId: ChainId
 }
 
