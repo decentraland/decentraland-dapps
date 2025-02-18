@@ -46,4 +46,6 @@ export type StateWithFeatures = {
 }
 
 // Make sure that in order to handle these, the client has to fetch ApplicationName.DAPPS feature flags.
-export enum FeatureName {}
+export enum FeatureName {
+  MAGIC_AUTO_SIGN = 'magic-auto-sign'
+}
