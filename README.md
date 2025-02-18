@@ -201,6 +201,12 @@ All of this is handled by [SignInPage](#signinpage) behind the scenes, so you ca
 </p>
 </details>
 
+### MetaTransactions
+
+The wallet module includes utilities to send transaction and meta transactions automatically. Meta transactions are sent when trying to send a transaction to a network different from the one connected to.
+
+Web2 wallets will be prompted to accept or reject the transaction using the Web2TransactionModal. This modal is required for the sendTransaction function to work and must be initiated in your dApp.
+
 ## Storage
 
 The storage module allows you to save parts of the redux store in localStorage to make them persistent and migrate it from different versions without loosing it.
