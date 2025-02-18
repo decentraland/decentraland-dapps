@@ -1,4 +1,5 @@
 import { AnyAction } from 'redux'
+import { isbot } from 'isbot'
 import { Wallet } from '../wallet/types'
 import {
   AnalyticsAction,
@@ -8,7 +9,6 @@ import {
   AnalyticsWindow,
   TransformPayload
 } from './types'
-import { isbot } from 'isbot'
 
 export const trackedActions: { [key: string]: AnalyticsAction } = {}
 

@@ -19,7 +19,7 @@ import {
   authorizationFlowRequest
 } from '../../modules/authorization/actions'
 import { getIsFeatureEnabled } from '../../modules/features/selectors'
-import { ApplicationName } from '../../modules/features'
+import { ApplicationName, FeatureName } from '../../modules/features'
 import { isWeb2Wallet } from '../../modules/wallet/utils/providerChecks'
 import {
   getAuthorizationFlowError,
@@ -41,13 +41,11 @@ import {
   AuthorizationTranslationKeys
 } from './withAuthorizedAction.types'
 
-const MAGIC_AUTO_SIGN_FEATURE = 'magic-auto-sign'
-
 const mapState = (state: RootStateOrAny): MapStateProps => ({
   isMagicAutoSignEnabled: getIsFeatureEnabled(
     state,
     ApplicationName.DAPPS,
-    MAGIC_AUTO_SIGN_FEATURE
+    FeatureName.MAGIC_AUTO_SIGN
   ),
   authorizationError: getAuthorizationFlowError(state),
   authorizerWallet: getWallet(state),
@@ -199,7 +197,11 @@ export default function withAuthorizedAction<
               return
             }
 
-            if (isMagicAutoSignEnabled && isUserLoggedInWithMagic) {
+            if (
+              isMagicAutoSignEnabled &&
+              isUserLoggedInWithMagic &&
+              !authorizeOptions.manual
+            ) {
               handleGrant(authorization, {
                 requiredAllowance: BigNumber.from(requiredAllowanceInWei),
                 currentAllowance: currentAllowance,
@@ -240,7 +242,11 @@ export default function withAuthorizedAction<
 
             const { targetContractLabel } = authorizeOptions
 
-            if (isMagicAutoSignEnabled && isUserLoggedInWithMagic) {
+            if (
+              isMagicAutoSignEnabled &&
+              isUserLoggedInWithMagic &&
+              !authorizeOptions.manual
+            ) {
               handleGrant(authorization, {
                 onAuthorized: () => onAuthorized(false)
               })
@@ -277,7 +283,11 @@ export default function withAuthorizedAction<
               return
             }
 
-            if (isMagicAutoSignEnabled && isUserLoggedInWithMagic) {
+            if (
+              isMagicAutoSignEnabled &&
+              isUserLoggedInWithMagic &&
+              !authorizeOptions.manual
+            ) {
               handleGrant(authorization, {
                 onAuthorized: () => onAuthorized(false)
               })
