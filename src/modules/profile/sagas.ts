@@ -29,7 +29,8 @@ import {
   loadProfilesFailure,
   LOAD_PROFILES_REQUEST
 } from './actions'
-import { getHashesByKeyMap, lambdaProfileToContentProfile } from './utils'
+import { ProfileEntity } from '../../lib'
+import { getHashesByKeyMap } from './utils'
 import { Profile } from './types'
 
 export const NO_IDENTITY_FOUND_ERROR_MESSAGE = 'No identity found'
@@ -143,19 +144,17 @@ export function createProfileSaga({
     address: string,
     changes: Partial<Avatar>
   ) {
-    const profile: Profile = yield call([peerApi, 'fetchProfile'], address, {
-      useCache: false
-    })
-    const profileWithContentHashes = lambdaProfileToContentProfile(profile)
-
+    const profile: ProfileEntity = yield call(
+      [entities, 'getProfileEntity'],
+      address
+    )
     const newAvatar: Avatar = {
-      ...profileWithContentHashes.avatars[0],
+      ...profile.metadata.avatars[0],
       ...changes,
-      version: profileWithContentHashes.avatars[0].version + 1
+      version: profile.metadata.avatars[0].version + 1
     }
-
     const profileMetadata: Profile = {
-      avatars: [newAvatar, ...profileWithContentHashes.avatars.slice(1)]
+      avatars: [newAvatar, ...profile.metadata.avatars.slice(1)]
     }
     const identity = getIdentity()
 
