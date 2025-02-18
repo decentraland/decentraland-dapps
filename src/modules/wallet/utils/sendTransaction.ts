@@ -1,11 +1,27 @@
-import { ContractData, sendMetaTransaction } from "decentraland-transactions"
+import { ContractData, sendMetaTransaction } from 'decentraland-transactions'
 import { Contract, PopulatedTransaction } from '@ethersproject/contracts'
-import { getConnectedProvider } from "../../../lib/eth"
-import { getTargetNetworkProvider } from "./getTargetNetworkProvider"
-import { transactionEvents } from "./transactionEvents"
-import { TransactionEventData, TransactionEventType } from "./types"
-import { getTransactionsApiUrl } from "./urls"
-import { getProviderChainId } from "./getProviderChainId"
+import { getConnectedProvider } from '../../../lib/eth'
+import { getTargetNetworkProvider } from './getTargetNetworkProvider'
+import { transactionEvents } from './transactionEvents'
+import { TransactionEventData, TransactionEventType } from './types'
+import { getTransactionsApiUrl } from './urls'
+import { getProviderChainId } from './getProviderChainId'
+import { BigNumber } from 'ethers'
+
+const acceptOrRejectTransaction = () => {
+  return new Promise((resolve, reject) => {
+    const acceptListener = () => {
+      transactionEvents.removeAllListeners(TransactionEventType.REJECT)
+      resolve(true)
+    }
+    const rejectListener = () => {
+      transactionEvents.removeAllListeners(TransactionEventType.ACCEPT)
+      reject(new Error('User rejected transaction'))
+    }
+    transactionEvents.addListener(TransactionEventType.ACCEPT, acceptListener)
+    transactionEvents.addListener(TransactionEventType.REJECT, rejectListener)
+  })
+}
 
 /**
  * Sends a transaction either as a meta transaction or as a regular transaction.
@@ -63,17 +79,41 @@ export async function sendTransaction(...args: any[]) {
 
     // Populate the transaction data
     const unsignedTx = await (typeof contractMethodNameOrGetPopulatedTransaction ===
-      'function'
+    'function'
       ? contractMethodNameOrGetPopulatedTransaction(
-        contractInstance.populateTransaction
-      )
+          contractInstance.populateTransaction
+        )
       : contractInstance.populateTransaction[
-        contractMethodNameOrGetPopulatedTransaction
-      ](...contractArguments))
+          contractMethodNameOrGetPopulatedTransaction
+        ](...contractArguments))
 
     // If the connected provider is in the target network, use it to sign and send the tx
     if (chainId === contract.chainId) {
       const signer = targetNetworkProvider.getSigner()
+      // Only on magic, prompt the user to accept or reject the transaction via the Web2TransactionModal
+      if (connectedProvider.isMagic) {
+        let transactionGasPrice: BigNumber = BigNumber.from(0)
+        try {
+          // Compute the cost of the transaction
+          const gasPrice = await signer.getGasPrice()
+          const transactionGasCost = await signer.estimateGas(unsignedTx)
+          transactionGasPrice = gasPrice.mul(transactionGasCost)
+        } catch (_e) {}
+
+        // If the transaction gas price is not zero, we need to wait for the user to accept or reject the transaction
+        if (!transactionGasPrice.isZero()) {
+          const acceptOrRejectPromise = acceptOrRejectTransaction()
+          const userBalance = await signer.getBalance()
+          transactionEvents.emit(TransactionEventType.PROMPT, {
+            transactionGasPrice,
+            userBalance,
+            chainId: contract.chainId
+          })
+          // Wait for the user to accept or reject the transaction in the Web2TransactionModal
+          await acceptOrRejectPromise
+        }
+      }
+
       const tx = await signer.sendTransaction(unsignedTx)
       transactionEvents.emit(TransactionEventType.SUCCESS, { txHash: tx.hash })
       return tx.hash
