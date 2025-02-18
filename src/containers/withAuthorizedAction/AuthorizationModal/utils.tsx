@@ -168,7 +168,8 @@ export function getStepMessage(
   currentStep: number,
   price: string,
   action: AuthorizationStepAction,
-  translationKeys: AuthorizationTranslationKeys
+  translationKeys: AuthorizationTranslationKeys,
+  isWeb2AutoSigning?: boolean
 ) {
   if (stepIndex > currentStep) {
     return ''
@@ -180,7 +181,9 @@ export function getStepMessage(
 
   switch (stepStatus) {
     case AuthorizationStepStatus.WAITING:
-      return getTranslation(translationKeys, 'waiting_wallet')
+      return !!isWeb2AutoSigning
+        ? getTranslation(translationKeys, 'waiting_confirmation')
+        : getTranslation(translationKeys, 'waiting_wallet')
     case AuthorizationStepStatus.PROCESSING:
       return getTranslation(translationKeys, 'waiting_confirmation')
     case AuthorizationStepStatus.ERROR:

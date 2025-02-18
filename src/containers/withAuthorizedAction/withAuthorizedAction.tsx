@@ -343,6 +343,7 @@ export default function withAuthorizedAction<
         />
         {showAuthorizationModal && authModalData ? (
           <AuthorizationModal
+            isWeb2AutoSigning={isMagicAutoSignEnabled}
             onGrant={handleGrant}
             onRevoke={handleRevoke}
             onClose={handleClose}
