@@ -47,13 +47,16 @@ type MintOptions = AuthorizeBaseOptions & {
   targetContractLabel?: string
 }
 
+type ExtraAuthorizationOptions = {
+  manual?: boolean
+}
+
 export type AuthorizeActionOptions = (
   | ApprovalOptions
   | AllowanceOptions
   | MintOptions
-) & {
-  manual?: boolean
-}
+) &
+  ExtraAuthorizationOptions
 
 type RecursivePartial<T> = {
   [P in keyof T]?: T[P] extends (infer U)[]
