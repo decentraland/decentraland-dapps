@@ -39,6 +39,7 @@ export function AuthorizationModal({
   authorizedContractLabel,
   targetContractLabel,
   translationKeys,
+  isWeb2AutoSigning,
   onClose,
   onRevoke,
   onGrant,
@@ -190,7 +191,8 @@ export function AuthorizationModal({
                   currentStep,
                   requiredAllowanceAsEth,
                   step.actionType,
-                  translationKeys
+                  translationKeys,
+                  isWeb2AutoSigning
                 ),
           testId: 'testId' in step ? step.testId : `${step.actionType}-step`
         }

@@ -50,6 +50,7 @@ export type HandleGrantOptions = {
 
 export type Props = {
   authorization: Authorization
+  isWeb2AutoSigning?: boolean
   requiredAllowance?: BigNumber
   currentAllowance?: BigNumber
   action: AuthorizedAction
@@ -78,6 +79,7 @@ export type MapDispatch = Dispatch<
 >
 export type OwnProps = Pick<
   Props,
+  | 'isWeb2AutoSigning'
   | 'authorization'
   | 'requiredAllowance'
   | 'getConfirmationStatus'
