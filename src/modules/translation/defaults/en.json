@@ -363,6 +363,17 @@
       "connected": "Connected",
       "confirm_in_wallet": "Confirm in wallet",
       "switching": "Switching..."
+    },
+    "web2_transactions": {
+      "title": "Confirm Transaction",
+      "description": "You are about to perform a transaction on the <b>{networkName}</b> network.",
+      "gasExplanation": "Network transactions require gas, paid in the network's native currency. For more information about gas, click <anchor>here</anchor>",
+      "transactionCostTitle": "Estimated Gas Fee:",
+      "userBalanceTitle": "Your Balance:",
+      "balanceNotEnoughTitle": "Insufficient Balance",
+      "balanceNotEnoughContent": "Your balance may be insufficient to cover this transaction. If the transaction cannot be completed, please add more of the necessary currency to your account and try again.",
+      "accept": "Continue",
+      "reject": "Cancel"
     }
   }
 }

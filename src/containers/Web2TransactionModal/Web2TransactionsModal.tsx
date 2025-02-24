@@ -1,10 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Web2TransactionModal as UIWeb2TransactionModal } from 'decentraland-ui/dist/components/Web2TransactionModal'
+import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
+import { t } from '../../modules/translation'
 import { transactionEvents } from '../../modules/wallet/utils/transactionEvents'
 import { TransactionEventType } from '../../modules/wallet/utils/types'
 import { isWeb2Wallet } from '../../modules/wallet/utils/providerChecks'
-import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { Web2TransactionModalProps } from './Web2TransactionsModal.types'
+
 type EventData = {
   transactionGasPrice: string
   userBalance: string
@@ -59,6 +61,37 @@ export const Web2TransactionsModal = (props: Web2TransactionModalProps) => {
       chainId={eventData?.chainId ?? ChainId.ETHEREUM_MAINNET}
       transactionCostAmount={eventData?.transactionGasPrice?.toString() ?? '0'}
       userBalanceAmount={eventData?.userBalance?.toString() ?? '0'}
+      i18n={{
+        title: t('@dapps.web2_transactions.title'),
+        description: (networkName: string) =>
+          t('@dapps.web2_transactions.description', {
+            networkName,
+            b: (content: React.ReactNode) => <b>{content}</b>
+          }),
+        gasExplanation: t('@dapps.web2_transactions.gasExplanation', {
+          anchor: (content: React.ReactNode) => (
+            <a
+              href="https://www.coinbase.com/es-la/learn/crypto-basics/what-are-gas-fees#:~:text=Gas%20fees%20are%20transaction%20costs,during%20periods%20of%20network%20congestion"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {content}
+            </a>
+          )
+        }),
+        transactionCostTitle: t(
+          '@dapps.web2_transactions.transactionCostTitle'
+        ),
+        userBalanceTitle: t('@dapps.web2_transactions.userBalanceTitle'),
+        balanceNotEnoughTitle: t(
+          '@dapps.web2_transactions.balanceNotEnoughTitle'
+        ),
+        balanceNotEnoughContent: t(
+          '@dapps.web2_transactions.balanceNotEnoughContent'
+        ),
+        accept: t('@dapps.web2_transactions.accept'),
+        reject: t('@dapps.web2_transactions.reject')
+      }}
     />
   )
 }

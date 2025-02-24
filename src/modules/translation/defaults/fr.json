@@ -271,6 +271,23 @@
         "simple": "Jouer une fois",
         "loop": "Boucle de jeu"
       }
+    },
+    "chain_selector": {
+      "title": "Sélectionnez un réseau",
+      "connected": "Connecté",
+      "confirm_in_wallet": "Confirmer dans le portefeuille",
+      "switching": "En cours de changement..."
+    },
+    "web2_transactions": {
+      "title": "Confirmer la transaction",
+      "description": "Vous êtes sur le point de réaliser une transaction sur le réseau <b>{networkName}</b>.",
+      "gasExplanation": "Les transactions de réseau nécessitent du gaz, payé en monnaie native du réseau. Pour plus d'informations sur le gaz, cliquez <anchor>ici</anchor>",
+      "transactionCostTitle": "Frais de gaz estimés:",
+      "userBalanceTitle": "Votre solde:",
+      "balanceNotEnoughTitle": "Solde insuffisant",
+      "balanceNotEnoughContent": "Votre solde peut être insuffisant pour couvrir cette transaction. Si la transaction ne peut pas être complétée, veuillez ajouter plus de la monnaie nécessaire à votre compte et réessayer.",
+      "accept": "Continuer",
+      "reject": "Annuler"
     }
   }
 }
