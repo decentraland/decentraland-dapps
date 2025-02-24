@@ -261,16 +261,33 @@
         "hands_wear": "ハンドウェア"
       },
       "with_sound": "音で",
-      "smart": "Smart",
+      "smart": "頭いい",
       "body_shape": {
         "male": "男",
         "female": "女性",
         "unisex": "ユニセックス"
       },
       "play_mode": {
-        "simple": "Play once",
-        "loop": "Play loop"
+        "simple": "一度プレイ",
+        "loop": "ループで再生する"
       }
+    },
+    "chain_selector": {
+      "title": "ネットワークを選択",
+      "connected": "接続済み",
+      "confirm_in_wallet": "ウォレットで確認",
+      "switching": "切り替え中..."
+    },
+    "web2_transactions": {
+      "title": "取引の確認",
+      "description": "<b>{networkName}</b> ネットワーク上でトランザクションを実行しようとしています。",
+      "gasExplanation": "ネットワーク取引にはガスが必要で、ネットワークのネイティブ通貨で支払われます。ガスの詳細については、<anchor>こちら</anchor>をクリックしてください。",
+      "transactionCostTitle": "推定ガス料金:",
+      "userBalanceTitle": "あなたの残高：",
+      "balanceNotEnoughTitle": "残高不足",
+      "balanceNotEnoughContent": "この取引をカバーするには残高が不足している可能性があります。取引を完了できない場合は、アカウントに必要な通貨を追加して、もう一度お試しください。",
+      "accept": "続行",
+      "reject": "キャンセル"
     }
   }
 }

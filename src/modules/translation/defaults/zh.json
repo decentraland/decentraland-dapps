@@ -361,6 +361,17 @@
       "connected": "已连接",
       "confirm_in_wallet": "请在您的钱包中确认",
       "switching": "切换中..."
+    },
+    "web2_transactions": {
+      "title": "确认交易",
+      "description": "您即将在 <b>{networkName} 网络上执行交易。",
+      "gasExplanation": "网络交易需要 gas, 以网络的本币支付。有关 gas 的更多信息，请点击<anchor>此处</anchor>",
+      "transactionCostTitle": "预计燃气费：",
+      "userBalanceTitle": "您的余额：",
+      "balanceNotEnoughTitle": "余额不足",
+      "balanceNotEnoughContent": "您的余额可能不足以支付此交易。如果无法完成交易，请向您的帐户充值更多所需货币，然后重试。",
+      "accept": "继续",
+      "reject": "取消"
     }
   }
 }
