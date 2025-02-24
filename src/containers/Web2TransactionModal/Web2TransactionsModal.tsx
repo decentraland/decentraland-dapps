@@ -1,11 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Web2TransactionModal as UIWeb2TransactionModal } from 'decentraland-ui/dist/components/Web2TransactionModal'
+import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
+import { t } from '../../modules/translation'
 import { transactionEvents } from '../../modules/wallet/utils/transactionEvents'
 import { TransactionEventType } from '../../modules/wallet/utils/types'
 import { isWeb2Wallet } from '../../modules/wallet/utils/providerChecks'
-import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { Web2TransactionModalProps } from './Web2TransactionsModal.types'
-import { t } from '../../modules/translation'
+
 type EventData = {
   transactionGasPrice: string
   userBalance: string
