@@ -366,7 +366,7 @@
     "web2_transactions": {
       "title": "Confirmar Transacción",
       "description": "Está a punto de realizar una transacción en la red <b>{networkName}</b>.",
-      "gasExplanation": "Las transacciones de la red requieren gas, pagado en la moneda nativa de la red. Para más información sobre el gas, haga clic en <anchor>aquí</anchor>",
+      "gasExplanation": "Las transacciones de la red requieren gas, pagado en la moneda nativa de la red. Para más información sobre el gas, haga clic <anchor>aquí</anchor>",
       "transactionCostTitle": "Tarifa de gas estimada:",
       "userBalanceTitle": "Su saldo:",
       "balanceNotEnoughTitle": "Saldo insuficiente",
