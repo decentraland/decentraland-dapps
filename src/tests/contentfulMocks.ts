@@ -3,7 +3,8 @@ import {
   ContentfulEntry,
   MarketingAdminFields,
   CampaignFields,
-  BannerFields
+  BannerFields,
+  ContentfulLocale
 } from '@dcl/schemas'
 
 const mockAdminEntry: ContentfulEntry<MarketingAdminFields> = {
@@ -65,7 +66,7 @@ const mockAdminEntry: ContentfulEntry<MarketingAdminFields> = {
   }
 }
 
-const mockCampaignEntry: ContentfulEntry<CampaignFields> = {
+const mockCampaignEntry = {
   metadata: {
     tags: [],
     concepts: []
@@ -101,20 +102,25 @@ const mockCampaignEntry: ContentfulEntry<CampaignFields> = {
   },
   fields: {
     name: {
-      'en-US': 'Metaverse Festival 2024',
-      es: 'Festival del metaverso 2024',
-      zh: '2024 年元宇宙节'
+      'en-US': 'Test Campaign'
     },
     marketplaceTabName: {
-      'en-US': 'MVF2024',
-      es: 'MVF2024',
-      zh: 'MVF2024'
+      'en-US': 'Test Tab'
     },
     mainTag: {
-      'en-US': 'MVF2024'
+      'en-US': 'test-tag'
+    },
+    assets: {
+      'en-US': {
+        sys: {
+          type: 'Link',
+          linkType: 'Asset',
+          id: 'asset-1'
+        }
+      }
     }
   }
-}
+} as const
 
 const mockHomepageBannerEntry: ContentfulEntry<BannerFields> = {
   metadata: {
@@ -584,9 +590,60 @@ const marketplaceHomepageBannerAssets: ContentfulAsset[] = [
   }
 ]
 
+export const mockAsset: ContentfulAsset = {
+  metadata: {
+    tags: [],
+    concepts: []
+  },
+  sys: {
+    space: {
+      sys: {
+        type: 'Link',
+        linkType: 'Space',
+        id: 'test-space'
+      }
+    },
+    id: 'asset-1',
+    type: 'Asset',
+    createdAt: '2024-02-20T15:55:35.975Z',
+    updatedAt: '2024-02-20T15:55:35.975Z',
+    environment: {
+      sys: {
+        id: 'master',
+        type: 'Link',
+        linkType: 'Environment'
+      }
+    },
+    publishedVersion: 1,
+    revision: 1
+  },
+  fields: {
+    title: {
+      'en-US': 'Test Asset'
+    },
+    description: {
+      'en-US': 'Test Description'
+    },
+    file: {
+      'en-US': {
+        url: 'test-url',
+        details: {
+          size: 1000,
+          image: {
+            width: 100,
+            height: 100
+          }
+        },
+        fileName: 'test.jpg',
+        contentType: 'image/jpeg'
+      }
+    }
+  }
+}
+
 export {
   mockAdminEntry,
-  mockHomepageBannerEntry,
   mockCampaignEntry,
+  mockHomepageBannerEntry,
   marketplaceHomepageBannerAssets
 }
