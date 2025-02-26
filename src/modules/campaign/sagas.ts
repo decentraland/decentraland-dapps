@@ -31,25 +31,16 @@ export function* campaignSagas(
 
   function* handleFetchCampaignRequest(_: FetchCampaignRequestAction) {
     try {
-      console.log('   >>>>   config   >>>   ', config)
       const { fields } = (yield call(
         [client, 'fetchEntryAllLocales'],
         config.space,
         config.environment,
         config.id
       )) as ContentfulEntry<MarketingAdminFields>
-      console.log('   >>>>   fields   >>>   ', fields)
+
       if (!fields) {
         throw new Error('Failed to fetch campaign data')
       }
-
-      const assets = (yield call(
-        [client, 'fetchAssetsFromEntryFields'],
-        config.space,
-        config.environment,
-        fields
-      )) as Record<string, ContentfulAsset>
-
       const entries = (yield call(
         [client, 'fetchEntriesFromEntryFields'],
         config.space,
@@ -57,29 +48,50 @@ export function* campaignSagas(
         fields
       )) as Record<string, ContentfulEntry<LocalizedFields>>
 
-      const banners = Object.entries(fields).reduce((acc, [key, value]) => {
-        const fieldOnLocale = value[ContentfulLocale.enUS]
-        if (isSysLink(fieldOnLocale)) {
-          const linkedEntryId = fieldOnLocale.sys.id
-          const bannerEntry = entries[linkedEntryId]
-          if (
-            bannerEntry &&
-            bannerEntry.sys.contentType.sys.id === BANNER_CONTENT_TYPE
-          ) {
-            acc[key] = {
-              ...bannerEntry.fields,
-              id: linkedEntryId
-            } as BannerFields & { id: string }
-          }
-        }
-        return acc
-      }, {} as Record<string, BannerFields & { id: string }>)
+      const arrayOfFields = [
+        fields as LocalizedFields,
+        ...Object.values(entries).map(entry => entry.fields)
+      ]
+
+      const assets = (yield call(
+        [client, 'fetchAssetsFromEntryFields'],
+        config.space,
+        config.environment,
+        arrayOfFields
+      )) as Record<string, ContentfulAsset>
+
+      const banners = arrayOfFields
+        .map(fields =>
+          Object.entries(fields).reduce((acc, [key, value]) => {
+            const fieldOnLocale = value[ContentfulLocale.enUS]
+            if (isSysLink(fieldOnLocale)) {
+              const linkedEntryId = fieldOnLocale.sys.id
+              const bannerEntry = Object.values(entries).find(
+                entry => entry.sys.id === linkedEntryId
+              )
+              if (
+                bannerEntry &&
+                bannerEntry.sys.contentType.sys.id === BANNER_CONTENT_TYPE
+              ) {
+                acc[key] = {
+                  ...bannerEntry.fields,
+                  id: linkedEntryId
+                } as BannerFields & { id: string }
+              }
+            }
+            return acc
+          }, {} as Record<string, BannerFields & { id: string }>)
+        )
+        .reduce((acc, curr) => ({ ...acc, ...curr }), {})
 
       const campaignField = Object.values(fields).find(field => {
         const fieldOnLocale = field[ContentfulLocale.enUS]
         if (isSysLink(fieldOnLocale)) {
-          const entry = entries[fieldOnLocale.sys.id]
+          const entry = Object.values(entries).find(
+            entry => entry.sys.id === fieldOnLocale.sys.id
+          )
           if (
+            entry &&
             entry.sys.contentType.sys.id === MARKETING_CAMPAIGN_CONTENT_TYPE
           ) {
             return entry.fields as CampaignFields
@@ -89,8 +101,10 @@ export function* campaignSagas(
       }) as LocalizedField<SysLink<'Entry'>> | undefined
 
       const campaignFields = campaignField?.[ContentfulLocale.enUS].sys.id
-        ? (entries[campaignField?.[ContentfulLocale.enUS].sys.id]
-            ?.fields as CampaignFields)
+        ? (Object.values(entries).find(
+            entry =>
+              entry.sys.id === campaignField[ContentfulLocale.enUS].sys.id
+          )?.fields as CampaignFields)
         : undefined
 
       yield put(

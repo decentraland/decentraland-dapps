@@ -6,20 +6,33 @@ import {
   ContentfulLocale
 } from '@dcl/schemas'
 import { BaseClient } from '../../lib'
+import { ContentfulEntryWithoutLocales, Fields } from './ContentfulClient.types'
+
+type ImageOptimizedFormats = Partial<{
+  jpg: string
+  png: string
+  webp: string
+  gif: string
+}>
+
+type ImageOptimized = ImageOptimizedFormats &
+  Partial<{
+    original: string
+    originalFormat: keyof ImageOptimizedFormats
+    optimized: string
+  }>
 
 export class ContentfulClient extends BaseClient {
   constructor() {
     super('https://cms.decentraland.org')
   }
 
-  async fetchEntry<
-    T extends Record<string, LocalizedField<LocalizedFieldType>>
-  >(
+  async fetchEntry<T extends Fields>(
     space: string,
     environment: string,
     id: string,
     locale: ContentfulLocale = ContentfulLocale.enUS
-  ): Promise<ContentfulEntry<T>> {
+  ): Promise<ContentfulEntryWithoutLocales<T>> {
     const response = await this.rawFetch(
       `/spaces/${space}/environments/${environment}/entries/${id}/?` +
         new URLSearchParams({
@@ -71,6 +84,84 @@ export class ContentfulClient extends BaseClient {
     }
   }
 
+  isWebpSupported() {
+    const elem =
+      typeof document !== 'undefined' && document.createElement('canvas')
+    if (elem && elem.getContext && elem.getContext('2d')) {
+      // was able or not to get WebP representation
+      return elem.toDataURL('image/webp').startsWith('data:image/webp')
+    }
+
+    // very old browser like IE 8, canvas not supported
+    return false
+  }
+
+  optimize(image?: string | null): ImageOptimized {
+    if (!image) {
+      return {}
+    }
+
+    try {
+      if (image.startsWith('//')) {
+        image = `https:${image}`
+      }
+
+      const url = new URL(image)
+      url.hostname = 'cms-images.decentraland.org'
+      url.searchParams.set('q', '80')
+
+      const jpg = new URL(url)
+      jpg.searchParams.set('fm', 'jpg')
+      jpg.searchParams.set('fl', 'progressive')
+
+      const png = new URL(url)
+      png.searchParams.set('fm', 'png')
+
+      const webp = new URL(url)
+      webp.searchParams.set('fm', 'webp')
+
+      const gif = new URL(url)
+      gif.searchParams.set('fm', 'gif')
+
+      const optimized =
+        url.pathname.endsWith('.jpg') || url.pathname.endsWith('.jpeg')
+          ? this.isWebpSupported()
+            ? webp
+            : jpg
+          : url.pathname.endsWith('.webp')
+          ? webp
+          : url.pathname.endsWith('.png')
+          ? png
+          : url.pathname.endsWith('.gif')
+          ? gif
+          : undefined
+
+      const originalFormat =
+        url.pathname.endsWith('.jpg') || url.pathname.endsWith('.jpeg')
+          ? 'jpg'
+          : url.pathname.endsWith('.png')
+          ? 'png'
+          : url.pathname.endsWith('.webp')
+          ? 'webp'
+          : url.pathname.endsWith('.gif')
+          ? 'gif'
+          : undefined
+
+      return {
+        jpg: jpg.toString(),
+        png: png.toString(),
+        webp: webp.toString(),
+        gif: gif.toString(),
+        original: url.toString(),
+        optimized: optimized && optimized.toString(),
+        originalFormat
+      }
+    } catch (err) {
+      console.error(`Error optimizing:`, image, err)
+      return {}
+    }
+  }
+
   async fetchAsset(
     space: string,
     environment: string,
@@ -95,7 +186,12 @@ export class ContentfulClient extends BaseClient {
         [locale]: asset.fields.description
       },
       file: {
-        [locale]: asset.fields.file
+        [locale]: {
+          ...asset.fields.file,
+          url:
+            this.optimize(asset.fields.file.url).optimized ||
+            asset.fields.file.url
+        }
       }
     }
 
@@ -110,15 +206,16 @@ export class ContentfulClient extends BaseClient {
   >(
     space: string,
     environment: string,
-    fields: T
+    fieldsInArray: T[]
   ): Promise<Record<string, ContentfulAsset>> {
     const assetIds = new Set<string>()
-
-    Object.values(fields).forEach(field => {
-      Object.values(field).forEach(content => {
-        if (content?.sys?.linkType === 'Asset') {
-          assetIds.add(content.sys.id)
-        }
+    fieldsInArray.forEach(fields => {
+      Object.values(fields).forEach(field => {
+        Object.values(field).forEach(content => {
+          if (content?.sys?.linkType === 'Asset') {
+            assetIds.add(content.sys.id)
+          }
+        })
       })
     })
 

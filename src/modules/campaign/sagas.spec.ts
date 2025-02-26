@@ -1,7 +1,14 @@
 import { expectSaga } from 'redux-saga-test-plan'
 import * as matchers from 'redux-saga-test-plan/matchers'
 import { throwError } from 'redux-saga-test-plan/providers'
-import { ContentfulResponse, MarketingAdminFields } from '@dcl/schemas'
+import {
+  ContentfulResponse,
+  MarketingAdminFields,
+  ContentfulEntry,
+  LocalizedField,
+  ContentfulAsset,
+  BannerFields
+} from '@dcl/schemas'
 import {
   mockAdminEntry,
   marketplaceHomepageBannerAssets,
@@ -17,75 +24,115 @@ import {
 } from './actions'
 
 describe('when handling the fetch campaign request', () => {
+  const BANNER_CONTENT_TYPE = 'banner'
+  const MARKETING_CAMPAIGN_CONTENT_TYPE = 'marketingCampaign'
   let mockConfig: {
     space: string
     environment: string
     id: string
-    token: string
   }
   let mockClient: ContentfulClient
-  let mockResponse: ContentfulResponse<MarketingAdminFields>
+  let mockResponse: {
+    banners: Record<string, BannerFields & { id: string }>
+    assets: Record<string, ContentfulAsset>
+    name?: LocalizedField<string>
+    tabName?: LocalizedField<string>
+    mainTag?: string
+    additionalTags?: string[]
+  }
 
   beforeEach(() => {
     mockConfig = {
       space: 'space-id',
       environment: 'environment-id',
-      id: 'entry-id',
-      token: 'access-token'
+      id: '7FJAHnPOiCEHMJhrZ3sRmG'
     }
     mockClient = new ContentfulClient()
+    mockResponse = {
+      banners: {
+        marketplaceHomepageBanner: {
+          ...mockHomepageBannerEntry.fields,
+          id: mockHomepageBannerEntry.sys.id
+        },
+        marketplaceCollectiblesBanner: {
+          ...mockHomepageBannerEntry.fields,
+          id: mockHomepageBannerEntry.sys.id
+        },
+        marketplaceCampaignCollectiblesBanner: {
+          ...mockHomepageBannerEntry.fields,
+          id: mockHomepageBannerEntry.sys.id
+        },
+        builderCampaignBanner: {
+          ...mockHomepageBannerEntry.fields,
+          id: mockHomepageBannerEntry.sys.id
+        }
+      },
+      assets: marketplaceHomepageBannerAssets.reduce((acc, asset) => {
+        acc[asset.sys.id] = asset
+        return acc
+      }, {} as Record<string, ContentfulAsset>),
+      name: mockCampaignEntry.fields.name,
+      tabName: mockCampaignEntry.fields.marketplaceTabName,
+      mainTag: mockCampaignEntry.fields.mainTag?.['en-US'],
+      additionalTags: mockCampaignEntry.fields.additionalTags?.['en-US']
+    }
   })
 
   describe('when the request is successful', () => {
-    beforeEach(() => {
-      mockResponse = {
-        items: [{ ...mockAdminEntry }],
-        includes: {
-          Asset: [...marketplaceHomepageBannerAssets],
-          Entry: [{ ...mockHomepageBannerEntry }, { ...mockCampaignEntry }]
-        }
-      }
-    })
-
     it('should put fetch campaign success with the transformed campaign data', () => {
       return expectSaga(campaignSagas, mockClient, mockConfig)
         .provide([
           [
             matchers.call(
-              [mockClient, 'fetchEntry'],
+              [mockClient, 'fetchEntryAllLocales'],
               mockConfig.space,
               mockConfig.environment,
-              mockConfig.id,
-              'admin',
-              mockConfig.token
+              mockConfig.id
             ),
-            mockResponse
+            Promise.resolve(mockAdminEntry)
+          ],
+          [
+            matchers.call(
+              [mockClient, 'fetchEntriesFromEntryFields'],
+              mockConfig.space,
+              mockConfig.environment,
+              mockAdminEntry.fields
+            ),
+            Promise.resolve([mockCampaignEntry, mockHomepageBannerEntry])
+          ],
+          [
+            matchers.call(
+              [mockClient, 'fetchAssetsFromEntryFields'],
+              mockConfig.space,
+              mockConfig.environment,
+              [
+                mockAdminEntry.fields,
+                mockCampaignEntry.fields,
+                mockHomepageBannerEntry.fields
+              ]
+            ),
+            Promise.resolve(
+              Object.fromEntries(
+                marketplaceHomepageBannerAssets.map(asset => [
+                  asset.sys.id,
+                  asset
+                ])
+              )
+            )
           ]
         ])
         .put(
           fetchCampaignSuccess(
-            {
-              marketplaceHomepageBanner: {
-                ...mockHomepageBannerEntry.fields,
-                id: mockHomepageBannerEntry.sys.id
-              }
-            },
-            {
-              [marketplaceHomepageBannerAssets[0].sys.id]:
-                marketplaceHomepageBannerAssets[0],
-              [marketplaceHomepageBannerAssets[1].sys.id]:
-                marketplaceHomepageBannerAssets[1],
-              [marketplaceHomepageBannerAssets[2].sys.id]:
-                marketplaceHomepageBannerAssets[2]
-            },
-            mockCampaignEntry.fields.name,
-            mockCampaignEntry.fields.marketplaceTabName,
-            mockCampaignEntry.fields.mainTag?.['en-US'],
-            mockCampaignEntry.fields.additionalTags?.['en-US']
+            mockResponse.banners,
+            mockResponse.assets,
+            mockResponse.name,
+            mockResponse.tabName,
+            mockResponse.mainTag,
+            mockResponse.additionalTags
           )
         )
         .dispatch(fetchCampaignRequest())
-        .run()
+        .run(1000)
     })
   })
 
@@ -97,48 +144,30 @@ describe('when handling the fetch campaign request', () => {
         .provide([
           [
             matchers.call(
-              [mockClient, 'fetchEntry'],
+              [mockClient, 'fetchEntryAllLocales'],
               mockConfig.space,
               mockConfig.environment,
-              mockConfig.id,
-              'admin',
-              mockConfig.token
+              mockConfig.id
             ),
             throwError(error)
           ]
         ])
         .put(fetchCampaignFailure('Network error'))
         .dispatch(fetchCampaignRequest())
-        .run()
+        .run(1000)
     })
   })
 
   describe('when the response contains no items', () => {
-    beforeEach(() => {
-      mockResponse = {
-        items: [],
-        includes: {}
-      }
-    })
-
     it('should put fetch campaign failure with an error message', () => {
+      jest
+        .spyOn(ContentfulClient.prototype, 'fetchEntryAllLocales')
+        .mockRejectedValue(new Error('Failed to fetch campaign data'))
+
       return expectSaga(campaignSagas, mockClient, mockConfig)
-        .provide([
-          [
-            matchers.call(
-              [mockClient, 'fetchEntry'],
-              mockConfig.space,
-              mockConfig.environment,
-              mockConfig.id,
-              'admin',
-              mockConfig.token
-            ),
-            mockResponse
-          ]
-        ])
         .put(fetchCampaignFailure('Failed to fetch campaign data'))
         .dispatch(fetchCampaignRequest())
-        .run()
+        .run(1000)
     })
   })
 })

@@ -1,10 +1,14 @@
+import nock from 'nock'
 import { ContentfulClient } from './ContentfulClient'
 import {
-  mockAsset,
+  mockAdminEntry,
+  marketplaceHomepageBannerAssets,
   mockCampaignEntry,
   mockHomepageBannerEntry
 } from '../../tests/contentfulMocks'
 import { ContentfulLocale } from '@dcl/schemas'
+
+const CMS_URL = 'https://cms.decentraland.org'
 
 describe('ContentfulClient', () => {
   let client: ContentfulClient
@@ -14,33 +18,41 @@ describe('ContentfulClient', () => {
 
   beforeEach(() => {
     client = new ContentfulClient()
-    global.fetch = jest.fn()
+    nock.cleanAll()
+  })
+
+  afterEach(() => {
+    nock.cleanAll()
   })
 
   describe('fetchEntry', () => {
-    it('should fetch an entry with the given parameters', async () => {
-      global.fetch = jest.fn().mockResolvedValue({
-        ok: true,
-        json: () => Promise.resolve(mockCampaignEntry)
+    describe('and the request is successful', () => {
+      beforeEach(() => {
+        nock(CMS_URL)
+          .get('/spaces/space-id/environments/env-id/entries/entry-id/')
+          .query({ locale: 'en-US' })
+          .reply(200, mockAdminEntry)
       })
 
-      const result = await client.fetchEntry(mockSpace, mockEnvironment, mockId)
-
-      expect(result).toEqual(mockCampaignEntry)
-      expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining(
-          `/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockId}`
-        ),
-        expect.any(Object)
-      )
+      it('should return the entry data', async () => {
+        const result = await client.fetchEntry('space-id', 'env-id', 'entry-id')
+        expect(result).toEqual(mockAdminEntry)
+      })
     })
 
-    it('should throw an error when the request fails', async () => {
-      global.fetch = jest.fn().mockResolvedValue({ ok: false })
+    describe('and the request fails', () => {
+      beforeEach(() => {
+        nock(CMS_URL)
+          .get('/spaces/space-id/environments/env-id/entries/entry-id/')
+          .query({ locale: 'en-US' })
+          .reply(500)
+      })
 
-      await expect(
-        client.fetchEntry(mockSpace, mockEnvironment, mockId)
-      ).rejects.toThrow('Failed to fetch entity data')
+      it('should throw an error', async () => {
+        await expect(
+          client.fetchEntry('space-id', 'env-id', 'entry-id')
+        ).rejects.toThrow('Failed to fetch entity data')
+      })
     })
   })
 
@@ -91,7 +103,7 @@ describe('ContentfulClient', () => {
     it('should fetch and transform an asset to the correct format', async () => {
       global.fetch = jest.fn().mockResolvedValue({
         ok: true,
-        json: () => Promise.resolve(mockAsset)
+        json: () => Promise.resolve(marketplaceHomepageBannerAssets[0])
       })
 
       const result = await client.fetchAsset(mockSpace, mockEnvironment, mockId)
@@ -107,23 +119,27 @@ describe('ContentfulClient', () => {
       const mockFields = {
         image: {
           'en-US': {
-            sys: { type: 'Link', linkType: 'Asset', id: mockAsset.sys.id }
+            sys: {
+              type: 'Link',
+              linkType: 'Asset',
+              id: marketplaceHomepageBannerAssets[0].sys.id
+            }
           }
         }
       }
 
       global.fetch = jest.fn().mockResolvedValue({
         ok: true,
-        json: () => Promise.resolve(mockAsset)
+        json: () => Promise.resolve(marketplaceHomepageBannerAssets[0])
       })
 
       const result = await client.fetchAssetsFromEntryFields(
         mockSpace,
         mockEnvironment,
-        mockFields
+        [mockFields]
       )
 
-      expect(result).toHaveProperty(mockAsset.sys.id)
+      expect(result).toHaveProperty(marketplaceHomepageBannerAssets[0].sys.id)
       expect(Object.keys(result)).toHaveLength(1)
     })
 
@@ -131,7 +147,7 @@ describe('ContentfulClient', () => {
       const result = await client.fetchAssetsFromEntryFields(
         mockSpace,
         mockEnvironment,
-        {}
+        []
       )
       expect(result).toEqual({})
     })
