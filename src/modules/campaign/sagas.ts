@@ -95,12 +95,9 @@ export function* campaignSagas(
         }
         return false
       }) as LocalizedField<SysLink<'Entry'>> | undefined
-
       const campaignFields = campaignField?.[ContentfulLocale.enUS].sys.id
-        ? (Object.values(entries).find(
-            entry =>
-              entry.sys.id === campaignField[ContentfulLocale.enUS].sys.id
-          )?.fields as CampaignFields)
+        ? (entries[campaignField?.[ContentfulLocale.enUS].sys.id]
+            .fields as CampaignFields)
         : undefined
 
       yield put(
