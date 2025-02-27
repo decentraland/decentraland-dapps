@@ -143,7 +143,8 @@ describe('ContentfulClient', () => {
       expect(Object.keys(result)).toHaveLength(1)
     })
 
-    it('should return empty object when no assets are found', async () => {
+   describe("when there are no entry fields to look assets from", () =>
+    it('should return empty object', async () => {
       const result = await client.fetchAssetsFromEntryFields(
         mockSpace,
         mockEnvironment,
