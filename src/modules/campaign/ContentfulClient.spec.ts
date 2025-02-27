@@ -191,12 +191,15 @@ describe('ContentfulClient', () => {
 
   describe('fetchAssetsFromEntryFields', () => {
     describe('when there are fields to get the assets from', () => {
-      it('should get all assets referenced in the entry fields', async () => {
-        global.fetch = jest.fn().mockResolvedValue({
-          ok: true,
-          json: () => Promise.resolve(marketplaceHomepageBannerAssets[0])
-        })
+      beforeEach(() => {
+        nock(CMS_URL)
+          .get(
+            `/spaces/${mockSpace}/environments/${mockEnvironment}/assets/${marketplaceHomepageBannerAssets[0].sys.id}/`
+          )
+          .reply(200, marketplaceHomepageBannerAssets[0])
+      })
 
+      it('should get all assets referenced in the entry fields', async () => {
         const result = await client.fetchAssetsFromEntryFields(
           mockSpace,
           mockEnvironment,
@@ -221,53 +224,59 @@ describe('ContentfulClient', () => {
   })
 
   describe('fetchEntriesFromEntryFields', () => {
-    it('should fetch all entries referenced in the entry fields', async () => {
-      nock(CMS_URL)
-        .get(
-          `/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockHomepageBannerEntry.sys.id}/`
-        )
-        .query({ locale: ContentfulLocale.enUS })
-        .reply(200, mockHomepageBannerEntry)
-        .get(
-          `/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockHomepageBannerEntry.sys.id}/`
-        )
-        .query({ locale: ContentfulLocale.es })
-        .reply(200, mockHomepageBannerEntry)
-        .get(
-          `/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockHomepageBannerEntry.sys.id}/`
-        )
-        .query({ locale: ContentfulLocale.zh })
-        .reply(200, mockHomepageBannerEntry)
+    describe('when there are entries to fetch', () => {
+      beforeEach(() => {
+        nock(CMS_URL)
+          .get(
+            `/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockHomepageBannerEntry.sys.id}/`
+          )
+          .query({ locale: ContentfulLocale.enUS })
+          .reply(200, mockHomepageBannerEntry)
+          .get(
+            `/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockHomepageBannerEntry.sys.id}/`
+          )
+          .query({ locale: ContentfulLocale.es })
+          .reply(200, mockHomepageBannerEntry)
+          .get(
+            `/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockHomepageBannerEntry.sys.id}/`
+          )
+          .query({ locale: ContentfulLocale.zh })
+          .reply(200, mockHomepageBannerEntry)
+      })
 
-      const mockFieldsWithEntry = {
-        reference: {
-          'en-US': {
-            sys: {
-              type: 'Link',
-              linkType: 'Entry',
-              id: mockHomepageBannerEntry.sys.id
+      it('should fetch all entries referenced in the entry fields', async () => {
+        const mockFieldsWithEntry = {
+          reference: {
+            'en-US': {
+              sys: {
+                type: 'Link',
+                linkType: 'Entry',
+                id: mockHomepageBannerEntry.sys.id
+              }
             }
           }
         }
-      }
 
-      const result = await client.fetchEntriesFromEntryFields(
-        mockSpace,
-        mockEnvironment,
-        mockFieldsWithEntry
-      )
+        const result = await client.fetchEntriesFromEntryFields(
+          mockSpace,
+          mockEnvironment,
+          mockFieldsWithEntry
+        )
 
-      expect(result).toHaveProperty(mockHomepageBannerEntry.sys.id)
-      expect(Object.keys(result)).toHaveLength(1)
+        expect(result).toHaveProperty(mockHomepageBannerEntry.sys.id)
+        expect(Object.keys(result)).toHaveLength(1)
+      })
     })
 
-    it('should return empty object when no entries are found', async () => {
-      const result = await client.fetchEntriesFromEntryFields(
-        mockSpace,
-        mockEnvironment,
-        {}
-      )
-      expect(result).toEqual({})
+    describe('when there are no entries to fetch', () => {
+      it('should return empty object', async () => {
+        const result = await client.fetchEntriesFromEntryFields(
+          mockSpace,
+          mockEnvironment,
+          {}
+        )
+        expect(result).toEqual({})
+      })
     })
   })
 })
