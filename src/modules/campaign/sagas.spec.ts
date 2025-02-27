@@ -160,11 +160,18 @@ describe('when handling the fetch campaign request', () => {
 
   describe('when the response contains no items', () => {
     it('should put fetch campaign failure with an error message', () => {
-      jest
-        .spyOn(ContentfulClient.prototype, 'fetchEntryAllLocales')
-        .mockRejectedValue(new Error('Failed to fetch campaign data'))
-
       return expectSaga(campaignSagas, mockClient, mockConfig)
+        .provide([
+          [
+            matchers.call(
+              [mockClient, 'fetchEntryAllLocales'],
+              mockConfig.space,
+              mockConfig.environment,
+              mockConfig.id
+            ),
+            throwError(new Error('Failed to fetch campaign data'))
+          ]
+        ])
         .put(fetchCampaignFailure('Failed to fetch campaign data'))
         .dispatch(fetchCampaignRequest())
         .run(1000)

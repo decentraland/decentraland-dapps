@@ -60,29 +60,25 @@ export function* campaignSagas(
         arrayOfFields
       )) as Record<string, ContentfulAsset>
 
-      const banners = arrayOfFields
-        .map(fields =>
-          Object.entries(fields).reduce((acc, [key, value]) => {
-            const fieldOnLocale = value[ContentfulLocale.enUS]
-            if (isSysLink(fieldOnLocale)) {
-              const linkedEntryId = fieldOnLocale.sys.id
-              const bannerEntry = Object.values(entries).find(
-                entry => entry.sys.id === linkedEntryId
-              )
-              if (
-                bannerEntry &&
-                bannerEntry.sys.contentType.sys.id === BANNER_CONTENT_TYPE
-              ) {
-                acc[key] = {
-                  ...bannerEntry.fields,
-                  id: linkedEntryId
-                } as BannerFields & { id: string }
-              }
-            }
-            return acc
-          }, {} as Record<string, BannerFields & { id: string }>)
-        )
-        .reduce((acc, curr) => ({ ...acc, ...curr }), {})
+      const banners = Object.entries(fields).reduce((acc, [key, value]) => {
+        const fieldOnLocale = value[ContentfulLocale.enUS]
+        if (isSysLink(fieldOnLocale)) {
+          const linkedEntryId = fieldOnLocale.sys.id
+          const bannerEntry = Object.values(entries).find(
+            entry => entry.sys.id === linkedEntryId
+          )
+          if (
+            bannerEntry &&
+            bannerEntry.sys.contentType.sys.id === BANNER_CONTENT_TYPE
+          ) {
+            acc[key] = {
+              ...bannerEntry.fields,
+              id: linkedEntryId
+            } as BannerFields & { id: string }
+          }
+        }
+        return acc
+      }, {} as Record<string, BannerFields & { id: string }>)
 
       const campaignField = Object.values(fields).find(field => {
         const fieldOnLocale = field[ContentfulLocale.enUS]
