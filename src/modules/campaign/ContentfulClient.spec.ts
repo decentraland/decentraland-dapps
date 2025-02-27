@@ -115,7 +115,8 @@ describe('ContentfulClient', () => {
   })
 
   describe('fetchAssetsFromEntryFields', () => {
-    it('should fetch all assets referenced in the entry fields', async () => {
+   describe("when there are fields to get the assets from", () =>
+    it('should get all assets referenced in the entry fields', async () => {
       const mockFields = {
         image: {
           'en-US': {
