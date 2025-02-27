@@ -96,7 +96,7 @@ export class ContentfulClient extends BaseClient {
     return false
   }
 
-  optimize(image?: string | null): ImageOptimized {
+  private optimize(image?: string | null): ImageOptimized {
     if (!image) {
       return {}
     }
