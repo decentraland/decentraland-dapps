@@ -1,12 +1,22 @@
 import {
   ContentfulAsset,
-  ContentfulEntry,
   MarketingAdminFields,
-  CampaignFields,
-  BannerFields
+  BannerFields,
+  SysLink,
+  ContentfulEntry
 } from '@dcl/schemas'
+import {
+  MarketingAdminFieldsWithoutLocales,
+  ContentfulContentWithoutLocales,
+  ContentfulEntryWithoutLocales,
+  ContentfulAssetWithoutLocales,
+  BannerFieldsWithoutLocales
+} from '../modules/campaign/ContentfulClient.types'
 
-const mockAdminEntry: ContentfulEntry<MarketingAdminFields> = {
+const mockAdminEntryEn: ContentfulContentWithoutLocales<
+  'Entry',
+  MarketingAdminFieldsWithoutLocales
+> = {
   metadata: {
     tags: [],
     concepts: []
@@ -19,19 +29,93 @@ const mockAdminEntry: ContentfulEntry<MarketingAdminFields> = {
         id: 'ea2ybdmmn1kv'
       }
     },
-    id: '3mvjCEsGUUqL22BY1vZLmZ',
+    id: '7FJAHnPOiCEHMJhrZ3sRmG',
     type: 'Entry',
-    createdAt: '2025-01-14T19:01:37.139Z',
-    updatedAt: '2025-01-17T13:10:03.829Z',
+    createdAt: '2025-02-25T14:46:55.405Z',
+    updatedAt: '2025-02-25T14:46:55.405Z',
     environment: {
       sys: {
-        id: 'development',
+        id: 'master',
         type: 'Link',
         linkType: 'Environment'
       }
     },
-    publishedVersion: 14,
-    revision: 3,
+    publishedVersion: 6,
+    revision: 1,
+    contentType: {
+      sys: {
+        type: 'Link',
+        linkType: 'ContentType',
+        id: 'admin'
+      }
+    }
+  },
+  fields: {
+    name: 'Test usage only',
+    campaign: {
+      sys: {
+        type: 'Link',
+        linkType: 'Entry',
+        id: '1wljdcVnU32MZq9j5KY5jZ'
+      }
+    },
+    marketplaceHomepageBanner: {
+      sys: {
+        type: 'Link',
+        linkType: 'Entry',
+        id: '2wT4mlAKsjJ5IZmbBHObgV'
+      }
+    },
+    marketplaceCollectiblesBanner: {
+      sys: {
+        type: 'Link',
+        linkType: 'Entry',
+        id: '2wT4mlAKsjJ5IZmbBHObgV'
+      }
+    },
+    marketplaceCampaignCollectiblesBanner: {
+      sys: {
+        type: 'Link',
+        linkType: 'Entry',
+        id: '2wT4mlAKsjJ5IZmbBHObgV'
+      }
+    },
+    builderCampaignBanner: {
+      sys: {
+        type: 'Link',
+        linkType: 'Entry',
+        id: '2wT4mlAKsjJ5IZmbBHObgV'
+      }
+    }
+  }
+}
+
+const mockAdminEntry: ContentfulEntryWithoutLocales<MarketingAdminFields> = {
+  metadata: {
+    tags: [],
+    concepts: []
+  },
+  sys: {
+    space: {
+      sys: {
+        type: 'Link',
+        linkType: 'Space',
+        id: 'ea2ybdmmn1kv'
+      }
+    },
+    id: '7FJAHnPOiCEHMJhrZ3sRmG',
+    type: 'Entry',
+    createdAt: '2025-02-25T14:46:55.405Z',
+    updatedAt: '2025-02-25T14:46:55.405Z',
+    environment: {
+      sys: {
+        id: 'master',
+        type: 'Link',
+        linkType: 'Environment'
+      }
+    },
+    publishedVersion: 6,
+    revision: 1,
     contentType: {
       sys: {
         type: 'Link',
@@ -42,14 +126,14 @@ const mockAdminEntry: ContentfulEntry<MarketingAdminFields> = {
   },
   fields: {
     name: {
-      'en-US': 'Unique admin entity'
+      'en-US': 'Test usage only'
     },
     campaign: {
       'en-US': {
         sys: {
           type: 'Link',
           linkType: 'Entry',
-          id: '7luqOR5Qdl8siwdQ8hscEW'
+          id: '1wljdcVnU32MZq9j5KY5jZ'
         }
       }
     },
@@ -58,14 +142,41 @@ const mockAdminEntry: ContentfulEntry<MarketingAdminFields> = {
         sys: {
           type: 'Link',
           linkType: 'Entry',
-          id: '2maJ4UuoqaYtbZxVGymsJo'
+          id: '2wT4mlAKsjJ5IZmbBHObgV'
+        }
+      }
+    },
+    marketplaceCollectiblesBanner: {
+      'en-US': {
+        sys: {
+          type: 'Link',
+          linkType: 'Entry',
+          id: '2wT4mlAKsjJ5IZmbBHObgV'
+        }
+      }
+    },
+    marketplaceCampaignCollectiblesBanner: {
+      'en-US': {
+        sys: {
+          type: 'Link',
+          linkType: 'Entry',
+          id: '2wT4mlAKsjJ5IZmbBHObgV'
+        }
+      }
+    },
+    builderCampaignBanner: {
+      'en-US': {
+        sys: {
+          type: 'Link',
+          linkType: 'Entry',
+          id: '2wT4mlAKsjJ5IZmbBHObgV'
         }
       }
     }
   }
 }
 
-const mockCampaignEntry: ContentfulEntry<CampaignFields> = {
+const mockCampaignEntry = {
   metadata: {
     tags: [],
     concepts: []
@@ -78,19 +189,19 @@ const mockCampaignEntry: ContentfulEntry<CampaignFields> = {
         id: 'ea2ybdmmn1kv'
       }
     },
-    id: '7luqOR5Qdl8siwdQ8hscEW',
+    id: '1wljdcVnU32MZq9j5KY5jZ',
     type: 'Entry',
-    createdAt: '2025-01-14T17:04:54.159Z',
-    updatedAt: '2025-01-20T14:39:39.699Z',
+    createdAt: '2025-02-25T14:44:59.665Z',
+    updatedAt: '2025-02-25T14:44:59.665Z',
     environment: {
       sys: {
-        id: 'development',
+        id: 'master',
         type: 'Link',
         linkType: 'Environment'
       }
     },
-    publishedVersion: 24,
-    revision: 7,
+    publishedVersion: 18,
+    revision: 1,
     contentType: {
       sys: {
         type: 'Link',
@@ -101,22 +212,25 @@ const mockCampaignEntry: ContentfulEntry<CampaignFields> = {
   },
   fields: {
     name: {
-      'en-US': 'Metaverse Festival 2024',
-      es: 'Festival del metaverso 2024',
-      zh: '2024 年元宇宙节'
+      'en-US': 'Test Marketing Campaign',
+      es: 'Campaña de marketing Test',
+      zh: '测试营销活动'
     },
     marketplaceTabName: {
-      'en-US': 'MVF2024',
-      es: 'MVF2024',
-      zh: 'MVF2024'
+      'en-US': 'Test Tab',
+      es: 'Prueba de pestaña',
+      zh: '测试标签'
     },
     mainTag: {
-      'en-US': 'MVF2024'
+      'en-US': 'TestTag'
+    },
+    additionalTags: {
+      'en-US': ['TestTag1', 'TestTag2']
     }
   }
 }
 
-const mockHomepageBannerEntry: ContentfulEntry<BannerFields> = {
+const mockHomepageBannerEntryEn: ContentfulEntryWithoutLocales<BannerFieldsWithoutLocales> = {
   metadata: {
     tags: [],
     concepts: []
@@ -129,19 +243,116 @@ const mockHomepageBannerEntry: ContentfulEntry<BannerFields> = {
         id: 'ea2ybdmmn1kv'
       }
     },
-    id: '2maJ4UuoqaYtbZxVGymsJo',
+    id: '2wT4mlAKsjJ5IZmbBHObgV',
     type: 'Entry',
-    createdAt: '2025-01-07T18:43:08.572Z',
-    updatedAt: '2025-01-15T17:23:51.474Z',
+    createdAt: '2025-02-20T15:56:44.523Z',
+    updatedAt: '2025-02-24T17:29:17.938Z',
     environment: {
       sys: {
-        id: 'development',
+        id: 'master',
         type: 'Link',
         linkType: 'Environment'
       }
     },
-    publishedVersion: 50,
-    revision: 12,
+    publishedVersion: 23,
+    revision: 4,
+    contentType: {
+      sys: {
+        type: 'Link',
+        linkType: 'ContentType',
+        id: 'banner'
+      }
+    }
+  },
+  fields: {
+    desktopTitle: 'Get ready to publish your wearables with the MFV tag!',
+    desktopTitleAlignment: 'Left',
+    mobileTitle: 'Create for Decentraland Music Festival!',
+    mobileTitleAlignment: 'Left',
+    desktopText: {
+      data: {},
+      content: [
+        {
+          data: {},
+          content: [
+            {
+              data: {},
+              marks: [],
+              value:
+                "Add the MVF tag for your space-themed Wearables and Emotes and they'll be featured in a special Festival Tab on the Marketplace!",
+              nodeType: 'text'
+            }
+          ],
+          nodeType: 'paragraph'
+        }
+      ]
+    },
+    desktopTextAlignment: 'Left',
+    mobileText: {
+      data: {},
+      content: [
+        {
+          data: {},
+          content: [
+            {
+              data: {},
+              marks: [],
+              value:
+                '¡Agrega la etiqueta MVF a tus wearables y emoticones con temática espacial y aparecerán en una pestaña especial del Festival en el Marketplace!',
+              nodeType: 'text'
+            }
+          ],
+          nodeType: 'paragraph'
+        }
+      ]
+    },
+    mobileTextAlignment: 'Left',
+    showButton: false,
+    desktopButtonAlignment: 'Left',
+    mobileButtonAlignment: 'Center',
+    fullSizeBackground: {
+      sys: {
+        type: 'Link',
+        linkType: 'Asset',
+        id: '5XKf4HY4MRWv2fzZD8lXoK'
+      }
+    },
+    mobileBackground: {
+      sys: {
+        type: 'Link',
+        linkType: 'Asset',
+        id: '5YhMhFL4mjaGvFryUCET2b'
+      }
+    }
+  }
+}
+
+const mockHomepageBannerEntry: ContentfulEntryWithoutLocales<BannerFields> = {
+  metadata: {
+    tags: [],
+    concepts: []
+  },
+  sys: {
+    space: {
+      sys: {
+        type: 'Link',
+        linkType: 'Space',
+        id: 'ea2ybdmmn1kv'
+      }
+    },
+    id: '2wT4mlAKsjJ5IZmbBHObgV',
+    type: 'Entry',
+    createdAt: '2025-02-20T15:56:44.523Z',
+    updatedAt: '2025-02-24T17:29:17.938Z',
+    environment: {
+      sys: {
+        id: 'master',
+        type: 'Link',
+        linkType: 'Environment'
+      }
+    },
+    publishedVersion: 23,
+    revision: 4,
     contentType: {
       sys: {
         type: 'Link',
@@ -152,20 +363,20 @@ const mockHomepageBannerEntry: ContentfulEntry<BannerFields> = {
   },
   fields: {
     desktopTitle: {
-      'en-US': 'Prepare Your Galactic Looks!',
-      es: 'Prepara tus looks galácticos!',
-      zh: '准备好你的银河外观！'
+      'en-US': 'Get ready to publish your wearables with the MFV tag!',
+      es: '¡Prepárate para publicar tus wearables con la etiqueta MFV!',
+      zh: '¡Prepárate para publicar tus wearables con la etiqueta MFV!'
     },
     desktopTitleAlignment: {
       'en-US': 'Left'
     },
     mobileTitle: {
-      'en-US': 'Prepare Your Galactic Looks!',
-      es: 'Prepara tus looks galácticos!',
-      zh: '准备好你的银河外观！'
+      'en-US': 'Create for Decentraland Music Festival!',
+      es: '¡Crea para el Festival de Música Decentraland!',
+      zh: '¡Crea para el Festival de Música Decentraland!'
     },
     mobileTitleAlignment: {
-      'en-US': 'Center'
+      'en-US': 'Left'
     },
     desktopText: {
       'en-US': {
@@ -178,68 +389,7 @@ const mockHomepageBannerEntry: ContentfulEntry<BannerFields> = {
                 data: {},
                 marks: [],
                 value:
-                  "Get ready to show off your out of this world style at this year's music festival ",
-                nodeType: 'text'
-              },
-              {
-                data: {},
-                marks: [
-                  {
-                    type: 'bold'
-                  }
-                ],
-                value: 'Nov 20-23',
-                nodeType: 'text'
-              },
-              {
-                data: {},
-                marks: [],
-                value: '!',
-                nodeType: 'text'
-              }
-            ],
-            nodeType: 'paragraph'
-          },
-          {
-            data: {},
-            content: [
-              {
-                data: {},
-                marks: [],
-                value: 'Use the ',
-                nodeType: 'text'
-              },
-              {
-                data: {},
-                marks: [
-                  {
-                    type: 'italic'
-                  }
-                ],
-                value: 'DCLMF24',
-                nodeType: 'text'
-              },
-              {
-                data: {},
-                marks: [],
-                value:
-                  ' tab to find everything you will need to be festival ready all in ',
-                nodeType: 'text'
-              },
-              {
-                data: {},
-                marks: [
-                  {
-                    type: 'underline'
-                  }
-                ],
-                value: 'one place',
-                nodeType: 'text'
-              },
-              {
-                data: {},
-                marks: [],
-                value: '.',
+                  "Add the MVF tag for your space-themed Wearables and Emotes and they'll be featured in a special Festival Tab on the Marketplace!",
                 nodeType: 'text'
               }
             ],
@@ -249,36 +399,23 @@ const mockHomepageBannerEntry: ContentfulEntry<BannerFields> = {
         nodeType: 'document'
       },
       es: {
-        nodeType: 'document',
         data: {},
         content: [
           {
-            nodeType: 'paragraph',
             data: {},
             content: [
               {
-                nodeType: 'text',
-                value:
-                  '¡Prepárate para mostrar tu estilo fuera de lo común en el festival de música de este año, que se realizará del 20 al 23 de noviembre!',
+                data: {},
                 marks: [],
-                data: {}
-              }
-            ]
-          },
-          {
-            nodeType: 'paragraph',
-            data: {},
-            content: [
-              {
-                nodeType: 'text',
                 value:
-                  'Usa la pestaña DCLMF24 para encontrar todo lo que necesitas para estar listo para el festival, todo en un solo lugar.',
-                marks: [],
-                data: {}
+                  '¡Agrega la etiqueta MVF a tus wearables y emoticones con temática espacial y aparecerán en una pestaña especial del Festival en el Marketplace!',
+                nodeType: 'text'
               }
-            ]
+            ],
+            nodeType: 'paragraph'
           }
-        ]
+        ],
+        nodeType: 'document'
       },
       zh: {
         data: {},
@@ -290,7 +427,7 @@ const mockHomepageBannerEntry: ContentfulEntry<BannerFields> = {
                 data: {},
                 marks: [],
                 value:
-                  '准备好在 11 月 20 日至 23 日举行的今年音乐节上展示您非凡的风格吧！使用 DCLMF24 选项卡，在一个地方找到您参加音乐节所需的一切。',
+                  '¡Agrega la etiqueta MVF a tus wearables y emoticones con temática espacial y aparecerán en una pestaña especial del Festival en el Marketplace!',
                 nodeType: 'text'
               }
             ],
@@ -314,23 +451,7 @@ const mockHomepageBannerEntry: ContentfulEntry<BannerFields> = {
                 data: {},
                 marks: [],
                 value:
-                  "Get ready to show off your out of this world style at this year's music festival ",
-                nodeType: 'text'
-              },
-              {
-                data: {},
-                marks: [
-                  {
-                    type: 'bold'
-                  }
-                ],
-                value: 'Nov 20-23',
-                nodeType: 'text'
-              },
-              {
-                data: {},
-                marks: [],
-                value: '!',
+                  '¡Agrega la etiqueta MVF a tus wearables y emoticones con temática espacial y aparecerán en una pestaña especial del Festival en el Marketplace!',
                 nodeType: 'text'
               }
             ],
@@ -340,23 +461,23 @@ const mockHomepageBannerEntry: ContentfulEntry<BannerFields> = {
         nodeType: 'document'
       },
       es: {
+        nodeType: 'document',
         data: {},
         content: [
           {
+            nodeType: 'paragraph',
             data: {},
             content: [
               {
-                data: {},
-                marks: [],
+                nodeType: 'text',
                 value:
-                  '¡Prepárate para mostrar tu estilo fuera de lo común en el festival de música de este año, que se realizará del 20 al 23 de noviembre!',
-                nodeType: 'text'
+                  '¡Agrega la etiqueta MVF a tus wearables y emoticones con temática espacial y aparecerán en una pestaña especial del Festival en el Marketplace!',
+                marks: [],
+                data: {}
               }
-            ],
-            nodeType: 'paragraph'
+            ]
           }
-        ],
-        nodeType: 'document'
+        ]
       },
       zh: {
         data: {},
@@ -368,7 +489,7 @@ const mockHomepageBannerEntry: ContentfulEntry<BannerFields> = {
                 data: {},
                 marks: [],
                 value:
-                  '准备好在 11 月 20 日至 23 日举行的今年音乐节上展示您非凡的风格吧！',
+                  '¡Agrega la etiqueta MVF a tus wearables y emoticones con temática espacial y aparecerán en una pestaña especial del Festival en el Marketplace!',
                 nodeType: 'text'
               }
             ],
@@ -382,15 +503,7 @@ const mockHomepageBannerEntry: ContentfulEntry<BannerFields> = {
       'en-US': 'Left'
     },
     showButton: {
-      'en-US': true
-    },
-    buttonLink: {
-      'en-US': 'https://google.com'
-    },
-    buttonsText: {
-      'en-US': 'Shop now',
-      es: 'Comprar ahora',
-      zh: '立即购买'
+      'en-US': false
     },
     desktopButtonAlignment: {
       'en-US': 'Left'
@@ -403,7 +516,7 @@ const mockHomepageBannerEntry: ContentfulEntry<BannerFields> = {
         sys: {
           type: 'Link',
           linkType: 'Asset',
-          id: '6E1rR9gejaDnaXQbRPifFe'
+          id: '5XKf4HY4MRWv2fzZD8lXoK'
         }
       }
     },
@@ -412,16 +525,7 @@ const mockHomepageBannerEntry: ContentfulEntry<BannerFields> = {
         sys: {
           type: 'Link',
           linkType: 'Asset',
-          id: '4r6BTqYTzJViXYDhowTMJm'
-        }
-      }
-    },
-    logo: {
-      'en-US': {
-        sys: {
-          type: 'Link',
-          linkType: 'Asset',
-          id: '2fPc6zxkPEIJcI3jUBTdOo'
+          id: '5YhMhFL4mjaGvFryUCET2b'
         }
       }
     }
@@ -434,130 +538,6 @@ const marketplaceHomepageBannerAssets: ContentfulAsset[] = [
       tags: [],
       concepts: []
     },
-    sys: {
-      space: {
-        sys: {
-          type: 'Link',
-          linkType: 'Space',
-          id: 'ea2ybdmmn1kv'
-        }
-      },
-      id: '2fPc6zxkPEIJcI3jUBTdOo',
-      type: 'Asset',
-      createdAt: '2025-01-09T17:55:26.842Z',
-      updatedAt: '2025-01-09T17:55:26.842Z',
-      environment: {
-        sys: {
-          id: 'development',
-          type: 'Link',
-          linkType: 'Environment'
-        }
-      },
-      publishedVersion: 5,
-      revision: 1
-    },
-    fields: {
-      title: {
-        'en-US': 'Metarverse Festival 2024 Logo'
-      },
-      description: {
-        'en-US': ''
-      },
-      file: {
-        'en-US': {
-          url:
-            '//images.ctfassets.net/ea2ybdmmn1kv/2fPc6zxkPEIJcI3jUBTdOo/1454c71d341ff247c9563e3108e025ff/logo.webp',
-          details: {
-            size: 441546,
-            image: {
-              width: 960,
-              height: 211
-            }
-          },
-          fileName: 'logo.webp',
-          contentType: 'image/webp'
-        }
-      }
-    }
-  },
-  {
-    metadata: {
-      tags: [],
-      concepts: []
-    },
-    sys: {
-      space: {
-        sys: {
-          type: 'Link',
-          linkType: 'Space',
-          id: 'ea2ybdmmn1kv'
-        }
-      },
-      id: '4r6BTqYTzJViXYDhowTMJm',
-      type: 'Asset',
-      createdAt: '2025-01-07T18:41:30.547Z',
-      updatedAt: '2025-01-07T18:41:30.547Z',
-      environment: {
-        sys: {
-          id: 'development',
-          type: 'Link',
-          linkType: 'Environment'
-        }
-      },
-      publishedVersion: 6,
-      revision: 1
-    },
-    fields: {
-      title: {
-        'en-US': 'Marketplace Mobile Banner Test'
-      },
-      description: {
-        'en-US': 'Marketplace mobile banner.'
-      },
-      file: {
-        'en-US': {
-          url:
-            '//images.ctfassets.net/ea2ybdmmn1kv/4r6BTqYTzJViXYDhowTMJm/86510732bc7732625ad3581d4bd14eb3/static-390-390.jpg',
-          details: {
-            size: 44180,
-            image: {
-              width: 390,
-              height: 390
-            }
-          },
-          fileName: 'static-390-390.jpg',
-          contentType: 'image/jpeg'
-        }
-      }
-    }
-  },
-  {
-    metadata: {
-      tags: [],
-      concepts: []
-    },
-    sys: {
-      space: {
-        sys: {
-          type: 'Link',
-          linkType: 'Space',
-          id: 'ea2ybdmmn1kv'
-        }
-      },
-      id: '6E1rR9gejaDnaXQbRPifFe',
-      type: 'Asset',
-      createdAt: '2025-01-07T18:39:55.992Z',
-      updatedAt: '2025-01-07T18:39:55.992Z',
-      environment: {
-        sys: {
-          id: 'development',
-          type: 'Link',
-          linkType: 'Environment'
-        }
-      },
-      publishedVersion: 7,
-      revision: 1
-    },
     fields: {
       title: {
         'en-US': 'Marketplace Banner Full Background Test'
@@ -568,7 +548,7 @@ const marketplaceHomepageBannerAssets: ContentfulAsset[] = [
       file: {
         'en-US': {
           url:
-            '//images.ctfassets.net/ea2ybdmmn1kv/6E1rR9gejaDnaXQbRPifFe/7638d286960c0269125543c23faf8312/static-1920-300.jpg',
+            'https://cms-images.decentraland.org/ea2ybdmmn1kv/5XKf4HY4MRWv2fzZD8lXoK/7bf434e90b6115c5394ab13eec5583f9/static-1920-300.jpg',
           details: {
             size: 117325,
             image: {
@@ -580,13 +560,87 @@ const marketplaceHomepageBannerAssets: ContentfulAsset[] = [
           contentType: 'image/jpeg'
         }
       }
+    },
+    sys: {
+      type: 'Asset',
+      id: '5XKf4HY4MRWv2fzZD8lXoK',
+      space: {
+        sys: {
+          type: 'Link',
+          linkType: 'Space',
+          id: 'ea2ybdmmn1kv'
+        }
+      },
+      environment: {
+        sys: {
+          id: 'master',
+          type: 'Link',
+          linkType: 'Environment'
+        }
+      },
+      revision: 1,
+      createdAt: '2025-02-20T15:55:35.975Z',
+      updatedAt: '2025-02-20T15:55:35.975Z',
+      publishedVersion: 4
+    }
+  },
+  {
+    metadata: {
+      tags: [],
+      concepts: []
+    },
+    sys: {
+      type: 'Asset',
+      id: '5YhMhFL4mjaGvFryUCET2b',
+      space: {
+        sys: {
+          type: 'Link',
+          linkType: 'Space',
+          id: 'ea2ybdmmn1kv'
+        }
+      },
+      environment: {
+        sys: {
+          id: 'master',
+          type: 'Link',
+          linkType: 'Environment'
+        }
+      },
+      revision: 1,
+      createdAt: '2025-02-20T15:56:36.934Z',
+      updatedAt: '2025-02-20T15:56:36.934Z',
+      publishedVersion: 4
+    },
+    fields: {
+      title: {
+        'en-US': 'Marketplace Mobile Banner Test'
+      },
+      description: {
+        'en-US': ''
+      },
+      file: {
+        'en-US': {
+          url:
+            'https://cms-images.decentraland.org/ea2ybdmmn1kv/5YhMhFL4mjaGvFryUCET2b/3b3955fb6518b3523ea766e305f30f8e/Marketplace_Mobile_Banner_Test.jpg',
+          details: {
+            size: 39941,
+            image: {
+              width: 400,
+              height: 400
+            }
+          },
+          fileName: 'Marketplace Mobile Banner Test.jpg',
+          contentType: 'image/jpeg'
+        }
+      }
     }
   }
 ]
 
 export {
+  mockAdminEntryEn,
   mockAdminEntry,
-  mockHomepageBannerEntry,
   mockCampaignEntry,
+  mockHomepageBannerEntry,
   marketplaceHomepageBannerAssets
 }
