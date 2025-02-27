@@ -98,7 +98,10 @@ describe('when handling the fetch campaign request', () => {
               mockConfig.environment,
               mockAdminEntry.fields
             ),
-            Promise.resolve([mockCampaignEntry, mockHomepageBannerEntry])
+            Promise.resolve({
+              [mockCampaignEntry.sys.id]: mockCampaignEntry,
+              [mockHomepageBannerEntry.sys.id]: mockHomepageBannerEntry
+            })
           ],
           [
             matchers.call(
@@ -111,14 +114,7 @@ describe('when handling the fetch campaign request', () => {
                 mockHomepageBannerEntry.fields
               ]
             ),
-            Promise.resolve(
-              Object.fromEntries(
-                marketplaceHomepageBannerAssets.map(asset => [
-                  asset.sys.id,
-                  asset
-                ])
-              )
-            )
+            Promise.resolve(mockResponse.assets)
           ]
         ])
         .put(
