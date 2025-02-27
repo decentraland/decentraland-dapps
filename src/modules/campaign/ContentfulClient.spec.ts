@@ -3,7 +3,6 @@ import { ContentfulClient } from './ContentfulClient'
 import {
   mockAdminEntry,
   marketplaceHomepageBannerAssets,
-  mockCampaignEntry,
   mockHomepageBannerEntry
 } from '../../tests/contentfulMocks'
 import { ContentfulLocale } from '@dcl/schemas'
@@ -115,43 +114,45 @@ describe('ContentfulClient', () => {
   })
 
   describe('fetchAssetsFromEntryFields', () => {
-   describe("when there are fields to get the assets from", () =>
-    it('should get all assets referenced in the entry fields', async () => {
-      const mockFields = {
-        image: {
-          'en-US': {
-            sys: {
-              type: 'Link',
-              linkType: 'Asset',
-              id: marketplaceHomepageBannerAssets[0].sys.id
+    describe('when there are fields to get the assets from', () => {
+      it('should get all assets referenced in the entry fields', async () => {
+        const mockFields = {
+          image: {
+            'en-US': {
+              sys: {
+                type: 'Link',
+                linkType: 'Asset',
+                id: marketplaceHomepageBannerAssets[0].sys.id
+              }
             }
           }
         }
-      }
 
-      global.fetch = jest.fn().mockResolvedValue({
-        ok: true,
-        json: () => Promise.resolve(marketplaceHomepageBannerAssets[0])
+        global.fetch = jest.fn().mockResolvedValue({
+          ok: true,
+          json: () => Promise.resolve(marketplaceHomepageBannerAssets[0])
+        })
+
+        const result = await client.fetchAssetsFromEntryFields(
+          mockSpace,
+          mockEnvironment,
+          [mockFields]
+        )
+
+        expect(result).toHaveProperty(marketplaceHomepageBannerAssets[0].sys.id)
+        expect(Object.keys(result)).toHaveLength(1)
       })
-
-      const result = await client.fetchAssetsFromEntryFields(
-        mockSpace,
-        mockEnvironment,
-        [mockFields]
-      )
-
-      expect(result).toHaveProperty(marketplaceHomepageBannerAssets[0].sys.id)
-      expect(Object.keys(result)).toHaveLength(1)
     })
 
-   describe("when there are no entry fields to look assets from", () =>
-    it('should return empty object', async () => {
-      const result = await client.fetchAssetsFromEntryFields(
-        mockSpace,
-        mockEnvironment,
-        []
-      )
-      expect(result).toEqual({})
+    describe('when there are no entry fields to look assets from', () => {
+      it('should return empty object', async () => {
+        const result = await client.fetchAssetsFromEntryFields(
+          mockSpace,
+          mockEnvironment,
+          []
+        )
+        expect(result).toEqual({})
+      })
     })
   })
 
