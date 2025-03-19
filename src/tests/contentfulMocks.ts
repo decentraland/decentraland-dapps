@@ -2,15 +2,12 @@ import {
   ContentfulAsset,
   MarketingAdminFields,
   BannerFields,
-  SysLink,
-  ContentfulEntry
+  ContentfulEntry,
+  CampaignFields
 } from '@dcl/schemas'
 import {
   MarketingAdminFieldsWithoutLocales,
-  ContentfulContentWithoutLocales,
-  ContentfulEntryWithoutLocales,
-  ContentfulAssetWithoutLocales,
-  BannerFieldsWithoutLocales
+  ContentfulContentWithoutLocales
 } from '../modules/campaign/ContentfulClient.types'
 
 const mockAdminEntryEn: ContentfulContentWithoutLocales<
@@ -90,7 +87,7 @@ const mockAdminEntryEn: ContentfulContentWithoutLocales<
   }
 }
 
-const mockAdminEntry: ContentfulEntryWithoutLocales<MarketingAdminFields> = {
+const mockAdminEntry: ContentfulEntry<MarketingAdminFields> = {
   metadata: {
     tags: [],
     concepts: []
@@ -176,7 +173,7 @@ const mockAdminEntry: ContentfulEntryWithoutLocales<MarketingAdminFields> = {
   }
 }
 
-const mockCampaignEntry = {
+const mockCampaignEntry: ContentfulEntry<CampaignFields> = {
   metadata: {
     tags: [],
     concepts: []
@@ -230,104 +227,7 @@ const mockCampaignEntry = {
   }
 }
 
-const mockHomepageBannerEntryEn: ContentfulEntryWithoutLocales<BannerFieldsWithoutLocales> = {
-  metadata: {
-    tags: [],
-    concepts: []
-  },
-  sys: {
-    space: {
-      sys: {
-        type: 'Link',
-        linkType: 'Space',
-        id: 'ea2ybdmmn1kv'
-      }
-    },
-    id: '2wT4mlAKsjJ5IZmbBHObgV',
-    type: 'Entry',
-    createdAt: '2025-02-20T15:56:44.523Z',
-    updatedAt: '2025-02-24T17:29:17.938Z',
-    environment: {
-      sys: {
-        id: 'master',
-        type: 'Link',
-        linkType: 'Environment'
-      }
-    },
-    publishedVersion: 23,
-    revision: 4,
-    contentType: {
-      sys: {
-        type: 'Link',
-        linkType: 'ContentType',
-        id: 'banner'
-      }
-    }
-  },
-  fields: {
-    desktopTitle: 'Get ready to publish your wearables with the MFV tag!',
-    desktopTitleAlignment: 'Left',
-    mobileTitle: 'Create for Decentraland Music Festival!',
-    mobileTitleAlignment: 'Left',
-    desktopText: {
-      data: {},
-      content: [
-        {
-          data: {},
-          content: [
-            {
-              data: {},
-              marks: [],
-              value:
-                "Add the MVF tag for your space-themed Wearables and Emotes and they'll be featured in a special Festival Tab on the Marketplace!",
-              nodeType: 'text'
-            }
-          ],
-          nodeType: 'paragraph'
-        }
-      ]
-    },
-    desktopTextAlignment: 'Left',
-    mobileText: {
-      data: {},
-      content: [
-        {
-          data: {},
-          content: [
-            {
-              data: {},
-              marks: [],
-              value:
-                '¡Agrega la etiqueta MVF a tus wearables y emoticones con temática espacial y aparecerán en una pestaña especial del Festival en el Marketplace!',
-              nodeType: 'text'
-            }
-          ],
-          nodeType: 'paragraph'
-        }
-      ]
-    },
-    mobileTextAlignment: 'Left',
-    showButton: false,
-    desktopButtonAlignment: 'Left',
-    mobileButtonAlignment: 'Center',
-    fullSizeBackground: {
-      sys: {
-        type: 'Link',
-        linkType: 'Asset',
-        id: '5XKf4HY4MRWv2fzZD8lXoK'
-      }
-    },
-    mobileBackground: {
-      sys: {
-        type: 'Link',
-        linkType: 'Asset',
-        id: '5YhMhFL4mjaGvFryUCET2b'
-      }
-    }
-  }
-}
-
-const mockHomepageBannerEntry: ContentfulEntryWithoutLocales<BannerFields> = {
+const mockHomepageBannerEntry: ContentfulEntry<BannerFields> = {
   metadata: {
     tags: [],
     concepts: []
