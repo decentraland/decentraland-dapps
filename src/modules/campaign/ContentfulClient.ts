@@ -47,6 +47,32 @@ export class ContentfulClient extends BaseClient {
     return response.json()
   }
 
+  private mergeEntriesWithoutLocales<T extends Fields>(
+    content: {
+      entry: ContentfulEntryWithoutLocales<T>
+      locale: ContentfulLocale
+    }[]
+  ): ContentfulEntry<T> {
+    const combinedFields = {} as Record<
+      string,
+      LocalizedField<LocalizedFieldType>
+    >
+
+    for (const { entry, locale } of content) {
+      Object.entries(entry.fields).forEach(([key, value]) => {
+        combinedFields[key] = {
+          ...combinedFields[key],
+          [locale]: value
+        }
+      })
+    }
+    return {
+      fields: combinedFields as T,
+      metadata: content[0].entry.metadata,
+      sys: content[0].entry.sys
+    }
+  }
+
   async fetchEntryAllLocales<
     T extends Record<string, LocalizedField<LocalizedFieldType>>
   >(
@@ -62,28 +88,20 @@ export class ContentfulClient extends BaseClient {
           this.fetchEntry(space, environment, id, ContentfulLocale.zh)
         ])
 
-        const combinedFields = {} as Record<
-          string,
-          LocalizedField<LocalizedFieldType>
-        >
-
-        for (const response of [
-          { content: responseEn, language: ContentfulLocale.enUS },
-          { content: responseEs, language: ContentfulLocale.es },
-          { content: responseZh, language: ContentfulLocale.zh }
-        ]) {
-          Object.entries(response.content.fields).forEach(([key, value]) => {
-            combinedFields[key] = {
-              ...combinedFields[key],
-              [response.language]: value
-            }
-          })
-        }
-        return {
-          fields: combinedFields as T,
-          metadata: responseEn.metadata,
-          sys: responseEn.sys
-        }
+        return this.mergeEntriesWithoutLocales<T>([
+          {
+            entry: responseEn as ContentfulEntryWithoutLocales<T>,
+            locale: ContentfulLocale.enUS
+          },
+          {
+            entry: responseEs as ContentfulEntryWithoutLocales<T>,
+            locale: ContentfulLocale.es
+          },
+          {
+            entry: responseZh as ContentfulEntryWithoutLocales<T>,
+            locale: ContentfulLocale.zh
+          }
+        ])
       } catch (error) {
         throw new Error('Error fetching entry in all locales')
       }

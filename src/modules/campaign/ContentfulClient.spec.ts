@@ -1,11 +1,12 @@
 import nock from 'nock'
 import { ContentfulClient } from './ContentfulClient'
 import {
-  mockAdminEntry,
+  mockAdminEntryEn,
   marketplaceHomepageBannerAssets,
   mockHomepageBannerEntry
 } from '../../tests/contentfulMocks'
-import { ContentfulLocale } from '@dcl/schemas'
+import { ContentfulLocale, LocalizedField } from '@dcl/schemas'
+import { ContentfulEntryWithoutLocales } from './ContentfulClient.types'
 
 const CMS_URL = 'https://cms.decentraland.org'
 
@@ -15,11 +16,9 @@ describe('ContentfulClient', () => {
   let mockEnvironment: string
   let mockId: string
   let mockFields: Record<string, any>
-  let mockResponses: {
-    enUS: any
-    es: any
-    zh: any
-  }
+  let mockedEnResponse: ContentfulEntryWithoutLocales<any>
+  let mockedEsResponse: ContentfulEntryWithoutLocales<any>
+  let mockedZhResponse: ContentfulEntryWithoutLocales<any>
 
   beforeEach(() => {
     client = new ContentfulClient()
@@ -37,16 +36,55 @@ describe('ContentfulClient', () => {
         }
       }
     }
-    mockResponses = {
-      enUS: {
-        fields: { title: { [ContentfulLocale.enUS]: 'English Title' } }
+
+    const mockedEntrySys = {
+      id: 'test-id',
+      type: 'Entry' as const,
+      space: {
+        sys: {
+          type: 'Link' as const,
+          linkType: 'Space' as const,
+          id: 'space1'
+        }
       },
-      es: {
-        fields: { title: { [ContentfulLocale.es]: 'Título en Español' } }
+      createdAt: '2021-01-01',
+      updatedAt: '2021-01-01',
+      environment: {
+        sys: {
+          type: 'Link' as const,
+          linkType: 'Environment' as const,
+          id: 'env1'
+        }
       },
-      zh: {
-        fields: { title: { [ContentfulLocale.zh]: '中文标题' } }
-      }
+      contentType: {
+        sys: {
+          type: 'Link' as const,
+          linkType: 'ContentType' as const,
+          id: 'content1'
+        }
+      },
+      publishedVersion: 1,
+      revision: 1
+    }
+    const mockedEntryMetadata = {
+      tags: [],
+      concepts: []
+    }
+
+    mockedEnResponse = {
+      fields: { title: 'English Title' },
+      metadata: mockedEntryMetadata,
+      sys: mockedEntrySys
+    }
+    mockedEsResponse = {
+      fields: { title: 'Título en Español' },
+      metadata: mockedEntryMetadata,
+      sys: mockedEntrySys
+    }
+    mockedZhResponse = {
+      fields: { title: '中文标题' },
+      metadata: mockedEntryMetadata,
+      sys: mockedEntrySys
     }
 
     nock(CMS_URL)
@@ -68,12 +106,12 @@ describe('ContentfulClient', () => {
         nock(CMS_URL)
           .get('/spaces/space-id/environments/env-id/entries/entry-id/')
           .query({ locale: 'en-US' })
-          .reply(200, mockAdminEntry)
+          .reply(200, mockAdminEntryEn)
       })
 
       it('should return the entry data', async () => {
         const result = await client.fetchEntry('space-id', 'env-id', 'entry-id')
-        expect(result).toEqual(mockAdminEntry)
+        expect(result).toEqual(mockAdminEntryEn)
       })
     })
 
@@ -101,17 +139,17 @@ describe('ContentfulClient', () => {
             `/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockId}/`
           )
           .query({ locale: ContentfulLocale.enUS })
-          .reply(200, mockResponses.enUS)
+          .reply(200, mockedEnResponse)
           .get(
             `/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockId}/`
           )
           .query({ locale: ContentfulLocale.es })
-          .reply(200, mockResponses.es)
+          .reply(200, mockedEsResponse)
           .get(
             `/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockId}/`
           )
           .query({ locale: ContentfulLocale.zh })
-          .reply(200, mockResponses.zh)
+          .reply(200, mockedZhResponse)
       })
 
       it('should combine fields from all available locales', async () => {
@@ -122,11 +160,15 @@ describe('ContentfulClient', () => {
         )
 
         expect(result).toEqual({
-          title: {
-            [ContentfulLocale.enUS]: 'English Title',
-            [ContentfulLocale.es]: 'Título en Español',
-            [ContentfulLocale.zh]: '中文标题'
-          }
+          fields: {
+            title: {
+              [ContentfulLocale.enUS]: 'English Title',
+              [ContentfulLocale.es]: 'Título en Español',
+              [ContentfulLocale.zh]: '中文标题'
+            }
+          },
+          sys: mockedEnResponse.sys,
+          metadata: mockedEnResponse.metadata
         })
       })
     })
@@ -263,7 +305,24 @@ describe('ContentfulClient', () => {
           mockFieldsWithEntry
         )
 
-        expect(result).toHaveProperty(mockHomepageBannerEntry.sys.id)
+        expect(result).toEqual({
+          [mockHomepageBannerEntry.sys.id]: {
+            sys: mockHomepageBannerEntry.sys,
+            metadata: mockHomepageBannerEntry.metadata,
+            fields: Object.entries(mockHomepageBannerEntry.fields).reduce(
+              (acc, [key, value]) => {
+                acc[key] = {
+                  ...acc[key],
+                  [ContentfulLocale.enUS]: value,
+                  [ContentfulLocale.es]: value,
+                  [ContentfulLocale.zh]: value
+                }
+                return acc
+              },
+              {} as Record<string, LocalizedField<any>>
+            )
+          }
+        })
         expect(Object.keys(result)).toHaveLength(1)
       })
     })
