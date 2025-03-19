@@ -49,36 +49,44 @@ export class ContentfulClient extends BaseClient {
 
   async fetchEntryAllLocales<
     T extends Record<string, LocalizedField<LocalizedFieldType>>
-  >(space: string, environment: string, id: string): Promise<T> {
+  >(
+    space: string,
+    environment: string,
+    id: string
+  ): Promise<ContentfulEntry<T>> {
     try {
-      const [responseEn, responseEs, responseZh] = await Promise.all([
-        this.fetchEntry<T>(space, environment, id, ContentfulLocale.enUS),
-        this.fetchEntry<T>(space, environment, id, ContentfulLocale.es),
-        this.fetchEntry<T>(space, environment, id, ContentfulLocale.zh)
-      ])
+      try {
+        const [responseEn, responseEs, responseZh] = await Promise.all([
+          this.fetchEntry(space, environment, id, ContentfulLocale.enUS),
+          this.fetchEntry(space, environment, id, ContentfulLocale.es),
+          this.fetchEntry(space, environment, id, ContentfulLocale.zh)
+        ])
 
-      const combinedFields = Object.entries(responseEn.fields).reduce<
-        Record<string, LocalizedField<LocalizedFieldType>>
-      >((acc, [key, value]) => {
-        const field: Partial<LocalizedField<LocalizedFieldType>> = {
-          [ContentfulLocale.enUS]: value[ContentfulLocale.enUS]
+        const combinedFields = {} as Record<
+          string,
+          LocalizedField<LocalizedFieldType>
+        >
+
+        for (const response of [
+          { content: responseEn, language: ContentfulLocale.enUS },
+          { content: responseEs, language: ContentfulLocale.es },
+          { content: responseZh, language: ContentfulLocale.zh }
+        ]) {
+          Object.entries(response.content.fields).forEach(([key, value]) => {
+            combinedFields[key] = {
+              ...combinedFields[key],
+              [response.language]: value
+            }
+          })
         }
-
-        if (responseEs.fields[key]?.[ContentfulLocale.es]) {
-          field[ContentfulLocale.es] =
-            responseEs.fields[key][ContentfulLocale.es]
+        return {
+          fields: combinedFields as T,
+          metadata: responseEn.metadata,
+          sys: responseEn.sys
         }
-
-        if (responseZh.fields[key]?.[ContentfulLocale.zh]) {
-          field[ContentfulLocale.zh] =
-            responseZh.fields[key][ContentfulLocale.zh]
-        }
-
-        acc[key] = field as LocalizedField<LocalizedFieldType>
-        return acc
-      }, {}) as T
-
-      return combinedFields
+      } catch (error) {
+        throw new Error('Error fetching entry in all locales')
+      }
     } catch (error) {
       throw new Error('Error fetching entry in all locales')
     }
@@ -256,13 +264,7 @@ export class ContentfulClient extends BaseClient {
 
     const entries = await Promise.all(
       Array.from(entryIds).map(id =>
-        this.fetchEntryAllLocales<T>(space, environment, id).then(
-          fields =>
-            ({
-              sys: { id },
-              fields
-            } as ContentfulEntry<T>)
-        )
+        this.fetchEntryAllLocales<T>(space, environment, id)
       )
     )
 
