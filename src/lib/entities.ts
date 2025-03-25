@@ -76,10 +76,12 @@ export class EntitiesOperator {
       timestamp: Date.now()
     }
 
+    console.log('options', options)
+
     const catalystContentClient =
       this.catalystContentClientWithoutGbCollector ?? this.catalystContentClient
     const contentUrl = this.peerWithNoGbCollectorUrl ?? this.peerUrl
-
+    debugger
     const entityToDeploy = await buildEntityWithoutNewFiles(
       createFetchComponent(),
       { contentUrl: `${contentUrl}/content`, ...options }

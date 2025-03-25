@@ -1,4 +1,5 @@
 import { connect } from 'react-redux'
+import { ChainId } from '@dcl/schemas'
 import {
   isConnected,
   isConnecting,
@@ -16,10 +17,10 @@ import {
   disconnectWalletRequest,
   switchNetworkRequest
 } from '../../modules/wallet/actions'
+import { getCredits } from '../../modules/credits/selectors'
 import { RootDispatch } from '../../types'
 import { NavbarProps2, MapStateProps, MapDispatchProps } from './Navbar.types'
 import Navbar2 from './Navbar2'
-import { ChainId } from '@dcl/schemas'
 
 const mapState = (state: any): MapStateProps => {
   const address = getAddress(state)
@@ -28,6 +29,7 @@ const mapState = (state: any): MapStateProps => {
     avatar: profile ? profile.avatars[0] : undefined,
     chainId: getChainId(state),
     manaBalances: getManaBalances(state),
+    credits: address ? getCredits(state, address) : null,
     address: getAddress(state),
     locale: getLocale(state),
     isSignedIn: isConnected(state),
