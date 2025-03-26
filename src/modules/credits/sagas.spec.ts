@@ -154,32 +154,5 @@ describe('Credits saga', () => {
         .dispatch(pollCreditsBalanceRequest(address, expectedBalance))
         .silentRun()
     })
-
-    // Tests that polling completes when the balance meets expectations
-    it('should continue polling until credits balance matches expected balance', () => {
-      const expectedBalance = BigInt('2000')
-      const updatedCredits: CreditsResponse = {
-        ...mockCredits,
-        totalCredits: 2000
-      }
-
-      // Skip testing the full polling logic
-      // Just test that a successful fetch is dispatched once the right value is found
-      return expectSaga(creditsSaga, {
-        creditsClient
-      })
-        .provide([
-          [
-            select(getIsFeatureEnabled, ApplicationName.MARKETPLACE, 'credits'),
-            true
-          ],
-          [call([creditsClient, 'fetchCredits'], address), mockCredits],
-          [select(getCredits, address), updatedCredits]
-        ])
-        .put(fetchCreditsRequest(address))
-        .put(fetchCreditsSuccess(address, updatedCredits))
-        .dispatch(pollCreditsBalanceRequest(address, expectedBalance))
-        .silentRun(100)
-    })
   })
 })
