@@ -16,7 +16,7 @@ import {
   getContract
 } from 'decentraland-transactions'
 import { Credit } from '../modules/credits/types'
-import CreditsService, { CreditsData, ExternalCallParams } from './credits'
+import { CreditsService, CreditsData, ExternalCallParams } from './credits'
 import { getOnChainTrade } from './trades'
 
 // Only mock external dependencies
@@ -29,15 +29,14 @@ jest.mock('../modules/wallet/utils', () => ({
 }))
 
 // Mock trades utils
-// jest.mock('./trades', () => ({
-//   getOnChainTrade: (...args) => mockGetOnChainTrade(...args)
-// }))
 
 // Extended external call type to match what the actual implementation returns
 type ExtendedExternalCall = ExternalCallParams & {
   salt: string
   expiresAt: number
 }
+
+const creditsService = new CreditsService()
 
 describe('CreditsService', () => {
   beforeEach(() => {
@@ -123,7 +122,7 @@ describe('CreditsService', () => {
         }
       ]
 
-      const result = CreditsService['prepareCreditsData'](
+      const result = creditsService['prepareCreditsData'](
         credits,
         ChainId.MATIC_AMOY
       )
@@ -146,7 +145,7 @@ describe('CreditsService', () => {
       }
 
       // @ts-ignore: Accessing private method
-      const result = CreditsService['prepareExternalCall'](params)
+      const result = creditsService['prepareExternalCall'](params)
 
       expect(result).toMatchObject({
         target: '0xtarget',
@@ -185,7 +184,7 @@ describe('CreditsService', () => {
       const maxUncreditedValue = '900'
 
       // @ts-ignore: Accessing private method
-      await CreditsService['executeUseCredits'](
+      await creditsService['executeUseCredits'](
         contract,
         creditsData,
         creditsSignatures,
@@ -235,7 +234,7 @@ describe('CreditsService', () => {
         }
       ]
 
-      const result = CreditsService.prepareCreditsCollectionStore(
+      const result = creditsService.prepareCreditsCollectionStore(
         item,
         walletAddress,
         credits
@@ -316,7 +315,7 @@ describe('CreditsService', () => {
       }
 
       jest
-        .spyOn(CreditsService, 'prepareCreditsCollectionStore')
+        .spyOn(creditsService, 'prepareCreditsCollectionStore')
         .mockReturnValue({
           contract: {
             name: 'CreditsManager',
@@ -334,13 +333,13 @@ describe('CreditsService', () => {
           maxCreditedValue: '1000'
         })
 
-      await CreditsService.useCreditsCollectionStore(
+      await creditsService.useCreditsCollectionStore(
         item,
         walletAddress,
         credits
       )
 
-      expect(CreditsService.prepareCreditsCollectionStore).toHaveBeenCalledWith(
+      expect(creditsService.prepareCreditsCollectionStore).toHaveBeenCalledWith(
         item,
         walletAddress,
         credits
@@ -424,7 +423,7 @@ describe('CreditsService', () => {
         }
       ]
 
-      const result = CreditsService.prepareCreditsMarketplace(
+      const result = creditsService.prepareCreditsMarketplace(
         trade,
         walletAddress,
         credits
@@ -519,7 +518,7 @@ describe('CreditsService', () => {
         expiresAt: 1234567890
       }
 
-      jest.spyOn(CreditsService, 'prepareCreditsMarketplace').mockReturnValue({
+      jest.spyOn(creditsService, 'prepareCreditsMarketplace').mockReturnValue({
         contract: {
           name: 'CreditsManager',
           address: '0xCreditsManagerAddress',
@@ -534,9 +533,9 @@ describe('CreditsService', () => {
         maxCreditedValue: '1000'
       })
 
-      await CreditsService.useCreditsMarketplace(trade, walletAddress, credits)
+      await creditsService.useCreditsMarketplace(trade, walletAddress, credits)
 
-      expect(CreditsService.prepareCreditsMarketplace).toHaveBeenCalledWith(
+      expect(creditsService.prepareCreditsMarketplace).toHaveBeenCalledWith(
         trade,
         walletAddress,
         credits
@@ -600,7 +599,7 @@ describe('CreditsService', () => {
         }
       ]
 
-      const result = CreditsService['prepareCreditsLegacyMarketplace'](
+      const result = creditsService['prepareCreditsLegacyMarketplace'](
         nft,
         order,
         credits
@@ -676,7 +675,7 @@ describe('CreditsService', () => {
       }
 
       jest
-        .spyOn(CreditsService, 'prepareCreditsLegacyMarketplace')
+        .spyOn(creditsService, 'prepareCreditsLegacyMarketplace')
         .mockReturnValue({
           contract: {
             name: 'CreditsManager',
@@ -694,10 +693,10 @@ describe('CreditsService', () => {
           maxCreditedValue: '1000'
         })
 
-      await CreditsService.useCreditsLegacyMarketplace(nft, order, credits)
+      await creditsService.useCreditsLegacyMarketplace(nft, order, credits)
 
       expect(
-        CreditsService.prepareCreditsLegacyMarketplace
+        creditsService.prepareCreditsLegacyMarketplace
       ).toHaveBeenCalledWith(nft, order, credits)
       expect(mockSendTransaction).toHaveBeenCalledWith(
         {
@@ -733,7 +732,7 @@ describe('CreditsService', () => {
       } as unknown) as Trade
 
       // @ts-ignore: Accessing private method
-      const result = CreditsService['getTradePrice'](trade)
+      const result = creditsService['getTradePrice'](trade)
       expect(result).toBe('1000')
     })
 
@@ -749,7 +748,7 @@ describe('CreditsService', () => {
       } as unknown) as Trade
 
       // @ts-ignore: Accessing private method
-      const result = CreditsService['getTradePrice'](trade)
+      const result = creditsService['getTradePrice'](trade)
       expect(result).toBe('0')
     })
   })

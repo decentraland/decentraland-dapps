@@ -76,8 +76,6 @@ export class EntitiesOperator {
       timestamp: Date.now()
     }
 
-    console.log('options', options)
-
     const catalystContentClient =
       this.catalystContentClientWithoutGbCollector ?? this.catalystContentClient
     const contentUrl = this.peerWithNoGbCollectorUrl ?? this.peerUrl
