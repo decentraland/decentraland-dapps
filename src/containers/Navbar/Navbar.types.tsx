@@ -8,6 +8,7 @@ import {
   switchNetworkRequest,
   SwitchNetworkRequestAction
 } from '../../modules/wallet/actions'
+import { getCredits } from '../../modules/credits/selectors'
 
 export type NavbarProps = NavbarComponentProps & {
   withChainSelector?: boolean
@@ -36,6 +37,7 @@ export type NavbarProps2 = NavbarComponentProps2 & {
   identity?: AuthIdentity
   locale: string
   walletError: string | null
+  credits?: ReturnType<typeof getCredits>
   onSwitchNetwork: typeof switchNetworkRequest
   onSignOut: typeof disconnectWalletRequest
   onSignIn: () => void
@@ -54,7 +56,8 @@ export type MapStateProps = Pick<
   | 'avatar'
   | 'locale'
   | 'walletError'
->
+> &
+  Pick<NavbarProps2, 'credits'>
 
 export type MapDispatchProps = Pick<
   NavbarProps,

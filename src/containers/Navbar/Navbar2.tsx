@@ -24,6 +24,7 @@ import { NavbarProps2 } from './Navbar.types'
 import { NAVBAR_CLICK_EVENT } from './constants'
 import useNotifications from '../../hooks/useNotifications'
 import { NavbarContainer } from './Navbar2.styled'
+import { ethers } from 'ethers'
 
 const BASE_URL = getBaseUrl()
 
@@ -148,6 +149,13 @@ const Navbar2: React.FC<NavbarProps2> = ({
     [analytics]
   )
 
+  const creditsBalance = {
+    balance: Number(
+      ethers.utils.formatEther(props.credits?.totalCredits.toString() ?? 0)
+    ),
+    expiresAt: Number(props.credits?.credits[0]?.expiresAt * 1000) ?? 0
+  }
+
   return (
     <NavbarContainer>
       <ChainProvider>
@@ -155,6 +163,7 @@ const Navbar2: React.FC<NavbarProps2> = ({
           <>
             <NavbarComponent
               {...props}
+              creditsBalance={creditsBalance}
               notifications={
                 withNotifications
                   ? {
