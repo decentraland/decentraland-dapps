@@ -480,5 +480,3 @@ export class CreditsService {
     return '0'
   }
 }
-
-export default new CreditsService()
