@@ -1,19 +1,24 @@
 import { expectSaga } from 'redux-saga-test-plan'
 import { call, select } from 'redux-saga-test-plan/matchers'
 import { throwError } from 'redux-saga-test-plan/providers'
-import { t } from 'decentraland-dapps/dist/modules/translation/utils'
-import { CONNECT_WALLET_SUCCESS } from 'decentraland-dapps/dist/modules/wallet/actions'
-import { Wallet } from 'decentraland-dapps/dist/modules/wallet/types'
-import { fetchCreditsRequest, fetchCreditsSuccess, fetchCreditsFailure, pollCreditsBalanceRequest } from './actions'
-import { creditsSaga, creditsService } from './sagas'
+import {
+  fetchCreditsRequest,
+  fetchCreditsSuccess,
+  fetchCreditsFailure,
+  pollCreditsBalanceRequest
+} from './actions'
+import { creditsSaga } from './sagas'
 import { getCredits } from './selectors'
 import { CreditsResponse } from './types'
+import { CreditsClient } from './CreditsClient'
+import { connectWalletSuccess } from '../wallet/actions'
+import { getIsFeatureEnabled } from '../features/selectors'
+import { ApplicationName } from '../features/types'
+import { Wallet } from '../wallet'
 
-jest.mock('../vendor/decentraland/credits/api', () => ({
-  CreditsAPI: jest.fn().mockImplementation(() => ({
-    fetchCredits: jest.fn()
-  }))
-}))
+const creditsClient = new CreditsClient(
+  'https://credits-server.decentraland.zone'
+)
 
 describe('Credits saga', () => {
   const address = '0x123'
@@ -34,40 +39,79 @@ describe('Credits saga', () => {
     ]
   }
 
-  beforeEach(() => {
-    jest.spyOn(creditsService, 'fetchCredits').mockResolvedValue(mockCredits)
-  })
-
   afterEach(() => {
     jest.clearAllMocks()
   })
 
   describe('when handling fetchCreditsRequest action', () => {
-    it('should put fetchCreditsSuccess with the credits when the request succeeds', () => {
-      return expectSaga(creditsSaga)
-        .provide([[call([creditsService, 'fetchCredits'], address), mockCredits]])
-        .put(fetchCreditsSuccess(address, mockCredits))
-        .dispatch(fetchCreditsRequest(address))
-        .silentRun()
+    describe('and the request succeeds', () => {
+      it('should put fetchCreditsSuccess with the credits when the request succeeds', () => {
+        return expectSaga(creditsSaga, {
+          creditsClient
+        })
+          .provide([
+            [
+              select(
+                getIsFeatureEnabled,
+                ApplicationName.MARKETPLACE,
+                'credits'
+              ),
+              true
+            ],
+            [call([creditsClient, 'fetchCredits'], address), mockCredits]
+          ])
+          .put(fetchCreditsSuccess(address, mockCredits))
+          .dispatch(fetchCreditsRequest(address))
+          .silentRun()
+      })
     })
 
-    it('should put fetchCreditsFailure with the error message when the request fails with a message', () => {
-      const errorMessage = 'Invalid address'
-      const error = new Error(errorMessage)
+    describe('and the request fails', () => {
+      it('should put fetchCreditsFailure with the error message when the request fails with a message', () => {
+        const errorMessage = 'Invalid address'
+        const error = new Error(errorMessage)
 
-      return expectSaga(creditsSaga)
-        .provide([[call([creditsService, 'fetchCredits'], address), throwError(error)]])
-        .put(fetchCreditsFailure(address, errorMessage))
-        .dispatch(fetchCreditsRequest(address))
-        .silentRun()
-    })
+        return expectSaga(creditsSaga, {
+          creditsClient
+        })
+          .provide([
+            [
+              select(
+                getIsFeatureEnabled,
+                ApplicationName.MARKETPLACE,
+                'credits'
+              ),
+              true
+            ],
+            [call([creditsClient, 'fetchCredits'], address), throwError(error)]
+          ])
+          .put(fetchCreditsFailure(address, errorMessage))
+          .dispatch(fetchCreditsRequest(address))
+          .silentRun()
+      })
 
-    it('should put fetchCreditsFailure with an unknown error when the request fails without a message', () => {
-      return expectSaga(creditsSaga)
-        .provide([[call([creditsService, 'fetchCredits'], address), throwError({} as Error)]])
-        .put(fetchCreditsFailure(address, t('global.unknown_error')))
-        .dispatch(fetchCreditsRequest(address))
-        .silentRun()
+      it('should put fetchCreditsFailure with an unknown error when the request fails without a message', () => {
+        return expectSaga(creditsSaga, {
+          creditsClient
+        })
+          .provide([
+            [
+              select(
+                getIsFeatureEnabled,
+                ApplicationName.MARKETPLACE,
+                'credits'
+              ),
+              true
+            ],
+            [
+              call([creditsClient, 'fetchCredits'], address),
+              throwError({} as Error)
+            ]
+          ])
+          .put(fetchCreditsFailure(address, 'Unknown error'))
+          .dispatch(fetchCreditsRequest(address))
+          .silentRun()
+      })
     })
   })
 
@@ -75,12 +119,17 @@ describe('Credits saga', () => {
     it('should put fetchCreditsRequest with the wallet address', () => {
       const wallet = { address } as Wallet
 
-      return expectSaga(creditsSaga)
+      return expectSaga(creditsSaga, {
+        creditsClient
+      })
+        .provide([
+          [
+            select(getIsFeatureEnabled, ApplicationName.MARKETPLACE, 'credits'),
+            true
+          ]
+        ])
         .put(fetchCreditsRequest(address))
-        .dispatch({
-          type: CONNECT_WALLET_SUCCESS,
-          payload: { wallet }
-        })
+        .dispatch(connectWalletSuccess(wallet))
         .silentRun()
     })
   })
@@ -89,9 +138,15 @@ describe('Credits saga', () => {
     it('should put fetchCreditsSuccess when the credits balance matches the expected balance', () => {
       const expectedBalance = BigInt('1000')
 
-      return expectSaga(creditsSaga)
+      return expectSaga(creditsSaga, {
+        creditsClient
+      })
         .provide([
-          [call([creditsService, 'fetchCredits'], address), mockCredits],
+          [
+            select(getIsFeatureEnabled, ApplicationName.MARKETPLACE, 'credits'),
+            true
+          ],
+          [call([creditsClient, 'fetchCredits'], address), mockCredits],
           [select(getCredits, address), mockCredits]
         ])
         .put(fetchCreditsRequest(address))
@@ -110,9 +165,15 @@ describe('Credits saga', () => {
 
       // Skip testing the full polling logic
       // Just test that a successful fetch is dispatched once the right value is found
-      return expectSaga(creditsSaga)
+      return expectSaga(creditsSaga, {
+        creditsClient
+      })
         .provide([
-          [call([creditsService, 'fetchCredits'], address), mockCredits],
+          [
+            select(getIsFeatureEnabled, ApplicationName.MARKETPLACE, 'credits'),
+            true
+          ],
+          [call([creditsClient, 'fetchCredits'], address), mockCredits],
           [select(getCredits, address), updatedCredits]
         ])
         .put(fetchCreditsRequest(address))

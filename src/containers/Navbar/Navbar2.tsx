@@ -39,7 +39,6 @@ const Navbar2: React.FC<NavbarProps2> = ({
   walletError,
   ...props
 }: NavbarProps2) => {
-  console.log('props', props)
   const expectedChainName = getChainName(appChainId)
   const analytics = getAnalytics()
 
@@ -156,8 +155,6 @@ const Navbar2: React.FC<NavbarProps2> = ({
     ),
     expiresAt: Number(props.credits?.credits[0]?.expiresAt * 1000) ?? 0
   }
-
-  console.log('creditsBalance', creditsBalance)
 
   return (
     <NavbarContainer>

@@ -1,4 +1,12 @@
-import { takeEvery, put, call, delay, take, select } from 'redux-saga/effects'
+import {
+  takeEvery,
+  put,
+  call,
+  delay,
+  take,
+  select,
+  race
+} from 'redux-saga/effects'
 import { isErrorWithMessage } from '../../lib/error'
 import { CONNECT_WALLET_SUCCESS, ConnectWalletSuccessAction } from '../wallet'
 import {
@@ -9,7 +17,8 @@ import {
   PollCreditsBalanceRequestAction,
   POLL_CREDITS_BALANCE_REQUEST,
   FETCH_CREDITS_REQUEST,
-  FETCH_CREDITS_SUCCESS
+  FETCH_CREDITS_SUCCESS,
+  FETCH_CREDITS_FAILURE
 } from './actions'
 import { getCredits } from './selectors'
 import { CreditsResponse } from './types'
@@ -59,35 +68,29 @@ export function* creditsSaga(options: { creditsClient: CreditsClient }) {
   function* handlePollCreditsBalanceRequest(
     action: PollCreditsBalanceRequestAction
   ) {
-    console.log('handlePollCreditsBalanceRequest', action)
     const { address, expectedBalance } = action.payload
-    while (true) {
-      console.log(
-        'handlePollCreditsBalanceRequest while0',
-        address,
-        expectedBalance
-      )
+    // max of 10 attempts
+    const maxAttempts = 10
+    let attempts = 0
+    while (attempts < maxAttempts) {
       yield put(fetchCreditsRequest(address))
-      yield take(FETCH_CREDITS_SUCCESS)
-      const credits: CreditsResponse = yield select(getCredits, address)
-      console.log(
-        'handlePollCreditsBalanceRequest while1',
-        address,
-        expectedBalance,
-        credits
-      )
-      if (BigInt(credits.totalCredits) === expectedBalance) {
-        console.log(
-          'handlePollCreditsBalanceRequest while2',
-          address,
-          expectedBalance,
-          credits,
-          'break'
-        )
-        yield put(fetchCreditsSuccess(address, credits))
+      const { success, failure } = yield race({
+        success: take(FETCH_CREDITS_SUCCESS),
+        failure: take(FETCH_CREDITS_FAILURE)
+      })
+      if (success) {
+        const credits: CreditsResponse = yield select(getCredits, address)
+        if (BigInt(credits.totalCredits) === expectedBalance) {
+          yield put(fetchCreditsSuccess(address, credits))
+          break
+        }
+      }
+      if (failure) {
+        yield put(fetchCreditsFailure(address, failure.payload.error))
         break
       }
-      yield delay(1000)
+      yield delay(2000)
+      attempts++
     }
   }
 }

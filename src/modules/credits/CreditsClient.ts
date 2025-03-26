@@ -22,5 +22,3 @@ export class CreditsClient extends BaseClient {
     }
   }
 }
-
-// export const creditsAPI = new CreditsClient(config.get('CREDITS_SERVER_URL'))
