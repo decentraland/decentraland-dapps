@@ -149,12 +149,14 @@ const Navbar2: React.FC<NavbarProps2> = ({
     [analytics]
   )
 
-  const creditsBalance = {
-    balance: Number(
-      ethers.utils.formatEther(props.credits?.totalCredits.toString() ?? 0)
-    ),
-    expiresAt: Number(props.credits?.credits[0]?.expiresAt * 1000) ?? 0
-  }
+  const creditsBalance = props.credits
+    ? {
+        balance: Number(
+          ethers.utils.formatEther(props.credits?.totalCredits.toString() ?? 0)
+        ),
+        expiresAt: Number(props.credits?.credits[0]?.expiresAt * 1000) ?? 0
+      }
+    : undefined
 
   return (
     <NavbarContainer>
