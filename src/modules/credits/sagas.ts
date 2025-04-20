@@ -23,8 +23,8 @@ import {
 import { getCredits } from './selectors'
 import { CreditsResponse } from './types'
 import { CreditsClient } from './CreditsClient'
-import { getIsFeatureEnabled } from '../features/selectors'
-import { ApplicationName } from '../features/types'
+import { getFeatureVariant, getIsFeatureEnabled } from '../features/selectors'
+import { ApplicationName, FeatureName, Variant } from '../features/types'
 
 export function* creditsSaga(options: { creditsClient: CreditsClient }) {
   yield takeEvery(FETCH_CREDITS_REQUEST, handleFetchCreditsRequest)
@@ -34,11 +34,34 @@ export function* creditsSaga(options: { creditsClient: CreditsClient }) {
   function* handleFetchCreditsRequest(action: FetchCreditsRequestAction) {
     const { address } = action.payload
 
-    const isCreditsEnabled: boolean = yield select(
+    const isMarketplaceCreditsEnabled: boolean = yield select(
       getIsFeatureEnabled,
       ApplicationName.MARKETPLACE,
-      'credits'
+      FeatureName.CREDITS
     )
+
+    if (!isMarketplaceCreditsEnabled) {
+      return
+    }
+
+    // Get user wallets feature flag
+    const userWalletsVariant: Variant | undefined = yield select(
+      getFeatureVariant,
+      ApplicationName.EXPLORER,
+      FeatureName.USER_WALLETS
+    )
+
+    // Parse wallets list if available
+    let walletsAllowed
+
+    if (userWalletsVariant?.payload?.value) {
+      walletsAllowed = userWalletsVariant.payload.value
+        .replace('\n', '')
+        .split(',')
+        .map(wallet => wallet.toLowerCase())
+    }
+
+    const isCreditsEnabled = !walletsAllowed || walletsAllowed.includes(address)
 
     if (!isCreditsEnabled) {
       return
