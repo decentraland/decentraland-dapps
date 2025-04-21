@@ -12,8 +12,12 @@ import { getCredits } from './selectors'
 import { CreditsResponse } from './types'
 import { CreditsClient } from './CreditsClient'
 import { connectWalletSuccess } from '../wallet/actions'
-import { getIsFeatureEnabled } from '../features/selectors'
-import { ApplicationName } from '../features/types'
+import {
+  getFeatureVariant,
+  getIsFeatureEnabled,
+  isCreditsFeatureEnabled
+} from '../features/selectors'
+import { ApplicationName, FeatureName } from '../features/types'
 import { Wallet } from '../wallet'
 
 const creditsClient = new CreditsClient(
@@ -50,14 +54,7 @@ describe('Credits saga', () => {
           creditsClient
         })
           .provide([
-            [
-              select(
-                getIsFeatureEnabled,
-                ApplicationName.MARKETPLACE,
-                'credits'
-              ),
-              true
-            ],
+            [select(isCreditsFeatureEnabled, address), true],
             [call([creditsClient, 'fetchCredits'], address), mockCredits]
           ])
           .put(fetchCreditsSuccess(address, mockCredits))
@@ -75,14 +72,7 @@ describe('Credits saga', () => {
           creditsClient
         })
           .provide([
-            [
-              select(
-                getIsFeatureEnabled,
-                ApplicationName.MARKETPLACE,
-                'credits'
-              ),
-              true
-            ],
+            [select(isCreditsFeatureEnabled, address), true],
             [call([creditsClient, 'fetchCredits'], address), throwError(error)]
           ])
           .put(fetchCreditsFailure(address, errorMessage))
@@ -95,14 +85,7 @@ describe('Credits saga', () => {
           creditsClient
         })
           .provide([
-            [
-              select(
-                getIsFeatureEnabled,
-                ApplicationName.MARKETPLACE,
-                'credits'
-              ),
-              true
-            ],
+            [select(isCreditsFeatureEnabled, address), true],
             [
               call([creditsClient, 'fetchCredits'], address),
               throwError({} as Error)
@@ -122,12 +105,7 @@ describe('Credits saga', () => {
       return expectSaga(creditsSaga, {
         creditsClient
       })
-        .provide([
-          [
-            select(getIsFeatureEnabled, ApplicationName.MARKETPLACE, 'credits'),
-            true
-          ]
-        ])
+        .provide([[select(isCreditsFeatureEnabled, address), true]])
         .put(fetchCreditsRequest(address))
         .dispatch(connectWalletSuccess(wallet))
         .silentRun()
@@ -142,10 +120,7 @@ describe('Credits saga', () => {
         creditsClient
       })
         .provide([
-          [
-            select(getIsFeatureEnabled, ApplicationName.MARKETPLACE, 'credits'),
-            true
-          ],
+          [select(isCreditsFeatureEnabled, address), true],
           [call([creditsClient, 'fetchCredits'], address), mockCredits],
           [select(getCredits, address), mockCredits]
         ])

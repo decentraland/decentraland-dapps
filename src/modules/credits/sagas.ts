@@ -23,8 +23,7 @@ import {
 import { getCredits } from './selectors'
 import { CreditsResponse } from './types'
 import { CreditsClient } from './CreditsClient'
-import { getIsFeatureEnabled } from '../features/selectors'
-import { ApplicationName } from '../features/types'
+import { isCreditsFeatureEnabled } from '../features/selectors'
 
 export function* creditsSaga(options: { creditsClient: CreditsClient }) {
   yield takeEvery(FETCH_CREDITS_REQUEST, handleFetchCreditsRequest)
@@ -35,9 +34,8 @@ export function* creditsSaga(options: { creditsClient: CreditsClient }) {
     const { address } = action.payload
 
     const isCreditsEnabled: boolean = yield select(
-      getIsFeatureEnabled,
-      ApplicationName.MARKETPLACE,
-      'credits'
+      isCreditsFeatureEnabled,
+      address
     )
 
     if (!isCreditsEnabled) {
