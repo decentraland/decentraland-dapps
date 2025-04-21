@@ -12,7 +12,11 @@ import { getCredits } from './selectors'
 import { CreditsResponse } from './types'
 import { CreditsClient } from './CreditsClient'
 import { connectWalletSuccess } from '../wallet/actions'
-import { getFeatureVariant, getIsFeatureEnabled } from '../features/selectors'
+import {
+  getFeatureVariant,
+  getIsFeatureEnabled,
+  isCreditsFeatureEnabled
+} from '../features/selectors'
 import { ApplicationName, FeatureName } from '../features/types'
 import { Wallet } from '../wallet'
 
@@ -50,26 +54,7 @@ describe('Credits saga', () => {
           creditsClient
         })
           .provide([
-            [
-              select(
-                getIsFeatureEnabled,
-                ApplicationName.MARKETPLACE,
-                'credits'
-              ),
-              true
-            ],
-            [
-              select(
-                getFeatureVariant,
-                ApplicationName.EXPLORER,
-                FeatureName.USER_WALLETS
-              ),
-              {
-                payload: {
-                  value: '0x123,0x456'
-                }
-              }
-            ],
+            [select(isCreditsFeatureEnabled, address), true],
             [call([creditsClient, 'fetchCredits'], address), mockCredits]
           ])
           .put(fetchCreditsSuccess(address, mockCredits))
@@ -87,26 +72,7 @@ describe('Credits saga', () => {
           creditsClient
         })
           .provide([
-            [
-              select(
-                getIsFeatureEnabled,
-                ApplicationName.MARKETPLACE,
-                'credits'
-              ),
-              true
-            ],
-            [
-              select(
-                getFeatureVariant,
-                ApplicationName.EXPLORER,
-                FeatureName.USER_WALLETS
-              ),
-              {
-                payload: {
-                  value: '0x123,0x456'
-                }
-              }
-            ],
+            [select(isCreditsFeatureEnabled, address), true],
             [call([creditsClient, 'fetchCredits'], address), throwError(error)]
           ])
           .put(fetchCreditsFailure(address, errorMessage))
@@ -119,26 +85,7 @@ describe('Credits saga', () => {
           creditsClient
         })
           .provide([
-            [
-              select(
-                getIsFeatureEnabled,
-                ApplicationName.MARKETPLACE,
-                'credits'
-              ),
-              true
-            ],
-            [
-              select(
-                getFeatureVariant,
-                ApplicationName.EXPLORER,
-                FeatureName.USER_WALLETS
-              ),
-              {
-                payload: {
-                  value: '0x123,0x456'
-                }
-              }
-            ],
+            [select(isCreditsFeatureEnabled, address), true],
             [
               call([creditsClient, 'fetchCredits'], address),
               throwError({} as Error)
@@ -158,24 +105,7 @@ describe('Credits saga', () => {
       return expectSaga(creditsSaga, {
         creditsClient
       })
-        .provide([
-          [
-            select(getIsFeatureEnabled, ApplicationName.MARKETPLACE, 'credits'),
-            true
-          ],
-          [
-            select(
-              getFeatureVariant,
-              ApplicationName.EXPLORER,
-              FeatureName.USER_WALLETS
-            ),
-            {
-              payload: {
-                value: '0x123,0x456'
-              }
-            }
-          ]
-        ])
+        .provide([[select(isCreditsFeatureEnabled, address), true]])
         .put(fetchCreditsRequest(address))
         .dispatch(connectWalletSuccess(wallet))
         .silentRun()
@@ -190,22 +120,7 @@ describe('Credits saga', () => {
         creditsClient
       })
         .provide([
-          [
-            select(getIsFeatureEnabled, ApplicationName.MARKETPLACE, 'credits'),
-            true
-          ],
-          [
-            select(
-              getFeatureVariant,
-              ApplicationName.EXPLORER,
-              FeatureName.USER_WALLETS
-            ),
-            {
-              payload: {
-                value: '0x123,0x456'
-              }
-            }
-          ],
+          [select(isCreditsFeatureEnabled, address), true],
           [call([creditsClient, 'fetchCredits'], address), mockCredits],
           [select(getCredits, address), mockCredits]
         ])
