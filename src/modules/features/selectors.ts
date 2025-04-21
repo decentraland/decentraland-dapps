@@ -6,7 +6,8 @@ import {
   ApplicationName,
   ApplicationFeatures,
   StateWithFeatures,
-  Variant
+  Variant,
+  FeatureName
 } from './types'
 
 export const getState = (state: StateWithFeatures): FeaturesState => {
@@ -74,7 +75,11 @@ export const isLoadingFeatureFlags = (state: StateWithFeatures) => {
   return isLoadingType(getLoading(state), FETCH_APPLICATION_FEATURES_REQUEST)
 }
 
-export const getFeatureVariant = (state: StateWithFeatures, app: ApplicationName, feature: string): Variant | null => {
+export const getFeatureVariant = (
+  state: StateWithFeatures,
+  app: ApplicationName,
+  feature: string
+): Variant | null => {
   const variant = getVariantFromEnv(app, feature)
 
   // Return the flag variant if it has been defined in the env.
@@ -126,4 +131,41 @@ const getVariantFromEnv = (
   const value = process.env[key]
 
   return !value || value === '' ? null : value
+}
+
+/**
+ * Helper to check if credits are enabled for a given address.
+ * It will first check if the marketplace credits are enabled, if not, it will return false.
+ * Then it will check if the user wallets variant is defined, if not, it will return true.
+ * Then it will check if the address is in the user wallets variant, if not, it will return false.
+ */
+export const isCreditsFeatureEnabled = (
+  state: StateWithFeatures,
+  address: string
+) => {
+  const userWalletsVariant = getFeatureVariant(
+    state,
+    ApplicationName.EXPLORER,
+    FeatureName.USER_WALLETS
+  )
+  const isMarketplaceCreditsEnabled = getIsFeatureEnabled(
+    state,
+    ApplicationName.MARKETPLACE,
+    FeatureName.CREDITS
+  )
+
+  if (!isMarketplaceCreditsEnabled) {
+    return false
+  }
+
+  if (!userWalletsVariant) {
+    return true
+  }
+
+  const walletsAllowed = userWalletsVariant.payload.value
+    .replace('\n', '')
+    .split(',')
+    .map(wallet => wallet.toLowerCase())
+
+  return walletsAllowed.includes(address)
 }
