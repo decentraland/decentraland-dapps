@@ -163,6 +163,7 @@ export const isCreditsFeatureEnabled = (
   }
 
   const walletsAllowed = userWalletsVariant.payload.value
+    .trim()
     .replace('\n', '')
     .split(',')
     .map(wallet => wallet.toLowerCase())
