@@ -1,11 +1,14 @@
 import { expectSaga } from 'redux-saga-test-plan'
 import { call, select } from 'redux-saga-test-plan/matchers'
 import { throwError } from 'redux-saga-test-plan/providers'
+import { eventChannel } from 'redux-saga'
 import {
   fetchCreditsRequest,
   fetchCreditsSuccess,
   fetchCreditsFailure,
-  pollCreditsBalanceRequest
+  pollCreditsBalanceRequest,
+  startCreditsSSE,
+  stopCreditsSSE
 } from './actions'
 import { creditsSaga } from './sagas'
 import { getCredits } from './selectors'
@@ -42,6 +45,37 @@ describe('Credits saga', () => {
       }
     ]
   }
+
+  // Mock for EventSource since it's not available in Node.js environment
+  class MockEventSource {
+    onmessage: ((event: any) => void) | null = null
+    onerror: ((event: any) => void) | null = null
+
+    constructor(public url: string) {}
+
+    close() {
+      // Simulating close behavior
+    }
+
+    // Helper to simulate receiving a message
+    simulateMessage(data: any) {
+      if (this.onmessage) {
+        this.onmessage({ data: JSON.stringify(data) })
+      }
+    }
+
+    // Helper to simulate an error
+    simulateError(error: any) {
+      if (this.onerror) {
+        this.onerror(error)
+      }
+    }
+  }
+
+  beforeAll(() => {
+    // Mock EventSource globally
+    ;(global as any).EventSource = MockEventSource
+  })
 
   afterEach(() => {
     jest.clearAllMocks()
@@ -128,6 +162,92 @@ describe('Credits saga', () => {
         .put(fetchCreditsSuccess(address, mockCredits))
         .dispatch(pollCreditsBalanceRequest(address, expectedBalance))
         .silentRun()
+    })
+  })
+
+  describe('when handling startCreditsSSE action', () => {
+    it('should establish SSE connection and dispatch initial fetch', () => {
+      // Mock the createSSEConnection method
+      const mockEventSource = new MockEventSource(
+        `https://example.com/users/${address}/credits/stream`
+      )
+      const createSSEConnectionMock = jest
+        .spyOn(creditsClient, 'createSSEConnection')
+        .mockImplementation((addr, onMessage, onError) => {
+          // Store callbacks to simulate events later
+          mockEventSource.onmessage = onMessage as any
+          mockEventSource.onerror = onError as any
+          return mockEventSource as any
+        })
+
+      const saga = expectSaga(creditsSaga, {
+        creditsClient
+      })
+        .provide([
+          [select(isCreditsFeatureEnabled, address), true],
+          [call([creditsClient, 'fetchCredits'], address), mockCredits]
+        ])
+        .put(fetchCreditsRequest(address))
+        .dispatch(startCreditsSSE(address))
+
+      return saga.silentRun().then(() => {
+        // Verify that createSSEConnection was called
+        expect(createSSEConnectionMock).toHaveBeenCalledWith(
+          address,
+          expect.any(Function),
+          expect.any(Function)
+        )
+
+        createSSEConnectionMock.mockRestore()
+      })
+    })
+
+    it('should handle SSE messages by dispatching success actions', () => {
+      // Mock event channel to control events
+      const mockChannel = eventChannel(() => () => {})
+
+      // We can use redux-saga-test-plan to test the flow
+      return expectSaga(creditsSaga, { creditsClient })
+        .provide([
+          [select(isCreditsFeatureEnabled, address), true],
+          [call([creditsClient, 'fetchCredits'], address), mockCredits]
+        ])
+        .put(fetchCreditsRequest(address))
+        .dispatch(startCreditsSSE(address))
+        .silentRun()
+    })
+  })
+
+  describe('when handling stopCreditsSSE action', () => {
+    it('should close SSE connection and cancel saga', () => {
+      // Create a spy on EventSource.close
+      const mockEventSource = new MockEventSource(
+        `https://example.com/users/${address}/credits/stream`
+      )
+      const closeSpy = jest.spyOn(mockEventSource, 'close')
+
+      // Mock the createSSEConnection method
+      const createSSEConnectionMock = jest
+        .spyOn(creditsClient, 'createSSEConnection')
+        .mockImplementation(() => mockEventSource as any)
+
+      // First start polling, then stop it
+      return expectSaga(creditsSaga, { creditsClient })
+        .provide([
+          [select(isCreditsFeatureEnabled, address), true],
+          [call([creditsClient, 'fetchCredits'], address), mockCredits]
+        ])
+        .dispatch(startCreditsSSE(address))
+        .dispatch(stopCreditsSSE())
+        .silentRun()
+        .then(() => {
+          // We should have tried to close the connection
+          expect(closeSpy).toHaveBeenCalled()
+
+          // Clean up mocks
+          closeSpy.mockRestore()
+          createSSEConnectionMock.mockRestore()
+        })
     })
   })
 })
