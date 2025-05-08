@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useState, useEffect, useCallback } from 'react'
 import {
   NotificationsAPI,
@@ -11,6 +11,7 @@ import {
   NotificationActiveTab
 } from 'decentraland-ui/dist/components/Notifications/types'
 import { CURRENT_AVAILABLE_NOTIFICATIONS } from 'decentraland-ui/dist/components/Notifications/utils'
+import { CURRENT_AVAILABLE_NOTIFICATIONS as CURRENT_AVAILABLE_NOTIFICATIONS_UI2 } from 'decentraland-ui2/dist/components/Notifications/utils'
 import { NOTIFICATIONS_QUERY_INTERVAL } from '../containers/Navbar/constants'
 import Profile from '../containers/Profile'
 import { getBaseUrl } from '../lib'
@@ -37,6 +38,10 @@ const useNotifications = (
 
   const [notificationsClient, setNotificationsClient] = useState<NotificationsAPI | null>(null)
 
+  const AVAILABLE_NOTIFICATIONS = useMemo(() => {
+    return new Set([...CURRENT_AVAILABLE_NOTIFICATIONS, ...CURRENT_AVAILABLE_NOTIFICATIONS_UI2])
+  }, [])
+
   const handleOnBegin = () => {
     setOnboardingDone()
     setNotificationsState(prevState => ({ ...prevState, isOnboarding: false }))
@@ -46,7 +51,7 @@ const useNotifications = (
     return scopedNotificationsClient.getNotifications().then((notificationsFetched) => {
       const filteredNotifications = notificationsFetched
         .filter((notification => 
-          CURRENT_AVAILABLE_NOTIFICATIONS.includes(notification.type)
+          AVAILABLE_NOTIFICATIONS.has(notification.type)
         ))
 
       setUserNotifications(prevState => ({
