@@ -69,7 +69,16 @@ export function* creditsSaga(options: { creditsClient: CreditsClient }) {
 
   function* handleConnectWalletSuccess(action: ConnectWalletSuccessAction) {
     const { address } = action.payload.wallet
-    // yield put(fetchCreditsRequest(address))
+
+    const isCreditsEnabled: boolean = yield select(
+      isCreditsFeatureEnabled,
+      address
+    )
+
+    if (!isCreditsEnabled) {
+      return
+    }
+
     yield put(startCreditsSSE(address))
   }
 
@@ -124,11 +133,11 @@ export function* creditsSaga(options: { creditsClient: CreditsClient }) {
   let sseConnectionTask: Task | null = null
   let currentSSEConnection: EventSource | null = null
 
-  function createCreditsEventChannel(address: string): EventChannel<any> {
+  function createCreditsEventChannel(
+    address: string,
+    isCreditsEnabled: boolean
+  ): EventChannel<any> {
     return eventChannel((emit: (input: any) => void) => {
-      // Check if credits feature is enabled
-      const isCreditsEnabled = select(isCreditsFeatureEnabled, address)
-
       if (!isCreditsEnabled) {
         emit(END)
         return () => {}
@@ -166,8 +175,16 @@ export function* creditsSaga(options: { creditsClient: CreditsClient }) {
     yield put(fetchCreditsRequest(address))
 
     try {
+      const isCreditsEnabled: boolean = yield select(
+        isCreditsFeatureEnabled,
+        address
+      )
       // Create an event channel for SSE events
-      const channel = yield call(createCreditsEventChannel, address)
+      const channel = yield call(
+        createCreditsEventChannel,
+        address,
+        isCreditsEnabled
+      )
 
       try {
         while (true) {
