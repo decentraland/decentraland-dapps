@@ -1,6 +1,7 @@
 import { expectSaga } from 'redux-saga-test-plan'
 import { call, select } from 'redux-saga-test-plan/matchers'
 import { throwError } from 'redux-saga-test-plan/providers'
+import { eventChannel } from 'redux-saga'
 import {
   fetchCreditsRequest,
   fetchCreditsSuccess,
@@ -21,7 +22,6 @@ import {
 } from '../features/selectors'
 import { ApplicationName, FeatureName } from '../features/types'
 import { Wallet } from '../wallet'
-import { eventChannel } from 'redux-saga'
 
 const creditsClient = new CreditsClient(
   'https://credits-server.decentraland.zone'
@@ -184,10 +184,7 @@ describe('Credits saga', () => {
         creditsClient
       })
         .provide([
-          [
-            select(getIsFeatureEnabled, ApplicationName.MARKETPLACE, 'credits'),
-            true
-          ],
+          [select(isCreditsFeatureEnabled, address), true],
           [call([creditsClient, 'fetchCredits'], address), mockCredits]
         ])
         .put(fetchCreditsRequest(address))
@@ -212,10 +209,7 @@ describe('Credits saga', () => {
       // We can use redux-saga-test-plan to test the flow
       return expectSaga(creditsSaga, { creditsClient })
         .provide([
-          [
-            select(getIsFeatureEnabled, ApplicationName.MARKETPLACE, 'credits'),
-            true
-          ],
+          [select(isCreditsFeatureEnabled, address), true],
           [call([creditsClient, 'fetchCredits'], address), mockCredits]
         ])
         .put(fetchCreditsRequest(address))
@@ -240,10 +234,7 @@ describe('Credits saga', () => {
       // First start polling, then stop it
       return expectSaga(creditsSaga, { creditsClient })
         .provide([
-          [
-            select(getIsFeatureEnabled, ApplicationName.MARKETPLACE, 'credits'),
-            true
-          ],
+          [select(isCreditsFeatureEnabled, address), true],
           [call([creditsClient, 'fetchCredits'], address), mockCredits]
         ])
         .dispatch(startCreditsSSE(address))
