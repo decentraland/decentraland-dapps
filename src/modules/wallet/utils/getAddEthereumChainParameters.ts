@@ -14,8 +14,8 @@ export function getAddEthereumChainParameters(
         chainId: hexChainId,
         chainName,
         nativeCurrency: {
-          name: 'MATIC',
-          symbol: 'MATIC',
+          name: 'POL',
+          symbol: 'POL',
           decimals: 18
         },
         rpcUrls: ['https://rpc-mainnet.maticvigil.com/'],
@@ -26,8 +26,8 @@ export function getAddEthereumChainParameters(
         chainId: hexChainId,
         chainName,
         nativeCurrency: {
-          name: 'MATIC',
-          symbol: 'MATIC',
+          name: 'POL',
+          symbol: 'POL',
           decimals: 18
         },
         rpcUrls: ['https://rpc-mumbai.maticvigil.com/'],
@@ -38,8 +38,8 @@ export function getAddEthereumChainParameters(
         chainId: hexChainId,
         chainName,
         nativeCurrency: {
-          name: 'MATIC',
-          symbol: 'MATIC',
+          name: 'POL',
+          symbol: 'POL',
           decimals: 18
         },
         rpcUrls: ['https://rpc-amoy.polygon.technology/'],
