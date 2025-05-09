@@ -17,6 +17,7 @@ Common modules for our dApps.
   - [Modal](https://github.com/decentraland/decentraland-dapps#modal)
   - [Toasts](https://github.com/decentraland/decentraland-dapps#toasts)
   - [Profile](https://github.com/decentraland/decentraland-dapps#profile)
+  - [Credits](https://github.com/decentraland/decentraland-dapps#credits)
 - [Lib](https://github.com/decentraland/decentraland-dapps#lib)
   - [API](https://github.com/decentraland/decentraland-dapps#api)
   - [ETH](https://github.com/decentraland/decentraland-dapps#eth)
@@ -448,9 +449,9 @@ import {
   FetchInvitesSuccessAction,
   FetchInvitesFailureAction,
   FetchInvitesRequestAction,
-+  SEND_INVITE_SUCCESS
+  SEND_INVITE_SUCCESS
 } from './actions'
-+ import { FETCH_TRANSACTION_SUCCESS, FetchTransactionSuccessAction } from 'decentraland-dapps/dist/modules/transaction/actions';
+import { FETCH_TRANSACTION_SUCCESS, FetchTransactionSuccessAction } from 'decentraland-dapps/dist/modules/transaction/actions';
 
 export type InviteState = {
   loading: AnyAction[]
@@ -464,7 +465,7 @@ export type InviteReducerAction =
   | FetchInvitesRequestAction
   | FetchInvitesSuccessAction
   | FetchInvitesFailureAction
-+  | FetchTransactionSuccessAction
+  | FetchTransactionSuccessAction
 
 export const INITIAL_STATE: InviteState = {
   loading: [],
@@ -500,23 +501,23 @@ export function invitesReducer(
         error: action.payload.errorMessage
       }
     }
-+    case FETCH_TRANSACTION_SUCCESS: {
-+      const { transaction } = action.payload
-+      switch (transaction.actionType) {
-+        case SEND_INVITE_SUCCESS: {
-+          const { address } = (transaction as any).payload
-+          return {
-+            ...state,
-+            data: {
-+              ...state.data,
-+              [address]: state.data[address] - 1
-+            }
-+          }
-+        }
-+        default:
-+          return state
-+      }
-+    }
+    case FETCH_TRANSACTION_SUCCESS: {
+      const { transaction } = action.payload
+      switch (transaction.actionType) {
+        case SEND_INVITE_SUCCESS: {
+          const { address } = (transaction as any).payload
+          return {
+            ...state,
+            data: {
+              ...state.data,
+              [address]: state.data[address] - 1
+            }
+          }
+        }
+        default:
+          return state
+      }
+    }
     default: {
       return state
     }
@@ -1006,36 +1007,6 @@ ReactDOM.render(
 )
 ```
 
-where `modals` could look like this:
-
-```ts
-// components/Modals/index.ts
-
-export { default as HelpModal } from './HelpModal'
-```
-
-Each modal will receive the properties defined on the `ModalComponent` type, found on `modules/modal/types`, so for example:
-
-```tsx
-import { Modal } from 'decentraland-ui/dist/components/Modal/Modal'
-import { ModalProps } from 'decentraland-dapps/dist/modules/modal/types'
-
-type HelpModalProps = ModalProps & {
-  // Some custom props, maybe from a container
-}
-
-export default class HelpModal extends React.Component<HelpModalProps> {
-  render() {
-    const { name, metadata, onClose } = this.props
-    // The Modal component here can be whatever you like, just make sure to call onClose when you want to close it, to update the state
-    // For more examples check the advanced usage
-    return <Modal open={true} className={name} onClose={onClose} />
-  }
-}
-```
-
-If want to use [decentraland-ui's Modal](https://github.com/decentraland/ui) but you don't want to repeat the `open`, `className` and `onClose` props, you can use this module's [Modal](https://github.com/decentraland/decentraland-dapps#modal)
-
 **Reducer**:
 
 Add the `modalReducer` as `modal` to your `rootReducer`:
@@ -1187,6 +1158,123 @@ export const createRootReducer = (history: History) =>
   })
 
 export type RootState = ReturnType<ReturnType<typeof createRootReducer>>
+```
+
+## Credits
+
+This module helps manage credits in the Decentraland marketplace. It handles fetching credits and provides real-time updates through Server-Sent Events (SSE).
+
+### Usage
+
+You can start and stop real-time credit updates using SSE:
+
+```ts
+import {
+  startCreditsSSE,
+  stopCreditsSSE
+} from 'decentraland-dapps/dist/modules/credits/actions'
+
+// Start real-time credit updates when component mounts
+dispatch(startCreditsSSE(address))
+
+// Stop real-time updates when component unmounts
+dispatch(stopCreditsSSE())
+```
+
+For backward compatibility, the following aliases are also available:
+
+```ts
+import {
+  startCreditsAutoPolling, // alias for startCreditsSSE
+  stopCreditsAutoPolling // alias for stopCreditsSSE
+} from 'decentraland-dapps/dist/modules/credits/actions'
+```
+
+The module will automatically:
+
+1. Fetch the initial credits state
+2. Establish an SSE connection with the server
+3. Update the credits in real-time whenever changes occur on the server
+4. Check if the credits feature is enabled before establishing a connection
+
+**Selectors**:
+
+```ts
+import { getCredits } from 'decentraland-dapps/dist/modules/credits/selectors'
+
+const credits = getCredits(state, address)
+```
+
+**Installation**:
+
+Add the `creditsReducer` to your root reducer:
+
+```ts
+import { combineReducers } from 'redux'
+import { creditsReducer as credits } from 'decentraland-dapps/dist/modules/credits/reducer'
+
+export const rootReducer = combineReducers({
+  credits
+  // your other reducers
+})
+```
+
+Add the `creditsSaga` to your root saga:
+
+```ts
+import { all } from 'redux-saga/effects'
+import { creditsSaga } from 'decentraland-dapps/dist/modules/credits/sagas'
+import { CreditsClient } from 'decentraland-dapps/dist/modules/credits/CreditsClient'
+
+// Create a credits client - make sure your server supports SSE at /users/{address}/credits/stream
+const creditsClient = new CreditsClient(API_URL)
+
+export function* rootSaga() {
+  yield all([
+    creditsSaga({ creditsClient })
+    // your other sagas
+  ])
+}
+```
+
+**Server Requirements**:
+
+Your server needs to provide an SSE endpoint at `/users/{address}/credits/stream` that:
+
+1. Keeps the connection open
+2. Sends credit updates in the same format as the regular credits endpoint
+3. Properly handles connection errors and retries
+
+Here's an example of how the server might implement the SSE endpoint:
+
+```typescript
+// Server-side (Node.js with Express)
+app.get('/users/:address/credits/stream', (req, res) => {
+  const { address } = req.params
+
+  // Set up SSE connection
+  res.setHeader('Content-Type', 'text/event-stream')
+  res.setHeader('Cache-Control', 'no-cache')
+  res.setHeader('Connection', 'keep-alive')
+
+  // Send initial credits data
+  sendCreditsUpdate(address, res)
+
+  // Set up listener for credit changes for this address
+  const listener = (updatedAddress, creditsData) => {
+    if (updatedAddress === address) {
+      res.write(`data: ${JSON.stringify(creditsData)}\n\n`)
+    }
+  }
+
+  // Add listener to your event system
+  creditEventEmitter.on('credits-updated', listener)
+
+  // Clean up when connection closes
+  req.on('close', () => {
+    creditEventEmitter.off('credits-updated', listener)
+  })
+})
 ```
 
 # Lib
@@ -1602,3 +1690,31 @@ export default class MyComponent extends React.PureComponent {
   }
 }
 ```
+
+## Credits Module
+
+### Auto-polling credits
+
+The credits module now supports auto-polling to keep the credits balance updated every 2 minutes. This is useful for applications where users need to see their up-to-date credit balance without having to manually refresh the page.
+
+To use this feature:
+
+1. Start auto-polling when the user needs to see their updated credits:
+
+```typescript
+import { startCreditsSSE } from 'decentraland-dapps/dist/modules/credits/actions'
+
+// Start auto-polling credits (address is the user's wallet address)
+dispatch(startCreditsSSE(address))
+```
+
+2. Stop auto-polling when it's no longer needed (e.g., when the user navigates away or logs out):
+
+```typescript
+import { stopCreditsSSE } from 'decentraland-dapps/dist/modules/credits/actions'
+
+// Stop auto-polling credits
+dispatch(stopCreditsSSE())
+```
+
+The polling will automatically check if the credits feature is enabled before fetching credits, so there's no need for additional checks in your application code.
