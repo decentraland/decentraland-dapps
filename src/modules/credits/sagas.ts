@@ -147,7 +147,6 @@ export function* creditsSaga(options: { creditsClient: CreditsClient }) {
       const eventSource = options.creditsClient.createSSEConnection(
         address,
         (creditsData: CreditsResponse) => {
-          console.log('got creditsData', creditsData)
           emit(fetchCreditsSuccess(address, creditsData))
         },
         (error: Event) => {

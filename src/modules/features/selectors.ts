@@ -166,7 +166,7 @@ export const isCreditsFeatureEnabled = (
     .trim()
     .replace('\n', '')
     .split(',')
-    .map(wallet => wallet.toLowerCase())
+    .map(wallet => wallet.toLowerCase().trim())
 
   return walletsAllowed.includes(address.toLowerCase())
 }
