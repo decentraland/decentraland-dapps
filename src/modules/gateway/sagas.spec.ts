@@ -47,6 +47,7 @@ import {
 import { getPendingManaPurchase, getPendingPurchases } from './selectors'
 import { OrderResponse, TransakOrderStatus } from './transak/types'
 import { generateIdentityFailure } from '../identity'
+import WertWidget from '@wert-io/widget-initializer'
 
 jest.mock('@wert-io/widget-initializer')
 jest.mock('../../lib/marketplaceApi')
@@ -201,7 +202,7 @@ const mockTransaction: MoonPayTransaction = {
 const mockTransakOrderResponse: OrderResponse = {
   meta: {
     orderId: '816374b8-11fd-4ec4-be2d-3936de24d9c2',
-    apiKey: mockConfig.transak.key
+    apiKey: mockConfig[NetworkGatewayType.TRANSAK]!.key
   },
   data: {
     id: '816374b8-11fd-4ec4-be2d-3936de24d9c2',
@@ -330,7 +331,9 @@ describe('when handling the request to open the Buy MANA with FIAT modal', () =>
     })
 
     describe('when suceeding on getting the receipt url', () => {
-      const mockTxReceiptUrl = `${mockConfig.moonPay.widgetBaseUrl}/transaction_receipt?transactionId=${mockPurchase.id}`
+      const mockTxReceiptUrl = `${
+        mockConfig[NetworkGatewayType.MOON_PAY]!.widgetBaseUrl
+      }/transaction_receipt?transactionId=${mockPurchase.id}`
       beforeEach(() => {
         jest
           .spyOn(MoonPay.prototype, 'getTransactionReceiptUrl')
@@ -480,7 +483,7 @@ describe('when handling the completion of the purchase', () => {
     let moonPay: MoonPay
 
     beforeEach(() => {
-      moonPay = new MoonPay(mockConfig.moonPay)
+      moonPay = new MoonPay(mockConfig[NetworkGatewayType.MOON_PAY]!)
     })
 
     afterEach(() => {
@@ -907,11 +910,17 @@ describe('when handling the action signaling the opening of the fiat gateway wid
   let wallet: Wallet
   let wertOptions: WertOptions
   let identity: AuthIdentity
-  let signedMessage: string
+  let response: { signature: string; sessionId: string }
+
   describe('when it is the WERT gateway', () => {
     beforeEach(() => {
-      signedMessage = 'signedMessage'
-      wallet = {} as Wallet
+      response = {
+        signature: 'signedMessage',
+        sessionId: 'session-123'
+      }
+      wallet = {
+        address: '0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2'
+      } as Wallet
     })
 
     describe('and there is identity', () => {
@@ -919,6 +928,12 @@ describe('when handling the action signaling the opening of the fiat gateway wid
         identity = {} as AuthIdentity
       })
       describe('and the marketplace server api call succeeds', () => {
+        beforeEach(() => {
+          jest
+            .spyOn(MarketplaceAPI.prototype, 'signWertMessageAndCreateSession')
+            .mockResolvedValue(response)
+        })
+
         describe('and has all the required data to sign', () => {
           beforeEach(() => {
             wertOptions = {
@@ -932,17 +947,27 @@ describe('when handling the action signaling the opening of the fiat gateway wid
             return expectSaga(gatewaySaga)
               .put(openFiatGatewayWidgetSuccess())
               .provide([
-                [select(getData), [wallet]],
+                [select(getData), { address: wallet.address }],
                 [call(getIdentityOrRedirect), identity],
                 [
-                  matchers.call.fn(MarketplaceAPI.prototype.signWertMessage),
-                  signedMessage
+                  matchers.call.fn(
+                    MarketplaceAPI.prototype.signWertMessageAndCreateSession
+                  ),
+                  response
                 ]
               ])
               .dispatch(
                 openFiatGatewayWidgetRequest(FiatGateway.WERT, wertOptions)
               )
               .silentRun()
+              .then(() => {
+                expect(WertWidget).toHaveBeenCalledWith(
+                  expect.objectContaining({
+                    session_id: response.sessionId,
+                    signature: response.signature
+                  })
+                )
+              })
           })
         })
         describe('and does not have all the required data to sign', () => {
@@ -957,7 +982,7 @@ describe('when handling the action signaling the opening of the fiat gateway wid
                 )
               )
               .provide([
-                [select(getData), [wallet]],
+                [select(getData), { address: wallet.address }],
                 [call(getIdentityOrRedirect), identity]
               ])
               .dispatch(
@@ -978,13 +1003,15 @@ describe('when handling the action signaling the opening of the fiat gateway wid
             sc_input_data: '0x0'
           } as WertOptions
           ;(MarketplaceAPI.prototype
-            .signWertMessage as jest.Mock).mockRejectedValue({ message: error })
+            .signWertMessageAndCreateSession as jest.Mock).mockRejectedValue({
+            message: error
+          })
         })
         it('should put the failure action', () => {
           return expectSaga(gatewaySaga)
             .put(openFiatGatewayWidgetFailure(error))
             .provide([
-              [select(getData), [wallet]],
+              [select(getData), { address: wallet.address }],
               [call(getIdentityOrRedirect), identity]
             ])
             .dispatch(
@@ -996,7 +1023,6 @@ describe('when handling the action signaling the opening of the fiat gateway wid
     })
 
     describe('and there is no identity', () => {
-      let error: string
       beforeEach(() => {
         wertOptions = {
           commodity: 'MANA',
@@ -1004,14 +1030,12 @@ describe('when handling the action signaling the opening of the fiat gateway wid
           sc_address: '0x0',
           sc_input_data: '0x0'
         } as WertOptions
-        ;(MarketplaceAPI.prototype
-          .signWertMessage as jest.Mock).mockRejectedValue(error)
       })
       it('should put the failure action', () => {
         return expectSaga(gatewaySaga)
           .put(openFiatGatewayWidgetFailure(NO_IDENTITY_ERROR))
           .provide([
-            [select(getData), [wallet]],
+            [select(getData), { address: wallet.address }],
             [call(getIdentityOrRedirect), undefined]
           ])
           .dispatch(openFiatGatewayWidgetRequest(FiatGateway.WERT, wertOptions))

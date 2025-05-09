@@ -1,18 +1,21 @@
 import { AuthIdentity } from 'decentraland-crypto-fetch'
-import { WertMessageWithTarget } from '../modules/gateway/types'
+import { WertPayload } from '../modules/gateway/types'
 import { OrderResponse } from '../modules/gateway/transak/types'
 import { BaseClient } from './BaseClient'
 
 export class MarketplaceAPI extends BaseClient {
-  async signWertMessage(
-    message: WertMessageWithTarget,
+  async signWertMessageAndCreateSession(
+    body: WertPayload,
     identity: AuthIdentity
-  ): Promise<string> {
+  ): Promise<{ signature: string; sessionId: string }> {
     try {
-      const response = await this.fetch<string>('/v1/wert/sign', {
+      const response = await this.fetch<{
+        signature: string
+        sessionId: string
+      }>('/v1/wert/sign', {
         method: 'POST',
         identity,
-        body: JSON.stringify(message),
+        body: JSON.stringify(body),
         headers: {
           'Content-Type': 'application/json'
         }

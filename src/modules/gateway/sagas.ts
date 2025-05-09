@@ -62,7 +62,9 @@ import {
   GatewaySagasConfig,
   Purchase,
   PurchaseStatus,
-  WertMessage
+  WertMessage,
+  WertPayload,
+  WertSession
 } from './types'
 import { isManaPurchase, purchaseEventsChannel } from './utils'
 import { Wallet } from '../wallet/types'
@@ -140,30 +142,53 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
               commodity,
               commodity_amount,
               sc_address,
-              sc_input_data,
-              network
+              sc_input_data
             } = data
+
             if (commodity && commodity_amount && sc_address && sc_input_data) {
+              const { address } = wallet
+              const network = data.network || (isDev ? 'sepolia' : 'ethereum')
+
               const dataToSign: WertMessage = {
-                address: wallet.address,
+                address,
                 commodity,
                 commodity_amount,
-                network: network ? network : isDev ? 'sepolia' : 'ethereum',
+                network,
                 sc_address,
                 sc_input_data
               }
 
+              const session: WertSession = {
+                flow_type: 'simple_full_restrict',
+                commodity,
+                network,
+                wallet_address: address,
+                currency: 'USD'
+              }
+
+              const payload: WertPayload = {
+                message: dataToSign,
+                session,
+                target
+              }
+
               const marketplaceAPI = new MarketplaceAPI(marketplaceServerURL)
 
-              const signature: string = yield call(
-                [marketplaceAPI, 'signWertMessage'],
-                { ...dataToSign, target },
+              const response: {
+                signature: string
+                sessionId: string
+              } = yield call(
+                [marketplaceAPI, 'signWertMessageAndCreateSession'],
+                payload,
                 identity
               )
+
+              const { signature, sessionId } = response
 
               const wertWidget = new WertWidget({
                 ...data,
                 ...dataToSign,
+                session_id: sessionId,
                 signature,
                 listeners: {
                   loaded: onLoaded,
