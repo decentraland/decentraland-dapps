@@ -189,6 +189,7 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
                 ...data,
                 ...dataToSign,
                 session_id: sessionId,
+                origin: isDev ? 'https://sandbox.wert.io' : undefined,
                 signature,
                 listeners: {
                   loaded: onLoaded,
