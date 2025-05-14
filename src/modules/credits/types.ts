@@ -14,3 +14,9 @@ export type CreditsResponse = {
   credits: Credit[]
   totalCredits: number
 }
+
+export interface SeasonResponse {
+  id: number
+  week: number
+  isPaused: boolean
+}
