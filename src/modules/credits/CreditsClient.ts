@@ -22,29 +22,94 @@ export class CreditsClient extends BaseClient {
     }
   }
 
+  /**
+   * Creates an SSE connection with reconnection logic
+   * @param address - The user's address
+   * @param onMessage - Callback function for received messages
+   * @param onError - Callback function for errors
+   * @returns Object with close method to manually disconnect
+   */
   createSSEConnection(
     address: string,
     onMessage: (data: CreditsResponse) => void,
     onError: (error: Event) => void
-  ): EventSource {
-    const eventSource = new EventSource(
-      `${this.url}/users/${address}/credits/stream`
-    )
+  ): { close: () => void } {
+    let eventSource: EventSource | null = null
+    let retryCount = 0
+    let reconnectTimeout: number | null = null
+    const MAX_RETRIES = 5
+    const RETRY_DELAY_MS = 3000
 
-    eventSource.onmessage = event => {
-      try {
-        const data = JSON.parse(event.data) as CreditsResponse
-        onMessage(data)
-      } catch (error) {
-        console.error('Error parsing SSE event data:', error)
+    const connect = () => {
+      if (eventSource) {
+        // Close existing connection before creating a new one
+        eventSource.close()
+        eventSource = null
+      }
+
+      eventSource = new EventSource(
+        `${this.url}/users/${address}/credits/stream`
+      )
+
+      eventSource.onopen = () => {
+        // Reset retry count on successful connection
+        retryCount = 0
+        console.log('SSE connection established')
+      }
+
+      eventSource.onmessage = event => {
+        try {
+          const data = JSON.parse(event.data) as CreditsResponse
+          onMessage(data)
+        } catch (error) {
+          console.error('Error parsing SSE event data:', error)
+        }
+      }
+
+      eventSource.onerror = error => {
+        console.error('SSE connection error:', error)
+
+        // Close the connection
+        if (eventSource) {
+          eventSource.close()
+          eventSource = null
+        }
+
+        // Attempt to reconnect if under max retries
+        if (retryCount < MAX_RETRIES) {
+          retryCount++
+          console.log(
+            `Reconnecting SSE (attempt ${retryCount}/${MAX_RETRIES})...`
+          )
+          // Store timeout ID so we can cancel it if needed
+          reconnectTimeout = window.setTimeout(connect, RETRY_DELAY_MS)
+        } else {
+          console.error(
+            `Max SSE reconnection attempts (${MAX_RETRIES}) reached`
+          )
+          onError(error)
+        }
       }
     }
 
-    eventSource.onerror = error => {
-      console.error('SSE connection error:', error)
-      onError(error)
-    }
+    // Initial connection
+    connect()
 
-    return eventSource
+    // Return an object with a close method to allow manual disconnection
+    return {
+      close: () => {
+        // Clear any pending reconnection attempts
+        if (reconnectTimeout !== null) {
+          window.clearTimeout(reconnectTimeout)
+          reconnectTimeout = null
+        }
+
+        // Close the EventSource if it exists
+        if (eventSource) {
+          eventSource.close()
+          eventSource = null
+        }
+      }
+    }
   }
 }

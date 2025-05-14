@@ -131,7 +131,7 @@ export function* creditsSaga(options: { creditsClient: CreditsClient }) {
   }
 
   let sseConnectionTask: Task | null = null
-  let currentSSEConnection: EventSource | null = null
+  let currentSSEConnection: { close: () => void } | null = null
 
   function createCreditsEventChannel(
     address: string,
@@ -144,7 +144,7 @@ export function* creditsSaga(options: { creditsClient: CreditsClient }) {
       }
 
       // Create SSE connection
-      const eventSource = options.creditsClient.createSSEConnection(
+      const connection = options.creditsClient.createSSEConnection(
         address,
         (creditsData: CreditsResponse) => {
           emit(fetchCreditsSuccess(address, creditsData))
@@ -157,12 +157,12 @@ export function* creditsSaga(options: { creditsClient: CreditsClient }) {
       )
 
       // Store the connection for cleanup
-      currentSSEConnection = eventSource
+      currentSSEConnection = connection
 
       // Return unsubscribe function
       return () => {
-        if (eventSource) {
-          eventSource.close()
+        if (connection) {
+          connection.close()
           currentSSEConnection = null
         }
       }
