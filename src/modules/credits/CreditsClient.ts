@@ -1,5 +1,5 @@
 import { BaseClient, BaseClientConfig } from '../../lib'
-import { CreditsResponse } from './types'
+import { CreditsResponse, SeasonResponse } from './types'
 
 export class CreditsClient extends BaseClient {
   constructor(public readonly url: string, config?: BaseClientConfig) {
@@ -19,6 +19,20 @@ export class CreditsClient extends BaseClient {
     } catch (error) {
       console.error('Error fetching credits', error)
       return { credits: [], totalCredits: 0 }
+    }
+  }
+
+  /**
+   * Fetches the current season data
+   * @returns The season data
+   */
+  async fetchSeason(): Promise<SeasonResponse | null> {
+    try {
+      const response = await this.fetch<SeasonResponse>('/season')
+      return response
+    } catch (error) {
+      console.error('Error fetching season data', error)
+      return null
     }
   }
 
