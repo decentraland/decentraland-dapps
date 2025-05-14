@@ -27,55 +27,40 @@ export class CreditsClient extends BaseClient {
    * @param address - The user's address
    * @param onMessage - Callback function for received messages
    * @param onError - Callback function for errors
-   * @returns EventSource with auto-reconnection capabilities
+   * @returns Object with close method to manually disconnect
    */
   createSSEConnection(
     address: string,
     onMessage: (data: CreditsResponse) => void,
     onError: (error: Event) => void
-  ): EventSource {
+  ): { close: () => void } {
     let eventSource: EventSource | null = null
     let retryCount = 0
+    let reconnectTimeout: number | null = null
     const MAX_RETRIES = 5
     const RETRY_DELAY_MS = 3000
-
-    // Create a wrapper object that appears as an EventSource to TypeScript
-    const wrapper = {} as EventSource
 
     const connect = () => {
       if (eventSource) {
         // Close existing connection before creating a new one
         eventSource.close()
+        eventSource = null
       }
 
       eventSource = new EventSource(
         `${this.url}/users/${address}/credits/stream`
       )
 
-      // Copy all properties from the real EventSource to our wrapper
-      Object.defineProperties(
-        wrapper,
-        Object.getOwnPropertyDescriptors(eventSource)
-      )
-
-      eventSource.onopen = event => {
+      eventSource.onopen = () => {
         // Reset retry count on successful connection
         retryCount = 0
         console.log('SSE connection established')
-        // Forward the event if there's a listener on wrapper
-        if (wrapper.onopen) {
-          wrapper.onopen(event)
-        }
       }
 
       eventSource.onmessage = event => {
         try {
           const data = JSON.parse(event.data) as CreditsResponse
           onMessage(data)
-          // Forward the event if there's a listener on wrapper
-          if (wrapper.onmessage) {
-            wrapper.onmessage(event)
-          }
         } catch (error) {
           console.error('Error parsing SSE event data:', error)
         }
@@ -84,14 +69,10 @@ export class CreditsClient extends BaseClient {
       eventSource.onerror = error => {
         console.error('SSE connection error:', error)
 
-        // Forward the event if there's a listener on wrapper
-        if (wrapper.onerror && eventSource) {
-          wrapper.onerror(error)
-        }
-
         // Close the connection
         if (eventSource) {
           eventSource.close()
+          eventSource = null
         }
 
         // Attempt to reconnect if under max retries
@@ -100,7 +81,8 @@ export class CreditsClient extends BaseClient {
           console.log(
             `Reconnecting SSE (attempt ${retryCount}/${MAX_RETRIES})...`
           )
-          setTimeout(connect, RETRY_DELAY_MS)
+          // Store timeout ID so we can cancel it if needed
+          reconnectTimeout = window.setTimeout(connect, RETRY_DELAY_MS)
         } else {
           console.error(
             `Max SSE reconnection attempts (${MAX_RETRIES}) reached`
@@ -113,14 +95,21 @@ export class CreditsClient extends BaseClient {
     // Initial connection
     connect()
 
-    // Override the close method to handle our custom cleanup
-    wrapper.close = function() {
-      if (eventSource) {
-        eventSource.close()
-        eventSource = null
+    // Return an object with a close method to allow manual disconnection
+    return {
+      close: () => {
+        // Clear any pending reconnection attempts
+        if (reconnectTimeout !== null) {
+          window.clearTimeout(reconnectTimeout)
+          reconnectTimeout = null
+        }
+
+        // Close the EventSource if it exists
+        if (eventSource) {
+          eventSource.close()
+          eventSource = null
+        }
       }
     }
-
-    return wrapper
   }
 }
