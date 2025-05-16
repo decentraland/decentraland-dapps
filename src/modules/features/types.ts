@@ -49,5 +49,6 @@ export type StateWithFeatures = {
 export enum FeatureName {
   MAGIC_AUTO_SIGN = 'magic-auto-sign',
   CREDITS = 'credits',
-  USER_WALLETS = 'alfa-marketplace-credits'
+  USER_WALLETS = 'alfa-marketplace-credits',
+  LAUNCHER_LINKS = 'launcher-links'
 }

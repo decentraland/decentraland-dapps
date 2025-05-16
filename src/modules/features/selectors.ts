@@ -170,3 +170,29 @@ export const isCreditsFeatureEnabled = (
 
   return walletsAllowed.includes(address.toLowerCase())
 }
+
+export const getIsLauncherLinksFeatureEnabled = (state: StateWithFeatures) => {
+  const isLauncherLinksEnabled = getIsFeatureEnabled(
+    state,
+    ApplicationName.DAPPS,
+    FeatureName.LAUNCHER_LINKS
+  )
+
+  return isLauncherLinksEnabled
+}
+
+export const getLauncherLinksVariant = (state: StateWithFeatures) => {
+  if (!getIsLauncherLinksFeatureEnabled(state)) {
+    return undefined
+  }
+
+  const launcherLinks = getFeatureVariant(
+    state,
+    ApplicationName.DAPPS,
+    FeatureName.LAUNCHER_LINKS
+  )
+
+  return launcherLinks?.payload?.value
+    ? JSON.parse(launcherLinks.payload.value)
+    : undefined
+}

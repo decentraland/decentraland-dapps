@@ -18,6 +18,7 @@ import {
   switchNetworkRequest
 } from '../../modules/wallet/actions'
 import { getCredits } from '../../modules/credits/selectors'
+import { getLauncherLinksVariant } from '../../modules/features/selectors'
 import { RootDispatch } from '../../types'
 import { NavbarProps2, MapStateProps, MapDispatchProps } from './Navbar.types'
 import Navbar2 from './Navbar2'
@@ -37,7 +38,8 @@ const mapState = (state: any): MapStateProps => {
     isSigningIn: isConnecting(state),
     appChainId: getAppChainId(state),
     isSwitchingNetwork: isSwitchingNetwork(state),
-    walletError: getWalletError(state)
+    walletError: getWalletError(state),
+    cdnLinks: getLauncherLinksVariant(state)
   }
 }
 
