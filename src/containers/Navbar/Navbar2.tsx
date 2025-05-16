@@ -37,6 +37,7 @@ const Navbar2: React.FC<NavbarProps2> = ({
   docsUrl = 'https://docs.decentraland.org',
   enablePartialSupportAlert = true,
   walletError,
+  cdnLinks,
   ...props
 }: NavbarProps2) => {
   const expectedChainName = getChainName(appChainId)
@@ -183,6 +184,7 @@ const Navbar2: React.FC<NavbarProps2> = ({
                     }
                   : undefined
               }
+              cdnLinks={cdnLinks}
               onClickBalance={handleClickBalance}
               onClickNavbarItem={handleClickNavbarItem}
               onClickUserMenuItem={handleClickUserMenuItem}
