@@ -192,7 +192,12 @@ export const getLauncherLinksVariant = (state: StateWithFeatures) => {
     FeatureName.LAUNCHER_LINKS
   )
 
-  return launcherLinks?.payload?.value
-    ? JSON.parse(launcherLinks.payload.value)
-    : undefined
+  try {
+    return launcherLinks?.payload?.value
+      ? JSON.parse(launcherLinks.payload.value)
+      : undefined
+  } catch (error) {
+    console.error('Error parsing launcher links', error)
+    return undefined
+  }
 }
