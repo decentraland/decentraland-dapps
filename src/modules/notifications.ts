@@ -94,7 +94,7 @@ export class NotificationsAPI extends BaseClient {
     })
   }
 
-  async postEmailConfirmationCode(body: { address: string; code: string }) {
+  async postEmailConfirmationCode(body: { address: string; code: string, turnstileToken?: string, source?: string }) {
     return this.fetch('/confirm-email', {
       method: 'PUT',
       body: JSON.stringify(body),
