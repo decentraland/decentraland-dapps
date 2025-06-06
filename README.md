@@ -1718,4 +1718,3 @@ dispatch(stopCreditsSSE())
 ```
 
 The polling will automatically check if the credits feature is enabled before fetching credits, so there's no need for additional checks in your application code.
-
