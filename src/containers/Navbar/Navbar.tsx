@@ -24,6 +24,7 @@ import useNotifications from '../../hooks/useNotifications'
 
 const BASE_URL = getBaseUrl()
 
+/* DEPRECATED: please use Navbar2 instead */
 const Navbar: React.FC<NavbarProps> = ({
   appChainId,
   isSwitchingNetwork,
