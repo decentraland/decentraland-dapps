@@ -315,7 +315,7 @@ export class CreditsService {
     // Execute the transaction
     const tradePrice = this.getTradePrice(trade)
     const creditsValue = credits.reduce(
-      (acc, credit) => acc + parseInt(credit.amount),
+      (acc, credit) => acc + parseInt(credit.availableAmount),
       0
     )
     const whatUserHasToPay = BigInt(tradePrice) - BigInt(creditsValue)
