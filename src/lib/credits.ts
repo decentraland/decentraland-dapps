@@ -211,7 +211,7 @@ export class CreditsService {
     })
 
     const creditsValue = credits.reduce(
-      (acc, credit) => acc + parseInt(credit.amount),
+      (acc, credit) => acc + parseInt(credit.availableAmount),
       0
     )
     const whatUserHasToPay = BigInt(item.price) - BigInt(creditsValue)
@@ -414,7 +414,7 @@ export class CreditsService {
     })
 
     const creditsValue = credits.reduce(
-      (acc, credit) => acc + parseInt(credit.amount),
+      (acc, credit) => acc + parseInt(credit.availableAmount),
       0
     )
     const whatUserHasToPay = BigInt(order.price) - BigInt(creditsValue)
