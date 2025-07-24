@@ -68,6 +68,8 @@ export function isTrackable(action: AnyAction) {
 }
 
 export function getAnalytics() {
+  if (typeof window === 'undefined' || !window.analytics) return
+
   const userAgent = window.navigator.userAgent
 
   const isBot = isbot(userAgent)
@@ -152,7 +154,8 @@ export function hasSolanaWallet() {
   }
 
   const windowWallets = window as WindowWithWallets
-  return windowWallets.solana !== undefined || getSolanaWallets() !== undefined
+  const solanaWallets = getSolanaWallets()
+  return windowWallets.solana !== undefined || (solanaWallets !== undefined && solanaWallets.length > 0)
 }
 
 export function getSolanaWallets() {
@@ -209,6 +212,11 @@ const createWalletEnrichmentMiddleware = (): MiddlewareFunction => {
 
 // Global flag to ensure middleware is only registered once
 let globalMiddlewareRegistered = false
+
+// Export for testing purposes only
+export const resetMiddlewareRegistration = () => {
+  globalMiddlewareRegistered = false
+}
 
 const registerWalletMiddleware = () => {
   if (typeof window === 'undefined' || !window.analytics) return
