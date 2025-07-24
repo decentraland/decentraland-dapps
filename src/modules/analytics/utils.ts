@@ -152,21 +152,7 @@ export function hasSolanaWallet() {
   }
 
   const windowWallets = window as WindowWithWallets
-
-  return (
-    windowWallets.solana !== undefined ||
-    windowWallets.sollet !== undefined ||
-    windowWallets.braveSolana?.isBraveWallet === true ||
-    windowWallets.solong !== undefined ||
-    windowWallets.exodus?.solana !== undefined ||
-    Boolean(windowWallets.glowSolana) ||
-    windowWallets.coin98 !== undefined ||
-    windowWallets.coinbaseSolana !== undefined ||
-    windowWallets.clover_solana !== undefined ||
-    windowWallets.Slope !== undefined ||
-    windowWallets.huobiWallet?.isHuobiWallet === true ||
-    typeof windowWallets?.nightly?.solana !== 'undefined'
-  )
+  return windowWallets.solana !== undefined || getSolanaWallets() !== undefined
 }
 
 export function getSolanaWallets() {
