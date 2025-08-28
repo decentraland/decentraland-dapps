@@ -6,3 +6,5 @@ cjs
 .nyc_output
 coverage
 .vscode
+.claude
+.cursor
