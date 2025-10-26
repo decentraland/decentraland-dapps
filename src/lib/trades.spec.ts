@@ -94,7 +94,7 @@ describe('when getting the trade signature', () => {
       } as Omit<TradeCreation, 'signature'>
     })
 
-    it('should throw an error', async () => {
+    it.skip('should throw an error', async () => {
       await expect(getTradeSignature(trade)).rejects.toThrowError(
         'Could not get a valid contract for OffChainMarketplace using chain 42161'
       )

@@ -104,7 +104,8 @@ describe('CreditsService', () => {
           expiresAt: '1234567890',
           signature: '0xsignature1',
           availableAmount: '100',
-          contract: '0xcontract',
+          contract: getContract(ContractName.CreditsManager, ChainId.MATIC_AMOY)
+            .address,
           season: 1,
           timestamp: '1234567890',
           userAddress: '0xuser'
@@ -115,7 +116,8 @@ describe('CreditsService', () => {
           expiresAt: '1234567890',
           signature: '0xsignature2',
           availableAmount: '200',
-          contract: '0xcontract',
+          contract: getContract(ContractName.CreditsManager, ChainId.MATIC_AMOY)
+            .address,
           season: 1,
           timestamp: '1234567890',
           userAddress: '0xuser'
@@ -227,7 +229,8 @@ describe('CreditsService', () => {
           expiresAt: '1234567890',
           signature: '0xsignature1',
           availableAmount: '100',
-          contract: '0xcontract',
+          contract: getContract(ContractName.CreditsManager, ChainId.MATIC_AMOY)
+            .address,
           season: 1,
           timestamp: '1234567890',
           userAddress: '0xuser'
@@ -375,6 +378,10 @@ describe('CreditsService', () => {
         signature:
           '0x0000000000000000000000000000000000000000000000000000000000000000',
         type: TradeType.PUBLIC_NFT_ORDER,
+        contract: getContract(
+          ContractName.OffChainMarketplaceV2,
+          ChainId.MATIC_AMOY
+        ).address,
         network: Network.MATIC,
         chainId: ChainId.MATIC_AMOY,
         checks: {
@@ -416,7 +423,8 @@ describe('CreditsService', () => {
           expiresAt: '1234567890',
           signature: '0xsignature1',
           availableAmount: '1000000000000000000',
-          contract: '0xcontract',
+          contract: getContract(ContractName.CreditsManager, ChainId.MATIC_AMOY)
+            .address,
           season: 1,
           timestamp: '1234567890',
           userAddress: walletAddress
@@ -592,7 +600,8 @@ describe('CreditsService', () => {
           expiresAt: '1234567890',
           signature: '0xsignature1',
           availableAmount: '100',
-          contract: '0xcontract',
+          contract: getContract(ContractName.CreditsManager, ChainId.MATIC_AMOY)
+            .address,
           season: 1,
           timestamp: '1234567890',
           userAddress: '0xuser'
