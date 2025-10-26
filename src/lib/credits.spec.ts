@@ -441,7 +441,7 @@ describe('CreditsService', () => {
         creditsSignatures: ['0xsignature1'],
         externalCall: {
           target: getContract(
-            ContractName.OffChainMarketplace,
+            ContractName.OffChainMarketplaceV2,
             ChainId.MATIC_AMOY
           ).address,
           selector: '0x961a547e',

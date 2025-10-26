@@ -1,6 +1,10 @@
 import { Trade, TradeCreation } from '@dcl/schemas'
 import { AuthIdentity } from 'decentraland-crypto-fetch'
-import { ContractName, getContract } from 'decentraland-transactions'
+import {
+  ContractName,
+  getContract,
+  getContractName
+} from 'decentraland-transactions'
 import { TradesAPI } from './api'
 import { getOnChainTrade } from '../../lib/trades'
 import { sendTransaction } from '../wallet/utils'
@@ -28,24 +32,16 @@ export class TradeService {
   }
 
   async accept(trade: Trade, sentBeneficiaryAddress: string) {
-    const offchainMarketplaceContract = getContract(
-      ContractName.OffChainMarketplace,
-      trade.chainId
-    )
+    const contractName = getContractName(trade.contract)
+    const contract = getContract(contractName, trade.chainId)
     const tradeToAccept = getOnChainTrade(trade, sentBeneficiaryAddress)
-    return sendTransaction(offchainMarketplaceContract, 'accept', [
-      tradeToAccept
-    ])
+    return sendTransaction(contract, 'accept', [tradeToAccept])
   }
 
   async cancel(trade: Trade, sentBeneficiaryAddress: string) {
-    const offchainMarketplaceContract = getContract(
-      ContractName.OffChainMarketplace,
-      trade.chainId
-    )
+    const contractName = trade.contract as ContractName
+    const contract = getContract(contractName, trade.chainId)
     const tradeToCancel = getOnChainTrade(trade, sentBeneficiaryAddress)
-    return sendTransaction(offchainMarketplaceContract, 'cancelSignature', [
-      tradeToCancel
-    ])
+    return sendTransaction(contract, 'cancelSignature', [tradeToCancel])
   }
 }
