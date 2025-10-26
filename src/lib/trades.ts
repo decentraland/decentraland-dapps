@@ -59,7 +59,7 @@ export async function getOffChainMarketplaceContract(chainId: ChainId) {
     throw new Error('Could not get connected provider')
   }
   const { address, abi } = getContract(
-    ContractName.OffChainMarketplace,
+    ContractName.OffChainMarketplaceV2,
     chainId
   )
   const instance = new ethers.Contract(
@@ -146,7 +146,7 @@ export async function getTradeSignature(
   trade: Omit<TradeCreation, 'signature'>
 ) {
   const marketplaceContract: ContractData = getContract(
-    ContractName.OffChainMarketplace,
+    ContractName.OffChainMarketplaceV2,
     trade.chainId
   )
 
