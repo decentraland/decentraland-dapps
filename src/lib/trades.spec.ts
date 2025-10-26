@@ -117,7 +117,7 @@ describe('when getting the trade signature', () => {
         .mockImplementation(() => Promise.resolve(signer))
       signerAddress = (await signer.getAddress()).toLowerCase()
       offchainMarketplaceContract = getContract(
-        ContractName.OffChainMarketplace,
+        ContractName.OffChainMarketplaceV2,
         ChainId.ETHEREUM_SEPOLIA
       )
 
@@ -160,7 +160,7 @@ describe('when getting the trade signature', () => {
         32
       )
       offchainMarketplaceContract = getContract(
-        ContractName.OffChainMarketplace,
+        ContractName.OffChainMarketplaceV2,
         trade.chainId
       )
       domain = {
