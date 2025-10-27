@@ -93,8 +93,6 @@ export type MoonPayConfig = {
 
 export type TransakConfig = {
   apiBaseUrl: string
-  key: string
-  env: string
   pollingDelay?: number
   pusher: {
     appKey: string

@@ -275,14 +275,16 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
 
           const address: string = yield select(getAddress)
           const customizationOptions: Partial<CustomizationOptions> = {
-            defaultCryptoCurrency: 'MANA',
-            cyptoCurrencyList: 'MANA',
             fiatCurrency: '', // INR/GBP
             email: '', // Your customer's email address
-            redirectURL: ''
+            redirectURL: '',
+            walletAddress: address
           }
-          const transak = new Transak(transakConfig, customizationOptions)
-          transak.openWidget(address, network)
+          const transak = new Transak(transakConfig)
+          yield call([transak, 'openWidget'], {
+            network,
+            ...customizationOptions
+          })
           break
         case NetworkGatewayType.MOON_PAY:
           if (!moonPayConfig) {
@@ -370,18 +372,16 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
             }
           }
 
-          const marketplaceAPI = new MarketplaceAPI(transakConfig.apiBaseUrl)
-          const transak = new Transak(transakConfig, {}, identity)
+          const marketplaceAPI = new MarketplaceAPI(transakConfig.apiBaseUrl, {
+            identity
+          })
+          const transak = new Transak(transakConfig, identity)
           let statusHasChanged = false
 
           while (!statusHasChanged) {
             const {
               data: { status, transactionHash, errorMessage }
-            }: OrderResponse = yield call(
-              [marketplaceAPI, 'getOrder'],
-              id,
-              identity
-            )
+            }: OrderResponse = yield call([marketplaceAPI, 'getOrder'], id)
             const newStatus: PurchaseStatus = yield call(
               [transak, transak.getPurchaseStatus],
               status
