@@ -191,7 +191,7 @@ export class Transak {
   async openWidget(
     customizationOptions: Partial<CustomizationOptions> & { network: Network }
   ) {
-    const { network } = customizationOptions
+    const { network, widgetHeight, widgetWidth } = customizationOptions
     const transakNetwork = network === Network.MATIC ? 'polygon' : 'ethereum'
 
     const widgetUrl = await this.marketplaceAPI.getTransakWidgetUrl({
@@ -202,8 +202,8 @@ export class Transak {
     this.sdk = new TransakSDK({
       widgetUrl,
       referrer: window.location.origin,
-      widgetHeight: '650px',
-      widgetWidth: '450px'
+      widgetHeight: widgetHeight || '650px',
+      widgetWidth: widgetWidth || '450px'
     })
 
     this.suscribeToEvents(network)
