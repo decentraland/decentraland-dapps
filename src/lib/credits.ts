@@ -11,7 +11,8 @@ import {
 import {
   ContractData,
   ContractName,
-  getContract
+  getContract,
+  getContractName
 } from 'decentraland-transactions'
 import { Credit } from '../modules/credits/types'
 import { sendTransaction } from '../modules/wallet/utils'
@@ -63,11 +64,9 @@ export class CreditsService {
     creditsData: CreditsData[]
     creditsSignatures: string[]
   } {
+    const contractName = getContractName(credits[0].contract) // there can only be one contract in the credits array
     // Get the CreditsManager contract
-    const contract = getContract(
-      ContractName.CreditsManager,
-      chainId as ChainId
-    )
+    const contract = getContract(contractName, chainId as ChainId)
 
     // Prepare the credits data
     const creditsData = credits.map(credit => {
@@ -279,10 +278,10 @@ export class CreditsService {
       creditsData,
       creditsSignatures
     } = this.prepareCreditsData(credits, trade.chainId)
-
+    const offchainMarketplaceName = getContractName(trade.contract)
     // Get the OffChainMarketplace contract address
     const marketplaceContract = getContract(
-      ContractName.OffChainMarketplace,
+      offchainMarketplaceName,
       trade.chainId
     )
     const marketplaceAddress = marketplaceContract.address
