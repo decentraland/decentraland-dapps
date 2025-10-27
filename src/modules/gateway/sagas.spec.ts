@@ -70,8 +70,6 @@ const mockConfig: GatewaySagasConfig = {
   },
   [NetworkGatewayType.TRANSAK]: {
     apiBaseUrl: 'http://transak-base.url.xyz',
-    key: 'transak-key',
-    env: 'TEST',
     pusher: {
       appKey: 'appKey',
       appCluster: 'appCluster'
@@ -201,8 +199,7 @@ const mockTransaction: MoonPayTransaction = {
 
 const mockTransakOrderResponse: OrderResponse = {
   meta: {
-    orderId: '816374b8-11fd-4ec4-be2d-3936de24d9c2',
-    apiKey: mockConfig[NetworkGatewayType.TRANSAK]!.key
+    orderId: '816374b8-11fd-4ec4-be2d-3936de24d9c2'
   },
   data: {
     id: '816374b8-11fd-4ec4-be2d-3936de24d9c2',
@@ -397,7 +394,9 @@ describe('when handling the request to open the MANA-FIAT gateway', () => {
     })
 
     it('should init its SDK and put the success action', () => {
-      jest.spyOn(Transak.prototype, 'openWidget').mockImplementation(() => {})
+      jest
+        .spyOn(Transak.prototype, 'openWidget')
+        .mockImplementation(() => Promise.resolve())
 
       return expectSaga(gatewaySaga)
         .provide([[select(getAddress), mockAddress]])
@@ -410,10 +409,13 @@ describe('when handling the request to open the MANA-FIAT gateway', () => {
         .put(openManaFiatGatewaySuccess())
         .silentRun()
         .then(() => {
-          expect(Transak.prototype.openWidget).toHaveBeenCalledWith(
-            mockAddress,
-            Network.ETHEREUM
-          )
+          expect(Transak.prototype.openWidget).toHaveBeenCalledWith({
+            network: Network.ETHEREUM,
+            fiatCurrency: '',
+            email: '',
+            redirectURL: '',
+            walletAddress: mockAddress
+          })
         })
     })
   })

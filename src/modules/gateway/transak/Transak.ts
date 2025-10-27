@@ -1,17 +1,13 @@
-import {
-  Transak as TransakSDK,
-  TransakConfig as TransakSDKConfig
-} from '@transak/transak-sdk'
+import { Transak as TransakSDK } from '@transak/transak-sdk'
 import { AuthIdentity } from 'decentraland-crypto-fetch'
 import Pusher from 'pusher-js'
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui'
-import { BaseAPI } from '../../../lib/api'
+import { MarketplaceAPI } from '../../../lib/marketplaceApi'
 import { TransakConfig, Purchase, PurchaseStatus } from '../types'
 import { purchaseEventsChannel } from '../utils'
 import {
   CustomizationOptions,
-  DefaultCustomizationOptions,
   OrderData,
   OrderResponse,
   TradeType,
@@ -22,29 +18,19 @@ import {
 const PURCHASE_EVENT = 'Purchase status change'
 
 export class Transak {
-  private readonly config: TransakConfig
-  private readonly customizationOptions: Partial<CustomizationOptions>
   private readonly pusher: Pusher
-  private readonly transakAPI: BaseAPI
-  private readonly identity: AuthIdentity | undefined
+  private readonly marketplaceAPI: MarketplaceAPI
   private sdk: TransakSDK
 
-  constructor(
-    config: TransakConfig,
-    customizationOptions?: Partial<CustomizationOptions>,
-    identity?: AuthIdentity
-  ) {
+  constructor(config: TransakConfig, identity?: AuthIdentity) {
     const {
       apiBaseUrl,
       pusher: { appCluster, appKey }
     } = config
-    this.config = config
-    this.customizationOptions = customizationOptions || {}
     this.pusher = new Pusher(appKey, {
       cluster: appCluster
     })
-    this.transakAPI = new BaseAPI(apiBaseUrl)
-    this.identity = identity
+    this.marketplaceAPI = new MarketplaceAPI(apiBaseUrl, { identity })
   }
 
   /**
@@ -110,22 +96,7 @@ export class Transak {
     }[status]
   }
 
-  private defaultCustomizationOptions(
-    address: string
-  ): DefaultCustomizationOptions {
-    return {
-      apiKey: this.config.key, // Your API Key
-      environment: (this.config.env ||
-        'STAGING') as TransakSDKConfig['environment'], // STAGING/PRODUCTION
-      networks: 'ethereum,matic',
-      walletAddress: address, // Your customer's wallet address
-      hostURL: window.location.origin,
-      widgetHeight: '650px',
-      widgetWidth: '450px'
-    }
-  }
-
-  getItemIdFromUrl(url: string): string | null {
+  getItemIdFromUrl(url: string): string | undefined {
     const itemRegex = /\/items\/(\d+)/
     const itemMatch = url.match(itemRegex)
 
@@ -133,10 +104,10 @@ export class Transak {
       return itemMatch[1] // Return the item id
     }
 
-    return null // Return null if no item id is found
+    return undefined // Return null if no item id is found
   }
 
-  getTokenIdFromUrl(url: string): string | null {
+  getTokenIdFromUrl(url: string): string | undefined {
     const tokenRegex = /\/tokens\/(\d+)/
     const tokenMatch = url.match(tokenRegex)
 
@@ -144,7 +115,7 @@ export class Transak {
       return tokenMatch[1] // Return the token id
     }
 
-    return null // Return null if no token id is found
+    return undefined // Return null if no token id is found
   }
 
   /**
@@ -217,20 +188,24 @@ export class Transak {
    * @param address - Address of the connected wallet.
    * @param network - Network in which the transaction will be done.
    */
-  openWidget(address: string, network: Network) {
+  async openWidget(
+    customizationOptions: Partial<CustomizationOptions> & { network: Network }
+  ) {
+    const { network, widgetHeight, widgetWidth, ...rest } = customizationOptions
     const transakNetwork = network === Network.MATIC ? 'polygon' : 'ethereum'
 
-    const customizationOptions = {
-      ...this.defaultCustomizationOptions(address),
-      ...this.customizationOptions
-    }
-    const config = {
-      ...customizationOptions,
-      defaultNetwork: transakNetwork,
-      walletAddress: address,
-      networks: transakNetwork
-    }
-    this.sdk = new TransakSDK(config) as TransakSDK
+    const widgetUrl = await this.marketplaceAPI.getTransakWidgetUrl({
+      ...rest,
+      defaultNetwork: transakNetwork
+    })
+
+    this.sdk = new TransakSDK({
+      widgetUrl,
+      referrer: window.location.origin,
+      widgetHeight: widgetHeight || '650px',
+      widgetWidth: widgetWidth || '450px'
+    })
+
     this.suscribeToEvents(network)
     this.sdk.init()
   }
@@ -241,15 +216,6 @@ export class Transak {
    * @param orderId - Transak Order ID.
    */
   async getOrder(orderId: string): Promise<OrderResponse> {
-    return await this.transakAPI.request(
-      'GET',
-      `/transak/orders/${orderId}`,
-      { identity: this.identity },
-      {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }
-    )
+    return await this.marketplaceAPI.getOrder(orderId)
   }
 }

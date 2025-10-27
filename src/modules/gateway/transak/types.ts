@@ -1,5 +1,3 @@
-import { TransakConfig } from '@transak/transak-sdk'
-
 export enum WebSocketEvents {
   ORDER_PAYMENT_VERIFYING = 'ORDER_PAYMENT_VERIFYING',
   ORDER_PROCESSING = 'ORDER_PROCESSING',
@@ -30,15 +28,10 @@ export enum ProductsAvailed {
 }
 
 export type CustomizationOptions = {
-  apiKey: string // Your API Key
-  environment: TransakConfig['environment'] // PRODUCTION/STAGING
-  networks: string
-  walletAddress: string // Your customer's wallet address
-  hostURL: string
+  defaultNetwork: string
+  walletAddress?: string // Your customer's wallet address
   widgetHeight: string
   widgetWidth: string
-  defaultCryptoCurrency?: 'MANA'
-  cyptoCurrencyList?: 'MANA'
   fiatCurrency?: string
   email?: string // Your customer's email address
   redirectURL?: string
@@ -46,18 +39,20 @@ export type CustomizationOptions = {
   tradeType?: TradeType // Can be primary in case of minting and secondary in case of secondary sale
   productsAvailed?: ProductsAvailed // Would be BUY as NFT checkout is a special case of on ramping
   isNFT?: boolean // Will be true in case the bought assset is an NFT
+  contractId?: string
+  estimatedGasLimit?: number
+  nftData?: {
+    imageURL: string
+    nftName: string
+    collectionAddress: string
+    tokenID: string[]
+    price: number[]
+    quantity: number
+    // 'ERC721' | 'ERC1155'
+    nftType: string
+  }[]
+  calldata?: string
 }
-
-export type DefaultCustomizationOptions = Pick<
-  CustomizationOptions,
-  | 'apiKey'
-  | 'environment'
-  | 'networks'
-  | 'walletAddress'
-  | 'hostURL'
-  | 'widgetHeight'
-  | 'widgetWidth'
->
 
 export type OrderData = {
   eventName: string
@@ -98,7 +93,6 @@ export type OrderData = {
 export type OrderResponse = {
   meta: {
     orderId: string
-    apiKey: string
   }
   data: Pick<OrderData['status'], 'id' | 'status' | 'transactionHash'> & {
     errorMessage: string | null

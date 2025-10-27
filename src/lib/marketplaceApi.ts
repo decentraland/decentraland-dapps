@@ -1,6 +1,9 @@
 import { AuthIdentity } from 'decentraland-crypto-fetch'
 import { WertPayload } from '../modules/gateway/types'
-import { OrderResponse } from '../modules/gateway/transak/types'
+import {
+  CustomizationOptions as TransakCustomizationOptions,
+  OrderResponse
+} from '../modules/gateway/transak/types'
 import { BaseClient } from './BaseClient'
 
 export class MarketplaceAPI extends BaseClient {
@@ -30,12 +33,27 @@ export class MarketplaceAPI extends BaseClient {
    *
    * @param orderId - Transak Order ID.
    */
-  async getOrder(
-    orderId: string,
-    identity: AuthIdentity
-  ): Promise<OrderResponse> {
-    return await this.fetch<OrderResponse>(`/v1/transak/orders/${orderId}`, {
-      identity
+  async getOrder(orderId: string): Promise<OrderResponse> {
+    return this.fetch<OrderResponse>(`/v1/transak/orders/${orderId}`)
+  }
+
+  /**
+   * Given the customization options, returns the widget url for the Transak widget.
+   *
+   * @param customizationOptions - Customization options for the Transak widget.
+   */
+  async getTransakWidgetUrl(
+    customizationOptions: Omit<
+      TransakCustomizationOptions,
+      'widgetHeight' | 'widgetWidth'
+    >
+  ): Promise<string> {
+    return this.fetch<string>(`/v1/transak/widget-url`, {
+      method: 'post',
+      body: JSON.stringify(customizationOptions),
+      headers: {
+        'Content-Type': 'application/json'
+      }
     })
   }
 }

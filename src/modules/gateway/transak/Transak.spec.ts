@@ -16,7 +16,12 @@ import {
   Purchase,
   PurchaseStatus
 } from '../types'
-import { OrderData, TradeType, TransakOrderStatus } from './types'
+import {
+  CustomizationOptions,
+  OrderData,
+  TradeType,
+  TransakOrderStatus
+} from './types'
 
 jest.mock('../../../lib/eth')
 
@@ -52,8 +57,6 @@ const mockConfig: GatewaySagasConfig = {
   },
   [NetworkGatewayType.TRANSAK]: {
     apiBaseUrl: 'http://transak-base.url.xyz',
-    key: 'transak-key',
-    env: 'TEST',
     pusher: {
       appKey: 'appKey',
       appCluster: 'appCluster'
@@ -100,8 +103,7 @@ const mockOrderDataWithNftAssetInfo = {
     isNFTOrder: true,
     nftAssetInfo: {
       collection: 'contractAddress',
-      tokenId: '123',
-      tradeType: TradeType.PRIMARY
+      tokenId: ['123']
     }
   }
 }
@@ -123,7 +125,7 @@ const mockNftPurchase: NFTPurchase = {
   nft: {
     contractAddress: 'contractAddress',
     tokenId: '123',
-    itemId: null,
+    itemId: undefined,
     tradeType: TradeType.SECONDARY,
     cryptoAmount: 10
   }
@@ -135,7 +137,7 @@ describe('when interacting with Transak', () => {
   let transak: Transak
 
   beforeEach(() => {
-    transak = new Transak(mockConfig.transak)
+    transak = new Transak(mockConfig[NetworkGatewayType.TRANSAK]!)
     mockGetChainIdByNetwork.mockReturnValue(ChainId.ETHEREUM_GOERLI)
   })
 
@@ -188,7 +190,7 @@ describe('when interacting with Transak', () => {
           }
         })
       })
-      describe('when it belongs to the primary market', () => {
+      describe('when it belongs to the secondary market', () => {
         beforeEach(() => {
           Object.defineProperty(window, 'location', {
             value: {
@@ -198,7 +200,7 @@ describe('when interacting with Transak', () => {
           })
         })
 
-        it('should put a new message in the channel signaling the set of the purchase with the nft info and the item id', () => {
+        it('should put a new message in the channel signaling the set of the purchase with the nft info and the token id', () => {
           transak.emitPurchaseEvent(
             mockOrderDataWithNftAssetInfo.status,
             Network.ETHEREUM
@@ -221,13 +223,7 @@ describe('when interacting with Transak', () => {
         })
         it('should put a new message in the channel signaling the set of the purchase with the nft info and the item id', () => {
           transak.emitPurchaseEvent(
-            {
-              ...mockOrderDataWithNftAssetInfo.status,
-              nftAssetInfo: {
-                ...mockOrderDataWithNftAssetInfo.status.nftAssetInfo,
-                tradeType: TradeType.PRIMARY
-              }
-            },
+            mockOrderDataWithNftAssetInfo.status,
             Network.ETHEREUM
           )
           return expectSaga(gatewaySaga)
@@ -237,7 +233,7 @@ describe('when interacting with Transak', () => {
                 amount: 1,
                 nft: {
                   ...mockNftPurchase.nft,
-                  tokenId: null,
+                  tokenId: undefined,
                   itemId: '234',
                   tradeType: TradeType.PRIMARY
                 }
@@ -250,12 +246,29 @@ describe('when interacting with Transak', () => {
   })
 
   describe('when opening the widget', () => {
+    let getTransakWidgetUrlSpy: jest.SpyInstance<
+      Promise<string>,
+      [Omit<CustomizationOptions, 'widgetHeight' | 'widgetWidth'>]
+    >
+    const mockWidgetUrl = 'https://transak-widget.url'
+
     beforeEach(() => {
       initMock = jest.fn()
+      getTransakWidgetUrlSpy = jest
+        .spyOn(transak['marketplaceAPI'], 'getTransakWidgetUrl')
+        .mockResolvedValue(mockWidgetUrl)
     })
 
-    it('should call the method init from the Transak SDK', () => {
-      transak.openWidget(mockAddress, Network.ETHEREUM)
+    it('should get the widget url and call the init method from the Transak SDK', async () => {
+      await transak.openWidget({
+        network: Network.ETHEREUM,
+        walletAddress: mockAddress
+      })
+
+      expect(getTransakWidgetUrlSpy).toHaveBeenCalledWith({
+        walletAddress: mockAddress,
+        defaultNetwork: 'ethereum'
+      })
       expect(initMock).toHaveBeenCalled()
     })
   })
