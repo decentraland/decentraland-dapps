@@ -1,10 +1,6 @@
 import { Trade, TradeCreation } from '@dcl/schemas'
 import { AuthIdentity } from 'decentraland-crypto-fetch'
-import {
-  ContractName,
-  getContract,
-  getContractName
-} from 'decentraland-transactions'
+import { getContract, getContractName } from 'decentraland-transactions'
 import { TradesAPI } from './api'
 import { getOnChainTrade } from '../../lib/trades'
 import { sendTransaction } from '../wallet/utils'
