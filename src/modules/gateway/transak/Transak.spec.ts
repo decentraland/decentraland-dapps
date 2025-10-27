@@ -266,7 +266,6 @@ describe('when interacting with Transak', () => {
       })
 
       expect(getTransakWidgetUrlSpy).toHaveBeenCalledWith({
-        network: Network.ETHEREUM,
         walletAddress: mockAddress,
         defaultNetwork: 'ethereum'
       })
