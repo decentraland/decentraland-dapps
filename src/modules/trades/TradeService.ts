@@ -39,7 +39,7 @@ export class TradeService {
   }
 
   async cancel(trade: Trade, sentBeneficiaryAddress: string) {
-    const contractName = trade.contract as ContractName
+    const contractName = getContractName(trade.contract)
     const contract = getContract(contractName, trade.chainId)
     const tradeToCancel = getOnChainTrade(trade, sentBeneficiaryAddress)
     return sendTransaction(contract, 'cancelSignature', [tradeToCancel])
