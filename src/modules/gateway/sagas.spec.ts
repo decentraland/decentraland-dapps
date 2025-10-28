@@ -411,9 +411,6 @@ describe('when handling the request to open the MANA-FIAT gateway', () => {
         .then(() => {
           expect(Transak.prototype.openWidget).toHaveBeenCalledWith({
             network: Network.ETHEREUM,
-            fiatCurrency: '',
-            email: '',
-            redirectURL: '',
             walletAddress: mockAddress
           })
         })
