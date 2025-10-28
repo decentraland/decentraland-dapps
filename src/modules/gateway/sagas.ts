@@ -275,9 +275,6 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
 
           const address: string = yield select(getAddress)
           const customizationOptions: Partial<CustomizationOptions> = {
-            fiatCurrency: '', // INR/GBP
-            email: '', // Your customer's email address
-            redirectURL: '',
             walletAddress: address
           }
           const transak = new Transak(transakConfig)
