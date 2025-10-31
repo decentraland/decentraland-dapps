@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Navbar as NavbarComponent } from 'decentraland-ui2'
 import { NotificationLocale } from 'decentraland-ui/dist/components/Notifications/types'
 import { ChainId, getChainName } from '@dcl/schemas/dist/dapps/chain-id'
@@ -23,6 +23,11 @@ import {
 import { NavbarProps2 } from './Navbar.types'
 import { NAVBAR_CLICK_EVENT } from './constants'
 import useNotifications from '../../hooks/useNotifications'
+import useSignInIdentity from '../../hooks/useSinginIdentity'
+import {
+  getCDNRelease,
+  CDNSource
+} from 'decentraland-ui2/dist/modules/cdnReleases'
 import { NavbarContainer } from './Navbar2.styled'
 import { ethers } from 'ethers'
 
@@ -38,7 +43,6 @@ const Navbar2: React.FC<NavbarProps2> = ({
   enablePartialSupportAlert = true,
   walletError,
   cdnLinks,
-  identityId,
   hideSignInButton,
   ...props
 }: NavbarProps2) => {
@@ -56,6 +60,8 @@ const Navbar2: React.FC<NavbarProps2> = ({
     handleOnChangeModalTab,
     handleRenderProfile
   } = useNotifications(identity, withNotifications || false)
+
+  const { identityId, createIdentityId } = useSignInIdentity(identity)
 
   const handleSwitchNetwork = useCallback(() => {
     props.onSwitchNetwork(appChainId)
@@ -161,6 +167,34 @@ const Navbar2: React.FC<NavbarProps2> = ({
       }
     : undefined
 
+  // Create identityId if we have identity and authChain
+  useEffect(() => {
+    if (
+      identity &&
+      !identityId &&
+      identity.authChain &&
+      identity.ephemeralIdentity
+    ) {
+      createIdentityId({
+        authChain: identity.authChain,
+        ephemeralIdentity: identity.ephemeralIdentity
+      }).catch(error => {
+        console.error('Failed to create identity ID:', error)
+      })
+    }
+  }, [identity, identityId, createIdentityId])
+
+  // Generate CDN links using the identityId (from props or generated)
+  const generatedCdnLinks = useMemo(() => {
+    return identityId
+      ? getCDNRelease(CDNSource.AUTO_SIGNING, identityId)
+      : getCDNRelease(CDNSource.LAUNCHER)
+  }, [identityId])
+
+  const finalCdnLinks =
+    cdnLinks ||
+    (generatedCdnLinks as Record<string, Record<string, string>> | undefined)
+
   return (
     <NavbarContainer>
       <ChainProvider>
@@ -186,8 +220,8 @@ const Navbar2: React.FC<NavbarProps2> = ({
                     }
                   : undefined
               }
-              cdnLinks={cdnLinks}
-              identityId={identityId}
+              cdnLinks={finalCdnLinks}
+              identityId={identityId || undefined}
               hideSignInButton={hideSignInButton}
               onClickBalance={handleClickBalance}
               onClickNavbarItem={handleClickNavbarItem}
