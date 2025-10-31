@@ -38,6 +38,8 @@ const Navbar2: React.FC<NavbarProps2> = ({
   enablePartialSupportAlert = true,
   walletError,
   cdnLinks,
+  identityId,
+  hideSignInButton,
   ...props
 }: NavbarProps2) => {
   const expectedChainName = getChainName(appChainId)
@@ -185,6 +187,8 @@ const Navbar2: React.FC<NavbarProps2> = ({
                   : undefined
               }
               cdnLinks={cdnLinks}
+              identityId={identityId}
+              hideSignInButton={hideSignInButton}
               onClickBalance={handleClickBalance}
               onClickNavbarItem={handleClickNavbarItem}
               onClickUserMenuItem={handleClickUserMenuItem}
