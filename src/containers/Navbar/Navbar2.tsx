@@ -25,7 +25,7 @@ import { NAVBAR_CLICK_EVENT } from './constants'
 import useNotifications from '../../hooks/useNotifications'
 import { NavbarContainer } from './Navbar2.styled'
 import { ethers } from 'ethers'
-import { getIdentityId } from '../../modules/identity'
+import { getIdentityId } from '../../modules/identityId'
 
 const BASE_URL = getBaseUrl()
 
