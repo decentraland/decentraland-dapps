@@ -23,9 +23,9 @@ import {
 import { NavbarProps2 } from './Navbar.types'
 import { NAVBAR_CLICK_EVENT } from './constants'
 import useNotifications from '../../hooks/useNotifications'
-import useSignInIdentity from '../../hooks/useSinginIdentity'
 import { NavbarContainer } from './Navbar2.styled'
 import { ethers } from 'ethers'
+import { getIdentityId } from '../../modules/identity'
 
 const BASE_URL = getBaseUrl()
 
@@ -56,8 +56,6 @@ const Navbar2: React.FC<NavbarProps2> = ({
     handleOnChangeModalTab,
     handleRenderProfile
   } = useNotifications(identity, withNotifications || false)
-
-  const { createIdentityId } = useSignInIdentity(identity)
 
   const handleSwitchNetwork = useCallback(() => {
     props.onSwitchNetwork(appChainId)
@@ -168,8 +166,8 @@ const Navbar2: React.FC<NavbarProps2> = ({
   > => {
     if (identity?.authChain && identity?.ephemeralIdentity) {
       try {
-        const response = await createIdentityId(identity)
-        return response?.identityId
+        const response = await getIdentityId(identity)
+        return response
       } catch (error) {
         console.error('Failed to create identity ID:', error)
         return undefined
@@ -177,7 +175,7 @@ const Navbar2: React.FC<NavbarProps2> = ({
     }
 
     return undefined
-  }, [identity, createIdentityId])
+  }, [identity])
 
   return (
     <NavbarContainer>
