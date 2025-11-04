@@ -25,6 +25,7 @@ import { NAVBAR_CLICK_EVENT } from './constants'
 import useNotifications from '../../hooks/useNotifications'
 import { NavbarContainer } from './Navbar2.styled'
 import { ethers } from 'ethers'
+import { getIdentityId } from '../../modules/identityId'
 
 const BASE_URL = getBaseUrl()
 
@@ -38,7 +39,6 @@ const Navbar2: React.FC<NavbarProps2> = ({
   enablePartialSupportAlert = true,
   walletError,
   cdnLinks,
-  identityId,
   hideSignInButton,
   ...props
 }: NavbarProps2) => {
@@ -161,6 +161,22 @@ const Navbar2: React.FC<NavbarProps2> = ({
       }
     : undefined
 
+  const handleGetIdentityId = useCallback(async (): Promise<
+    string | undefined
+  > => {
+    if (identity?.authChain && identity?.ephemeralIdentity) {
+      try {
+        const response = await getIdentityId(identity)
+        return response
+      } catch (error) {
+        console.error('Failed to create identity ID:', error)
+        return undefined
+      }
+    }
+
+    return undefined
+  }, [identity])
+
   return (
     <NavbarContainer>
       <ChainProvider>
@@ -186,8 +202,7 @@ const Navbar2: React.FC<NavbarProps2> = ({
                     }
                   : undefined
               }
-              cdnLinks={cdnLinks}
-              identityId={identityId}
+              getIdentityId={handleGetIdentityId}
               hideSignInButton={hideSignInButton}
               onClickBalance={handleClickBalance}
               onClickNavbarItem={handleClickNavbarItem}
