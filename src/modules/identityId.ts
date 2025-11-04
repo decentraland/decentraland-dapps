@@ -1,16 +1,8 @@
-import { AuthAPI, AuthIdentityPayload } from './auth-api'
-import { AuthIdentity } from 'decentraland-crypto-fetch'
+import { AuthClient, AuthIdentityPayload } from './authClient'
+import { AuthIdentity } from '@dcl/crypto'
 
 export async function getIdentityId(identity: AuthIdentity): Promise<string> {
-  if (!identity) {
-    throw new Error('Identity is required')
-  }
-
-  if (!identity.authChain || !identity.ephemeralIdentity) {
-    throw new Error('Identity must contain authChain and ephemeralIdentity')
-  }
-
-  const authClient = new AuthAPI({ identity })
+  const authClient = new AuthClient({ identity })
   const identityPayload: AuthIdentityPayload = {
     authChain: identity.authChain,
     ephemeralIdentity: identity.ephemeralIdentity

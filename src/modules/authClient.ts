@@ -22,7 +22,7 @@ export interface IdentityResponse {
   expiration: Date
 }
 
-export class AuthAPI extends BaseClient {
+export class AuthClient extends BaseClient {
   constructor(config: BaseClientConfig) {
     const url =
       getEnv() === Env.DEVELOPMENT
