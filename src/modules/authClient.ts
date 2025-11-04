@@ -1,6 +1,5 @@
 import { getEnv, Env } from '@dcl/ui-env'
-import { AuthChain } from '@dcl/schemas'
-
+import { AuthIdentity } from '@dcl/crypto'
 import { BaseClient, BaseClientConfig } from '../lib/BaseClient'
 
 export interface EphemeralIdentity {
@@ -8,13 +7,8 @@ export interface EphemeralIdentity {
   privateKey: string
 }
 
-export interface AuthIdentityPayload {
-  authChain: AuthChain
-  ephemeralIdentity: EphemeralIdentity
-}
-
 export interface CreateIdentityRequest {
-  identity: AuthIdentityPayload
+  identity: AuthIdentity
 }
 
 export interface IdentityResponse {
@@ -33,7 +27,7 @@ export class AuthClient extends BaseClient {
   }
 
   async createIdentityId(
-    identityPayload: AuthIdentityPayload
+    identityPayload: AuthIdentity
   ): Promise<IdentityResponse> {
     const response = await this.fetch<IdentityResponse>('/identities', {
       method: 'POST',
