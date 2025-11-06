@@ -55,46 +55,43 @@ export type CustomizationOptions = {
 }
 
 export type OrderData = {
-  eventName: string
-  status: {
-    id: string
-    autoExpiresAt: string
-    conversionPrice: number
-    convertedFiatAmount: number
-    convertedFiatCurrency: string
-    createdAt: string
-    cryptoAmount: number
-    cryptoCurrency: string
-    cryptocurrency: string
-    envName: string
-    fiatAmount: number
-    fiatCurrency: string
-    fromWalletAddress: string
-    isBuyOrSell: 'BUY' | 'SELL'
-    isNFTOrder: boolean
-    transactionLink?: string
-    transactionHash?: string
-    network: 'ethereum' | 'matic'
-    nftAssetInfo?: {
-      collection: string
-      tokenId: string[]
-    }
-    paymentOptionId: string
-    quoteId: string
-    referenceCode: number
-    reservationId: string
-    status: TransakOrderStatus
-    totalFeeInFiat: number
-    walletAddress: string
-    walletLink: string
+  id: string
+  autoExpiresAt: string
+  conversionPrice: number
+  convertedFiatAmount: number
+  convertedFiatCurrency: string
+  createdAt: string
+  cryptoAmount: number
+  cryptoCurrency: string
+  cryptocurrency: string
+  envName: string
+  fiatAmount: number
+  fiatCurrency: string
+  fromWalletAddress: string
+  isBuyOrSell: 'BUY' | 'SELL'
+  isNFTOrder: boolean
+  transactionLink?: string
+  transactionHash?: string
+  network: 'ethereum' | 'matic'
+  nftAssetInfo?: {
+    collection: string
+    tokenId: string[]
   }
+  paymentOptionId: string
+  quoteId: string
+  referenceCode: number
+  reservationId: string
+  status: TransakOrderStatus
+  totalFeeInFiat: number
+  walletAddress: string
+  walletLink: string
 }
 
 export type OrderResponse = {
   meta: {
     orderId: string
   }
-  data: Pick<OrderData['status'], 'id' | 'status' | 'transactionHash'> & {
+  data: Pick<OrderData, 'id' | 'status' | 'transactionHash'> & {
     errorMessage: string | null
   }
 }

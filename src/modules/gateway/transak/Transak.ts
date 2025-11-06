@@ -52,11 +52,11 @@ export class Transak {
           WebSocketEvents.ORDER_FAILED
         ]
 
-        const channel = this.pusher.subscribe(orderData.status.id)
-        this.emitPurchaseEvent(orderData.status, network)
+        const channel = this.pusher.subscribe(orderData.id)
+        this.emitPurchaseEvent(orderData, network)
 
         events.forEach(event => {
-          channel.bind(event, (orderData: OrderData['status']) => {
+          channel.bind(event, (orderData: OrderData) => {
             this.emitPurchaseEvent(orderData, network)
             if (
               [
@@ -124,10 +124,7 @@ export class Transak {
    * @param orderData - Order entity that comes from the Transak SDK.
    * @param status - Status of the order.
    */
-  private createPurchase(
-    orderData: OrderData['status'],
-    network: Network
-  ): Purchase {
+  private createPurchase(orderData: OrderData, network: Network): Purchase {
     const {
       id,
       cryptoAmount,
@@ -175,7 +172,7 @@ export class Transak {
    * @param status - Status of the order.
    * @param Network - Network in which the transaction will be done.
    */
-  emitPurchaseEvent(orderData: OrderData['status'], network: Network) {
+  emitPurchaseEvent(orderData: OrderData, network: Network) {
     purchaseEventsChannel.put({
       type: PURCHASE_EVENT,
       purchase: this.createPurchase(orderData, network)
