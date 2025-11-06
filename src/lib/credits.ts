@@ -498,7 +498,6 @@ export class CreditsService {
   }
 
   prepareCreditsCollectionManager(
-    _walletAddress: string,
     credits: Credit[],
     chainId: ChainId | string | number,
     collectionManagerArgs: CollectionManagerCreateCollectionArgs,
@@ -606,7 +605,6 @@ export class CreditsService {
       maxUncreditedValue,
       maxCreditedValue
     } = this.prepareCreditsCollectionManager(
-      walletAddress,
       credits,
       chainId,
       collectionManagerArgs,
