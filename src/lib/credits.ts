@@ -49,6 +49,24 @@ export type ExternalCallParams = {
   data: string
 }
 
+export type CollectionManagerItem = [
+  rarity: string,
+  price: string,
+  beneficiary: string,
+  metadata: string
+]
+
+export type CollectionManagerCreateCollectionArgs = [
+  forwarder: string,
+  factory: string,
+  salt: string,
+  name: string,
+  symbol: string,
+  baseURI: string,
+  creator: string,
+  items: CollectionManagerItem[]
+]
+
 export class CreditsService {
   /**
    * Prepares common credits data and gets the CreditsManager contract
@@ -477,5 +495,186 @@ export class CreditsService {
       return paymentAsset.amount
     }
     return '0'
+  }
+
+  prepareCreditsCollectionManager(
+    _walletAddress: string,
+    credits: Credit[],
+    chainId: ChainId | string | number,
+    collectionManagerArgs: CollectionManagerCreateCollectionArgs,
+    totalPrice: string
+  ): {
+    contract: ContractData
+    creditsData: CreditsData[]
+    creditsSignatures: string[]
+    externalCall: ExternalCallParams
+    maxUncreditedValue: string
+    maxCreditedValue: string
+  } {
+
+    // Prepare common credits data
+    const {
+      contract,
+      creditsData,
+      creditsSignatures
+    } = this.prepareCreditsData(credits, chainId)
+
+
+    // Get the CollectionManager contract address
+    const collectionManagerContract = getContract(
+      ContractName.CollectionManager,
+      chainId as ChainId
+    )
+    const collectionManagerAddress = collectionManagerContract.address
+
+    // Create a contract interface for the CollectionManager to get the function selector
+    const collectionManagerInterface = new ethers.utils.Interface(
+      collectionManagerContract.abi
+    )
+
+    // The selector for the createCollection function in the CollectionManager contract
+    const createCollectionSelector = collectionManagerInterface.getSighash(
+      'createCollection'
+    )
+
+    // Encode the createCollection function parameters
+    const createCollectionData = ethers.utils.defaultAbiCoder.encode(
+      [
+        'address', // forwarder
+        'address', // factory
+        'bytes32', // salt
+        'string', // name
+        'string', // symbol
+        'string', // baseURI
+        'address', // creator
+        'tuple(string,string,string,string)[]' // items
+      ],
+      collectionManagerArgs
+    )
+
+    // Prepare the external call
+    const externalCall = this.prepareExternalCall({
+      target: collectionManagerAddress,
+      selector: createCollectionSelector,
+      data: createCollectionData
+    })
+
+    const creditsValue = credits.reduce(
+      (acc, credit) => acc + parseInt(credit.availableAmount),
+      0
+    )
+    const whatUserHasToPay = BigInt(totalPrice) - BigInt(creditsValue)
+    const maxUncreditedValue =
+      whatUserHasToPay < BigInt(0) ? '0' : whatUserHasToPay.toString()
+
+
+    return {
+      contract,
+      creditsData,
+      creditsSignatures,
+      externalCall,
+      maxUncreditedValue,
+      maxCreditedValue: totalPrice
+    }
+  }
+
+  /**
+   * Use credits for publishing collections via CollectionManager
+   * @param walletAddress - The user's wallet address
+   * @param credits - The user's credits
+   * @param chainId - The chain ID
+   * @param collectionManagerArgs - Arguments for the createCollection function
+   * @param totalPrice - Total price in wei to pay for publishing
+   * @param creditsServerUrl - URL of the credits server
+   * @returns The transaction hash
+   */
+  async useCreditsCollectionManager(
+    walletAddress: string,
+    credits: Credit[],
+    chainId: ChainId | string | number,
+    collectionManagerArgs: CollectionManagerCreateCollectionArgs,
+    totalPrice: string,
+    creditsServerUrl: string
+  ): Promise<string> {
+
+    // Prepare common credits data
+    const {
+      contract,
+      creditsData,
+      creditsSignatures,
+      externalCall,
+      maxUncreditedValue,
+      maxCreditedValue
+    } = this.prepareCreditsCollectionManager(
+      walletAddress,
+      credits,
+      chainId,
+      collectionManagerArgs,
+      totalPrice
+    )
+
+    
+
+    const signatureResponse = await fetch(
+      `${creditsServerUrl}/sign-external-call`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          userAddress: walletAddress,
+          chainId: chainId,
+          creditsManagerAddress: contract.address,
+          externalCall: externalCall
+        })
+      }
+    )
+
+    if (!signatureResponse.ok) {
+      const errorData = await signatureResponse.json()
+      throw new Error(
+        `Failed to get external call signature: ${errorData.error ||
+          signatureResponse.statusText}`
+      )
+    }
+
+    const {
+      signature: customExternalCallSignature
+    } = await signatureResponse.json()
+
+    // Execute the transaction with the signed external call
+    return this.executeUseCreditsWithSignature(
+      contract,
+      creditsData,
+      creditsSignatures,
+      externalCall,
+      customExternalCallSignature,
+      maxCreditedValue,
+      maxUncreditedValue
+    )
+  }
+
+  private async executeUseCreditsWithSignature(
+    contract: ContractData,
+    creditsData: CreditsData[],
+    creditsSignatures: string[],
+    externalCall: ExternalCallParams,
+    customExternalCallSignature: string,
+    maxCreditedValue: string | number,
+    maxUncreditedValue: string | number
+  ): Promise<string> {
+
+    // Prepare the UseCreditsArgs
+    const useCreditsArgs = {
+      credits: creditsData,
+      creditsSignatures,
+      externalCall,
+      customExternalCallSignature,
+      maxUncreditedValue,
+      maxCreditedValue
+    }
+    // Send the transaction
+    return sendTransaction(contract, 'useCredits', useCreditsArgs)
   }
 }
