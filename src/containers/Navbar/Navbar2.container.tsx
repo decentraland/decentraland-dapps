@@ -18,10 +18,14 @@ import {
   switchNetworkRequest
 } from '../../modules/wallet/actions'
 import { getCredits } from '../../modules/credits/selectors'
-import { getLauncherLinksVariant } from '../../modules/features/selectors'
+import {
+  getIsFeatureEnabled,
+  getLauncherLinksVariant
+} from '../../modules/features/selectors'
 import { RootDispatch } from '../../types'
 import { NavbarProps2, MapStateProps, MapDispatchProps } from './Navbar.types'
 import Navbar2 from './Navbar2'
+import { ApplicationName, FeatureName } from '../../modules/features'
 
 const mapState = (state: any): MapStateProps => {
   const address = getAddress(state)
@@ -39,7 +43,12 @@ const mapState = (state: any): MapStateProps => {
     appChainId: getAppChainId(state),
     isSwitchingNetwork: isSwitchingNetwork(state),
     walletError: getWalletError(state),
-    cdnLinks: getLauncherLinksVariant(state)
+    cdnLinks: getLauncherLinksVariant(state),
+    shouldDownloadBeforeRedirect: !getIsFeatureEnabled(
+      state,
+      ApplicationName.DAPPS,
+      FeatureName.DOWNLOAD_IN_SUCCESS_PAGE
+    )
   }
 }
 
