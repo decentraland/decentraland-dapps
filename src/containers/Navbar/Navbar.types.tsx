@@ -57,7 +57,7 @@ export type MapStateProps = Pick<
   | 'locale'
   | 'walletError'
 > &
-  Pick<NavbarProps2, 'credits' | 'cdnLinks'>
+  Pick<NavbarProps2, 'credits' | 'cdnLinks' | 'shouldDownloadBeforeRedirect'>
 
 export type MapDispatchProps = Pick<
   NavbarProps,

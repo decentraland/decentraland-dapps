@@ -50,5 +50,6 @@ export enum FeatureName {
   MAGIC_AUTO_SIGN = 'magic-auto-sign',
   CREDITS = 'credits',
   USER_WALLETS = 'alfa-marketplace-credits',
-  LAUNCHER_LINKS = 'launcher-links'
+  LAUNCHER_LINKS = 'launcher-links',
+  DOWNLOAD_IN_SUCCESS_PAGE = 'download-in-success-page'
 }
