@@ -546,7 +546,7 @@ export class CreditsService {
         'string', // symbol
         'string', // baseURI
         'address', // creator
-        'tuple(string,string,string,string)[]' // items
+        'tuple(string,uint256,address,string)[]' // items
       ],
       collectionManagerArgs
     )
