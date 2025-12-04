@@ -562,10 +562,6 @@ export class CreditsService {
       data: createCollectionData
     })
 
-    const creditsValue = credits.reduce(
-      (acc, credit) => acc + parseInt(credit.availableAmount),
-      0
-    )
     const maxUncreditedValue = this.calculateMaxUncreditedValue(totalPrice, creditsData)
 
 
