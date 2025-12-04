@@ -145,7 +145,7 @@ describe('CreditsService', () => {
 
   describe('prepareExternalCall', () => {
     it('should prepare external call and return target, selector, data, expiresAt and salt', () => {
-      const params: ExternalCallParams = {
+      const params: Pick<ExternalCallParams, 'target' | 'selector' | 'data'> = {
         target: '0xtarget',
         selector: '0xselector',
         data: '0xdata'
@@ -865,7 +865,7 @@ describe('CreditsService', () => {
     describe('when signing the external call', () => {
       let walletAddress: string
       let credits: Credit[]
-      let collectionManagerArgs: any[]
+      let collectionManagerArgs: CollectionManagerCreateCollectionArgs
       let totalPrice: string
       let creditsServerUrl: string
 
@@ -1000,18 +1000,32 @@ describe('CreditsService', () => {
   })
 
   describe('useCreditsWithExternalCall', () => {
-    describe('when using credits with a custom external call', () => {
-      let price: string
+    let price: string
+    let chainId: ChainId
+    let externalCall: ExternalCallParams
+    let customExternalCallSignature: string
+
+    beforeEach(() => {
+      price = '100000000000000000000' // 100 MANA
+      chainId = ChainId.MATIC_MAINNET
+      externalCall = {
+        target: '0xCreditExecutor',
+        selector: '0xabcdef',
+        data: '0xcoralRouterCalldata',
+        expiresAt: 1234567890,
+        salt: '0x123'
+      }
+      customExternalCallSignature = '0xsignatureFromBackend'
+    })
+
+    describe('when credits exceed price', () => {
       let credits: Credit[]
-      let externalCall: ExternalCallParams
-      let customExternalCallSignature: string
 
       beforeEach(() => {
-        price = '100000000000000000000' // 100 MANA
         credits = [
           {
             id: 'credit1',
-            amount: '150000000000000000000', // 150 MANA in credits
+            amount: '150000000000000000000', // 150 MANA in credits (exceeds 100 MANA price)
             expiresAt: '1234567890',
             signature: '0xsignature1',
             availableAmount: '150000000000000000000',
@@ -1024,19 +1038,13 @@ describe('CreditsService', () => {
             userAddress: '0xuser'
           }
         ]
-        externalCall = {
-          target: '0xCreditExecutor',
-          selector: '0xabcdef',
-          data: '0xcoralRouterCalldata'
-        }
-        customExternalCallSignature = '0xsignatureFromBackend'
       })
 
-      it('should calculate maxUncreditedValue correctly when credits exceed price', async () => {
+      it('should calculate maxUncreditedValue as 0', async () => {
         await creditsService.useCreditsWithExternalCall(
           price,
           credits,
-          ChainId.MATIC_MAINNET,
+          chainId,
           externalCall,
           customExternalCallSignature
         )
@@ -1053,59 +1061,18 @@ describe('CreditsService', () => {
         )
       })
 
-      it('should calculate maxUncreditedValue correctly when credits are less than price', async () => {
-        const smallerCredits: Credit[] = [
-          {
-            id: 'credit1',
-            amount: '50000000000000000000', // 50 MANA in credits
-            expiresAt: '1234567890',
-            signature: '0xsignature1',
-            availableAmount: '50000000000000000000',
-            contract: getContract(
-              ContractName.CreditsManager,
-              ChainId.MATIC_MAINNET
-            ).address,
-            season: 1,
-            timestamp: '1234567890',
-            userAddress: '0xuser'
-          }
-        ]
-
-        await creditsService.useCreditsWithExternalCall(
-          price,
-          smallerCredits,
-          ChainId.MATIC_MAINNET,
-          externalCall,
-          customExternalCallSignature
-        )
-
-        // Credits (50) < Price (100), so user needs to pay 50 MANA
-        expect(mockSendTransaction).toHaveBeenCalledWith(
-          expect.any(Object),
-          'useCredits',
-          expect.objectContaining({
-            customExternalCallSignature,
-            maxCreditedValue: price,
-            maxUncreditedValue: '50000000000000000000' // 50 MANA needed
-          })
-        )
-      })
-
       it('should execute useCredits with correct parameters', async () => {
         await creditsService.useCreditsWithExternalCall(
           price,
           credits,
-          ChainId.MATIC_MAINNET,
+          chainId,
           externalCall,
           customExternalCallSignature
         )
 
         expect(mockSendTransaction).toHaveBeenCalledWith(
           expect.objectContaining({
-            address: getContract(
-              ContractName.CreditsManager,
-              ChainId.MATIC_MAINNET
-            ).address
+            address: getContract(ContractName.CreditsManager, chainId).address
           }),
           'useCredits',
           expect.objectContaining({
@@ -1132,7 +1099,97 @@ describe('CreditsService', () => {
         const txHash = await creditsService.useCreditsWithExternalCall(
           price,
           credits,
-          ChainId.MATIC_MAINNET,
+          chainId,
+          externalCall,
+          customExternalCallSignature
+        )
+
+        expect(txHash).toBe('0xtransactionHash')
+      })
+    })
+
+    describe('and credits are less than price', () => {
+      let credits: Credit[]
+
+      beforeEach(() => {
+        credits = [
+          {
+            id: 'credit1',
+            amount: '50000000000000000000', // 50 MANA in credits (less than 100 MANA price)
+            expiresAt: '1234567890',
+            signature: '0xsignature1',
+            availableAmount: '50000000000000000000',
+            contract: getContract(
+              ContractName.CreditsManager,
+              ChainId.MATIC_MAINNET
+            ).address,
+            season: 1,
+            timestamp: '1234567890',
+            userAddress: '0xuser'
+          }
+        ]
+      })
+
+      it('should calculate maxUncreditedValue correctly for hybrid purchase', async () => {
+        await creditsService.useCreditsWithExternalCall(
+          price,
+          credits,
+          chainId,
+          externalCall,
+          customExternalCallSignature
+        )
+
+        // Credits (50) < Price (100), so user needs to pay 50 MANA
+        expect(mockSendTransaction).toHaveBeenCalledWith(
+          expect.any(Object),
+          'useCredits',
+          expect.objectContaining({
+            customExternalCallSignature,
+            maxCreditedValue: price,
+            maxUncreditedValue: '50000000000000000000' // 50 MANA needed
+          })
+        )
+      })
+
+      it('should execute useCredits with correct parameters', async () => {
+        await creditsService.useCreditsWithExternalCall(
+          price,
+          credits,
+          chainId,
+          externalCall,
+          customExternalCallSignature
+        )
+
+        expect(mockSendTransaction).toHaveBeenCalledWith(
+          expect.objectContaining({
+            address: getContract(ContractName.CreditsManager, chainId).address
+          }),
+          'useCredits',
+          expect.objectContaining({
+            credits: expect.arrayContaining([
+              expect.objectContaining({
+                value: credits[0].amount,
+                expiresAt: parseInt(credits[0].expiresAt)
+              })
+            ]),
+            creditsSignatures: ['0xsignature1'],
+            externalCall: expect.objectContaining({
+              target: externalCall.target,
+              selector: externalCall.selector,
+              data: externalCall.data
+            }),
+            customExternalCallSignature,
+            maxCreditedValue: price,
+            maxUncreditedValue: '50000000000000000000'
+          })
+        )
+      })
+
+      it('should return transaction hash', async () => {
+        const txHash = await creditsService.useCreditsWithExternalCall(
+          price,
+          credits,
+          chainId,
           externalCall,
           customExternalCallSignature
         )

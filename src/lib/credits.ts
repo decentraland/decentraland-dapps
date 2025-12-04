@@ -140,6 +140,21 @@ export class CreditsService {
   }
 
   /**
+   * Calculates how much the user needs to pay with MANA after credits are applied
+   * @param price - Total price in wei
+   * @param creditsData - Prepared credits data
+   * @returns The amount user needs to pay with MANA (0 if credits cover everything)
+   */
+  private calculateMaxUncreditedValue(price: string, creditsData: CreditsData[]): string {
+    const creditsValue = creditsData.reduce(
+      (acc, credit) => BigInt(acc) + BigInt(credit.value),
+      0n
+    )
+    const whatUserHasToPay = BigInt(price) - creditsValue
+    return whatUserHasToPay < 0n ? '0' : whatUserHasToPay.toString()
+  }
+
+  /**
    * Executes the useCredits transaction
    * @param contract - The CreditsManager contract
    * @param creditsData - The prepared credits data
@@ -228,13 +243,8 @@ export class CreditsService {
       data: buyData
     })
 
-    const creditsValue = credits.reduce(
-      (acc, credit) => acc + parseInt(credit.availableAmount),
-      0
-    )
-    const whatUserHasToPay = BigInt(item.price) - BigInt(creditsValue)
-    const maxUncreditedValue =
-      whatUserHasToPay < BigInt(0) ? '0' : whatUserHasToPay.toString()
+    
+    const maxUncreditedValue = this.calculateMaxUncreditedValue(item.price, creditsData)
 
     return {
       contract,
@@ -332,13 +342,8 @@ export class CreditsService {
     // Get the trade price
     // Execute the transaction
     const tradePrice = this.getTradePrice(trade)
-    const creditsValue = credits.reduce(
-      (acc, credit) => acc + parseInt(credit.availableAmount),
-      0
-    )
-    const whatUserHasToPay = BigInt(tradePrice) - BigInt(creditsValue)
-    const maxUncreditedValue =
-      whatUserHasToPay < BigInt(0) ? '0' : whatUserHasToPay.toString()
+
+    const maxUncreditedValue = this.calculateMaxUncreditedValue(tradePrice, creditsData)
 
     return {
       contract,
@@ -435,9 +440,7 @@ export class CreditsService {
       (acc, credit) => acc + parseInt(credit.availableAmount),
       0
     )
-    const whatUserHasToPay = BigInt(order.price) - BigInt(creditsValue)
-    const maxUncreditedValue =
-      whatUserHasToPay < BigInt(0) ? '0' : whatUserHasToPay.toString()
+    const maxUncreditedValue = this.calculateMaxUncreditedValue(order.price, creditsData)
 
     return {
       contract,
@@ -563,9 +566,7 @@ export class CreditsService {
       (acc, credit) => acc + parseInt(credit.availableAmount),
       0
     )
-    const whatUserHasToPay = BigInt(totalPrice) - BigInt(creditsValue)
-    const maxUncreditedValue =
-      whatUserHasToPay < BigInt(0) ? '0' : whatUserHasToPay.toString()
+    const maxUncreditedValue = this.calculateMaxUncreditedValue(totalPrice, creditsData)
 
 
     return {
@@ -701,12 +702,7 @@ export class CreditsService {
     } = this.prepareCreditsData(credits, chainId)
 
     // Calculate how much user needs to pay with MANA (hybrid purchase)
-    const creditsValue = creditsData.reduce(
-      (acc, credit) => BigInt(acc) + BigInt(credit.value),
-      0n
-    )
-    const whatUserHasToPay = BigInt(price) - creditsValue
-    const maxUncreditedValue = whatUserHasToPay < 0n ? '0' : whatUserHasToPay.toString()
+    const maxUncreditedValue = this.calculateMaxUncreditedValue(price, creditsData)
 
     // Execute the transaction with the signed external call (signature provided by backend)
     return this.executeUseCreditsWithSignature(
