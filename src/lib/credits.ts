@@ -47,6 +47,8 @@ export type ExternalCallParams = {
   target: string
   selector: string
   data: string
+  expiresAt: number
+  salt: string
 }
 
 export type CollectionManagerItem = [
@@ -121,13 +123,12 @@ export class CreditsService {
    * @param params - The external call parameters
    * @returns The external call object
    */
-  private prepareExternalCall({ target, selector, data }: ExternalCallParams) {
+  private prepareExternalCall({ target, selector, data }: Pick<ExternalCallParams, 'target' | 'selector' | 'data'>) {
     // Set expiration time (can be adjusted as needed)
     const expiresAt = Math.floor(Date.now() / 1000) + 3600 * 24 // 24 hours from now
 
     // Random salt for the external call
     const salt = ethers.utils.hexlify(ethers.utils.randomBytes(32))
-
     // Prepare the external call
     return {
       target,
@@ -136,6 +137,21 @@ export class CreditsService {
       expiresAt,
       salt
     }
+  }
+
+  /**
+   * Calculates how much the user needs to pay with MANA after credits are applied
+   * @param price - Total price in wei
+   * @param creditsData - Prepared credits data
+   * @returns The amount user needs to pay with MANA (0 if credits cover everything)
+   */
+  private calculateMaxUncreditedValue(price: string, creditsData: CreditsData[]): string {
+    const creditsValue = creditsData.reduce(
+      (acc, credit) => BigInt(acc) + BigInt(credit.value),
+      0n
+    )
+    const whatUserHasToPay = BigInt(price) - creditsValue
+    return whatUserHasToPay < 0n ? '0' : whatUserHasToPay.toString()
   }
 
   /**
@@ -227,13 +243,8 @@ export class CreditsService {
       data: buyData
     })
 
-    const creditsValue = credits.reduce(
-      (acc, credit) => acc + parseInt(credit.availableAmount),
-      0
-    )
-    const whatUserHasToPay = BigInt(item.price) - BigInt(creditsValue)
-    const maxUncreditedValue =
-      whatUserHasToPay < BigInt(0) ? '0' : whatUserHasToPay.toString()
+    
+    const maxUncreditedValue = this.calculateMaxUncreditedValue(item.price, creditsData)
 
     return {
       contract,
@@ -331,13 +342,8 @@ export class CreditsService {
     // Get the trade price
     // Execute the transaction
     const tradePrice = this.getTradePrice(trade)
-    const creditsValue = credits.reduce(
-      (acc, credit) => acc + parseInt(credit.availableAmount),
-      0
-    )
-    const whatUserHasToPay = BigInt(tradePrice) - BigInt(creditsValue)
-    const maxUncreditedValue =
-      whatUserHasToPay < BigInt(0) ? '0' : whatUserHasToPay.toString()
+
+    const maxUncreditedValue = this.calculateMaxUncreditedValue(tradePrice, creditsData)
 
     return {
       contract,
@@ -430,13 +436,7 @@ export class CreditsService {
       data: executeOrderData
     })
 
-    const creditsValue = credits.reduce(
-      (acc, credit) => acc + parseInt(credit.availableAmount),
-      0
-    )
-    const whatUserHasToPay = BigInt(order.price) - BigInt(creditsValue)
-    const maxUncreditedValue =
-      whatUserHasToPay < BigInt(0) ? '0' : whatUserHasToPay.toString()
+    const maxUncreditedValue = this.calculateMaxUncreditedValue(order.price, creditsData)
 
     return {
       contract,
@@ -558,13 +558,7 @@ export class CreditsService {
       data: createCollectionData
     })
 
-    const creditsValue = credits.reduce(
-      (acc, credit) => acc + parseInt(credit.availableAmount),
-      0
-    )
-    const whatUserHasToPay = BigInt(totalPrice) - BigInt(creditsValue)
-    const maxUncreditedValue =
-      whatUserHasToPay < BigInt(0) ? '0' : whatUserHasToPay.toString()
+    const maxUncreditedValue = this.calculateMaxUncreditedValue(totalPrice, creditsData)
 
 
     return {
@@ -662,7 +656,6 @@ export class CreditsService {
     maxCreditedValue: string | number,
     maxUncreditedValue: string | number
   ): Promise<string> {
-
     // Prepare the UseCreditsArgs
     const useCreditsArgs = {
       credits: creditsData,
@@ -674,5 +667,44 @@ export class CreditsService {
     }
     // Send the transaction
     return sendTransaction(contract, 'useCredits', useCreditsArgs)
+  }
+
+  /**
+   * Use credits with a custom external call (e.g., CORAL cross-chain transactions)
+   * This is a generic method that can be used for any external call that needs credits
+   * @param price - The total price in wei
+   * @param credits - The user's credits
+   * @param chainId - The chain ID where CreditsManager lives
+   * @param externalCall - External call parameters (target, selector, data, etc.)
+   * @param customExternalCallSignature - Signature of the external call (from backend)
+   * @returns The transaction hash
+   */
+  async useCreditsWithExternalCall(
+    price: string,
+    credits: Credit[],
+    chainId: ChainId | string | number,
+    externalCall: ExternalCallParams,
+    customExternalCallSignature: string
+  ): Promise<string> {
+    // Prepare common credits data
+    const {
+      contract,
+      creditsData,
+      creditsSignatures
+    } = this.prepareCreditsData(credits, chainId)
+
+    // Calculate how much user needs to pay with MANA (hybrid purchase)
+    const maxUncreditedValue = this.calculateMaxUncreditedValue(price, creditsData)
+
+    // Execute the transaction with the signed external call (signature provided by backend)
+    return this.executeUseCreditsWithSignature(
+      contract,
+      creditsData,
+      creditsSignatures,
+      externalCall,
+      customExternalCallSignature,
+      price, // maxCreditedValue (total price)
+      maxUncreditedValue // what user pays with MANA (if credits are not enough)
+    )
   }
 }

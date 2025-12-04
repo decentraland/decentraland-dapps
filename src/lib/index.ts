@@ -1,6 +1,7 @@
 export * from './api'
 export * from './BaseClient'
 export * from './ClientError'
+export * from './credits'
 export * from './disabledMiddleware'
 export * from './entities'
 export * from './error'
