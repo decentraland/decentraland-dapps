@@ -16,7 +16,12 @@ import {
   getContract
 } from 'decentraland-transactions'
 import { Credit } from '../modules/credits/types'
-import { CreditsService, CreditsData, ExternalCallParams } from './credits'
+import {
+  CreditsService,
+  CreditsData,
+  ExternalCallParams,
+  CollectionManagerCreateCollectionArgs
+} from './credits'
 import { getOnChainTrade } from './trades'
 
 // Only mock external dependencies
@@ -759,6 +764,381 @@ describe('CreditsService', () => {
       // @ts-ignore: Accessing private method
       const result = creditsService['getTradePrice'](trade)
       expect(result).toBe('0')
+    })
+  })
+
+  describe('prepareCreditsCollectionManager', () => {
+    let credits: Credit[]
+    let collectionManagerArgs: CollectionManagerCreateCollectionArgs
+    let totalPrice: string
+
+    beforeEach(() => {
+      credits = [
+        {
+          id: '0x123',
+          amount: '100',
+          expiresAt: '1234567890',
+          signature: '0xsignature1',
+          availableAmount: '100',
+          contract: getContract(ContractName.CreditsManager, ChainId.MATIC_AMOY)
+            .address,
+          season: 1,
+          timestamp: '1234567890',
+          userAddress: '0xuser'
+        }
+      ]
+      collectionManagerArgs = [
+        '0x0000000000000000000000000000000000000001', // forwarder - valid address
+        '0x0000000000000000000000000000000000000002', // factory - valid address
+        ethers.utils.hexZeroPad('0x123', 32), // salt as bytes32
+        'Collection Name',
+        'COL',
+        'baseURI',
+        '0x0000000000000000000000000000000000000003', // creator - valid address
+        [
+          [
+            'rarity1',
+            '1000',
+            '0x0000000000000000000000000000000000000004',
+            'metadata'
+          ]
+        ]
+      ]
+      totalPrice = '1000'
+    })
+
+    it('should prepare credits data for collection manager call', () => {
+      const result = creditsService.prepareCreditsCollectionManager(
+        credits,
+        ChainId.MATIC_AMOY,
+        collectionManagerArgs,
+        totalPrice
+      )
+
+      expect(result.contract).toEqual(
+        getContract(ContractName.CreditsManager, ChainId.MATIC_AMOY)
+      )
+      expect(result.creditsData).toEqual([
+        {
+          value: '100',
+          expiresAt: 1234567890,
+          salt: ethers.utils.hexZeroPad('0x123', 32)
+        }
+      ])
+      expect(result.creditsSignatures).toEqual(['0xsignature1'])
+      expect(result.externalCall.target).toEqual(
+        getContract(ContractName.CollectionManager, ChainId.MATIC_AMOY).address
+      )
+      expect(result.externalCall.selector).toBeDefined()
+      expect(result.externalCall.data).toContain(
+        '436f6c6c656374696f6e204e616d65'
+      ) // "Collection Name" in hex
+      expect(result.externalCall.data).toContain('434f4c') // "COL" in hex
+      expect(result.externalCall.expiresAt).toBeDefined()
+      expect(result.externalCall.salt).toBeDefined()
+      expect(result.maxUncreditedValue).toEqual('900')
+      expect(result.maxCreditedValue).toEqual('1000')
+    })
+  })
+
+  describe('useCreditsCollectionManager', () => {
+    let mockFetch: jest.Mock
+    let originalFetch: typeof global.fetch
+
+    beforeEach(() => {
+      originalFetch = global.fetch
+      mockFetch = jest.fn()
+      global.fetch = mockFetch
+
+      mockFetch.mockResolvedValue({
+        ok: true,
+        json: jest.fn().mockResolvedValue({
+          signature: '0xcustomSignature'
+        })
+      } as any)
+    })
+
+    afterEach(() => {
+      global.fetch = originalFetch
+    })
+
+    describe('when signing the external call', () => {
+      let walletAddress: string
+      let credits: Credit[]
+      let collectionManagerArgs: any[]
+      let totalPrice: string
+      let creditsServerUrl: string
+
+      beforeEach(() => {
+        walletAddress = '0xuser'
+        credits = [
+          {
+            id: 'credit1',
+            amount: '100',
+            expiresAt: '1234567890',
+            signature: '0xsignature1',
+            availableAmount: '100',
+            contract: getContract(
+              ContractName.CreditsManager,
+              ChainId.MATIC_AMOY
+            ).address,
+            season: 1,
+            timestamp: '1234567890',
+            userAddress: '0xuser'
+          }
+        ]
+        collectionManagerArgs = [
+          '0x0000000000000000000000000000000000000001',
+          '0x0000000000000000000000000000000000000002',
+          ethers.utils.hexZeroPad('0x123', 32),
+          'Collection Name',
+          'COL',
+          'baseURI',
+          '0x0000000000000000000000000000000000000003',
+          [
+            [
+              'rarity1',
+              '1000',
+              '0x0000000000000000000000000000000000000004',
+              'metadata'
+            ]
+          ]
+        ]
+        totalPrice = '1000'
+        creditsServerUrl = 'https://credits-server.com'
+      })
+
+      it('should call the credits server for signature', async () => {
+        await creditsService.useCreditsCollectionManager(
+          walletAddress,
+          credits,
+          ChainId.MATIC_AMOY,
+          collectionManagerArgs,
+          totalPrice,
+          creditsServerUrl
+        )
+
+        expect(mockFetch).toHaveBeenCalledWith(
+          `${creditsServerUrl}/sign-external-call`,
+          expect.objectContaining({
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: expect.stringContaining(walletAddress)
+          })
+        )
+      })
+
+      it('should execute useCredits with the signature', async () => {
+        await creditsService.useCreditsCollectionManager(
+          walletAddress,
+          credits,
+          ChainId.MATIC_AMOY,
+          collectionManagerArgs,
+          totalPrice,
+          creditsServerUrl
+        )
+
+        expect(mockSendTransaction).toHaveBeenCalledWith(
+          expect.any(Object),
+          'useCredits',
+          expect.objectContaining({
+            customExternalCallSignature: '0xcustomSignature'
+          })
+        )
+      })
+    })
+
+    describe('and the signature request fails', () => {
+      beforeEach(() => {
+        mockFetch.mockResolvedValue({
+          ok: false,
+          json: jest.fn().mockResolvedValue({
+            error: 'Signature failed'
+          })
+        } as any)
+      })
+
+      it('should throw an error', async () => {
+        await expect(
+          creditsService.useCreditsCollectionManager(
+            '0xuser',
+            [
+              {
+                id: 'credit1',
+                amount: '100',
+                expiresAt: '1234567890',
+                signature: '0xsignature1',
+                availableAmount: '100',
+                contract: getContract(
+                  ContractName.CreditsManager,
+                  ChainId.MATIC_AMOY
+                ).address,
+                season: 1,
+                timestamp: '1234567890',
+                userAddress: '0xuser'
+              }
+            ],
+            ChainId.MATIC_AMOY,
+            [
+              '0x0000000000000000000000000000000000000001',
+              '0x0000000000000000000000000000000000000002',
+              ethers.utils.hexZeroPad('0x123', 32),
+              'Name',
+              'SYM',
+              'uri',
+              '0x0000000000000000000000000000000000000003',
+              []
+            ],
+            '1000',
+            'https://credits-server.com'
+          )
+        ).rejects.toThrow('Failed to get external call signature')
+      })
+    })
+  })
+
+  describe('useCreditsWithExternalCall', () => {
+    describe('when using credits with a custom external call', () => {
+      let price: string
+      let credits: Credit[]
+      let externalCall: ExternalCallParams
+      let customExternalCallSignature: string
+
+      beforeEach(() => {
+        price = '100000000000000000000' // 100 MANA
+        credits = [
+          {
+            id: 'credit1',
+            amount: '150000000000000000000', // 150 MANA in credits
+            expiresAt: '1234567890',
+            signature: '0xsignature1',
+            availableAmount: '150000000000000000000',
+            contract: getContract(
+              ContractName.CreditsManager,
+              ChainId.MATIC_MAINNET
+            ).address,
+            season: 1,
+            timestamp: '1234567890',
+            userAddress: '0xuser'
+          }
+        ]
+        externalCall = {
+          target: '0xCreditExecutor',
+          selector: '0xabcdef',
+          data: '0xcoralRouterCalldata'
+        }
+        customExternalCallSignature = '0xsignatureFromBackend'
+      })
+
+      it('should calculate maxUncreditedValue correctly when credits exceed price', async () => {
+        await creditsService.useCreditsWithExternalCall(
+          price,
+          credits,
+          ChainId.MATIC_MAINNET,
+          externalCall,
+          customExternalCallSignature
+        )
+
+        // Credits (150) > Price (100), so maxUncreditedValue should be '0'
+        expect(mockSendTransaction).toHaveBeenCalledWith(
+          expect.any(Object),
+          'useCredits',
+          expect.objectContaining({
+            customExternalCallSignature,
+            maxCreditedValue: price,
+            maxUncreditedValue: '0' // No MANA needed
+          })
+        )
+      })
+
+      it('should calculate maxUncreditedValue correctly when credits are less than price', async () => {
+        const smallerCredits: Credit[] = [
+          {
+            id: 'credit1',
+            amount: '50000000000000000000', // 50 MANA in credits
+            expiresAt: '1234567890',
+            signature: '0xsignature1',
+            availableAmount: '50000000000000000000',
+            contract: getContract(
+              ContractName.CreditsManager,
+              ChainId.MATIC_MAINNET
+            ).address,
+            season: 1,
+            timestamp: '1234567890',
+            userAddress: '0xuser'
+          }
+        ]
+
+        await creditsService.useCreditsWithExternalCall(
+          price,
+          smallerCredits,
+          ChainId.MATIC_MAINNET,
+          externalCall,
+          customExternalCallSignature
+        )
+
+        // Credits (50) < Price (100), so user needs to pay 50 MANA
+        expect(mockSendTransaction).toHaveBeenCalledWith(
+          expect.any(Object),
+          'useCredits',
+          expect.objectContaining({
+            customExternalCallSignature,
+            maxCreditedValue: price,
+            maxUncreditedValue: '50000000000000000000' // 50 MANA needed
+          })
+        )
+      })
+
+      it('should execute useCredits with correct parameters', async () => {
+        await creditsService.useCreditsWithExternalCall(
+          price,
+          credits,
+          ChainId.MATIC_MAINNET,
+          externalCall,
+          customExternalCallSignature
+        )
+
+        expect(mockSendTransaction).toHaveBeenCalledWith(
+          expect.objectContaining({
+            address: getContract(
+              ContractName.CreditsManager,
+              ChainId.MATIC_MAINNET
+            ).address
+          }),
+          'useCredits',
+          expect.objectContaining({
+            credits: expect.arrayContaining([
+              expect.objectContaining({
+                value: credits[0].amount,
+                expiresAt: parseInt(credits[0].expiresAt)
+              })
+            ]),
+            creditsSignatures: ['0xsignature1'],
+            externalCall: expect.objectContaining({
+              target: externalCall.target,
+              selector: externalCall.selector,
+              data: externalCall.data
+            }),
+            customExternalCallSignature,
+            maxCreditedValue: price,
+            maxUncreditedValue: '0'
+          })
+        )
+      })
+
+      it('should return transaction hash', async () => {
+        const txHash = await creditsService.useCreditsWithExternalCall(
+          price,
+          credits,
+          ChainId.MATIC_MAINNET,
+          externalCall,
+          customExternalCallSignature
+        )
+
+        expect(txHash).toBe('0xtransactionHash')
+      })
     })
   })
 })

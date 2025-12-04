@@ -47,6 +47,8 @@ export type ExternalCallParams = {
   target: string
   selector: string
   data: string
+  expiresAt: number
+  salt: string
 }
 
 export type CollectionManagerItem = [
@@ -662,7 +664,6 @@ export class CreditsService {
     maxCreditedValue: string | number,
     maxUncreditedValue: string | number
   ): Promise<string> {
-
     // Prepare the UseCreditsArgs
     const useCreditsArgs = {
       credits: creditsData,
@@ -674,5 +675,49 @@ export class CreditsService {
     }
     // Send the transaction
     return sendTransaction(contract, 'useCredits', useCreditsArgs)
+  }
+
+  /**
+   * Use credits with a custom external call (e.g., CORAL cross-chain transactions)
+   * This is a generic method that can be used for any external call that needs credits
+   * @param price - The total price in wei
+   * @param credits - The user's credits
+   * @param chainId - The chain ID where CreditsManager lives
+   * @param externalCall - External call parameters (target, selector, data, etc.)
+   * @param customExternalCallSignature - Signature of the external call (from backend)
+   * @returns The transaction hash
+   */
+  async useCreditsWithExternalCall(
+    price: string,
+    credits: Credit[],
+    chainId: ChainId | string | number,
+    externalCall: ExternalCallParams,
+    customExternalCallSignature: string
+  ): Promise<string> {
+    // Prepare common credits data
+    const {
+      contract,
+      creditsData,
+      creditsSignatures
+    } = this.prepareCreditsData(credits, chainId)
+
+    // Calculate how much user needs to pay with MANA (hybrid purchase)
+    const creditsValue = creditsData.reduce(
+      (acc, credit) => BigInt(acc) + BigInt(credit.value),
+      0n
+    )
+    const whatUserHasToPay = BigInt(price) - creditsValue
+    const maxUncreditedValue = whatUserHasToPay < 0n ? '0' : whatUserHasToPay.toString()
+
+    // Execute the transaction with the signed external call (signature provided by backend)
+    return this.executeUseCreditsWithSignature(
+      contract,
+      creditsData,
+      creditsSignatures,
+      externalCall,
+      customExternalCallSignature,
+      price, // maxCreditedValue (total price)
+      maxUncreditedValue // what user pays with MANA (if credits are not enough)
+    )
   }
 }
