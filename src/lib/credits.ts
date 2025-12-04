@@ -123,13 +123,12 @@ export class CreditsService {
    * @param params - The external call parameters
    * @returns The external call object
    */
-  private prepareExternalCall({ target, selector, data }: ExternalCallParams) {
+  private prepareExternalCall({ target, selector, data }: Pick<ExternalCallParams, 'target' | 'selector' | 'data'>) {
     // Set expiration time (can be adjusted as needed)
     const expiresAt = Math.floor(Date.now() / 1000) + 3600 * 24 // 24 hours from now
 
     // Random salt for the external call
     const salt = ethers.utils.hexlify(ethers.utils.randomBytes(32))
-
     // Prepare the external call
     return {
       target,
