@@ -1,4 +1,3 @@
-import React from 'react'
 import { Rarity } from '@dcl/schemas'
 import { RarityFilter as RarityFilterUI } from 'decentraland-ui/dist/components/RarityFilter'
 import { t } from '../../modules/translation/utils'
