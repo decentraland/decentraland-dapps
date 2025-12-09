@@ -1,7 +1,5 @@
-import React from 'react'
 import { BigNumber, ethers } from 'ethers'
 import { Network } from '@dcl/schemas'
-import { RootStateOrAny } from 'react-redux'
 import {
   getAuthorizationFlowError,
   getError,
@@ -35,6 +33,7 @@ import {
   AuthorizationStepStatus
 } from './AuthorizationModal.types'
 import { AuthorizationTranslationKeys } from '../withAuthorizedAction.types'
+import { RootState } from '../../../types'
 
 const MAX_ERROR_LENGTH = 150
 
@@ -67,7 +66,7 @@ export function getTranslation(
 }
 
 export function getStepStatus(
-  state: RootStateOrAny,
+  state: RootState,
   authorizationAction: AuthorizationAction,
   authorization: Authorization,
   allowance: BigNumber | undefined

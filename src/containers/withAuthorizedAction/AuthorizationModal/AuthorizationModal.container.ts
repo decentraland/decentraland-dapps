@@ -1,4 +1,4 @@
-import { RootStateOrAny, connect } from 'react-redux'
+import { connect } from 'react-redux'
 import { AuthorizationAction } from '../../../modules/authorization/types'
 import {
   getAuthorizationFlowError,
@@ -14,8 +14,9 @@ import {
   MapDispatchProps
 } from './AuthorizationModal.types'
 import { getStepStatus } from './utils'
+import { RootState } from '../../../types'
 
-const mapState = (state: RootStateOrAny, ownProps: OwnProps): MapStateProps => {
+const mapState = (state: RootState, ownProps: OwnProps): MapStateProps => {
   const {
     authorization,
     requiredAllowance,

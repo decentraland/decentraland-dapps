@@ -1,4 +1,4 @@
-import { RootStateOrAny, connect } from 'react-redux'
+import { connect } from 'react-redux'
 import { v4 as uuid } from 'uuid'
 import React, { useCallback, useEffect, useState } from 'react'
 import { BigNumber, ethers } from 'ethers'
@@ -40,8 +40,9 @@ import {
   MapDispatchProps,
   AuthorizationTranslationKeys
 } from './withAuthorizedAction.types'
+import { RootState } from '../../types'
 
-const mapState = (state: RootStateOrAny): MapStateProps => ({
+const mapState = (state: RootState): MapStateProps => ({
   isMagicAutoSignEnabled: getIsFeatureEnabled(
     state,
     ApplicationName.DAPPS,
@@ -88,8 +89,8 @@ export default function withAuthorizedAction<
   WrappedComponent: React.ComponentType<P>,
   action: AuthorizedAction,
   translationKeys: AuthorizationTranslationKeys,
-  getConfirmationStatus?: (state: RootStateOrAny) => AuthorizationStepStatus,
-  getConfirmationError?: (state: RootStateOrAny) => string | null
+  getConfirmationStatus?: (state: RootState) => AuthorizationStepStatus,
+  getConfirmationError?: (state: RootState) => string | null
 ): React.ComponentType<Omit<P, keyof WithAuthorizedActionProps>> {
   // TODO: Remove any type
   const WithAuthorizedActionComponent = (
@@ -353,5 +354,10 @@ export default function withAuthorizedAction<
       </>
     )
   }
-  return connect(mapState, mapDispatch)(WithAuthorizedActionComponent)
+  return connect(
+    mapState,
+    mapDispatch
+  )(WithAuthorizedActionComponent) as React.ComponentType<
+    Omit<P, keyof WithAuthorizedActionProps>
+  >
 }
