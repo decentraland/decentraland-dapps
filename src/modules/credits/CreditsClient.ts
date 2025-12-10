@@ -1,5 +1,10 @@
+import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { BaseClient, BaseClientConfig } from '../../lib'
-import { CreditsResponse, SeasonResponse } from './types'
+import {
+  CreditsNameRouteResponse,
+  CreditsResponse,
+  SeasonResponse
+} from './types'
 
 export class CreditsClient extends BaseClient {
   constructor(public readonly url: string, config?: BaseClientConfig) {
@@ -34,6 +39,22 @@ export class CreditsClient extends BaseClient {
       console.error('Error fetching season data', error)
       return null
     }
+  }
+
+  /**
+   * Fetches the credits name route for claiming a NAME using credits
+   * @param name - The NAME to claim
+   * @param chainId - The chain ID for the transaction
+   * @returns The route data for the credits transaction
+   */
+  async fetchCreditsNameRoute(
+    name: string,
+    chainId: ChainId
+  ): Promise<CreditsNameRouteResponse> {
+    const response = await this.fetch<CreditsNameRouteResponse>(
+      `/credits-name-route?name=${encodeURIComponent(name)}&chainId=${chainId}`
+    )
+    return response
   }
 
   /**
