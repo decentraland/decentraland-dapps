@@ -14,9 +14,9 @@ import {
   MapDispatchProps
 } from './AuthorizationModal.types'
 import { getStepStatus } from './utils'
-import { RootState } from '../../../types'
+import { RootStateOrAny } from '../../../types'
 
-const mapState = (state: RootState, ownProps: OwnProps): MapStateProps => {
+const mapState = (state: RootStateOrAny, ownProps: OwnProps): MapStateProps => {
   const {
     authorization,
     requiredAllowance,

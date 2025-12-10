@@ -40,9 +40,9 @@ import {
   MapDispatchProps,
   AuthorizationTranslationKeys
 } from './withAuthorizedAction.types'
-import { RootState } from '../../types'
+import { RootStateOrAny } from '../../types'
 
-const mapState = (state: RootState): MapStateProps => ({
+const mapState = (state: RootStateOrAny): MapStateProps => ({
   isMagicAutoSignEnabled: getIsFeatureEnabled(
     state,
     ApplicationName.DAPPS,
@@ -89,8 +89,8 @@ export default function withAuthorizedAction<
   WrappedComponent: React.ComponentType<P>,
   action: AuthorizedAction,
   translationKeys: AuthorizationTranslationKeys,
-  getConfirmationStatus?: (state: RootState) => AuthorizationStepStatus,
-  getConfirmationError?: (state: RootState) => string | null
+  getConfirmationStatus?: (state: RootStateOrAny) => AuthorizationStepStatus,
+  getConfirmationError?: (state: RootStateOrAny) => string | null
 ): React.ComponentType<Omit<P, keyof WithAuthorizedActionProps>> {
   // TODO: Remove any type
   const WithAuthorizedActionComponent = (

@@ -4,9 +4,9 @@ import { getIsFeatureEnabled } from '../../modules/features/selectors'
 import { ApplicationName, FeatureName } from '../../modules/features'
 import { MapStateProps } from './Web2TransactionsModal.types'
 import { Web2TransactionsModal } from './Web2TransactionsModal'
-import { RootState } from '../../types'
+import { RootStateOrAny } from '../../types'
 
-const mapState = (state: RootState): MapStateProps => {
+const mapState = (state: RootStateOrAny): MapStateProps => {
   return {
     wallet: getWallet(state),
     isMagicAutoSignEnabled: getIsFeatureEnabled(

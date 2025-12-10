@@ -33,7 +33,7 @@ import {
   AuthorizationStepStatus
 } from './AuthorizationModal.types'
 import { AuthorizationTranslationKeys } from '../withAuthorizedAction.types'
-import { RootState } from '../../../types'
+import { RootStateOrAny } from '../../../types'
 
 const MAX_ERROR_LENGTH = 150
 
@@ -66,7 +66,7 @@ export function getTranslation(
 }
 
 export function getStepStatus(
-  state: RootState,
+  state: RootStateOrAny,
   authorizationAction: AuthorizationAction,
   authorization: Authorization,
   allowance: BigNumber | undefined

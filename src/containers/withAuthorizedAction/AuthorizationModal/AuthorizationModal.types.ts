@@ -11,7 +11,7 @@ import {
   AuthorizationType
 } from '../../../modules/authorization/types'
 import { AuthorizationTranslationKeys } from '../withAuthorizedAction.types'
-import { RootState } from '../../../types'
+import { RootStateOrAny } from '../../../types'
 
 // Action to perform after authorization step is finished
 export enum AuthorizedAction {
@@ -64,8 +64,8 @@ export type Props = {
   authorizedContractLabel?: string
   targetContractLabel?: string
   translationKeys: AuthorizationTranslationKeys
-  getConfirmationStatus?: (state: RootState) => AuthorizationStepStatus
-  getConfirmationError?: (state: RootState) => string | null
+  getConfirmationStatus?: (state: RootStateOrAny) => AuthorizationStepStatus
+  getConfirmationError?: (state: RootStateOrAny) => string | null
   onClose: () => void
   onAuthorized: () => void
   onFetchAuthorizations: () => ReturnType<typeof fetchAuthorizationsRequest>
