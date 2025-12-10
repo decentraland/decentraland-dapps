@@ -20,3 +20,20 @@ export interface SeasonResponse {
   week: number
   isPaused: boolean
 }
+
+export interface CreditsNameRouteExternalCall {
+  target: string
+  selector: string
+  data: string
+  expiresAt: number
+  salt: string
+}
+
+export interface CreditsNameRouteResponse {
+  externalCall: CreditsNameRouteExternalCall
+  customExternalCallSignature: string
+  quoteId: string
+  estimatedRouteDuration: number
+  fromChainId: string
+  toChainId: string
+}
