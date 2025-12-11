@@ -25,7 +25,7 @@
     "decentraland-crypto-fetch": "^2.0.1",
     "decentraland-transactions": "^2.24.1",
     "decentraland-ui": "^7.0.0",
-    "decentraland-ui2": "^0.44.1",
+    "decentraland-ui2": "^1.0.0",
     "ethers": "^5.7.2",
     "events": "^3.3.0",
     "flat": "^5.0.2",
@@ -91,7 +91,7 @@
   },
   "peerDependencies": {
     "history": "^4.10.1",
-    "react": "^18.2.0",
+    "react": "^18.0.0",
     "react-redux": "^7.2.4 || ^8.0.0",
     "react-router": "^5.3.4",
     "redux": "^4.1.0",
@@ -103,7 +103,8 @@
     "semi": false
   },
   "engines": {
-    "npm": "^8.0.0 || ^9.0.0"
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
   },
   "repository": {
     "type": "git",
