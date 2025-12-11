@@ -16,12 +16,13 @@ This version includes significant changes including **React 18 upgrade** and dep
 
 | Package                  | From    | To      |
 | ------------------------ | ------- | ------- |
-| `react` / `react-dom`    | 17.0.2  | 18.3.1  |
-| `react-intl`             | 5.20.7  | 6.5.0   |
-| `react-redux`            | 7.2.4   | 8.1.3   |
-| `@types/react`           | 17.0.17 | 18.3.27 |
-| `@testing-library/react` | 12.1.5  | 14.3.1  |
-| `decentraland-ui2`       | -       | ^1.0.0  |
+| `react` / `react-dom`    | ^17.0.0 | ^18.0.0 |
+| `react-intl`             | ^5.20.0 | ^6.5.0  |
+| `react-redux`            | ^7.2.4  | ^8.1.3  |
+| `@types/react`           | ^17.0.0 | ^18.3.0 |
+| `@testing-library/react` | ^12.1.0 | ^14.3.0 |
+| `decentraland-ui`        | ^6.0.0  | ^7.0.1  |
+| `decentraland-ui2`       | ^0.44.0 | ^1.0.1  |
 
 #### Migration notes:
 
