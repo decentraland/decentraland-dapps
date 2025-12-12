@@ -1,7 +1,6 @@
 import { Dispatch } from 'redux'
 import { BigNumber } from 'ethers'
 import { Network } from '@dcl/schemas'
-import { RootStateOrAny } from 'react-redux'
 import {
   AuthorizationFlowRequestAction,
   fetchAuthorizationsRequest,
@@ -12,8 +11,9 @@ import {
   AuthorizationType
 } from '../../../modules/authorization/types'
 import { AuthorizationTranslationKeys } from '../withAuthorizedAction.types'
+import { RootStateOrAny } from '../../../types'
 
-// Action to perfom after authorization step is finished
+// Action to perform after authorization step is finished
 export enum AuthorizedAction {
   BID = 'bid',
   BUY = 'buy',

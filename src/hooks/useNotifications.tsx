@@ -1,5 +1,4 @@
-import React, { useMemo } from 'react'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import {
   NotificationsAPI,
   checkIsOnboarding,
@@ -36,10 +35,16 @@ const useNotifications = (
     }
   )
 
-  const [notificationsClient, setNotificationsClient] = useState<NotificationsAPI | null>(null)
+  const [
+    notificationsClient,
+    setNotificationsClient
+  ] = useState<NotificationsAPI | null>(null)
 
   const AVAILABLE_NOTIFICATIONS = useMemo(() => {
-    return new Set([...CURRENT_AVAILABLE_NOTIFICATIONS, ...CURRENT_AVAILABLE_NOTIFICATIONS_UI2])
+    return new Set([
+      ...CURRENT_AVAILABLE_NOTIFICATIONS,
+      ...CURRENT_AVAILABLE_NOTIFICATIONS_UI2
+    ])
   }, [])
 
   const handleOnBegin = () => {
@@ -47,21 +52,25 @@ const useNotifications = (
     setNotificationsState(prevState => ({ ...prevState, isOnboarding: false }))
   }
 
-  const fetchAndUpdateNotifications = useCallback(async (scopedNotificationsClient: NotificationsAPI) => {
-    return scopedNotificationsClient.getNotifications().then((notificationsFetched) => {
-      const filteredNotifications = notificationsFetched
-        .filter((notification => 
-          AVAILABLE_NOTIFICATIONS.has(notification.type)
-        ))
+  const fetchAndUpdateNotifications = useCallback(
+    async (scopedNotificationsClient: NotificationsAPI) => {
+      return scopedNotificationsClient
+        .getNotifications()
+        .then(notificationsFetched => {
+          const filteredNotifications = notificationsFetched.filter(
+            notification => AVAILABLE_NOTIFICATIONS.has(notification.type)
+          )
 
-      setUserNotifications(prevState => ({
-        ...prevState,
-        isLoading: false,
-        notifications: filteredNotifications
-      }))
-    })
-  }, [])
-  
+          setUserNotifications(prevState => ({
+            ...prevState,
+            isLoading: false,
+            notifications: filteredNotifications
+          }))
+        })
+    },
+    []
+  )
+
   useEffect(() => {
     if (identity) {
       const notificationsClient = new NotificationsAPI({ identity })
@@ -86,7 +95,12 @@ const useNotifications = (
   useEffect(() => {
     const isClosing = !isOpen
     if (isClosing) {
-      const unreadNotificationsIds = notifications.filter(notification => !notification.read).map(notification => notification.id)
+      const unreadNotificationsIds: string[] = []
+      for (const notification of notifications) {
+        if (!notification.read) {
+          unreadNotificationsIds.push(notification.id)
+        }
+      }
       if (unreadNotificationsIds.length && notificationsClient) {
         try {
           notificationsClient.markNotificationsAsRead(unreadNotificationsIds)
@@ -94,7 +108,9 @@ const useNotifications = (
             ...prevState,
             notifications: prevState.notifications.map(notification => ({
               ...notification,
-              read: unreadNotificationsIds.includes(notification.id) ? true : notification.read
+              read: unreadNotificationsIds.includes(notification.id)
+                ? true
+                : notification.read
             }))
           }))
         } catch (error) {
@@ -115,7 +131,7 @@ const useNotifications = (
       ...prevState,
       activeTab: tab
     }))
-  
+
   const handleRenderProfile = useCallback((address: string) => {
     return (
       <Profile
@@ -128,7 +144,7 @@ const useNotifications = (
     )
   }, [])
 
-  return { 
+  return {
     notificationsClient,
     notifications,
     isLoading,

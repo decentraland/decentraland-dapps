@@ -1,4 +1,3 @@
-import React from 'react'
 import { ChainId, getNetwork } from '@dcl/schemas/dist/dapps/chain-id'
 import { ToastType } from 'decentraland-ui'
 import { getNetworkName } from 'decentraland-ui/dist/lib/network'

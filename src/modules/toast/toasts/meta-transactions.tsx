@@ -1,4 +1,3 @@
-import React from 'react'
 import { ToastType } from 'decentraland-ui/dist/components/Toast/Toast'
 import MetaTransactionError from '../../../containers/MetaTransactionError'
 import { T, t } from '../../translation/utils'
