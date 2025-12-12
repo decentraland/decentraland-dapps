@@ -77,7 +77,7 @@
     "@types/ws": "^8.5.3",
     "dcl-tslint-config-standard": "^1.0.1",
     "decentraland-connect": "^9.1.0",
-    "decentraland-ui": "^7.0.1",
+    "decentraland-ui": "^7.1.0",
     "decentraland-ui2": "^1.0.1",
     "ethers": "^5.7.2",
     "history": "^4.10.1",
