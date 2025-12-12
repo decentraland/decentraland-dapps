@@ -95,9 +95,12 @@ const useNotifications = (
   useEffect(() => {
     const isClosing = !isOpen
     if (isClosing) {
-      const unreadNotificationsIds = notifications
-        .filter(notification => !notification.read)
-        .map(notification => notification.id)
+      const unreadNotificationsIds: string[] = []
+      for (const notification of notifications) {
+        if (!notification.read) {
+          unreadNotificationsIds.push(notification.id)
+        }
+      }
       if (unreadNotificationsIds.length && notificationsClient) {
         try {
           notificationsClient.markNotificationsAsRead(unreadNotificationsIds)
