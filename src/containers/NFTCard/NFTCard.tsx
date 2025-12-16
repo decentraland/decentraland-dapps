@@ -1,3 +1,4 @@
+import React from 'react'
 import { Network, WearableCategory } from '@dcl/schemas'
 import { NFTCard as NFTCardUI } from 'decentraland-ui/dist/components/NFTCard/NFTCard'
 import { t } from '../../modules/translation/utils'
@@ -39,8 +40,7 @@ export const NFTCard = (props: NFTCardProps) => {
       [WearableCategory.HANDS_WEAR]: t('@dapps.nft_card.category.hands_wear')
     },
     withSound: t('@dapps.nft_card.with_sound'),
-    smart: t('@dapps.nft_card.smart'),
-    social: t('@dapps.nft_card.social')
+    smart: t('@dapps.nft_card.smart')
   }
 
   return <NFTCardUI i18n={i18n} {...props} />
