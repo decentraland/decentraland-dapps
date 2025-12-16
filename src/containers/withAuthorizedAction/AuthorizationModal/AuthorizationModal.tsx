@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { v4 as uuid } from 'uuid'
 import { Network } from '@dcl/schemas'
 import {
