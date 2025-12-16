@@ -142,12 +142,12 @@ export class CreditsService {
   /**
    * Calculates how much the user needs to pay with MANA after credits are applied
    * @param price - Total price in wei
-   * @param creditsData - Prepared credits data
+   * @param credits - Prepared credits data
    * @returns The amount user needs to pay with MANA (0 if credits cover everything)
    */
-  private calculateMaxUncreditedValue(price: string, creditsData: CreditsData[]): string {
-    const creditsValue = creditsData.reduce(
-      (acc, credit) => BigInt(acc) + BigInt(credit.value),
+  private calculateMaxUncreditedValue(price: string, credits: Credit[]): string {
+    const creditsValue = credits.reduce(
+      (acc, credit) => BigInt(acc) + BigInt(credit.availableAmount),
       0n
     )
     const whatUserHasToPay = BigInt(price) - creditsValue
@@ -244,7 +244,7 @@ export class CreditsService {
     })
 
     
-    const maxUncreditedValue = this.calculateMaxUncreditedValue(item.price, creditsData)
+    const maxUncreditedValue = this.calculateMaxUncreditedValue(item.price, credits)
 
     return {
       contract,
@@ -343,7 +343,7 @@ export class CreditsService {
     // Execute the transaction
     const tradePrice = this.getTradePrice(trade)
 
-    const maxUncreditedValue = this.calculateMaxUncreditedValue(tradePrice, creditsData)
+    const maxUncreditedValue = this.calculateMaxUncreditedValue(tradePrice, credits)
 
     return {
       contract,
@@ -436,7 +436,7 @@ export class CreditsService {
       data: executeOrderData
     })
 
-    const maxUncreditedValue = this.calculateMaxUncreditedValue(order.price, creditsData)
+    const maxUncreditedValue = this.calculateMaxUncreditedValue(order.price, credits)
 
     return {
       contract,
@@ -558,7 +558,7 @@ export class CreditsService {
       data: createCollectionData
     })
 
-    const maxUncreditedValue = this.calculateMaxUncreditedValue(totalPrice, creditsData)
+    const maxUncreditedValue = this.calculateMaxUncreditedValue(totalPrice, credits)
 
 
     return {
@@ -694,7 +694,7 @@ export class CreditsService {
     } = this.prepareCreditsData(credits, chainId)
 
     // Calculate how much user needs to pay with MANA (hybrid purchase)
-    const maxUncreditedValue = this.calculateMaxUncreditedValue(price, creditsData)
+    const maxUncreditedValue = this.calculateMaxUncreditedValue(price, credits)
 
     // Execute the transaction with the signed external call (signature provided by backend)
     return this.executeUseCreditsWithSignature(
