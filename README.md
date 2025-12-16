@@ -2,60 +2,7 @@
 
 # Decentraland dApps
 
-Common modules for Decentraland dApps.
-
-## ⚠️ Breaking Changes in v26.0.0
-
-This version includes significant changes including **React 18 upgrade** and dependency management improvements following Decentraland's [Dependency Management Standard](https://github.com/decentraland/standards).
-
-### React 18 Upgrade
-
-**This version requires React 18.0.0 or higher.** React 17 is no longer supported.
-
-#### What changed:
-
-| Package                  | From    | To      |
-| ------------------------ | ------- | ------- |
-| `react` / `react-dom`    | ^17.0.0 | ^18.0.0 |
-| `react-intl`             | ^5.20.0 | ^6.5.0  |
-| `react-redux`            | ^7.2.4  | ^8.1.3  |
-| `@types/react`           | ^17.0.0 | ^18.3.0 |
-| `@testing-library/react` | ^12.1.0 | ^14.3.0 |
-| `decentraland-ui`        | ^6.0.0  | ^7.0.1  |
-| `decentraland-ui2`       | ^0.44.0 | ^1.0.1  |
-
-#### Migration notes:
-
-- **JSX Transform**: Updated from `react` to `react-jsx`. You no longer need to import React in files that only use JSX.
-- **RootStateOrAny removed**: `RootStateOrAny` was removed in react-redux v8. Use `any` or define your own `RootState` type.
-- **Node.js requirement**: Now requires Node.js >=20.0.0 and npm >=10.0.0
-
-### Peer Dependencies
-
-The following packages are required and will be **automatically installed** by npm v7+ when you install `decentraland-dapps`. If your project already has these dependencies, npm will use your existing versions (as long as they satisfy the version ranges).
-
-> **Note**: If you're using npm v6 or earlier, you'll need to install these manually.
-
-| Package                | Version              | Notes                        |
-| ---------------------- | -------------------- | ---------------------------- |
-| `react`                | `^18.0.0`            | **⚠️ Updated from React 17** |
-| `react-redux`          | `^7.2.4 \|\| ^8.0.0` |                              |
-| `react-router`         | `^5.3.4`             |                              |
-| `redux`                | `^4.1.0`             |                              |
-| `redux-saga`           | `^1.1.3`             |                              |
-| `history`              | `^4.10.1`            |                              |
-| `@dcl/crypto`          | `^3.3.1`             | **Moved from dependencies**  |
-| `@dcl/schemas`         | `^19.8.0`            | **Moved from dependencies**  |
-| `@dcl/ui-env`          | `^1.5.0`             | **Moved from dependencies**  |
-| `decentraland-connect` | `^9.1.0`             | **Moved from dependencies**  |
-| `decentraland-ui`      | `^7.0.0`             | **Moved from dependencies**  |
-| `decentraland-ui2`     | `^1.0.0`             | **Moved from dependencies**  |
-| `ethers`               | `^5.7.2`             | **Moved from dependencies**  |
-| `react-intl`           | `^6.5.0`             | **Moved from dependencies**  |
-
-> **Note**: These packages were moved to `peerDependencies` to ensure a single instance is shared across your application and prevent issues with React Context, singletons, and bundle size.
-
----
+Common modules for our dApps.
 
 # Table of Contents
 

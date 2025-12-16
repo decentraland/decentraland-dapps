@@ -1,4 +1,4 @@
-import { connect } from 'react-redux'
+import { RootStateOrAny, connect } from 'react-redux'
 import { v4 as uuid } from 'uuid'
 import React, { useCallback, useEffect, useState } from 'react'
 import { BigNumber, ethers } from 'ethers'
@@ -40,7 +40,6 @@ import {
   MapDispatchProps,
   AuthorizationTranslationKeys
 } from './withAuthorizedAction.types'
-import { RootStateOrAny } from '../../types'
 
 const mapState = (state: RootStateOrAny): MapStateProps => ({
   isMagicAutoSignEnabled: getIsFeatureEnabled(
@@ -354,10 +353,5 @@ export default function withAuthorizedAction<
       </>
     )
   }
-  return connect(
-    mapState,
-    mapDispatch
-  )(WithAuthorizedActionComponent) as React.ComponentType<
-    Omit<P, keyof WithAuthorizedActionProps>
-  >
+  return connect(mapState, mapDispatch)(WithAuthorizedActionComponent)
 }
