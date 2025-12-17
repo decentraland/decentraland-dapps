@@ -1,4 +1,3 @@
-import React from 'react'
 import { SmartWearableFilter as SmartWearableFilterUI } from 'decentraland-ui/dist/components/SmartWearableFilter'
 import { t } from '../../modules/translation/utils'
 import { SmartWearableFilterProps } from './SmartWearableFilter.types'
