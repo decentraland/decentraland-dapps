@@ -1,3 +1,4 @@
+import { EventSource } from 'eventsource'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { BaseClient, BaseClientConfig } from '../../lib'
 import {
@@ -83,7 +84,10 @@ export class CreditsClient extends BaseClient {
       }
 
       eventSource = new EventSource(
-        `${this.url}/users/${address}/credits/stream`
+        `${this.url}/users/${address}/credits/stream`,
+        {
+          fetch: this.rawFetch.bind(this)
+        }
       )
 
       eventSource.onopen = () => {
