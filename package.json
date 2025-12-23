@@ -20,7 +20,6 @@
     "@0xsequence/relayer": "^0.25.1",
     "@dcl/single-sign-on-client": "^0.1.0",
     "@transak/transak-sdk": "^4.0.0",
-    "@well-known-components/fetch-component": "^2.0.1",
     "@wert-io/widget-initializer": "^6.8.0",
     "axios": "^0.21.1",
     "date-fns": "^1.29.0",
