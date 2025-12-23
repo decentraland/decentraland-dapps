@@ -5,6 +5,14 @@ import { I18nProvider } from '../../modules/translation/utils'
 import { Props } from './TranslationProvider.types'
 
 export default class TranslationProvider extends React.PureComponent<Props> {
+  componentDidMount() {
+    const { locale, onFetchTranslations } = this.props
+
+    if (locale) {
+      onFetchTranslations(locale)
+    }
+  }
+
   componentDidUpdate(prevProps: Props) {
     const { locale, onFetchTranslations } = this.props
 
