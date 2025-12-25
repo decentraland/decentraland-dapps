@@ -30,7 +30,6 @@ import {
   LOAD_PROFILES_REQUEST
 } from './actions'
 import { ProfileEntity } from '../../lib'
-import { getHashesByKeyMap } from './utils'
 import { Profile } from './types'
 
 export const NO_IDENTITY_FOUND_ERROR_MESSAGE = 'No identity found'
