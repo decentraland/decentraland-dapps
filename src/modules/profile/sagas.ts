@@ -1,6 +1,6 @@
 import { takeLatest, put, call, takeEvery } from 'redux-saga/effects'
 import { AuthIdentity } from '@dcl/crypto'
-import { Avatar } from '@dcl/schemas/dist/platform/profile'
+import { Avatar, AvatarInfo } from '@dcl/schemas/dist/platform/profile'
 import { EntityType } from '@dcl/schemas/dist/platform/entity'
 import { PeerAPI } from '../../lib/peer'
 import { EntitiesOperator } from '../../lib/entities'
@@ -148,22 +148,26 @@ export function createProfileSaga({
       [entities, 'getProfileEntity'],
       address
     )
-    const newAvatar: Avatar = {
-      ...profile.metadata.avatars[0],
+    const { avatar: avatarInfo, ...restOfAvatar } = profile.metadata.avatars[0]
+    const { snapshots, ...avatarInfoWithoutSnapshots } = avatarInfo
+    const newAvatar: Omit<Avatar, 'avatar'> & {
+      avatar: Omit<AvatarInfo, 'snapshots'>
+    } = {
+      ...restOfAvatar,
+      avatar: avatarInfoWithoutSnapshots,
       ...changes,
       version: profile.metadata.avatars[0].version + 1
     }
-    const profileMetadata: Profile = {
+    const profileMetadata = {
       avatars: [newAvatar, ...profile.metadata.avatars.slice(1)]
-    }
+    } as Profile
     const identity = getIdentity()
 
     if (identity) {
       yield call(
-        [entities, 'deployEntityWithoutNewFiles'],
-        profileMetadata,
-        getHashesByKeyMap(newAvatar),
+        [entities, 'deployEntityWithoutFiles'],
         EntityType.PROFILE,
+        profileMetadata,
         address,
         identity
       )
