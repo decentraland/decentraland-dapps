@@ -90,7 +90,7 @@ export const AssetCard = (props: AssetCardProps) => {
     extraInformation: catalogItemInformation.extraInformation,
     notForSale: notForSale,
     price: price,
-    owners: `${asset.owners} ${asset.owners === 1 ? i18n.owner : i18n.owners}`,
+    owners: asset.owners ? `${asset.owners} ${asset.owners === 1 ? i18n.owner : i18n.owners}` : undefined,
     i18n: {
       rarities: {
         [Rarity.COMMON]: t('@dapps.rarities.common'),
