@@ -6,7 +6,8 @@ import {
   getAlsoAvailableForMintingText,
   getAssetListingsRangeInfoText,
   getCatalogCardInformation,
-  getListingsRangePrice
+  getListingsRangePrice,
+  getOwnersText
 } from './utils'
 
 const translations: AssetCardTranslations = {
@@ -631,6 +632,43 @@ describe('AssetCard utils', () => {
             })
           })
         })
+      })
+    })
+  })
+
+  describe('getOwnersText', () => {
+    describe('when owners is null', () => {
+      it('should return undefined', () => {
+        const result = getOwnersText(null, translations)
+        expect(result).toBeUndefined()
+      })
+    })
+
+    describe('when owners is undefined', () => {
+      it('should return undefined', () => {
+        const result = getOwnersText(undefined, translations)
+        expect(result).toBeUndefined()
+      })
+    })
+
+    describe('when owners is 0', () => {
+      it('should return undefined', () => {
+        const result = getOwnersText(0, translations)
+        expect(result).toBeUndefined()
+      })
+    })
+
+    describe('when owners is 1', () => {
+      it('should return "1 Owner" (singular)', () => {
+        const result = getOwnersText(1, translations)
+        expect(result).toBe('1 Owner')
+      })
+    })
+
+    describe('when owners is greater than 1', () => {
+      it('should return the number with "Owners" (plural)', () => {
+        const result = getOwnersText(5, translations)
+        expect(result).toBe('5 Owners')
       })
     })
   })
