@@ -4,7 +4,7 @@ import {
   CatalogCard as AssetCardUi,
   CatalogCardProps as AssetCardUiProps
 } from 'decentraland-ui/dist/components/CatalogCard/CatalogCard'
-import { formatWeiToAssetCardEther, getCatalogCardInformation } from './utils'
+import { formatWeiToAssetCardEther, getCatalogCardInformation, getOwnersText } from './utils'
 import { t } from '../../modules/translation/utils'
 
 export type AssetCardTranslations = {
@@ -90,7 +90,7 @@ export const AssetCard = (props: AssetCardProps) => {
     extraInformation: catalogItemInformation.extraInformation,
     notForSale: notForSale,
     price: price,
-    owners: `${asset.owners} ${asset.owners === 1 ? i18n.owner : i18n.owners}`,
+    owners: getOwnersText(asset.owners, i18n),
     i18n: {
       rarities: {
         [Rarity.COMMON]: t('@dapps.rarities.common'),
