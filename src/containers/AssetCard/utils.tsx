@@ -85,6 +85,17 @@ export function formatWeiToAssetCardEther(wei: string): string {
   return formatter.format(value)
 }
 
+export function getOwnersText(
+  owners: number | null | undefined,
+  translations: Pick<AssetCardTranslations, 'owner' | 'owners'>
+): string | undefined {
+  if (!owners) {
+    return undefined
+  }
+
+  return `${owners} ${owners === 1 ? translations.owner : translations.owners}`
+}
+
 export function getCatalogCardInformation(
   asset: Item,
   translations: AssetCardTranslations,
