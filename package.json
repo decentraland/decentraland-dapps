@@ -39,7 +39,7 @@
   },
   "peerDependencies": {
     "@dcl/crypto": "^3.3.1",
-    "@dcl/schemas": "^19.8.0",
+    "@dcl/schemas": "^22.1.0",
     "@dcl/ui-env": "^1.5.0",
     "decentraland-connect": "^11.0.0",
     "decentraland-ui": "^7.1.0",
@@ -55,7 +55,7 @@
   },
   "devDependencies": {
     "@dcl/crypto": "^3.3.1",
-    "@dcl/schemas": "^19.8.0",
+    "@dcl/schemas": "^22.2.0",
     "@dcl/ui-env": "^1.5.0",
     "@swc/core": "^1.10.7",
     "@swc/jest": "^0.2.37",
@@ -76,7 +76,7 @@
     "@types/uuid": "^9.0.5",
     "@types/ws": "^8.5.3",
     "dcl-tslint-config-standard": "^1.0.1",
-    "decentraland-connect": "^11.0.0",
+    "decentraland-connect": "^11.1.0",
     "decentraland-ui": "^7.1.0",
     "decentraland-ui2": "^1.1.6",
     "ethers": "^5.7.2",
