@@ -76,7 +76,7 @@
     "@types/uuid": "^9.0.5",
     "@types/ws": "^8.5.3",
     "dcl-tslint-config-standard": "^1.0.1",
-    "decentraland-connect": "file:decentraland-connect-0.0.3-development.tgz",
+    "decentraland-connect": "^11.1.0",
     "decentraland-ui": "^7.1.0",
     "decentraland-ui2": "^1.1.6",
     "ethers": "^5.7.2",
