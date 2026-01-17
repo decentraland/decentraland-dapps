@@ -21,11 +21,12 @@ import {
   setProfileAvatarDescriptionRequest,
   setProfileAvatarDescriptionSuccess
 } from './actions'
+import { getIdentityOrRedirect } from '../identity/sagas'
+import { call } from 'redux-saga/effects'
 
 let mockAuthIdentity: AuthIdentity | undefined = {} as AuthIdentity
 
 const profileSagas = createProfileSaga({
-  getIdentity: () => mockAuthIdentity,
   peerUrl: 'aURL'
 })
 const address = 'anAddress'
@@ -61,7 +62,8 @@ describe('when handling the action to set the profile avatar description', () =>
               EntitiesOperator.prototype.deployEntityWithoutNewFiles
             ),
             Promise.reject(new Error(errorMessage))
-          ]
+          ],
+          [call(getIdentityOrRedirect), mockAuthIdentity]
         ])
         .put(setProfileAvatarDescriptionFailure(address, errorMessage))
         .dispatch(setProfileAvatarDescriptionRequest(address, description))
@@ -83,6 +85,7 @@ describe('when handling the action to set the profile avatar description', () =>
 
       return expectSaga(profileSagas)
         .provide([
+          [call(getIdentityOrRedirect), mockAuthIdentity],
           [
             matchers.call.fn(EntitiesOperator.prototype.getProfileEntity),
             dynamicDeepParametersEquality(
@@ -166,6 +169,7 @@ describe('when handling the action to set the profile avatar alias', () => {
     it('should dispatch an action to signal that the request failed', () => {
       return expectSaga(profileSagas)
         .provide([
+          [call(getIdentityOrRedirect), mockAuthIdentity],
           [
             matchers.call.fn(EntitiesOperator.prototype.getProfileEntity),
             Promise.resolve(profileFromContent)
@@ -198,6 +202,7 @@ describe('when handling the action to set the profile avatar alias', () => {
 
       return expectSaga(profileSagas)
         .provide([
+          [call(getIdentityOrRedirect), mockAuthIdentity],
           [
             matchers.call.fn(EntitiesOperator.prototype.getProfileEntity),
             dynamicDeepParametersEquality(
