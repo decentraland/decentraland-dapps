@@ -1,5 +1,4 @@
 import { connect } from 'react-redux'
-import { LoginModalProps } from 'decentraland-ui/dist/components/LoginModal/LoginModal'
 import {
   getError,
   isEnabling,
@@ -10,7 +9,8 @@ import { isEnabled } from '../../modules/translation/selectors'
 import {
   MapStateProps,
   MapDispatch,
-  MapDispatchProps
+  MapDispatchProps,
+  OwnProps
 } from './LoginModal.types'
 import LoginModal from './LoginModal'
 
@@ -20,22 +20,13 @@ const mapState = (state: any): MapStateProps => ({
   hasTranslations: isEnabled(state)
 })
 
-const mapDispatch = (dispatch: MapDispatch): MapDispatchProps => ({
-  onConnect: providerType => dispatch(enableWalletRequest(providerType))
+const mapDispatch = (
+  dispatch: MapDispatch,
+  ownProps: OwnProps
+): MapDispatchProps => ({
+  onConnect:
+    ownProps.metadata?.onConnect ??
+    (providerType => dispatch(enableWalletRequest(providerType)))
 })
 
-const mergeProps = (
-  stateProps: MapStateProps,
-  dispatchProps: MapDispatchProps,
-  ownProps: LoginModalProps
-): LoginModalProps => ({
-  ...stateProps,
-  ...dispatchProps,
-  ...ownProps
-})
-
-export default connect(
-  mapState,
-  mapDispatch,
-  mergeProps
-)(LoginModal)
+export default connect(mapState, mapDispatch)(LoginModal)
