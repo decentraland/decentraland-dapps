@@ -1,36 +1,34 @@
-import { ethers } from 'ethers'
 import { Provider } from '@ethersproject/providers'
+import { ethers } from 'ethers'
 import { Authorization, AuthorizationType } from './types'
 
 export enum AuthorizationError {
   REVOKE_FAILED = 'revoke-failed-error',
   GRANT_FAILED = 'grant-failed-error',
   INSUFFICIENT_ALLOWANCE = 'insufficient-allowance',
-  FETCH_AUTHORIZATIONS_FAILURE = 'fetch-authorizations-failure'
+  FETCH_AUTHORIZATIONS_FAILURE = 'fetch-authorizations-failure',
 }
 
 export function getTokenAmountToApprove(): ethers.BigNumber {
-  return ethers.BigNumber.from(2)
-    .pow(256)
-    .sub(1)
+  return ethers.BigNumber.from(2).pow(256).sub(1)
 }
 
 export function hasAuthorization(
   authorizations: Authorization[],
-  authorizationToFind: Authorization
+  authorizationToFind: Authorization,
 ) {
-  return authorizations.some(authorization =>
-    areEqual(authorization, authorizationToFind)
+  return authorizations.some((authorization) =>
+    areEqual(authorization, authorizationToFind),
   )
 }
 
 export function hasAuthorizationAndEnoughAllowance(
   authorizations: Authorization[],
   authorizationToFind: Authorization,
-  allowance: string
+  allowance: string,
 ) {
-  const foundAuth = authorizations.find(authorization =>
-    areEqual(authorization, authorizationToFind)
+  const foundAuth = authorizations.find((authorization) =>
+    areEqual(authorization, authorizationToFind),
   )
 
   if (!foundAuth) {
@@ -73,37 +71,37 @@ export function isValidType(type: string) {
 
 export function getERC20ContractInstance(
   contractAddress: string,
-  provider: Provider
+  provider: Provider,
 ) {
   return new ethers.Contract(
     contractAddress,
     [
-      'function allowance(address owner, address spender) view returns (uint256)'
+      'function allowance(address owner, address spender) view returns (uint256)',
     ],
-    provider
+    provider,
   )
 }
 
 export function getERC721ContractInstance(
   contractAddress: string,
-  provider: Provider
+  provider: Provider,
 ) {
   return new ethers.Contract(
     contractAddress,
     [
-      'function isApprovedForAll(address owner, address operator) view returns (bool)'
+      'function isApprovedForAll(address owner, address operator) view returns (bool)',
     ],
-    provider
+    provider,
   )
 }
 
 export function getCollectionV2ContractInstance(
   contractAddress: string,
-  provider: Provider
+  provider: Provider,
 ) {
   return new ethers.Contract(
     contractAddress,
     ['function globalMinters(address) view returns (bool)'],
-    provider
+    provider,
   )
 }

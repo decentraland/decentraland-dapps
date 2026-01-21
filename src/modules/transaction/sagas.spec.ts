@@ -3,8 +3,8 @@ jest.mock('../../lib/eth', () => ({
   getNetworkProvider: () => ({
     send: jest.fn(),
     on: jest.fn(),
-    removeListener: jest.fn()
-  })
+    removeListener: jest.fn(),
+  }),
 }))
 
 // Mock the getFibonacciDelay function
@@ -13,7 +13,7 @@ jest.mock('./sagas', () => {
   return {
     ...actual,
     BACKOFF_DELAY_MULTIPLIER: 0.01,
-    getFibonacciDelay: function*(attempt: number) {
+    getFibonacciDelay: function* (attempt: number) {
       const fib = [1, 1]
       for (let i = 2; i <= attempt + 1; i++) {
         fib[i] = fib[i - 1] + fib[i - 2]
@@ -22,7 +22,7 @@ jest.mock('./sagas', () => {
         return 100
       }
       return 100 * fib[attempt]
-    }
+    },
   }
 })
 
@@ -34,7 +34,7 @@ import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import {
   getFibonacciDelay,
   handleRegularTransactionRequest,
-  handleWatchRevertedTransaction
+  handleWatchRevertedTransaction,
 } from './sagas'
 import { fetchTransactionSuccess, watchRevertedTransaction } from './actions'
 import { getTransaction as getTransactionInState } from './selectors'
@@ -53,14 +53,12 @@ describe('when using fibonacci backoff for transaction polling', () => {
       { attempt: 3, expected: MOCK_DELAY_MULTIPLIER * 3 },
       { attempt: 4, expected: MOCK_DELAY_MULTIPLIER * 5 },
       { attempt: 5, expected: MOCK_DELAY_MULTIPLIER * 8 },
-      { attempt: 6, expected: MOCK_DELAY_MULTIPLIER * 13 }
+      { attempt: 6, expected: MOCK_DELAY_MULTIPLIER * 13 },
     ]
 
     cases.forEach(({ attempt, expected }) => {
       it(`should return ${expected}ms for attempt ${attempt}`, () => {
-        return expectSaga(getFibonacciDelay, attempt)
-          .returns(expected)
-          .run()
+        return expectSaga(getFibonacciDelay, attempt).returns(expected).run()
       })
     })
   })
@@ -89,7 +87,7 @@ describe('when using fibonacci backoff for transaction polling', () => {
         isCrossChain: false,
         actionType: 'SOME_ACTION',
         url: '',
-        replacedBy: null
+        replacedBy: null,
       }
     })
 
@@ -99,7 +97,7 @@ describe('when using fibonacci backoff for transaction polling', () => {
         const mockReceipt = { logs: [] }
         const revertedTx = {
           ...transaction,
-          status: TransactionStatus.REVERTED
+          status: TransactionStatus.REVERTED,
         }
         const action = {
           type: '[Request] Fetch Transaction' as const,
@@ -112,10 +110,10 @@ describe('when using fibonacci backoff for transaction polling', () => {
                 transaction.chainId,
                 hash,
                 {},
-                transaction.chainId
-              )
-            }
-          }
+                transaction.chainId,
+              ),
+            },
+          },
         }
 
         return expectSaga(handleRegularTransactionRequest, action)
@@ -126,28 +124,28 @@ describe('when using fibonacci backoff for transaction polling', () => {
               {
                 ...revertedTx,
                 status: TransactionStatus.CONFIRMED,
-                receipt: mockReceipt
-              }
-            ]
+                receipt: mockReceipt,
+              },
+            ],
           ])
           .withState({
             transaction: {
               data: [revertedTx],
               loading: [],
-              error: null
+              error: null,
             },
             wallet: {
               data: {
-                address: '0x123'
-              }
-            }
+                address: '0x123',
+              },
+            },
           })
           .put(
             fetchTransactionSuccess({
               ...revertedTx,
               status: TransactionStatus.CONFIRMED,
-              receipt: { logs: [] }
-            })
+              receipt: { logs: [] },
+            }),
           )
           .run({ timeout: 15000 })
       })
@@ -177,7 +175,7 @@ describe('when using fibonacci backoff for transaction polling', () => {
         isCrossChain: false,
         replacedBy: null,
         actionType: 'SOME_ACTION',
-        url: ''
+        url: '',
       }
     })
 
@@ -185,25 +183,25 @@ describe('when using fibonacci backoff for transaction polling', () => {
       it('should stop polling after expiration threshold', () => {
         const expiredTransaction = {
           ...transaction,
-          timestamp: Date.now() - 25 * 60 * 60 * 1000 // 25 hours ago
+          timestamp: Date.now() - 25 * 60 * 60 * 1000, // 25 hours ago
         }
 
         return expectSaga(
           handleWatchRevertedTransaction,
-          watchRevertedTransaction(hash)
+          watchRevertedTransaction(hash),
         )
           .provide([
-            [matchers.select(getTransactionInState, hash), expiredTransaction]
+            [matchers.select(getTransactionInState, hash), expiredTransaction],
           ])
           .withState({
             transaction: {
-              data: [expiredTransaction]
+              data: [expiredTransaction],
             },
             wallet: {
               data: {
-                address
-              }
-            }
+                address,
+              },
+            },
           })
           .not.call(getTransactionFromChain)
           .run()

@@ -15,11 +15,11 @@ export class TradesAPI extends BaseClient {
       body: JSON.stringify(trade),
       metadata: {
         signer: this.signer,
-        intent: 'dcl:create-trade'
+        intent: 'dcl:create-trade',
       },
       headers: {
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     })
   }
 

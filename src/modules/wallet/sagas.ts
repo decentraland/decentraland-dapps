@@ -1,63 +1,63 @@
 import { ethers } from 'ethers'
 import {
-  put,
-  call,
   all,
-  takeEvery,
-  race,
-  take,
+  call,
   delay,
+  fork,
+  put,
+  race,
   select,
-  fork
+  take,
+  takeEvery,
 } from 'redux-saga/effects'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
-import { connection, Provider } from 'decentraland-connect'
+import { Provider, connection } from 'decentraland-connect'
+import { isErrorWithMessage } from '../../lib'
 import {
   _getAppChainId,
+  _setAppChainId,
   getConnectedProvider,
   isCucumberProvider,
   isValidChainId,
-  _setAppChainId
 } from '../../lib/eth'
-import {
-  connectWalletSuccess,
-  connectWalletFailure,
-  CONNECT_WALLET_REQUEST,
-  EnableWalletRequestAction,
-  enableWalletFailure,
-  enableWalletSuccess,
-  EnableWalletSuccessAction,
-  connectWalletRequest,
-  ENABLE_WALLET_REQUEST,
-  ENABLE_WALLET_SUCCESS,
-  DisconnectWalletRequestAction,
-  DISCONNECT_WALLET_REQUEST,
-  FETCH_WALLET_REQUEST,
-  FetchWalletRequestAction,
-  fetchWalletSuccess,
-  fetchWalletFailure,
-  fetchWalletRequest,
-  FETCH_WALLET_SUCCESS,
-  FETCH_WALLET_FAILURE,
-  FetchWalletSuccessAction,
-  FetchWalletFailureAction,
-  CONNECT_WALLET_SUCCESS,
-  SWITCH_NETWORK_REQUEST,
-  SwitchNetworkRequestAction,
-  switchNetworkSuccess,
-  switchNetworkFailure,
-  setAppChainId,
-  disconnectWalletSuccess,
-  disconnectWalletFailure
-} from './actions'
 import { showToast } from '../toast'
 import { getSwitchChainErrorToast } from '../toast/toasts'
-import { getTransactionsApiUrl, setTransactionsApiUrl } from './utils'
-import { switchProviderChainId } from './utils/switchProviderChainId'
-import { buildWallet } from './utils/buildWallet'
-import { CreateWalletOptions, ProviderType, Wallet } from './types'
+import {
+  CONNECT_WALLET_REQUEST,
+  CONNECT_WALLET_SUCCESS,
+  DISCONNECT_WALLET_REQUEST,
+  DisconnectWalletRequestAction,
+  ENABLE_WALLET_REQUEST,
+  ENABLE_WALLET_SUCCESS,
+  EnableWalletRequestAction,
+  EnableWalletSuccessAction,
+  FETCH_WALLET_FAILURE,
+  FETCH_WALLET_REQUEST,
+  FETCH_WALLET_SUCCESS,
+  FetchWalletFailureAction,
+  FetchWalletRequestAction,
+  FetchWalletSuccessAction,
+  SWITCH_NETWORK_REQUEST,
+  SwitchNetworkRequestAction,
+  connectWalletFailure,
+  connectWalletRequest,
+  connectWalletSuccess,
+  disconnectWalletFailure,
+  disconnectWalletSuccess,
+  enableWalletFailure,
+  enableWalletSuccess,
+  fetchWalletFailure,
+  fetchWalletRequest,
+  fetchWalletSuccess,
+  setAppChainId,
+  switchNetworkFailure,
+  switchNetworkSuccess,
+} from './actions'
 import { getAppChainId, isConnected } from './selectors'
-import { isErrorWithMessage } from '../../lib'
+import { CreateWalletOptions, ProviderType, Wallet } from './types'
+import { getTransactionsApiUrl, setTransactionsApiUrl } from './utils'
+import { buildWallet } from './utils/buildWallet'
+import { switchProviderChainId } from './utils/switchProviderChainId'
 
 // Patch Samsung's Cucumber provider send to support promises
 const provider = (window as any).ethereum as ethers.providers.Web3Provider
@@ -70,7 +70,7 @@ if (isCucumberProvider()) {
   cucumberProviderSend = (...args: any[]) => {
     try {
       return Promise.resolve(_send.apply(provider, args)).then(
-        accounts => accounts?.result || []
+        (accounts) => accounts?.result || [],
       )
     } catch (err) {
       return Promise.reject(err)
@@ -87,7 +87,7 @@ export async function getAccount(providerType: ProviderType) {
     providerType === ProviderType.WALLET_CONNECT
       ? ProviderType.WALLET_CONNECT_V2
       : providerType,
-    _getAppChainId()
+    _getAppChainId(),
   )
 
   return account
@@ -106,7 +106,7 @@ export function* walletSaga() {
     takeEvery(FETCH_WALLET_REQUEST, handleFetchWalletRequest),
     takeEvery(DISCONNECT_WALLET_REQUEST, handleDisconnectWalletRequest),
     takeEvery(CONNECT_WALLET_SUCCESS, handleConnectWalletSuccess),
-    takeEvery(SWITCH_NETWORK_REQUEST, handleSwitchNetworkRequest)
+    takeEvery(SWITCH_NETWORK_REQUEST, handleSwitchNetworkRequest),
   ])
 }
 
@@ -120,13 +120,13 @@ function* handleConnectWalletRequest() {
     yield put(fetchWalletRequest())
     const {
       success,
-      failure
+      failure,
     }: {
       success: FetchWalletSuccessAction | null
       failure: FetchWalletFailureAction | null
     } = yield race({
       success: take(FETCH_WALLET_SUCCESS),
-      failure: take(FETCH_WALLET_FAILURE)
+      failure: take(FETCH_WALLET_FAILURE),
     })
     if (success) {
       yield put(connectWalletSuccess(success.payload.wallet))
@@ -157,7 +157,7 @@ function* handleEnableWalletSuccess(_action: EnableWalletSuccessAction) {
 }
 
 function* handleDisconnectWalletRequest(
-  _action: DisconnectWalletRequestAction
+  _action: DisconnectWalletRequestAction,
 ) {
   try {
     yield call([connection, 'disconnect'])
@@ -165,8 +165,10 @@ function* handleDisconnectWalletRequest(
   } catch (error) {
     yield put(
       disconnectWalletFailure(
-        isErrorWithMessage(error) ? error.message : 'Error disconnecting wallet'
-      )
+        isErrorWithMessage(error)
+          ? error.message
+          : 'Error disconnecting wallet',
+      ),
     )
   }
   // stop polling wallet balances
@@ -205,14 +207,14 @@ function* handleSwitchNetworkRequest(action: SwitchNetworkRequestAction) {
     yield put(
       switchNetworkFailure(
         chainId,
-        'Error switching network: Could not get provider'
-      )
+        'Error switching network: Could not get provider',
+      ),
     )
   } else {
     try {
       const { timeout } = yield race({
         switched: call(switchProviderChainId, provider, chainId),
-        timeout: delay(SWITCH_NETWORK_TIMEOUT) // 10 seconds timeout
+        timeout: delay(SWITCH_NETWORK_TIMEOUT), // 10 seconds timeout
       })
 
       if (timeout) {
@@ -222,7 +224,7 @@ function* handleSwitchNetworkRequest(action: SwitchNetworkRequestAction) {
         yield put(fetchWalletRequest())
         yield race({
           success: take(FETCH_WALLET_SUCCESS),
-          failure: take(FETCH_WALLET_FAILURE)
+          failure: take(FETCH_WALLET_FAILURE),
         })
         yield put(switchNetworkSuccess(chainId))
       }
@@ -237,15 +239,13 @@ export function createWalletSaga(options: CreateWalletOptions) {
     _setAppChainId(Number(options.CHAIN_ID))
   } else {
     throw new Error(
-      `Invalid Chain id ${options.CHAIN_ID}. Valid options are ${Object.values(
-        ChainId
-      )}`
+      `Invalid Chain id ${options.CHAIN_ID}. Valid options are ${Object.values(ChainId)}`,
     )
   }
 
   if (options.MANA_ADDRESS) {
     console.warn(
-      'Deprecated notice: the MANA_ADDRESS option on `createWalletSaga` has been deprecated and will be removed in future version.'
+      'Deprecated notice: the MANA_ADDRESS option on `createWalletSaga` has been deprecated and will be removed in future version.',
     )
   }
 
@@ -257,7 +257,7 @@ export function createWalletSaga(options: CreateWalletOptions) {
     setTransactionsApiUrl(options.TRANSACTIONS_API_URL)
   } else {
     console.warn(
-      `"TRANSACTIONS_API_URL" not provided on createWalletSaga, using default value "${getTransactionsApiUrl()}".`
+      `"TRANSACTIONS_API_URL" not provided on createWalletSaga, using default value "${getTransactionsApiUrl()}".`,
     )
   }
 

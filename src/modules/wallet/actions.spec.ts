@@ -35,7 +35,7 @@ import {
   setAppChainId,
   switchNetworkFailure,
   switchNetworkRequest,
-  switchNetworkSuccess
+  switchNetworkSuccess,
 } from './actions'
 import { ProviderType, Wallet } from './types'
 
@@ -56,7 +56,7 @@ describe('when creating the action to signal the start of the connect wallet req
     expect(connectWalletRequest()).toEqual({
       type: CONNECT_WALLET_REQUEST,
       meta: undefined,
-      payload: undefined
+      payload: undefined,
     })
   })
 })
@@ -66,7 +66,7 @@ describe('when creating the action to signal a failure in the connect wallet req
     expect(connectWalletFailure(error)).toEqual({
       type: CONNECT_WALLET_FAILURE,
       meta: undefined,
-      payload: { error }
+      payload: { error },
     })
   })
 })
@@ -76,7 +76,7 @@ describe('when creating the action to signal a successful connect wallet request
     expect(connectWalletSuccess(wallet)).toEqual({
       type: CONNECT_WALLET_SUCCESS,
       meta: undefined,
-      payload: { wallet }
+      payload: { wallet },
     })
   })
 })
@@ -86,7 +86,7 @@ describe('when creating the action to signal the start of the enable wallet requ
     expect(enableWalletRequest(providerType)).toEqual({
       type: ENABLE_WALLET_REQUEST,
       meta: undefined,
-      payload: { providerType }
+      payload: { providerType },
     })
   })
 })
@@ -96,7 +96,7 @@ describe('when creating the action to signal a failure in the enable wallet requ
     expect(enableWalletFailure(error)).toEqual({
       type: ENABLE_WALLET_FAILURE,
       meta: undefined,
-      payload: { error }
+      payload: { error },
     })
   })
 })
@@ -106,7 +106,7 @@ describe('when creating the action to signal a successful enable wallet request'
     expect(enableWalletSuccess(providerType)).toEqual({
       type: ENABLE_WALLET_SUCCESS,
       meta: undefined,
-      payload: { providerType }
+      payload: { providerType },
     })
   })
 })
@@ -116,7 +116,7 @@ describe('when creating the action to signal a change account', () => {
     expect(changeAccount(wallet)).toEqual({
       type: CHANGE_ACCOUNT,
       meta: undefined,
-      payload: { wallet }
+      payload: { wallet },
     })
   })
 })
@@ -126,7 +126,7 @@ describe('when creating the action to signal a change network', () => {
     expect(changeNetwork(wallet)).toEqual({
       type: CHANGE_NETWORK,
       meta: undefined,
-      payload: { wallet }
+      payload: { wallet },
     })
   })
 })
@@ -136,7 +136,7 @@ describe('when creating the action to signal the start of a disconnect wallet re
     expect(disconnectWalletRequest()).toEqual({
       type: DISCONNECT_WALLET_REQUEST,
       meta: undefined,
-      payload: undefined
+      payload: undefined,
     })
   })
 })
@@ -146,7 +146,7 @@ describe('when creating the action to signal the failure of a disconnect wallet 
     expect(disconnectWalletFailure(error)).toEqual({
       type: DISCONNECT_WALLET_FAILURE,
       meta: undefined,
-      payload: { error }
+      payload: { error },
     })
   })
 })
@@ -156,7 +156,7 @@ describe('when creating the action to signal the success of a disconnect wallet 
     expect(disconnectWalletSuccess()).toEqual({
       type: DISCONNECT_WALLET_SUCCESS,
       meta: undefined,
-      payload: undefined
+      payload: undefined,
     })
   })
 })
@@ -166,7 +166,7 @@ describe('when creating the action to signal the start of the fetch wallet reque
     expect(fetchWalletRequest()).toEqual({
       type: FETCH_WALLET_REQUEST,
       meta: undefined,
-      payload: undefined
+      payload: undefined,
     })
   })
 })
@@ -176,7 +176,7 @@ describe('when creating the action to signal a failure in the fetch wallet reque
     expect(fetchWalletFailure(error)).toEqual({
       type: FETCH_WALLET_FAILURE,
       meta: undefined,
-      payload: { error }
+      payload: { error },
     })
   })
 })
@@ -186,7 +186,7 @@ describe('when creating the action to signal a successful fetch wallet request',
     expect(fetchWalletSuccess(wallet)).toEqual({
       type: FETCH_WALLET_SUCCESS,
       meta: undefined,
-      payload: { wallet }
+      payload: { wallet },
     })
   })
 })
@@ -196,7 +196,7 @@ describe('when creating the action to signal the start of the switch network req
     expect(switchNetworkRequest(chainId)).toEqual({
       type: SWITCH_NETWORK_REQUEST,
       meta: undefined,
-      payload: { chainId }
+      payload: { chainId },
     })
   })
 })
@@ -206,7 +206,7 @@ describe('when creating the action to signal a failure in the switch network req
     expect(switchNetworkFailure(chainId, error)).toEqual({
       type: SWITCH_NETWORK_FAILURE,
       meta: undefined,
-      payload: { chainId, error }
+      payload: { chainId, error },
     })
   })
 })
@@ -216,7 +216,7 @@ describe('when creating the action to signal a successful switch network request
     expect(switchNetworkSuccess(chainId)).toEqual({
       type: SWITCH_NETWORK_SUCCESS,
       meta: undefined,
-      payload: { chainId }
+      payload: { chainId },
     })
   })
 })
@@ -226,7 +226,7 @@ describe('when creating the action to signal a set app chain id', () => {
     expect(setAppChainId(chainId)).toEqual({
       type: SET_APP_CHAIN_ID,
       meta: undefined,
-      payload: { chainId }
+      payload: { chainId },
     })
   })
 })

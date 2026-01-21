@@ -1,7 +1,7 @@
 import {
   fetchApplicationFeaturesFailure,
   fetchApplicationFeaturesRequest,
-  fetchApplicationFeaturesSuccess
+  fetchApplicationFeaturesSuccess,
 } from './actions'
 import { getMockApplicationFeaturesRecord } from './actions.spec'
 import { featuresReducer } from './reducer'
@@ -11,19 +11,19 @@ describe('when handling the fetch features request', () => {
   it('should set error to null and add the action to the loading state', () => {
     const action = fetchApplicationFeaturesRequest([
       ApplicationName.ACCOUNT,
-      ApplicationName.BUILDER
+      ApplicationName.BUILDER,
     ])
 
     const state = featuresReducer(
       { data: {}, hasLoadedInitialFlags: false, loading: [], error: 'error' },
-      action
+      action,
     )
 
     expect(state).toEqual({
       data: {},
       loading: [action],
       hasLoadedInitialFlags: false,
-      error: null
+      error: null,
     })
   })
 })
@@ -40,16 +40,16 @@ describe('when handling the fetch features success', () => {
         data: {},
         hasLoadedInitialFlags: true,
         loading: [requestAction],
-        error: null
+        error: null,
       },
-      successAction
+      successAction,
     )
 
     expect(state).toEqual({
       data: features,
       loading: [],
       hasLoadedInitialFlags: true,
-      error: null
+      error: null,
     })
   })
 })
@@ -66,16 +66,16 @@ describe('when handling the fetch features failure', () => {
         data: {},
         hasLoadedInitialFlags: false,
         loading: [requestAction],
-        error: null
+        error: null,
       },
-      failureAction
+      failureAction,
     )
 
     expect(state).toEqual({
       data: {},
       loading: [],
       hasLoadedInitialFlags: false,
-      error
+      error,
     })
   })
 })

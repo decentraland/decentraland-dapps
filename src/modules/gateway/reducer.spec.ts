@@ -4,7 +4,7 @@ import {
   pollPurchaseStatusFailure,
   pollPurchaseStatusRequest,
   pollPurchaseStatusSuccess,
-  setPurchase
+  setPurchase,
 } from '../gateway/actions'
 import { Purchase, PurchaseStatus } from './types'
 import {
@@ -14,7 +14,7 @@ import {
   openBuyManaWithFiatModalSuccess,
   openManaFiatGatewayFailure,
   openManaFiatGatewayRequest,
-  openManaFiatGatewaySuccess
+  openManaFiatGatewaySuccess,
 } from './actions'
 import { INITIAL_STATE, gatewayReducer, GatewayState } from './reducer'
 
@@ -27,7 +27,7 @@ const mockPurchase: Purchase = {
   status: PurchaseStatus.PENDING,
   paymentMethod: 'credit_debit_card',
   gateway: NetworkGatewayType.MOON_PAY,
-  txHash: null
+  txHash: null,
 }
 
 describe('when handling the open buy mana with fiat modal request', () => {
@@ -37,13 +37,13 @@ describe('when handling the open buy mana with fiat modal request', () => {
 
       const state = gatewayReducer(
         { data: { purchases: [] }, loading: [], error: 'error' },
-        action
+        action,
       )
 
       expect(state).toEqual({
         data: { purchases: [] },
         loading: [action],
-        error: null
+        error: null,
       })
     })
   })
@@ -54,13 +54,13 @@ describe('when handling the open buy mana with fiat modal request', () => {
 
       const state = gatewayReducer(
         { data: { purchases: [] }, loading: [], error: 'error' },
-        action
+        action,
       )
 
       expect(state).toEqual({
         data: { purchases: [] },
         loading: [action],
-        error: null
+        error: null,
       })
     })
   })
@@ -73,7 +73,7 @@ describe('when handling the open buy mana with fiat modal success', () => {
 
     const state = gatewayReducer(
       { data: { purchases: [] }, loading: [requestAction], error: null },
-      successAction
+      successAction,
     )
 
     expect(state).toEqual({ data: { purchases: [] }, loading: [], error: null })
@@ -88,7 +88,7 @@ describe('when handling the open buy mana with fiat modal failure', () => {
 
     const state = gatewayReducer(
       { data: { purchases: [] }, loading: [requestAction], error: null },
-      failureAction
+      failureAction,
     )
 
     expect(state).toEqual({ data: { purchases: [] }, loading: [], error })
@@ -99,18 +99,18 @@ describe('when handling the open mana fiat gateway modal request', () => {
   it('should set error to null and add the action to the loading state', () => {
     const action = openManaFiatGatewayRequest(
       Network.ETHEREUM,
-      NetworkGatewayType.MOON_PAY
+      NetworkGatewayType.MOON_PAY,
     )
 
     const state = gatewayReducer(
       { data: { purchases: [] }, loading: [], error: 'error' },
-      action
+      action,
     )
 
     expect(state).toEqual({
       data: { purchases: [] },
       loading: [action],
-      error: null
+      error: null,
     })
   })
 })
@@ -119,13 +119,13 @@ describe('when handling the open mana fiat gateway modal success', () => {
   it('should remove the request action from the loading state and remove the error', () => {
     const requestAction = openManaFiatGatewayRequest(
       Network.ETHEREUM,
-      NetworkGatewayType.MOON_PAY
+      NetworkGatewayType.MOON_PAY,
     )
     const successAction = openManaFiatGatewaySuccess()
 
     const state = gatewayReducer(
       { data: { purchases: [] }, loading: [requestAction], error: null },
-      successAction
+      successAction,
     )
 
     expect(state).toEqual({ data: { purchases: [] }, loading: [], error: null })
@@ -136,18 +136,18 @@ describe('when handling the open mana fiat gateway modal failure', () => {
   it('should update the error and remove the request action from the loading state', () => {
     const requestAction = openManaFiatGatewayRequest(
       Network.ETHEREUM,
-      NetworkGatewayType.MOON_PAY
+      NetworkGatewayType.MOON_PAY,
     )
     const error = 'error'
     const failureAction = openManaFiatGatewayFailure(
       Network.ETHEREUM,
       NetworkGatewayType.MOON_PAY,
-      error
+      error,
     )
 
     const state = gatewayReducer(
       { data: { purchases: [] }, loading: [requestAction], error: null },
-      failureAction
+      failureAction,
     )
 
     expect(state).toEqual({ data: { purchases: [] }, loading: [], error })
@@ -168,12 +168,12 @@ describe('when handling the failure on purchase completion', () => {
           network,
           gateway,
           transactionId,
-          error
-        )
-      )
+          error,
+        ),
+      ),
     ).toEqual({
       ...state,
-      error
+      error,
     })
   })
 })
@@ -187,8 +187,8 @@ describe('when handling the set purchase', () => {
         ...state,
         data: {
           ...state.data,
-          purchases: [...state.data.purchases, mockPurchase]
-        }
+          purchases: [...state.data.purchases, mockPurchase],
+        },
       })
     })
   })
@@ -196,22 +196,22 @@ describe('when handling the set purchase', () => {
   describe('when the purchase already exists', () => {
     const stateWithPurchases = {
       ...state,
-      data: { ...state.data, purchases: [mockPurchase] }
+      data: { ...state.data, purchases: [mockPurchase] },
     }
 
     it('should add or replace if already exists', () => {
       const completeMockPurchase: Purchase = {
         ...mockPurchase,
-        status: PurchaseStatus.COMPLETE
+        status: PurchaseStatus.COMPLETE,
       }
       expect(
-        gatewayReducer(stateWithPurchases, setPurchase(completeMockPurchase))
+        gatewayReducer(stateWithPurchases, setPurchase(completeMockPurchase)),
       ).toEqual({
         ...stateWithPurchases,
         data: {
           ...state.data,
-          purchases: [...state.data.purchases, completeMockPurchase]
-        }
+          purchases: [...state.data.purchases, completeMockPurchase],
+        },
       })
     })
   })
@@ -223,13 +223,13 @@ describe('when handling the poll purchase status request', () => {
 
     const state = gatewayReducer(
       { data: { purchases: [] }, loading: [], error: 'error' },
-      action
+      action,
     )
 
     expect(state).toEqual({
       data: { purchases: [] },
       loading: [action],
-      error: null
+      error: null,
     })
   })
 })
@@ -241,7 +241,7 @@ describe('when handling the poll purchase status success', () => {
 
     const state = gatewayReducer(
       { data: { purchases: [] }, loading: [requestAction], error: null },
-      successAction
+      successAction,
     )
 
     expect(state).toEqual({ data: { purchases: [] }, loading: [], error: null })
@@ -256,7 +256,7 @@ describe('when handling the poll purchase status failure', () => {
 
     const state = gatewayReducer(
       { data: { purchases: [] }, loading: [requestAction], error: null },
-      failureAction
+      failureAction,
     )
 
     expect(state).toEqual({ data: { purchases: [] }, loading: [], error })

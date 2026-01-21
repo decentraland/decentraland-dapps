@@ -1,19 +1,19 @@
-import { takeLatest, call, put } from 'redux-saga/effects'
+import { call, put, takeLatest } from 'redux-saga/effects'
 import { AuthIdentity } from '@dcl/crypto'
 import {
+  localStorageClearIdentity,
   localStorageGetIdentity,
-  localStorageClearIdentity
 } from '@dcl/single-sign-on-client'
 import {
   CONNECT_WALLET_SUCCESS,
+  ConnectWalletSuccessAction,
   DISCONNECT_WALLET_SUCCESS,
-  DisconnectWalletSuccessAction
+  DisconnectWalletSuccessAction,
 } from '../wallet/actions'
-import { ConnectWalletSuccessAction } from '../wallet/actions'
 import {
   GENERATE_IDENTITY_REQUEST,
   GenerateIdentityRequestAction,
-  generateIdentitySuccess
+  generateIdentitySuccess,
 } from './actions'
 
 type IdentitySagaConfig = {
@@ -41,7 +41,7 @@ export function createIdentitySaga(options: IdentitySagaConfig) {
     const identity: AuthIdentity | null = localStorageGetIdentity(address)
     if (!identity) {
       window.location.replace(
-        `${authURL}/login?redirectTo=${window.location.href}`
+        `${authURL}/login?redirectTo=${window.location.href}`,
       )
       return
     }
@@ -56,9 +56,7 @@ export function createIdentitySaga(options: IdentitySagaConfig) {
     const identity: AuthIdentity | null = localStorageGetIdentity(address)
     if (!identity) {
       window.location.replace(
-        `${authURL}/login?redirectTo=${encodeURIComponent(
-          window.location.href
-        )}`
+        `${authURL}/login?redirectTo=${encodeURIComponent(window.location.href)}`,
       )
     }
   }
@@ -80,9 +78,7 @@ export function* getIdentityOrRedirect() {
   const identity: AuthIdentity | null = localStorageGetIdentity(auxAddress)
   if (!identity) {
     window.location.replace(
-      `${dappAuthURL}/login?redirectTo=${encodeURIComponent(
-        window.location.href
-      )}`
+      `${dappAuthURL}/login?redirectTo=${encodeURIComponent(window.location.href)}`,
     )
     return
   }

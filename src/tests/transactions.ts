@@ -7,27 +7,27 @@ export const mockedContract = {
       inputs: [
         {
           name: 'from',
-          type: 'address'
+          type: 'address',
         },
         {
           name: 'to',
-          type: 'address'
+          type: 'address',
         },
         {
           name: 'value',
-          type: 'uint256'
-        }
+          type: 'uint256',
+        },
       ],
       name: 'transferFrom',
       outputs: [
         {
           name: '',
-          type: 'bool'
-        }
+          type: 'bool',
+        },
       ],
       payable: false,
       stateMutability: 'nonpayable',
-      type: 'function'
+      type: 'function',
     },
     {
       constant: false,
@@ -36,13 +36,13 @@ export const mockedContract = {
       outputs: [],
       payable: false,
       stateMutability: 'nonpayable',
-      type: 'function'
-    }
+      type: 'function',
+    },
   ],
   address: '0x5a467398dfa9d5c663a656423a2d055f538198a4',
   name: 'aContractName',
   version: '1.0',
-  chainId: ChainId.MATIC_MUMBAI
+  chainId: ChainId.MATIC_MUMBAI,
 }
 
 type buildNetworkProviderOptions = {
@@ -57,7 +57,7 @@ type buildNetworkProviderOptions = {
 }
 
 export function buildMockedNetworkProvider(
-  options?: buildNetworkProviderOptions
+  options?: buildNetworkProviderOptions,
 ) {
   const {
     ethChainId,
@@ -67,7 +67,7 @@ export function buildMockedNetworkProvider(
     ethBlockNumber,
     eth_getTransactionByHash,
     walletSwitchEthereumChain,
-    walletAddEthereumChain
+    walletAddEthereumChain,
   } = options ?? {}
 
   return {
@@ -89,7 +89,7 @@ export function buildMockedNetworkProvider(
               return (
                 ethSendTransaction ??
                 Promise.resolve(
-                  '0xc9dd675b8949ce5d18b6cb4c9df888bb4c37ca02bbe54eb42d2b42514a0967c5'
+                  '0xc9dd675b8949ce5d18b6cb4c9df888bb4c37ca02bbe54eb42d2b42514a0967c5',
                 )
               )
             case 'eth_blockNumber':
@@ -104,18 +104,15 @@ export function buildMockedNetworkProvider(
                   from: '0x7309F0134f3e51E8CBE29dD86068e0F264F6c946',
                   gas: '0x5208',
                   gasPrice: '0x4a817c800',
-                  hash:
-                    '0xc9dd675b8949ce5d18b6cb4c9df888bb4c37ca02bbe54eb42d2b42514a0967c5',
+                  hash: '0xc9dd675b8949ce5d18b6cb4c9df888bb4c37ca02bbe54eb42d2b42514a0967c5',
                   input: '0x68656c6c6f21',
                   nonce: '0x15',
                   to: mockedContract.address,
                   transactionIndex: '0x41',
                   value: '0xf3dbb76162000',
                   v: '0x25',
-                  r:
-                    '0x1b5e176d927f8e9ab405058b2d2457392da3e20f328b16ddabcebc33eaac5fea',
-                  s:
-                    '0x4ba69724e8f69de52f0125ad8b3c5c2cef33019bac3249e2c0a2192766d1721c'
+                  r: '0x1b5e176d927f8e9ab405058b2d2457392da3e20f328b16ddabcebc33eaac5fea',
+                  s: '0x4ba69724e8f69de52f0125ad8b3c5c2cef33019bac3249e2c0a2192766d1721c',
                 })
               )
             case 'wallet_switchEthereumChain':
@@ -125,7 +122,7 @@ export function buildMockedNetworkProvider(
             default:
               throw new Error(`Unsupported method: ${method}`)
           }
-        }
-      )
+        },
+      ),
   }
 }

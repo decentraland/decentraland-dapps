@@ -1,5 +1,4 @@
 import { ModalProps as ModalComponentProps } from 'decentraland-ui/dist/components/Modal/Modal'
-
 import { closeModal } from '../../modules/modal/actions'
 
 export type ModalProps = ModalComponentProps & {

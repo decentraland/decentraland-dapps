@@ -2,7 +2,7 @@ import React, { useCallback } from 'react'
 import {
   FeedbackModal as BaseBuyManaWithFiatFeedbackModal,
   FeedbackModalI18N,
-  TransactionStatus
+  TransactionStatus,
 } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/FeedbackModal'
 import { gatewaysNames } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 import { getNetworkName } from 'decentraland-ui/dist/lib/network'
@@ -16,47 +16,47 @@ const transactionStatuses = {
   [PurchaseStatus.COMPLETE]: TransactionStatus.SUCCESS,
   [PurchaseStatus.FAILED]: TransactionStatus.FAILURE,
   [PurchaseStatus.CANCELLED]: TransactionStatus.FAILURE,
-  [PurchaseStatus.REFUNDED]: TransactionStatus.FAILURE
+  [PurchaseStatus.REFUNDED]: TransactionStatus.FAILURE,
 }
 
 const camelToSnakeCase = (str: string) =>
-  str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`)
+  str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`)
 
 const propsToTranslateByStatus = {
   [TransactionStatus.PENDING]: [
     'title',
     'statusTitle',
     'description',
-    'goToText'
+    'goToText',
   ],
   [TransactionStatus.SUCCESS]: [
     'title',
     'description',
     'cta',
-    'viewTransaction'
+    'viewTransaction',
   ],
   [TransactionStatus.FAILURE]: [
     'title',
     'statusTitle',
     'description',
     'cta',
-    'secondaryCta'
-  ]
+    'secondaryCta',
+  ],
 }
 
 const getDefaultFeedbackTranslations = (
   { network, gateway }: Purchase,
-  status: TransactionStatus
+  status: TransactionStatus,
 ): FeedbackModalI18N => {
   const basePath = `@dapps.buyManaWithFiat.feedback_modal.${status}`
   return Object.fromEntries(
-    propsToTranslateByStatus[status].map(prop => [
+    propsToTranslateByStatus[status].map((prop) => [
       prop,
       t(`${basePath}.${camelToSnakeCase(prop)}`, {
         network: getNetworkName(network),
-        gateway: gatewaysNames[gateway]
-      })
-    ])
+        gateway: gatewaysNames[gateway],
+      }),
+    ]),
   ) as FeedbackModalI18N
 }
 
@@ -64,7 +64,7 @@ const BuyManaWithFiatFeedbackModal = ({
   metadata: { purchase, goToUrl, transactionUrl },
   onTryAgain,
   onSelectOtherProvider,
-  onClose
+  onClose,
 }: Props) => {
   const { network, gateway, status: purchaseStatus } = purchase
   const transactionStatus = transactionStatuses[purchaseStatus]
@@ -91,7 +91,7 @@ const BuyManaWithFiatFeedbackModal = ({
     if (transactionStatus === TransactionStatus.FAILURE) {
       analytics?.track('Select other gateway', {
         network,
-        previousGateway: gateway
+        previousGateway: gateway,
       })
       onSelectOtherProvider(network)
       onClose()
@@ -102,7 +102,7 @@ const BuyManaWithFiatFeedbackModal = ({
     network,
     gateway,
     onSelectOtherProvider,
-    onClose
+    onClose,
   ])
 
   return (

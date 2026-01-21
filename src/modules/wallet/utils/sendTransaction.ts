@@ -1,12 +1,12 @@
+import { Contract, PopulatedTransaction } from '@ethersproject/contracts'
 import { BigNumber, utils } from 'ethers'
 import { ContractData, sendMetaTransaction } from 'decentraland-transactions'
-import { Contract, PopulatedTransaction } from '@ethersproject/contracts'
 import { getConnectedProvider } from '../../../lib/eth'
+import { getProviderChainId } from './getProviderChainId'
 import { getTargetNetworkProvider } from './getTargetNetworkProvider'
 import { transactionEvents } from './transactionEvents'
 import { TransactionEventData, TransactionEventType } from './types'
 import { getTransactionsApiUrl } from './urls'
-import { getProviderChainId } from './getProviderChainId'
 
 const acceptOrRejectTransaction = () => {
   return new Promise((resolve, reject) => {
@@ -48,8 +48,8 @@ export async function sendTransaction(
 export async function sendTransaction(
   contract: ContractData,
   getPopulatedTransaction: (
-    populateTransaction: Contract['populateTransaction']
-  ) => Promise<PopulatedTransaction>
+    populateTransaction: Contract['populateTransaction'],
+  ) => Promise<PopulatedTransaction>,
 ): Promise<string>
 
 export async function sendTransaction(...args: any[]) {
@@ -68,24 +68,24 @@ export async function sendTransaction(...args: any[]) {
     const chainId = await getProviderChainId(connectedProvider)
 
     const targetNetworkProvider = await getTargetNetworkProvider(
-      contract.chainId
+      contract.chainId,
     )
 
     const contractInstance = new Contract(
       contract.address,
       contract.abi,
-      targetNetworkProvider
+      targetNetworkProvider,
     )
 
     // Populate the transaction data
-    const unsignedTx = await (typeof contractMethodNameOrGetPopulatedTransaction ===
-    'function'
-      ? contractMethodNameOrGetPopulatedTransaction(
-          contractInstance.populateTransaction
-        )
-      : contractInstance.populateTransaction[
-          contractMethodNameOrGetPopulatedTransaction
-        ](...contractArguments))
+    const unsignedTx =
+      await (typeof contractMethodNameOrGetPopulatedTransaction === 'function'
+        ? contractMethodNameOrGetPopulatedTransaction(
+            contractInstance.populateTransaction,
+          )
+        : contractInstance.populateTransaction[
+            contractMethodNameOrGetPopulatedTransaction
+          ](...contractArguments))
 
     // If the connected provider is in the target network, use it to sign and send the tx
     if (chainId === contract.chainId) {
@@ -98,7 +98,9 @@ export async function sendTransaction(...args: any[]) {
           const gasPrice = await signer.getGasPrice()
           const transactionGasCost = await signer.estimateGas(unsignedTx)
           transactionGasPrice = gasPrice.mul(transactionGasCost)
-        } catch (_e) {}
+        } catch {
+          // Ignore gas estimation errors
+        }
 
         // If the transaction gas price is not zero, we need to wait for the user to accept or reject the transaction
         if (!transactionGasPrice.isZero()) {
@@ -107,7 +109,7 @@ export async function sendTransaction(...args: any[]) {
           transactionEvents.emit(TransactionEventType.PROMPT, {
             transactionGasPrice: utils.formatEther(transactionGasPrice),
             userBalance: utils.formatEther(userBalance),
-            chainId: contract.chainId
+            chainId: contract.chainId,
           })
           // Wait for the user to accept or reject the transaction in the Web2TransactionModal
           await acceptOrRejectPromise
@@ -122,11 +124,11 @@ export async function sendTransaction(...args: any[]) {
       const txHash = await sendMetaTransaction(
         connectedProvider,
         targetNetworkProvider,
-        unsignedTx.data!,
+        unsignedTx.data,
         contract,
         {
-          serverURL: getTransactionsApiUrl()
-        }
+          serverURL: getTransactionsApiUrl(),
+        },
       )
       transactionEvents.emit(TransactionEventType.SUCCESS, { txHash })
       return txHash
@@ -134,7 +136,7 @@ export async function sendTransaction(...args: any[]) {
   } catch (error) {
     const data: TransactionEventData<TransactionEventType.ERROR> = {
       type: TransactionEventType.ERROR,
-      error: error as Error
+      error: error as Error,
     }
     transactionEvents.emit(TransactionEventType.ERROR, data)
     throw error

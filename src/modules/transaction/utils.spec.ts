@@ -6,7 +6,7 @@ import {
   fetchTransactionRequest,
   fetchTransactionSuccess,
   replaceTransactionSuccess,
-  updateTransactionStatus
+  updateTransactionStatus,
 } from './actions'
 import {
   ActionWithTransactionPayload,
@@ -14,7 +14,7 @@ import {
   Transaction,
   TransactionPayload,
   TransactionStatus,
-  TRANSACTION_ACTION_FLAG
+  TRANSACTION_ACTION_FLAG,
 } from './types'
 import {
   buildTransactionPayload,
@@ -26,7 +26,7 @@ import {
   buildTransactionWithFromPayload,
   getTransactionHref,
   isTransactionActionCrossChain,
-  buildCrossChainTransactionFromPayload
+  buildCrossChainTransactionFromPayload,
 } from './utils'
 
 describe('modules', () => {
@@ -57,11 +57,11 @@ describe('modules', () => {
           const txPayload = buildTransactionPayload(
             chainId,
             tx.hash,
-            tx.payload
+            tx.payload,
           )
 
           expect(txPayload).toEqual({
-            [TRANSACTION_ACTION_FLAG]: tx
+            [TRANSACTION_ACTION_FLAG]: tx,
           })
         })
       })
@@ -75,7 +75,7 @@ describe('modules', () => {
             payload,
             chainId,
             toChainId: chainId,
-            withReceipt: true
+            withReceipt: true,
           }
         })
 
@@ -83,11 +83,11 @@ describe('modules', () => {
           const txPayload = buildTransactionWithReceiptPayload(
             chainId,
             txWithReceipt.hash,
-            txWithReceipt.payload
+            txWithReceipt.payload,
           )
 
           expect(txPayload).toEqual({
-            [TRANSACTION_ACTION_FLAG]: txWithReceipt
+            [TRANSACTION_ACTION_FLAG]: txWithReceipt,
           })
         })
       })
@@ -101,20 +101,20 @@ describe('modules', () => {
             payload,
             chainId,
             from,
-            toChainId: chainId
+            toChainId: chainId,
           }
         })
 
-        it('should return a new object with the transaction flag and the action inside', function() {
+        it('should return a new object with the transaction flag and the action inside', function () {
           const txPayload = buildTransactionWithFromPayload(
             chainId,
             txWithFrom.hash,
             from,
-            payload
+            payload,
           )
 
           expect(txPayload).toEqual({
-            [TRANSACTION_ACTION_FLAG]: txWithFrom
+            [TRANSACTION_ACTION_FLAG]: txWithFrom,
           })
         })
       })
@@ -124,44 +124,44 @@ describe('modules', () => {
           const txPayload = buildTransactionPayload(
             chainId,
             tx.hash,
-            tx.payload
+            tx.payload,
           )
           const action = {
             type: '[Success] Transaction action',
-            payload: txPayload
+            payload: txPayload,
           }
 
           expect(isTransactionAction(action)).toBe(true)
         })
 
-        it('should return true if the action was built with buildTransactionWithReceiptPayload', function() {
+        it('should return true if the action was built with buildTransactionWithReceiptPayload', function () {
           const txPayload = buildTransactionWithReceiptPayload(
             chainId,
             tx.hash,
-            tx.payload
+            tx.payload,
           )
           const action = {
             type: '[Success] Transaction action',
-            payload: txPayload
+            payload: txPayload,
           }
 
           expect(isTransactionAction(action)).toBe(true)
         })
 
-        it('should return false for normal actions', function() {
+        it('should return false for normal actions', function () {
           expect(
             isTransactionAction({
-              type: '[Success] Some success action'
-            })
+              type: '[Success] Some success action',
+            }),
           ).toBe(false)
 
           expect(
             isTransactionAction({
               type: '[Request] Some request action',
               payload: {
-                mock_transaction_flag: tx
-              }
-            })
+                mock_transaction_flag: tx,
+              },
+            }),
           ).toBe(false)
         })
       })
@@ -183,7 +183,7 @@ describe('modules', () => {
             requestId: undefined,
             status: null,
             timestamp: expect.any(Number),
-            url: ''
+            url: '',
           }
         })
 
@@ -192,7 +192,7 @@ describe('modules', () => {
             const txPayload = buildTransactionWithReceiptPayload(
               chainId,
               tx.hash,
-              tx.payload
+              tx.payload,
             )
             action = {
               type: '[Success] Transaction action',
@@ -200,8 +200,8 @@ describe('modules', () => {
                 this: 'is',
                 more: 2,
                 data: ['a', 3],
-                ...txPayload
-              }
+                ...txPayload,
+              },
             }
             expectedTx = {
               ...expectedTx,
@@ -209,11 +209,11 @@ describe('modules', () => {
               hash: action.payload._watch_tx.hash,
               url: getTransactionHref(
                 { txHash: action.payload._watch_tx.hash },
-                chainId
+                chainId,
               ),
               payload: action.payload._watch_tx.payload,
               toChainId: action.payload._watch_tx.toChainId,
-              withReceipt: action.payload._watch_tx.withReceipt
+              withReceipt: action.payload._watch_tx.withReceipt,
             }
           })
 
@@ -227,7 +227,7 @@ describe('modules', () => {
             const txPayload = buildTransactionPayload(
               chainId,
               tx.hash,
-              tx.payload
+              tx.payload,
             )
             action = {
               type: '[Success] Transaction action',
@@ -235,8 +235,8 @@ describe('modules', () => {
                 this: 'is',
                 more: 2,
                 data: ['a', 3],
-                ...txPayload
-              }
+                ...txPayload,
+              },
             }
             expectedTx = {
               ...expectedTx,
@@ -244,10 +244,10 @@ describe('modules', () => {
               hash: action.payload._watch_tx.hash,
               url: getTransactionHref(
                 { txHash: action.payload._watch_tx.hash },
-                chainId
+                chainId,
               ),
               toChainId: action.payload._watch_tx.toChainId,
-              payload: action.payload._watch_tx.payload
+              payload: action.payload._watch_tx.payload,
             }
           })
 
@@ -272,7 +272,7 @@ describe('modules', () => {
               tx.hash,
               tx.payload,
               requestId,
-              crossChainProviderType
+              crossChainProviderType,
             )
             action = {
               type: '[Success] Transaction action',
@@ -280,8 +280,8 @@ describe('modules', () => {
                 this: 'is',
                 more: 2,
                 data: ['a', 3],
-                ...txPayload
-              }
+                ...txPayload,
+              },
             }
             expectedTx = {
               ...expectedTx,
@@ -290,16 +290,16 @@ describe('modules', () => {
               url: getTransactionHref(
                 {
                   txHash: action.payload._watch_tx.hash,
-                  crossChainProviderType
+                  crossChainProviderType,
                 },
-                chainId
+                chainId,
               ),
               isCrossChain: true,
               requestId: action.payload._watch_tx.requestId,
               toChainId: action.payload._watch_tx.toChainId,
               crossChainProviderType:
                 action.payload._watch_tx.crossChainProviderType,
-              payload: action.payload._watch_tx.payload
+              payload: action.payload._watch_tx.payload,
             }
           })
 
@@ -310,38 +310,38 @@ describe('modules', () => {
       })
 
       describe('getTransactionHashFromAction', () => {
-        it('should return the transaction hash from a built transaction action with buildTransactionPayload', function() {
+        it('should return the transaction hash from a built transaction action with buildTransactionPayload', function () {
           const txPayload = buildTransactionPayload(
             chainId,
             tx.hash,
-            tx.payload
+            tx.payload,
           )
           const action = {
             type: '[Success] Transaction action',
-            payload: { data: ['a', 3], ...txPayload }
+            payload: { data: ['a', 3], ...txPayload },
           }
 
           expect(getTransactionHashFromAction(action)).toEqual(tx.hash)
         })
 
-        it('should return the transaction hash from a built transaction action with buildTransactionWithReceiptPayload', function() {
+        it('should return the transaction hash from a built transaction action with buildTransactionWithReceiptPayload', function () {
           const txPayload = buildTransactionWithReceiptPayload(
             chainId,
             tx.hash,
-            tx.payload
+            tx.payload,
           )
           const action = {
             type: '[Success] Transaction action',
-            payload: { data: ['a', 3], ...txPayload }
+            payload: { data: ['a', 3], ...txPayload },
           }
 
           expect(getTransactionHashFromAction(action)).toEqual(tx.hash)
         })
 
-        it('should throw for a normal action (use isTransactionAction to avoid it)', function() {
+        it('should throw for a normal action (use isTransactionAction to avoid it)', function () {
           const action = {
             type: '[Success] Transaction action',
-            payload: { more: 2 }
+            payload: { more: 2 },
           }
 
           expect(() => getTransactionHashFromAction(action as any)).toThrow()
@@ -371,12 +371,12 @@ describe('when waiting for a transaction to be completed', () => {
       status: null,
       url: '',
       isCrossChain: false,
-      chainId: ChainId.ETHEREUM_GOERLI
+      chainId: ChainId.ETHEREUM_GOERLI,
     }
 
     anotherTransaction = {
       ...transaction,
-      hash: anotherAddress
+      hash: anotherAddress,
     }
 
     // Mute console error when running the expect saga implementation and throwing
@@ -384,7 +384,7 @@ describe('when waiting for a transaction to be completed', () => {
   })
 
   afterEach(() => {
-    ;((global.console.error as unknown) as jest.SpyInstance).mockRestore()
+    ;(global.console.error as unknown as jest.SpyInstance).mockRestore()
   })
 
   describe('and the transaction results in a REVERTED failure', () => {
@@ -395,19 +395,19 @@ describe('when waiting for a transaction to be completed', () => {
             anotherAddress,
             TransactionStatus.REVERTED,
             'aFailureMessage',
-            anotherTransaction
-          )
+            anotherTransaction,
+          ),
         )
         .dispatch(
           fetchTransactionFailure(
             txHash,
             TransactionStatus.REVERTED,
             'aFailureMessage',
-            transaction
-          )
+            transaction,
+          ),
         )
         .throws(
-          `The transaction ${txHash} failed to be mined. The status is ${TransactionStatus.REVERTED}.`
+          `The transaction ${txHash} failed to be mined. The status is ${TransactionStatus.REVERTED}.`,
         )
         .silentRun()
     })
@@ -428,8 +428,8 @@ describe('when waiting for a transaction to be completed', () => {
               txHash,
               TransactionStatus.DROPPED,
               'aFailureMessage',
-              transaction
-            )
+              transaction,
+            ),
           )
           .dispatch(replaceTransactionSuccess(txHash, newTxHash))
           .dispatch(
@@ -437,11 +437,11 @@ describe('when waiting for a transaction to be completed', () => {
               newTxHash,
               TransactionStatus.REVERTED,
               'aFailureMessage',
-              { ...transaction, hash: newTxHash }
-            )
+              { ...transaction, hash: newTxHash },
+            ),
           )
           .throws(
-            `The transaction ${newTxHash} failed to be mined. The status is ${TransactionStatus.REVERTED}.`
+            `The transaction ${newTxHash} failed to be mined. The status is ${TransactionStatus.REVERTED}.`,
           )
           .silentRun()
       })
@@ -455,12 +455,12 @@ describe('when waiting for a transaction to be completed', () => {
               txHash,
               TransactionStatus.DROPPED,
               'aFailureMessage',
-              transaction
-            )
+              transaction,
+            ),
           )
           .dispatch(replaceTransactionSuccess(txHash, newTxHash))
           .dispatch(
-            fetchTransactionSuccess({ ...transaction, hash: newTxHash })
+            fetchTransactionSuccess({ ...transaction, hash: newTxHash }),
           )
           .silentRun()
       })
@@ -476,25 +476,25 @@ describe('when waiting for a transaction to be completed', () => {
               txHash,
               TransactionStatus.DROPPED,
               'aFailureMessage',
-              transaction
-            )
+              transaction,
+            ),
           )
           .dispatch(
             fetchTransactionRequest('anAddress', txHash, {
               type: 'SomeAction',
-              payload: { _watch_tx: { hash: txHash } } as TransactionPayload
-            })
+              payload: { _watch_tx: { hash: txHash } } as TransactionPayload,
+            }),
           )
           .dispatch(
             fetchTransactionFailure(
               txHash,
               TransactionStatus.REVERTED,
               'aFailureMessage',
-              transaction
-            )
+              transaction,
+            ),
           )
           .throws(
-            `The transaction ${txHash} failed to be mined. The status is ${TransactionStatus.REVERTED}.`
+            `The transaction ${txHash} failed to be mined. The status is ${TransactionStatus.REVERTED}.`,
           )
           .silentRun()
       })
@@ -508,14 +508,14 @@ describe('when waiting for a transaction to be completed', () => {
               txHash,
               TransactionStatus.DROPPED,
               'aFailureMessage',
-              transaction
-            )
+              transaction,
+            ),
           )
           .dispatch(
             fetchTransactionRequest('anAddress', txHash, {
               type: 'SomeAction',
-              payload: { _watch_tx: { hash: txHash } } as TransactionPayload
-            })
+              payload: { _watch_tx: { hash: txHash } } as TransactionPayload,
+            }),
           )
           .dispatch(fetchTransactionSuccess(transaction))
           .silentRun()
@@ -531,8 +531,8 @@ describe('when waiting for a transaction to be completed', () => {
             txHash,
             TransactionStatus.DROPPED,
             'aFailureMessage',
-            transaction
-          )
+            transaction,
+          ),
         )
         .dispatch(updateTransactionStatus(txHash, TransactionStatus.REPLACED))
         .silentRun()
@@ -569,7 +569,7 @@ describe('when getting the transaction href', () => {
 
       it('should return the link to the Axelar site', () => {
         expect(getTransactionHref({ txHash, crossChainProviderType })).toBe(
-          `https://axelarscan.io/gmp/${txHash}`
+          `https://axelarscan.io/gmp/${txHash}`,
         )
       })
     })
@@ -597,7 +597,7 @@ describe('when getting the transaction href', () => {
 
       it('should return the link to the Etherscan site pointing to the address', () => {
         expect(getTransactionHref({ address })).toBe(
-          `https://etherscan.io/address/${address}`
+          `https://etherscan.io/address/${address}`,
         )
       })
     })
@@ -614,7 +614,7 @@ describe('when getting the transaction href', () => {
 
         it('should return the link to the Etherscan site pointing to the block number', () => {
           expect(getTransactionHref({ blockNumber })).toBe(
-            `https://etherscan.io/block/${blockNumber}`
+            `https://etherscan.io/block/${blockNumber}`,
           )
         })
       })
@@ -626,7 +626,7 @@ describe('when getting the transaction href', () => {
 
         it('should return the link to the Etherscan site pointing to the transaction', () => {
           expect(getTransactionHref({ txHash })).toBe(
-            `https://etherscan.io/tx/${txHash}`
+            `https://etherscan.io/tx/${txHash}`,
           )
         })
       })
@@ -639,7 +639,7 @@ describe('when getting the transaction href', () => {
 
       it('should return the link to the Sepolia site', () => {
         expect(getTransactionHref({ txHash }, network)).toBe(
-          `https://sepolia.etherscan.io/tx/${txHash}`
+          `https://sepolia.etherscan.io/tx/${txHash}`,
         )
       })
     })
@@ -651,7 +651,7 @@ describe('when getting if an action is a cross chain transaction action', () => 
 
   beforeEach(() => {
     action = {
-      type: 'SomeAction'
+      type: 'SomeAction',
     }
   })
 
@@ -669,9 +669,9 @@ describe('when getting if an action is a cross chain transaction action', () => 
           _watch_tx: {
             chainId: ChainId.ETHEREUM_MAINNET,
             hash: '0xdeadbeef',
-            payload: { some: 'data' }
-          }
-        }
+            payload: { some: 'data' },
+          },
+        },
       }
     })
 
@@ -684,9 +684,9 @@ describe('when getting if an action is a cross chain transaction action', () => 
             _watch_tx: {
               ...action.payload._watch_tx,
               toChainId: ChainId.AVALANCHE_MAINNET,
-              crossChainProviderType: CrossChainProviderType.SQUID
-            }
-          }
+              crossChainProviderType: CrossChainProviderType.SQUID,
+            },
+          },
         }
       })
 
@@ -704,9 +704,9 @@ describe('when getting if an action is a cross chain transaction action', () => 
             _watch_tx: {
               ...action.payload._watch_tx,
               toChainId: undefined,
-              crossChainProviderType: undefined
-            }
-          }
+              crossChainProviderType: undefined,
+            },
+          },
         }
       })
 

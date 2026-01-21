@@ -10,12 +10,12 @@ export type StorageState = {
 
 export const INITIAL_STATE: StorageState = {
   version: 1,
-  loading: true
+  loading: true,
 }
 
 export function storageReducerWrapper(
   reducer: any,
-  merger?: StateMerger
+  merger?: StateMerger,
 ): Reducer<{} | undefined> {
   return storage.reducer(reducer, merger)
 }
@@ -25,7 +25,7 @@ export function storageReducer(state = INITIAL_STATE, action: AnyAction) {
     case STORAGE_LOAD:
       return {
         ...state,
-        loading: false
+        loading: false,
       }
     default:
       return state

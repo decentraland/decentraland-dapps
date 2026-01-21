@@ -1,74 +1,75 @@
-import { useState, useEffect, useCallback, useMemo } from 'react'
-import {
-  NotificationsAPI,
-  checkIsOnboarding,
-  setOnboardingDone
-} from '../modules/notifications'
-import { AuthIdentity } from 'decentraland-crypto-fetch'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   DCLNotification,
-  NotificationActiveTab
+  NotificationActiveTab,
 } from 'decentraland-ui/dist/components/Notifications/types'
 import { CURRENT_AVAILABLE_NOTIFICATIONS } from 'decentraland-ui/dist/components/Notifications/utils'
 import { CURRENT_AVAILABLE_NOTIFICATIONS as CURRENT_AVAILABLE_NOTIFICATIONS_UI2 } from 'decentraland-ui2/dist/components/Notifications/utils'
+import { AuthIdentity } from 'decentraland-crypto-fetch'
 import { NOTIFICATIONS_QUERY_INTERVAL } from '../containers/Navbar/constants'
 import Profile from '../containers/Profile'
 import { getBaseUrl } from '../lib'
+import {
+  NotificationsAPI,
+  checkIsOnboarding,
+  setOnboardingDone,
+} from '../modules/notifications'
 
 const useNotifications = (
   identity: AuthIdentity | undefined,
-  isNotificationsEnabled: boolean
+  isNotificationsEnabled: boolean,
 ) => {
   const [{ isLoading, notifications }, setUserNotifications] = useState<{
     isLoading: boolean
     notifications: DCLNotification[]
   }>({
     isLoading: false,
-    notifications: []
+    notifications: [],
   })
 
   const [{ activeTab, isOnboarding, isOpen }, setNotificationsState] = useState(
     {
       activeTab: NotificationActiveTab.NEWEST,
       isOnboarding: checkIsOnboarding(),
-      isOpen: false
-    }
+      isOpen: false,
+    },
   )
 
-  const [
-    notificationsClient,
-    setNotificationsClient
-  ] = useState<NotificationsAPI | null>(null)
+  const [notificationsClient, setNotificationsClient] =
+    useState<NotificationsAPI | null>(null)
 
   const AVAILABLE_NOTIFICATIONS = useMemo(() => {
     return new Set([
       ...CURRENT_AVAILABLE_NOTIFICATIONS,
-      ...CURRENT_AVAILABLE_NOTIFICATIONS_UI2
+      ...CURRENT_AVAILABLE_NOTIFICATIONS_UI2,
     ])
   }, [])
 
   const handleOnBegin = () => {
     setOnboardingDone()
-    setNotificationsState(prevState => ({ ...prevState, isOnboarding: false }))
+    setNotificationsState((prevState) => ({
+      ...prevState,
+      isOnboarding: false,
+    }))
   }
 
   const fetchAndUpdateNotifications = useCallback(
     async (scopedNotificationsClient: NotificationsAPI) => {
       return scopedNotificationsClient
         .getNotifications()
-        .then(notificationsFetched => {
+        .then((notificationsFetched) => {
           const filteredNotifications = notificationsFetched.filter(
-            notification => AVAILABLE_NOTIFICATIONS.has(notification.type)
+            (notification) => AVAILABLE_NOTIFICATIONS.has(notification.type),
           )
 
-          setUserNotifications(prevState => ({
+          setUserNotifications((prevState) => ({
             ...prevState,
             isLoading: false,
-            notifications: filteredNotifications
+            notifications: filteredNotifications,
           }))
         })
     },
-    []
+    [],
   )
 
   useEffect(() => {
@@ -77,7 +78,7 @@ const useNotifications = (
       setNotificationsClient(notificationsClient)
 
       if (isNotificationsEnabled) {
-        setUserNotifications(prevState => ({ ...prevState, isLoading: true }))
+        setUserNotifications((prevState) => ({ ...prevState, isLoading: true }))
 
         fetchAndUpdateNotifications(notificationsClient)
 
@@ -104,14 +105,14 @@ const useNotifications = (
       if (unreadNotificationsIds.length && notificationsClient) {
         try {
           notificationsClient.markNotificationsAsRead(unreadNotificationsIds)
-          setUserNotifications(prevState => ({
+          setUserNotifications((prevState) => ({
             ...prevState,
-            notifications: prevState.notifications.map(notification => ({
+            notifications: prevState.notifications.map((notification) => ({
               ...notification,
               read: unreadNotificationsIds.includes(notification.id)
                 ? true
-                : notification.read
-            }))
+                : notification.read,
+            })),
           }))
         } catch (error) {
           console.error('Error marking notifications as read:', error)
@@ -121,15 +122,15 @@ const useNotifications = (
   }, [isOpen])
 
   const handleNotificationsOpen = () => {
-    setNotificationsState(prevState => {
+    setNotificationsState((prevState) => {
       return { ...prevState, isOpen: !prevState.isOpen }
     })
   }
 
   const handleOnChangeModalTab = (tab: NotificationActiveTab) =>
-    setNotificationsState(prevState => ({
+    setNotificationsState((prevState) => ({
       ...prevState,
-      activeTab: tab
+      activeTab: tab,
     }))
 
   const handleRenderProfile = useCallback((address: string) => {
@@ -154,7 +155,7 @@ const useNotifications = (
     handleOnBegin,
     handleNotificationsOpen,
     handleOnChangeModalTab,
-    handleRenderProfile
+    handleRenderProfile,
   }
 }
 

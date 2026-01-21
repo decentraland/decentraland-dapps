@@ -13,7 +13,7 @@ export const fetchCampaignSuccess = (
   name?: LocalizedField<string>,
   tabName?: LocalizedField<string>,
   mainTag?: string,
-  additionalTags?: string[]
+  additionalTags?: string[],
 ) =>
   action(FETCH_CAMPAIGN_SUCCESS, {
     name,
@@ -21,7 +21,7 @@ export const fetchCampaignSuccess = (
     mainTag,
     additionalTags,
     banners,
-    assets
+    assets,
   })
 
 export const fetchCampaignFailure = (error: string) =>

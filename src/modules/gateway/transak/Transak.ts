@@ -1,10 +1,10 @@
 import { Transak as TransakSDK } from '@transak/transak-sdk'
-import { AuthIdentity } from 'decentraland-crypto-fetch'
 import Pusher from 'pusher-js'
 import { Network } from '@dcl/schemas/dist/dapps/network'
+import { AuthIdentity } from 'decentraland-crypto-fetch'
 import { NetworkGatewayType } from 'decentraland-ui'
 import { MarketplaceAPI } from '../../../lib/marketplaceApi'
-import { TransakConfig, Purchase, PurchaseStatus } from '../types'
+import { Purchase, PurchaseStatus, TransakConfig } from '../types'
 import { purchaseEventsChannel } from '../utils'
 import {
   CustomizationOptions,
@@ -12,7 +12,7 @@ import {
   OrderResponse,
   TradeType,
   TransakOrderStatus,
-  WebSocketEvents
+  WebSocketEvents,
 } from './types'
 
 const PURCHASE_EVENT = 'Purchase status change'
@@ -25,10 +25,10 @@ export class Transak {
   constructor(config: TransakConfig, identity?: AuthIdentity) {
     const {
       apiBaseUrl,
-      pusher: { appCluster, appKey }
+      pusher: { appCluster, appKey },
     } = config
     this.pusher = new Pusher(appKey, {
-      cluster: appCluster
+      cluster: appCluster,
     })
     this.marketplaceAPI = new MarketplaceAPI(apiBaseUrl, { identity })
   }
@@ -49,26 +49,26 @@ export class Transak {
           WebSocketEvents.ORDER_PAYMENT_VERIFYING,
           WebSocketEvents.ORDER_PROCESSING,
           WebSocketEvents.ORDER_COMPLETED,
-          WebSocketEvents.ORDER_FAILED
+          WebSocketEvents.ORDER_FAILED,
         ]
 
         const channel = this.pusher.subscribe(orderData.id)
         this.emitPurchaseEvent(orderData, network)
 
-        events.forEach(event => {
+        events.forEach((event) => {
           channel.bind(event, (orderData: OrderData) => {
             this.emitPurchaseEvent(orderData, network)
             if (
               [
                 WebSocketEvents.ORDER_COMPLETED,
-                WebSocketEvents.ORDER_FAILED
+                WebSocketEvents.ORDER_FAILED,
               ].includes(event)
             ) {
               this.pusher.unsubscribe(orderData.id)
             }
           })
         })
-      }
+      },
     )
 
     TransakSDK.on(TransakSDK.EVENTS.TRANSAK_WIDGET_CLOSE, () => {
@@ -92,7 +92,7 @@ export class Transak {
       [TransakOrderStatus.REFUNDED]: PurchaseStatus.REFUNDED,
       [TransakOrderStatus.CANCELLED]: PurchaseStatus.CANCELLED,
       [TransakOrderStatus.FAILED]: PurchaseStatus.FAILED,
-      [TransakOrderStatus.EXPIRED]: PurchaseStatus.FAILED
+      [TransakOrderStatus.EXPIRED]: PurchaseStatus.FAILED,
     }[status]
   }
 
@@ -134,7 +134,7 @@ export class Transak {
       nftAssetInfo,
       transactionHash,
       walletAddress,
-      paymentOptionId
+      paymentOptionId,
     } = orderData
 
     // read if there's item in the URL and set the item id otherwise set the token id
@@ -158,10 +158,10 @@ export class Transak {
               tokenId,
               itemId,
               tradeType: itemId ? TradeType.PRIMARY : TradeType.SECONDARY,
-              cryptoAmount
-            }
+              cryptoAmount,
+            },
           }
-        : {})
+        : {}),
     }
   }
 
@@ -175,7 +175,7 @@ export class Transak {
   emitPurchaseEvent(orderData: OrderData, network: Network) {
     purchaseEventsChannel.put({
       type: PURCHASE_EVENT,
-      purchase: this.createPurchase(orderData, network)
+      purchase: this.createPurchase(orderData, network),
     })
   }
 
@@ -186,21 +186,21 @@ export class Transak {
    * @param network - Network in which the transaction will be done.
    */
   async openWidget(
-    customizationOptions: Partial<CustomizationOptions> & { network: Network }
+    customizationOptions: Partial<CustomizationOptions> & { network: Network },
   ) {
     const { network, widgetHeight, widgetWidth, ...rest } = customizationOptions
     const transakNetwork = network === Network.MATIC ? 'polygon' : 'ethereum'
 
     const widgetUrl = await this.marketplaceAPI.getTransakWidgetUrl({
       ...rest,
-      defaultNetwork: transakNetwork
+      defaultNetwork: transakNetwork,
     })
 
     this.sdk = new TransakSDK({
       widgetUrl,
       referrer: window.location.origin,
       widgetHeight: widgetHeight || '650px',
-      widgetWidth: widgetWidth || '450px'
+      widgetWidth: widgetWidth || '450px',
     })
 
     this.suscribeToEvents(network)

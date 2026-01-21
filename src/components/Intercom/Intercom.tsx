@@ -1,5 +1,4 @@
 import * as React from 'react'
-
 import { IntercomWidget } from './IntercomWidget'
 import { DefaultProps, Props } from './Intercom.types'
 
@@ -9,8 +8,8 @@ export default class Intercom extends React.PureComponent<Props> {
     settings: {
       alignment: 'left',
       horizontal_padding: 10,
-      vertical_padding: 10
-    }
+      vertical_padding: 10,
+    },
   }
 
   private readonly widget: IntercomWidget
@@ -24,7 +23,7 @@ export default class Intercom extends React.PureComponent<Props> {
     } else {
       if (this.widget.appId !== props.appId) {
         throw new Error(
-          `Intercom widget already inicialized with app id "${props.appId}". Only one intercom widget is allowed.`
+          `Intercom widget already inicialized with app id "${props.appId}". Only one intercom widget is allowed.`,
         )
       }
 

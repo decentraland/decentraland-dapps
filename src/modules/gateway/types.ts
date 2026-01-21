@@ -1,15 +1,15 @@
-import { Network } from '@dcl/schemas/dist/dapps/network'
 import { Options, WidgetEvents } from '@wert-io/widget-initializer/types'
+import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 import { TradeType } from './transak/types'
 
 export enum FiatGateway {
-  WERT = 'wert'
+  WERT = 'wert',
 }
 
 export enum WertTarget {
   DEFAULT = 'default',
-  PUBLICATION_FEES = 'publicationFees'
+  PUBLICATION_FEES = 'publicationFees',
 }
 
 export type WertOptions = Options & { target?: WertTarget }
@@ -117,7 +117,7 @@ export enum PurchaseStatus {
   FAILED = 'failed',
   CANCELLED = 'cancelled',
   REFUNDED = 'refunded',
-  COMPLETE = 'complete'
+  COMPLETE = 'complete',
 }
 
 type BasePurchase = {

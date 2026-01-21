@@ -6,7 +6,7 @@ const cache: Record<string, Toast> = {}
 export function set(
   id: number,
   toast: Toast | Omit<Toast, 'id'>,
-  position?: ToastPosition
+  position?: ToastPosition,
 ) {
   cache[id] = { ...toast, id, position }
 }

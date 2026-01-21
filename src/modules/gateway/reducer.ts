@@ -1,31 +1,29 @@
-import { loadingReducer, LoadingState } from '../loading/reducer'
 import {
-  PollPurchaseStatusFailureAction,
-  PollPurchaseStatusRequestAction,
-  PollPurchaseStatusSuccessAction,
-  POLL_PURCHASE_STATUS_FAILURE,
-  POLL_PURCHASE_STATUS_REQUEST,
-  POLL_PURCHASE_STATUS_SUCCESS,
-  SetPurchaseAction,
-  SET_PURCHASE
-} from '../gateway/actions'
-import { Purchase } from './types'
-import {
-  ManaFiatGatewayPurchaseCompletedFailureAction,
   MANA_FIAT_GATEWAY_PURCHASE_COMPLETED_FAILURE,
+  ManaFiatGatewayPurchaseCompletedFailureAction,
+  OPEN_BUY_MANA_WITH_FIAT_MODAL_FAILURE,
+  OPEN_BUY_MANA_WITH_FIAT_MODAL_REQUEST,
+  OPEN_BUY_MANA_WITH_FIAT_MODAL_SUCCESS,
+  OPEN_MANA_FIAT_GATEWAY_FAILURE,
+  OPEN_MANA_FIAT_GATEWAY_REQUEST,
+  OPEN_MANA_FIAT_GATEWAY_SUCCESS,
   OpenBuyManaWithFiatModalFailureAction,
   OpenBuyManaWithFiatModalRequestAction,
   OpenBuyManaWithFiatModalSuccessAction,
   OpenManaFiatGatewayFailureAction,
   OpenManaFiatGatewayRequestAction,
   OpenManaFiatGatewaySuccessAction,
-  OPEN_BUY_MANA_WITH_FIAT_MODAL_FAILURE,
-  OPEN_BUY_MANA_WITH_FIAT_MODAL_REQUEST,
-  OPEN_BUY_MANA_WITH_FIAT_MODAL_SUCCESS,
-  OPEN_MANA_FIAT_GATEWAY_FAILURE,
-  OPEN_MANA_FIAT_GATEWAY_REQUEST,
-  OPEN_MANA_FIAT_GATEWAY_SUCCESS
-} from './actions'
+  POLL_PURCHASE_STATUS_FAILURE,
+  POLL_PURCHASE_STATUS_REQUEST,
+  POLL_PURCHASE_STATUS_SUCCESS,
+  PollPurchaseStatusFailureAction,
+  PollPurchaseStatusRequestAction,
+  PollPurchaseStatusSuccessAction,
+  SET_PURCHASE,
+  SetPurchaseAction,
+} from '../gateway/actions'
+import { LoadingState, loadingReducer } from '../loading/reducer'
+import { Purchase } from './types'
 
 export type GatewayState = {
   data: {
@@ -38,7 +36,7 @@ export type GatewayState = {
 export const INITIAL_STATE: GatewayState = {
   data: { purchases: [] },
   loading: [],
-  error: null
+  error: null,
 }
 
 export type ManaFiatGatewayReducerAction =
@@ -56,20 +54,20 @@ export type ManaFiatGatewayReducerAction =
 
 export function gatewayReducer(
   state: GatewayState = INITIAL_STATE,
-  action: ManaFiatGatewayReducerAction
+  action: ManaFiatGatewayReducerAction,
 ): GatewayState {
   switch (action.type) {
     case OPEN_BUY_MANA_WITH_FIAT_MODAL_REQUEST: {
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
-        error: null
+        error: null,
       }
     }
     case OPEN_BUY_MANA_WITH_FIAT_MODAL_SUCCESS: {
       return {
         ...state,
-        loading: loadingReducer(state.loading, action)
+        loading: loadingReducer(state.loading, action),
       }
     }
     case OPEN_BUY_MANA_WITH_FIAT_MODAL_FAILURE: {
@@ -77,20 +75,20 @@ export function gatewayReducer(
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
-        error
+        error,
       }
     }
     case OPEN_MANA_FIAT_GATEWAY_REQUEST: {
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
-        error: null
+        error: null,
       }
     }
     case OPEN_MANA_FIAT_GATEWAY_SUCCESS: {
       return {
         ...state,
-        loading: loadingReducer(state.loading, action)
+        loading: loadingReducer(state.loading, action),
       }
     }
     case OPEN_MANA_FIAT_GATEWAY_FAILURE: {
@@ -98,14 +96,14 @@ export function gatewayReducer(
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
-        error
+        error,
       }
     }
     case MANA_FIAT_GATEWAY_PURCHASE_COMPLETED_FAILURE: {
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
-        error: action.payload.error
+        error: action.payload.error,
       }
     }
     case SET_PURCHASE: {
@@ -116,24 +114,24 @@ export function gatewayReducer(
           ...state.data,
           purchases: [
             ...state.data.purchases.filter(
-              _purchase => _purchase.id !== purchase.id
+              (_purchase) => _purchase.id !== purchase.id,
             ),
-            purchase
-          ]
-        }
+            purchase,
+          ],
+        },
       }
     }
     case POLL_PURCHASE_STATUS_REQUEST: {
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
-        error: null
+        error: null,
       }
     }
     case POLL_PURCHASE_STATUS_SUCCESS: {
       return {
         ...state,
-        loading: loadingReducer(state.loading, action)
+        loading: loadingReducer(state.loading, action),
       }
     }
     case POLL_PURCHASE_STATUS_FAILURE: {
@@ -141,7 +139,7 @@ export function gatewayReducer(
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
-        error
+        error,
       }
     }
     default:

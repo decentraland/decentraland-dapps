@@ -1,8 +1,7 @@
-import { isMobile, insertScript } from '../../lib/utils'
+import { insertScript, isMobile } from '../../lib/utils'
+import { IntercomSettings, IntercomWindow } from './Intercom.types'
 
-import { IntercomWindow, IntercomSettings } from './Intercom.types'
-
-const intercomWindow = (window as unknown) as IntercomWindow
+const intercomWindow = window as unknown as IntercomWindow
 
 export class IntercomWidget {
   private _appId: string
@@ -47,13 +46,13 @@ export class IntercomWidget {
   }
 
   inject() {
-    return new Promise<void>(resolve => {
+    return new Promise<void>((resolve) => {
       if (this.isInjected()) {
         return resolve()
       }
 
       const script = insertScript({
-        src: `https://widget.intercom.io/widget/${this._appId}`
+        src: `https://widget.intercom.io/widget/${this._appId}`,
       })
       script.addEventListener('load', () => resolve(), true)
     }).then(() => {
@@ -83,7 +82,7 @@ function getWindowClient(appId: string) {
   return (...args: any[]) => {
     if (!appId) {
       return console.warn(
-        'Intercom app id empty. Check that the environment is propery set'
+        'Intercom app id empty. Check that the environment is propery set',
       )
     }
 

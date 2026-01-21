@@ -1,13 +1,13 @@
 import { ethers } from 'ethers'
+import { Network } from '@dcl/schemas'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
+import { getChainConfiguration } from '../../../lib/chainConfiguration'
 import {
   getConnectedProvider,
-  getConnectedProviderType
+  getConnectedProviderType,
 } from '../../../lib/eth'
-import { getChainConfiguration } from '../../../lib/chainConfiguration'
 import { Networks, Wallet } from '../types'
 import { fetchManaBalance } from './fetchManaBalance'
-import { Network } from '@dcl/schemas'
 
 export async function buildWallet(appChainId: ChainId): Promise<Wallet> {
   const provider = await getConnectedProvider()
@@ -38,7 +38,7 @@ export async function buildWallet(appChainId: ChainId): Promise<Wallet> {
     const networkChainId = appChainConfig.networkMapping[network]
     networks[network] = {
       chainId: networkChainId,
-      mana: await fetchManaBalance(networkChainId, address)
+      mana: await fetchManaBalance(networkChainId, address),
     }
   }
 
@@ -47,6 +47,6 @@ export async function buildWallet(appChainId: ChainId): Promise<Wallet> {
     providerType: getConnectedProviderType()!,
     networks: networks as Networks,
     network: chainConfig.network,
-    chainId
+    chainId,
   }
 }

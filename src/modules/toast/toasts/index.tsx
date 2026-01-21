@@ -1,8 +1,8 @@
 import { ChainId, getNetwork } from '@dcl/schemas/dist/dapps/chain-id'
-import { ToastType } from 'decentraland-ui'
 import { getNetworkName } from 'decentraland-ui/dist/lib/network'
-import { Toast } from '../types'
+import { ToastType } from 'decentraland-ui'
 import { t } from '../../translation/utils'
+import { Toast } from '../types'
 
 export function getSwitchChainErrorToast(chainId: ChainId): Omit<Toast, 'id'> {
   return {
@@ -11,11 +11,11 @@ export function getSwitchChainErrorToast(chainId: ChainId): Omit<Toast, 'id'> {
     body: (
       <div>
         {t('@dapps.toasts.switch_network_error.body', {
-          network: getNetworkName(getNetwork(chainId))
+          network: getNetworkName(getNetwork(chainId)),
         })}
       </div>
     ),
     closable: true,
-    timeout: 30000
+    timeout: 30000,
   }
 }

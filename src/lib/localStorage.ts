@@ -1,4 +1,4 @@
-import { Migrations, LocalStorage, StorageOwnData } from './types'
+import { LocalStorage, Migrations, StorageOwnData } from './types'
 
 export function hasLocalStorage(): boolean {
   try {
@@ -8,7 +8,7 @@ export function hasLocalStorage(): boolean {
     localStorage.setItem(val, val)
     localStorage.removeItem(val)
     return true
-  } catch (e) {
+  } catch {
     return false
   }
 }
@@ -19,7 +19,7 @@ export function getLocalStorage(): LocalStorage {
     : {
         getItem: () => null,
         setItem: () => null,
-        removeItem: () => null
+        removeItem: () => null,
       }
 }
 
@@ -31,7 +31,7 @@ export function getDefaultState<T>(migrations: Migrations<T>) {
       ? 1
       : Object.keys(migrations)
           .map(Number)
-          .filter(num => !isNaN(num))
+          .filter((num) => !isNaN(num))
           .sort((a, b) => b - a)[0]
 
   return { storage: { version } }
@@ -39,7 +39,7 @@ export function getDefaultState<T>(migrations: Migrations<T>) {
 
 export function migrateStorage<T extends StorageOwnData>(
   key: string,
-  migrations: Migrations<T>
+  migrations: Migrations<T>,
 ): T {
   let version = 1
   const localStorage = getLocalStorage()

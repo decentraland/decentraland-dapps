@@ -5,22 +5,22 @@ import {
   race,
   spawn,
   take,
-  takeEvery
+  takeEvery,
 } from 'redux-saga/effects'
 import {
-  fetchApplicationFeaturesFailure,
-  fetchApplicationFeaturesRequest,
-  FetchApplicationFeaturesRequestAction,
-  fetchApplicationFeaturesSuccess,
   FETCH_APPLICATION_FEATURES_FAILURE,
   FETCH_APPLICATION_FEATURES_REQUEST,
-  FETCH_APPLICATION_FEATURES_SUCCESS
+  FETCH_APPLICATION_FEATURES_SUCCESS,
+  FetchApplicationFeaturesRequestAction,
+  fetchApplicationFeaturesFailure,
+  fetchApplicationFeaturesRequest,
+  fetchApplicationFeaturesSuccess,
 } from './actions'
 import {
-  ApplicationName,
   ApplicationFeatures,
+  ApplicationName,
   FeatureSagasConfig,
-  Polling
+  Polling,
 } from './types'
 import { fetchApplicationFeatures } from './utils'
 
@@ -35,7 +35,7 @@ export function* featuresSaga(config: FeatureSagasConfig) {
 
   yield takeEvery(
     FETCH_APPLICATION_FEATURES_REQUEST,
-    handleFetchApplicationFeaturesRequest
+    handleFetchApplicationFeaturesRequest,
   )
 
   if (polling) {
@@ -44,14 +44,14 @@ export function* featuresSaga(config: FeatureSagasConfig) {
 }
 
 function* handleFetchApplicationFeaturesRequest(
-  action: FetchApplicationFeaturesRequestAction
+  action: FetchApplicationFeaturesRequestAction,
 ) {
   const { apps } = action.payload
 
   try {
     const features: Record<ApplicationName, ApplicationFeatures> = yield call(
       fetchApplicationFeatures,
-      apps
+      apps,
     )
 
     yield put(fetchApplicationFeaturesSuccess(apps, features))
@@ -61,16 +61,16 @@ function* handleFetchApplicationFeaturesRequest(
 }
 
 export const getFetchApplicationFeaturesIntervalGenerator = (
-  polling: Polling
+  polling: Polling,
 ) => {
-  return function*() {
+  return function* () {
     while (true) {
       // Fetch application features for the configured applications.
       yield put(fetchApplicationFeaturesRequest(polling.apps))
       // Wait for the request to finish so there is no request overlap.
       yield race({
         success: take(FETCH_APPLICATION_FEATURES_SUCCESS),
-        failure: take(FETCH_APPLICATION_FEATURES_FAILURE)
+        failure: take(FETCH_APPLICATION_FEATURES_FAILURE),
       })
       // Wait for a certain amount of time before making the next request.
       yield delay(polling.delay)

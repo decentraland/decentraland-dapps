@@ -1,26 +1,26 @@
 import React, { useCallback, useEffect, useState } from 'react'
+import { ProviderType } from '@dcl/schemas'
+import { ChainId, getChainName } from '@dcl/schemas/dist/dapps/chain-id'
+import { Network } from '@dcl/schemas/dist/dapps/network'
 import { Navbar as NavbarComponent } from 'decentraland-ui/dist/components/Navbar/Navbar'
 import { NotificationLocale } from 'decentraland-ui/dist/components/Notifications/types'
-import { ChainId, getChainName } from '@dcl/schemas/dist/dapps/chain-id'
-import { ProviderType } from '@dcl/schemas'
-import { Network } from '@dcl/schemas/dist/dapps/network'
+import useNotifications from '../../hooks/useNotifications'
+import { getConnectedProviderType } from '../../lib'
+import { getAvailableChains } from '../../lib/chainConfiguration'
+import { getBaseUrl } from '../../lib/utils'
 import { getAnalytics } from '../../modules/analytics/utils'
 import { t } from '../../modules/translation'
-import UnsupportedNetworkModal from '../UnsupportedNetworkModal'
-import { getAvailableChains } from '../../lib/chainConfiguration'
-import { getConnectedProviderType } from '../../lib'
-import { getBaseUrl } from '../../lib/utils'
 import ChainProvider from '../ChainProvider'
+import UnsupportedNetworkModal from '../UnsupportedNetworkModal'
 import {
   CHANGE_NETWORK,
   DROPDOWN_MENU_BALANCE_CLICK_EVENT,
   DROPDOWN_MENU_DISPLAY_EVENT,
   DROPDOWN_MENU_ITEM_CLICK_EVENT,
-  DROPDOWN_MENU_SIGN_OUT_EVENT
+  DROPDOWN_MENU_SIGN_OUT_EVENT,
+  NAVBAR_CLICK_EVENT,
 } from './constants'
 import { NavbarProps } from './Navbar.types'
-import { NAVBAR_CLICK_EVENT } from './constants'
-import useNotifications from '../../hooks/useNotifications'
 
 const BASE_URL = getBaseUrl()
 
@@ -31,8 +31,8 @@ const Navbar: React.FC<NavbarProps> = ({
   withNotifications,
   withChainSelector,
   identity,
-  docsUrl = 'https://docs.decentraland.org',
-  enablePartialSupportAlert = true,
+  docsUrl: _docsUrl = 'https://docs.decentraland.org',
+  enablePartialSupportAlert: _enablePartialSupportAlert = true,
   walletError,
   ...props
 }: NavbarProps) => {
@@ -48,7 +48,7 @@ const Navbar: React.FC<NavbarProps> = ({
     handleNotificationsOpen,
     handleOnBegin,
     handleOnChangeModalTab,
-    handleRenderProfile
+    handleRenderProfile,
   } = useNotifications(identity, withNotifications || false)
 
   const handleSwitchNetwork = useCallback(() => {
@@ -56,7 +56,7 @@ const Navbar: React.FC<NavbarProps> = ({
   }, [])
 
   const [chainSelected, setChainSelected] = useState<ChainId | undefined>(
-    undefined
+    undefined,
   )
 
   useEffect(() => {
@@ -71,10 +71,10 @@ const Navbar: React.FC<NavbarProps> = ({
       props.onSwitchNetwork(chainId, props.chainId)
       analytics?.track(CHANGE_NETWORK, {
         from_chain_id: props.chainId,
-        to_chain_id: chainId
+        to_chain_id: chainId,
       })
     },
-    [analytics]
+    [analytics],
   )
 
   const handleClickBalance = useCallback(
@@ -86,41 +86,45 @@ const Navbar: React.FC<NavbarProps> = ({
         window.open(`${BASE_URL}/account`, '_blank', 'noopener')
       }, 300)
     },
-    [analytics]
+    [analytics],
   )
 
   const handleClickNavbarItem = useCallback(
     (
       _e: React.MouseEvent,
-      options: { eventTrackingName: string; url?: string; isExternal?: boolean }
+      options: {
+        eventTrackingName: string
+        url?: string
+        isExternal?: boolean
+      },
     ) => {
       analytics?.track(NAVBAR_CLICK_EVENT, options)
     },
-    [analytics]
+    [analytics],
   )
 
   const handleClickUserMenuItem = useCallback(
     (
       _e: React.MouseEvent,
-      options: { type: string; url?: string; track_uuid?: string }
+      options: { type: string; url?: string; track_uuid?: string },
     ) => {
       analytics?.track(DROPDOWN_MENU_ITEM_CLICK_EVENT, options)
     },
-    [analytics]
+    [analytics],
   )
 
   const handleClickOpen = useCallback(
     (_e: React.MouseEvent, track_uuid: string) => {
       analytics?.track(DROPDOWN_MENU_DISPLAY_EVENT, { track_uuid })
     },
-    [analytics]
+    [analytics],
   )
 
   const handleClickSignIn = useCallback(
     (_e: React.MouseEvent<HTMLElement, MouseEvent>) => {
       props.onSignIn()
     },
-    [analytics]
+    [analytics],
   )
 
   const handleClickSignOut = useCallback(
@@ -130,7 +134,7 @@ const Navbar: React.FC<NavbarProps> = ({
         props.onSignOut()
       }, 300)
     },
-    [analytics]
+    [analytics],
   )
 
   return (
@@ -153,7 +157,7 @@ const Navbar: React.FC<NavbarProps> = ({
                       onClose: handleNotificationsOpen,
                       onBegin: handleOnBegin,
                       onChangeTab: (_, tab) => handleOnChangeModalTab(tab),
-                      renderProfile: handleRenderProfile
+                      renderProfile: handleRenderProfile,
                     }
                   : undefined
               }
@@ -175,8 +179,8 @@ const Navbar: React.FC<NavbarProps> = ({
                   confirmInWallet:
                     getConnectedProviderType() === ProviderType.INJECTED // for injected ones, show label to confirm in wallet, the rest won't ask for confirmation
                       ? t('@dapps.chain_selector.confirm_in_wallet')
-                      : t('@dapps.chain_selector.switching')
-                }
+                      : t('@dapps.chain_selector.switching'),
+                },
               })}
             />
             {isUnsupported ? (

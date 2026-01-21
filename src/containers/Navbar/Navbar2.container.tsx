@@ -1,31 +1,31 @@
 import { connect } from 'react-redux'
 import { ChainId } from '@dcl/schemas'
+import { getCredits } from '../../modules/credits/selectors'
+import { ApplicationName, FeatureName } from '../../modules/features'
 import {
-  isConnected,
-  isConnecting,
-  getAddress,
-  getChainId,
-  getAppChainId,
-  getManaBalances,
-  isSwitchingNetwork,
-  isDisconnecting
-} from '../../modules/wallet/selectors'
+  getIsFeatureEnabled,
+  getLauncherLinksVariant,
+} from '../../modules/features/selectors'
 import { getData as getProfiles } from '../../modules/profile/selectors'
-import { getError as getWalletError } from '../../modules/wallet/selectors'
 import { getLocale } from '../../modules/translation/selectors'
 import {
   disconnectWalletRequest,
-  switchNetworkRequest
+  switchNetworkRequest,
 } from '../../modules/wallet/actions'
-import { getCredits } from '../../modules/credits/selectors'
 import {
-  getIsFeatureEnabled,
-  getLauncherLinksVariant
-} from '../../modules/features/selectors'
+  getAddress,
+  getAppChainId,
+  getChainId,
+  getManaBalances,
+  getError as getWalletError,
+  isConnected,
+  isConnecting,
+  isDisconnecting,
+  isSwitchingNetwork,
+} from '../../modules/wallet/selectors'
 import { RootDispatch } from '../../types'
-import { NavbarProps2, MapStateProps, MapDispatchProps } from './Navbar.types'
 import Navbar2 from './Navbar2'
-import { ApplicationName, FeatureName } from '../../modules/features'
+import { MapDispatchProps, MapStateProps, NavbarProps2 } from './Navbar.types'
 
 const mapState = (state: any): MapStateProps => {
   const address = getAddress(state)
@@ -47,25 +47,25 @@ const mapState = (state: any): MapStateProps => {
     shouldDownloadBeforeRedirect: !getIsFeatureEnabled(
       state,
       ApplicationName.DAPPS,
-      FeatureName.DOWNLOAD_IN_SUCCESS_PAGE
-    )
+      FeatureName.DOWNLOAD_IN_SUCCESS_PAGE,
+    ),
   }
 }
 
 const mapDispatch = (dispatch: RootDispatch): MapDispatchProps => ({
   onSwitchNetwork: (chainId: ChainId, fromChainId: ChainId) =>
     dispatch(switchNetworkRequest(chainId, fromChainId)),
-  onSignOut: () => dispatch(disconnectWalletRequest())
+  onSignOut: () => dispatch(disconnectWalletRequest()),
 })
 
 const mergeProps = (
   stateProps: MapStateProps,
   dispatchProps: MapDispatchProps,
-  ownProps: NavbarProps2
+  ownProps: NavbarProps2,
 ): NavbarProps2 => ({
   ...stateProps,
   ...dispatchProps,
-  ...ownProps
+  ...ownProps,
 })
 
 export default connect(mapState, mapDispatch, mergeProps)(Navbar2) as any

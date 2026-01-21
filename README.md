@@ -130,7 +130,7 @@ This is an example of how you can wait for the `CONNECT_WALLET_SUCCESS` action t
 
 import {
   CONNECT_WALLET_SUCCESS,
-  ConnectWalletSuccessAction
+  ConnectWalletSuccessAction,
 } from 'decentraland-dapps/dist/modules/wallet/actions'
 import { fetchSomethingRequest } from './actions'
 
@@ -165,7 +165,7 @@ ReactDOM.render(
       <ConnectedRouter history={history}>{/* Your App */}</ConnectedRouter>
     </WalletProvider>
   </Provider>,
-  document.getElementById('root')
+  document.getElementById('root'),
 )
 ```
 
@@ -178,7 +178,7 @@ import { combineReducers } from 'redux'
 import { walletReducer as wallet } from 'decentraland-dapps/dist/modules/wallet/reducer'
 
 export const rootReducer = combineReducers({
-  wallet
+  wallet,
   // your other reducers
 })
 ```
@@ -193,7 +193,7 @@ import { walletSaga } from 'decentraland-dapps/dist/modules/wallet/sagas'
 
 export function* rootSaga() {
   yield all([
-    walletSaga()
+    walletSaga(),
     // your other sagas here
   ])
 }
@@ -220,7 +220,7 @@ import { createWalletSaga } from 'decentraland-dapps/dist/modules/wallet/sagas'
 const walletSaga = createWalletSaga({ CHAIN_ID: process.env.chainId })
 export function* rootSaga() {
   yield all([
-    walletSaga()
+    walletSaga(),
     // your other sagas here
   ])
 }
@@ -309,7 +309,7 @@ loadStorageMiddleware(store)
 ```ts
 export const migrations = {
   2: migrateToVersion2(data),
-  3: migrateToVersion3(data)
+  3: migrateToVersion3(data),
 }
 ```
 
@@ -332,14 +332,14 @@ import { combineReducers } from 'redux'
 
 import {
   storageReducer as storage,
-  storageReducerWrapper
+  storageReducerWrapper,
 } from 'decentraland-dapps/dist/modules/storage/reducer'
 
 export const rootReducer = storageReducerWrapper(
   combineReducers({
-    storage
+    storage,
     // your other reducers
-  })
+  }),
 )
 ```
 
@@ -395,21 +395,21 @@ export const SEND_INVITE_FAILURE = '[Failure] Send Invite'
 
 export const sendInvitesRequest = (address: string) =>
   action(SEND_INVITE_REQUEST, {
-    address
+    address,
   })
 
 export const sendInvitesSuccess = (txHash: string, address: string) =>
   action(SEND_INVITE_SUCCESS, {
     ...buildTransactionPayload(txHash, {
-      address
+      address,
     }),
-    address
+    address,
   })
 
 export const sendInvitesFailure = (address: string, errorMessage: string) =>
   action(SEND_INVITE_FAILURE, {
     address,
-    errorMessage
+    errorMessage,
   })
 
 export type SendInvitesRequestAction = ReturnType<typeof sendInvitesRequest>
@@ -423,9 +423,9 @@ Or `buildTransactionWithReceiptPayload` if you need the tx event logs
 export const sendInvitesSuccess = (txHash: string, address: string) =>
   action(SEND_INVITE_SUCCESS, {
     ...buildTransactionWithReceiptPayload(txHash, {
-      address
+      address,
     }),
-    address
+    address,
   })
 ```
 
@@ -448,7 +448,7 @@ const transactionMiddleware = createTransactionMiddleware()
 
 const middleware = applyMiddleware(
   // your other middlewares
-  transactionMiddleware
+  transactionMiddleware,
 )
 ```
 
@@ -461,7 +461,7 @@ import { combineReducers } from 'redux'
 import { transactionReducer as transaction } from 'decentraland-dapps/dist/modules/transaction/reducer'
 
 export const rootReducer = combineReducers({
-  transaction
+  transaction,
   // your other reducers
 })
 ```
@@ -476,7 +476,7 @@ import { transactionSaga } from 'decentraland-dapps/dist/modules/transaction/sag
 
 export function* rootSaga() {
   yield all([
-    transactionSaga()
+    transactionSaga(),
     // your other sagas
   ])
 }
@@ -637,7 +637,7 @@ import { combineReducers } from 'redux'
 import { authorizationReducer as authorization } from 'decentraland-dapps/dist/modules/authorization/reducer'
 
 export const rootReducer = combineReducers({
-  authorization
+  authorization,
   // your other reducers
 })
 ```
@@ -652,7 +652,7 @@ import { authorizationSaga } from 'decentraland-dapps/dist/modules/authorization
 
 export function* rootSaga() {
   yield all([
-    authorizationSaga()
+    authorizationSaga(),
     // your other sagas
   ])
 }
@@ -727,7 +727,7 @@ ReactDOM.render(
       <ConnectedRouter history={history}>{/* Your App */}</ConnectedRouter>
     </TranslationProvider>
   </Provider>,
-  document.getElementById('root')
+  document.getElementById('root'),
 )
 ```
 
@@ -740,7 +740,7 @@ import { combineReducers } from 'redux'
 import { translationReducer as translation } from 'decentraland-dapps/dist/modules/translation/reducer'
 
 export const rootReducer = combineReducers({
-  translation
+  translation,
   // your other reducers
 })
 ```
@@ -787,12 +787,12 @@ import { createTranslationSaga } from 'decentraland-dapps/dist/modules/translati
 import * as translations from './translations'
 
 export const translationSaga = createTranslationSaga({
-  translations
+  translations,
 })
 
 export function* rootSaga() {
   yield all([
-    translationSaga()
+    translationSaga(),
     // your other sagas
   ])
 }
@@ -808,12 +808,12 @@ import { createTranslationSaga } from 'decentraland-dapps/dist/modules/translati
 import { api } from 'lib/api'
 
 export const translationSaga = createTranslationSaga({
-  getTranslation: locale => api.fetchTranslations(locale)
+  getTranslation: (locale) => api.fetchTranslations(locale),
 })
 
 export function* rootSaga() {
   yield all([
-    translationSaga()
+    translationSaga(),
     // your other sagas
   ])
 }
@@ -835,7 +835,7 @@ After [installing the Storage module](https://github.com/decentraland/decentrala
 
 const { storageMiddleware, loadStorageMiddleware } = createStorageMiddleware({
   storageKey: 'my-dapp-storage',
-  paths: ['translation']
+  paths: ['translation'],
 })
 ```
 
@@ -859,13 +859,13 @@ To send `track` events, add an `analytics.ts` file and require it from your entr
 import { add } from 'decentraland-dapps/dist/modules/analytics/utils'
 import {
   CREATE_VOTE_SUCCESS,
-  CreateVoteSuccessAction
+  CreateVoteSuccessAction,
 } from 'modules/vote/actions'
 
 add(CREATE_VOTE_SUCCESS, 'Vote', (action: CreateVoteSuccessAction) => ({
   poll_id: action.payload.vote.poll_id,
   option_id: action.payload.vote.option_id,
-  address: action.payload.wallet.address
+  address: action.payload.wallet.address,
 }))
 ```
 
@@ -889,7 +889,7 @@ const analyticsMiddleware = createAnalyticsMiddleware('SEGMENT WRITE KEY')
 
 const middleware = applyMiddleware(
   // your other middlewares
-  analyticsMiddleware
+  analyticsMiddleware,
 )
 const enhancer = composeEnhancers(middleware)
 const store = createStore(rootReducer, enhancer)
@@ -903,7 +903,7 @@ import { analyticsSaga } from 'decentraland-dapps/dist/modules/analytics/sagas'
 
 export function* rootSaga() {
   yield all([
-    analyticsSaga()
+    analyticsSaga(),
     // your other sagas
   ])
 }
@@ -929,8 +929,8 @@ function Routes() {
 You can use the same redux action type to generate different Segment events if you pass a function as the second parameter instead of a string:
 
 ```ts
-add(AUTHORIZE_LAND_SUCCESS, action =>
-  action.isAuthorized ? 'Authorize LAND' : 'Unauthorize LAND'
+add(AUTHORIZE_LAND_SUCCESS, (action) =>
+  action.isAuthorized ? 'Authorize LAND' : 'Unauthorize LAND',
 )
 ```
 
@@ -947,7 +947,7 @@ In order to use these selectors you need to use the `loadingReducer` within your
 ```ts
 import {
   loadingReducer,
-  LoadingState
+  LoadingState,
 } from 'decentraland-dapps/dist/modules/loading/reducer'
 import {
   FETCH_INVITES_REQUEST,
@@ -955,7 +955,7 @@ import {
   FETCH_INVITES_FAILURE,
   FetchInvitesSuccessAction,
   FetchInvitesFailureAction,
-  FetchInvitesRequestAction
+  FetchInvitesRequestAction,
 } from './actions'
 
 export type InviteState = {
@@ -969,7 +969,7 @@ export type InviteState = {
 export const INITIAL_STATE: InviteState = {
   loading: [],
   data: {},
-  error: null
+  error: null,
 }
 
 export type InviteReducerAction =
@@ -979,13 +979,13 @@ export type InviteReducerAction =
 
 export function invitesReducer(
   state: InviteState = INITIAL_STATE,
-  action: InviteReducerAction
+  action: InviteReducerAction,
 ): InviteState {
   switch (action.type) {
     case FETCH_INVITES_REQUEST: {
       return {
         ...state,
-        loading: loadingReducer(state.loading, action)
+        loading: loadingReducer(state.loading, action),
       }
     }
     case FETCH_INVITES_SUCCESS: {
@@ -993,16 +993,16 @@ export function invitesReducer(
         loading: loadingReducer(state.loading, action),
         data: {
           ...state.data,
-          [action.payload.address]: action.payload.amount
+          [action.payload.address]: action.payload.amount,
         },
-        error: null
+        error: null,
       }
     }
     case FETCH_INVITES_FAILURE: {
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
-        error: action.payload.errorMessage
+        error: action.payload.errorMessage,
       }
     }
     default: {
@@ -1056,7 +1056,7 @@ ReactDOM.render(
       <ConnectedRouter history={history}>{/* Your App */}</ConnectedRouter>
     </ModalProvider>
   </Provider>,
-  document.getElementById('root')
+  document.getElementById('root'),
 )
 ```
 
@@ -1069,7 +1069,7 @@ import { combineReducers } from 'redux'
 import { modalReducer as modal } from 'decentraland-dapps/dist/modules/modal/reducer'
 
 export const rootReducer = combineReducers({
-  modal
+  modal,
   // your other reducers
 })
 ```
@@ -1147,7 +1147,7 @@ ReactDOM.render(
       <ConnectedRouter history={history}>{/* Your App */}</ConnectedRouter>
     </ToastProvider>
   </Provider>,
-  document.getElementById('root')
+  document.getElementById('root'),
 )
 ```
 
@@ -1160,7 +1160,7 @@ import { combineReducers } from 'redux'
 import { toastReducer as toast } from 'decentraland-dapps/dist/modules/toast/reducer'
 
 export const rootReducer = combineReducers({
-  toast
+  toast,
   // your other reducers
 })
 ```
@@ -1175,7 +1175,7 @@ import { toastSaga } from 'decentraland-dapps/dist/modules/wallet/sagas'
 
 export function* rootSaga() {
   yield all([
-    toastSaga()
+    toastSaga(),
     // your other sagas here
   ])
 }
@@ -1207,7 +1207,7 @@ import { profileReducer as profile } from 'decentraland-dapps/dist/modules/profi
 export const createRootReducer = (history: History) =>
   combineReducers({
     profile,
-    otherReducer
+    otherReducer,
   })
 
 export type RootState = ReturnType<ReturnType<typeof createRootReducer>>
@@ -1224,7 +1224,7 @@ You can start and stop real-time credit updates using SSE:
 ```ts
 import {
   startCreditsSSE,
-  stopCreditsSSE
+  stopCreditsSSE,
 } from 'decentraland-dapps/dist/modules/credits/actions'
 
 // Start real-time credit updates when component mounts
@@ -1239,7 +1239,7 @@ For backward compatibility, the following aliases are also available:
 ```ts
 import {
   startCreditsAutoPolling, // alias for startCreditsSSE
-  stopCreditsAutoPolling // alias for stopCreditsSSE
+  stopCreditsAutoPolling, // alias for stopCreditsSSE
 } from 'decentraland-dapps/dist/modules/credits/actions'
 ```
 
@@ -1267,7 +1267,7 @@ import { combineReducers } from 'redux'
 import { creditsReducer as credits } from 'decentraland-dapps/dist/modules/credits/reducer'
 
 export const rootReducer = combineReducers({
-  credits
+  credits,
   // your other reducers
 })
 ```
@@ -1284,7 +1284,7 @@ const creditsClient = new CreditsClient(API_URL)
 
 export function* rootSaga() {
   yield all([
-    creditsSaga({ creditsClient })
+    creditsSaga({ creditsClient }),
     // your other sagas
   ])
 }
@@ -1461,7 +1461,7 @@ import './SomePage.css'
 
 export default class SomePage extends React.PureComponent {
   static defaultProps = {
-    children: null
+    children: null,
   }
 
   render() {

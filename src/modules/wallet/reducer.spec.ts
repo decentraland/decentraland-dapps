@@ -26,7 +26,7 @@ import {
   fetchWalletSuccess,
   setAppChainId,
   switchNetworkFailure,
-  switchNetworkRequest
+  switchNetworkRequest,
 } from './actions'
 import { INITIAL_STATE, WalletState, walletReducer } from './reducer'
 import { ProviderType, Wallet } from './types'
@@ -41,25 +41,25 @@ const requestActions = [
   enableWalletRequest(providerType),
   connectWalletRequest(),
   disconnectWalletRequest(),
-  switchNetworkRequest(chainId)
+  switchNetworkRequest(chainId),
 ]
 
 beforeEach(() => {})
 
-describe.each(requestActions)('when reducing the "$type" action', action => {
+describe.each(requestActions)('when reducing the "$type" action', (action) => {
   let initialState: WalletState
 
   beforeEach(() => {
     initialState = {
       ...INITIAL_STATE,
-      loading: []
+      loading: [],
     }
   })
 
   it('should return a state with the loading set', () => {
     expect(walletReducer(initialState, action)).toEqual({
       ...INITIAL_STATE,
-      loading: loadingReducer(initialState.loading, action)
+      loading: loadingReducer(initialState.loading, action),
     })
   })
 })
@@ -68,13 +68,13 @@ const fetchAndConnectSuccessActions = [
   {
     action: 'fetching the wallet',
     request: fetchWalletRequest,
-    success: fetchWalletSuccess
+    success: fetchWalletSuccess,
   },
   {
     action: 'connecting the wallet',
     request: connectWalletRequest,
-    success: connectWalletSuccess
-  }
+    success: connectWalletSuccess,
+  },
 ]
 
 describe.each(fetchAndConnectSuccessActions)(
@@ -85,7 +85,7 @@ describe.each(fetchAndConnectSuccessActions)(
     beforeEach(() => {
       initialState = {
         ...INITIAL_STATE,
-        loading: loadingReducer([], request())
+        loading: loadingReducer([], request()),
       }
     })
 
@@ -94,10 +94,10 @@ describe.each(fetchAndConnectSuccessActions)(
         ...INITIAL_STATE,
         loading: [],
         error: null,
-        data: wallet
+        data: wallet,
       })
     })
-  }
+  },
 )
 
 describe(`when reducing the successful action of enabling the wallet`, () => {
@@ -112,7 +112,7 @@ describe(`when reducing the successful action of enabling the wallet`, () => {
 
     initialState = {
       ...INITIAL_STATE,
-      loading: loadingReducer([], requestAction)
+      loading: loadingReducer([], requestAction),
     }
   })
 
@@ -120,7 +120,7 @@ describe(`when reducing the successful action of enabling the wallet`, () => {
     expect(walletReducer(initialState, successAction)).toEqual({
       ...initialState,
       loading: [],
-      error: null
+      error: null,
     })
   })
 })
@@ -137,14 +137,14 @@ describe('when reducing the failure action of fetching the wallet', () => {
 
     initialState = {
       ...INITIAL_STATE,
-      loading: loadingReducer([], requestAction)
+      loading: loadingReducer([], requestAction),
     }
   })
 
   it('should return a state with loading state cleared', () => {
     expect(walletReducer(initialState, failureAction)).toEqual({
       ...INITIAL_STATE,
-      loading: []
+      loading: [],
     })
   })
 })
@@ -162,7 +162,7 @@ describe('when reducing the failure action of connecting the wallet', () => {
     initialState = {
       ...INITIAL_STATE,
       loading: loadingReducer([], requestAction),
-      data: wallet
+      data: wallet,
     }
   })
 
@@ -170,7 +170,7 @@ describe('when reducing the failure action of connecting the wallet', () => {
     expect(walletReducer(initialState, failureAction)).toEqual({
       ...INITIAL_STATE,
       loading: [],
-      data: null
+      data: null,
     })
   })
 })
@@ -189,7 +189,7 @@ describe('when reducing the failure action of enabling the wallet', () => {
       ...INITIAL_STATE,
       error: null,
       loading: loadingReducer([], requestAction),
-      data: wallet
+      data: wallet,
     }
   })
 
@@ -205,7 +205,7 @@ describe('when reducing the failure action of enabling the wallet', () => {
 
       initialState = {
         ...INITIAL_STATE,
-        loading: loadingReducer([], requestAction)
+        loading: loadingReducer([], requestAction),
       }
     })
 
@@ -213,7 +213,7 @@ describe('when reducing the failure action of enabling the wallet', () => {
       expect(walletReducer(initialState, failureAction)).toEqual({
         ...INITIAL_STATE,
         loading: [],
-        error
+        error,
       })
     })
   })
@@ -223,21 +223,21 @@ describe('when reducing the failure action of enabling the wallet', () => {
       ...INITIAL_STATE,
       error,
       loading: [],
-      data: null
+      data: null,
     })
   })
 })
 
 describe.each([changeAccount(wallet), changeNetwork(wallet)])(
   'when reducing the $type action',
-  action => {
+  (action) => {
     let initialState: WalletState
 
     beforeEach(() => {
       initialState = {
         ...INITIAL_STATE,
         error,
-        data: null
+        data: null,
       }
     })
 
@@ -245,10 +245,10 @@ describe.each([changeAccount(wallet), changeNetwork(wallet)])(
       expect(walletReducer(initialState, action)).toEqual({
         ...INITIAL_STATE,
         error: null,
-        data: wallet
+        data: wallet,
       })
     })
-  }
+  },
 )
 
 describe('when reducing the failure action of disconnecting a wallet', () => {
@@ -258,7 +258,7 @@ describe('when reducing the failure action of disconnecting a wallet', () => {
     initialState = {
       ...INITIAL_STATE,
       loading: loadingReducer([], disconnectWalletRequest()),
-      data: wallet
+      data: wallet,
     }
   })
 
@@ -267,8 +267,8 @@ describe('when reducing the failure action of disconnecting a wallet', () => {
       {
         ...INITIAL_STATE,
         loading: [],
-        data: wallet
-      }
+        data: wallet,
+      },
     )
   })
 })
@@ -280,7 +280,7 @@ describe('when reducing the success action of disconnecting a wallet', () => {
     initialState = {
       ...INITIAL_STATE,
       loading: loadingReducer([], disconnectWalletRequest()),
-      data: wallet
+      data: wallet,
     }
   })
 
@@ -289,7 +289,7 @@ describe('when reducing the success action of disconnecting a wallet', () => {
       ...INITIAL_STATE,
       error: null,
       data: null,
-      loading: []
+      loading: [],
     })
   })
 })
@@ -300,14 +300,14 @@ describe('when reducing the action of setting the app chain id', () => {
   beforeEach(() => {
     initialState = {
       ...INITIAL_STATE,
-      appChainId: null
+      appChainId: null,
     }
   })
 
   it('should return a state with app chainId set', () => {
     expect(walletReducer(initialState, setAppChainId(chainId))).toEqual({
       ...INITIAL_STATE,
-      appChainId: chainId
+      appChainId: chainId,
     })
   })
 })

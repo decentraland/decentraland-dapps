@@ -1,8 +1,8 @@
-import dateFnsFormat from 'date-fns/format'
 import dateFnsDistanceInWordsToNow from 'date-fns/distance_in_words_to_now'
-import { getEnv, Env } from '@dcl/ui-env'
-import { Model, ModelById, DataByKey } from './types'
+import dateFnsFormat from 'date-fns/format'
+import { Env, getEnv } from '@dcl/ui-env'
 import { getCurrentLocale } from '../modules/translation/utils'
+import { DataByKey, Model, ModelById } from './types'
 
 export function isMobile() {
   // WARN: Super naive mobile device check.
@@ -31,44 +31,44 @@ export function insertScript({
 
 export function toObjectById<T extends Model>(
   values: T[],
-  currentValues: ModelById<T> = {}
+  currentValues: ModelById<T> = {},
 ): ModelById<T> {
   return toObjectByKey<T>(values, currentValues, 'id')
 }
 
-export function toObjectByKey<T extends Object>(
+export function toObjectByKey<T extends object>(
   values: T[],
   currentValues: DataByKey<T> = {},
-  key: keyof T
+  key: keyof T,
 ): DataByKey<T> {
   return values.reduce<DataByKey<T>>(
     (obj, value) => {
       obj[value[key] as any] = value
       return obj
     },
-    { ...currentValues }
+    { ...currentValues },
   )
 }
 
 export function distanceInWordsToNow(date: number | string, addSuffix = true) {
   return dateFnsDistanceInWordsToNow(date, {
     addSuffix,
-    locale: getCurrentLocale()
+    locale: getCurrentLocale(),
   })
 }
 
 export function formatDate(date: number | string, format = 'MMMM Do, YYYY') {
   return dateFnsFormat(date, format, {
-    locale: getCurrentLocale()
+    locale: getCurrentLocale(),
   })
 }
 
 export function formatDateTime(
   date: number | string,
-  format = 'MMMM Do, YYYY - hh:mm aa'
+  format = 'MMMM Do, YYYY - hh:mm aa',
 ) {
   return dateFnsFormat(date, format, {
-    locale: getCurrentLocale()
+    locale: getCurrentLocale(),
   })
 }
 

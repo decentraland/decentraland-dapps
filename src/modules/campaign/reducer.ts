@@ -1,27 +1,27 @@
 import { loadingReducer } from '../loading/reducer'
-import { CampaignState, CampaignAction } from './types'
 import {
+  FETCH_CAMPAIGN_FAILURE,
   FETCH_CAMPAIGN_REQUEST,
   FETCH_CAMPAIGN_SUCCESS,
-  FETCH_CAMPAIGN_FAILURE
 } from './actions'
+import { CampaignAction, CampaignState } from './types'
 
 const INITIAL_STATE: CampaignState = {
   data: null,
   loading: [],
-  error: null
+  error: null,
 }
 
 export function campaignReducer(
   state = INITIAL_STATE,
-  action: CampaignAction
+  action: CampaignAction,
 ): CampaignState {
   switch (action.type) {
     case FETCH_CAMPAIGN_REQUEST: {
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
-        error: null
+        error: null,
       }
     }
     case FETCH_CAMPAIGN_SUCCESS: {
@@ -29,14 +29,14 @@ export function campaignReducer(
         ...state,
         loading: loadingReducer(state.loading, action),
         data: action.payload,
-        error: null
+        error: null,
       }
     }
     case FETCH_CAMPAIGN_FAILURE: {
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
-        error: action.payload.error
+        error: action.payload.error,
       }
     }
     default:

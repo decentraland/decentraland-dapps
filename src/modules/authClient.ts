@@ -1,5 +1,5 @@
-import { getEnv, Env } from '@dcl/ui-env'
 import { AuthIdentity } from '@dcl/crypto'
+import { Env, getEnv } from '@dcl/ui-env'
 import { BaseClient, BaseClientConfig } from '../lib/BaseClient'
 
 export interface EphemeralIdentity {
@@ -27,7 +27,7 @@ export class AuthClient extends BaseClient {
   }
 
   async createIdentityId(
-    identityPayload: AuthIdentity
+    identityPayload: AuthIdentity,
   ): Promise<IdentityResponse> {
     const response = await this.fetch<IdentityResponse>('/identities', {
       method: 'POST',
@@ -35,13 +35,13 @@ export class AuthClient extends BaseClient {
       headers: { 'Content-Type': 'application/json' },
       metadata: {
         signer: 'dcl:auth',
-        intent: 'dcl:auth:create-identity'
-      }
+        intent: 'dcl:auth:create-identity',
+      },
     })
 
     return {
       ...response,
-      expiration: new Date(response.expiration)
+      expiration: new Date(response.expiration),
     }
   }
 }

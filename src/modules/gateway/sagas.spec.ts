@@ -15,7 +15,7 @@ import {
   pollPurchaseStatusFailure,
   pollPurchaseStatusRequest,
   pollPurchaseStatusSuccess,
-  setPurchase
+  setPurchase,
 } from '../gateway/actions'
 import { openModal } from '../modal/actions'
 import { fetchWalletRequest } from '../wallet/actions'
@@ -31,7 +31,7 @@ import {
   openBuyManaWithFiatModalSuccess,
   openManaFiatGatewayFailure,
   openManaFiatGatewayRequest,
-  openManaFiatGatewaySuccess
+  openManaFiatGatewaySuccess,
 } from './actions'
 import { MoonPay } from './moonpay'
 import { MoonPayTransaction, MoonPayTransactionStatus } from './moonpay/types'
@@ -42,7 +42,7 @@ import {
   GatewaySagasConfig,
   Purchase,
   PurchaseStatus,
-  WertOptions
+  WertOptions,
 } from './types'
 import { getPendingManaPurchase, getPendingPurchases } from './selectors'
 import { OrderResponse, TransakOrderStatus } from './transak/types'
@@ -60,21 +60,21 @@ const mockGetChainIdByNetwork = getChainIdByNetwork as jest.MockedFunction<
 const mockConfig: GatewaySagasConfig = {
   [FiatGateway.WERT]: {
     url: 'http://wert-url.xyz',
-    marketplaceServerURL: 'http://marketplace-server-url.xyz'
+    marketplaceServerURL: 'http://marketplace-server-url.xyz',
   },
   [NetworkGatewayType.MOON_PAY]: {
     apiKey: 'api-key',
     apiBaseUrl: 'http://moonpay-base.url.xyz',
     widgetBaseUrl: 'http://widget.base.url.xyz',
-    pollingDelay: 50
+    pollingDelay: 50,
   },
   [NetworkGatewayType.TRANSAK]: {
     apiBaseUrl: 'http://transak-base.url.xyz',
     pusher: {
       appKey: 'appKey',
-      appCluster: 'appCluster'
-    }
-  }
+      appCluster: 'appCluster',
+    },
+  },
 }
 
 const gatewaySaga = createGatewaySaga(mockConfig)
@@ -128,7 +128,7 @@ const mockTransaction: MoonPayTransaction = {
     maxAmount: 10000,
     minAmount: 20,
     minBuyAmount: 20,
-    maxBuyAmount: 10000
+    maxBuyAmount: 10000,
   },
   currency: {
     id: '8d305f63-1fd7-4e01-a220-8445e591aec4',
@@ -155,7 +155,7 @@ const mockTransaction: MoonPayTransaction = {
     isSellSupported: true,
     confirmationsRequired: 12,
     minSellAmount: 0.03,
-    maxSellAmount: 3
+    maxSellAmount: 3,
   },
   externalCustomerId: '41e794f0-b9ee-48cd-842a-431edf6555b8',
   country: 'GBR',
@@ -164,7 +164,7 @@ const mockTransaction: MoonPayTransaction = {
       stage: 'stage_one_ordering',
       status: 'success',
       actions: [],
-      failureReason: null
+      failureReason: null,
     },
     {
       stage: 'stage_two_verification',
@@ -172,41 +172,40 @@ const mockTransaction: MoonPayTransaction = {
       actions: [
         {
           type: 'verify_card_by_code',
-          url:
-            'https://buy.moonpay.com/card_verification_code?cardId=68e46314-93e5-4420-ac10-485aef4e19d0'
+          url: 'https://buy.moonpay.com/card_verification_code?cardId=68e46314-93e5-4420-ac10-485aef4e19d0',
         },
         {
           type: 'retry_kyc',
-          url: 'https://buy.moonpay.com/identity_check'
-        }
+          url: 'https://buy.moonpay.com/identity_check',
+        },
       ],
-      failureReason: null
+      failureReason: null,
     },
     {
       stage: 'stage_three_processing',
       status: 'not_started',
       actions: [],
-      failureReason: null
+      failureReason: null,
     },
     {
       stage: 'stage_four_delivery',
       status: 'not_started',
       actions: [],
-      failureReason: null
-    }
-  ]
+      failureReason: null,
+    },
+  ],
 }
 
 const mockTransakOrderResponse: OrderResponse = {
   meta: {
-    orderId: '816374b8-11fd-4ec4-be2d-3936de24d9c2'
+    orderId: '816374b8-11fd-4ec4-be2d-3936de24d9c2',
   },
   data: {
     id: '816374b8-11fd-4ec4-be2d-3936de24d9c2',
     status: TransakOrderStatus.COMPLETED,
     transactionHash: 'aTxHash',
-    errorMessage: null
-  }
+    errorMessage: null,
+  },
 }
 
 const mockPurchase: Purchase = {
@@ -218,12 +217,12 @@ const mockPurchase: Purchase = {
   status: PurchaseStatus.PENDING,
   paymentMethod: 'credit_debit_card',
   gateway: NetworkGatewayType.MOON_PAY,
-  txHash: null
+  txHash: null,
 }
 
 const mockPurchaseWithCryptoTransactionId = {
   ...mockPurchase,
-  txHash: mockCryptoTransactionId
+  txHash: mockCryptoTransactionId,
 }
 
 const buyManaWithFiatModalName = 'BuyManaWithFiatModal'
@@ -240,7 +239,7 @@ describe('when handling the request to open the Buy MANA with FIAT modal', () =>
     it('should put the failure action', async () => {
       return expectSaga(gatewaySaga)
         .provide([
-          [select(getPendingManaPurchase), Promise.reject(new Error(error))]
+          [select(getPendingManaPurchase), Promise.reject(new Error(error))],
         ])
         .dispatch(openBuyManaWithFiatModalRequest())
         .put(openBuyManaWithFiatModalFailure(error))
@@ -257,7 +256,7 @@ describe('when handling the request to open the Buy MANA with FIAT modal', () =>
           .provide([[select(getPendingManaPurchase), undefined]])
           .dispatch(openBuyManaWithFiatModalRequest())
           .put(
-            openModal(buyManaWithFiatModalName, { selectedNetwork: undefined })
+            openModal(buyManaWithFiatModalName, { selectedNetwork: undefined }),
           )
           .put(openBuyManaWithFiatModalSuccess())
           .silentRun()
@@ -285,7 +284,7 @@ describe('when handling the request to open the Buy MANA with FIAT modal', () =>
       it('should put the action signaling the opening of the Feedback Modal in pending status without a go to url, and that the request succeed', async () => {
         const transakMockPurchase = {
           ...mockPurchase,
-          gateway: NetworkGatewayType.TRANSAK
+          gateway: NetworkGatewayType.TRANSAK,
         }
 
         return expectSaga(gatewaySaga)
@@ -294,8 +293,8 @@ describe('when handling the request to open the Buy MANA with FIAT modal', () =>
           .put(
             openModal(buyManaWithFiatFeedbackModalName, {
               purchase: transakMockPurchase,
-              goToUrl: undefined
-            })
+              goToUrl: undefined,
+            }),
           )
           .put(openBuyManaWithFiatModalSuccess())
           .silentRun()
@@ -318,8 +317,8 @@ describe('when handling the request to open the Buy MANA with FIAT modal', () =>
           .provide([
             [
               select(getPendingManaPurchase),
-              mockPurchaseWithCryptoTransactionId
-            ]
+              mockPurchaseWithCryptoTransactionId,
+            ],
           ])
           .dispatch(openBuyManaWithFiatModalRequest())
           .put(openBuyManaWithFiatModalFailure(error))
@@ -342,15 +341,15 @@ describe('when handling the request to open the Buy MANA with FIAT modal', () =>
           .provide([
             [
               select(getPendingManaPurchase),
-              mockPurchaseWithCryptoTransactionId
-            ]
+              mockPurchaseWithCryptoTransactionId,
+            ],
           ])
           .dispatch(openBuyManaWithFiatModalRequest())
           .put(
             openModal(buyManaWithFiatFeedbackModalName, {
               purchase: mockPurchaseWithCryptoTransactionId,
-              goToUrl: mockTxReceiptUrl
-            })
+              goToUrl: mockTxReceiptUrl,
+            }),
           )
           .silentRun()
       })
@@ -379,15 +378,15 @@ describe('when handling the request to open the MANA-FIAT gateway', () => {
           .dispatch(
             openManaFiatGatewayRequest(
               Network.ETHEREUM,
-              NetworkGatewayType.TRANSAK
-            )
+              NetworkGatewayType.TRANSAK,
+            ),
           )
           .put(
             openManaFiatGatewayFailure(
               Network.ETHEREUM,
               NetworkGatewayType.TRANSAK,
-              error
-            )
+              error,
+            ),
           )
           .silentRun()
       })
@@ -403,15 +402,15 @@ describe('when handling the request to open the MANA-FIAT gateway', () => {
         .dispatch(
           openManaFiatGatewayRequest(
             Network.ETHEREUM,
-            NetworkGatewayType.TRANSAK
-          )
+            NetworkGatewayType.TRANSAK,
+          ),
         )
         .put(openManaFiatGatewaySuccess())
         .silentRun()
         .then(() => {
           expect(Transak.prototype.openWidget).toHaveBeenCalledWith({
             network: Network.ETHEREUM,
-            walletAddress: mockAddress
+            walletAddress: mockAddress,
           })
         })
     })
@@ -434,15 +433,15 @@ describe('when handling the request to open the MANA-FIAT gateway', () => {
           .dispatch(
             openManaFiatGatewayRequest(
               Network.ETHEREUM,
-              NetworkGatewayType.MOON_PAY
-            )
+              NetworkGatewayType.MOON_PAY,
+            ),
           )
           .put(
             openManaFiatGatewayFailure(
               Network.ETHEREUM,
               NetworkGatewayType.MOON_PAY,
-              error
-            )
+              error,
+            ),
           )
           .silentRun()
       })
@@ -457,8 +456,8 @@ describe('when handling the request to open the MANA-FIAT gateway', () => {
         .dispatch(
           openManaFiatGatewayRequest(
             Network.ETHEREUM,
-            NetworkGatewayType.MOON_PAY
-          )
+            NetworkGatewayType.MOON_PAY,
+          ),
         )
         .put(openManaFiatGatewaySuccess())
         .silentRun()
@@ -466,7 +465,7 @@ describe('when handling the request to open the MANA-FIAT gateway', () => {
           expect(window.open).toHaveBeenCalledWith(
             mockWidgetUrl,
             '_blank',
-            'noopener,noreferrer'
+            'noopener,noreferrer',
           )
         })
     })
@@ -497,24 +496,24 @@ describe('when handling the completion of the purchase', () => {
           .provide([
             [
               matchers.call.fn(moonPay.getTransaction),
-              Promise.reject(new Error(error))
-            ]
+              Promise.reject(new Error(error)),
+            ],
           ])
           .put(
             manaFiatGatewayPurchaseCompletedFailure(
               Network.ETHEREUM,
               NetworkGatewayType.MOON_PAY,
               mockTransaction.id,
-              error
-            )
+              error,
+            ),
           )
           .dispatch(
             manaFiatGatewayPurchaseCompleted(
               Network.ETHEREUM,
               NetworkGatewayType.MOON_PAY,
               mockTransaction.id,
-              MoonPayTransactionStatus.PENDING
-            )
+              MoonPayTransactionStatus.PENDING,
+            ),
           )
           .silentRun()
       })
@@ -524,7 +523,7 @@ describe('when handling the completion of the purchase', () => {
       it('should put the action signaling that the purchase was created with its final status ', () => {
         const expectedPurchase = {
           ...mockPurchaseWithCryptoTransactionId,
-          status: PurchaseStatus.COMPLETE
+          status: PurchaseStatus.COMPLETE,
         }
 
         return expectSaga(gatewaySaga)
@@ -533,21 +532,21 @@ describe('when handling the completion of the purchase', () => {
               matchers.call.fn(moonPay.getTransaction),
               {
                 ...mockTransaction,
-                status: MoonPayTransactionStatus.COMPLETED
-              }
+                status: MoonPayTransactionStatus.COMPLETED,
+              },
             ],
             [
               call(getChainIdByNetwork, Network.ETHEREUM),
-              ChainId.ETHEREUM_GOERLI
-            ]
+              ChainId.ETHEREUM_GOERLI,
+            ],
           ])
 
           .put(setPurchase(expectedPurchase))
           .put(
             openModal(buyManaWithFiatFeedbackModalName, {
               purchase: expectedPurchase,
-              transactionUrl: mockTxUrl
-            })
+              transactionUrl: mockTxUrl,
+            }),
           )
           .put(fetchWalletRequest())
           .dispatch(
@@ -555,8 +554,8 @@ describe('when handling the completion of the purchase', () => {
               Network.ETHEREUM,
               NetworkGatewayType.MOON_PAY,
               mockTransaction.id,
-              MoonPayTransactionStatus.PENDING
-            )
+              MoonPayTransactionStatus.PENDING,
+            ),
           )
           .silentRun()
       })
@@ -570,38 +569,38 @@ describe('when handling the completion of the purchase', () => {
           .mockImplementationOnce(() =>
             Promise.resolve({
               ...mockTransaction,
-              status: MoonPayTransactionStatus.COMPLETED
-            })
+              status: MoonPayTransactionStatus.COMPLETED,
+            }),
           )
       })
 
       it('should put the action signaling that the purchase was created with its initial status and updated with the new one ', () => {
         const expectedPurchase = {
           ...mockPurchaseWithCryptoTransactionId,
-          status: PurchaseStatus.COMPLETE
+          status: PurchaseStatus.COMPLETE,
         }
 
         return expectSaga(gatewaySaga)
           .provide([
             [
               call(getChainIdByNetwork, Network.ETHEREUM),
-              ChainId.ETHEREUM_GOERLI
-            ]
+              ChainId.ETHEREUM_GOERLI,
+            ],
           ])
           .put(
             openModal(buyManaWithFiatFeedbackModalName, {
               purchase: mockPurchaseWithCryptoTransactionId,
               goToUrl:
-                'http://widget.base.url.xyz/transaction_receipt?transactionId=354b1f46-480c-4307-9896-f4c81c1e1e17'
-            })
+                'http://widget.base.url.xyz/transaction_receipt?transactionId=354b1f46-480c-4307-9896-f4c81c1e1e17',
+            }),
           )
           .put(setPurchase(mockPurchaseWithCryptoTransactionId))
           .put(setPurchase(expectedPurchase))
           .put(
             openModal(buyManaWithFiatFeedbackModalName, {
               purchase: expectedPurchase,
-              transactionUrl: mockTxUrl
-            })
+              transactionUrl: mockTxUrl,
+            }),
           )
           .put(fetchWalletRequest())
           .dispatch(
@@ -609,8 +608,8 @@ describe('when handling the completion of the purchase', () => {
               Network.ETHEREUM,
               NetworkGatewayType.MOON_PAY,
               mockTransaction.id,
-              MoonPayTransactionStatus.PENDING
-            )
+              MoonPayTransactionStatus.PENDING,
+            ),
           )
           .silentRun()
       })
@@ -632,8 +631,8 @@ describe('when handling the action signaling the set purchase', () => {
           .dispatch(
             setPurchase({
               ...mockPurchase,
-              gateway: NetworkGatewayType.TRANSAK
-            })
+              gateway: NetworkGatewayType.TRANSAK,
+            }),
           )
           .silentRun()
           .then(({ effects }) => {
@@ -660,7 +659,7 @@ describe('when handling the action signaling the set purchase', () => {
         const expectedPurchase = {
           ...mockPurchaseWithCryptoTransactionId,
           txHash: null,
-          status: PurchaseStatus.COMPLETE
+          status: PurchaseStatus.COMPLETE,
         }
 
         return expectSaga(gatewaySaga)
@@ -669,8 +668,8 @@ describe('when handling the action signaling the set purchase', () => {
           .put(
             openModal(buyManaWithFiatFeedbackModalName, {
               purchase: expectedPurchase,
-              transactionUrl: undefined
-            })
+              transactionUrl: undefined,
+            }),
           )
           .silentRun()
           .then(({ effects }) => {
@@ -683,15 +682,15 @@ describe('when handling the action signaling the set purchase', () => {
       it('should put the fetch wallet request, the add MANA purchase as transaction, and the open modal action with the correct status and transaction url using the chainId', async () => {
         const expectedPurchase = {
           ...mockPurchaseWithCryptoTransactionId,
-          status: PurchaseStatus.COMPLETE
+          status: PurchaseStatus.COMPLETE,
         }
 
         return expectSaga(gatewaySaga)
           .provide([
             [
               call(getChainIdByNetwork, Network.ETHEREUM),
-              ChainId.ETHEREUM_GOERLI
-            ]
+              ChainId.ETHEREUM_GOERLI,
+            ],
           ])
           .dispatch(setPurchase(expectedPurchase))
           .put(fetchWalletRequest())
@@ -699,8 +698,8 @@ describe('when handling the action signaling the set purchase', () => {
           .put(
             openModal(buyManaWithFiatFeedbackModalName, {
               purchase: expectedPurchase,
-              transactionUrl: mockTxUrl
-            })
+              transactionUrl: mockTxUrl,
+            }),
           )
           .silentRun()
           .then(() => {})
@@ -712,7 +711,7 @@ describe('when handling the action signaling the set purchase', () => {
     it('should put the fetch wallet request action and the open modal action with the correct status', async () => {
       const expectedPurchase = {
         ...mockPurchaseWithCryptoTransactionId,
-        status: PurchaseStatus.FAILED
+        status: PurchaseStatus.FAILED,
       }
 
       return expectSaga(gatewaySaga)
@@ -721,8 +720,8 @@ describe('when handling the action signaling the set purchase', () => {
         .put(
           openModal(buyManaWithFiatFeedbackModalName, {
             purchase: expectedPurchase,
-            transactionUrl: undefined
-          })
+            transactionUrl: undefined,
+          }),
         )
         .silentRun()
         .then(() => {})
@@ -733,7 +732,7 @@ describe('when handling the action signaling the set purchase', () => {
     it('should put the fetch wallet request action and the open modal action with the correct status', async () => {
       const expectedPurchase = {
         ...mockPurchaseWithCryptoTransactionId,
-        status: PurchaseStatus.CANCELLED
+        status: PurchaseStatus.CANCELLED,
       }
 
       return expectSaga(gatewaySaga)
@@ -742,8 +741,8 @@ describe('when handling the action signaling the set purchase', () => {
         .put(
           openModal(buyManaWithFiatFeedbackModalName, {
             purchase: expectedPurchase,
-            transactionUrl: undefined
-          })
+            transactionUrl: undefined,
+          }),
         )
         .silentRun()
         .then(() => {})
@@ -769,7 +768,10 @@ describe('when handling the action signaling the load of the local storage into 
       it('should put the action signaling the completion of the purchase', async () => {
         return expectSaga(gatewaySaga)
           .provide([
-            [select(getPendingPurchases), [mockPurchaseWithCryptoTransactionId]]
+            [
+              select(getPendingPurchases),
+              [mockPurchaseWithCryptoTransactionId],
+            ],
           ])
           .dispatch(load({}))
           .put(
@@ -777,8 +779,8 @@ describe('when handling the action signaling the load of the local storage into 
               Network.ETHEREUM,
               NetworkGatewayType.MOON_PAY,
               mockPurchaseWithCryptoTransactionId.id,
-              MoonPayTransactionStatus.PENDING
-            )
+              MoonPayTransactionStatus.PENDING,
+            ),
           )
           .silentRun()
       })
@@ -796,7 +798,7 @@ describe('when handling the action signaling the load of the local storage into 
           const transakPurchase = {
             ...mockPurchase,
             id: mockTransakOrderResponse.data.id,
-            gateway: NetworkGatewayType.TRANSAK
+            gateway: NetworkGatewayType.TRANSAK,
           }
 
           return expectSaga(gatewaySaga)
@@ -810,8 +812,8 @@ describe('when handling the action signaling the load of the local storage into 
                 ...transakPurchase,
                 status: PurchaseStatus.COMPLETE,
                 txHash: mockTransakOrderResponse.data.transactionHash!,
-                failureReason: null
-              })
+                failureReason: null,
+              }),
             )
             .put(pollPurchaseStatusFailure(NO_IDENTITY_ERROR))
             .silentRun()
@@ -828,13 +830,13 @@ describe('when handling the action signaling the load of the local storage into 
           const transakPurchase = {
             ...mockPurchase,
             id: mockTransakOrderResponse.data.id,
-            gateway: NetworkGatewayType.TRANSAK
+            gateway: NetworkGatewayType.TRANSAK,
           }
 
           return expectSaga(gatewaySaga)
             .provide([
               [select(getPendingPurchases), [transakPurchase]],
-              [call(getIdentityOrRedirect), {}]
+              [call(getIdentityOrRedirect), {}],
             ])
             .dispatch(load({}))
             .dispatch(generateIdentityFailure('', ''))
@@ -844,8 +846,8 @@ describe('when handling the action signaling the load of the local storage into 
                 ...transakPurchase,
                 status: PurchaseStatus.COMPLETE,
                 txHash: mockTransakOrderResponse.data.transactionHash!,
-                failureReason: null
-              })
+                failureReason: null,
+              }),
             )
             .put(pollPurchaseStatusSuccess())
             .silentRun()
@@ -860,7 +862,7 @@ describe('when handling the action signaling the load of the local storage into 
     const transakPurchase = {
       ...mockPurchase,
       id: mockTransakOrderResponse.data.id,
-      gateway: NetworkGatewayType.TRANSAK
+      gateway: NetworkGatewayType.TRANSAK,
     }
 
     describe('when it is possible to get the order from Transak API', () => {
@@ -878,8 +880,8 @@ describe('when handling the action signaling the load of the local storage into 
               ...transakPurchase,
               status: PurchaseStatus.COMPLETE,
               txHash: mockTransakOrderResponse.data.transactionHash!,
-              failureReason: null
-            })
+              failureReason: null,
+            }),
           )
           .put(pollPurchaseStatusSuccess())
           .dispatch(pollPurchaseStatusRequest(transakPurchase))
@@ -915,10 +917,10 @@ describe('when handling the action signaling the opening of the fiat gateway wid
     beforeEach(() => {
       response = {
         signature: 'signedMessage',
-        sessionId: 'session-123'
+        sessionId: 'session-123',
       }
       wallet = {
-        address: '0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2'
+        address: '0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2',
       } as Wallet
     })
 
@@ -939,7 +941,7 @@ describe('when handling the action signaling the opening of the fiat gateway wid
               commodity: 'MANA',
               commodity_amount: 100,
               sc_address: '0x0',
-              sc_input_data: '0x0'
+              sc_input_data: '0x0',
             } as WertOptions
           })
           it('should put the success action', () => {
@@ -950,21 +952,21 @@ describe('when handling the action signaling the opening of the fiat gateway wid
                 [call(getIdentityOrRedirect), identity],
                 [
                   matchers.call.fn(
-                    MarketplaceAPI.prototype.signWertMessageAndCreateSession
+                    MarketplaceAPI.prototype.signWertMessageAndCreateSession,
                   ),
-                  response
-                ]
+                  response,
+                ],
               ])
               .dispatch(
-                openFiatGatewayWidgetRequest(FiatGateway.WERT, wertOptions)
+                openFiatGatewayWidgetRequest(FiatGateway.WERT, wertOptions),
               )
               .silentRun()
               .then(() => {
                 expect(WertWidget).toHaveBeenCalledWith(
                   expect.objectContaining({
                     session_id: response.sessionId,
-                    signature: response.signature
-                  })
+                    signature: response.signature,
+                  }),
                 )
               })
           })
@@ -977,15 +979,15 @@ describe('when handling the action signaling the opening of the fiat gateway wid
             return expectSaga(gatewaySaga)
               .put(
                 openFiatGatewayWidgetFailure(
-                  'Missing data needed for the message to sign'
-                )
+                  'Missing data needed for the message to sign',
+                ),
               )
               .provide([
                 [select(getData), { address: wallet.address }],
-                [call(getIdentityOrRedirect), identity]
+                [call(getIdentityOrRedirect), identity],
               ])
               .dispatch(
-                openFiatGatewayWidgetRequest(FiatGateway.WERT, wertOptions)
+                openFiatGatewayWidgetRequest(FiatGateway.WERT, wertOptions),
               )
               .silentRun()
           })
@@ -999,11 +1001,13 @@ describe('when handling the action signaling the opening of the fiat gateway wid
             commodity: 'MANA',
             commodity_amount: 100,
             sc_address: '0x0',
-            sc_input_data: '0x0'
+            sc_input_data: '0x0',
           } as WertOptions
-          ;(MarketplaceAPI.prototype
-            .signWertMessageAndCreateSession as jest.Mock).mockRejectedValue({
-            message: error
+          ;(
+            MarketplaceAPI.prototype
+              .signWertMessageAndCreateSession as jest.Mock
+          ).mockRejectedValue({
+            message: error,
           })
         })
         it('should put the failure action', () => {
@@ -1011,10 +1015,10 @@ describe('when handling the action signaling the opening of the fiat gateway wid
             .put(openFiatGatewayWidgetFailure(error))
             .provide([
               [select(getData), { address: wallet.address }],
-              [call(getIdentityOrRedirect), identity]
+              [call(getIdentityOrRedirect), identity],
             ])
             .dispatch(
-              openFiatGatewayWidgetRequest(FiatGateway.WERT, wertOptions)
+              openFiatGatewayWidgetRequest(FiatGateway.WERT, wertOptions),
             )
             .silentRun()
         })
@@ -1027,7 +1031,7 @@ describe('when handling the action signaling the opening of the fiat gateway wid
           commodity: 'MANA',
           commodity_amount: 100,
           sc_address: '0x0',
-          sc_input_data: '0x0'
+          sc_input_data: '0x0',
         } as WertOptions
       })
       it('should put the failure action', () => {
@@ -1035,7 +1039,7 @@ describe('when handling the action signaling the opening of the fiat gateway wid
           .put(openFiatGatewayWidgetFailure(NO_IDENTITY_ERROR))
           .provide([
             [select(getData), { address: wallet.address }],
-            [call(getIdentityOrRedirect), undefined]
+            [call(getIdentityOrRedirect), undefined],
           ])
           .dispatch(openFiatGatewayWidgetRequest(FiatGateway.WERT, wertOptions))
           .silentRun()

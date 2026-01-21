@@ -13,13 +13,13 @@ export const RarityFilter = (props: RarityFilterProps) => {
       [Rarity.EPIC]: t('@dapps.rarities.epic'),
       [Rarity.RARE]: t('@dapps.rarities.rare'),
       [Rarity.UNCOMMON]: t('@dapps.rarities.uncommon'),
-      [Rarity.COMMON]: t('@dapps.rarities.common')
+      [Rarity.COMMON]: t('@dapps.rarities.common'),
     },
     title: t('@dapps.rarities_filter.title'),
     all_rarities: t('@dapps.rarities_filter.all_rarities'),
     count_rarities: (count: number) =>
       t('@dapps.rarities_filter.count_rarities', { count: count }),
-    tooltip: t('@dapps.rarities_filter.tooltip')
+    tooltip: t('@dapps.rarities_filter.tooltip'),
   }
 
   return <RarityFilterUI i18n={i18n} {...props} />

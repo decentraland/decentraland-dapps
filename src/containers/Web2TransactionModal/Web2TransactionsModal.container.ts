@@ -1,10 +1,10 @@
 import { connect } from 'react-redux'
-import { getData as getWallet } from '../../modules/wallet/selectors'
-import { getIsFeatureEnabled } from '../../modules/features/selectors'
 import { ApplicationName, FeatureName } from '../../modules/features'
-import { MapStateProps } from './Web2TransactionsModal.types'
-import { Web2TransactionsModal } from './Web2TransactionsModal'
+import { getIsFeatureEnabled } from '../../modules/features/selectors'
+import { getData as getWallet } from '../../modules/wallet/selectors'
 import { RootStateOrAny } from '../../types'
+import { Web2TransactionsModal } from './Web2TransactionsModal'
+import { MapStateProps } from './Web2TransactionsModal.types'
 
 const mapState = (state: RootStateOrAny): MapStateProps => {
   return {
@@ -12,8 +12,8 @@ const mapState = (state: RootStateOrAny): MapStateProps => {
     isMagicAutoSignEnabled: getIsFeatureEnabled(
       state,
       ApplicationName.DAPPS,
-      FeatureName.MAGIC_AUTO_SIGN
-    )
+      FeatureName.MAGIC_AUTO_SIGN,
+    ),
   }
 }
 

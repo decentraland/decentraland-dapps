@@ -4,7 +4,7 @@ import {
   fetchApplicationFeaturesSuccess,
   FETCH_APPLICATION_FEATURES_FAILURE,
   FETCH_APPLICATION_FEATURES_REQUEST,
-  FETCH_APPLICATION_FEATURES_SUCCESS
+  FETCH_APPLICATION_FEATURES_SUCCESS,
 } from './actions'
 import { ApplicationFeatures, ApplicationName } from './types'
 
@@ -14,7 +14,7 @@ export const getMockApplicationFeaturesRecord = () =>
       name: ApplicationName.ACCOUNT,
       flags: {
         [`${ApplicationName.ACCOUNT}-flag1`]: true,
-        [`${ApplicationName.ACCOUNT}-flag2`]: false
+        [`${ApplicationName.ACCOUNT}-flag2`]: false,
       },
       variants: {
         [`${ApplicationName.ACCOUNT}-flag1`]: {
@@ -22,24 +22,24 @@ export const getMockApplicationFeaturesRecord = () =>
           name: 'name',
           payload: {
             type: 'type',
-            value: 'value'
-          }
+            value: 'value',
+          },
         },
         [`${ApplicationName.ACCOUNT}-flag2`]: {
           enabled: false,
           name: 'name',
           payload: {
             type: 'type',
-            value: 'value'
-          }
-        }
-      }
+            value: 'value',
+          },
+        },
+      },
     } as ApplicationFeatures,
     [ApplicationName.BUILDER]: {
       name: ApplicationName.BUILDER,
       flags: {
         [`${ApplicationName.BUILDER}-flag1`]: true,
-        [`${ApplicationName.BUILDER}-flag2`]: false
+        [`${ApplicationName.BUILDER}-flag2`]: false,
       },
       variants: {
         [`${ApplicationName.BUILDER}-flag1`]: {
@@ -47,20 +47,20 @@ export const getMockApplicationFeaturesRecord = () =>
           name: 'name',
           payload: {
             type: 'type',
-            value: 'value'
-          }
+            value: 'value',
+          },
         },
         [`${ApplicationName.BUILDER}-flag2`]: {
           enabled: false,
           name: 'name',
           payload: {
             type: 'type',
-            value: 'value'
-          }
-        }
-      }
-    } as ApplicationFeatures
-  } as Record<ApplicationName, ApplicationFeatures>)
+            value: 'value',
+          },
+        },
+      },
+    } as ApplicationFeatures,
+  }) as Record<ApplicationName, ApplicationFeatures>
 
 describe('when fetching application features', () => {
   describe('when calling the request action creator', () => {
@@ -70,7 +70,7 @@ describe('when fetching application features', () => {
       const payload = {
         meta: undefined,
         payload: { apps },
-        type: FETCH_APPLICATION_FEATURES_REQUEST
+        type: FETCH_APPLICATION_FEATURES_REQUEST,
       }
 
       expect(action).toEqual(payload)
@@ -88,7 +88,7 @@ describe('when fetching application features', () => {
       const payload = {
         meta: undefined,
         payload: { apps, features },
-        type: FETCH_APPLICATION_FEATURES_SUCCESS
+        type: FETCH_APPLICATION_FEATURES_SUCCESS,
       }
 
       expect(action).toEqual(payload)
@@ -104,7 +104,7 @@ describe('when fetching application features', () => {
       const payload = {
         meta: undefined,
         payload: { apps, error },
-        type: FETCH_APPLICATION_FEATURES_FAILURE
+        type: FETCH_APPLICATION_FEATURES_FAILURE,
       }
 
       expect(action).toEqual(payload)

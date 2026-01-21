@@ -9,7 +9,7 @@ import {
   createIdentity,
   firstHeaderValueMatcher,
   secondHeaderValueMatcher,
-  thirdHeaderValueMatcher
+  thirdHeaderValueMatcher,
 } from '../tests/authentication'
 
 const urlTest = 'http://test.com'
@@ -30,50 +30,44 @@ let config: BaseClientConfig
 
 jest.spyOn(console, 'error').mockReturnValue(undefined)
 
-jest.spyOn(global, 'setTimeout').mockImplementation(func => {
+jest.spyOn(global, 'setTimeout').mockImplementation((func) => {
   return func() as any
 })
 
 beforeEach(() => {
   config = {
-    retryDelay: 1
+    retryDelay: 1,
   }
   jest.clearAllMocks()
 })
 
 describe('when the request fails with a server error', () => {
   beforeEach(() => {
-    nock(urlTest)
-      .get('/test')
-      .reply(500, {})
-      .defaultReplyHeaders({
-        'Access-Control-Allow-Origin': '*'
-      })
+    nock(urlTest).get('/test').reply(500, {}).defaultReplyHeaders({
+      'Access-Control-Allow-Origin': '*',
+    })
   })
 
   describe('and there is one attempt left', () => {
     beforeEach(() => {
       config = {
         ...config,
-        retries: 1
+        retries: 1,
       }
       baseClient = new TestBaseClient(urlTest, config)
 
-      nock(urlTest)
-        .get('/test')
-        .reply(500, {})
-        .defaultReplyHeaders({
-          'Access-Control-Allow-Origin': '*'
-        })
+      nock(urlTest).get('/test').reply(500, {}).defaultReplyHeaders({
+        'Access-Control-Allow-Origin': '*',
+      })
     })
 
     it('should retry 1 time and throw with the response error', async () => {
       await expect(baseClient.performRequest('/test')).rejects.toThrowError(
-        'Request failed with status code 500'
+        'Request failed with status code 500',
       )
       expect(setTimeout).toHaveBeenCalledWith(
         expect.anything(),
-        config.retryDelay
+        config.retryDelay,
       )
       expect(nock.isDone()).toBeTruthy()
     })
@@ -83,26 +77,22 @@ describe('when the request fails with a server error', () => {
     beforeEach(() => {
       config = {
         ...config,
-        retries: 3
+        retries: 3,
       }
       baseClient = new TestBaseClient(urlTest, config)
 
-      nock(urlTest)
-        .get('/test')
-        .times(3)
-        .reply(500, {})
-        .defaultReplyHeaders({
-          'Access-Control-Allow-Origin': '*'
-        })
+      nock(urlTest).get('/test').times(3).reply(500, {}).defaultReplyHeaders({
+        'Access-Control-Allow-Origin': '*',
+      })
     })
 
     it('should retry 3 times and throw with the response error', async () => {
       await expect(baseClient.performRequest('/test')).rejects.toThrowError(
-        'Request failed with status code 500'
+        'Request failed with status code 500',
       )
       expect(setTimeout).toHaveBeenCalledWith(
         expect.anything(),
-        config.retryDelay
+        config.retryDelay,
       )
       expect(nock.isDone()).toBeTruthy()
     })
@@ -112,14 +102,14 @@ describe('when the request fails with a server error', () => {
     beforeEach(() => {
       config = {
         ...config,
-        retries: 0
+        retries: 0,
       }
       baseClient = new TestBaseClient(urlTest, config)
     })
 
     it('should throw an error', async () => {
       await expect(baseClient.performRequest('/test')).rejects.toThrowError(
-        'Request failed with status code 500'
+        'Request failed with status code 500',
       )
       expect(nock.isDone()).toBeTruthy()
     })
@@ -129,7 +119,7 @@ describe('when the request fails with a server error', () => {
     beforeEach(() => {
       config = {
         ...config,
-        retries: 1
+        retries: 1,
       }
 
       baseClient = new TestBaseClient(urlTest, config)
@@ -138,16 +128,16 @@ describe('when the request fails with a server error', () => {
         .get('/test')
         .reply(200, { data: 'my test data', ok: true })
         .defaultReplyHeaders({
-          'Access-Control-Allow-Origin': '*'
+          'Access-Control-Allow-Origin': '*',
         })
     })
     it('should retry 1 time and resolve with the response data', async () => {
       await expect(baseClient.performRequest('/test')).resolves.toEqual(
-        'my test data'
+        'my test data',
       )
       expect(setTimeout).toHaveBeenCalledWith(
         expect.anything(),
-        config.retryDelay
+        config.retryDelay,
       )
       expect(nock.isDone()).toBeTruthy()
     })
@@ -156,27 +146,24 @@ describe('when the request fails with a server error', () => {
 
 describe('when the request fails with a client non-retryable error', () => {
   beforeEach(() => {
-    nock(urlTest)
-      .get('/test')
-      .reply(422, {})
-      .defaultReplyHeaders({
-        'Access-Control-Allow-Origin': '*'
-      })
+    nock(urlTest).get('/test').reply(422, {}).defaultReplyHeaders({
+      'Access-Control-Allow-Origin': '*',
+    })
   })
 
-  describe.each([1, 3, 5])('and there is %s attempt left', retries => {
+  describe.each([1, 3, 5])('and there is %s attempt left', (retries) => {
     beforeEach(() => {
       config = {
         ...config,
         retries,
-        nonRetryableStatuses: [422]
+        nonRetryableStatuses: [422],
       }
       baseClient = new TestBaseClient(urlTest, config)
     })
 
     it('should not retry, but throw with the response error as soon as the request fails', async () => {
       await expect(baseClient.performRequest('/test')).rejects.toThrowError(
-        'Request failed with status code 422'
+        'Request failed with status code 422',
       )
       expect(nock.isDone()).toBeTruthy()
     })
@@ -189,7 +176,7 @@ describe('when the request is successful', () => {
       nock.cleanAll()
       config = {
         ...config,
-        retries: 0
+        retries: 0,
       }
       baseClient = new TestBaseClient(urlTest, config)
 
@@ -197,13 +184,13 @@ describe('when the request is successful', () => {
         .get('/test')
         .reply(201, { data: 'my test data', ok: true })
         .defaultReplyHeaders({
-          'Access-Control-Allow-Origin': '*'
+          'Access-Control-Allow-Origin': '*',
         })
     })
 
     it('should resolve with the response data', async () => {
       await expect(baseClient.performRequest('/test')).resolves.toEqual(
-        'my test data'
+        'my test data',
       )
       expect(nock.isDone()).toBeTruthy()
     })
@@ -214,7 +201,7 @@ describe('when the request is successful', () => {
       nock.cleanAll()
       config = {
         ...config,
-        retries: 0
+        retries: 0,
       }
       baseClient = new TestBaseClient(urlTest, config)
 
@@ -222,33 +209,30 @@ describe('when the request is successful', () => {
         .get('/test')
         .reply(201, ['my test data'])
         .defaultReplyHeaders({
-          'Access-Control-Allow-Origin': '*'
+          'Access-Control-Allow-Origin': '*',
         })
     })
 
     it('should resolve with the response', async () => {
       await expect(baseClient.performRequest('/test')).resolves.toEqual([
-        'my test data'
+        'my test data',
       ])
       expect(nock.isDone()).toBeTruthy()
     })
   })
 
-  describe("and the response has no body", () => {
+  describe('and the response has no body', () => {
     beforeEach(() => {
       nock.cleanAll()
       config = {
         ...config,
-        retries: 0
+        retries: 0,
       }
       baseClient = new TestBaseClient(urlTest, config)
 
-      nock(urlTest)
-        .get('/test')
-        .reply(204)
-        .defaultReplyHeaders({
-          'Access-Control-Allow-Origin': '*'
-        })
+      nock(urlTest).get('/test').reply(204).defaultReplyHeaders({
+        'Access-Control-Allow-Origin': '*',
+      })
     })
 
     it('should resolve as null', async () => {
@@ -271,7 +255,7 @@ describe('when the client is authenticated', () => {
     beforeEach(() => {
       config = {
         ...config,
-        identity
+        identity,
       }
       baseClient = new TestBaseClient(urlTest, config)
       nock(urlTest)
@@ -281,13 +265,13 @@ describe('when the client is authenticated', () => {
         .matchHeader(THIRD_AUTH_HEADER, thirdHeaderValueMatcher('get', '/test'))
         .reply(201, { data: 'my test data', ok: true })
         .defaultReplyHeaders({
-          'Access-Control-Allow-Origin': '*'
+          'Access-Control-Allow-Origin': '*',
         })
     })
 
     it('should include the authentication headers and resolve with the response data', async () => {
       await expect(baseClient.performRequest('/test')).resolves.toEqual(
-        'my test data'
+        'my test data',
       )
       expect(nock.isDone()).toBeTruthy()
     })
@@ -297,7 +281,7 @@ describe('when the client is authenticated', () => {
     beforeEach(() => {
       config = {
         ...config,
-        identity: () => identity
+        identity: () => identity,
       }
       baseClient = new TestBaseClient(urlTest, config)
       nock(urlTest)
@@ -307,13 +291,13 @@ describe('when the client is authenticated', () => {
         .matchHeader(THIRD_AUTH_HEADER, thirdHeaderValueMatcher('get', '/test'))
         .reply(201, { data: 'my test data', ok: true })
         .defaultReplyHeaders({
-          'Access-Control-Allow-Origin': '*'
+          'Access-Control-Allow-Origin': '*',
         })
     })
 
     it('should include the authentication headers and resolve with the response data', async () => {
       await expect(baseClient.performRequest('/test')).resolves.toEqual(
-        'my test data'
+        'my test data',
       )
       expect(nock.isDone()).toBeTruthy()
     })
@@ -322,7 +306,7 @@ describe('when the client is authenticated', () => {
   describe('and the authentication is given in the fetch', () => {
     beforeEach(() => {
       config = {
-        ...config
+        ...config,
       }
       baseClient = new TestBaseClient(urlTest, config)
       nock(urlTest)
@@ -332,13 +316,13 @@ describe('when the client is authenticated', () => {
         .matchHeader(THIRD_AUTH_HEADER, thirdHeaderValueMatcher('get', '/test'))
         .reply(201, { data: 'my test data', ok: true })
         .defaultReplyHeaders({
-          'Access-Control-Allow-Origin': '*'
+          'Access-Control-Allow-Origin': '*',
         })
     })
 
     it('should include the authentication headers and resolve with the response data', async () => {
       await expect(
-        baseClient.performRequest('/test', { identity })
+        baseClient.performRequest('/test', { identity }),
       ).resolves.toEqual('my test data')
       expect(nock.isDone()).toBeTruthy()
     })

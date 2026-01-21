@@ -1,48 +1,38 @@
 import React from 'react'
 import { getConnectedProvider } from '../../lib/eth'
-import { buildWallet } from "../../modules/wallet/utils/buildWallet"
+import { buildWallet } from '../../modules/wallet/utils/buildWallet'
 import {
-  Props,
+  AccountsChangedHandler,
+  EmitterMethod,
   EventType,
   Handler,
-  EmitterMethod,
-  AccountsChangedHandler,
-  NetworkChangedHandler
+  NetworkChangedHandler,
+  Props,
 } from './WalletProvider.types'
 
 export default class WalletProvider extends React.PureComponent<Props> {
   handleChangeAccount = async () => {
-    const {
-      isConnected,
-      isConnecting,
-      address,
-      onChangeAccount,
-      appChainId
-    } = this.props
+    const { isConnected, isConnecting, address, onChangeAccount, appChainId } =
+      this.props
     try {
       const wallet = await buildWallet(appChainId)
       if (isConnected && !isConnecting && wallet.address !== address) {
         onChangeAccount(wallet)
       }
-    } catch (error) {
+    } catch {
       // do nothing
     }
   }
 
   handleChangeNetwork = async () => {
-    const {
-      isConnected,
-      isConnecting,
-      chainId,
-      onChangeNetwork,
-      appChainId
-    } = this.props
+    const { isConnected, isConnecting, chainId, onChangeNetwork, appChainId } =
+      this.props
     try {
       const wallet = await buildWallet(appChainId)
       if (isConnected && !isConnecting && wallet.chainId !== chainId) {
         onChangeNetwork(wallet)
       }
-    } catch (error) {
+    } catch {
       // do nothing
     }
   }
@@ -64,21 +54,21 @@ export default class WalletProvider extends React.PureComponent<Props> {
             break
         }
         return // all good, early return
-      } catch (error) {
+      } catch {
         // it fails if there's legacy provider (ie. metamask legacy provider) but it shouldn't happen
       }
     }
   }
 
   on(type: EventType, handler: Handler) {
-    this.handle('on', type, handler).catch(error =>
-      console.error(error.message)
+    this.handle('on', type, handler).catch((error) =>
+      console.error(error.message),
     )
   }
 
   off(type: EventType, handler: Handler) {
-    this.handle('removeListener', type, handler).catch(error =>
-      console.error(error.message)
+    this.handle('removeListener', type, handler).catch((error) =>
+      console.error(error.message),
     )
   }
 

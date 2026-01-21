@@ -9,11 +9,15 @@ import {
   LocalizedFields,
   MarketingAdminFields,
   SysLink,
-  isSysLink
+  isSysLink,
 } from '@dcl/schemas'
 import { isErrorWithMessage } from '../../lib'
-import { FETCH_CAMPAIGN_REQUEST, FetchCampaignRequestAction } from './actions'
-import { fetchCampaignSuccess, fetchCampaignFailure } from './actions'
+import {
+  FETCH_CAMPAIGN_REQUEST,
+  FetchCampaignRequestAction,
+  fetchCampaignFailure,
+  fetchCampaignSuccess,
+} from './actions'
 import { ContentfulClient } from './ContentfulClient'
 
 const BANNER_CONTENT_TYPE = 'banner'
@@ -25,7 +29,7 @@ export function* campaignSagas(
     space: string
     environment: string
     id: string
-  }
+  },
 ) {
   yield takeEvery(FETCH_CAMPAIGN_REQUEST, handleFetchCampaignRequest)
 
@@ -35,7 +39,7 @@ export function* campaignSagas(
         [client, 'fetchEntryAllLocales'],
         config.space,
         config.environment,
-        config.id
+        config.id,
       )) as ContentfulEntry<MarketingAdminFields>
 
       if (!fields) {
@@ -45,46 +49,49 @@ export function* campaignSagas(
         [client, 'fetchEntriesFromEntryFields'],
         config.space,
         config.environment,
-        fields
+        fields,
       )) as Record<string, ContentfulEntry<LocalizedFields>>
 
       const arrayOfFields = [
         fields as LocalizedFields,
-        ...Object.values(entries).map(entry => entry.fields)
+        ...Object.values(entries).map((entry) => entry.fields),
       ]
 
       const assets = (yield call(
         [client, 'fetchAssetsFromEntryFields'],
         config.space,
         config.environment,
-        arrayOfFields
+        arrayOfFields,
       )) as Record<string, ContentfulAsset>
 
-      const banners = Object.entries(fields).reduce((acc, [key, value]) => {
-        const fieldOnLocale = value[ContentfulLocale.enUS]
-        if (isSysLink(fieldOnLocale)) {
-          const linkedEntryId = fieldOnLocale.sys.id
-          const bannerEntry = Object.values(entries).find(
-            entry => entry.sys.id === linkedEntryId
-          )
-          if (
-            bannerEntry &&
-            bannerEntry.sys.contentType.sys.id === BANNER_CONTENT_TYPE
-          ) {
-            acc[key] = {
-              ...bannerEntry.fields,
-              id: linkedEntryId
-            } as BannerFields & { id: string }
+      const banners = Object.entries(fields).reduce(
+        (acc, [key, value]) => {
+          const fieldOnLocale = value[ContentfulLocale.enUS]
+          if (isSysLink(fieldOnLocale)) {
+            const linkedEntryId = fieldOnLocale.sys.id
+            const bannerEntry = Object.values(entries).find(
+              (entry) => entry.sys.id === linkedEntryId,
+            )
+            if (
+              bannerEntry &&
+              bannerEntry.sys.contentType.sys.id === BANNER_CONTENT_TYPE
+            ) {
+              acc[key] = {
+                ...bannerEntry.fields,
+                id: linkedEntryId,
+              } as BannerFields & { id: string }
+            }
           }
-        }
-        return acc
-      }, {} as Record<string, BannerFields & { id: string }>)
+          return acc
+        },
+        {} as Record<string, BannerFields & { id: string }>,
+      )
 
-      const campaignField = Object.values(fields).find(field => {
+      const campaignField = Object.values(fields).find((field) => {
         const fieldOnLocale = field[ContentfulLocale.enUS]
         if (isSysLink(fieldOnLocale)) {
           const entry = Object.values(entries).find(
-            entry => entry.sys.id === fieldOnLocale.sys.id
+            (entry) => entry.sys.id === fieldOnLocale.sys.id,
           )
           if (
             entry &&
@@ -107,14 +114,14 @@ export function* campaignSagas(
           campaignFields?.name,
           campaignFields?.marketplaceTabName,
           campaignFields?.mainTag?.[ContentfulLocale.enUS],
-          campaignFields?.additionalTags?.[ContentfulLocale.enUS]
-        )
+          campaignFields?.additionalTags?.[ContentfulLocale.enUS],
+        ),
       )
     } catch (error) {
       yield put(
         fetchCampaignFailure(
-          isErrorWithMessage(error) ? error.message : 'Error fetching campaign'
-        )
+          isErrorWithMessage(error) ? error.message : 'Error fetching campaign',
+        ),
       )
     }
   }

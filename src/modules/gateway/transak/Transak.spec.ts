@@ -14,13 +14,13 @@ import {
   GatewaySagasConfig,
   NFTPurchase,
   Purchase,
-  PurchaseStatus
+  PurchaseStatus,
 } from '../types'
 import {
   CustomizationOptions,
   OrderData,
   TradeType,
-  TransakOrderStatus
+  TransakOrderStatus,
 } from './types'
 
 jest.mock('../../../lib/eth')
@@ -32,11 +32,11 @@ jest.mock('@transak/transak-sdk', () => {
   return {
     __esModule: true,
     ...actualTransakSDK,
-    Transak: jest.fn().mockImplementation(config => {
+    Transak: jest.fn().mockImplementation((config) => {
       return {
-        init: initMock
+        init: initMock,
       }
-    })
+    }),
   }
 })
 
@@ -47,21 +47,21 @@ const mockGetChainIdByNetwork = getChainIdByNetwork as jest.MockedFunction<
 const mockConfig: GatewaySagasConfig = {
   [FiatGateway.WERT]: {
     url: 'http://wert-base.url.xyz',
-    marketplaceServerURL: 'http://marketplace-server.url.xyz'
+    marketplaceServerURL: 'http://marketplace-server.url.xyz',
   },
   [NetworkGatewayType.MOON_PAY]: {
     apiKey: 'api-key',
     apiBaseUrl: 'http://moonpay-base.url.xyz',
     widgetBaseUrl: 'http://widget.base.url.xyz',
-    pollingDelay: 50
+    pollingDelay: 50,
   },
   [NetworkGatewayType.TRANSAK]: {
     apiBaseUrl: 'http://transak-base.url.xyz',
     pusher: {
       appKey: 'appKey',
-      appCluster: 'appCluster'
-    }
-  }
+      appCluster: 'appCluster',
+    },
+  },
 }
 
 const mockAddress = '0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2'
@@ -92,8 +92,8 @@ const mockOrderData: OrderData = {
     totalFeeInFiat: 2,
     transactionHash: 'mock-transaction-hash',
     walletAddress: mockAddress,
-    walletLink: 'wallet-link'
-  }
+    walletLink: 'wallet-link',
+  },
 }
 
 const mockOrderDataWithNftAssetInfo = {
@@ -103,9 +103,9 @@ const mockOrderDataWithNftAssetInfo = {
     isNFTOrder: true,
     nftAssetInfo: {
       collection: 'contractAddress',
-      tokenId: ['123']
-    }
-  }
+      tokenId: ['123'],
+    },
+  },
 }
 
 const mockManaPurchase: Purchase = {
@@ -117,7 +117,7 @@ const mockManaPurchase: Purchase = {
   status: PurchaseStatus.PENDING,
   paymentMethod: 'credit_debit_card',
   gateway: NetworkGatewayType.TRANSAK,
-  txHash: 'mock-transaction-hash'
+  txHash: 'mock-transaction-hash',
 }
 
 const mockNftPurchase: NFTPurchase = {
@@ -127,8 +127,8 @@ const mockNftPurchase: NFTPurchase = {
     tokenId: '123',
     itemId: undefined,
     tradeType: TradeType.SECONDARY,
-    cryptoAmount: 10
-  }
+    cryptoAmount: 10,
+  },
 }
 
 const gatewaySaga = createGatewaySaga(mockConfig)
@@ -161,17 +161,17 @@ describe('when interacting with Transak', () => {
         transak.emitPurchaseEvent(
           {
             ...mockOrderData.status,
-            status: TransakOrderStatus.COMPLETED
+            status: TransakOrderStatus.COMPLETED,
           },
-          Network.ETHEREUM
+          Network.ETHEREUM,
         )
         return expectSaga(gatewaySaga)
           .provide([[select(getChainId), ChainId.ETHEREUM_GOERLI]])
           .put(
             setPurchase({
               ...mockManaPurchase,
-              status: PurchaseStatus.COMPLETE
-            })
+              status: PurchaseStatus.COMPLETE,
+            }),
           )
           .put(fetchWalletRequest())
           .silentRun()
@@ -186,24 +186,23 @@ describe('when interacting with Transak', () => {
         Object.defineProperty(window, 'location', {
           writable: true, // Allow href to be writable
           value: {
-            href: originalHref
-          }
+            href: originalHref,
+          },
         })
       })
       describe('when it belongs to the secondary market', () => {
         beforeEach(() => {
           Object.defineProperty(window, 'location', {
             value: {
-              href:
-                'https://decentraland.zone/contracts/contractAddress/tokens/123'
-            }
+              href: 'https://decentraland.zone/contracts/contractAddress/tokens/123',
+            },
           })
         })
 
         it('should put a new message in the channel signaling the set of the purchase with the nft info and the token id', () => {
           transak.emitPurchaseEvent(
             mockOrderDataWithNftAssetInfo.status,
-            Network.ETHEREUM
+            Network.ETHEREUM,
           )
 
           return expectSaga(gatewaySaga)
@@ -216,15 +215,14 @@ describe('when interacting with Transak', () => {
         beforeEach(() => {
           Object.defineProperty(window, 'location', {
             value: {
-              href:
-                'https://decentraland.zone/contracts/contractAddress/items/234'
-            }
+              href: 'https://decentraland.zone/contracts/contractAddress/items/234',
+            },
           })
         })
         it('should put a new message in the channel signaling the set of the purchase with the nft info and the item id', () => {
           transak.emitPurchaseEvent(
             mockOrderDataWithNftAssetInfo.status,
-            Network.ETHEREUM
+            Network.ETHEREUM,
           )
           return expectSaga(gatewaySaga)
             .put(
@@ -235,9 +233,9 @@ describe('when interacting with Transak', () => {
                   ...mockNftPurchase.nft,
                   tokenId: undefined,
                   itemId: '234',
-                  tradeType: TradeType.PRIMARY
-                }
-              })
+                  tradeType: TradeType.PRIMARY,
+                },
+              }),
             )
             .silentRun()
         })
@@ -262,12 +260,12 @@ describe('when interacting with Transak', () => {
     it('should get the widget url and call the init method from the Transak SDK', async () => {
       await transak.openWidget({
         network: Network.ETHEREUM,
-        walletAddress: mockAddress
+        walletAddress: mockAddress,
       })
 
       expect(getTransakWidgetUrlSpy).toHaveBeenCalledWith({
         walletAddress: mockAddress,
-        defaultNetwork: 'ethereum'
+        defaultNetwork: 'ethereum',
       })
       expect(initMock).toHaveBeenCalled()
     })

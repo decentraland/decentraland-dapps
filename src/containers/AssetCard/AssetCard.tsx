@@ -2,10 +2,14 @@ import React, { useMemo } from 'react'
 import { Item, Rarity } from '@dcl/schemas'
 import {
   CatalogCard as AssetCardUi,
-  CatalogCardProps as AssetCardUiProps
+  CatalogCardProps as AssetCardUiProps,
 } from 'decentraland-ui/dist/components/CatalogCard/CatalogCard'
-import { formatWeiToAssetCardEther, getCatalogCardInformation, getOwnersText } from './utils'
 import { t } from '../../modules/translation/utils'
+import {
+  formatWeiToAssetCardEther,
+  getCatalogCardInformation,
+  getOwnersText,
+} from './utils'
 
 export type AssetCardTranslations = {
   also_minting: React.ReactNode
@@ -43,7 +47,7 @@ export const AssetCard = (props: AssetCardProps) => {
     listings: t('@dapps.asset_card.listings'),
     available_for_mint: t('@dapps.asset_card.available_for_mint'),
     available_listings_in_range: t(
-      '@dapps.asset_card.available_listings_in_range'
+      '@dapps.asset_card.available_listings_in_range',
     ),
     cheapest_listing: t('@dapps.asset_card.cheapest_listing'),
     not_for_sale: t('@dapps.asset_card.not_for_sale'),
@@ -53,7 +57,7 @@ export const AssetCard = (props: AssetCardProps) => {
     cheapest_option_range: t('@dapps.asset_card.cheapest_option_range'),
     most_expensive: t('@dapps.asset_card.most_expensive'),
     most_expensive_range: t('@dapps.asset_card.most_expensive_range'),
-    also_minting: t('@dapps.asset_card.also_minting')
+    also_minting: t('@dapps.asset_card.also_minting'),
   }
 
   const catalogItemInformation = useMemo(() => {
@@ -65,14 +69,12 @@ export const AssetCard = (props: AssetCardProps) => {
 
   const price = useMemo(() => {
     return catalogItemInformation.price?.includes('-')
-      ? `${formatWeiToAssetCardEther(
-          catalogItemInformation.price.split(' - ')[0]
-        )} - ${formatWeiToAssetCardEther(
-          catalogItemInformation.price.split(' - ')[1]
+      ? `${formatWeiToAssetCardEther(catalogItemInformation.price.split(' - ')[0])} - ${formatWeiToAssetCardEther(
+          catalogItemInformation.price.split(' - ')[1],
         )}`
       : catalogItemInformation.price
-      ? formatWeiToAssetCardEther(catalogItemInformation.price)
-      : undefined
+        ? formatWeiToAssetCardEther(catalogItemInformation.price)
+        : undefined
   }, [catalogItemInformation.price])
 
   const propsCard: AssetCardUiProps = {
@@ -82,7 +84,7 @@ export const AssetCard = (props: AssetCardProps) => {
       name: asset.name,
       rarity: asset.rarity,
       network: asset.network,
-      creator: asset.creator
+      creator: asset.creator,
     },
     action: catalogItemInformation.action,
     actionIcon: catalogItemInformation.actionIcon,
@@ -100,7 +102,7 @@ export const AssetCard = (props: AssetCardProps) => {
         [Rarity.EPIC]: t('@dapps.rarities.epic'),
         [Rarity.LEGENDARY]: t('@dapps.rarities.legendary'),
         [Rarity.MYTHIC]: t('@dapps.rarities.mythic'),
-        [Rarity.UNIQUE]: t('@dapps.rarities.unique')
+        [Rarity.UNIQUE]: t('@dapps.rarities.unique'),
       },
       rarities_description: {
         [Rarity.COMMON]: t('@dapps.rarities_description.common'),
@@ -110,9 +112,9 @@ export const AssetCard = (props: AssetCardProps) => {
         [Rarity.EPIC]: t('@dapps.rarities_description.epic'),
         [Rarity.LEGENDARY]: t('@dapps.rarities_description.legendary'),
         [Rarity.MYTHIC]: t('@dapps.rarities_description.mythic'),
-        [Rarity.UNIQUE]: t('@dapps.rarities_description.unique')
-      }
-    }
+        [Rarity.UNIQUE]: t('@dapps.rarities_description.unique'),
+      },
+    },
   }
 
   return <AssetCardUi {...propsCard} />

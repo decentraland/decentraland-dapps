@@ -1,9 +1,9 @@
 import {
+  ContentfulAsset,
   ContentfulEntry,
+  ContentfulLocale,
   LocalizedField,
   LocalizedFieldType,
-  ContentfulAsset,
-  ContentfulLocale
 } from '@dcl/schemas'
 import { BaseClient } from '../../lib'
 import { ContentfulEntryWithoutLocales, Fields } from './ContentfulClient.types'
@@ -31,13 +31,13 @@ export class ContentfulClient extends BaseClient {
     space: string,
     environment: string,
     id: string,
-    locale: ContentfulLocale = ContentfulLocale.enUS
+    locale: ContentfulLocale = ContentfulLocale.enUS,
   ): Promise<ContentfulEntryWithoutLocales<T>> {
     const response = await this.rawFetch(
       `/spaces/${space}/environments/${environment}/entries/${id}/?` +
         new URLSearchParams({
-          locale: locale
-        })
+          locale: locale,
+        }),
     )
 
     if (!response.ok) {
@@ -51,7 +51,7 @@ export class ContentfulClient extends BaseClient {
     content: {
       entry: ContentfulEntryWithoutLocales<T>
       locale: ContentfulLocale
-    }[]
+    }[],
   ): ContentfulEntry<T> {
     const combinedFields = {} as Record<
       string,
@@ -62,50 +62,50 @@ export class ContentfulClient extends BaseClient {
       Object.entries(entry.fields).forEach(([key, value]) => {
         combinedFields[key] = {
           ...combinedFields[key],
-          [locale]: value
+          [locale]: value,
         }
       })
     }
     return {
       fields: combinedFields as T,
       metadata: content[0].entry.metadata,
-      sys: content[0].entry.sys
+      sys: content[0].entry.sys,
     }
   }
 
   async fetchEntryAllLocales<
-    T extends Record<string, LocalizedField<LocalizedFieldType>>
+    T extends Record<string, LocalizedField<LocalizedFieldType>>,
   >(
     space: string,
     environment: string,
-    id: string
+    id: string,
   ): Promise<ContentfulEntry<T>> {
     try {
       try {
         const [responseEn, responseEs, responseZh] = await Promise.all([
           this.fetchEntry(space, environment, id, ContentfulLocale.enUS),
           this.fetchEntry(space, environment, id, ContentfulLocale.es),
-          this.fetchEntry(space, environment, id, ContentfulLocale.zh)
+          this.fetchEntry(space, environment, id, ContentfulLocale.zh),
         ])
 
         return this.mergeEntriesWithoutLocales<T>([
           {
             entry: responseEn as ContentfulEntryWithoutLocales<T>,
-            locale: ContentfulLocale.enUS
+            locale: ContentfulLocale.enUS,
           },
           {
             entry: responseEs as ContentfulEntryWithoutLocales<T>,
-            locale: ContentfulLocale.es
+            locale: ContentfulLocale.es,
           },
           {
             entry: responseZh as ContentfulEntryWithoutLocales<T>,
-            locale: ContentfulLocale.zh
-          }
+            locale: ContentfulLocale.zh,
+          },
         ])
-      } catch (error) {
+      } catch {
         throw new Error('Error fetching entry in all locales')
       }
-    } catch (error) {
+    } catch {
       throw new Error('Error fetching entry in all locales')
     }
   }
@@ -155,23 +155,23 @@ export class ContentfulClient extends BaseClient {
             ? webp
             : jpg
           : url.pathname.endsWith('.webp')
-          ? webp
-          : url.pathname.endsWith('.png')
-          ? png
-          : url.pathname.endsWith('.gif')
-          ? gif
-          : undefined
+            ? webp
+            : url.pathname.endsWith('.png')
+              ? png
+              : url.pathname.endsWith('.gif')
+                ? gif
+                : undefined
 
       const originalFormat =
         url.pathname.endsWith('.jpg') || url.pathname.endsWith('.jpeg')
           ? 'jpg'
           : url.pathname.endsWith('.png')
-          ? 'png'
-          : url.pathname.endsWith('.webp')
-          ? 'webp'
-          : url.pathname.endsWith('.gif')
-          ? 'gif'
-          : undefined
+            ? 'png'
+            : url.pathname.endsWith('.webp')
+              ? 'webp'
+              : url.pathname.endsWith('.gif')
+                ? 'gif'
+                : undefined
 
       return {
         jpg: jpg.toString(),
@@ -180,10 +180,10 @@ export class ContentfulClient extends BaseClient {
         gif: gif.toString(),
         original: url.toString(),
         optimized: optimized && optimized.toString(),
-        originalFormat
+        originalFormat,
       }
     } catch (err) {
-      console.error(`Error optimizing:`, image, err)
+      console.error('Error optimizing:', image, err)
       return {}
     }
   }
@@ -191,10 +191,10 @@ export class ContentfulClient extends BaseClient {
   async fetchAsset(
     space: string,
     environment: string,
-    id: string
+    id: string,
   ): Promise<ContentfulAsset> {
     const response = await this.rawFetch(
-      `/spaces/${space}/environments/${environment}/assets/${id}/`
+      `/spaces/${space}/environments/${environment}/assets/${id}/`,
     )
 
     if (!response.ok) {
@@ -206,38 +206,38 @@ export class ContentfulClient extends BaseClient {
     const locale = ContentfulLocale.enUS
     const transformedFields = {
       title: {
-        [locale]: asset.fields.title
+        [locale]: asset.fields.title,
       },
       description: {
-        [locale]: asset.fields.description
+        [locale]: asset.fields.description,
       },
       file: {
         [locale]: {
           ...asset.fields.file,
           url:
             this.optimize(asset.fields.file.url).optimized ||
-            asset.fields.file.url
-        }
-      }
+            asset.fields.file.url,
+        },
+      },
     }
 
     return {
       ...asset,
-      fields: transformedFields
+      fields: transformedFields,
     }
   }
 
   async fetchAssetsFromEntryFields<
-    T extends Record<string, LocalizedField<LocalizedFieldType>>
+    T extends Record<string, LocalizedField<LocalizedFieldType>>,
   >(
     space: string,
     environment: string,
-    fieldsInArray: T[]
+    fieldsInArray: T[],
   ): Promise<Record<string, ContentfulAsset>> {
     const assetIds = new Set<string>()
-    fieldsInArray.forEach(fields => {
-      Object.values(fields).forEach(field => {
-        Object.values(field).forEach(content => {
+    fieldsInArray.forEach((fields) => {
+      Object.values(fields).forEach((field) => {
+        Object.values(field).forEach((content) => {
           if (content?.sys?.linkType === 'Asset') {
             assetIds.add(content.sys.id)
           }
@@ -250,26 +250,29 @@ export class ContentfulClient extends BaseClient {
     }
 
     const assets = await Promise.all(
-      Array.from(assetIds).map(id => this.fetchAsset(space, environment, id))
+      Array.from(assetIds).map((id) => this.fetchAsset(space, environment, id)),
     )
 
-    return assets.reduce((acc, asset) => {
-      acc[asset.sys.id] = asset
-      return acc
-    }, {} as Record<string, ContentfulAsset>)
+    return assets.reduce(
+      (acc, asset) => {
+        acc[asset.sys.id] = asset
+        return acc
+      },
+      {} as Record<string, ContentfulAsset>,
+    )
   }
 
   async fetchEntriesFromEntryFields<
-    T extends Record<string, LocalizedField<LocalizedFieldType>>
+    T extends Record<string, LocalizedField<LocalizedFieldType>>,
   >(
     space: string,
     environment: string,
-    fields: T
+    fields: T,
   ): Promise<Record<string, ContentfulEntry<T>>> {
     const entryIds = new Set<string>()
 
-    Object.values(fields).forEach(field => {
-      Object.values(field).forEach(content => {
+    Object.values(fields).forEach((field) => {
+      Object.values(field).forEach((content) => {
         if (content?.sys?.linkType === 'Entry') {
           entryIds.add(content.sys.id)
         }
@@ -281,14 +284,17 @@ export class ContentfulClient extends BaseClient {
     }
 
     const entries = await Promise.all(
-      Array.from(entryIds).map(id =>
-        this.fetchEntryAllLocales<T>(space, environment, id)
-      )
+      Array.from(entryIds).map((id) =>
+        this.fetchEntryAllLocales<T>(space, environment, id),
+      ),
     )
 
-    return entries.reduce((acc, entry) => {
-      acc[entry.sys.id] = entry
-      return acc
-    }, {} as Record<string, ContentfulEntry<T>>)
+    return entries.reduce(
+      (acc, entry) => {
+        acc[entry.sys.id] = entry
+        return acc
+      },
+      {} as Record<string, ContentfulEntry<T>>,
+    )
   }
 }

@@ -1,14 +1,14 @@
 import { Dispatch } from 'redux'
-import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { AuthIdentity } from '@dcl/crypto'
+import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { NavbarProps as NavbarComponentProps } from 'decentraland-ui/dist/components/Navbar/Navbar.types'
 import { NavbarProps as NavbarComponentProps2 } from 'decentraland-ui2'
+import { getCredits } from '../../modules/credits/selectors'
 import {
+  SwitchNetworkRequestAction,
   disconnectWalletRequest,
   switchNetworkRequest,
-  SwitchNetworkRequestAction
 } from '../../modules/wallet/actions'
-import { getCredits } from '../../modules/credits/selectors'
 
 export type NavbarProps = NavbarComponentProps & {
   withChainSelector?: boolean

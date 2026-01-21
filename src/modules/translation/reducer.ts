@@ -1,15 +1,14 @@
 import { Locale } from 'decentraland-ui/dist/components/Language/Language'
-
-import { loadingReducer, LoadingState } from '../loading/reducer'
+import { LoadingState, loadingReducer } from '../loading/reducer'
 import {
-  ChangeLocaleAction,
   CHANGE_LOCALE,
+  ChangeLocaleAction,
+  FETCH_TRANSLATIONS_FAILURE,
   FETCH_TRANSLATIONS_REQUEST,
   FETCH_TRANSLATIONS_SUCCESS,
-  FETCH_TRANSLATIONS_FAILURE,
+  FetchTranslationsFailureAction,
   FetchTranslationsRequestAction,
   FetchTranslationsSuccessAction,
-  FetchTranslationsFailureAction
 } from './actions'
 import { Translation } from './types'
 
@@ -24,7 +23,7 @@ export const INITIAL_STATE: TranslationState = {
   data: {},
   locale: 'en',
   loading: [],
-  error: null
+  error: null,
 }
 
 export type TranslationReducerAction =
@@ -35,13 +34,13 @@ export type TranslationReducerAction =
 
 export function translationReducer(
   state = INITIAL_STATE,
-  action: TranslationReducerAction
+  action: TranslationReducerAction,
 ): TranslationState {
   switch (action.type) {
     case CHANGE_LOCALE:
       return {
         ...state,
-        locale: action.payload.locale
+        locale: action.payload.locale,
       }
     case FETCH_TRANSLATIONS_REQUEST:
       return {
@@ -49,8 +48,8 @@ export function translationReducer(
         loading: loadingReducer(state.loading, action),
         data: {
           ...state.data,
-          [action.payload.locale]: null
-        }
+          [action.payload.locale]: null,
+        },
       }
     case FETCH_TRANSLATIONS_SUCCESS:
       return {
@@ -60,15 +59,15 @@ export function translationReducer(
         data: {
           ...state.data,
           [action.payload.locale]: {
-            ...action.payload.translations
-          }
-        }
+            ...action.payload.translations,
+          },
+        },
       }
     case FETCH_TRANSLATIONS_FAILURE:
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
-        error: action.payload.error
+        error: action.payload.error,
       }
     default:
       return state

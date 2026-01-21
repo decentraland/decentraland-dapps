@@ -1,68 +1,68 @@
-import {
-  put,
-  call,
-  takeEvery,
-  take,
-  select,
-  race,
-  fork
-} from 'redux-saga/effects'
 import { providers } from '@0xsequence/multicall'
 import { BigNumber, ethers } from 'ethers'
+import {
+  call,
+  fork,
+  put,
+  race,
+  select,
+  take,
+  takeEvery,
+} from 'redux-saga/effects'
 import { Provider } from 'decentraland-connect'
 import { ContractData, getContract } from 'decentraland-transactions'
 import { getNetworkProvider } from '../../lib/eth'
-import { sendTransaction } from '../wallet/utils/sendTransaction'
-import { getTransactionHashFromAction, waitForTx } from '../transaction/utils'
 import { getAnalytics } from '../analytics/utils'
+import { getTransactionHashFromAction, waitForTx } from '../transaction/utils'
+import { sendTransaction } from '../wallet/utils/sendTransaction'
+import {
+  AUTHORIZATION_FLOW_REQUEST,
+  AuthorizationFlowRequestAction,
+  FETCH_AUTHORIZATIONS_FAILURE,
+  FETCH_AUTHORIZATIONS_REQUEST,
+  FETCH_AUTHORIZATIONS_SUCCESS,
+  FetchAuthorizationsFailureAction,
+  FetchAuthorizationsRequestAction,
+  FetchAuthorizationsSuccessAction,
+  GRANT_TOKEN_FAILURE,
+  GRANT_TOKEN_REQUEST,
+  GRANT_TOKEN_SUCCESS,
+  GrantTokenRequestAction,
+  GrantTokenSuccessAction,
+  REVOKE_TOKEN_FAILURE,
+  REVOKE_TOKEN_REQUEST,
+  REVOKE_TOKEN_SUCCESS,
+  RevokeTokenFailureAction,
+  RevokeTokenRequestAction,
+  RevokeTokenSuccessAction,
+  authorizationFlowFailure,
+  authorizationFlowSuccess,
+  fetchAuthorizationsFailure,
+  fetchAuthorizationsRequest,
+  fetchAuthorizationsSuccess,
+  grantTokenFailure,
+  grantTokenRequest,
+  grantTokenSuccess,
+  revokeTokenFailure,
+  revokeTokenRequest,
+  revokeTokenSuccess,
+} from './actions'
+import { getData } from './selectors'
+import { Authorization, AuthorizationAction, AuthorizationType } from './types'
 import {
   AuthorizationError,
   getCollectionV2ContractInstance,
   getTokenAmountToApprove,
   hasAuthorization,
   hasAuthorizationAndEnoughAllowance,
-  isValidType
+  isValidType,
 } from './utils'
-import {
-  fetchAuthorizationsSuccess,
-  fetchAuthorizationsFailure,
-  FetchAuthorizationsRequestAction,
-  FETCH_AUTHORIZATIONS_REQUEST,
-  grantTokenSuccess,
-  grantTokenFailure,
-  GrantTokenRequestAction,
-  GRANT_TOKEN_REQUEST,
-  revokeTokenSuccess,
-  revokeTokenFailure,
-  RevokeTokenRequestAction,
-  REVOKE_TOKEN_REQUEST,
-  AuthorizationFlowRequestAction,
-  AUTHORIZATION_FLOW_REQUEST,
-  authorizationFlowFailure,
-  authorizationFlowSuccess,
-  fetchAuthorizationsRequest,
-  FETCH_AUTHORIZATIONS_SUCCESS,
-  REVOKE_TOKEN_SUCCESS,
-  GRANT_TOKEN_SUCCESS,
-  revokeTokenRequest,
-  grantTokenRequest,
-  GrantTokenSuccessAction,
-  RevokeTokenSuccessAction,
-  REVOKE_TOKEN_FAILURE,
-  GRANT_TOKEN_FAILURE,
-  RevokeTokenFailureAction,
-  FETCH_AUTHORIZATIONS_FAILURE,
-  FetchAuthorizationsSuccessAction,
-  FetchAuthorizationsFailureAction
-} from './actions'
-import { Authorization, AuthorizationAction, AuthorizationType } from './types'
-import { getData } from './selectors'
 
 export function createAuthorizationSaga() {
   return function* authorizationSaga() {
     yield takeEvery(
       FETCH_AUTHORIZATIONS_REQUEST,
-      handleFetchAuthorizationsRequest
+      handleFetchAuthorizationsRequest,
     )
     yield takeEvery(GRANT_TOKEN_REQUEST, handleGrantTokenRequest)
     yield takeEvery(REVOKE_TOKEN_REQUEST, handleRevokeTokenRequest)
@@ -70,7 +70,7 @@ export function createAuthorizationSaga() {
   }
 
   function* handleFetchAuthorizationsRequest(
-    action: FetchAuthorizationsRequestAction
+    action: FetchAuthorizationsRequestAction,
   ) {
     const { authorizations } = action.payload
     try {
@@ -86,12 +86,12 @@ export function createAuthorizationSaga() {
         if (!multicallProviders[chainId]) {
           // provider party 🎉
           const provider: Provider = yield call(() =>
-            getNetworkProvider(chainId)
+            getNetworkProvider(chainId),
           )
           const ethersProvider = new ethers.providers.Web3Provider(provider)
           const multicallProvider = new providers.MulticallProvider(
             ethersProvider,
-            { batchSize: 500 } // defaults to 50
+            { batchSize: 500 }, // defaults to 50
           )
           multicallProviders[chainId] = multicallProvider
         }
@@ -100,7 +100,7 @@ export function createAuthorizationSaga() {
           case AuthorizationType.ALLOWANCE:
             const erc20 = getERC20ContractInstance(
               authorization,
-              multicallProviders[chainId]
+              multicallProviders[chainId],
             )
 
             promises.push(
@@ -108,7 +108,7 @@ export function createAuthorizationSaga() {
               erc20
                 .allowance(
                   authorization.address,
-                  authorization.authorizedAddress
+                  authorization.authorizedAddress,
                 )
                 .then<Authorization | null>((allowance: ethers.BigNumber) => {
                   return [
@@ -116,21 +116,21 @@ export function createAuthorizationSaga() {
                     allowance.gt(0)
                       ? {
                           ...authorization,
-                          allowance: allowance.toString()
+                          allowance: allowance.toString(),
                         }
-                      : null
+                      : null,
                   ]
                 })
                 .catch((error: Error) => {
-                  console.warn(`Error fetching allowance`, authorization, error)
+                  console.warn('Error fetching allowance', authorization, error)
                   return [authorization, null]
-                })
+                }),
             )
             break
           case AuthorizationType.APPROVAL:
             const erc721 = getERC721ContractInstance(
               authorization,
-              multicallProviders[chainId]
+              multicallProviders[chainId],
             )
 
             promises.push(
@@ -138,22 +138,22 @@ export function createAuthorizationSaga() {
               erc721
                 .isApprovedForAll(
                   authorization.address,
-                  authorization.authorizedAddress
+                  authorization.authorizedAddress,
                 )
                 .then<Authorization | null>((isApproved: boolean) => [
                   authorization,
-                  isApproved ? authorization : null
+                  isApproved ? authorization : null,
                 ])
                 .catch((error: Error) => {
-                  console.warn(`Error fetching approval`, authorization, error)
+                  console.warn('Error fetching approval', authorization, error)
                   return [authorization, null]
-                })
+                }),
             )
             break
           case AuthorizationType.MINT:
             const collectionContract = getCollectionV2ContractInstance(
               authorization.contractAddress,
-              multicallProviders[chainId]
+              multicallProviders[chainId],
             )
 
             promises.push(
@@ -161,22 +161,20 @@ export function createAuthorizationSaga() {
                 .globalMinters(authorization.authorizedAddress)
                 .then((isMinter: boolean) => [
                   authorization,
-                  isMinter ? authorization : null
+                  isMinter ? authorization : null,
                 ])
                 .catch((error: Error) => {
-                  console.error(`Error fetching minters`, authorization, error)
+                  console.error('Error fetching minters', authorization, error)
                   return [authorization, null]
-                })
+                }),
             )
         }
       }
 
-      const authorizationsToStore: [
-        Authorization,
-        Authorization | null
-      ][] = yield call(async () => {
-        return Promise.all(promises)
-      })
+      const authorizationsToStore: [Authorization, Authorization | null][] =
+        yield call(async () => {
+          return Promise.all(promises)
+        })
 
       yield put(fetchAuthorizationsSuccess(authorizationsToStore))
     } catch (error) {
@@ -188,7 +186,7 @@ export function createAuthorizationSaga() {
     const { authorization } = action.payload
     try {
       const txHash: string = yield call(() =>
-        changeAuthorization(authorization, AuthorizationAction.GRANT)
+        changeAuthorization(authorization, AuthorizationAction.GRANT),
       )
       yield put(grantTokenSuccess(authorization, authorization.chainId, txHash))
     } catch (error) {
@@ -200,10 +198,10 @@ export function createAuthorizationSaga() {
     const { authorization } = action.payload
     try {
       const txHash: string = yield call(() =>
-        changeAuthorization(authorization, AuthorizationAction.REVOKE)
+        changeAuthorization(authorization, AuthorizationAction.REVOKE),
       )
       yield put(
-        revokeTokenSuccess(authorization, authorization.chainId, txHash)
+        revokeTokenSuccess(authorization, authorization.chainId, txHash),
       )
     } catch (error) {
       yield put(revokeTokenFailure(authorization, error.message))
@@ -213,7 +211,7 @@ export function createAuthorizationSaga() {
   function* authorizeAndWaitForTx(
     authorization: Authorization,
     authorizationAction: AuthorizationAction,
-    traceId: string
+    traceId: string,
   ) {
     const isRevoke = authorizationAction === AuthorizationAction.REVOKE
     const tokenRequest = isRevoke
@@ -226,13 +224,13 @@ export function createAuthorizationSaga() {
 
     const {
       success,
-      failure
+      failure,
     }: {
       success: RevokeTokenSuccessAction | GrantTokenSuccessAction | undefined
       failure: RevokeTokenFailureAction | RevokeTokenFailureAction | undefined
     } = yield race({
       success: take(TOKEN_SUCCESS),
-      failure: take(TOKEN_FAILURE)
+      failure: take(TOKEN_FAILURE),
     })
     if (failure) {
       throw new Error(failure.payload.error)
@@ -241,20 +239,18 @@ export function createAuthorizationSaga() {
     const analytics = getAnalytics()
     if (analytics) {
       analytics.track(
-        `[Authorization Flow] ${
-          isRevoke ? 'Revoke' : 'Grant'
-        } Transaction Approved in Wallet`,
-        { traceId }
+        `[Authorization Flow] ${isRevoke ? 'Revoke' : 'Grant'} Transaction Approved in Wallet`,
+        { traceId },
       )
     }
     const txHash = getTransactionHashFromAction(
-      success as RevokeTokenSuccessAction | GrantTokenSuccessAction
+      success as RevokeTokenSuccessAction | GrantTokenSuccessAction,
     )
     yield call(waitForTx, txHash)
   }
 
   function* handleAuthorizationFlowRequest(
-    action: AuthorizationFlowRequestAction
+    action: AuthorizationFlowRequestAction,
   ) {
     const {
       authorizationAction,
@@ -262,7 +258,7 @@ export function createAuthorizationSaga() {
       requiredAllowance,
       currentAllowance,
       traceId,
-      onAuthorized
+      onAuthorized,
     } = action.payload
 
     try {
@@ -281,7 +277,7 @@ export function createAuthorizationSaga() {
           authorizeAndWaitForTx,
           authorization,
           AuthorizationAction.REVOKE,
-          traceId ?? 'Unknown trace id'
+          traceId ?? 'Unknown trace id',
         )
       }
 
@@ -290,24 +286,24 @@ export function createAuthorizationSaga() {
         authorizeAndWaitForTx,
         authorization,
         authorizationAction,
-        traceId ?? 'Unknown trace id'
+        traceId ?? 'Unknown trace id',
       )
       yield put(fetchAuthorizationsRequest([authorization]))
 
       const {
-        fetchFailure
+        fetchFailure,
       }: {
         fetchSuccess: FetchAuthorizationsSuccessAction | undefined
         fetchFailure: FetchAuthorizationsFailureAction | undefined
       } = yield race({
         fetchSuccess: take(FETCH_AUTHORIZATIONS_SUCCESS),
-        fetchFailure: take(FETCH_AUTHORIZATIONS_FAILURE)
+        fetchFailure: take(FETCH_AUTHORIZATIONS_FAILURE),
       })
 
       if (fetchFailure) {
         throw new Error(
           fetchFailure.payload.error ||
-            AuthorizationError.FETCH_AUTHORIZATIONS_FAILURE
+            AuthorizationError.FETCH_AUTHORIZATIONS_FAILURE,
         )
       }
       const authorizations: Authorization[] = yield select(getData)
@@ -326,7 +322,7 @@ export function createAuthorizationSaga() {
           !hasAuthorizationAndEnoughAllowance(
             authorizations,
             authorization,
-            requiredAllowance
+            requiredAllowance,
           )
         ) {
           throw new Error(AuthorizationError.INSUFFICIENT_ALLOWANCE)
@@ -353,7 +349,7 @@ export function createAuthorizationSaga() {
 
   async function changeAuthorization(
     authorization: Authorization,
-    action: AuthorizationAction
+    action: AuthorizationAction,
   ): Promise<string> {
     if (!isValidType(authorization.type)) {
       throw new Error(`Invalid authorization type ${authorization.type}`)
@@ -361,7 +357,7 @@ export function createAuthorizationSaga() {
 
     const contract: ContractData = {
       ...getContract(authorization.contractName, authorization.chainId),
-      address: authorization.contractAddress
+      address: authorization.contractAddress,
     }
 
     switch (authorization.type) {
@@ -370,18 +366,18 @@ export function createAuthorizationSaga() {
           action === AuthorizationAction.GRANT
             ? getTokenAmountToApprove().toString()
             : '0'
-        return sendTransaction(contract, erc20 =>
-          erc20.approve(authorization.authorizedAddress, amount)
+        return sendTransaction(contract, (erc20) =>
+          erc20.approve(authorization.authorizedAddress, amount),
         )
       case AuthorizationType.APPROVAL:
         const isApproved = action === AuthorizationAction.GRANT
-        return sendTransaction(contract, erc712 =>
-          erc712.setApprovalForAll(authorization.authorizedAddress, isApproved)
+        return sendTransaction(contract, (erc712) =>
+          erc712.setApprovalForAll(authorization.authorizedAddress, isApproved),
         )
       case AuthorizationType.MINT:
         const isMinter = action === AuthorizationAction.GRANT
-        return sendTransaction(contract, collection =>
-          collection.setMinters([authorization.authorizedAddress], [isMinter])
+        return sendTransaction(contract, (collection) =>
+          collection.setMinters([authorization.authorizedAddress], [isMinter]),
         )
     }
   }
@@ -390,27 +386,27 @@ export function createAuthorizationSaga() {
 // TODO: Use decentraland-transactions
 function getERC20ContractInstance(
   authorization: Authorization,
-  provider: ethers.providers.Provider
+  provider: ethers.providers.Provider,
 ) {
   return new ethers.Contract(
     authorization.contractAddress,
     [
-      'function allowance(address owner, address spender) view returns (uint256)'
+      'function allowance(address owner, address spender) view returns (uint256)',
     ],
-    provider
+    provider,
   )
 }
 
 function getERC721ContractInstance(
   authorization: Authorization,
-  provider: ethers.providers.Provider
+  provider: ethers.providers.Provider,
 ) {
   return new ethers.Contract(
     authorization.contractAddress,
     [
-      'function isApprovedForAll(address owner, address operator) view returns (bool)'
+      'function isApprovedForAll(address owner, address operator) view returns (bool)',
     ],
-    provider
+    provider,
   )
 }
 

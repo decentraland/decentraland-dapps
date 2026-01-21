@@ -1,25 +1,25 @@
 import { connect } from 'react-redux'
-import {
-  isConnected,
-  isConnecting,
-  getAddress,
-  getChainId,
-  getAppChainId,
-  getManaBalances,
-  isSwitchingNetwork,
-  isDisconnecting
-} from '../../modules/wallet/selectors'
+import { ChainId } from '@dcl/schemas'
 import { getData as getProfiles } from '../../modules/profile/selectors'
-import { getError as getWalletError } from '../../modules/wallet/selectors'
 import { getLocale } from '../../modules/translation/selectors'
 import {
   disconnectWalletRequest,
-  switchNetworkRequest
+  switchNetworkRequest,
 } from '../../modules/wallet/actions'
+import {
+  getAddress,
+  getAppChainId,
+  getChainId,
+  getManaBalances,
+  getError as getWalletError,
+  isConnected,
+  isConnecting,
+  isDisconnecting,
+  isSwitchingNetwork,
+} from '../../modules/wallet/selectors'
 import { RootDispatch } from '../../types'
-import { NavbarProps, MapStateProps, MapDispatchProps } from './Navbar.types'
 import Navbar from './Navbar'
-import { ChainId } from '@dcl/schemas'
+import { MapDispatchProps, MapStateProps, NavbarProps } from './Navbar.types'
 
 const mapState = (state: any): MapStateProps => {
   const address = getAddress(state)
@@ -35,24 +35,24 @@ const mapState = (state: any): MapStateProps => {
     isSigningIn: isConnecting(state),
     appChainId: getAppChainId(state),
     isSwitchingNetwork: isSwitchingNetwork(state),
-    walletError: getWalletError(state)
+    walletError: getWalletError(state),
   }
 }
 
 const mapDispatch = (dispatch: RootDispatch): MapDispatchProps => ({
   onSwitchNetwork: (chainId: ChainId, fromChainId: ChainId) =>
     dispatch(switchNetworkRequest(chainId, fromChainId)),
-  onSignOut: () => dispatch(disconnectWalletRequest())
+  onSignOut: () => dispatch(disconnectWalletRequest()),
 })
 
 const mergeProps = (
   stateProps: MapStateProps,
   dispatchProps: MapDispatchProps,
-  ownProps: NavbarProps
+  ownProps: NavbarProps,
 ): NavbarProps => ({
   ...stateProps,
   ...dispatchProps,
-  ...ownProps
+  ...ownProps,
 })
 
 export default connect(mapState, mapDispatch, mergeProps)(Navbar) as any

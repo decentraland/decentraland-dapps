@@ -19,7 +19,7 @@ import {
   fetchWalletRequest,
   switchNetworkFailure,
   switchNetworkRequest,
-  switchNetworkSuccess
+  switchNetworkSuccess,
 } from './actions'
 import { getConnectedProvider, getNetworkProvider } from '../../lib/eth'
 import { switchProviderChainId } from './utils'
@@ -41,7 +41,7 @@ describe('Wallet sagas', () => {
         return expectSaga(walletSaga)
           .provide([
             [put(fetchWalletRequest()), undefined],
-            [take(FETCH_WALLET_FAILURE), { payload: { error } }]
+            [take(FETCH_WALLET_FAILURE), { payload: { error } }],
           ])
           .put(fetchWalletRequest())
           .put(connectWalletFailure(error))
@@ -61,7 +61,7 @@ describe('Wallet sagas', () => {
         return expectSaga(walletSaga)
           .provide([
             [put(fetchWalletRequest()), undefined],
-            [take(FETCH_WALLET_SUCCESS), { payload: { wallet } }]
+            [take(FETCH_WALLET_SUCCESS), { payload: { wallet } }],
           ])
           .put(fetchWalletRequest())
           .put(connectWalletSuccess(wallet))
@@ -105,13 +105,13 @@ describe('Wallet sagas', () => {
       it('should dispatch an action to signal that the request failed', () => {
         return expectSaga(walletSaga)
           .provide([
-            [matchers.call.fn(getConnectedProvider), Promise.resolve(null)]
+            [matchers.call.fn(getConnectedProvider), Promise.resolve(null)],
           ])
           .put(
             switchNetworkFailure(
               ChainId.ETHEREUM_MAINNET,
-              'Error switching network: Could not get provider'
-            )
+              'Error switching network: Could not get provider',
+            ),
           )
           .dispatch(switchNetworkRequest(ChainId.ETHEREUM_MAINNET))
           .run({ silenceTimeout: true })
@@ -124,27 +124,27 @@ describe('Wallet sagas', () => {
             .provide([
               [
                 matchers.call.fn(getConnectedProvider),
-                Promise.resolve(mockProvider)
+                Promise.resolve(mockProvider),
               ],
               [
                 race({
                   switched: call(
                     switchProviderChainId,
                     mockProvider,
-                    ChainId.ETHEREUM_MAINNET
+                    ChainId.ETHEREUM_MAINNET,
                   ),
-                  timeout: delay(SWITCH_NETWORK_TIMEOUT)
+                  timeout: delay(SWITCH_NETWORK_TIMEOUT),
                 }),
-                { switched: true }
+                { switched: true },
               ],
               [put(fetchWalletRequest()), undefined],
               [
                 race({
                   success: take(FETCH_WALLET_SUCCESS),
-                  failure: take(FETCH_WALLET_FAILURE)
+                  failure: take(FETCH_WALLET_FAILURE),
                 }),
-                { success: true }
-              ]
+                { success: true },
+              ],
             ])
             .put(switchNetworkSuccess(ChainId.ETHEREUM_MAINNET))
             .dispatch(switchNetworkRequest(ChainId.ETHEREUM_MAINNET))
@@ -161,15 +161,18 @@ describe('Wallet sagas', () => {
             .provide([
               [
                 matchers.call.fn(getConnectedProvider),
-                Promise.resolve(mockProvider)
+                Promise.resolve(mockProvider),
               ],
               [
                 call(switchProviderChainId, mockProvider, 1),
-                Promise.reject(switchError)
-              ]
+                Promise.reject(switchError),
+              ],
             ])
             .put(
-              switchNetworkFailure(ChainId.ETHEREUM_MAINNET, 'Could not switch')
+              switchNetworkFailure(
+                ChainId.ETHEREUM_MAINNET,
+                'Could not switch',
+              ),
             )
             .dispatch(switchNetworkRequest(ChainId.ETHEREUM_MAINNET))
             .run({ silenceTimeout: true })
@@ -181,25 +184,25 @@ describe('Wallet sagas', () => {
             .provide([
               [
                 matchers.call.fn(getConnectedProvider),
-                Promise.resolve(mockProvider)
+                Promise.resolve(mockProvider),
               ],
               [
                 race({
                   switched: call(
                     switchProviderChainId,
                     mockProvider,
-                    ChainId.ETHEREUM_MAINNET
+                    ChainId.ETHEREUM_MAINNET,
                   ),
-                  timeout: delay(SWITCH_NETWORK_TIMEOUT)
+                  timeout: delay(SWITCH_NETWORK_TIMEOUT),
                 }),
-                { timeout: true }
-              ]
+                { timeout: true },
+              ],
             ])
             .put(
               switchNetworkFailure(
                 ChainId.ETHEREUM_MAINNET,
-                'Error switching network: Operation timed out'
-              )
+                'Error switching network: Operation timed out',
+              ),
             )
             .dispatch(switchNetworkRequest(ChainId.ETHEREUM_MAINNET))
             .run({ silenceTimeout: true })
@@ -218,7 +221,10 @@ describe('Wallet sagas', () => {
       it('should dispatch an action to signal the failure', () => {
         return expectSaga(walletSaga)
           .provide([
-            [call([connection, 'disconnect']), Promise.reject(new Error(error))]
+            [
+              call([connection, 'disconnect']),
+              Promise.reject(new Error(error)),
+            ],
           ])
           .put(disconnectWalletFailure(error))
           .dispatch(disconnectWalletRequest())

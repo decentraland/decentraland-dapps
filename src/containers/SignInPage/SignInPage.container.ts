@@ -1,21 +1,20 @@
 import { connect } from 'react-redux'
-
+import { localStorageGetIdentity } from '@dcl/single-sign-on-client'
+import { openModal } from '../../modules/modal/actions'
 import { isEnabled } from '../../modules/translation/selectors'
 import {
-  isConnecting,
-  isConnected,
+  getError,
   getData as getWallet,
-  getError
+  isConnected,
+  isConnecting,
 } from '../../modules/wallet/selectors'
+import SignInPage from './SignInPage'
 import {
+  MapDispatch,
   MapDispatchProps,
   MapStateProps,
-  MapDispatch,
-  SignInPageProps
+  SignInPageProps,
 } from './SignInPage.types'
-import SignInPage from './SignInPage'
-import { openModal } from '../../modules/modal/actions'
-import { localStorageGetIdentity } from '@dcl/single-sign-on-client'
 
 const mapState = (state: any): MapStateProps => {
   const wallet = getWallet(state)
@@ -24,30 +23,30 @@ const mapState = (state: any): MapStateProps => {
     isConnecting: isConnecting(state),
     isConnected: isConnected(state) && !!identity,
     hasError: !!getError(state),
-    hasTranslations: isEnabled(state)
+    hasTranslations: isEnabled(state),
   }
 }
 
 const mapDispatch = (
   dispatch: MapDispatch,
-  ownProps: SignInPageProps
+  ownProps: SignInPageProps,
 ): MapDispatchProps => ({
   onConnect: ownProps.onConnect
     ? ownProps.onConnect
     : () =>
         dispatch(
-          openModal('LoginModal', { onConnect: ownProps.handleLoginConnect })
-        )
+          openModal('LoginModal', { onConnect: ownProps.handleLoginConnect }),
+        ),
 })
 
 const mergeProps = (
   stateProps: MapStateProps,
   dispatchProps: MapDispatchProps,
-  ownProps: SignInPageProps
+  ownProps: SignInPageProps,
 ): SignInPageProps => ({
   ...stateProps,
   ...dispatchProps,
-  ...ownProps
+  ...ownProps,
 })
 
 export default connect(mapState, mapDispatch, mergeProps)(SignInPage) as any

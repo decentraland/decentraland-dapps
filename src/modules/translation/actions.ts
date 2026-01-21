@@ -12,7 +12,7 @@ export const fetchTranslationsRequest = (locale: Locale) =>
   action(FETCH_TRANSLATIONS_REQUEST, { locale })
 export const fetchTranslationsSuccess = (
   locale: Locale,
-  translations: TranslationKeys
+  translations: TranslationKeys,
 ) => action(FETCH_TRANSLATIONS_SUCCESS, { locale, translations })
 export const fetchTranslationsFailure = (error: string) =>
   action(FETCH_TRANSLATIONS_FAILURE, { error })

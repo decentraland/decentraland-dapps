@@ -3,9 +3,9 @@ import * as R from 'ramda'
 
 export function dynamicDeepParametersEquality(
   parameters: Array<unknown>,
-  returnValue: unknown
+  returnValue: unknown,
 ) {
   return dynamic(({ args }, next) =>
-    R.equals(args, parameters) ? Promise.resolve(returnValue) : next()
+    R.equals(args, parameters) ? Promise.resolve(returnValue) : next(),
   )
 }

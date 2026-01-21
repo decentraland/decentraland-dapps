@@ -1,5 +1,5 @@
 import { action } from 'typesafe-actions'
-import { ApplicationName, ApplicationFeatures } from './types'
+import { ApplicationFeatures, ApplicationName } from './types'
 
 // Fetch all application features
 
@@ -17,16 +17,16 @@ export const fetchApplicationFeaturesRequest = (apps: ApplicationName[]) =>
 
 export const fetchApplicationFeaturesSuccess = (
   apps: ApplicationName[],
-  features: Record<ApplicationName, ApplicationFeatures>
+  features: Record<ApplicationName, ApplicationFeatures>,
 ) =>
   action(FETCH_APPLICATION_FEATURES_SUCCESS, {
     apps,
-    features
+    features,
   })
 
 export const fetchApplicationFeaturesFailure = (
   apps: ApplicationName[],
-  error: string
+  error: string,
 ) => action(FETCH_APPLICATION_FEATURES_FAILURE, { apps, error })
 
 export type FetchApplicationFeaturesRequestAction = ReturnType<

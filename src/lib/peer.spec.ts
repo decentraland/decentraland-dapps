@@ -12,12 +12,12 @@ describe('peerAPI', () => {
       avatars: [
         {
           avatar: {
-            bodyShape: ''
+            bodyShape: '',
           },
           description: 'aDescription',
-          name: 'aName'
-        }
-      ]
+          name: 'aName',
+        },
+      ],
     } as Profile
   })
 
@@ -29,7 +29,7 @@ describe('peerAPI', () => {
         })
         it('should get the result from the cache', async () => {
           expect(await peerApi.fetchProfile(address, { useCache: true })).toBe(
-            profile
+            profile,
           )
         })
       })
@@ -41,12 +41,12 @@ describe('peerAPI', () => {
             avatars: [
               {
                 avatar: {
-                  bodyShape: ''
+                  bodyShape: '',
                 },
                 description: 'aDescription',
-                name: 'aNewName'
-              }
-            ]
+                name: 'aNewName',
+              },
+            ],
           } as Profile
           peerApi.cache = {}
           jest
@@ -55,10 +55,10 @@ describe('peerAPI', () => {
         })
         it('should fetch the profile', async () => {
           expect(await peerApi.fetchProfile(address, { useCache: true })).toBe(
-            profileUpdated
+            profileUpdated,
           )
           await expect(peerApi.cache[address]).resolves.toStrictEqual(
-            profileUpdated
+            profileUpdated,
           )
         })
       })
@@ -72,12 +72,12 @@ describe('peerAPI', () => {
           avatars: [
             {
               avatar: {
-                bodyShape: ''
+                bodyShape: '',
               },
               description: 'aDescription',
-              name: 'aNewName'
-            }
-          ]
+              name: 'aNewName',
+            },
+          ],
         } as Profile
         peerApi.cache = {}
         jest
@@ -87,10 +87,10 @@ describe('peerAPI', () => {
 
       it('should fetch the profile', async () => {
         expect(await peerApi.fetchProfile(address, { useCache: false })).toBe(
-          profileUpdated
+          profileUpdated,
         )
         await expect(peerApi.cache[address]).resolves.toStrictEqual(
-          profileUpdated
+          profileUpdated,
         )
       })
     })
@@ -109,13 +109,13 @@ describe('peerAPI', () => {
             {
               userId: 'anAddress',
               avatar: {
-                bodyShape: ''
+                bodyShape: '',
               },
               description: 'aDescription',
-              name: 'aNewName'
-            }
-          ]
-        } as Profile
+              name: 'aNewName',
+            },
+          ],
+        } as Profile,
       ]
       jest
         .spyOn(peerApi.lambdasClient, 'getAvatarsDetailsByPost')

@@ -23,5 +23,5 @@ export {
   toast,
   transaction,
   translation,
-  wallet
+  wallet,
 }

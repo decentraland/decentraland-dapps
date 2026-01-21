@@ -2,7 +2,7 @@ export enum WebSocketEvents {
   ORDER_PAYMENT_VERIFYING = 'ORDER_PAYMENT_VERIFYING',
   ORDER_PROCESSING = 'ORDER_PROCESSING',
   ORDER_COMPLETED = 'ORDER_COMPLETED',
-  ORDER_FAILED = 'ORDER_FAILED'
+  ORDER_FAILED = 'ORDER_FAILED',
 }
 
 export enum TransakOrderStatus {
@@ -15,16 +15,16 @@ export enum TransakOrderStatus {
   CANCELLED = 'CANCELLED',
   FAILED = 'FAILED',
   REFUNDED = 'REFUNDED',
-  EXPIRED = 'EXPIRED'
+  EXPIRED = 'EXPIRED',
 }
 
 export enum TradeType {
   PRIMARY = 'primary',
-  SECONDARY = 'secondary'
+  SECONDARY = 'secondary',
 }
 
 export enum ProductsAvailed {
-  BUY = 'BUY'
+  BUY = 'BUY',
 }
 
 export type CustomizationOptions = {

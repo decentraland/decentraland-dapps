@@ -1,15 +1,15 @@
 import { action } from 'typesafe-actions'
 
 export const getModalActions = <T>() => ({
-  openModal: function(name: T, metadata: any = null) {
+  openModal: function (name: T, metadata: any = null) {
     return action(OPEN_MODAL, { name, metadata })
   },
-  closeModal: function(name: T) {
+  closeModal: function (name: T) {
     return action(CLOSE_MODAL, { name })
   },
-  toggleModal: function(name: T) {
+  toggleModal: function (name: T) {
     return action(TOGGLE_MODAL, { name })
-  }
+  },
 })
 
 const { openModal, closeModal, toggleModal } = getModalActions<string>()

@@ -10,7 +10,7 @@ export const fetchCreditsRequest = (address: string) =>
   action(FETCH_CREDITS_REQUEST, { address })
 export const fetchCreditsSuccess = (
   address: string,
-  credits: CreditsResponse
+  credits: CreditsResponse,
 ) => action(FETCH_CREDITS_SUCCESS, { address, credits })
 export const fetchCreditsFailure = (address: string, error: string) =>
   action(FETCH_CREDITS_FAILURE, { address, error })
@@ -24,7 +24,7 @@ export const POLL_CREDITS_BALANCE_REQUEST = '[Request] Poll credits balance'
 
 export const pollCreditsBalanceRequest = (
   address: string,
-  expectedBalance: bigint
+  expectedBalance: bigint,
 ) => action(POLL_CREDITS_BALANCE_REQUEST, { address, expectedBalance })
 
 export type PollCreditsBalanceRequestAction = ReturnType<

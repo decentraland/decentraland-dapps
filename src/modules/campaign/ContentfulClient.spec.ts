@@ -3,7 +3,7 @@ import { ContentfulClient } from './ContentfulClient'
 import {
   mockAdminEntryEn,
   marketplaceHomepageBannerAssets,
-  mockHomepageBannerEntry
+  mockHomepageBannerEntry,
 } from '../../tests/contentfulMocks'
 import { ContentfulLocale, LocalizedField } from '@dcl/schemas'
 import { ContentfulEntryWithoutLocales } from './ContentfulClient.types'
@@ -31,10 +31,10 @@ describe('ContentfulClient', () => {
           sys: {
             type: 'Link',
             linkType: 'Asset',
-            id: marketplaceHomepageBannerAssets[0].sys.id
-          }
-        }
-      }
+            id: marketplaceHomepageBannerAssets[0].sys.id,
+          },
+        },
+      },
     }
 
     const mockedEntrySys = {
@@ -44,8 +44,8 @@ describe('ContentfulClient', () => {
         sys: {
           type: 'Link' as const,
           linkType: 'Space' as const,
-          id: 'space1'
-        }
+          id: 'space1',
+        },
       },
       createdAt: '2021-01-01',
       updatedAt: '2021-01-01',
@@ -53,43 +53,43 @@ describe('ContentfulClient', () => {
         sys: {
           type: 'Link' as const,
           linkType: 'Environment' as const,
-          id: 'env1'
-        }
+          id: 'env1',
+        },
       },
       contentType: {
         sys: {
           type: 'Link' as const,
           linkType: 'ContentType' as const,
-          id: 'content1'
-        }
+          id: 'content1',
+        },
       },
       publishedVersion: 1,
-      revision: 1
+      revision: 1,
     }
     const mockedEntryMetadata = {
       tags: [],
-      concepts: []
+      concepts: [],
     }
 
     mockedEnResponse = {
       fields: { title: 'English Title' },
       metadata: mockedEntryMetadata,
-      sys: mockedEntrySys
+      sys: mockedEntrySys,
     }
     mockedEsResponse = {
       fields: { title: 'Título en Español' },
       metadata: mockedEntryMetadata,
-      sys: mockedEntrySys
+      sys: mockedEntrySys,
     }
     mockedZhResponse = {
       fields: { title: '中文标题' },
       metadata: mockedEntryMetadata,
-      sys: mockedEntrySys
+      sys: mockedEntrySys,
     }
 
     nock(CMS_URL)
       .get(
-        `/spaces/${mockSpace}/environments/${mockEnvironment}/assets/${mockId}/`
+        `/spaces/${mockSpace}/environments/${mockEnvironment}/assets/${mockId}/`,
       )
       .reply(200, marketplaceHomepageBannerAssets[0])
 
@@ -125,7 +125,7 @@ describe('ContentfulClient', () => {
 
       it('should throw an error', async () => {
         await expect(
-          client.fetchEntry('space-id', 'env-id', 'entry-id')
+          client.fetchEntry('space-id', 'env-id', 'entry-id'),
         ).rejects.toThrow('Failed to fetch entity data')
       })
     })
@@ -136,17 +136,17 @@ describe('ContentfulClient', () => {
       beforeEach(() => {
         nock(CMS_URL)
           .get(
-            `/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockId}/`
+            `/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockId}/`,
           )
           .query({ locale: ContentfulLocale.enUS })
           .reply(200, mockedEnResponse)
           .get(
-            `/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockId}/`
+            `/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockId}/`,
           )
           .query({ locale: ContentfulLocale.es })
           .reply(200, mockedEsResponse)
           .get(
-            `/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockId}/`
+            `/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockId}/`,
           )
           .query({ locale: ContentfulLocale.zh })
           .reply(200, mockedZhResponse)
@@ -156,7 +156,7 @@ describe('ContentfulClient', () => {
         const result = await client.fetchEntryAllLocales(
           mockSpace,
           mockEnvironment,
-          mockId
+          mockId,
         )
 
         expect(result).toEqual({
@@ -164,11 +164,11 @@ describe('ContentfulClient', () => {
             title: {
               [ContentfulLocale.enUS]: 'English Title',
               [ContentfulLocale.es]: 'Título en Español',
-              [ContentfulLocale.zh]: '中文标题'
-            }
+              [ContentfulLocale.zh]: '中文标题',
+            },
           },
           sys: mockedEnResponse.sys,
-          metadata: mockedEnResponse.metadata
+          metadata: mockedEnResponse.metadata,
         })
       })
     })
@@ -177,7 +177,7 @@ describe('ContentfulClient', () => {
       beforeEach(() => {
         nock(CMS_URL)
           .get(
-            `/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockId}/`
+            `/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockId}/`,
           )
           .query({ locale: ContentfulLocale.enUS })
           .reply(500)
@@ -185,7 +185,7 @@ describe('ContentfulClient', () => {
 
       it('should throw an error', async () => {
         await expect(
-          client.fetchEntryAllLocales(mockSpace, mockEnvironment, mockId)
+          client.fetchEntryAllLocales(mockSpace, mockEnvironment, mockId),
         ).rejects.toThrow('Error fetching entry in all locales')
       })
     })
@@ -196,7 +196,7 @@ describe('ContentfulClient', () => {
       beforeEach(() => {
         nock(CMS_URL)
           .get(
-            `/spaces/${mockSpace}/environments/${mockEnvironment}/assets/${mockId}/`
+            `/spaces/${mockSpace}/environments/${mockEnvironment}/assets/${mockId}/`,
           )
           .reply(200, marketplaceHomepageBannerAssets[0])
       })
@@ -205,7 +205,7 @@ describe('ContentfulClient', () => {
         const result = await client.fetchAsset(
           mockSpace,
           mockEnvironment,
-          mockId
+          mockId,
         )
 
         expect(result.fields).toHaveProperty('title.en-US')
@@ -218,14 +218,14 @@ describe('ContentfulClient', () => {
       beforeEach(() => {
         nock(CMS_URL)
           .get(
-            `/spaces/${mockSpace}/environments/${mockEnvironment}/assets/${mockId}/`
+            `/spaces/${mockSpace}/environments/${mockEnvironment}/assets/${mockId}/`,
           )
           .replyWithError('Failed to fetch asset data')
       })
 
       it('should throw an error', async () => {
         await expect(
-          client.fetchAsset(mockSpace, mockEnvironment, mockId)
+          client.fetchAsset(mockSpace, mockEnvironment, mockId),
         ).rejects.toThrow('Failed to fetch asset data')
       })
     })
@@ -236,7 +236,7 @@ describe('ContentfulClient', () => {
       beforeEach(() => {
         nock(CMS_URL)
           .get(
-            `/spaces/${mockSpace}/environments/${mockEnvironment}/assets/${marketplaceHomepageBannerAssets[0].sys.id}/`
+            `/spaces/${mockSpace}/environments/${mockEnvironment}/assets/${marketplaceHomepageBannerAssets[0].sys.id}/`,
           )
           .reply(200, marketplaceHomepageBannerAssets[0])
       })
@@ -245,7 +245,7 @@ describe('ContentfulClient', () => {
         const result = await client.fetchAssetsFromEntryFields(
           mockSpace,
           mockEnvironment,
-          [mockFields]
+          [mockFields],
         )
 
         expect(result).toHaveProperty(marketplaceHomepageBannerAssets[0].sys.id)
@@ -258,7 +258,7 @@ describe('ContentfulClient', () => {
         const result = await client.fetchAssetsFromEntryFields(
           mockSpace,
           mockEnvironment,
-          []
+          [],
         )
         expect(result).toEqual({})
       })
@@ -270,17 +270,17 @@ describe('ContentfulClient', () => {
       beforeEach(() => {
         nock(CMS_URL)
           .get(
-            `/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockHomepageBannerEntry.sys.id}/`
+            `/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockHomepageBannerEntry.sys.id}/`,
           )
           .query({ locale: ContentfulLocale.enUS })
           .reply(200, mockHomepageBannerEntry)
           .get(
-            `/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockHomepageBannerEntry.sys.id}/`
+            `/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockHomepageBannerEntry.sys.id}/`,
           )
           .query({ locale: ContentfulLocale.es })
           .reply(200, mockHomepageBannerEntry)
           .get(
-            `/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockHomepageBannerEntry.sys.id}/`
+            `/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockHomepageBannerEntry.sys.id}/`,
           )
           .query({ locale: ContentfulLocale.zh })
           .reply(200, mockHomepageBannerEntry)
@@ -293,16 +293,16 @@ describe('ContentfulClient', () => {
               sys: {
                 type: 'Link',
                 linkType: 'Entry',
-                id: mockHomepageBannerEntry.sys.id
-              }
-            }
-          }
+                id: mockHomepageBannerEntry.sys.id,
+              },
+            },
+          },
         }
 
         const result = await client.fetchEntriesFromEntryFields(
           mockSpace,
           mockEnvironment,
-          mockFieldsWithEntry
+          mockFieldsWithEntry,
         )
 
         expect(result).toEqual({
@@ -315,13 +315,13 @@ describe('ContentfulClient', () => {
                   ...acc[key],
                   [ContentfulLocale.enUS]: value,
                   [ContentfulLocale.es]: value,
-                  [ContentfulLocale.zh]: value
+                  [ContentfulLocale.zh]: value,
                 }
                 return acc
               },
-              {} as Record<string, LocalizedField<any>>
-            )
-          }
+              {} as Record<string, LocalizedField<any>>,
+            ),
+          },
         })
         expect(Object.keys(result)).toHaveLength(1)
       })
@@ -332,7 +332,7 @@ describe('ContentfulClient', () => {
         const result = await client.fetchEntriesFromEntryFields(
           mockSpace,
           mockEnvironment,
-          {}
+          {},
         )
         expect(result).toEqual({})
       })

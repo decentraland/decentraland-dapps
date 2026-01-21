@@ -14,7 +14,7 @@ const RarityBadge = (props: RarityBadgeProps) => {
       [Rarity.EPIC]: t('@dapps.rarities.epic'),
       [Rarity.LEGENDARY]: t('@dapps.rarities.legendary'),
       [Rarity.MYTHIC]: t('@dapps.rarities.mythic'),
-      [Rarity.UNIQUE]: t('@dapps.rarities.unique')
+      [Rarity.UNIQUE]: t('@dapps.rarities.unique'),
     },
     rarities_description: {
       [Rarity.COMMON]: t('@dapps.rarities_description.common'),
@@ -24,8 +24,8 @@ const RarityBadge = (props: RarityBadgeProps) => {
       [Rarity.EPIC]: t('@dapps.rarities_description.epic'),
       [Rarity.LEGENDARY]: t('@dapps.rarities_description.legendary'),
       [Rarity.MYTHIC]: t('@dapps.rarities_description.mythic'),
-      [Rarity.UNIQUE]: t('@dapps.rarities_description.unique')
-    }
+      [Rarity.UNIQUE]: t('@dapps.rarities_description.unique'),
+    },
   }
 
   return <UIRarityBadge {...props} i18n={i18n} />

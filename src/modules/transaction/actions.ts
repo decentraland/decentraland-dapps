@@ -1,8 +1,8 @@
 import { action } from 'typesafe-actions'
 import {
-  Transaction,
+  ActionWithTransactionPayload,
   AnyTransaction,
-  ActionWithTransactionPayload
+  Transaction,
 } from './types'
 
 // Fetch transaction
@@ -14,12 +14,12 @@ export const FETCH_TRANSACTION_FAILURE = '[Failure] Fetch Transaction'
 export const fetchTransactionRequest = (
   address: string,
   hash: string,
-  actionObject: ActionWithTransactionPayload
+  actionObject: ActionWithTransactionPayload,
 ) =>
   action(FETCH_TRANSACTION_REQUEST, {
     address,
     hash,
-    action: actionObject
+    action: actionObject,
   })
 
 export const fetchTransactionSuccess = (transaction: Transaction) =>
@@ -29,13 +29,13 @@ export const fetchTransactionFailure = (
   hash: string,
   status: AnyTransaction['status'],
   message: string,
-  transaction: Transaction
+  transaction: Transaction,
 ) =>
   action(FETCH_TRANSACTION_FAILURE, {
     hash,
     status,
     message,
-    transaction
+    transaction,
   })
 
 export type FetchTransactionRequestAction = ReturnType<
@@ -65,7 +65,7 @@ export const UPDATE_TRANSACTION_STATUS = 'Update Transaction Status'
 
 export const updateTransactionStatus = (
   hash: string,
-  status: AnyTransaction['status'] | null
+  status: AnyTransaction['status'] | null,
 ) => action(UPDATE_TRANSACTION_STATUS, { hash, status })
 
 export type UpdateTransactionStatusAction = ReturnType<
@@ -125,12 +125,12 @@ export const REPLACE_TRANSACTION_FAILURE = '[Failure] Replace Transaction'
 export const replaceTransactionRequest = (
   hash: string,
   nonce: number,
-  address: string
+  address: string,
 ) =>
   action(REPLACE_TRANSACTION_REQUEST, {
     hash,
     nonce,
-    address
+    address,
   })
 
 export const replaceTransactionSuccess = (hash: string, replaceBy: string) =>
@@ -139,7 +139,7 @@ export const replaceTransactionSuccess = (hash: string, replaceBy: string) =>
 export const replaceTransactionFailure = (hash: string, error: string) =>
   action(REPLACE_TRANSACTION_FAILURE, {
     hash,
-    error
+    error,
   })
 
 export type ReplaceTransactionRequestAction = ReturnType<
@@ -158,11 +158,11 @@ export const CLEAR_TRANSACTIONS = 'Clear Transactions'
 
 export const clearTransactions = (
   address: string,
-  clearPendings: boolean = false
+  clearPendings: boolean = false,
 ) =>
   action(CLEAR_TRANSACTIONS, {
     address,
-    clearPendings
+    clearPendings,
   })
 
 export type ClearTransactionsAction = ReturnType<typeof clearTransactions>
@@ -173,7 +173,7 @@ export const CLEAR_TRANSACTION = 'Clear Transaction'
 
 export const clearTransaction = (hash: string) =>
   action(CLEAR_TRANSACTION, {
-    hash
+    hash,
   })
 
 export type ClearTransactionAction = ReturnType<typeof clearTransaction>

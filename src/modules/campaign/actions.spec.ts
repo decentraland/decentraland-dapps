@@ -1,7 +1,7 @@
 import { ContentfulAsset, BannerFields } from '@dcl/schemas'
 import {
   marketplaceHomepageBannerAssets,
-  mockHomepageBannerEntry
+  mockHomepageBannerEntry,
 } from '../../tests/contentfulMocks'
 import {
   fetchCampaignRequest,
@@ -9,7 +9,7 @@ import {
   fetchCampaignFailure,
   FETCH_CAMPAIGN_REQUEST,
   FETCH_CAMPAIGN_SUCCESS,
-  FETCH_CAMPAIGN_FAILURE
+  FETCH_CAMPAIGN_FAILURE,
 } from './actions'
 
 describe('Campaign actions', () => {
@@ -21,7 +21,7 @@ describe('Campaign actions', () => {
       beforeEach(() => {
         action = fetchCampaignRequest()
         expectedAction = {
-          type: FETCH_CAMPAIGN_REQUEST
+          type: FETCH_CAMPAIGN_REQUEST,
         }
       })
 
@@ -36,19 +36,19 @@ describe('Campaign actions', () => {
 
       beforeEach(() => {
         const name = {
-          'en-US': 'Test Campaign'
+          'en-US': 'Test Campaign',
         }
         const tabName = {
-          'en-US': 'Test Tab'
+          'en-US': 'Test Tab',
         }
         const mainTag = 'main-tag'
         const additionalTags = ['tag1', 'tag2']
         const banners: Record<string, BannerFields> = {
-          [mockHomepageBannerEntry.sys.id]: mockHomepageBannerEntry.fields
+          [mockHomepageBannerEntry.sys.id]: mockHomepageBannerEntry.fields,
         }
         const assets: Record<string, ContentfulAsset> = {
           [marketplaceHomepageBannerAssets[0].sys.id]:
-            marketplaceHomepageBannerAssets[0]
+            marketplaceHomepageBannerAssets[0],
         }
         action = fetchCampaignSuccess(
           banners,
@@ -56,7 +56,7 @@ describe('Campaign actions', () => {
           name,
           tabName,
           mainTag,
-          additionalTags
+          additionalTags,
         )
         expectedAction = {
           type: FETCH_CAMPAIGN_SUCCESS,
@@ -66,8 +66,8 @@ describe('Campaign actions', () => {
             mainTag,
             additionalTags,
             banners,
-            assets
-          }
+            assets,
+          },
         }
       })
 
@@ -87,8 +87,8 @@ describe('Campaign actions', () => {
         expectedAction = {
           type: FETCH_CAMPAIGN_FAILURE,
           payload: {
-            error
-          }
+            error,
+          },
         }
       })
 

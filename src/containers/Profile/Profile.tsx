@@ -5,7 +5,7 @@ import { loadProfileRequest } from '../../modules/profile/actions'
 import { getData as getProfiles } from '../../modules/profile/selectors'
 import { Props } from './Profile.types'
 
-const Profile = function<T extends React.ElementType>(props: Props<T>) {
+const Profile = function <T extends React.ElementType>(props: Props<T>) {
   const { address, debounce, inline = true } = props
   const profiles = useSelector(getProfiles)
   const dispatch = useDispatch()
@@ -19,7 +19,7 @@ const Profile = function<T extends React.ElementType>(props: Props<T>) {
 
   const onLoadProfile: typeof loadProfileRequest = useCallback(
     (address: string) => dispatch(loadProfileRequest(address)),
-    [address]
+    [address],
   )
 
   useEffect(() => {
@@ -30,7 +30,7 @@ const Profile = function<T extends React.ElementType>(props: Props<T>) {
         }
         timeoutRef.current = window.setTimeout(
           () => onLoadProfile(address),
-          debounce
+          debounce,
         )
       } else {
         onLoadProfile(address)

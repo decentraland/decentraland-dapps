@@ -1,12 +1,10 @@
 import * as React from 'react'
-
 import {
   Footer as FooterComponent,
-  FooterI18N
+  FooterI18N,
 } from 'decentraland-ui/dist/components/Footer/Footer'
-
-import { FooterProps } from './Footer.types'
 import { T } from '../../modules/translation/utils'
+import { FooterProps } from './Footer.types'
 
 export default class Footer extends React.PureComponent<FooterProps> {
   getTranslations = (): FooterI18N | undefined => {
@@ -20,15 +18,15 @@ export default class Footer extends React.PureComponent<FooterProps> {
         fr: <T id="@dapps.footer.dropdown.fr" />,
         ja: <T id="@dapps.footer.dropdown.ja" />,
         zh: <T id="@dapps.footer.dropdown.zh" />,
-        ko: <T id="@dapps.footer.dropdown.ko" />
+        ko: <T id="@dapps.footer.dropdown.ko" />,
       },
       links: {
         home: <T id="@dapps.footer.links.home" />,
         privacy: <T id="@dapps.footer.links.privacy" />,
         terms: <T id="@dapps.footer.links.terms" />,
         content: <T id="@dapps.footer.links.content" />,
-        ethics: <T id="@dapps.footer.links.ethics" />
-      }
+        ethics: <T id="@dapps.footer.links.ethics" />,
+      },
     }
   }
 

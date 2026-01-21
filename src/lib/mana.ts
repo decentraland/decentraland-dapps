@@ -8,7 +8,7 @@ export const MAXIMUM_FRACTION_DIGITS = 2
  */
 export function toFixedMANAValue(
   strValue: string,
-  maximumFractionDigits = MAXIMUM_FRACTION_DIGITS
+  maximumFractionDigits = MAXIMUM_FRACTION_DIGITS,
 ): string {
   const value = parseFloat(strValue)
 

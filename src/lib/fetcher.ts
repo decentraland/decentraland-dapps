@@ -12,6 +12,5 @@ import type { IFetchComponent } from '@well-known-components/interfaces'
  * This wrapper solves the problem by maintaining the correct context.
  */
 export const fetcher = {
-  fetch: (url: string, init?: RequestInit) => fetch(url, init)
+  fetch: (url: string, init?: RequestInit) => fetch(url, init),
 } as unknown as IFetchComponent
-

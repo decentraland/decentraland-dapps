@@ -3,7 +3,7 @@ export enum TransactionEventType {
   SUCCESS = 'success',
   PROMPT = 'prompt',
   ACCEPT = 'accept',
-  REJECT = 'reject'
+  REJECT = 'reject',
 }
 
 export type TransactionEventData<T extends TransactionEventType> = {
@@ -11,5 +11,5 @@ export type TransactionEventData<T extends TransactionEventType> = {
 } & (T extends TransactionEventType.ERROR
   ? { error: Error }
   : T extends TransactionEventType.SUCCESS
-  ? { txHash: string }
-  : {})
+    ? { txHash: string }
+    : {})

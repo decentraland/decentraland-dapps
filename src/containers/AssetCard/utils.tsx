@@ -1,7 +1,7 @@
 import React from 'react'
 import { BigNumber, ethers } from 'ethers'
-import { Item } from '@dcl/schemas/dist/dapps/item'
 import { CatalogSortBy } from '@dcl/schemas'
+import { Item } from '@dcl/schemas/dist/dapps/item'
 import { AssetCardFilters, AssetCardTranslations } from './AssetCard'
 
 export type CatalogCardInformation = {
@@ -15,7 +15,7 @@ const formatter = Intl.NumberFormat('en', { notation: 'compact' })
 
 export function getAlsoAvailableForMintingText(
   asset: Item,
-  text: React.ReactNode
+  text: React.ReactNode,
 ) {
   return (
     <span>
@@ -31,23 +31,23 @@ export function getListingsRangePrice(asset: Item) {
 
 export function getIsMintPriceInRange(
   asset: Item,
-  appliedFilters: AssetCardFilters
+  appliedFilters: AssetCardFilters,
 ) {
   return (
     (!appliedFilters.minPrice ||
       BigNumber.from(asset.price).gte(
-        ethers.utils.parseUnits(appliedFilters.minPrice)
+        ethers.utils.parseUnits(appliedFilters.minPrice),
       )) &&
     (!appliedFilters.maxPrice ||
       BigNumber.from(asset.price).lte(
-        ethers.utils.parseUnits(appliedFilters.maxPrice)
+        ethers.utils.parseUnits(appliedFilters.maxPrice),
       ))
   )
 }
 
 export function getAssetListingsRangeInfoText(
   asset: Item,
-  translations: AssetCardTranslations
+  translations: AssetCardTranslations,
 ) {
   return asset.minListingPrice && asset.maxListingPrice ? (
     <span className={'wrapBigText'}>
@@ -75,7 +75,7 @@ export function formatWeiToAssetCardEther(wei: string): string {
   }
 
   const fixedValue = value.toLocaleString(undefined, {
-    maximumFractionDigits
+    maximumFractionDigits,
   })
 
   if (fixedValue === '0') {
@@ -87,7 +87,7 @@ export function formatWeiToAssetCardEther(wei: string): string {
 
 export function getOwnersText(
   owners: number | null | undefined,
-  translations: Pick<AssetCardTranslations, 'owner' | 'owners'>
+  translations: Pick<AssetCardTranslations, 'owner' | 'owners'>,
 ): string | undefined {
   if (!owners) {
     return undefined
@@ -99,7 +99,7 @@ export function getOwnersText(
 export function getCatalogCardInformation(
   asset: Item,
   translations: AssetCardTranslations,
-  appliedFilters: AssetCardFilters = {}
+  appliedFilters: AssetCardFilters = {},
 ): CatalogCardInformation {
   const { sortBy = CatalogSortBy.CHEAPEST } = appliedFilters
 
@@ -115,7 +115,7 @@ export function getCatalogCardInformation(
       action: translations.not_for_sale,
       actionIcon: null,
       price: null,
-      extraInformation: null
+      extraInformation: null,
     }
   }
 
@@ -126,7 +126,7 @@ export function getCatalogCardInformation(
         : translations.cheapest_option,
       actionIcon: null,
       price: asset.minPrice ?? null,
-      extraInformation: null
+      extraInformation: null,
     }
 
     if (hasOnlyMint) {
@@ -139,23 +139,23 @@ export function getCatalogCardInformation(
         info.price = asset.minPrice ?? asset.price
         if (appliedFilters.minPrice) {
           const isMintingLessThanMinPriceFilter = BigNumber.from(
-            asset.price
+            asset.price,
           ).lt(ethers.utils.parseUnits(appliedFilters.minPrice))
           info.extraInformation = isMintingLessThanMinPriceFilter
             ? getAlsoAvailableForMintingText(
                 asset,
-                translations.available_for_mint
+                translations.available_for_mint,
               )
             : null
         }
       } else {
         const mintIsNotCheapestOption = BigNumber.from(asset.price).gt(
-          BigNumber.from(asset.minPrice)
+          BigNumber.from(asset.minPrice),
         )
         if (mintIsNotCheapestOption) {
           info.extraInformation = getAlsoAvailableForMintingText(
             asset,
-            translations.available_for_mint
+            translations.available_for_mint,
           )
         }
       }
@@ -168,7 +168,7 @@ export function getCatalogCardInformation(
         : translations.most_expensive,
       actionIcon: null,
       price: asset.price,
-      extraInformation: getAssetListingsRangeInfoText(asset, translations)
+      extraInformation: getAssetListingsRangeInfoText(asset, translations),
     }
 
     const isMintingGreaterThanMaxListingPrice =
@@ -179,7 +179,7 @@ export function getCatalogCardInformation(
       getIsMintPriceInRange(asset, appliedFilters) &&
       isMintingGreaterThanMaxListingPrice
         ? asset.price
-        : asset.maxListingPrice ?? asset.price
+        : (asset.maxListingPrice ?? asset.price)
 
     return info
   }
@@ -189,7 +189,7 @@ export function getCatalogCardInformation(
     action: '',
     actionIcon: null,
     price: asset.price,
-    extraInformation: null
+    extraInformation: null,
   }
 
   if (hasOnlyMint) {
@@ -205,8 +205,8 @@ export function getCatalogCardInformation(
       asset.minListingPrice !== asset.maxListingPrice
         ? hasRangeApplied
           ? getListingsRangePrice(asset)
-          : asset.minListingPrice ?? ''
-        : asset.minPrice ?? ''
+          : (asset.minListingPrice ?? '')
+        : (asset.minPrice ?? '')
   } else {
     // both mint and listings available
 
@@ -215,7 +215,7 @@ export function getCatalogCardInformation(
       info.action = isMintInRange
         ? translations.available_for_mint
         : translations.available_listings_in_range
-      info.price = isMintInRange ? asset.price : asset.minListingPrice ?? ''
+      info.price = isMintInRange ? asset.price : (asset.minListingPrice ?? '')
       info.actionIcon = isMintInRange ? 'mintingIcon' : null
       info.extraInformation = isMintInRange
         ? getAssetListingsRangeInfoText(asset, translations)
@@ -223,13 +223,13 @@ export function getCatalogCardInformation(
 
       if (appliedFilters.minPrice) {
         const isMintingLessThanMinPriceFilter = BigNumber.from(asset.price).lt(
-          ethers.utils.parseUnits(appliedFilters.minPrice)
+          ethers.utils.parseUnits(appliedFilters.minPrice),
         )
         info.extraInformation =
           !isMintInRange && isMintingLessThanMinPriceFilter
             ? getAlsoAvailableForMintingText(
                 asset,
-                translations.available_for_mint
+                translations.available_for_mint,
               )
             : info.extraInformation
       }

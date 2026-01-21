@@ -1,6 +1,12 @@
 import { RootState } from '../reducer'
 import { fetchCreditsRequest } from './actions'
-import { getData, getLoading, getError, isFetchingCredits, getCredits } from './selectors'
+import {
+  getData,
+  getLoading,
+  getError,
+  isFetchingCredits,
+  getCredits,
+} from './selectors'
 import { CreditsResponse } from './types'
 
 let state: RootState
@@ -9,7 +15,7 @@ describe('Credits selectors', () => {
   const address = '0x123'
   const credits: CreditsResponse = {
     credits: [],
-    totalCredits: 0
+    totalCredits: 0,
   }
 
   beforeEach(() => {
@@ -17,8 +23,8 @@ describe('Credits selectors', () => {
       credits: {
         data: { [address]: credits },
         loading: [],
-        error: null
-      }
+        error: null,
+      },
     } as unknown as RootState
   })
 

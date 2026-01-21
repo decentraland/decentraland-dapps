@@ -7,7 +7,7 @@ import {
   getIsFeatureEnabled,
   getLoading,
   hasLoadedInitialFlags,
-  isLoadingFeatureFlags
+  isLoadingFeatureFlags,
 } from './selectors'
 import { ApplicationName, StateWithFeatures } from './types'
 
@@ -24,8 +24,8 @@ describe('when getting the features state data', () => {
           data,
           error: null,
           hasLoadedInitialFlags: false,
-          loading: []
-        }
+          loading: [],
+        },
       }
     })
 
@@ -41,7 +41,7 @@ describe('when getting the features state data', () => {
 
     it('should throw an error indicating features reducer was not implemented', () => {
       expect(() => getData(state)).toThrowError(
-        "'features' reducer not implemented"
+        "'features' reducer not implemented",
       )
     })
   })
@@ -52,8 +52,8 @@ describe('when getting the features state loading', () => {
     const loading = [
       fetchApplicationFeaturesRequest([
         ApplicationName.ACCOUNT,
-        ApplicationName.BUILDER
-      ])
+        ApplicationName.BUILDER,
+      ]),
     ]
 
     const result = getLoading({
@@ -61,8 +61,8 @@ describe('when getting the features state loading', () => {
         data: {},
         error: null,
         hasLoadedInitialFlags: false,
-        loading
-      }
+        loading,
+      },
     })
 
     expect(result).toEqual(loading)
@@ -78,8 +78,8 @@ describe('when getting the features state error', () => {
         data: {},
         error,
         hasLoadedInitialFlags: false,
-        loading: []
-      }
+        loading: [],
+      },
     })
 
     expect(result).toEqual(error)
@@ -98,15 +98,15 @@ describe('when getting if a feature is enabled', () => {
         data,
         error: null,
         hasLoadedInitialFlags: false,
-        loading: []
-      }
+        loading: [],
+      },
     }
   })
 
   describe('when the application feature is stored as true', () => {
     it('should return true', () => {
       expect(
-        getIsFeatureEnabled(state, ApplicationName.ACCOUNT, 'flag1')
+        getIsFeatureEnabled(state, ApplicationName.ACCOUNT, 'flag1'),
       ).toEqual(true)
     })
   })
@@ -114,7 +114,7 @@ describe('when getting if a feature is enabled', () => {
   describe('when the application feature is stored as false', () => {
     it('should return false', () => {
       expect(
-        getIsFeatureEnabled(state, ApplicationName.ACCOUNT, 'flag2')
+        getIsFeatureEnabled(state, ApplicationName.ACCOUNT, 'flag2'),
       ).toEqual(false)
     })
   })
@@ -122,7 +122,7 @@ describe('when getting if a feature is enabled', () => {
   describe('when the application is not found in the state', () => {
     it('should return false', () => {
       expect(
-        getIsFeatureEnabled(state, ApplicationName.DAPPS, 'flag1')
+        getIsFeatureEnabled(state, ApplicationName.DAPPS, 'flag1'),
       ).toEqual(false)
     })
   })
@@ -149,7 +149,7 @@ describe('when getting if a feature is enabled', () => {
 
       it('should return true', () => {
         expect(
-          getIsFeatureEnabled(state, ApplicationName.ACCOUNT, featureName)
+          getIsFeatureEnabled(state, ApplicationName.ACCOUNT, featureName),
         ).toEqual(true)
       })
 
@@ -160,7 +160,7 @@ describe('when getting if a feature is enabled', () => {
 
         it('should return true', () => {
           expect(
-            getIsFeatureEnabled(state, ApplicationName.ACCOUNT, featureName)
+            getIsFeatureEnabled(state, ApplicationName.ACCOUNT, featureName),
           ).toEqual(true)
         })
       })
@@ -173,7 +173,7 @@ describe('when getting if a feature is enabled', () => {
 
       it('should return false', () => {
         expect(
-          getIsFeatureEnabled(state, ApplicationName.ACCOUNT, featureName)
+          getIsFeatureEnabled(state, ApplicationName.ACCOUNT, featureName),
         ).toEqual(false)
       })
     })
@@ -185,7 +185,7 @@ describe('when getting if a feature is enabled', () => {
 
       it('should return false', () => {
         expect(
-          getIsFeatureEnabled(state, ApplicationName.ACCOUNT, featureName)
+          getIsFeatureEnabled(state, ApplicationName.ACCOUNT, featureName),
         ).toEqual(false)
       })
     })
@@ -203,8 +203,8 @@ describe('when getting a feature variant', () => {
         data,
         error: null,
         hasLoadedInitialFlags: false,
-        loading: []
-      }
+        loading: [],
+      },
     }
   })
 
@@ -218,13 +218,15 @@ describe('when getting a feature variant', () => {
     })
 
     it('should return a local variant with the environment value', () => {
-      expect(getFeatureVariant(state, ApplicationName.DAPPS, 'test-feature')).toEqual({
+      expect(
+        getFeatureVariant(state, ApplicationName.DAPPS, 'test-feature'),
+      ).toEqual({
         name: 'Local variant',
         enabled: true,
         payload: {
           type: 'string',
-          value: 'test-variant'
-        }
+          value: 'test-variant',
+        },
       })
     })
   })
@@ -237,13 +239,15 @@ describe('when getting a feature variant', () => {
             data: {},
             error: null,
             hasLoadedInitialFlags: false,
-            loading: []
-          }
+            loading: [],
+          },
         }
       })
 
       it('should return null', () => {
-        expect(getFeatureVariant(state, ApplicationName.DAPPS, 'test-feature')).toBeNull()
+        expect(
+          getFeatureVariant(state, ApplicationName.DAPPS, 'test-feature'),
+        ).toBeNull()
       })
     })
 
@@ -262,27 +266,29 @@ describe('when getting a feature variant', () => {
                       enabled: true,
                       payload: {
                         type: 'string',
-                        value: 'remote-variant'
-                      }
-                    }
-                  }
-                }
+                        value: 'remote-variant',
+                      },
+                    },
+                  },
+                },
               },
               error: null,
               hasLoadedInitialFlags: true,
-              loading: []
-            }
+              loading: [],
+            },
           }
         })
 
         it('should return the variant from the store', () => {
-          expect(getFeatureVariant(state, ApplicationName.DAPPS, 'test-feature')).toEqual({
+          expect(
+            getFeatureVariant(state, ApplicationName.DAPPS, 'test-feature'),
+          ).toEqual({
             name: 'Remote variant',
             enabled: true,
             payload: {
               type: 'string',
-              value: 'remote-variant'
-            }
+              value: 'remote-variant',
+            },
           })
         })
       })
@@ -295,18 +301,20 @@ describe('when getting a feature variant', () => {
                 [ApplicationName.DAPPS]: {
                   name: ApplicationName.DAPPS,
                   flags: {},
-                  variants: {}
-                }
+                  variants: {},
+                },
               },
               error: null,
               hasLoadedInitialFlags: true,
-              loading: []
-            }
+              loading: [],
+            },
           }
         })
 
         it('should return null', () => {
-          expect(getFeatureVariant(state, ApplicationName.DAPPS, 'test-feature')).toBeNull()
+          expect(
+            getFeatureVariant(state, ApplicationName.DAPPS, 'test-feature'),
+          ).toBeNull()
         })
       })
     })
@@ -322,8 +330,8 @@ describe('when getting if the feature flags were loaded at least once', () => {
         data: {},
         error: null,
         hasLoadedInitialFlags: false,
-        loading: []
-      }
+        loading: [],
+      },
     }
   })
 
@@ -357,8 +365,8 @@ describe('when getting is the feature flags are being loaded', () => {
         data: {},
         error: null,
         hasLoadedInitialFlags: false,
-        loading: []
-      }
+        loading: [],
+      },
     }
   })
 
@@ -367,8 +375,8 @@ describe('when getting is the feature flags are being loaded', () => {
       state.features!.loading = [
         fetchApplicationFeaturesRequest([
           ApplicationName.ACCOUNT,
-          ApplicationName.BUILDER
-        ])
+          ApplicationName.BUILDER,
+        ]),
       ]
     })
 

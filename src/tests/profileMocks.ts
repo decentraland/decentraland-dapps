@@ -14,32 +14,31 @@ export const avatar: Avatar = {
   avatar: {
     bodyShape: 'aShape',
     snapshots: {
-      body:
-        'https://peer.decentraland.zone/content/contents/bafkreibxwevyktyrqikrlbbfohyec3ayvvjoolzagnlhppyph7q3l5qcky',
+      body: 'https://peer.decentraland.zone/content/contents/bafkreibxwevyktyrqikrlbbfohyec3ayvvjoolzagnlhppyph7q3l5qcky',
       face256:
-        'https://peer.decentraland.zone/content/contents/bafkreiamoamfdlzqodg6yserd74cseci62o7qq4uuwgglz2awxowgw737q'
+        'https://peer.decentraland.zone/content/contents/bafkreiamoamfdlzqodg6yserd74cseci62o7qq4uuwgglz2awxowgw737q',
     },
     eyes: {
-      color: { r: 255, g: 255, b: 255 }
+      color: { r: 255, g: 255, b: 255 },
     },
     hair: {
-      color: { r: 255, g: 255, b: 255 }
+      color: { r: 255, g: 255, b: 255 },
     },
     skin: {
-      color: { r: 255, g: 255, b: 255 }
+      color: { r: 255, g: 255, b: 255 },
     },
-    wearables: []
+    wearables: [],
   },
-  tutorialStep: 1
+  tutorialStep: 1,
 }
 
 export const profile: Profile = {
-  avatars: [avatar]
+  avatars: [avatar],
 }
 
 export const profileFromLambda: Profile & { timestamp: number } = {
   timestamp: 343243242,
-  avatars: profile.avatars
+  avatars: profile.avatars,
 }
 
 export const profileFromContent: ProfileEntity = {
@@ -49,16 +48,16 @@ export const profileFromContent: ProfileEntity = {
   content: [
     {
       file: 'body.png',
-      hash: 'bafkreidikdqefer34vp5qzwxh3efz4rkcoeb5fbehglfs6x6dvahv4fqr4'
+      hash: 'bafkreidikdqefer34vp5qzwxh3efz4rkcoeb5fbehglfs6x6dvahv4fqr4',
     },
     {
       file: 'face256.png',
-      hash: 'bafkreichycy5avovlazyrhipjzilqhs2lh7xqmhv2rxhxrykew6itpsn4u'
-    }
+      hash: 'bafkreichycy5avovlazyrhipjzilqhs2lh7xqmhv2rxhxrykew6itpsn4u',
+    },
   ],
   version: 'v3',
   timestamp: 1739828590372,
   metadata: {
-    avatars: profile.avatars
-  }
+    avatars: profile.avatars,
+  },
 }

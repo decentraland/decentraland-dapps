@@ -9,13 +9,13 @@ import {
   getHighCongestionErrorToast,
   getInvalidAddressErrorToast,
   getSalePriceTooLowErrorToast,
-  getUnknownErrorToast
+  getUnknownErrorToast,
 } from './toasts/meta-transactions'
 import {
   createMetaTransactionsErrorChannel,
   handleMetaTransactionError,
   toastSaga,
-  watchMetaTransactionErrors
+  watchMetaTransactionErrors,
 } from './sagas'
 import { getToasts } from './selectors'
 import { hideAllToasts, showToast } from './actions'
@@ -32,25 +32,26 @@ describe('when handling a SWITCH_NETWORK_SUCCESS action', () => {
 
 describe('when running the toastSaga', () => {
   it('should fork the watchMetaTransactionErrors saga', () => {
-    return expectSaga(toastSaga)
-      .fork(watchMetaTransactionErrors)
-      .silentRun()
+    return expectSaga(toastSaga).fork(watchMetaTransactionErrors).silentRun()
   })
 })
 
 describe('when running the watchMetaTransactionErrors', () => {
   it('should take actions from channel and forward them to the handleMetaTransactionError saga', () => {
     const fakeChannel = {
-      take() { },
-      flush() { },
-      close() { }
+      take() {},
+      flush() {},
+      close() {},
     }
 
     return expectSaga(watchMetaTransactionErrors)
       .provide([
         [matchers.call.fn(createMetaTransactionsErrorChannel), fakeChannel],
         [take(fakeChannel), ErrorCode.INVALID_ADDRESS],
-        [call(handleMetaTransactionError, ErrorCode.INVALID_ADDRESS), undefined]
+        [
+          call(handleMetaTransactionError, ErrorCode.INVALID_ADDRESS),
+          undefined,
+        ],
       ])
       .silentRun()
   })
@@ -77,7 +78,7 @@ describe('when handling a meta-transaction error', () => {
     it('should not show a toast', () => {
       return expectSaga(
         handleMetaTransactionError,
-        ErrorCode.USER_DENIED
+        ErrorCode.USER_DENIED,
       ).silentRun()
     })
   })
@@ -86,7 +87,7 @@ describe('when handling a meta-transaction error', () => {
     it('should show a sales price too low error toast', () => {
       return expectSaga(
         handleMetaTransactionError,
-        ErrorCode.SALE_PRICE_TOO_LOW
+        ErrorCode.SALE_PRICE_TOO_LOW,
       )
         .put(showToast(getSalePriceTooLowErrorToast()))
         .silentRun()

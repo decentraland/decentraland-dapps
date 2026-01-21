@@ -7,20 +7,20 @@ import {
   ContentfulEntry,
   LocalizedField,
   ContentfulAsset,
-  BannerFields
+  BannerFields,
 } from '@dcl/schemas'
 import {
   mockAdminEntry,
   marketplaceHomepageBannerAssets,
   mockCampaignEntry,
-  mockHomepageBannerEntry
+  mockHomepageBannerEntry,
 } from '../../tests/contentfulMocks'
 import { ContentfulClient } from './ContentfulClient'
 import { campaignSagas } from './sagas'
 import {
   fetchCampaignRequest,
   fetchCampaignSuccess,
-  fetchCampaignFailure
+  fetchCampaignFailure,
 } from './actions'
 
 describe('when handling the fetch campaign request', () => {
@@ -45,36 +45,39 @@ describe('when handling the fetch campaign request', () => {
     mockConfig = {
       space: 'space-id',
       environment: 'environment-id',
-      id: '7FJAHnPOiCEHMJhrZ3sRmG'
+      id: '7FJAHnPOiCEHMJhrZ3sRmG',
     }
     mockClient = new ContentfulClient()
     mockResponse = {
       banners: {
         marketplaceHomepageBanner: {
           ...mockHomepageBannerEntry.fields,
-          id: mockHomepageBannerEntry.sys.id
+          id: mockHomepageBannerEntry.sys.id,
         },
         marketplaceCollectiblesBanner: {
           ...mockHomepageBannerEntry.fields,
-          id: mockHomepageBannerEntry.sys.id
+          id: mockHomepageBannerEntry.sys.id,
         },
         marketplaceCampaignCollectiblesBanner: {
           ...mockHomepageBannerEntry.fields,
-          id: mockHomepageBannerEntry.sys.id
+          id: mockHomepageBannerEntry.sys.id,
         },
         builderCampaignBanner: {
           ...mockHomepageBannerEntry.fields,
-          id: mockHomepageBannerEntry.sys.id
-        }
+          id: mockHomepageBannerEntry.sys.id,
+        },
       },
-      assets: marketplaceHomepageBannerAssets.reduce((acc, asset) => {
-        acc[asset.sys.id] = asset
-        return acc
-      }, {} as Record<string, ContentfulAsset>),
+      assets: marketplaceHomepageBannerAssets.reduce(
+        (acc, asset) => {
+          acc[asset.sys.id] = asset
+          return acc
+        },
+        {} as Record<string, ContentfulAsset>,
+      ),
       name: mockCampaignEntry.fields.name,
       tabName: mockCampaignEntry.fields.marketplaceTabName,
       mainTag: mockCampaignEntry.fields.mainTag?.['en-US'],
-      additionalTags: mockCampaignEntry.fields.additionalTags?.['en-US']
+      additionalTags: mockCampaignEntry.fields.additionalTags?.['en-US'],
     }
   })
 
@@ -87,21 +90,21 @@ describe('when handling the fetch campaign request', () => {
               [mockClient, 'fetchEntryAllLocales'],
               mockConfig.space,
               mockConfig.environment,
-              mockConfig.id
+              mockConfig.id,
             ),
-            Promise.resolve(mockAdminEntry)
+            Promise.resolve(mockAdminEntry),
           ],
           [
             matchers.call(
               [mockClient, 'fetchEntriesFromEntryFields'],
               mockConfig.space,
               mockConfig.environment,
-              mockAdminEntry.fields
+              mockAdminEntry.fields,
             ),
             Promise.resolve({
               [mockCampaignEntry.sys.id]: mockCampaignEntry,
-              [mockHomepageBannerEntry.sys.id]: mockHomepageBannerEntry
-            })
+              [mockHomepageBannerEntry.sys.id]: mockHomepageBannerEntry,
+            }),
           ],
           [
             matchers.call(
@@ -111,11 +114,11 @@ describe('when handling the fetch campaign request', () => {
               [
                 mockAdminEntry.fields,
                 mockCampaignEntry.fields,
-                mockHomepageBannerEntry.fields
-              ]
+                mockHomepageBannerEntry.fields,
+              ],
             ),
-            Promise.resolve(mockResponse.assets)
-          ]
+            Promise.resolve(mockResponse.assets),
+          ],
         ])
         .put(
           fetchCampaignSuccess(
@@ -124,8 +127,8 @@ describe('when handling the fetch campaign request', () => {
             mockResponse.name,
             mockResponse.tabName,
             mockResponse.mainTag,
-            mockResponse.additionalTags
-          )
+            mockResponse.additionalTags,
+          ),
         )
         .dispatch(fetchCampaignRequest())
         .run(1000)
@@ -143,10 +146,10 @@ describe('when handling the fetch campaign request', () => {
               [mockClient, 'fetchEntryAllLocales'],
               mockConfig.space,
               mockConfig.environment,
-              mockConfig.id
+              mockConfig.id,
             ),
-            throwError(error)
-          ]
+            throwError(error),
+          ],
         ])
         .put(fetchCampaignFailure('Network error'))
         .dispatch(fetchCampaignRequest())
@@ -163,10 +166,10 @@ describe('when handling the fetch campaign request', () => {
               [mockClient, 'fetchEntryAllLocales'],
               mockConfig.space,
               mockConfig.environment,
-              mockConfig.id
+              mockConfig.id,
             ),
-            throwError(new Error('Failed to fetch campaign data'))
-          ]
+            throwError(new Error('Failed to fetch campaign data')),
+          ],
         ])
         .put(fetchCampaignFailure('Failed to fetch campaign data'))
         .dispatch(fetchCampaignRequest())

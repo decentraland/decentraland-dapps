@@ -22,7 +22,7 @@ export function getContractAccountErrorToast(): Omit<Toast, 'id'> {
       />
     ),
     closable: true,
-    timeout: 30000
+    timeout: 30000,
   }
 }
 
@@ -39,7 +39,7 @@ export function getInvalidAddressErrorToast(): Omit<Toast, 'id'> {
       />
     ),
     closable: true,
-    timeout: 30000
+    timeout: 30000,
   }
 }
 export function getSalePriceTooLowErrorToast(): Omit<Toast, 'id'> {
@@ -55,7 +55,7 @@ export function getSalePriceTooLowErrorToast(): Omit<Toast, 'id'> {
       />
     ),
     closable: true,
-    timeout: 30000
+    timeout: 30000,
   }
 }
 
@@ -70,7 +70,7 @@ export function getUnknownErrorToast(): Omit<Toast, 'id'> {
       />
     ),
     closable: true,
-    timeout: 30000
+    timeout: 30000,
   }
 }
 
@@ -91,7 +91,7 @@ export function getHighCongestionErrorToast(): Omit<Toast, 'id'> {
                 >
                   {text}
                 </a>
-              )
+              ),
             })}
           </span>
         }
@@ -99,6 +99,6 @@ export function getHighCongestionErrorToast(): Omit<Toast, 'id'> {
       />
     ),
     closable: true,
-    timeout: 30000
+    timeout: 30000,
   }
 }

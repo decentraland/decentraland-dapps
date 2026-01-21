@@ -1,45 +1,45 @@
 import { BigNumber, ethers } from 'ethers'
 import { Network } from '@dcl/schemas'
+import { TransactionLink } from '../..'
+import {
+  AUTHORIZATION_FLOW_REQUEST,
+  GRANT_TOKEN_REQUEST,
+  REVOKE_TOKEN_REQUEST,
+} from '../../../modules/authorization/actions'
 import {
   getAuthorizationFlowError,
+  getData as getAuthorizations,
   getError,
-  getLoading
+  getLoading,
 } from '../../../modules/authorization/selectors'
 import {
   Authorization,
   AuthorizationAction,
-  AuthorizationType
+  AuthorizationType,
 } from '../../../modules/authorization/types'
 import {
   AuthorizationError,
   areEqual,
   hasAuthorization,
-  hasAuthorizationAndEnoughAllowance
+  hasAuthorizationAndEnoughAllowance,
 } from '../../../modules/authorization/utils'
-import { TransactionLink } from '../..'
 import { isLoadingType } from '../../../modules/loading/selectors'
 import { getType } from '../../../modules/loading/utils'
 import { getTransactions } from '../../../modules/transaction/selectors'
 import { isPending } from '../../../modules/transaction/utils'
 import { t_cond } from '../../../modules/translation/utils'
-import { getData as getAuthorizations } from '../../../modules/authorization/selectors'
-import {
-  AUTHORIZATION_FLOW_REQUEST,
-  GRANT_TOKEN_REQUEST,
-  REVOKE_TOKEN_REQUEST
-} from '../../../modules/authorization/actions'
+import { RootStateOrAny } from '../../../types'
+import { AuthorizationTranslationKeys } from '../withAuthorizedAction.types'
 import {
   AuthorizationStepAction,
-  AuthorizationStepStatus
+  AuthorizationStepStatus,
 } from './AuthorizationModal.types'
-import { AuthorizationTranslationKeys } from '../withAuthorizedAction.types'
-import { RootStateOrAny } from '../../../types'
 
 const MAX_ERROR_LENGTH = 150
 
 export function safeGet(
   obj: AuthorizationTranslationKeys,
-  key: string
+  key: string,
 ): string | undefined {
   const keyParts = key.split('.')
   const value = keyParts.reduce((o, key) => {
@@ -56,12 +56,12 @@ export function safeGet(
 export function getTranslation(
   translationKeys: AuthorizationTranslationKeys,
   key: string,
-  values?: any
+  values?: any,
 ) {
   return t_cond(
     safeGet(translationKeys, key),
     `@dapps.authorization_modal.${key}`,
-    values
+    values,
   )
 }
 
@@ -69,7 +69,7 @@ export function getStepStatus(
   state: RootStateOrAny,
   authorizationAction: AuthorizationAction,
   authorization: Authorization,
-  allowance: BigNumber | undefined
+  allowance: BigNumber | undefined,
 ): AuthorizationStepStatus {
   const actionType =
     authorizationAction === AuthorizationAction.REVOKE
@@ -82,13 +82,13 @@ export function getStepStatus(
 
   const pendingActionTypeTransactions = getTransactions(
     state,
-    authorization.address
+    authorization.address,
   ).filter(
-    transaction =>
+    (transaction) =>
       isPending(transaction.status) &&
       getType({ type: actionType }) ===
         getType({ type: transaction.actionType }) &&
-      areEqual(transaction.payload.authorization, authorization)
+      areEqual(transaction.payload.authorization, authorization),
   )
 
   if (pendingActionTypeTransactions.length) {
@@ -117,7 +117,7 @@ export function getStepStatus(
       isDone = hasAuthorizationAndEnoughAllowance(
         authorizations,
         authorization,
-        allowance.toString()
+        allowance.toString(),
       )
     }
   } else {
@@ -131,8 +131,8 @@ export function getStepStatus(
   if (
     isLoadingType(getLoading(state), AUTHORIZATION_FLOW_REQUEST) &&
     getLoading(state).find(
-      loadingAction =>
-        loadingAction.payload?.authorizationAction === authorizationAction
+      (loadingAction) =>
+        loadingAction.payload?.authorizationAction === authorizationAction,
     )
   ) {
     return AuthorizationStepStatus.LOADING_INFO
@@ -144,7 +144,7 @@ export function getStepStatus(
 export function getStepError(
   error: string | null,
   action: AuthorizationStepAction,
-  translationKeys: AuthorizationTranslationKeys
+  translationKeys: AuthorizationTranslationKeys,
 ) {
   if (!error) {
     return undefined
@@ -168,7 +168,7 @@ export function getStepMessage(
   price: string,
   action: AuthorizationStepAction,
   translationKeys: AuthorizationTranslationKeys,
-  isWeb2AutoSigning?: boolean
+  isWeb2AutoSigning?: boolean,
 ) {
   if (stepIndex > currentStep) {
     return ''
@@ -180,7 +180,7 @@ export function getStepMessage(
 
   switch (stepStatus) {
     case AuthorizationStepStatus.WAITING:
-      return !!isWeb2AutoSigning
+      return isWeb2AutoSigning
         ? getTranslation(translationKeys, 'waiting_confirmation')
         : getTranslation(translationKeys, 'waiting_wallet')
     case AuthorizationStepStatus.PROCESSING:
@@ -219,7 +219,7 @@ export function getSteps({
   authorizedContractLabel,
   targetContractLabel,
   currentAllowance,
-  translationKeys
+  translationKeys,
 }: {
   translationKeys: AuthorizationTranslationKeys
   authorization: Authorization
@@ -240,17 +240,17 @@ export function getSteps({
       {
         title: getTranslation(translationKeys, 'revoke_cap.title'),
         description: getTranslation(translationKeys, 'revoke_cap.description', {
-          price: requiredAllowanceAsEth
+          price: requiredAllowanceAsEth,
         }),
-        actionType: AuthorizationStepAction.REVOKE
+        actionType: AuthorizationStepAction.REVOKE,
       },
       {
         title: getTranslation(translationKeys, 'set_cap.title'),
         description: getTranslation(translationKeys, 'set_cap.description', {
-          price: requiredAllowanceAsEth
+          price: requiredAllowanceAsEth,
         }),
-        actionType: AuthorizationStepAction.GRANT
-      }
+        actionType: AuthorizationStepAction.GRANT,
+      },
     ]
   }
 
@@ -266,17 +266,17 @@ export function getSteps({
             >
               {authorizedContractLabel || authorization.authorizedAddress}
             </TransactionLink>
-          )
+          ),
         }),
         description: getTranslation(
           translationKeys,
           'authorize_mana.description',
           {
-            price: requiredAllowanceAsEth
-          }
+            price: requiredAllowanceAsEth,
+          },
         ),
-        actionType: AuthorizationStepAction.GRANT
-      }
+        actionType: AuthorizationStepAction.GRANT,
+      },
     ]
   }
 
@@ -304,9 +304,9 @@ export function getSteps({
           >
             {targetContractLabel || authorization.contractAddress}
           </TransactionLink>
-        )
+        ),
       }),
-      actionType: AuthorizationStepAction.GRANT
-    }
+      actionType: AuthorizationStepAction.GRANT,
+    },
   ]
 }

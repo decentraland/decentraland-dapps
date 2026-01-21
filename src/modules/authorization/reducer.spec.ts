@@ -17,12 +17,12 @@ import {
   AuthorizationFlowFailureAction,
   AuthorizationFlowSuccessAction,
   authorizationFlowClear,
-  AuthorizationFlowClearAction
+  AuthorizationFlowClearAction,
 } from './actions'
 import {
   authorizationReducer,
   AuthorizationState,
-  INITIAL_STATE
+  INITIAL_STATE,
 } from './reducer'
 import { Authorization, AuthorizationAction } from './types'
 
@@ -30,44 +30,44 @@ describe.each([
   {
     type: GRANT_TOKEN_REQUEST,
     action: grantTokenRequest({} as Authorization),
-    addLoading: true
+    addLoading: true,
   },
   {
     type: REVOKE_TOKEN_REQUEST,
     action: revokeTokenRequest({} as Authorization),
-    addLoading: true
+    addLoading: true,
   },
   {
     type: GRANT_TOKEN_SUCCESS,
     action: grantTokenSuccess(
       {} as Authorization,
       ChainId.ETHEREUM_GOERLI,
-      'tsx'
-    )
+      'tsx',
+    ),
   },
   {
     type: REVOKE_TOKEN_SUCCESS,
     action: revokeTokenSuccess(
       {} as Authorization,
       ChainId.ETHEREUM_GOERLI,
-      'tsx'
-    )
+      'tsx',
+    ),
   },
   {
     type: FETCH_AUTHORIZATIONS_REQUEST,
     action: fetchAuthorizationsRequest([]),
-    addLoading: true
-  }
+    addLoading: true,
+  },
 ])('when handling the $type action', ({ action, addLoading }) => {
   it('should set error as null', () => {
     const initialStateWithError = {
       ...INITIAL_STATE,
-      error: 'Something went wrong'
+      error: 'Something went wrong',
     }
     expect(authorizationReducer(initialStateWithError, action)).toEqual(
       expect.objectContaining({
-        error: null
-      })
+        error: null,
+      }),
     )
   })
 
@@ -75,20 +75,20 @@ describe.each([
     it('should add action to loading array', () => {
       expect(authorizationReducer(INITIAL_STATE, action)).toEqual(
         expect.objectContaining({
-          loading: [action]
-        })
+          loading: [action],
+        }),
       )
     })
   } else {
     it('should remove an action from loading array', () => {
       const initialStateWithLoading = {
         ...INITIAL_STATE,
-        loading: [action]
+        loading: [action],
       }
       expect(authorizationReducer(initialStateWithLoading, action)).toEqual(
         expect.objectContaining({
-          loading: []
-        })
+          loading: [],
+        }),
       )
     })
   }
@@ -106,27 +106,27 @@ describe('authorization flow actions', () => {
     beforeEach(() => {
       action = authorizationFlowRequest(
         {} as Authorization,
-        AuthorizationAction.GRANT
+        AuthorizationAction.GRANT,
       )
       initialState = {
         ...INITIAL_STATE,
-        authorizationFlowError: 'test error'
+        authorizationFlowError: 'test error',
       }
     })
 
     it('should add an action to loading array', () => {
       expect(authorizationReducer(initialState, action)).toEqual(
         expect.objectContaining({
-          loading: [action]
-        })
+          loading: [action],
+        }),
       )
     })
 
     it('should remove the authorizationFlow error', () => {
       expect(authorizationReducer(initialState, action)).toEqual(
         expect.objectContaining({
-          authorizationFlowError: null
-        })
+          authorizationFlowError: null,
+        }),
       )
     })
   })
@@ -137,23 +137,23 @@ describe('authorization flow actions', () => {
       initialState = {
         ...INITIAL_STATE,
         loading: [action],
-        authorizationFlowError: 'test error'
+        authorizationFlowError: 'test error',
       }
     })
 
     it('should remove an action from loading array', () => {
       expect(authorizationReducer(initialState, action)).toEqual(
         expect.objectContaining({
-          loading: []
-        })
+          loading: [],
+        }),
       )
     })
 
     it('should remove the authorizationFlow error', () => {
       expect(authorizationReducer(initialState, action)).toEqual(
         expect.objectContaining({
-          authorizationFlowError: null
-        })
+          authorizationFlowError: null,
+        }),
       )
     })
   })
@@ -164,23 +164,23 @@ describe('authorization flow actions', () => {
       initialState = {
         ...INITIAL_STATE,
         loading: [action],
-        authorizationFlowError: null
+        authorizationFlowError: null,
       }
     })
 
     it('should remove an action from loading array', () => {
       expect(authorizationReducer(initialState, action)).toEqual(
         expect.objectContaining({
-          loading: []
-        })
+          loading: [],
+        }),
       )
     })
 
     it('should add an error', () => {
       expect(authorizationReducer(initialState, action)).toEqual(
         expect.objectContaining({
-          authorizationFlowError: 'an error'
-        })
+          authorizationFlowError: 'an error',
+        }),
       )
     })
   })
@@ -191,23 +191,23 @@ describe('authorization flow actions', () => {
       initialState = {
         ...INITIAL_STATE,
         loading: [action],
-        authorizationFlowError: null
+        authorizationFlowError: null,
       }
     })
 
     it('should remove an action from loading array', () => {
       expect(authorizationReducer(initialState, action)).toEqual(
         expect.objectContaining({
-          loading: []
-        })
+          loading: [],
+        }),
       )
     })
 
     it('should add an error', () => {
       expect(authorizationReducer(initialState, action)).toEqual(
         expect.objectContaining({
-          authorizationFlowError: null
-        })
+          authorizationFlowError: null,
+        }),
       )
     })
   })

@@ -11,7 +11,7 @@ export const generateIdentityRequest = (address: string) =>
   action(GENERATE_IDENTITY_REQUEST, { address })
 export const generateIdentitySuccess = (
   address: string,
-  identity: AuthIdentity
+  identity: AuthIdentity,
 ) => action(GENERATE_IDENTITY_SUCCESS, { address, identity })
 export const generateIdentityFailure = (address: string, error: string) =>
   action(GENERATE_IDENTITY_FAILURE, { address, error })

@@ -1,19 +1,19 @@
 import { Dispatch } from 'redux'
-import { ContractName } from 'decentraland-transactions'
 import { Contract } from '@dcl/schemas'
-import { Wallet } from '../../modules/wallet/types'
+import { ContractName } from 'decentraland-transactions'
 import {
   AuthorizationFlowClearAction,
   AuthorizationFlowRequestAction,
+  FetchAuthorizationsRequestAction,
   authorizationFlowClear,
   authorizationFlowRequest,
-  FetchAuthorizationsRequestAction
 } from '../../modules/authorization/actions'
 import {
   Authorization,
-  AuthorizationType
+  AuthorizationType,
 } from '../../modules/authorization/types'
 import { en } from '../../modules/translation/defaults'
+import { Wallet } from '../../modules/wallet/types'
 type AuthorizeBaseOptions = {
   /**
    * callback to run when authorization process is completed
@@ -62,12 +62,12 @@ type RecursivePartial<T> = {
   [P in keyof T]?: T[P] extends (infer U)[]
     ? RecursivePartial<U>[]
     : T[P] extends object
-    ? RecursivePartial<T[P]>
-    : T[P]
+      ? RecursivePartial<T[P]>
+      : T[P]
 }
 
 export type AuthorizationTranslationKeys = RecursivePartial<
-  typeof en['@dapps']['authorization_modal']
+  (typeof en)['@dapps']['authorization_modal']
 >
 
 export type WithAuthorizedActionProps = {
@@ -94,10 +94,10 @@ export type MapDispatchProps = {
   onClearAuthorizationFlow: typeof authorizationFlowClear
   onRevoke: (
     traceId: string,
-    authorization: Authorization
+    authorization: Authorization,
   ) => ReturnType<typeof authorizationFlowRequest>
   onGrant: (
     traceId: string,
-    authorization: Authorization
+    authorization: Authorization,
   ) => ReturnType<typeof authorizationFlowRequest>
 }

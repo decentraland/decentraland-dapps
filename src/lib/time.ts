@@ -3,7 +3,7 @@ export function fromMillisecondsToSeconds(timeInMilliseconds: number): number {
 }
 
 export function sleep(delay: number) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     setTimeout(resolve, delay)
   })
 }

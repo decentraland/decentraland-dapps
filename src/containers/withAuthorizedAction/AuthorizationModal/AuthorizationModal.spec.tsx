@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event'
 import { Network } from '@dcl/schemas'
 import {
   Authorization,
-  AuthorizationType
+  AuthorizationType,
 } from '../../../modules/authorization/types'
 import { t } from '../../../modules/translation/utils'
 import * as analyticsUtils from '../../../modules/analytics/utils'
@@ -13,15 +13,15 @@ import { AuthorizationModal } from './AuthorizationModal'
 import {
   AuthorizationStepStatus,
   AuthorizedAction,
-  Props
+  Props,
 } from './AuthorizationModal.types'
 
 jest.mock('../../../containers', () => ({
-  TransactionLink: () => 'test'
+  TransactionLink: () => 'test',
 }))
 
 jest.mock('../../../modules/analytics/utils', () => ({
-  getAnalytics: jest.fn().mockReturnValue({ track: jest.fn() })
+  getAnalytics: jest.fn().mockReturnValue({ track: jest.fn() }),
 }))
 
 function getAuthorizationModal(props: Partial<Props>) {
@@ -68,7 +68,7 @@ describe('when authorization type is APPROVAL', () => {
   describe('basic rendering', () => {
     beforeEach(() => {
       screen = renderAuthorizationModal({
-        authorizationType: AuthorizationType.APPROVAL
+        authorizationType: AuthorizationType.APPROVAL,
       })
     })
 
@@ -79,30 +79,30 @@ describe('when authorization type is APPROVAL', () => {
     it('should render authorization step', () => {
       expect(
         screen.getByRole('button', {
-          name: t('@dapps.authorization_modal.authorize_nft.action')
-        })
+          name: t('@dapps.authorization_modal.authorize_nft.action'),
+        }),
       ).toBeInTheDocument()
     })
 
     it('should render confirm action step', () => {
       expect(
         screen.getByRole('button', {
-          name: t('@dapps.authorization_modal.confirm_transaction.action')
-        })
+          name: t('@dapps.authorization_modal.confirm_transaction.action'),
+        }),
       ).toBeInTheDocument()
     })
 
     it('should show only first step enabled', () => {
       expect(
         screen.getByRole('button', {
-          name: t('@dapps.authorization_modal.authorize_nft.action')
-        })
+          name: t('@dapps.authorization_modal.authorize_nft.action'),
+        }),
       ).toBeEnabled()
 
       expect(
         screen.getByRole('button', {
-          name: t('@dapps.authorization_modal.confirm_transaction.action')
-        })
+          name: t('@dapps.authorization_modal.confirm_transaction.action'),
+        }),
       ).toBeDisabled()
     })
   })
@@ -112,12 +112,12 @@ describe('when authorization type is APPROVAL', () => {
       const onGrantMock = jest.fn()
       const screen = renderAuthorizationModal({
         authorizationType: AuthorizationType.APPROVAL,
-        onGrant: onGrantMock
+        onGrant: onGrantMock,
       })
       await userEvent.click(
         screen.getByRole('button', {
-          name: t('@dapps.authorization_modal.authorize_nft.action')
-        })
+          name: t('@dapps.authorization_modal.authorize_nft.action'),
+        }),
       )
       expect(onGrantMock).toHaveBeenCalled()
     })
@@ -134,7 +134,7 @@ describe('when authorization type is ALLOWANCE', () => {
             authorizationType: AuthorizationType.ALLOWANCE,
             network: Network.ETHEREUM,
             currentAllowance: BigNumber.from('1'),
-            requiredAllowance: BigNumber.from('10')
+            requiredAllowance: BigNumber.from('10'),
           })
         })
         it('should render 3 steps', () => {
@@ -152,20 +152,20 @@ describe('when authorization type is ALLOWANCE', () => {
         it('should only show the first step enabled', () => {
           expect(
             screen.getAllByRole('button', {
-              name: t('@dapps.authorization_modal.authorize_mana.action')
-            })[0]
+              name: t('@dapps.authorization_modal.authorize_mana.action'),
+            })[0],
           ).toBeEnabled()
 
           expect(
             screen.getAllByRole('button', {
-              name: t('@dapps.authorization_modal.authorize_mana.action')
-            })[1]
+              name: t('@dapps.authorization_modal.authorize_mana.action'),
+            })[1],
           ).toBeDisabled()
 
           expect(
             screen.getByRole('button', {
-              name: t('@dapps.authorization_modal.confirm_transaction.action')
-            })
+              name: t('@dapps.authorization_modal.confirm_transaction.action'),
+            }),
           ).toBeDisabled()
         })
       })
@@ -176,7 +176,7 @@ describe('when authorization type is ALLOWANCE', () => {
             authorizationType: AuthorizationType.ALLOWANCE,
             network: Network.ETHEREUM,
             currentAllowance: BigNumber.from('0'),
-            requiredAllowance: BigNumber.from('10')
+            requiredAllowance: BigNumber.from('10'),
           })
         })
         it('should render 2 steps', () => {
@@ -198,15 +198,15 @@ describe('when authorization type is ALLOWANCE', () => {
           screen = renderAuthorizationModal({
             authorizationType: AuthorizationType.ALLOWANCE,
             network: Network.ETHEREUM,
-            revokeStatus: AuthorizationStepStatus.PENDING
+            revokeStatus: AuthorizationStepStatus.PENDING,
           })
         })
 
         it('should render revoke action button', () => {
           expect(
             within(screen.getByTestId('revoke-step')).getByRole('button', {
-              name: t('@dapps.authorization_modal.revoke_cap.action')
-            })
+              name: t('@dapps.authorization_modal.revoke_cap.action'),
+            }),
           ).toBeInTheDocument()
         })
       })
@@ -216,13 +216,13 @@ describe('when authorization type is ALLOWANCE', () => {
           screen = renderAuthorizationModal({
             authorizationType: AuthorizationType.ALLOWANCE,
             network: Network.ETHEREUM,
-            revokeStatus: AuthorizationStepStatus.WAITING
+            revokeStatus: AuthorizationStepStatus.WAITING,
           })
         })
 
         it('should show waiting wallet for approval message', () => {
           expect(
-            screen.getByText(t('@dapps.authorization_modal.waiting_wallet'))
+            screen.getByText(t('@dapps.authorization_modal.waiting_wallet')),
           ).toBeInTheDocument()
         })
 
@@ -234,8 +234,8 @@ describe('when authorization type is ALLOWANCE', () => {
           const revokeStep = screen.getByTestId('revoke-step')
           expect(
             within(revokeStep).queryByText(
-              t('@dapps.authorization_modal.authorize_mana.action')
-            )
+              t('@dapps.authorization_modal.authorize_mana.action'),
+            ),
           ).not.toBeInTheDocument()
         })
       })
@@ -245,15 +245,15 @@ describe('when authorization type is ALLOWANCE', () => {
           screen = renderAuthorizationModal({
             authorizationType: AuthorizationType.ALLOWANCE,
             network: Network.ETHEREUM,
-            revokeStatus: AuthorizationStepStatus.PROCESSING
+            revokeStatus: AuthorizationStepStatus.PROCESSING,
           })
         })
 
         it('should show waiting wallet for approval message', () => {
           expect(
             screen.getByText(
-              t('@dapps.authorization_modal.waiting_confirmation')
-            )
+              t('@dapps.authorization_modal.waiting_confirmation'),
+            ),
           ).toBeInTheDocument()
         })
 
@@ -265,8 +265,8 @@ describe('when authorization type is ALLOWANCE', () => {
           const revokeStep = screen.getByTestId('revoke-step')
           expect(
             within(revokeStep).queryByText(
-              t('@dapps.authorization_modal.authorize_mana.action')
-            )
+              t('@dapps.authorization_modal.authorize_mana.action'),
+            ),
           ).not.toBeInTheDocument()
         })
       })
@@ -276,13 +276,13 @@ describe('when authorization type is ALLOWANCE', () => {
           screen = renderAuthorizationModal({
             authorizationType: AuthorizationType.ALLOWANCE,
             network: Network.ETHEREUM,
-            revokeStatus: AuthorizationStepStatus.DONE
+            revokeStatus: AuthorizationStepStatus.DONE,
           })
         })
 
         it('should show waiting wallet for approval message', () => {
           expect(
-            screen.getByText(t('@dapps.authorization_modal.done'))
+            screen.getByText(t('@dapps.authorization_modal.done')),
           ).toBeInTheDocument()
         })
 
@@ -294,8 +294,8 @@ describe('when authorization type is ALLOWANCE', () => {
           const revokeStep = screen.getByTestId('revoke-step')
           expect(
             within(revokeStep).queryByText(
-              t('@dapps.authorization_modal.authorize_mana.action')
-            )
+              t('@dapps.authorization_modal.authorize_mana.action'),
+            ),
           ).not.toBeInTheDocument()
         })
       })
@@ -306,14 +306,14 @@ describe('when authorization type is ALLOWANCE', () => {
         screen = renderAuthorizationModal({
           authorizationType: AuthorizationType.ALLOWANCE,
           revokeStatus: AuthorizationStepStatus.PENDING,
-          grantStatus: AuthorizationStepStatus.PENDING
+          grantStatus: AuthorizationStepStatus.PENDING,
         })
 
         const revokeStep = screen.getByTestId('revoke-step')
         return userEvent.click(
           within(revokeStep).getByRole('button', {
-            name: t('@dapps.authorization_modal.revoke_cap.action')
-          })
+            name: t('@dapps.authorization_modal.revoke_cap.action'),
+          }),
         )
       })
 
@@ -325,8 +325,8 @@ describe('when authorization type is ALLOWANCE', () => {
             getAuthorizationModal({
               authorizationType: AuthorizationType.ALLOWANCE,
               revokeStatus: AuthorizationStepStatus.DONE,
-              grantStatus: AuthorizationStepStatus.WAITING
-            })
+              grantStatus: AuthorizationStepStatus.WAITING,
+            }),
           )
 
           grantStatusStep = screen.getByTestId('grant-step')
@@ -335,22 +335,22 @@ describe('when authorization type is ALLOWANCE', () => {
         it('should show waiting wallet for approval message', () => {
           expect(
             within(grantStatusStep).getByText(
-              t('@dapps.authorization_modal.waiting_wallet')
-            )
+              t('@dapps.authorization_modal.waiting_wallet'),
+            ),
           ).toBeInTheDocument()
         })
 
         it('should show loading icon', () => {
           expect(
-            within(grantStatusStep).getByTestId('step-loader')
+            within(grantStatusStep).getByTestId('step-loader'),
           ).toBeInTheDocument()
         })
 
         it('should not show action button', () => {
           expect(
             within(grantStatusStep).queryByText(
-              t('@dapps.authorization_modal.authorize_mana.action')
-            )
+              t('@dapps.authorization_modal.authorize_mana.action'),
+            ),
           ).not.toBeInTheDocument()
         })
       })
@@ -363,8 +363,8 @@ describe('when authorization type is ALLOWANCE', () => {
             getAuthorizationModal({
               authorizationType: AuthorizationType.ALLOWANCE,
               revokeStatus: AuthorizationStepStatus.DONE,
-              grantStatus: AuthorizationStepStatus.PROCESSING
-            })
+              grantStatus: AuthorizationStepStatus.PROCESSING,
+            }),
           )
           grantStatusStep = screen.getByTestId('grant-step')
         })
@@ -372,22 +372,22 @@ describe('when authorization type is ALLOWANCE', () => {
         it('should show waiting wallet for approval message', () => {
           expect(
             within(grantStatusStep).getByText(
-              t('@dapps.authorization_modal.waiting_confirmation')
-            )
+              t('@dapps.authorization_modal.waiting_confirmation'),
+            ),
           ).toBeInTheDocument()
         })
 
         it('should show loading icon', () => {
           expect(
-            within(grantStatusStep).getByTestId('step-loader')
+            within(grantStatusStep).getByTestId('step-loader'),
           ).toBeInTheDocument()
         })
 
         it('should not show action button', () => {
           expect(
             within(grantStatusStep).queryByText(
-              t('@dapps.authorization_modal.authorize_mana.action')
-            )
+              t('@dapps.authorization_modal.authorize_mana.action'),
+            ),
           ).not.toBeInTheDocument()
         })
       })
@@ -400,8 +400,8 @@ describe('when authorization type is ALLOWANCE', () => {
             getAuthorizationModal({
               authorizationType: AuthorizationType.ALLOWANCE,
               revokeStatus: AuthorizationStepStatus.DONE,
-              grantStatus: AuthorizationStepStatus.DONE
-            })
+              grantStatus: AuthorizationStepStatus.DONE,
+            }),
           )
 
           grantStatusStep = screen.getByTestId('grant-step')
@@ -410,22 +410,22 @@ describe('when authorization type is ALLOWANCE', () => {
         it('should show done message', () => {
           expect(
             within(grantStatusStep).getByText(
-              t('@dapps.authorization_modal.done')
-            )
+              t('@dapps.authorization_modal.done'),
+            ),
           ).toBeInTheDocument()
         })
 
         it('should not show loading icon', () => {
           expect(
-            within(grantStatusStep).queryByTestId('step-loader')
+            within(grantStatusStep).queryByTestId('step-loader'),
           ).not.toBeInTheDocument()
         })
 
         it('should not show action button', () => {
           expect(
             within(grantStatusStep).queryByText(
-              t('@dapps.authorization_modal.authorize_mana.action')
-            )
+              t('@dapps.authorization_modal.authorize_mana.action'),
+            ),
           ).not.toBeInTheDocument()
         })
       })
@@ -440,8 +440,8 @@ describe('when authorization type is ALLOWANCE', () => {
               revokeStatus: AuthorizationStepStatus.DONE,
               grantStatus: AuthorizationStepStatus.ALLOWANCE_AMOUNT_ERROR,
               network: Network.ETHEREUM,
-              requiredAllowance: BigNumber.from('1000000000000000000')
-            })
+              requiredAllowance: BigNumber.from('1000000000000000000'),
+            }),
           )
 
           reauthorizeStep = screen.getByTestId('reauthorize-step')
@@ -452,23 +452,23 @@ describe('when authorization type is ALLOWANCE', () => {
             within(reauthorizeStep).getByText(
               t(
                 '@dapps.authorization_modal.insufficient_amount_error.message',
-                { price: '1' }
-              )
-            )
+                { price: '1' },
+              ),
+            ),
           ).toBeInTheDocument()
         })
 
         it('should not show loading icon', () => {
           expect(
-            within(reauthorizeStep).queryByTestId('step-loader')
+            within(reauthorizeStep).queryByTestId('step-loader'),
           ).not.toBeInTheDocument()
         })
 
         it('should show revoke action button', () => {
           expect(
             within(reauthorizeStep).getByText(
-              t('@dapps.authorization_modal.insufficient_amount_error.action')
-            )
+              t('@dapps.authorization_modal.insufficient_amount_error.action'),
+            ),
           ).toBeInTheDocument()
         })
       })
@@ -480,7 +480,7 @@ describe('when authorization type is ALLOWANCE', () => {
       beforeEach(() => {
         screen = renderAuthorizationModal({
           authorizationType: AuthorizationType.ALLOWANCE,
-          network: Network.MATIC
+          network: Network.MATIC,
         })
       })
       it('should render 2 steps', () => {
@@ -498,14 +498,14 @@ describe('when authorization type is ALLOWANCE', () => {
       it('should only show the first step enabled', () => {
         expect(
           screen.getAllByRole('button', {
-            name: t('@dapps.authorization_modal.authorize_mana.action')
-          })[0]
+            name: t('@dapps.authorization_modal.authorize_mana.action'),
+          })[0],
         ).toBeEnabled()
 
         expect(
           screen.getByRole('button', {
-            name: t('@dapps.authorization_modal.confirm_transaction.action')
-          })
+            name: t('@dapps.authorization_modal.confirm_transaction.action'),
+          }),
         ).toBeDisabled()
       })
     })
@@ -517,7 +517,7 @@ describe('when authorization type is MINT', () => {
   describe('basic rendering', () => {
     beforeEach(() => {
       screen = renderAuthorizationModal({
-        authorizationType: AuthorizationType.MINT
+        authorizationType: AuthorizationType.MINT,
       })
     })
 
@@ -528,30 +528,30 @@ describe('when authorization type is MINT', () => {
     it('should render authorization step', () => {
       expect(
         screen.getByRole('button', {
-          name: t('@dapps.authorization_modal.authorize_item.action')
-        })
+          name: t('@dapps.authorization_modal.authorize_item.action'),
+        }),
       ).toBeInTheDocument()
     })
 
     it('should render confirm action step', () => {
       expect(
         screen.getByRole('button', {
-          name: t('@dapps.authorization_modal.confirm_transaction.action')
-        })
+          name: t('@dapps.authorization_modal.confirm_transaction.action'),
+        }),
       ).toBeInTheDocument()
     })
 
     it('should show only first step enabled', () => {
       expect(
         screen.getByRole('button', {
-          name: t('@dapps.authorization_modal.authorize_item.action')
-        })
+          name: t('@dapps.authorization_modal.authorize_item.action'),
+        }),
       ).toBeEnabled()
 
       expect(
         screen.getByRole('button', {
-          name: t('@dapps.authorization_modal.confirm_transaction.action')
-        })
+          name: t('@dapps.authorization_modal.confirm_transaction.action'),
+        }),
       ).toBeDisabled()
     })
   })
@@ -561,12 +561,12 @@ describe('when authorization type is MINT', () => {
       const onGrantMock = jest.fn()
       const screen = renderAuthorizationModal({
         authorizationType: AuthorizationType.APPROVAL,
-        onGrant: onGrantMock
+        onGrant: onGrantMock,
       })
       await userEvent.click(
         screen.getByRole('button', {
-          name: t('@dapps.authorization_modal.authorize_nft.action')
-        })
+          name: t('@dapps.authorization_modal.authorize_nft.action'),
+        }),
       )
       expect(onGrantMock).toHaveBeenCalled()
     })
@@ -581,23 +581,23 @@ describe('when clicking revoke authorization button', () => {
   beforeEach(async () => {
     onRevokeMock = jest.fn()
     trackMock = jest.fn()
-    jest.spyOn(analyticsUtils, 'getAnalytics').mockReturnValue(({
-      track: trackMock
-    } as any) as SegmentAnalytics.AnalyticsJS)
+    jest.spyOn(analyticsUtils, 'getAnalytics').mockReturnValue({
+      track: trackMock,
+    } as any as SegmentAnalytics.AnalyticsJS)
     screen = renderAuthorizationModal({
       authorizationType: AuthorizationType.ALLOWANCE,
       revokeStatus: AuthorizationStepStatus.PENDING,
       requiredAllowance: BigNumber.from('10'),
       network: Network.ETHEREUM,
       action: AuthorizedAction.BUY,
-      onRevoke: onRevokeMock
+      onRevoke: onRevokeMock,
     })
 
     const revokeStatusStep = screen.getByTestId('revoke-step')
     await userEvent.click(
       within(revokeStatusStep).getByRole('button', {
-        name: t('@dapps.authorization_modal.revoke_cap.action')
-      })
+        name: t('@dapps.authorization_modal.revoke_cap.action'),
+      }),
     )
   })
 
@@ -610,8 +610,8 @@ describe('when clicking revoke authorization button', () => {
       '[Authorization Flow] Authorize Revoke Click',
       {
         action: AuthorizedAction.BUY,
-        traceId: expect.any(String)
-      }
+        traceId: expect.any(String),
+      },
     )
   })
 })
@@ -625,22 +625,22 @@ describe('when clicking grant authorization button', () => {
     onGrantMock = jest.fn()
     trackMock = jest.fn()
 
-    jest.spyOn(analyticsUtils, 'getAnalytics').mockReturnValue(({
-      track: trackMock
-    } as any) as SegmentAnalytics.AnalyticsJS)
+    jest.spyOn(analyticsUtils, 'getAnalytics').mockReturnValue({
+      track: trackMock,
+    } as any as SegmentAnalytics.AnalyticsJS)
 
     screen = renderAuthorizationModal({
       authorizationType: AuthorizationType.ALLOWANCE,
       revokeStatus: AuthorizationStepStatus.PENDING,
       grantStatus: AuthorizationStepStatus.PENDING,
-      onGrant: onGrantMock
+      onGrant: onGrantMock,
     })
 
     const revokeStatusStep = screen.getByTestId('revoke-step')
     await userEvent.click(
       within(revokeStatusStep).getByRole('button', {
-        name: t('@dapps.authorization_modal.revoke_cap.action')
-      })
+        name: t('@dapps.authorization_modal.revoke_cap.action'),
+      }),
     )
     screen.rerender(
       getAuthorizationModal({
@@ -648,14 +648,14 @@ describe('when clicking grant authorization button', () => {
         revokeStatus: AuthorizationStepStatus.DONE,
         grantStatus: AuthorizationStepStatus.PENDING,
         action: AuthorizedAction.BUY,
-        onGrant: onGrantMock
-      })
+        onGrant: onGrantMock,
+      }),
     )
     const grantStatusStep = screen.getByTestId('grant-step')
     await userEvent.click(
       within(grantStatusStep).getByRole('button', {
-        name: t('@dapps.authorization_modal.set_cap.action')
-      })
+        name: t('@dapps.authorization_modal.set_cap.action'),
+      }),
     )
   })
 
@@ -668,8 +668,8 @@ describe('when clicking grant authorization button', () => {
       '[Authorization Flow] Authorize Grant Click',
       {
         action: AuthorizedAction.BUY,
-        traceId: expect.any(String)
-      }
+        traceId: expect.any(String),
+      },
     )
   })
 })

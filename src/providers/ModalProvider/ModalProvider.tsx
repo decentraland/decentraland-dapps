@@ -1,10 +1,9 @@
 import * as React from 'react'
-
-import { DefaultProps, Props, ModalComponent } from './ModalProvider.types'
+import { DefaultProps, ModalComponent, Props } from './ModalProvider.types'
 
 export default class ModalProvider extends React.PureComponent<Props> {
   static defaultProps: DefaultProps = {
-    children: null
+    children: null,
   }
 
   getCloseHandler = (name: string) => {
@@ -35,7 +34,7 @@ export default class ModalProvider extends React.PureComponent<Props> {
           name={name}
           metadata={modal.metadata}
           onClose={onClose}
-        />
+        />,
       )
     }
 

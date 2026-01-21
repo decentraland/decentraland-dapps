@@ -8,7 +8,7 @@ import {
   fetchCreditsFailure,
   pollCreditsBalanceRequest,
   startCreditsSSE,
-  stopCreditsSSE
+  stopCreditsSSE,
 } from './actions'
 import { creditsSaga } from './sagas'
 import { getCredits } from './selectors'
@@ -18,13 +18,13 @@ import { connectWalletSuccess } from '../wallet/actions'
 import {
   getFeatureVariant,
   getIsFeatureEnabled,
-  isCreditsFeatureEnabled
+  isCreditsFeatureEnabled,
 } from '../features/selectors'
 import { ApplicationName, FeatureName } from '../features/types'
 import { Wallet } from '../wallet'
 
 const creditsClient = new CreditsClient(
-  'https://credits-server.decentraland.zone'
+  'https://credits-server.decentraland.zone',
 )
 
 describe('Credits saga', () => {
@@ -41,9 +41,9 @@ describe('Credits saga', () => {
         season: 1,
         signature: '123',
         timestamp: '1000',
-        userAddress: '0x123'
-      }
-    ]
+        userAddress: '0x123',
+      },
+    ],
   }
 
   // Mock for EventSource since it's not available in Node.js environment
@@ -85,11 +85,11 @@ describe('Credits saga', () => {
     describe('and the request succeeds', () => {
       it('should put fetchCreditsSuccess with the credits when the request succeeds', () => {
         return expectSaga(creditsSaga, {
-          creditsClient
+          creditsClient,
         })
           .provide([
             [select(isCreditsFeatureEnabled, address), true],
-            [call([creditsClient, 'fetchCredits'], address), mockCredits]
+            [call([creditsClient, 'fetchCredits'], address), mockCredits],
           ])
           .put(fetchCreditsSuccess(address, mockCredits))
           .dispatch(fetchCreditsRequest(address))
@@ -103,11 +103,11 @@ describe('Credits saga', () => {
         const error = new Error(errorMessage)
 
         return expectSaga(creditsSaga, {
-          creditsClient
+          creditsClient,
         })
           .provide([
             [select(isCreditsFeatureEnabled, address), true],
-            [call([creditsClient, 'fetchCredits'], address), throwError(error)]
+            [call([creditsClient, 'fetchCredits'], address), throwError(error)],
           ])
           .put(fetchCreditsFailure(address, errorMessage))
           .dispatch(fetchCreditsRequest(address))
@@ -116,14 +116,14 @@ describe('Credits saga', () => {
 
       it('should put fetchCreditsFailure with an unknown error when the request fails without a message', () => {
         return expectSaga(creditsSaga, {
-          creditsClient
+          creditsClient,
         })
           .provide([
             [select(isCreditsFeatureEnabled, address), true],
             [
               call([creditsClient, 'fetchCredits'], address),
-              throwError({} as Error)
-            ]
+              throwError({} as Error),
+            ],
           ])
           .put(fetchCreditsFailure(address, 'Unknown error'))
           .dispatch(fetchCreditsRequest(address))
@@ -137,7 +137,7 @@ describe('Credits saga', () => {
       const wallet = { address } as Wallet
 
       return expectSaga(creditsSaga, {
-        creditsClient
+        creditsClient,
       })
         .provide([[select(isCreditsFeatureEnabled, address), true]])
         .put(fetchCreditsRequest(address))
@@ -151,12 +151,12 @@ describe('Credits saga', () => {
       const expectedBalance = BigInt('1000')
 
       return expectSaga(creditsSaga, {
-        creditsClient
+        creditsClient,
       })
         .provide([
           [select(isCreditsFeatureEnabled, address), true],
           [call([creditsClient, 'fetchCredits'], address), mockCredits],
-          [select(getCredits, address), mockCredits]
+          [select(getCredits, address), mockCredits],
         ])
         .put(fetchCreditsRequest(address))
         .put(fetchCreditsSuccess(address, mockCredits))
@@ -169,7 +169,7 @@ describe('Credits saga', () => {
     it('should establish SSE connection and dispatch initial fetch', () => {
       // Mock the createSSEConnection method
       const mockEventSource = new MockEventSource(
-        `https://example.com/users/${address}/credits/stream`
+        `https://example.com/users/${address}/credits/stream`,
       )
       const createSSEConnectionMock = jest
         .spyOn(creditsClient, 'createSSEConnection')
@@ -181,11 +181,11 @@ describe('Credits saga', () => {
         })
 
       const saga = expectSaga(creditsSaga, {
-        creditsClient
+        creditsClient,
       })
         .provide([
           [select(isCreditsFeatureEnabled, address), true],
-          [call([creditsClient, 'fetchCredits'], address), mockCredits]
+          [call([creditsClient, 'fetchCredits'], address), mockCredits],
         ])
         .put(fetchCreditsRequest(address))
         .dispatch(startCreditsSSE(address))
@@ -195,7 +195,7 @@ describe('Credits saga', () => {
         expect(createSSEConnectionMock).toHaveBeenCalledWith(
           address,
           expect.any(Function),
-          expect.any(Function)
+          expect.any(Function),
         )
 
         createSSEConnectionMock.mockRestore()
@@ -210,7 +210,7 @@ describe('Credits saga', () => {
       return expectSaga(creditsSaga, { creditsClient })
         .provide([
           [select(isCreditsFeatureEnabled, address), true],
-          [call([creditsClient, 'fetchCredits'], address), mockCredits]
+          [call([creditsClient, 'fetchCredits'], address), mockCredits],
         ])
         .put(fetchCreditsRequest(address))
         .dispatch(startCreditsSSE(address))
@@ -222,7 +222,7 @@ describe('Credits saga', () => {
     it('should close SSE connection and cancel saga', () => {
       // Create a spy on EventSource.close
       const mockEventSource = new MockEventSource(
-        `https://example.com/users/${address}/credits/stream`
+        `https://example.com/users/${address}/credits/stream`,
       )
       const closeSpy = jest.spyOn(mockEventSource, 'close')
 
@@ -235,7 +235,7 @@ describe('Credits saga', () => {
       return expectSaga(creditsSaga, { creditsClient })
         .provide([
           [select(isCreditsFeatureEnabled, address), true],
-          [call([creditsClient, 'fetchCredits'], address), mockCredits]
+          [call([creditsClient, 'fetchCredits'], address), mockCredits],
         ])
         .dispatch(startCreditsSSE(address))
         .dispatch(stopCreditsSSE())

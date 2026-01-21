@@ -1,40 +1,40 @@
 import { connect } from 'react-redux'
-import { AuthorizationAction } from '../../../modules/authorization/types'
+import { fetchAuthorizationsRequest } from '../../../modules/authorization/actions'
 import {
   getAuthorizationFlowError,
-  getError
+  getError,
 } from '../../../modules/authorization/selectors'
-import { fetchAuthorizationsRequest } from '../../../modules/authorization/actions'
+import { AuthorizationAction } from '../../../modules/authorization/types'
+import { RootStateOrAny } from '../../../types'
 import { AuthorizationModal } from './AuthorizationModal'
+import { getStepStatus } from './utils'
 import {
   AuthorizationStepStatus,
+  MapDispatch,
+  MapDispatchProps,
   MapStateProps,
   OwnProps,
-  MapDispatch,
-  MapDispatchProps
 } from './AuthorizationModal.types'
-import { getStepStatus } from './utils'
-import { RootStateOrAny } from '../../../types'
 
 const mapState = (state: RootStateOrAny, ownProps: OwnProps): MapStateProps => {
   const {
     authorization,
     requiredAllowance,
     getConfirmationStatus,
-    getConfirmationError
+    getConfirmationError,
   } = ownProps
   return {
     revokeStatus: getStepStatus(
       state,
       AuthorizationAction.REVOKE,
       authorization,
-      undefined
+      undefined,
     ),
     grantStatus: getStepStatus(
       state,
       AuthorizationAction.GRANT,
       authorization,
-      requiredAllowance
+      requiredAllowance,
     ),
     confirmationStatus: getConfirmationStatus
       ? getConfirmationStatus(state)
@@ -42,16 +42,16 @@ const mapState = (state: RootStateOrAny, ownProps: OwnProps): MapStateProps => {
     confirmationError: getConfirmationError
       ? getConfirmationError(state)
       : null,
-    error: getAuthorizationFlowError(state) || getError(state) || ''
+    error: getAuthorizationFlowError(state) || getError(state) || '',
   }
 }
 
 const mapDispatch = (
   dispatch: MapDispatch,
-  ownProps: OwnProps
+  ownProps: OwnProps,
 ): MapDispatchProps => ({
   onFetchAuthorizations: () =>
-    dispatch(fetchAuthorizationsRequest([ownProps.authorization]))
+    dispatch(fetchAuthorizationsRequest([ownProps.authorization])),
 })
 
 export default connect(mapState, mapDispatch)(AuthorizationModal)

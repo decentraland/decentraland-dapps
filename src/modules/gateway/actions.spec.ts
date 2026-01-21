@@ -35,13 +35,13 @@ import {
   openFiatGatewayWidgetSuccess,
   OPEN_FIAT_GATEWAY_WIDGET_SUCCESS,
   openFiatGatewayWidgetFailure,
-  OPEN_FIAT_GATEWAY_WIDGET_FAILURE
+  OPEN_FIAT_GATEWAY_WIDGET_FAILURE,
 } from './actions'
 import {
   FiatGateway,
   FiatGatewayOptions,
   Purchase,
-  PurchaseStatus
+  PurchaseStatus,
 } from './types'
 
 jest.mock('../../lib/eth')
@@ -59,7 +59,7 @@ const mockPurchase: Purchase = {
   status: PurchaseStatus.PENDING,
   gateway: NetworkGatewayType.MOON_PAY,
   txHash: 'mock-tx-hash',
-  paymentMethod: 'credit_debit_card'
+  paymentMethod: 'credit_debit_card',
 }
 
 describe('when creating the action that signals the start of a buy mana with fiat modal opening', () => {
@@ -68,7 +68,7 @@ describe('when creating the action that signals the start of a buy mana with fia
       expect(openBuyManaWithFiatModalRequest()).toEqual({
         meta: undefined,
         payload: {},
-        type: OPEN_BUY_MANA_WITH_FIAT_MODAL_REQUEST
+        type: OPEN_BUY_MANA_WITH_FIAT_MODAL_REQUEST,
       })
     })
   })
@@ -79,9 +79,9 @@ describe('when creating the action that signals the start of a buy mana with fia
       expect(openBuyManaWithFiatModalRequest(selectedNetwork)).toEqual({
         meta: undefined,
         payload: {
-          selectedNetwork
+          selectedNetwork,
         },
-        type: OPEN_BUY_MANA_WITH_FIAT_MODAL_REQUEST
+        type: OPEN_BUY_MANA_WITH_FIAT_MODAL_REQUEST,
       })
     })
   })
@@ -91,7 +91,7 @@ describe('when creating the action that signals the successful opening of the bu
   it('should return an action signaling the success of the buy mana with fiat modal opening', () => {
     expect(openBuyManaWithFiatModalSuccess()).toEqual({
       meta: undefined,
-      type: OPEN_BUY_MANA_WITH_FIAT_MODAL_SUCCESS
+      type: OPEN_BUY_MANA_WITH_FIAT_MODAL_SUCCESS,
     })
   })
 })
@@ -102,9 +102,9 @@ describe('when creating the action that signals the unsuccessful opening of the 
     expect(openBuyManaWithFiatModalFailure(defaultError)).toEqual({
       meta: undefined,
       payload: {
-        error: defaultError
+        error: defaultError,
       },
-      type: OPEN_BUY_MANA_WITH_FIAT_MODAL_FAILURE
+      type: OPEN_BUY_MANA_WITH_FIAT_MODAL_FAILURE,
     })
   })
 })
@@ -112,14 +112,14 @@ describe('when creating the action that signals the unsuccessful opening of the 
 describe('when creating the action that signals the start of a mana fiat gateway modal opening', () => {
   it('should return an object representing the action', () => {
     expect(
-      openManaFiatGatewayRequest(Network.ETHEREUM, NetworkGatewayType.TRANSAK)
+      openManaFiatGatewayRequest(Network.ETHEREUM, NetworkGatewayType.TRANSAK),
     ).toEqual({
       meta: undefined,
       payload: {
         network: Network.ETHEREUM,
-        gateway: NetworkGatewayType.TRANSAK
+        gateway: NetworkGatewayType.TRANSAK,
       },
-      type: OPEN_MANA_FIAT_GATEWAY_REQUEST
+      type: OPEN_MANA_FIAT_GATEWAY_REQUEST,
     })
   })
 })
@@ -128,7 +128,7 @@ describe('when creating the action that signals the successful opening of the ma
   it('should return an action signaling the success of the mana fiat gateway modal opening', () => {
     expect(openManaFiatGatewaySuccess()).toEqual({
       meta: undefined,
-      type: OPEN_MANA_FIAT_GATEWAY_SUCCESS
+      type: OPEN_MANA_FIAT_GATEWAY_SUCCESS,
     })
   })
 })
@@ -140,16 +140,16 @@ describe('when creating the action that signals the unsuccessful opening of the 
       openManaFiatGatewayFailure(
         Network.ETHEREUM,
         NetworkGatewayType.MOON_PAY,
-        defaultError
-      )
+        defaultError,
+      ),
     ).toEqual({
       meta: undefined,
       payload: {
         network: Network.ETHEREUM,
         gateway: NetworkGatewayType.MOON_PAY,
-        error: defaultError
+        error: defaultError,
       },
-      type: OPEN_MANA_FIAT_GATEWAY_FAILURE
+      type: OPEN_MANA_FIAT_GATEWAY_FAILURE,
     })
   })
 })
@@ -161,16 +161,16 @@ describe('when creating the action to signal a completed purchase', () => {
       transactionId = 'transcation-id',
       status = MoonPayTransactionStatus.PENDING
     expect(
-      manaFiatGatewayPurchaseCompleted(network, gateway, transactionId, status)
+      manaFiatGatewayPurchaseCompleted(network, gateway, transactionId, status),
     ).toEqual({
       meta: undefined,
       payload: {
         network,
         gateway,
         transactionId,
-        status
+        status,
       },
-      type: MANA_FIAT_GATEWAY_PURCHASE_COMPLETED
+      type: MANA_FIAT_GATEWAY_PURCHASE_COMPLETED,
     })
   })
 })
@@ -186,17 +186,17 @@ describe('when creating the action to signal a failure after a purchase was comp
         network,
         gateway,
         transactionId,
-        error
-      )
+        error,
+      ),
     ).toEqual({
       meta: undefined,
       payload: {
         network,
         gateway,
         transactionId,
-        error
+        error,
       },
-      type: MANA_FIAT_GATEWAY_PURCHASE_COMPLETED_FAILURE
+      type: MANA_FIAT_GATEWAY_PURCHASE_COMPLETED_FAILURE,
     })
   })
 })
@@ -220,12 +220,12 @@ describe('when creating the action to signal the addition of a MANA purchase as 
           from: 'mock-address',
           hash: 'mock-tx-hash',
           payload: {
-            purchase: mockPurchase
-          }
+            purchase: mockPurchase,
+          },
         },
-        purchase: mockPurchase
+        purchase: mockPurchase,
       },
-      type: ADD_MANA_PURCHASE_AS_TRANSACTION
+      type: ADD_MANA_PURCHASE_AS_TRANSACTION,
     })
   })
 })
@@ -235,9 +235,9 @@ describe('when creating the action to set the purchase', () => {
     expect(setPurchase(mockPurchase)).toEqual({
       meta: undefined,
       payload: {
-        purchase: mockPurchase
+        purchase: mockPurchase,
       },
-      type: SET_PURCHASE
+      type: SET_PURCHASE,
     })
   })
 })
@@ -247,7 +247,7 @@ describe('when creating the action that signals the poll purchase status request
     expect(pollPurchaseStatusRequest(mockPurchase)).toEqual({
       meta: undefined,
       payload: { purchase: mockPurchase },
-      type: POLL_PURCHASE_STATUS_REQUEST
+      type: POLL_PURCHASE_STATUS_REQUEST,
     })
   })
 })
@@ -256,7 +256,7 @@ describe('when creating the action that signals success in the poll purchase sta
   it('should return an action signaling the success of the buy mana with fiat modal opening', () => {
     expect(pollPurchaseStatusSuccess()).toEqual({
       meta: undefined,
-      type: POLL_PURCHASE_STATUS_SUCCESS
+      type: POLL_PURCHASE_STATUS_SUCCESS,
     })
   })
 })
@@ -267,9 +267,9 @@ describe('when creating the action that signals failure in the poll purchase sta
     expect(pollPurchaseStatusFailure(defaultError)).toEqual({
       meta: undefined,
       payload: {
-        error: defaultError
+        error: defaultError,
       },
-      type: POLL_PURCHASE_STATUS_FAILURE
+      type: POLL_PURCHASE_STATUS_FAILURE,
     })
   })
 })
@@ -286,9 +286,9 @@ describe('when creating the action that signals the start of the fiat gateway wi
       meta: undefined,
       payload: {
         gateway,
-        data
+        data,
       },
-      type: OPEN_FIAT_GATEWAY_WIDGET_REQUEST
+      type: OPEN_FIAT_GATEWAY_WIDGET_REQUEST,
     })
   })
 })
@@ -297,7 +297,7 @@ describe('when creating the action that signals the success of the fiat gateway 
   it('should return an action signaling the rquest of the fiat gawteway widget opening', () => {
     expect(openFiatGatewayWidgetSuccess()).toEqual({
       meta: undefined,
-      type: OPEN_FIAT_GATEWAY_WIDGET_SUCCESS
+      type: OPEN_FIAT_GATEWAY_WIDGET_SUCCESS,
     })
   })
 })
@@ -311,9 +311,9 @@ describe('when creating the action that signals the failure of the fiat gateway 
     expect(openFiatGatewayWidgetFailure(error)).toEqual({
       meta: undefined,
       payload: {
-        error
+        error,
       },
-      type: OPEN_FIAT_GATEWAY_WIDGET_FAILURE
+      type: OPEN_FIAT_GATEWAY_WIDGET_FAILURE,
     })
   })
 })

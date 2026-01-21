@@ -1,18 +1,18 @@
 import { Dispatch } from 'redux'
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import {
+  BuyManaWithFiatModalProps as BaseBuyManaWithFiatModalProps,
   BuyManaWithFiatModalI18N,
   BuyManaWithFiatModalNetworkI18N,
   BuyManaWithFiatModalNetworkProps,
-  BuyManaWithFiatModalProps as BaseBuyManaWithFiatModalProps
 } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/BuyManaWithFiatModal'
+import { FeedbackModalI18N } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/FeedbackModal'
 import {
   BuyWithFiatNetworkProps,
   NetworkGatewayI18N,
   NetworkGatewayType,
-  NetworkI18N
+  NetworkI18N,
 } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
-import { FeedbackModalI18N } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/FeedbackModal'
 import { OpenManaFiatGatewayRequestAction } from '../../modules/gateway/actions'
 import { ModalProps } from '../../providers/ModalProvider/ModalProvider.types'
 
@@ -35,8 +35,8 @@ export type Props = DefaultProps &
   Omit<ModalProps, 'metadata'> & {
     metadata: Metadata
     networks?:
-    | (BuyManaWithFiatModalNetworkProps & BuyWithFiatNetworkProps)[]
-    | undefined
+      | (BuyManaWithFiatModalNetworkProps & BuyWithFiatNetworkProps)[]
+      | undefined
     hasTranslations?: boolean
     onContinue: (network: Network, gateway: NetworkGatewayType) => void
   }

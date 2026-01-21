@@ -1,11 +1,11 @@
-import { loadingReducer, LoadingState } from '../loading/reducer'
+import { LoadingState, loadingReducer } from '../loading/reducer'
 import {
+  FETCH_APPLICATION_FEATURES_FAILURE,
+  FETCH_APPLICATION_FEATURES_REQUEST,
+  FETCH_APPLICATION_FEATURES_SUCCESS,
   FetchApplicationFeaturesFailureAction,
   FetchApplicationFeaturesRequestAction,
   FetchApplicationFeaturesSuccessAction,
-  FETCH_APPLICATION_FEATURES_FAILURE,
-  FETCH_APPLICATION_FEATURES_REQUEST,
-  FETCH_APPLICATION_FEATURES_SUCCESS
 } from './actions'
 import { ApplicationFeatures } from './types'
 
@@ -20,7 +20,7 @@ export const INITIAL_STATE: FeaturesState = {
   data: {},
   loading: [],
   hasLoadedInitialFlags: false,
-  error: null
+  error: null,
 }
 
 export type FeaturesReducerAction =
@@ -30,14 +30,14 @@ export type FeaturesReducerAction =
 
 export const featuresReducer = (
   state = INITIAL_STATE,
-  action: FeaturesReducerAction
+  action: FeaturesReducerAction,
 ): FeaturesState => {
   switch (action.type) {
     case FETCH_APPLICATION_FEATURES_REQUEST: {
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
-        error: null
+        error: null,
       }
     }
     case FETCH_APPLICATION_FEATURES_SUCCESS: {
@@ -47,7 +47,7 @@ export const featuresReducer = (
         ...state,
         loading: loadingReducer(state.loading, action),
         hasLoadedInitialFlags: true,
-        data: features
+        data: features,
       }
     }
     case FETCH_APPLICATION_FEATURES_FAILURE: {
@@ -55,7 +55,7 @@ export const featuresReducer = (
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
-        error
+        error,
       }
     }
     default:

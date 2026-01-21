@@ -1,5 +1,5 @@
-import { Network } from '@dcl/schemas/dist/dapps/network'
 import { action } from 'typesafe-actions'
+import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 import { getChainIdByNetwork } from '../../lib/eth'
 import { buildTransactionWithFromPayload } from '../transaction/utils'
@@ -8,7 +8,7 @@ import {
   FiatGateway,
   FiatGatewayListeners,
   FiatGatewayOptions,
-  Purchase
+  Purchase,
 } from './types'
 
 // Open MANA-FIAT Gateway
@@ -45,7 +45,7 @@ export const OPEN_MANA_FIAT_GATEWAY_FAILURE = '[Failure] Open MANA-FIAT Gateway'
 
 export const openManaFiatGatewayRequest = (
   network: Network,
-  gateway: NetworkGatewayType
+  gateway: NetworkGatewayType,
 ) => action(OPEN_MANA_FIAT_GATEWAY_REQUEST, { network, gateway })
 
 export const openManaFiatGatewaySuccess = () =>
@@ -54,7 +54,7 @@ export const openManaFiatGatewaySuccess = () =>
 export const openManaFiatGatewayFailure = (
   network: Network,
   gateway: NetworkGatewayType,
-  error: string
+  error: string,
 ) => action(OPEN_MANA_FIAT_GATEWAY_FAILURE, { network, gateway, error })
 
 export type OpenManaFiatGatewayRequestAction = ReturnType<
@@ -77,25 +77,25 @@ export const manaFiatGatewayPurchaseCompleted = (
   network: Network,
   gateway: NetworkGatewayType,
   transactionId: string,
-  status: MoonPayTransactionStatus
+  status: MoonPayTransactionStatus,
 ) =>
   action(MANA_FIAT_GATEWAY_PURCHASE_COMPLETED, {
     network,
     gateway,
     transactionId,
-    status
+    status,
   })
 export const manaFiatGatewayPurchaseCompletedFailure = (
   network: Network,
   gateway: NetworkGatewayType,
   transactionId: string,
-  error: string
+  error: string,
 ) =>
   action(MANA_FIAT_GATEWAY_PURCHASE_COMPLETED_FAILURE, {
     network,
     gateway,
     transactionId,
-    error
+    error,
   })
 
 export type ManaFiatGatewayPurchaseCompletedAction = ReturnType<
@@ -121,9 +121,9 @@ export const addManaPurchaseAsTransaction = (purchase: Purchase) => {
       purchase.txHash,
       purchase.address,
       {
-        purchase
-      }
-    )
+        purchase,
+      },
+    ),
   })
 }
 
@@ -172,12 +172,12 @@ export const OPEN_FIAT_GATEWAY_WIDGET_FAILURE =
 export const openFiatGatewayWidgetRequest = (
   gateway: FiatGateway,
   data: FiatGatewayOptions,
-  listeners?: FiatGatewayListeners
+  listeners?: FiatGatewayListeners,
 ) =>
   action(OPEN_FIAT_GATEWAY_WIDGET_REQUEST, {
     gateway,
     data,
-    listeners
+    listeners,
   })
 
 export const openFiatGatewayWidgetSuccess = () =>

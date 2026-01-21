@@ -1,29 +1,29 @@
 import { EventChannel, eventChannel } from 'redux-saga'
 import { call, fork, put, select, take, takeEvery } from 'redux-saga/effects'
 import { ErrorCode, MetaTransactionError } from 'decentraland-transactions'
-import {
-  renderToast,
-  ShowToastAction,
-  SHOW_TOAST,
-  HIDE_TOAST,
-  HideToastAction,
-  showToast,
-  hideAllToasts
-} from './actions'
-import { getState } from './selectors'
-import * as cache from './cache'
+import { SWITCH_NETWORK_SUCCESS } from '../wallet/actions'
+import { transactionEvents } from '../wallet/utils/transactionEvents'
 import {
   TransactionEventData,
-  TransactionEventType
+  TransactionEventType,
 } from '../wallet/utils/types'
-import { transactionEvents } from '../wallet/utils/transactionEvents'
-import { SWITCH_NETWORK_SUCCESS } from '../wallet/actions'
+import {
+  HIDE_TOAST,
+  HideToastAction,
+  SHOW_TOAST,
+  ShowToastAction,
+  hideAllToasts,
+  renderToast,
+  showToast,
+} from './actions'
+import * as cache from './cache'
+import { getState } from './selectors'
 import {
   getContractAccountErrorToast,
   getHighCongestionErrorToast,
   getInvalidAddressErrorToast,
   getSalePriceTooLowErrorToast,
-  getUnknownErrorToast
+  getUnknownErrorToast,
 } from './toasts/meta-transactions'
 
 export function* toastSaga() {
@@ -51,9 +51,9 @@ function* handleHideToast(action: HideToastAction) {
 }
 
 export function createMetaTransactionsErrorChannel() {
-  return eventChannel<ErrorCode>(emitter => {
+  return eventChannel<ErrorCode>((emitter) => {
     function handleError(
-      data: TransactionEventData<TransactionEventType.ERROR>
+      data: TransactionEventData<TransactionEventType.ERROR>,
     ) {
       if (data.error instanceof MetaTransactionError) {
         emitter(data.error.code)
@@ -67,7 +67,7 @@ export function createMetaTransactionsErrorChannel() {
 
 export function* watchMetaTransactionErrors() {
   const channel: EventChannel<ErrorCode> = yield call(
-    createMetaTransactionsErrorChannel
+    createMetaTransactionsErrorChannel,
   )
   while (true) {
     const code: ErrorCode = yield take(channel)

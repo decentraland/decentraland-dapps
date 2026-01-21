@@ -6,12 +6,12 @@ import {
   Trade,
   TradeAsset,
   TradeAssetType,
-  TradeCreation
+  TradeCreation,
 } from '@dcl/schemas'
 import {
   ContractData,
   ContractName,
-  getContract
+  getContract,
 } from 'decentraland-transactions'
 import { getNetworkProvider, getSigner } from './eth'
 import { fromMillisecondsToSeconds } from './time'
@@ -20,20 +20,20 @@ export const OFFCHAIN_MARKETPLACE_TYPES: Record<string, TypedDataField[]> = {
   Trade: [
     { name: 'checks', type: 'Checks' },
     { name: 'sent', type: 'AssetWithoutBeneficiary[]' },
-    { name: 'received', type: 'Asset[]' }
+    { name: 'received', type: 'Asset[]' },
   ],
   Asset: [
     { name: 'assetType', type: 'uint256' },
     { name: 'contractAddress', type: 'address' },
     { name: 'value', type: 'uint256' },
     { name: 'extra', type: 'bytes' },
-    { name: 'beneficiary', type: 'address' }
+    { name: 'beneficiary', type: 'address' },
   ],
   AssetWithoutBeneficiary: [
     { name: 'assetType', type: 'uint256' },
     { name: 'contractAddress', type: 'address' },
     { name: 'value', type: 'uint256' },
-    { name: 'extra', type: 'bytes' }
+    { name: 'extra', type: 'bytes' },
   ],
   Checks: [
     { name: 'uses', type: 'uint256' },
@@ -43,14 +43,14 @@ export const OFFCHAIN_MARKETPLACE_TYPES: Record<string, TypedDataField[]> = {
     { name: 'contractSignatureIndex', type: 'uint256' },
     { name: 'signerSignatureIndex', type: 'uint256' },
     { name: 'allowedRoot', type: 'bytes32' },
-    { name: 'externalChecks', type: 'ExternalCheck[]' }
+    { name: 'externalChecks', type: 'ExternalCheck[]' },
   ],
   ExternalCheck: [
     { name: 'contractAddress', type: 'address' },
     { name: 'selector', type: 'bytes4' },
     { name: 'value', type: 'bytes' },
-    { name: 'required', type: 'bool' }
-  ]
+    { name: 'required', type: 'bool' },
+  ],
 }
 
 export async function getOffChainMarketplaceContract(chainId: ChainId) {
@@ -60,12 +60,12 @@ export async function getOffChainMarketplaceContract(chainId: ChainId) {
   }
   const { address, abi } = getContract(
     ContractName.OffChainMarketplaceV2,
-    chainId
+    chainId,
   )
   const instance = new ethers.Contract(
     address,
     abi,
-    new ethers.providers.Web3Provider(provider)
+    new ethers.providers.Web3Provider(provider),
   )
   return instance
 }
@@ -94,35 +94,35 @@ export function generateTradeValues(trade: Omit<TradeCreation, 'signature'>) {
       contractSignatureIndex: trade.checks.contractSignatureIndex,
       signerSignatureIndex: trade.checks.signerSignatureIndex,
       allowedRoot: ethers.utils.hexZeroPad(trade.checks.allowedRoot, 32),
-      externalChecks: trade.checks.externalChecks?.map(externalCheck => ({
+      externalChecks: trade.checks.externalChecks?.map((externalCheck) => ({
         contractAddress: externalCheck.contractAddress,
         selector: externalCheck.selector,
         // '0x' is the default value for value bytes (0 bytes)
         value: externalCheck.value ? externalCheck.value : '0x',
-        required: externalCheck.required
-      }))
+        required: externalCheck.required,
+      })),
     },
-    sent: trade.sent.map(asset => ({
-      assetType: asset.assetType,
-      contractAddress: asset.contractAddress,
-      value: getValueForTradeAsset(asset),
-      // '0x' is the default value for value bytes (0 bytes)
-      extra: asset.extra ? asset.extra : '0x'
-    })),
-    received: trade.received.map(asset => ({
+    sent: trade.sent.map((asset) => ({
       assetType: asset.assetType,
       contractAddress: asset.contractAddress,
       value: getValueForTradeAsset(asset),
       // '0x' is the default value for value bytes (0 bytes)
       extra: asset.extra ? asset.extra : '0x',
-      beneficiary: asset.beneficiary
-    }))
+    })),
+    received: trade.received.map((asset) => ({
+      assetType: asset.assetType,
+      contractAddress: asset.contractAddress,
+      value: getValueForTradeAsset(asset),
+      // '0x' is the default value for value bytes (0 bytes)
+      extra: asset.extra ? asset.extra : '0x',
+      beneficiary: asset.beneficiary,
+    })),
   }
 }
 
 export function getOnChainTrade(
   trade: Trade,
-  sentBeneficiaryAddress: string
+  sentBeneficiaryAddress: string,
 ): OnChainTrade {
   const tradeValues = generateTradeValues(trade)
 
@@ -132,27 +132,27 @@ export function getOnChainTrade(
     ...tradeValues,
     checks: {
       ...tradeValues.checks,
-      allowedProof: []
+      allowedProof: [],
     },
     // set the beneficiary of the sent assets to the address of the logged in user
-    sent: tradeValues.sent.map<OnChainTradeAsset>(asset => ({
+    sent: tradeValues.sent.map<OnChainTradeAsset>((asset) => ({
       ...asset,
-      beneficiary: sentBeneficiaryAddress
-    }))
+      beneficiary: sentBeneficiaryAddress,
+    })),
   }
 }
 
 export async function getTradeSignature(
-  trade: Omit<TradeCreation, 'signature'>
+  trade: Omit<TradeCreation, 'signature'>,
 ) {
   const marketplaceContract: ContractData = getContract(
     ContractName.OffChainMarketplaceV2,
-    trade.chainId
+    trade.chainId,
   )
 
   if (!marketplaceContract) {
     throw new Error(
-      `The ${ContractName.OffChainMarketplace} contract doesn't exist on chain ${trade.chainId}`
+      `The ${ContractName.OffChainMarketplace} contract doesn't exist on chain ${trade.chainId}`,
     )
   }
 
@@ -162,13 +162,13 @@ export async function getTradeSignature(
     name: marketplaceContract.name,
     version: marketplaceContract.version,
     salt: SALT,
-    verifyingContract: marketplaceContract.address
+    verifyingContract: marketplaceContract.address,
   }
 
   const signature = await signer._signTypedData(
     domain,
     OFFCHAIN_MARKETPLACE_TYPES,
-    generateTradeValues(trade)
+    generateTradeValues(trade),
   )
   return signature
 }

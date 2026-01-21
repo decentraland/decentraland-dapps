@@ -1,7 +1,6 @@
-import { getEnv, Env } from '@dcl/ui-env'
 import { Subscription, SubscriptionDetails } from '@dcl/schemas'
+import { Env, getEnv } from '@dcl/ui-env'
 import { DCLNotification } from 'decentraland-ui/dist/components/Notifications/types'
-
 import { BaseClient, BaseClientConfig } from '../lib/BaseClient'
 
 export const NOTIFICATIONS_LIMIT = 50
@@ -30,15 +29,13 @@ export class NotificationsAPI extends BaseClient {
     const { notifications } = await this.fetch<{
       notifications: Array<DCLNotification>
     }>(
-      `/notifications${
-        params.toString().length ? `?${params.toString()}` : ''
-      }`,
+      `/notifications${params.toString().length ? `?${params.toString()}` : ''}`,
       {
         metadata: {
           signer: 'dcl:navbar',
-          intent: 'dcl:navbar:see-notifications'
-        }
-      }
+          intent: 'dcl:navbar:see-notifications',
+        },
+      },
     )
 
     return notifications.map(parseNotification)
@@ -51,9 +48,9 @@ export class NotificationsAPI extends BaseClient {
       metadata: {
         notificationIds: ids,
         signer: 'dcl:navbar',
-        intent: 'dcl:navbar:read-notifications'
+        intent: 'dcl:navbar:read-notifications',
       },
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
     })
   }
 
@@ -65,8 +62,8 @@ export class NotificationsAPI extends BaseClient {
     >('/subscription', {
       metadata: {
         signer: 'dcl:account',
-        intent: 'dcl:account:manage-subscription'
-      }
+        intent: 'dcl:account:manage-subscription',
+      },
     })
   }
 
@@ -77,8 +74,8 @@ export class NotificationsAPI extends BaseClient {
       headers: { 'Content-Type': 'application/json' },
       metadata: {
         signer: 'dcl:account',
-        intent: 'dcl:account:manage-subscription'
-      }
+        intent: 'dcl:account:manage-subscription',
+      },
     })
   }
 
@@ -89,16 +86,21 @@ export class NotificationsAPI extends BaseClient {
       headers: { 'Content-Type': 'application/json' },
       metadata: {
         signer: 'dcl:account',
-        intent: 'dcl:account:manage-subscription'
-      }
+        intent: 'dcl:account:manage-subscription',
+      },
     })
   }
 
-  async postEmailConfirmationCode(body: { address: string; code: string, turnstileToken?: string, source?: string }) {
+  async postEmailConfirmationCode(body: {
+    address: string
+    code: string
+    turnstileToken?: string
+    source?: string
+  }) {
     return this.fetch('/confirm-email', {
       method: 'PUT',
       body: JSON.stringify(body),
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
     })
   }
 }
@@ -127,6 +129,6 @@ export const setOnboardingDone = () => {
 const parseNotification = (notification: DCLNotification): DCLNotification => {
   return {
     ...notification,
-    timestamp: Number(notification.timestamp)
+    timestamp: Number(notification.timestamp),
   }
 }

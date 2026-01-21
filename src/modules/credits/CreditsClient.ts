@@ -4,11 +4,14 @@ import { BaseClient, BaseClientConfig } from '../../lib'
 import {
   CreditsNameRouteResponse,
   CreditsResponse,
-  SeasonResponse
+  SeasonResponse,
 } from './types'
 
 export class CreditsClient extends BaseClient {
-  constructor(public readonly url: string, config?: BaseClientConfig) {
+  constructor(
+    public readonly url: string,
+    config?: BaseClientConfig,
+  ) {
     super(url, config)
   }
   /**
@@ -19,7 +22,7 @@ export class CreditsClient extends BaseClient {
   async fetchCredits(address: string): Promise<CreditsResponse> {
     try {
       const response = await this.fetch<CreditsResponse>(
-        `/users/${address}/credits`
+        `/users/${address}/credits`,
       )
       return response
     } catch (error) {
@@ -50,10 +53,10 @@ export class CreditsClient extends BaseClient {
    */
   async fetchCreditsNameRoute(
     name: string,
-    chainId: ChainId
+    chainId: ChainId,
   ): Promise<CreditsNameRouteResponse> {
     const response = await this.fetch<CreditsNameRouteResponse>(
-      `/credits-name-route?name=${encodeURIComponent(name)}&chainId=${chainId}`
+      `/credits-name-route?name=${encodeURIComponent(name)}&chainId=${chainId}`,
     )
     return response
   }
@@ -68,7 +71,7 @@ export class CreditsClient extends BaseClient {
   createSSEConnection(
     address: string,
     onMessage: (data: CreditsResponse) => void,
-    onError: (error: Event) => void
+    onError: (error: Event) => void,
   ): { close: () => void } {
     let eventSource: EventSource | null = null
     let retryCount = 0
@@ -86,8 +89,8 @@ export class CreditsClient extends BaseClient {
       eventSource = new EventSource(
         `${this.url}/users/${address}/credits/stream`,
         {
-          fetch: this.rawFetch.bind(this)
-        }
+          fetch: this.rawFetch.bind(this),
+        },
       )
 
       eventSource.onopen = () => {
@@ -96,7 +99,7 @@ export class CreditsClient extends BaseClient {
         console.log('SSE connection established')
       }
 
-      eventSource.onmessage = event => {
+      eventSource.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data) as CreditsResponse
           onMessage(data)
@@ -105,7 +108,7 @@ export class CreditsClient extends BaseClient {
         }
       }
 
-      eventSource.onerror = error => {
+      eventSource.onerror = (error) => {
         console.error('SSE connection error:', error)
 
         // Close the connection
@@ -118,13 +121,13 @@ export class CreditsClient extends BaseClient {
         if (retryCount < MAX_RETRIES) {
           retryCount++
           console.log(
-            `Reconnecting SSE (attempt ${retryCount}/${MAX_RETRIES})...`
+            `Reconnecting SSE (attempt ${retryCount}/${MAX_RETRIES})...`,
           )
           // Store timeout ID so we can cancel it if needed
           reconnectTimeout = window.setTimeout(connect, RETRY_DELAY_MS)
         } else {
           console.error(
-            `Max SSE reconnection attempts (${MAX_RETRIES}) reached`
+            `Max SSE reconnection attempts (${MAX_RETRIES}) reached`,
           )
           onError(error)
         }
@@ -148,7 +151,7 @@ export class CreditsClient extends BaseClient {
           eventSource.close()
           eventSource = null
         }
-      }
+      },
     }
   }
 }

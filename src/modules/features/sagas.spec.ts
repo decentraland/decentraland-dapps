@@ -3,7 +3,7 @@ import { call } from 'redux-saga/effects'
 import {
   fetchApplicationFeaturesFailure,
   fetchApplicationFeaturesRequest,
-  fetchApplicationFeaturesSuccess
+  fetchApplicationFeaturesSuccess,
 } from './actions'
 import { getMockApplicationFeaturesRecord } from './actions.spec'
 import { featuresSaga } from './sagas'
@@ -31,8 +31,8 @@ describe('when handling the request for fetching application features', () => {
         .provide([
           [
             call(fetchApplicationFeatures, apps),
-            Promise.reject(new Error(error))
-          ]
+            Promise.reject(new Error(error)),
+          ],
         ])
         .dispatch(fetchApplicationFeaturesRequest(apps))
         .put(fetchApplicationFeaturesFailure(apps, error))
@@ -53,8 +53,8 @@ describe('when providing a polling object in the saga configuration', () => {
     config = {
       polling: {
         apps,
-        delay
-      }
+        delay,
+      },
     }
   })
 
@@ -77,8 +77,8 @@ describe('when providing a polling object in the saga configuration', () => {
         .provide([
           [
             call(fetchApplicationFeatures, apps),
-            Promise.reject(new Error(error))
-          ]
+            Promise.reject(new Error(error)),
+          ],
         ])
         .put(fetchApplicationFeaturesRequest(apps))
         .put(fetchApplicationFeaturesFailure(apps, error))

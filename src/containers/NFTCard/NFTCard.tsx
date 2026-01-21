@@ -7,16 +7,16 @@ export const NFTCard = (props: NFTCardProps) => {
   const i18n = {
     network: {
       [Network.ETHEREUM]: 'Ethereum',
-      [Network.MATIC]: 'Polygon'
+      [Network.MATIC]: 'Polygon',
     },
     bodyShape: {
       male: t('@dapps.nft_card.body_shape.male'),
       female: t('@dapps.nft_card.body_shape.female'),
-      unisex: t('@dapps.nft_card.body_shape.unisex')
+      unisex: t('@dapps.nft_card.body_shape.unisex'),
     },
     playMode: {
       loop: t('@dapps.nft_card.play_mode.loop'),
-      once: t('@dapps.nft_card.play_mode.once')
+      once: t('@dapps.nft_card.play_mode.once'),
     },
     category: {
       [WearableCategory.EYEBROWS]: t('@dapps.nft_card.category.eyebrows'),
@@ -36,11 +36,11 @@ export const NFTCard = (props: NFTCardProps) => {
       [WearableCategory.TIARA]: t('@dapps.nft_card.category.tiara'),
       [WearableCategory.TOP_HEAD]: t('@dapps.nft_card.category.top_head'),
       [WearableCategory.SKIN]: t('@dapps.nft_card.category.skin'),
-      [WearableCategory.HANDS_WEAR]: t('@dapps.nft_card.category.hands_wear')
+      [WearableCategory.HANDS_WEAR]: t('@dapps.nft_card.category.hands_wear'),
     },
     withSound: t('@dapps.nft_card.with_sound'),
     smart: t('@dapps.nft_card.smart'),
-    social: t('@dapps.nft_card.social')
+    social: t('@dapps.nft_card.social'),
   }
 
   return <NFTCardUI i18n={i18n} {...props} />

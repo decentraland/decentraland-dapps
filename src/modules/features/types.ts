@@ -27,7 +27,7 @@ export enum ApplicationName {
   EVENTS = 'events',
   LANDING = 'landing',
   DAPPS = 'dapps',
-  TEST = 'test'
+  TEST = 'test',
 }
 
 export type Polling = {
@@ -51,5 +51,5 @@ export enum FeatureName {
   CREDITS = 'credits',
   USER_WALLETS = 'alfa-marketplace-credits',
   LAUNCHER_LINKS = 'launcher-links',
-  DOWNLOAD_IN_SUCCESS_PAGE = 'download-in-success-page'
+  DOWNLOAD_IN_SUCCESS_PAGE = 'download-in-success-page',
 }

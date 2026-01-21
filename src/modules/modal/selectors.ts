@@ -1,7 +1,7 @@
 import { ModalState } from './reducer'
 
-export const getState: (state: any) => ModalState = state => state.modal
-export const getOpenModals: (state: any) => ModalState = state => {
+export const getState: (state: any) => ModalState = (state) => state.modal
+export const getOpenModals: (state: any) => ModalState = (state) => {
   const openModals: ModalState = {}
   const modals = getState(state)
 

@@ -11,12 +11,9 @@ nock.disableNetConnect()
 
 describe('when making requests and the requests fail', () => {
   beforeEach(() => {
-    nock(urlTest)
-      .get('/test')
-      .reply(500, {})
-      .defaultReplyHeaders({
-        'Access-Control-Allow-Origin': '*'
-      })
+    nock(urlTest).get('/test').reply(500, {}).defaultReplyHeaders({
+      'Access-Control-Allow-Origin': '*',
+    })
   })
 
   describe('and there is one attempt left', () => {
@@ -24,21 +21,18 @@ describe('when making requests and the requests fail', () => {
     beforeEach(() => {
       const retry: RetryParams = {
         attempts: 1,
-        delay: 10
+        delay: 10,
       }
 
       baseApi = new BaseAPI(urlTest, retry)
 
-      nock(urlTest)
-        .get('/test')
-        .reply(500, {})
-        .defaultReplyHeaders({
-          'Access-Control-Allow-Origin': '*'
-        })
+      nock(urlTest).get('/test').reply(500, {}).defaultReplyHeaders({
+        'Access-Control-Allow-Origin': '*',
+      })
     })
     it('should retry 1 time and throw with the response error', async () => {
       await expect(baseApi.request('get', '/test')).rejects.toThrowError(
-        'Request failed with status code 500'
+        'Request failed with status code 500',
       )
       expect(nock.isDone()).toBeTruthy()
     })
@@ -48,22 +42,18 @@ describe('when making requests and the requests fail', () => {
     beforeEach(() => {
       const retry: RetryParams = {
         attempts: 3,
-        delay: 10
+        delay: 10,
       }
 
       baseApi = new BaseAPI(urlTest, retry)
 
-      nock(urlTest)
-        .get('/test')
-        .times(3)
-        .reply(500, {})
-        .defaultReplyHeaders({
-          'Access-Control-Allow-Origin': '*'
-        })
+      nock(urlTest).get('/test').times(3).reply(500, {}).defaultReplyHeaders({
+        'Access-Control-Allow-Origin': '*',
+      })
     })
     it('should retry 3 times and throw with the response error', async () => {
       await expect(baseApi.request('get', '/test')).rejects.toThrowError(
-        'Request failed with status code 500'
+        'Request failed with status code 500',
       )
       expect(nock.isDone()).toBeTruthy()
     })
@@ -73,7 +63,7 @@ describe('when making requests and the requests fail', () => {
     beforeEach(() => {
       const retry: RetryParams = {
         attempts: 0,
-        delay: 10
+        delay: 10,
       }
 
       baseApi = new BaseAPI(urlTest, retry)
@@ -81,7 +71,7 @@ describe('when making requests and the requests fail', () => {
 
     it('should throw an error', async () => {
       await expect(baseApi.request('get', '/test')).rejects.toThrowError(
-        'Request failed with status code 500'
+        'Request failed with status code 500',
       )
       expect(nock.isDone()).toBeTruthy()
     })
@@ -91,7 +81,7 @@ describe('when making requests and the requests fail', () => {
     beforeEach(() => {
       const retry: RetryParams = {
         attempts: 1,
-        delay: 10
+        delay: 10,
       }
 
       baseApi = new BaseAPI(urlTest, retry)
@@ -100,12 +90,12 @@ describe('when making requests and the requests fail', () => {
         .get('/test')
         .reply(200, { data: 'my test data', ok: true })
         .defaultReplyHeaders({
-          'Access-Control-Allow-Origin': '*'
+          'Access-Control-Allow-Origin': '*',
         })
     })
     it('should retry 1 time and resolve with the response data', async () => {
       await expect(baseApi.request('get', '/test')).resolves.toEqual(
-        'my test data'
+        'my test data',
       )
 
       expect(nock.isDone()).toBeTruthy()
@@ -119,7 +109,7 @@ describe('when making requests and the requests fail', () => {
     beforeEach(() => {
       retry = {
         attempts: 1,
-        delay: 10
+        delay: 10,
       }
 
       baseApi = new BaseAPI(urlTest)
@@ -128,13 +118,13 @@ describe('when making requests and the requests fail', () => {
         .get('/test')
         .reply(200, { data: 'my test data', ok: true })
         .defaultReplyHeaders({
-          'Access-Control-Allow-Origin': '*'
+          'Access-Control-Allow-Origin': '*',
         })
     })
 
     it('should retry 1 time and resolve with the response data', async () => {
       await expect(
-        baseApi.request('get', '/test', undefined, undefined, retry)
+        baseApi.request('get', '/test', undefined, undefined, retry),
       ).resolves.toEqual('my test data')
 
       expect(nock.isDone()).toBeTruthy()
@@ -149,7 +139,7 @@ describe('when making requests and the requests fail', () => {
 
       const retry: RetryParams = {
         attempts: 0,
-        delay: 10
+        delay: 10,
       }
 
       baseApi = new BaseAPI(urlTest, retry)
@@ -158,13 +148,13 @@ describe('when making requests and the requests fail', () => {
         .get('/test')
         .reply(201, { data: 'my test data', ok: true })
         .defaultReplyHeaders({
-          'Access-Control-Allow-Origin': '*'
+          'Access-Control-Allow-Origin': '*',
         })
     })
 
     it('should resolve with the response data', async () => {
       await expect(baseApi.request('get', '/test')).resolves.toEqual(
-        'my test data'
+        'my test data',
       )
       expect(nock.isDone()).toBeTruthy()
     })

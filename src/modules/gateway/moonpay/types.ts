@@ -3,7 +3,7 @@ export enum MoonPayTransactionStatus {
   PENDING = 'pending',
   WAITING_AUTHORIZATION = 'waitingAuthorization',
   FAILED = 'failed',
-  COMPLETED = 'completed'
+  COMPLETED = 'completed',
 }
 
 type Stage = {

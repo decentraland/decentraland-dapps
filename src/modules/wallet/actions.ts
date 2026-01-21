@@ -1,6 +1,6 @@
 import { action } from 'typesafe-actions'
-import { ProviderType } from '@dcl/schemas/dist/dapps/provider-type'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
+import { ProviderType } from '@dcl/schemas/dist/dapps/provider-type'
 import { Wallet } from './types'
 
 export const CONNECT_WALLET_REQUEST = '[Request] Connect Wallet'

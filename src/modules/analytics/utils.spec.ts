@@ -14,7 +14,7 @@ import {
   getSolanaWallets,
   getAllWallets,
   trackedActions,
-  resetMiddlewareRegistration
+  resetMiddlewareRegistration,
 } from './utils'
 
 jest.mock('isbot')
@@ -30,23 +30,23 @@ describe('Analytics Utils', () => {
       track: jest.fn(),
       user: jest.fn().mockReturnValue({ anonymousId: jest.fn() }),
       addSourceMiddleware: jest.fn(),
-      _walletMiddlewareRegistered: false
+      _walletMiddlewareRegistered: false,
     }
 
     mockWindow = {
       navigator: { userAgent: 'test-user-agent' },
       analytics: mockAnalytics,
       ethereum: undefined,
-      solana: undefined
+      solana: undefined,
     }
 
     Object.defineProperty(global, 'window', {
       value: mockWindow,
-      writable: true
+      writable: true,
     })
 
     // Clear tracked actions before each test
-    Object.keys(trackedActions).forEach(key => delete trackedActions[key])
+    Object.keys(trackedActions).forEach((key) => delete trackedActions[key])
 
     // Reset middleware registration for each test
     resetMiddlewareRegistration()
@@ -57,7 +57,7 @@ describe('Analytics Utils', () => {
   afterEach(() => {
     jest.resetAllMocks()
     // Clean up any tracked actions and state
-    Object.keys(trackedActions).forEach(key => delete trackedActions[key])
+    Object.keys(trackedActions).forEach((key) => delete trackedActions[key])
     resetMiddlewareRegistration()
   })
 
@@ -79,7 +79,7 @@ describe('Analytics Utils', () => {
         expect(trackedActions[actionType]).toEqual({
           actionType,
           eventName,
-          getPayload
+          getPayload,
         })
       })
     })
@@ -104,7 +104,7 @@ describe('Analytics Utils', () => {
         add(actionType)
 
         expect(consoleSpy).toHaveBeenCalledWith(
-          `Analytics: the action type "${actionType}" is already being tracked!`
+          `Analytics: the action type "${actionType}" is already being tracked!`,
         )
       })
 
@@ -125,7 +125,7 @@ describe('Analytics Utils', () => {
         trackedActions['TEST_ACTION'] = {
           actionType: 'TEST_ACTION',
           eventName: 'Test Event',
-          getPayload: jest.fn().mockReturnValue({ data: 'test' })
+          getPayload: jest.fn().mockReturnValue({ data: 'test' }),
         }
       })
 
@@ -133,7 +133,7 @@ describe('Analytics Utils', () => {
         track(action)
 
         expect(mockAnalytics.track).toHaveBeenCalledWith('Test Event', {
-          data: 'test'
+          data: 'test',
         })
       })
     })
@@ -182,7 +182,7 @@ describe('Analytics Utils', () => {
         eventNameFn = jest.fn().mockReturnValue('Dynamic Event 123')
         trackedActions['DYNAMIC_ACTION'] = {
           actionType: 'DYNAMIC_ACTION',
-          eventName: eventNameFn
+          eventName: eventNameFn,
         }
       })
 
@@ -197,7 +197,7 @@ describe('Analytics Utils', () => {
 
         expect(mockAnalytics.track).toHaveBeenCalledWith(
           'Dynamic Event 123',
-          undefined
+          undefined,
         )
       })
     })
@@ -208,7 +208,7 @@ describe('Analytics Utils', () => {
       beforeEach(() => {
         action = { type: 'NO_EVENT_NAME_ACTION' }
         trackedActions['NO_EVENT_NAME_ACTION'] = {
-          actionType: 'NO_EVENT_NAME_ACTION'
+          actionType: 'NO_EVENT_NAME_ACTION',
         }
       })
 
@@ -217,7 +217,7 @@ describe('Analytics Utils', () => {
 
         expect(mockAnalytics.track).toHaveBeenCalledWith(
           'NO_EVENT_NAME_ACTION',
-          undefined
+          undefined,
         )
       })
     })
@@ -268,7 +268,7 @@ describe('Analytics Utils', () => {
         const result = isTrackable(null as any)
 
         expect(consoleSpy).toHaveBeenCalledWith(
-          'Analytics: invalid action "null"'
+          'Analytics: invalid action "null"',
         )
         expect(result).toBe(false)
       })
@@ -278,7 +278,7 @@ describe('Analytics Utils', () => {
         const result = isTrackable(action)
 
         expect(consoleSpy).toHaveBeenCalledWith(
-          `Analytics: invalid action "${JSON.stringify(action)}"`
+          `Analytics: invalid action "${JSON.stringify(action)}"`,
         )
         expect(result).toBe(false)
       })
@@ -290,7 +290,7 @@ describe('Analytics Utils', () => {
       beforeEach(() => {
         Object.defineProperty(global, 'window', {
           value: undefined,
-          writable: true
+          writable: true,
         })
       })
 
@@ -304,11 +304,11 @@ describe('Analytics Utils', () => {
     describe('when window.analytics is undefined', () => {
       beforeEach(() => {
         const windowWithoutAnalytics = {
-          navigator: { userAgent: 'test-user-agent' }
+          navigator: { userAgent: 'test-user-agent' },
         }
         Object.defineProperty(global, 'window', {
           value: windowWithoutAnalytics,
-          writable: true
+          writable: true,
         })
       })
 
@@ -363,7 +363,7 @@ describe('Analytics Utils', () => {
       const action = { type: 'TEST_ACTION' }
       trackedActions['TEST_ACTION'] = {
         actionType: 'TEST_ACTION',
-        getPayload: jest.fn().mockReturnValue({ data: 'test' })
+        getPayload: jest.fn().mockReturnValue({ data: 'test' }),
       }
 
       track(action)
@@ -381,7 +381,7 @@ describe('Analytics Utils', () => {
           address: '0x123',
           providerType: 'metamask',
           chainId: 1,
-          walletName: 'MetaMask'
+          walletName: 'MetaMask',
         }
       })
 
@@ -390,7 +390,7 @@ describe('Analytics Utils', () => {
 
         expect(mockAnalytics.track).toHaveBeenCalledWith(
           'Connect Wallet',
-          props
+          props,
         )
       })
     })

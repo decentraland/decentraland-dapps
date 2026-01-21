@@ -3,7 +3,7 @@ import { LoginModalOptionType } from 'decentraland-ui/dist/components/LoginModal
 import {
   isCoinbaseProvider,
   isCucumberProvider,
-  isDapperProvider
+  isDapperProvider,
 } from '../../lib/eth'
 
 const {
@@ -14,11 +14,11 @@ const {
   COINBASE,
   WALLET_CONNECT,
   WALLET_LINK,
-  METAMASK_MOBILE
+  METAMASK_MOBILE,
 } = LoginModalOptionType
 
 export function toModalOptionType(
-  providerType: ProviderType
+  providerType: ProviderType,
 ): LoginModalOptionType | undefined {
   switch (providerType) {
     case ProviderType.METAMASK_MOBILE:
@@ -46,7 +46,7 @@ export function toModalOptionType(
 }
 
 export function toProviderType(
-  modalOptionType: LoginModalOptionType
+  modalOptionType: LoginModalOptionType,
 ): ProviderType {
   switch (modalOptionType) {
     // we're using the same logic of wallet connect for metamask in mobile

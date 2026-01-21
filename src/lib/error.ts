@@ -8,7 +8,7 @@ export function isErrorWithMessage(error: unknown): error is Error {
 }
 
 export function isAPIError(
-  error: unknown
+  error: unknown,
 ): error is Error & { status: number } {
   return isErrorWithMessage(error) && 'status' in error
 }

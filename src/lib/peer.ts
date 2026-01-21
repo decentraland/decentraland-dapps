@@ -1,6 +1,6 @@
 import {
+  LambdasClient,
   createLambdasClient,
-  LambdasClient
 } from 'dcl-catalyst-client/dist/client/LambdasClient'
 import { Profile } from '../modules/profile/types'
 import { BaseAPI } from './api'
@@ -15,7 +15,7 @@ export class PeerAPI extends BaseAPI {
     super(url)
     this.lambdasClient = createLambdasClient({
       url: `${url}/lambdas`,
-      fetcher
+      fetcher,
     })
   }
 
@@ -27,7 +27,7 @@ export class PeerAPI extends BaseAPI {
    */
   public async fetchProfile(
     address: string,
-    options: FetchProfileOptions = { useCache: true }
+    options: FetchProfileOptions = { useCache: true },
   ): Promise<Profile> {
     if (options.useCache && address in this.cache) {
       return this.cache[address]
@@ -35,7 +35,7 @@ export class PeerAPI extends BaseAPI {
 
     this.cache[address] = this.lambdasClient
       .getAvatarsDetailsByPost({ ids: [address.toLowerCase()] })
-      .then(profiles => profiles[0] as any)
+      .then((profiles) => profiles[0] as any)
 
     return this.cache[address]
   }
@@ -45,9 +45,9 @@ export class PeerAPI extends BaseAPI {
       return []
     }
 
-    return (this.lambdasClient.getAvatarsDetailsByPost({
-      ids: addresses.map(address => address.toLowerCase())
-    }) as unknown) as Promise<Profile[]>
+    return this.lambdasClient.getAvatarsDetailsByPost({
+      ids: addresses.map((address) => address.toLowerCase()),
+    }) as unknown as Promise<Profile[]>
   }
 
   /**
@@ -57,7 +57,7 @@ export class PeerAPI extends BaseAPI {
     const profile = await this.request(
       'GET',
       '/content/entities/profile?pointer=default' +
-        Math.floor(Math.random() * 128 + 1)
+        Math.floor(Math.random() * 128 + 1),
     )
     return profile[0]
   }

@@ -1,15 +1,15 @@
 import { AuthIdentity } from 'decentraland-crypto-fetch'
-import { WertPayload } from '../modules/gateway/types'
 import {
+  OrderResponse,
   CustomizationOptions as TransakCustomizationOptions,
-  OrderResponse
 } from '../modules/gateway/transak/types'
+import { WertPayload } from '../modules/gateway/types'
 import { BaseClient } from './BaseClient'
 
 export class MarketplaceAPI extends BaseClient {
   async signWertMessageAndCreateSession(
     body: WertPayload,
-    identity: AuthIdentity
+    identity: AuthIdentity,
   ): Promise<{ signature: string; sessionId: string }> {
     try {
       const response = await this.fetch<{
@@ -20,8 +20,8 @@ export class MarketplaceAPI extends BaseClient {
         identity,
         body: JSON.stringify(body),
         headers: {
-          'Content-Type': 'application/json'
-        }
+          'Content-Type': 'application/json',
+        },
       })
       return response
     } catch (error) {
@@ -46,14 +46,14 @@ export class MarketplaceAPI extends BaseClient {
     customizationOptions: Omit<
       TransakCustomizationOptions,
       'widgetHeight' | 'widgetWidth'
-    >
+    >,
   ): Promise<string> {
-    return this.fetch<string>(`/v1/transak/widget-url`, {
+    return this.fetch<string>('/v1/transak/widget-url', {
       method: 'post',
       body: JSON.stringify(customizationOptions),
       headers: {
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     })
   }
 }

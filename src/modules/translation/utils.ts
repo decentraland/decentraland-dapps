@@ -1,8 +1,8 @@
 import {
+  FormattedMessage,
   IntlProvider,
   createIntl,
   createIntlCache,
-  FormattedMessage
 } from 'react-intl'
 import { Locale } from 'decentraland-ui/dist/components/Language/Language'
 
@@ -21,7 +21,7 @@ export function getPreferredLocale(availableLocales: Locale[]): Locale | null {
   const navigatorLocale =
     (navigator.languages && navigator.languages[0]) || navigator.language
 
-  let locale: Locale = navigatorLocale.slice(0, 2) as Locale
+  const locale: Locale = navigatorLocale.slice(0, 2) as Locale
 
   if (!availableLocales.includes(locale)) {
     return null
@@ -32,7 +32,7 @@ export function getPreferredLocale(availableLocales: Locale[]): Locale | null {
 
 export function setCurrentLocale(
   localeName: Locale,
-  messages: Record<string, string>
+  messages: Record<string, string>,
 ) {
   const locale = {
     en: 'en-EN',
@@ -40,7 +40,7 @@ export function setCurrentLocale(
     fr: 'fr-FR',
     ko: 'ko-KR',
     zh: 'zh-CN',
-    ja: 'ja-JP'
+    ja: 'ja-JP',
   }[localeName]
 
   currentLocale = createIntl({ locale, messages }, cache)
@@ -57,7 +57,7 @@ export function t(id: string, values?: any) {
 export function t_cond(
   id: string | undefined,
   defaultId: string,
-  values?: any
+  values?: any,
 ) {
   if (!id) {
     return currentLocale.formatMessage({ id: defaultId }, values)
@@ -78,19 +78,19 @@ export function mergeTranslations<T extends { [key: string]: T | string }>(
 ) {
   return [target, ...sources].reduce<T>(
     (result, obj) => _mergeTranslations<T>(result, obj),
-    {} as T
+    {} as T,
   )
 }
 
 function _mergeTranslations<T extends { [key: string]: T | string }>(
   target: T = {} as T,
-  source: T = {} as T
+  source: T = {} as T,
 ) {
   const merged: T = Object.keys(source).reduce((result: T, key: string) => {
     // @ts-ignore
     result[key] =
       typeof source[key] === 'object'
-        ? _mergeTranslations(target[key] as T, source[key] as T)
+        ? _mergeTranslations(target[key] as T, source[key])
         : source[key]
     return result
   }, target)

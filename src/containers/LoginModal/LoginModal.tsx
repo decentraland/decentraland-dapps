@@ -1,36 +1,36 @@
 import * as React from 'react'
-import { connection } from 'decentraland-connect'
+import { ProviderType } from '@dcl/schemas/dist/dapps/provider-type'
 import {
   LoginModal as BaseLoginModal,
   LoginModalI18N,
   LoginModalOptionI18N,
-  LoginModalOptionType
+  LoginModalOptionType,
 } from 'decentraland-ui/dist/components/LoginModal/LoginModal'
-import { ProviderType } from '@dcl/schemas/dist/dapps/provider-type'
+import { connection } from 'decentraland-connect'
 import { T, t } from '../../modules/translation/utils'
-import { DefaultProps, Props, State } from './LoginModal.types'
 import { toModalOptionType, toProviderType } from './utils'
+import { DefaultProps, Props, State } from './LoginModal.types'
 
 export default class LoginModal extends React.PureComponent<Props, State> {
   static defaultProps: DefaultProps = {
-    isLoading: false
+    isLoading: false,
   }
 
   constructor(props: Props) {
     super(props)
     this.state = {
-      hasError: false
+      hasError: false,
     }
   }
 
   componentDidUpdate(prevProps: Props) {
     if (!prevProps.hasError && this.props.hasError) {
       this.setState({
-        hasError: true
+        hasError: true,
       })
     } else if (prevProps.hasError && !this.props.hasError) {
       this.setState({
-        hasError: false
+        hasError: false,
       })
     }
   }
@@ -48,7 +48,7 @@ export default class LoginModal extends React.PureComponent<Props, State> {
     return {
       title: <T id="@dapps.login.modal.title" />,
       subtitle: <T id="@dapps.login.modal.subtitle" />,
-      error: <T id="@dapps.login.modal.error" />
+      error: <T id="@dapps.login.modal.error" />,
     }
   }
 
@@ -61,7 +61,7 @@ export default class LoginModal extends React.PureComponent<Props, State> {
       email: <T id="@dapps.login.option.email" />,
       mobile: <T id="@dapps.login.option.mobile" />,
       mobile_and_browser: <T id="@dapps.login.option.mobile_and_browser" />,
-      metamask_mobile: <T id="@dapps.login.option.metamask_mobile" />
+      metamask_mobile: <T id="@dapps.login.option.metamask_mobile" />,
     }
   }
 
@@ -100,7 +100,7 @@ export default class LoginModal extends React.PureComponent<Props, State> {
                 >
                   {t('@dapps.login.modal.trezor_link')}
                 </a>
-              )
+              ),
             }}
           />
         }

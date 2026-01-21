@@ -7,7 +7,7 @@ import {
   getAssetListingsRangeInfoText,
   getCatalogCardInformation,
   getListingsRangePrice,
-  getOwnersText
+  getOwnersText,
 } from './utils'
 
 const translations: AssetCardTranslations = {
@@ -23,14 +23,14 @@ const translations: AssetCardTranslations = {
   cheapest_option_range: 'Cheapest Option within range',
   most_expensive: 'Most Expensive',
   most_expensive_range: 'Most Expensive within range',
-  also_minting: 'Buy directly from the creator'
+  also_minting: 'Buy directly from the creator',
 }
 
 const applyRange = (appliedFilters: AssetCardFilters) => {
   return (appliedFilters = {
     ...appliedFilters,
     minPrice: '100',
-    maxPrice: '1000'
+    maxPrice: '1000',
   })
 }
 
@@ -48,20 +48,20 @@ describe('AssetCard utils', () => {
         asset = {
           isOnSale: false,
           available: 0,
-          listings: 0
+          listings: 0,
         } as Item
       })
       it('should show "Not for sale" title, no icon, no extra information and no price', () => {
         const result = getCatalogCardInformation(
           asset,
           translations,
-          appliedFilters
+          appliedFilters,
         )
         expect(result).toEqual({
           action: 'Not for sale',
           actionIcon: null,
           extraInformation: null,
-          price: null
+          price: null,
         })
       })
     })
@@ -69,7 +69,7 @@ describe('AssetCard utils', () => {
     describe('when sorting by CHEAPEST', () => {
       beforeEach(() => {
         appliedFilters = {
-          sortBy: CatalogSortBy.CHEAPEST
+          sortBy: CatalogSortBy.CHEAPEST,
         }
       })
       describe('when the asset has only mint', () => {
@@ -80,20 +80,20 @@ describe('AssetCard utils', () => {
             available: 1,
             listings: 0,
             price,
-            minPrice: price
+            minPrice: price,
           } as Item
         })
         it('should show "Chepeast Option" title, no icon, no extra information and the price', () => {
           const result = getCatalogCardInformation(
             asset,
             translations,
-            appliedFilters
+            appliedFilters,
           )
           expect(result).toEqual({
             action: translations.cheapest_option,
             actionIcon: null,
             extraInformation: null,
-            price
+            price,
           })
         })
       })
@@ -106,7 +106,7 @@ describe('AssetCard utils', () => {
             available: 0,
             listings: 1,
             price,
-            minPrice: price
+            minPrice: price,
           } as Item
         })
         describe('when the asset has only one listing', () => {
@@ -114,13 +114,13 @@ describe('AssetCard utils', () => {
             const result = getCatalogCardInformation(
               asset,
               translations,
-              appliedFilters
+              appliedFilters,
             )
             expect(result).toEqual({
               action: translations.cheapest_option,
               actionIcon: null,
               extraInformation: null,
-              price
+              price,
             })
           })
         })
@@ -132,23 +132,23 @@ describe('AssetCard utils', () => {
               ...asset,
               listings: 2,
               minListingPrice,
-              maxListingPrice
+              maxListingPrice,
             }
           })
           it('should show "Chepeast Option" title, no icon, the price and the listings range in the extra section', () => {
             const result = getCatalogCardInformation(
               asset,
               translations,
-              appliedFilters
+              appliedFilters,
             )
             expect(result).toEqual({
               action: translations.cheapest_option,
               actionIcon: null,
               extraInformation: getAssetListingsRangeInfoText(
                 asset,
-                translations
+                translations,
               ),
-              price
+              price,
             })
           })
         })
@@ -166,7 +166,7 @@ describe('AssetCard utils', () => {
             price,
             minPrice: minListingPrice,
             minListingPrice,
-            maxListingPrice
+            maxListingPrice,
           } as Item
         })
         describe('and there is a range of prices applied', () => {
@@ -179,26 +179,26 @@ describe('AssetCard utils', () => {
               asset = {
                 ...asset,
                 price: BigNumber.from(
-                  ethers.utils.parseUnits(appliedFilters.minPrice as string)
+                  ethers.utils.parseUnits(appliedFilters.minPrice as string),
                 )
                   .sub(BigNumber.from(1))
-                  .toString()
+                  .toString(),
               }
             })
             it('should show "Chepeast Option" title, no icon, the min price and the mint option in the extra section', () => {
               const result = getCatalogCardInformation(
                 asset,
                 translations,
-                appliedFilters
+                appliedFilters,
               )
               expect(result).toEqual({
                 action: translations.cheapest_option_range,
                 actionIcon: null,
                 extraInformation: getAlsoAvailableForMintingText(
                   asset,
-                  translations.also_minting
+                  translations.also_minting,
                 ),
-                price: asset.minPrice
+                price: asset.minPrice,
               })
             })
           })
@@ -207,23 +207,23 @@ describe('AssetCard utils', () => {
               asset = {
                 ...asset,
                 price: BigNumber.from(
-                  ethers.utils.parseUnits(appliedFilters.maxPrice as string)
+                  ethers.utils.parseUnits(appliedFilters.maxPrice as string),
                 )
                   .add(BigNumber.from(1))
-                  .toString()
+                  .toString(),
               }
             })
             it('should show "Chepeast Option" title, no icon, the min price and no extra section', () => {
               const result = getCatalogCardInformation(
                 asset,
                 translations,
-                appliedFilters
+                appliedFilters,
               )
               expect(result).toEqual({
                 action: translations.cheapest_option_range,
                 actionIcon: null,
                 extraInformation: null,
-                price: asset.minPrice
+                price: asset.minPrice,
               })
             })
           })
@@ -234,20 +234,20 @@ describe('AssetCard utils', () => {
             beforeEach(() => {
               asset = {
                 ...asset,
-                price: asset.minPrice as string
+                price: asset.minPrice as string,
               }
             })
             it('should show "Chepeast Option" title, no icon, the min price and no extra section', () => {
               const result = getCatalogCardInformation(
                 asset,
                 translations,
-                appliedFilters
+                appliedFilters,
               )
               expect(result).toEqual({
                 action: translations.cheapest_option,
                 actionIcon: null,
                 extraInformation: null,
-                price: asset.minPrice
+                price: asset.minPrice,
               })
             })
           })
@@ -257,23 +257,23 @@ describe('AssetCard utils', () => {
                 ...asset,
                 price: BigNumber.from(asset.minPrice as string)
                   .add(1)
-                  .toString()
+                  .toString(),
               }
             })
             it('should show "Chepeast Option" title, no icon, the min price and the mint option in the extra section', () => {
               const result = getCatalogCardInformation(
                 asset,
                 translations,
-                appliedFilters
+                appliedFilters,
               )
               expect(result).toEqual({
                 action: translations.cheapest_option,
                 actionIcon: null,
                 extraInformation: getAlsoAvailableForMintingText(
                   asset,
-                  translations.also_minting
+                  translations.also_minting,
                 ),
-                price: asset.minPrice
+                price: asset.minPrice,
               })
             })
           })
@@ -293,10 +293,10 @@ describe('AssetCard utils', () => {
           price,
           minPrice: price,
           minListingPrice,
-          maxListingPrice
+          maxListingPrice,
         } as Item
         appliedFilters = {
-          sortBy: CatalogSortBy.MOST_EXPENSIVE
+          sortBy: CatalogSortBy.MOST_EXPENSIVE,
         }
       })
       describe('and there is a range applied', () => {
@@ -310,32 +310,30 @@ describe('AssetCard utils', () => {
               price: ethers.utils
                 .parseUnits(appliedFilters.maxPrice as string)
                 .sub(1)
-                .toString()
+                .toString(),
             }
           })
           describe('and minting is more expensive than the max listing', () => {
             beforeEach(() => {
               asset = {
                 ...asset,
-                maxListingPrice: BigNumber.from(asset.price)
-                  .sub(1)
-                  .toString()
+                maxListingPrice: BigNumber.from(asset.price).sub(1).toString(),
               }
             })
             it('should show most expensive in range title, no icon, the minting price and the listings range in the extra section', () => {
               const result = getCatalogCardInformation(
                 asset,
                 translations,
-                appliedFilters
+                appliedFilters,
               )
               expect(result).toEqual({
                 action: translations.most_expensive_range,
                 actionIcon: null,
                 extraInformation: getAssetListingsRangeInfoText(
                   asset,
-                  translations
+                  translations,
                 ),
-                price: asset.price
+                price: asset.price,
               })
             })
           })
@@ -343,25 +341,23 @@ describe('AssetCard utils', () => {
             beforeEach(() => {
               asset = {
                 ...asset,
-                maxListingPrice: BigNumber.from(asset.price)
-                  .add(1)
-                  .toString()
+                maxListingPrice: BigNumber.from(asset.price).add(1).toString(),
               }
             })
             it('should show "Most Expensive" title, no icon, the max listing price and the listings range in the extra section', () => {
               const result = getCatalogCardInformation(
                 asset,
                 translations,
-                appliedFilters
+                appliedFilters,
               )
               expect(result).toEqual({
                 action: translations.most_expensive_range,
                 actionIcon: null,
                 extraInformation: getAssetListingsRangeInfoText(
                   asset,
-                  translations
+                  translations,
                 ),
-                price: asset.maxListingPrice
+                price: asset.maxListingPrice,
               })
             })
           })
@@ -371,26 +367,26 @@ describe('AssetCard utils', () => {
             asset = {
               ...asset,
               price: BigNumber.from(
-                ethers.utils.parseUnits(appliedFilters.maxPrice as string)
+                ethers.utils.parseUnits(appliedFilters.maxPrice as string),
               )
                 .add(1)
-                .toString()
+                .toString(),
             }
           })
           it('should show "Most Expensive" title, no icon, the max listing price and the listings range in the extra section', () => {
             const result = getCatalogCardInformation(
               asset,
               translations,
-              appliedFilters
+              appliedFilters,
             )
             expect(result).toEqual({
               action: translations.most_expensive_range,
               actionIcon: null,
               extraInformation: getAssetListingsRangeInfoText(
                 asset,
-                translations
+                translations,
               ),
-              price: asset.maxListingPrice
+              price: asset.maxListingPrice,
             })
           })
         })
@@ -400,16 +396,16 @@ describe('AssetCard utils', () => {
           const result = getCatalogCardInformation(
             asset,
             translations,
-            appliedFilters
+            appliedFilters,
           )
           expect(result).toEqual({
             action: translations.most_expensive,
             actionIcon: null,
             extraInformation: getAssetListingsRangeInfoText(
               asset,
-              translations
+              translations,
             ),
-            price: asset.maxListingPrice
+            price: asset.maxListingPrice,
           })
         })
       })
@@ -417,11 +413,11 @@ describe('AssetCard utils', () => {
 
     describe.each(
       Object.values(CatalogSortBy).filter(
-        sortBy =>
+        (sortBy) =>
           sortBy !== CatalogSortBy.CHEAPEST &&
-          sortBy !== CatalogSortBy.MOST_EXPENSIVE
-      )
-    )('when sorting by %s', sort => {
+          sortBy !== CatalogSortBy.MOST_EXPENSIVE,
+      ),
+    )('when sorting by %s', (sort) => {
       beforeEach(() => {
         asset = {
           isOnSale: true,
@@ -430,30 +426,30 @@ describe('AssetCard utils', () => {
           price: '100',
           minPrice: '100',
           minListingPrice: '100',
-          maxListingPrice: '100'
+          maxListingPrice: '100',
         } as Item
         appliedFilters = {
-          sortBy: (sort as unknown) as CatalogSortBy
+          sortBy: sort as unknown as CatalogSortBy,
         }
       })
       describe('and there is only mint available', () => {
         beforeEach(() => {
           asset = {
             ...asset,
-            listings: 0
+            listings: 0,
           }
         })
         it('should show the mint title, mint icon, the mint price and no extra section', () => {
           const result = getCatalogCardInformation(
             asset,
             translations,
-            appliedFilters
+            appliedFilters,
           )
           expect(result).toEqual({
             action: translations.available_for_mint,
             actionIcon: 'mintingIcon',
             extraInformation: null,
-            price: asset.price
+            price: asset.price,
           })
         })
       })
@@ -465,27 +461,27 @@ describe('AssetCard utils', () => {
             isOnSale: false,
             minPrice: '10',
             minListingPrice: '10',
-            maxListingPrice: '100'
+            maxListingPrice: '100',
           }
         })
         describe('and has just 1 listing', () => {
           beforeEach(() => {
             asset = {
               ...asset,
-              listings: 1
+              listings: 1,
             }
           })
           it('should show cheapest listing label, no icon, the min price and no extra section', () => {
             const result = getCatalogCardInformation(
               asset,
               translations,
-              appliedFilters
+              appliedFilters,
             )
             expect(result).toEqual({
               action: translations.cheapest_listing,
               actionIcon: null,
               extraInformation: null,
-              price: asset.minListingPrice
+              price: asset.minListingPrice,
             })
           })
         })
@@ -493,7 +489,7 @@ describe('AssetCard utils', () => {
           beforeEach(() => {
             asset = {
               ...asset,
-              listings: 2
+              listings: 2,
             }
           })
           describe('and has a range applied', () => {
@@ -504,13 +500,13 @@ describe('AssetCard utils', () => {
               const result = getCatalogCardInformation(
                 asset,
                 translations,
-                appliedFilters
+                appliedFilters,
               )
               expect(result).toEqual({
                 action: translations.available_listings_in_range,
                 actionIcon: null,
                 extraInformation: null,
-                price: getListingsRangePrice(asset)
+                price: getListingsRangePrice(asset),
               })
             })
           })
@@ -525,7 +521,7 @@ describe('AssetCard utils', () => {
             isOnSale: true,
             minPrice: '10',
             minListingPrice: '10',
-            maxListingPrice: '100'
+            maxListingPrice: '100',
           }
         })
         describe('and has a range applied', () => {
@@ -537,26 +533,26 @@ describe('AssetCard utils', () => {
               asset = {
                 ...asset,
                 price: BigNumber.from(
-                  ethers.utils.parseUnits(appliedFilters.maxPrice as string)
+                  ethers.utils.parseUnits(appliedFilters.maxPrice as string),
                 )
                   .sub(1)
-                  .toString()
+                  .toString(),
               }
             })
             it('should show the available for mint label, mint icon and the listings range in the extra information', () => {
               const result = getCatalogCardInformation(
                 asset,
                 translations,
-                appliedFilters
+                appliedFilters,
               )
               expect(result).toEqual({
                 action: translations.available_for_mint,
                 actionIcon: 'mintingIcon',
                 extraInformation: getAssetListingsRangeInfoText(
                   asset,
-                  translations
+                  translations,
                 ),
-                price: asset.price
+                price: asset.price,
               })
             })
           })
@@ -565,26 +561,26 @@ describe('AssetCard utils', () => {
               asset = {
                 ...asset,
                 price: BigNumber.from(
-                  ethers.utils.parseUnits(appliedFilters.minPrice as string)
+                  ethers.utils.parseUnits(appliedFilters.minPrice as string),
                 )
                   .sub(1)
-                  .toString()
+                  .toString(),
               }
             })
             it('should show the available listings in range label, no icon and the minting price in the extra information', () => {
               const result = getCatalogCardInformation(
                 asset,
                 translations,
-                appliedFilters
+                appliedFilters,
               )
               expect(result).toEqual({
                 action: translations.available_listings_in_range,
                 actionIcon: null,
                 extraInformation: getAlsoAvailableForMintingText(
                   asset,
-                  translations.also_minting
+                  translations.also_minting,
                 ),
-                price: asset.minListingPrice
+                price: asset.minListingPrice,
               })
             })
           })
@@ -593,23 +589,23 @@ describe('AssetCard utils', () => {
               asset = {
                 ...asset,
                 price: BigNumber.from(
-                  ethers.utils.parseUnits(appliedFilters.maxPrice as string)
+                  ethers.utils.parseUnits(appliedFilters.maxPrice as string),
                 )
                   .add(1)
-                  .toString()
+                  .toString(),
               }
             })
             it('should show the available listings in range label, no icon and the no the extra information', () => {
               const result = getCatalogCardInformation(
                 asset,
                 translations,
-                appliedFilters
+                appliedFilters,
               )
               expect(result).toEqual({
                 action: translations.available_listings_in_range,
                 actionIcon: null,
                 extraInformation: null,
-                price: asset.minListingPrice
+                price: asset.minListingPrice,
               })
             })
           })
@@ -619,16 +615,16 @@ describe('AssetCard utils', () => {
             const result = getCatalogCardInformation(
               asset,
               translations,
-              appliedFilters
+              appliedFilters,
             )
             expect(result).toEqual({
               action: translations.available_for_mint,
               actionIcon: 'mintingIcon',
               extraInformation: getAssetListingsRangeInfoText(
                 asset,
-                translations
+                translations,
               ),
-              price: asset.price
+              price: asset.price,
             })
           })
         })

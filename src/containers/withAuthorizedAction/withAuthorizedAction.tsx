@@ -1,56 +1,56 @@
-import { connect } from 'react-redux'
-import { v4 as uuid } from 'uuid'
 import React, { useCallback, useEffect, useState } from 'react'
+import { connect } from 'react-redux'
 import { BigNumber, ethers } from 'ethers'
+import { v4 as uuid } from 'uuid'
+import { getNetworkProvider } from '../../lib/eth'
+import {
+  authorizationFlowClear,
+  authorizationFlowRequest,
+} from '../../modules/authorization/actions'
+import {
+  getAuthorizationFlowError,
+  isAuthorizing,
+} from '../../modules/authorization/selectors'
 import {
   Authorization,
   AuthorizationAction,
-  AuthorizationType
+  AuthorizationType,
 } from '../../modules/authorization/types'
 import {
   getCollectionV2ContractInstance,
   getERC20ContractInstance,
-  getERC721ContractInstance
+  getERC721ContractInstance,
 } from '../../modules/authorization/utils'
-import { getNetworkProvider } from '../../lib/eth'
-import { getData as getWallet } from '../../modules/wallet/selectors'
-import {
-  authorizationFlowClear,
-  authorizationFlowRequest
-} from '../../modules/authorization/actions'
-import { getIsFeatureEnabled } from '../../modules/features/selectors'
 import { ApplicationName, FeatureName } from '../../modules/features'
+import { getIsFeatureEnabled } from '../../modules/features/selectors'
+import { getData as getWallet } from '../../modules/wallet/selectors'
 import { isWeb2Wallet } from '../../modules/wallet/utils/providerChecks'
-import {
-  getAuthorizationFlowError,
-  isAuthorizing
-} from '../../modules/authorization/selectors'
+import { RootStateOrAny } from '../../types'
 import {
   AuthorizationModal,
+  OwnProps as AuthorizationModalOwnProps,
   AuthorizationStepStatus,
   AuthorizedAction,
-  OwnProps as AuthorizationModalOwnProps,
-  HandleGrantOptions
+  HandleGrantOptions,
 } from './AuthorizationModal'
 import {
-  WithAuthorizedActionProps,
-  MapStateProps,
+  AuthorizationTranslationKeys,
   AuthorizeActionOptions,
   MapDispatch,
   MapDispatchProps,
-  AuthorizationTranslationKeys
+  MapStateProps,
+  WithAuthorizedActionProps,
 } from './withAuthorizedAction.types'
-import { RootStateOrAny } from '../../types'
 
 const mapState = (state: RootStateOrAny): MapStateProps => ({
   isMagicAutoSignEnabled: getIsFeatureEnabled(
     state,
     ApplicationName.DAPPS,
-    FeatureName.MAGIC_AUTO_SIGN
+    FeatureName.MAGIC_AUTO_SIGN,
   ),
   authorizationError: getAuthorizationFlowError(state),
   authorizerWallet: getWallet(state),
-  isAuthorizing: isAuthorizing(state)
+  isAuthorizing: isAuthorizing(state),
 })
 
 const mapDispatch = (dispatch: MapDispatch): MapDispatchProps => ({
@@ -58,43 +58,43 @@ const mapDispatch = (dispatch: MapDispatch): MapDispatchProps => ({
   onRevoke: (
     traceId: string,
     authorization: Authorization,
-    onAuthorized?: () => void
+    onAuthorized?: () => void,
   ) =>
     dispatch(
       authorizationFlowRequest(authorization, AuthorizationAction.REVOKE, {
         traceId,
-        onAuthorized
-      })
+        onAuthorized,
+      }),
     ),
   onGrant: (
     traceId: string,
     authorization: Authorization,
     requiredAllowance?: BigNumber,
     currentAllowance?: BigNumber,
-    onAuthorized?: () => void
+    onAuthorized?: () => void,
   ) =>
     dispatch(
       authorizationFlowRequest(authorization, AuthorizationAction.GRANT, {
         requiredAllowance: requiredAllowance?.toString(),
         currentAllowance: currentAllowance?.toString(),
         traceId,
-        onAuthorized
-      })
-    )
+        onAuthorized,
+      }),
+    ),
 })
 
 export default function withAuthorizedAction<
-  P extends WithAuthorizedActionProps
+  P extends WithAuthorizedActionProps,
 >(
   WrappedComponent: React.ComponentType<P>,
   action: AuthorizedAction,
   translationKeys: AuthorizationTranslationKeys,
   getConfirmationStatus?: (state: RootStateOrAny) => AuthorizationStepStatus,
-  getConfirmationError?: (state: RootStateOrAny) => string | null
+  getConfirmationError?: (state: RootStateOrAny) => string | null,
 ): React.ComponentType<Omit<P, keyof WithAuthorizedActionProps>> {
   // TODO: Remove any type
   const WithAuthorizedActionComponent = (
-    props: MapStateProps & MapDispatchProps & any
+    props: MapStateProps & MapDispatchProps & any,
   ) => {
     const {
       authorizerWallet,
@@ -107,9 +107,8 @@ export default function withAuthorizedAction<
       ...rest
     } = props
     const [showAuthorizationModal, setShowAuthorizationModal] = useState(false)
-    const [authModalData, setAuthModalData] = useState<
-      Omit<AuthorizationModalOwnProps, 'onGrant' | 'onRevoke'>
-    >()
+    const [authModalData, setAuthModalData] =
+      useState<Omit<AuthorizationModalOwnProps, 'onGrant' | 'onRevoke'>>()
     const [isLoadingAuthorization, setIsLoadingAuthorization] = useState(false)
     const isUserLoggedInWithMagic =
       authorizerWallet && isWeb2Wallet(authorizerWallet)
@@ -126,11 +125,11 @@ export default function withAuthorizedAction<
       (
         authorization: Authorization,
         analyticsTraceId: string,
-        onAuthorized?: () => void
+        onAuthorized?: () => void,
       ) => {
         onRevoke(analyticsTraceId, authorization, onAuthorized)
       },
-      [onRevoke]
+      [onRevoke],
     )
 
     const handleGrant = useCallback(
@@ -140,10 +139,10 @@ export default function withAuthorizedAction<
           authorization,
           options?.requiredAllowance,
           options?.currentAllowance,
-          options?.onAuthorized
+          options?.onAuthorized,
         )
       },
-      [onGrant]
+      [onGrant],
     )
 
     const handleAuthorizedAction = useCallback(
@@ -159,7 +158,7 @@ export default function withAuthorizedAction<
           authorizedAddress,
           targetContractName,
           authorizedContractLabel,
-          onAuthorized
+          onAuthorized,
         } = authorizeOptions
 
         const networkProvider = await getNetworkProvider(targetContract.chainId)
@@ -171,7 +170,7 @@ export default function withAuthorizedAction<
           authorizedAddress,
           contractAddress: targetContract.address,
           chainId: targetContract.chainId,
-          contractName: targetContractName
+          contractName: targetContractName,
         } as Authorization
 
         try {
@@ -185,11 +184,11 @@ export default function withAuthorizedAction<
 
             const contract = getERC20ContractInstance(
               targetContract.address,
-              provider
+              provider,
             )
             const currentAllowance: BigNumber = await contract.allowance(
               userAddress,
-              authorizedAddress
+              authorizedAddress,
             )
 
             if (currentAllowance.gte(BigNumber.from(requiredAllowanceInWei))) {
@@ -206,7 +205,7 @@ export default function withAuthorizedAction<
               handleGrant(authorization, {
                 requiredAllowance: BigNumber.from(requiredAllowanceInWei),
                 currentAllowance: currentAllowance,
-                onAuthorized: () => onAuthorized(false)
+                onAuthorized: () => onAuthorized(false),
               })
               setIsLoadingAuthorization(false)
               return
@@ -223,16 +222,16 @@ export default function withAuthorizedAction<
               network: targetContract.network,
               onAuthorized: () => onAuthorized(false),
               getConfirmationStatus,
-              getConfirmationError
+              getConfirmationError,
             })
           } else if (authorizationType === AuthorizationType.APPROVAL) {
             const contract = getERC721ContractInstance(
               targetContract.address,
-              provider
+              provider,
             )
             const isApprovedForAll = await contract.isApprovedForAll(
               userAddress,
-              authorizedAddress
+              authorizedAddress,
             )
 
             if (isApprovedForAll) {
@@ -249,7 +248,7 @@ export default function withAuthorizedAction<
               !authorizeOptions.manual
             ) {
               handleGrant(authorization, {
-                onAuthorized: () => onAuthorized(false)
+                onAuthorized: () => onAuthorized(false),
               })
               setIsLoadingAuthorization(false)
               return
@@ -265,16 +264,15 @@ export default function withAuthorizedAction<
               targetContractLabel,
               onAuthorized: () => onAuthorized(false),
               getConfirmationStatus,
-              getConfirmationError
+              getConfirmationError,
             })
           } else {
             const contract = getCollectionV2ContractInstance(
               targetContract.address,
-              provider
+              provider,
             )
-            const isMintingAllowed = await contract.globalMinters(
-              authorizedAddress
-            )
+            const isMintingAllowed =
+              await contract.globalMinters(authorizedAddress)
 
             const { targetContractLabel } = authorizeOptions
 
@@ -290,7 +288,7 @@ export default function withAuthorizedAction<
               !authorizeOptions.manual
             ) {
               handleGrant(authorization, {
-                onAuthorized: () => onAuthorized(false)
+                onAuthorized: () => onAuthorized(false),
               })
               setIsLoadingAuthorization(false)
               return
@@ -306,7 +304,7 @@ export default function withAuthorizedAction<
               authorizedContractLabel,
               onAuthorized: () => onAuthorized(false),
               getConfirmationStatus,
-              getConfirmationError
+              getConfirmationError,
             })
           }
 
@@ -321,8 +319,8 @@ export default function withAuthorizedAction<
         isMagicAutoSignEnabled,
         isUserLoggedInWithMagic,
         handleGrant,
-        handleRevoke
-      ]
+        handleRevoke,
+      ],
     )
 
     const handleClose = useCallback(() => {
@@ -356,7 +354,7 @@ export default function withAuthorizedAction<
   }
   return connect(
     mapState,
-    mapDispatch
+    mapDispatch,
   )(WithAuthorizedActionComponent) as React.ComponentType<
     Omit<P, keyof WithAuthorizedActionProps>
   >

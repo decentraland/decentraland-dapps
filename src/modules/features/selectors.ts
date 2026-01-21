@@ -3,11 +3,11 @@ import { isLoadingType } from '../loading/selectors'
 import { FETCH_APPLICATION_FEATURES_REQUEST } from './actions'
 import { FeaturesState } from './reducer'
 import {
-  ApplicationName,
   ApplicationFeatures,
+  ApplicationName,
+  FeatureName,
   StateWithFeatures,
   Variant,
-  FeatureName
 } from './types'
 
 export const getState = (state: StateWithFeatures): FeaturesState => {
@@ -23,7 +23,7 @@ export const getState = (state: StateWithFeatures): FeaturesState => {
 }
 
 export const getData = (
-  state: StateWithFeatures
+  state: StateWithFeatures,
 ): Record<ApplicationName, ApplicationFeatures> => getState(state).data
 
 export const getLoading = (state: StateWithFeatures): LoadingState =>
@@ -50,7 +50,7 @@ export const getError = (state: StateWithFeatures): string | null =>
 export const getIsFeatureEnabled = (
   state: StateWithFeatures,
   app: ApplicationName,
-  feature: string
+  feature: string,
 ): boolean => {
   const env = getFromEnv(app, feature)
 
@@ -78,7 +78,7 @@ export const isLoadingFeatureFlags = (state: StateWithFeatures) => {
 export const getFeatureVariant = (
   state: StateWithFeatures,
   app: ApplicationName,
-  feature: string
+  feature: string,
 ): Variant | null => {
   const variant = getVariantFromEnv(app, feature)
 
@@ -91,8 +91,8 @@ export const getFeatureVariant = (
       enabled: true,
       payload: {
         type: 'string',
-        value: variant
-      }
+        value: variant,
+      },
     }
   }
 
@@ -113,7 +113,7 @@ export const hasLoadedInitialFlags = (state: StateWithFeatures) => {
 
 const getFromEnv = (
   application: ApplicationName,
-  flag: string
+  flag: string,
 ): boolean | null => {
   const envify = (word: string) => word.toUpperCase().replace(/-/g, '_')
   const key = `REACT_APP_FF_${envify(application)}_${envify(flag)}`
@@ -124,7 +124,7 @@ const getFromEnv = (
 
 const getVariantFromEnv = (
   application: ApplicationName,
-  flag: string
+  flag: string,
 ): string | null => {
   const envify = (word: string) => word.toUpperCase().replace(/-/g, '_')
   const key = `REACT_APP_FF_VARIANT_${envify(application)}_${envify(flag)}`
@@ -141,17 +141,17 @@ const getVariantFromEnv = (
  */
 export const isCreditsFeatureEnabled = (
   state: StateWithFeatures,
-  address: string
+  address: string,
 ) => {
   const userWalletsVariant = getFeatureVariant(
     state,
     ApplicationName.EXPLORER,
-    FeatureName.USER_WALLETS
+    FeatureName.USER_WALLETS,
   )
   const isMarketplaceCreditsEnabled = getIsFeatureEnabled(
     state,
     ApplicationName.MARKETPLACE,
-    FeatureName.CREDITS
+    FeatureName.CREDITS,
   )
 
   if (!isMarketplaceCreditsEnabled) {
@@ -166,7 +166,7 @@ export const isCreditsFeatureEnabled = (
     .trim()
     .replace('\n', '')
     .split(',')
-    .map(wallet => wallet.toLowerCase().trim())
+    .map((wallet) => wallet.toLowerCase().trim())
 
   return walletsAllowed.includes(address.toLowerCase())
 }
@@ -175,7 +175,7 @@ export const getIsLauncherLinksFeatureEnabled = (state: StateWithFeatures) => {
   const isLauncherLinksEnabled = getIsFeatureEnabled(
     state,
     ApplicationName.DAPPS,
-    FeatureName.LAUNCHER_LINKS
+    FeatureName.LAUNCHER_LINKS,
   )
 
   return isLauncherLinksEnabled
@@ -189,7 +189,7 @@ export const getLauncherLinksVariant = (state: StateWithFeatures) => {
   const launcherLinks = getFeatureVariant(
     state,
     ApplicationName.DAPPS,
-    FeatureName.LAUNCHER_LINKS
+    FeatureName.LAUNCHER_LINKS,
   )
 
   try {

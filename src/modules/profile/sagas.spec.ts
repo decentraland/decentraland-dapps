@@ -19,14 +19,14 @@ import {
   setProfileAvatarAliasSuccess,
   setProfileAvatarDescriptionFailure,
   setProfileAvatarDescriptionRequest,
-  setProfileAvatarDescriptionSuccess
+  setProfileAvatarDescriptionSuccess,
 } from './actions'
 
 let mockAuthIdentity: AuthIdentity | undefined = {} as AuthIdentity
 
 const profileSagas = createProfileSaga({
   getIdentity: () => mockAuthIdentity,
-  peerUrl: 'aURL'
+  peerUrl: 'aURL',
 })
 const address = 'anAddress'
 const description = 'aDescription'
@@ -39,8 +39,8 @@ describe('when handling the action to set the profile avatar description', () =>
         .provide([
           [
             matchers.call.fn(EntitiesOperator.prototype.getProfileEntity),
-            Promise.reject(new Error(errorMessage))
-          ]
+            Promise.reject(new Error(errorMessage)),
+          ],
         ])
         .put(setProfileAvatarDescriptionFailure(address, errorMessage))
         .dispatch(setProfileAvatarDescriptionRequest(address, description))
@@ -54,14 +54,14 @@ describe('when handling the action to set the profile avatar description', () =>
         .provide([
           [
             matchers.call.fn(EntitiesOperator.prototype.getProfileEntity),
-            Promise.resolve(profileFromContent)
+            Promise.resolve(profileFromContent),
           ],
           [
             matchers.call.fn(
-              EntitiesOperator.prototype.deployEntityWithoutNewFiles
+              EntitiesOperator.prototype.deployEntityWithoutNewFiles,
             ),
-            Promise.reject(new Error(errorMessage))
-          ]
+            Promise.reject(new Error(errorMessage)),
+          ],
         ])
         .put(setProfileAvatarDescriptionFailure(address, errorMessage))
         .dispatch(setProfileAvatarDescriptionRequest(address, description))
@@ -74,11 +74,11 @@ describe('when handling the action to set the profile avatar description', () =>
       const newAvatar: Avatar = {
         ...profileFromContent.metadata.avatars[0],
         version: profileFromContent.metadata.avatars[0].version + 1,
-        description
+        description,
       }
 
       const newProfileMetadata: ProfileEntity['metadata'] = {
-        avatars: [newAvatar, ...profileFromContent.metadata.avatars.slice(1)]
+        avatars: [newAvatar, ...profileFromContent.metadata.avatars.slice(1)],
       }
 
       return expectSaga(profileSagas)
@@ -87,12 +87,12 @@ describe('when handling the action to set the profile avatar description', () =>
             matchers.call.fn(EntitiesOperator.prototype.getProfileEntity),
             dynamicDeepParametersEquality(
               [address],
-              Promise.resolve(profileFromContent)
-            )
+              Promise.resolve(profileFromContent),
+            ),
           ],
           [
             matchers.call.fn(
-              EntitiesOperator.prototype.deployEntityWithoutNewFiles
+              EntitiesOperator.prototype.deployEntityWithoutNewFiles,
             ),
             dynamicDeepParametersEquality(
               [
@@ -100,18 +100,18 @@ describe('when handling the action to set the profile avatar description', () =>
                 getHashesByKeyMap(newAvatar),
                 EntityType.PROFILE,
                 address,
-                mockAuthIdentity
+                mockAuthIdentity,
               ],
-              Promise.resolve(undefined)
-            )
-          ]
+              Promise.resolve(undefined),
+            ),
+          ],
         ])
         .put(
           setProfileAvatarDescriptionSuccess(
             address,
             description,
-            newAvatar.version
-          )
+            newAvatar.version,
+          ),
         )
         .dispatch(setProfileAvatarDescriptionRequest(address, description))
         .silentRun()
@@ -127,8 +127,8 @@ describe('when handling the action to set the profile avatar alias', () => {
         .provide([
           [
             matchers.call.fn(EntitiesOperator.prototype.getProfileEntity),
-            Promise.reject(new Error(errorMessage))
-          ]
+            Promise.reject(new Error(errorMessage)),
+          ],
         ])
         .put(setProfileAvatarAliasFailure(address, errorMessage))
         .dispatch(setProfileAvatarAliasRequest(address, alias))
@@ -150,12 +150,15 @@ describe('when handling the action to set the profile avatar alias', () => {
             matchers.call.fn(EntitiesOperator.prototype.getProfileEntity),
             dynamicDeepParametersEquality(
               [address],
-              Promise.resolve(profileFromContent)
-            )
-          ]
+              Promise.resolve(profileFromContent),
+            ),
+          ],
         ])
         .put(
-          setProfileAvatarAliasFailure(address, NO_IDENTITY_FOUND_ERROR_MESSAGE)
+          setProfileAvatarAliasFailure(
+            address,
+            NO_IDENTITY_FOUND_ERROR_MESSAGE,
+          ),
         )
         .dispatch(setProfileAvatarAliasRequest(address, alias))
         .silentRun()
@@ -168,14 +171,14 @@ describe('when handling the action to set the profile avatar alias', () => {
         .provide([
           [
             matchers.call.fn(EntitiesOperator.prototype.getProfileEntity),
-            Promise.resolve(profileFromContent)
+            Promise.resolve(profileFromContent),
           ],
           [
             matchers.call.fn(
-              EntitiesOperator.prototype.deployEntityWithoutNewFiles
+              EntitiesOperator.prototype.deployEntityWithoutNewFiles,
             ),
-            Promise.reject(new Error(errorMessage))
-          ]
+            Promise.reject(new Error(errorMessage)),
+          ],
         ])
         .put(setProfileAvatarAliasFailure(address, errorMessage))
         .dispatch(setProfileAvatarAliasRequest(address, alias))
@@ -189,11 +192,11 @@ describe('when handling the action to set the profile avatar alias', () => {
         ...profileFromContent.metadata.avatars[0],
         version: profileFromContent.metadata.avatars[0].version + 1,
         hasClaimedName: true,
-        name: alias
+        name: alias,
       }
 
       const newProfileMetadata: ProfileEntity['metadata'] = {
-        avatars: [newAvatar, ...profileFromContent.metadata.avatars.slice(1)]
+        avatars: [newAvatar, ...profileFromContent.metadata.avatars.slice(1)],
       }
 
       return expectSaga(profileSagas)
@@ -202,12 +205,12 @@ describe('when handling the action to set the profile avatar alias', () => {
             matchers.call.fn(EntitiesOperator.prototype.getProfileEntity),
             dynamicDeepParametersEquality(
               [address],
-              Promise.resolve(profileFromContent)
-            )
+              Promise.resolve(profileFromContent),
+            ),
           ],
           [
             matchers.call.fn(
-              EntitiesOperator.prototype.deployEntityWithoutNewFiles
+              EntitiesOperator.prototype.deployEntityWithoutNewFiles,
             ),
             dynamicDeepParametersEquality(
               [
@@ -215,11 +218,11 @@ describe('when handling the action to set the profile avatar alias', () => {
                 getHashesByKeyMap(newAvatar),
                 EntityType.PROFILE,
                 address,
-                mockAuthIdentity
+                mockAuthIdentity,
               ],
-              Promise.resolve(undefined)
-            )
-          ]
+              Promise.resolve(undefined),
+            ),
+          ],
         ])
         .put(setProfileAvatarAliasSuccess(address, alias, newAvatar.version))
         .dispatch(setProfileAvatarAliasRequest(address, alias))
@@ -236,8 +239,8 @@ describe('when handling the action to load multiple profiles', () => {
         .provide([
           [
             matchers.call.fn(PeerAPI.prototype.fetchProfiles),
-            Promise.reject(error)
-          ]
+            Promise.reject(error),
+          ],
         ])
         .put(loadProfilesFailure(error.message))
         .dispatch(loadProfilesRequest(['anAddress']))
@@ -252,8 +255,8 @@ describe('when handling the action to load multiple profiles', () => {
         .provide([
           [
             matchers.call.fn(PeerAPI.prototype.fetchProfiles),
-            Promise.resolve(profiles)
-          ]
+            Promise.resolve(profiles),
+          ],
         ])
         .put(loadProfilesSuccess(profiles))
         .dispatch(loadProfilesRequest([profiles[0].avatars[0].userId]))

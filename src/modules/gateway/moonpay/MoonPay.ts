@@ -23,7 +23,7 @@ export class MoonPay {
       [MoonPayTransactionStatus.PENDING]: PurchaseStatus.PENDING,
       [MoonPayTransactionStatus.WAITING_AUTHORIZATION]: PurchaseStatus.PENDING,
       [MoonPayTransactionStatus.FAILED]: PurchaseStatus.FAILED,
-      [MoonPayTransactionStatus.COMPLETED]: PurchaseStatus.COMPLETE
+      [MoonPayTransactionStatus.COMPLETED]: PurchaseStatus.COMPLETE,
     }[status]
   }
 
@@ -36,7 +36,7 @@ export class MoonPay {
     return await this.moonPayAPI.request(
       'GET',
       `/v1/transactions/${transactionId}`,
-      { apiKey: this.apiKey }
+      { apiKey: this.apiKey },
     )
   }
 
@@ -53,7 +53,7 @@ export class MoonPay {
       status,
       walletAddress,
       cryptoTransactionId,
-      paymentMethod
+      paymentMethod,
     } = transaction
 
     return {
@@ -65,15 +65,13 @@ export class MoonPay {
       paymentMethod,
       address: walletAddress,
       gateway: NetworkGatewayType.MOON_PAY,
-      txHash: cryptoTransactionId
+      txHash: cryptoTransactionId,
     }
   }
 
   getWidgetUrl(network: Network) {
     const redirectURL = `${window.location.origin}?network=${network}&gateway=${NetworkGatewayType.MOON_PAY}`
-    return `${this.widgetBaseUrl}?apiKey=${
-      this.apiKey
-    }&currencyCode=MANA&redirectURL=${encodeURIComponent(redirectURL)}`
+    return `${this.widgetBaseUrl}?apiKey=${this.apiKey}&currencyCode=MANA&redirectURL=${encodeURIComponent(redirectURL)}`
   }
 
   getTransactionReceiptUrl(transactionId: string) {

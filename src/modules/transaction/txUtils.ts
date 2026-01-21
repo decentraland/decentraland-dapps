@@ -1,21 +1,21 @@
-import { ethers } from 'ethers'
 import { TransactionResponse } from '@ethersproject/providers'
+import { ethers } from 'ethers'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { getNetworkProvider } from '../../lib/eth'
 import {
-  ReplacedTransaction,
-  TransactionStatus,
   AnyTransaction,
-  QueuedTransaction,
+  ConfirmedTransaction,
   PendingTransaction,
+  QueuedTransaction,
+  ReplacedTransaction,
   RevertedTransaction,
-  ConfirmedTransaction
+  TransactionStatus,
 } from './types'
 
 export async function getTransaction(
   address: string,
   chainId: ChainId,
-  hash: string
+  hash: string,
 ): Promise<AnyTransaction | null> {
   const provider = await getNetworkProvider(chainId)
   if (!provider) return null
@@ -32,7 +32,7 @@ export async function getTransaction(
   } catch (error) {
     console.warn(
       `Could not get current nonce for account "${address}"`,
-      error.message
+      error.message,
     )
   }
 
@@ -55,7 +55,7 @@ export async function getTransaction(
         const tx: ReplacedTransaction = {
           hash,
           status: TransactionStatus.REPLACED,
-          nonce: response.nonce
+          nonce: response.nonce,
         }
         return tx
       }
@@ -65,7 +65,7 @@ export async function getTransaction(
         const tx: QueuedTransaction = {
           hash,
           status: TransactionStatus.QUEUED,
-          nonce: response.nonce
+          nonce: response.nonce,
         }
         return tx
       }
@@ -74,7 +74,7 @@ export async function getTransaction(
     // pending
     const tx: PendingTransaction = {
       status: TransactionStatus.PENDING,
-      ...response
+      ...response,
     }
     return tx
   }
@@ -85,7 +85,7 @@ export async function getTransaction(
   if (receipt == null || !receipt.status) {
     const tx: RevertedTransaction = {
       status: TransactionStatus.REVERTED,
-      ...response
+      ...response,
     }
     return tx
   }
@@ -94,7 +94,7 @@ export async function getTransaction(
   const tx: ConfirmedTransaction = {
     status: TransactionStatus.CONFIRMED,
     ...response,
-    receipt
+    receipt,
   }
   return tx
 }

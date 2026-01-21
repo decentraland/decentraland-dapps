@@ -4,7 +4,7 @@ import { AUTHORIZATION_FLOW_REQUEST, GRANT_TOKEN_SUCCESS } from './actions'
 import { AuthorizationState } from './reducer'
 import { Authorization, AuthorizationType } from './types'
 
-export const getState: (state: any) => AuthorizationState = state =>
+export const getState: (state: any) => AuthorizationState = (state) =>
   state.authorization
 export const getData = (state: any): Authorization[] => getState(state).data
 export const getLoading = (state: any) => getState(state).loading
@@ -18,15 +18,17 @@ export const getTransactions = (state: any) =>
 
 export const getAllowTransactions = (state: any) =>
   getTransactions(state).filter(
-    transaction =>
-      transaction.payload.authorization.type === AuthorizationType.ALLOWANCE
+    (transaction) =>
+      transaction.payload.authorization.type === AuthorizationType.ALLOWANCE,
   )
 
 export const getApproveTransactions = (state: any) =>
   getTransactions(state).filter(
-    transaction =>
-      transaction.payload.authorization.type === AuthorizationType.APPROVAL
+    (transaction) =>
+      transaction.payload.authorization.type === AuthorizationType.APPROVAL,
   )
 
 export const isAuthorizing = (state: any): boolean =>
-  getLoading(state).some(loading => loading.type === AUTHORIZATION_FLOW_REQUEST)
+  getLoading(state).some(
+    (loading) => loading.type === AUTHORIZATION_FLOW_REQUEST,
+  )

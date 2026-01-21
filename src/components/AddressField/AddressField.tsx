@@ -1,6 +1,6 @@
 import {
   AddressFieldProps,
-  AddressField as AddressFieldUI
+  AddressField as AddressFieldUI,
 } from 'decentraland-ui/dist/components/AddressField'
 import { resolveName } from './utils'
 

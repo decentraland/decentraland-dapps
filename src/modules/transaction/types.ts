@@ -1,10 +1,10 @@
-import type { AnyAction } from 'redux'
-import type { CrossChainProvider } from 'decentraland-transactions/esm/crossChain/types'
-import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import {
+  TransactionReceipt,
   TransactionResponse,
-  TransactionReceipt
 } from '@ethersproject/providers'
+import type { AnyAction } from 'redux'
+import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
+import type { CrossChainProvider } from 'decentraland-transactions/esm/crossChain/types'
 
 // Special flag used to determine transaction hashes to be monitored
 export const TRANSACTION_ACTION_FLAG = '_watch_tx'
@@ -16,11 +16,11 @@ export enum TransactionStatus {
   REPLACED = 'replaced',
   PENDING = 'pending',
   REVERTED = 'reverted',
-  CONFIRMED = 'confirmed'
+  CONFIRMED = 'confirmed',
 }
 
 export enum CrossChainProviderType {
-  SQUID = 'squid'
+  SQUID = 'squid',
 }
 
 export type DroppedTransaction = {
@@ -66,17 +66,17 @@ export const FINISHED_STATUS = [
   TransactionStatus.CONFIRMED,
   TransactionStatus.REVERTED,
   TransactionStatus.DROPPED,
-  TransactionStatus.REPLACED
+  TransactionStatus.REPLACED,
 ]
 
 export const FAILED_STATUS = [
   TransactionStatus.DROPPED,
-  TransactionStatus.REVERTED
+  TransactionStatus.REVERTED,
 ]
 
 export const SUCCESS_STATUS = [
   TransactionStatus.REPLACED,
-  TransactionStatus.CONFIRMED
+  TransactionStatus.CONFIRMED,
 ]
 
 export type Transaction = {
@@ -100,7 +100,7 @@ export type Transaction = {
 }
 
 export type TransactionPayload = {
-  [key: string]: any,
+  [key: string]: any
   [TRANSACTION_ACTION_FLAG]: {
     chainId: ChainId
     toChainId?: ChainId
@@ -113,7 +113,9 @@ export type TransactionPayload = {
   }
 }
 
-export type ActionWithTransactionPayload = AnyAction & { payload: TransactionPayload }
+export type ActionWithTransactionPayload = AnyAction & {
+  payload: TransactionPayload
+}
 
 export type Arg = {
   name: string
@@ -129,7 +131,9 @@ export type Log = {
 
 export type TransactionsConfig = {
   crossChainProviderUrl: string
-  getCrossChainProvider: () => Promise<new (...args: any[]) => CrossChainProvider>
+  getCrossChainProvider: () => Promise<
+    new (...args: any[]) => CrossChainProvider
+  >
   crossChainProviderRetryDelay?: number
   crossChainProviderNotFoundRetries?: number
 }

@@ -1,17 +1,17 @@
-import { Dispatch } from 'redux'
 import { BigNumber } from 'ethers'
+import { Dispatch } from 'redux'
 import { Network } from '@dcl/schemas'
 import {
   AuthorizationFlowRequestAction,
+  FetchAuthorizationsRequestAction,
   fetchAuthorizationsRequest,
-  FetchAuthorizationsRequestAction
 } from '../../../modules/authorization/actions'
 import {
   Authorization,
-  AuthorizationType
+  AuthorizationType,
 } from '../../../modules/authorization/types'
-import { AuthorizationTranslationKeys } from '../withAuthorizedAction.types'
 import { RootStateOrAny } from '../../../types'
+import { AuthorizationTranslationKeys } from '../withAuthorizedAction.types'
 
 // Action to perform after authorization step is finished
 export enum AuthorizedAction {
@@ -22,7 +22,7 @@ export enum AuthorizedAction {
   CLAIM_NAME = 'claim_name',
   SWAP_MANA = 'swap_mana',
   SELL = 'sell',
-  PUBLISH_COLLECTION = 'publish_collection'
+  PUBLISH_COLLECTION = 'publish_collection',
 }
 
 export enum AuthorizationStepStatus {
@@ -32,13 +32,13 @@ export enum AuthorizationStepStatus {
   PROCESSING = 'processing',
   ALLOWANCE_AMOUNT_ERROR = 'allowance_amount_error',
   ERROR = 'error',
-  DONE = 'done'
+  DONE = 'done',
 }
 
 export enum AuthorizationStepAction {
   REVOKE = 'revoke',
   GRANT = 'grant',
-  CONFIRM = 'confirm'
+  CONFIRM = 'confirm',
 }
 
 export type HandleGrantOptions = {

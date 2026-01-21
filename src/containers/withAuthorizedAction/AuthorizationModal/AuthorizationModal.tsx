@@ -3,25 +3,25 @@ import { v4 as uuid } from 'uuid'
 import { Network } from '@dcl/schemas'
 import {
   AuthorizationStep,
-  AuthorizationModal as BaseAuthorizationModal
+  AuthorizationModal as BaseAuthorizationModal,
 } from 'decentraland-ui'
 import { getAnalytics } from '../../../modules/analytics'
-import {
-  AuthorizationStepAction,
-  AuthorizationStepStatus,
-  Props
-} from './AuthorizationModal.types'
 import {
   getPriceInMana,
   getStepMessage,
   getSteps,
-  getTranslation
+  getTranslation,
 } from './utils'
+import {
+  AuthorizationStepAction,
+  AuthorizationStepStatus,
+  Props,
+} from './AuthorizationModal.types'
 
 const LOADING_STATUS = [
   AuthorizationStepStatus.LOADING_INFO,
   AuthorizationStepStatus.PROCESSING,
-  AuthorizationStepStatus.WAITING
+  AuthorizationStepStatus.WAITING,
 ]
 
 export function AuthorizationModal({
@@ -44,7 +44,7 @@ export function AuthorizationModal({
   onRevoke,
   onGrant,
   onAuthorized,
-  onFetchAuthorizations
+  onFetchAuthorizations,
 }: Props) {
   const [currentStep, setCurrentStep] = useState(0)
   const [loading, setLoading] = useState<AuthorizationStepAction>()
@@ -56,7 +56,7 @@ export function AuthorizationModal({
   useEffect(() => {
     getAnalytics()?.track('[Authorization Flow] Modal Opened', {
       action,
-      traceId: analyticsTraceId
+      traceId: analyticsTraceId,
     })
   }, [])
 
@@ -68,7 +68,7 @@ export function AuthorizationModal({
     onRevoke(authorization, analyticsTraceId)
     getAnalytics()?.track('[Authorization Flow] Authorize Revoke Click', {
       action,
-      traceId: analyticsTraceId
+      traceId: analyticsTraceId,
     })
     setLoading(AuthorizationStepAction.REVOKE)
   }, [onRevoke, authorization, analyticsTraceId])
@@ -77,7 +77,7 @@ export function AuthorizationModal({
     onGrant(authorization, { traceId: analyticsTraceId, requiredAllowance })
     getAnalytics()?.track('[Authorization Flow] Authorize Grant Click', {
       action,
-      traceId: analyticsTraceId
+      traceId: analyticsTraceId,
     })
     setLoading(AuthorizationStepAction.GRANT)
   }, [onGrant, authorization, analyticsTraceId, requiredAllowance])
@@ -86,7 +86,7 @@ export function AuthorizationModal({
     onAuthorized()
     getAnalytics()?.track('[Authorization Flow] Confirm Transaction Click', {
       action,
-      traceId: analyticsTraceId
+      traceId: analyticsTraceId,
     })
     setLoading(AuthorizationStepAction.CONFIRM)
   }, [onAuthorized, authorization, analyticsTraceId])
@@ -100,22 +100,22 @@ export function AuthorizationModal({
       authorization,
       authorizedContractLabel,
       translationKeys,
-      targetContractLabel
+      targetContractLabel,
     })
     return [
       ...authSteps,
       {
         title: getTranslation(translationKeys, 'confirm_transaction.title', {
-          action: getTranslation(translationKeys, 'action')
+          action: getTranslation(translationKeys, 'action'),
         }),
         action: getTranslation(translationKeys, 'confirm_transaction.action'),
         status: confirmationStatus,
         actionType: AuthorizationStepAction.CONFIRM,
         error: confirmationError,
-        onActionClick: handleAuthorized
-      }
+        onActionClick: handleAuthorized,
+      },
     ]
-      .map(step => {
+      .map((step) => {
         if (step.actionType === AuthorizationStepAction.GRANT) {
           if (
             shouldReauthorize ||
@@ -128,8 +128,8 @@ export function AuthorizationModal({
                 translationKeys,
                 'insufficient_amount_error.message',
                 {
-                  price: requiredAllowanceAsEth
-                }
+                  price: requiredAllowanceAsEth,
+                },
               ),
               action: 'Revoke',
               status: revokeStatus,
@@ -138,15 +138,13 @@ export function AuthorizationModal({
                   {getTranslation(
                     translationKeys,
                     'insufficient_amount_error.message',
-                    { price: requiredAllowanceAsEth }
+                    { price: requiredAllowanceAsEth },
                   )}
                 </div>
-              ) : (
-                undefined
-              ),
+              ) : undefined,
               actionType: AuthorizationStepAction.REVOKE,
               testId: 'reauthorize-step',
-              onActionClick: handleRevokeToken
+              onActionClick: handleRevokeToken,
             }
           }
           return {
@@ -157,7 +155,7 @@ export function AuthorizationModal({
                 : getTranslation(translationKeys, 'set_cap.action'),
             error,
             status: grantStatus,
-            onActionClick: handleGrantToken
+            onActionClick: handleGrantToken,
           }
         }
 
@@ -170,7 +168,7 @@ export function AuthorizationModal({
                 : getTranslation(translationKeys, 'revoke_cap.action'),
             error,
             status: revokeStatus,
-            onActionClick: handleRevokeToken
+            onActionClick: handleRevokeToken,
           }
         }
 
@@ -192,9 +190,9 @@ export function AuthorizationModal({
                   requiredAllowanceAsEth,
                   step.actionType,
                   translationKeys,
-                  isWeb2AutoSigning
+                  isWeb2AutoSigning,
                 ),
-          testId: 'testId' in step ? step.testId : `${step.actionType}-step`
+          testId: 'testId' in step ? step.testId : `${step.actionType}-step`,
         }
       })
   }, [
@@ -214,7 +212,7 @@ export function AuthorizationModal({
     error,
     handleGrantToken,
     handleRevokeToken,
-    handleAuthorized
+    handleAuthorized,
   ])
 
   useEffect(() => {
@@ -232,7 +230,6 @@ export function AuthorizationModal({
       }
     }
     // We only want to run this when there is a change in the current steps status
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [steps[currentStep].status])
 
   useEffect(() => {
@@ -250,7 +247,7 @@ export function AuthorizationModal({
       currentStep={currentStep}
       steps={steps}
       header={getTranslation(translationKeys, 'title', {
-        action: getTranslation(translationKeys, 'title_action')
+        action: getTranslation(translationKeys, 'title_action'),
       })}
     />
   )

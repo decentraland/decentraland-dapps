@@ -2,12 +2,12 @@ import { ethers } from 'ethers'
 import { Dispatch } from 'redux'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import {
-  connectWalletRequest,
+  ChangeAccountAction,
+  ChangeNetworkAction,
   ConnectWalletRequestAction,
   changeAccount,
   changeNetwork,
-  ChangeAccountAction,
-  ChangeNetworkAction
+  connectWalletRequest,
 } from '../../modules/wallet/actions'
 
 export type Props = {

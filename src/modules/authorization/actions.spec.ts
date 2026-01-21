@@ -4,7 +4,7 @@ import {
   AUTHORIZATION_FLOW_SUCCESS,
   authorizationFlowFailure,
   authorizationFlowRequest,
-  authorizationFlowSuccess
+  authorizationFlowSuccess,
 } from './actions'
 import { Authorization, AuthorizationAction } from './types'
 
@@ -20,7 +20,7 @@ describe('authorization flow actions', () => {
       const authorizationAction = AuthorizationAction.GRANT
       const options = { requiredAllowance: '10' }
       expect(
-        authorizationFlowRequest(authorization, authorizationAction, options)
+        authorizationFlowRequest(authorization, authorizationAction, options),
       ).toEqual({
         type: AUTHORIZATION_FLOW_REQUEST,
         payload: {
@@ -29,8 +29,8 @@ describe('authorization flow actions', () => {
           requiredAllowance: options.requiredAllowance,
           traceId: undefined,
           onAuthorized: undefined,
-          currentAllowance: undefined
-        }
+          currentAllowance: undefined,
+        },
       })
     })
   })
@@ -40,8 +40,8 @@ describe('authorization flow actions', () => {
       expect(authorizationFlowSuccess(authorization)).toEqual({
         type: AUTHORIZATION_FLOW_SUCCESS,
         payload: {
-          authorization
-        }
+          authorization,
+        },
       })
     })
   })
@@ -53,8 +53,8 @@ describe('authorization flow actions', () => {
         type: AUTHORIZATION_FLOW_FAILURE,
         payload: {
           authorization,
-          error
-        }
+          error,
+        },
       })
     })
   })

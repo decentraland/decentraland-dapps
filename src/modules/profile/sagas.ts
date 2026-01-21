@@ -1,37 +1,37 @@
-import { takeLatest, put, call, takeEvery } from 'redux-saga/effects'
+import { call, put, takeEvery, takeLatest } from 'redux-saga/effects'
 import { AuthIdentity } from '@dcl/crypto'
-import { Avatar } from '@dcl/schemas/dist/platform/profile'
 import { EntityType } from '@dcl/schemas/dist/platform/entity'
-import { PeerAPI } from '../../lib/peer'
+import { Avatar } from '@dcl/schemas/dist/platform/profile'
+import { ProfileEntity } from '../../lib'
 import { EntitiesOperator } from '../../lib/entities'
+import { PeerAPI } from '../../lib/peer'
 import {
-  ConnectWalletSuccessAction,
-  CONNECT_WALLET_SUCCESS,
   CHANGE_ACCOUNT,
-  ChangeAccountAction
+  CONNECT_WALLET_SUCCESS,
+  ChangeAccountAction,
+  ConnectWalletSuccessAction,
 } from '../wallet/actions'
 import {
+  LOAD_PROFILES_REQUEST,
   LOAD_PROFILE_REQUEST,
   LoadProfileRequestAction,
-  loadProfileSuccess,
-  loadProfileFailure,
-  loadProfileRequest,
-  SetProfileAvatarDescriptionRequestAction,
-  setProfileAvatarDescriptionSuccess,
-  setProfileAvatarDescriptionFailure,
+  LoadProfilesRequestAction,
+  SET_PROFILE_AVATAR_ALIAS_REQUEST,
   SET_PROFILE_AVATAR_DESCRIPTION_REQUEST,
   SetProfileAvatarAliasRequestAction,
-  SET_PROFILE_AVATAR_ALIAS_REQUEST,
+  SetProfileAvatarDescriptionRequestAction,
+  loadProfileFailure,
+  loadProfileRequest,
+  loadProfileSuccess,
+  loadProfilesFailure,
+  loadProfilesSuccess,
   setProfileAvatarAliasFailure,
   setProfileAvatarAliasSuccess,
-  LoadProfilesRequestAction,
-  loadProfilesSuccess,
-  loadProfilesFailure,
-  LOAD_PROFILES_REQUEST
+  setProfileAvatarDescriptionFailure,
+  setProfileAvatarDescriptionSuccess,
 } from './actions'
-import { ProfileEntity } from '../../lib'
-import { getHashesByKeyMap } from './utils'
 import { Profile } from './types'
+import { getHashesByKeyMap } from './utils'
 
 export const NO_IDENTITY_FOUND_ERROR_MESSAGE = 'No identity found'
 
@@ -44,7 +44,7 @@ type CreateProfileSagaOptions = {
 export function createProfileSaga({
   getIdentity,
   peerUrl,
-  peerWithNoGbCollectorUrl
+  peerWithNoGbCollectorUrl,
 }: CreateProfileSagaOptions) {
   const peerApi = new PeerAPI(peerUrl)
   const entities = new EntitiesOperator(peerUrl, peerWithNoGbCollectorUrl)
@@ -54,7 +54,7 @@ export function createProfileSaga({
     yield takeEvery(LOAD_PROFILES_REQUEST, handleLoadProfilesRequest)
     yield takeEvery(
       SET_PROFILE_AVATAR_DESCRIPTION_REQUEST,
-      handleSetProfileDescription
+      handleSetProfileDescription,
     )
     yield takeEvery(SET_PROFILE_AVATAR_ALIAS_REQUEST, handleSetAlias)
     yield takeLatest(CONNECT_WALLET_SUCCESS, handleWallet)
@@ -76,7 +76,7 @@ export function createProfileSaga({
     try {
       const profiles: Profile[] = yield call(
         [peerApi, 'fetchProfiles'],
-        addresses
+        addresses,
       )
       yield put(loadProfilesSuccess(profiles))
     } catch (error) {
@@ -85,7 +85,7 @@ export function createProfileSaga({
   }
 
   function* handleWallet(
-    action: ConnectWalletSuccessAction | ChangeAccountAction
+    action: ConnectWalletSuccessAction | ChangeAccountAction,
   ) {
     yield put(loadProfileRequest(action.payload.wallet.address))
   }
@@ -95,7 +95,7 @@ export function createProfileSaga({
     try {
       const newAvatar: Avatar = yield updateProfileAvatarWithoutNewFiles(
         address,
-        { hasClaimedName: true, name: alias }
+        { hasClaimedName: true, name: alias },
       )
 
       yield put(setProfileAvatarAliasSuccess(address, alias, newAvatar.version))
@@ -113,48 +113,48 @@ export function createProfileSaga({
    * @param action - The action that triggered the handler.
    */
   function* handleSetProfileDescription(
-    action: SetProfileAvatarDescriptionRequestAction
+    action: SetProfileAvatarDescriptionRequestAction,
   ) {
     try {
       const { address, description } = action.payload
 
       const newAvatar: Avatar = yield updateProfileAvatarWithoutNewFiles(
         address,
-        { description: description }
+        { description: description },
       )
 
       yield put(
         setProfileAvatarDescriptionSuccess(
           action.payload.address,
           newAvatar.description,
-          newAvatar.version
-        )
+          newAvatar.version,
+        ),
       )
     } catch (error) {
       yield put(
         setProfileAvatarDescriptionFailure(
           action.payload.address,
-          error.message
-        )
+          error.message,
+        ),
       )
     }
   }
 
   function* updateProfileAvatarWithoutNewFiles(
     address: string,
-    changes: Partial<Avatar>
+    changes: Partial<Avatar>,
   ) {
     const profile: ProfileEntity = yield call(
       [entities, 'getProfileEntity'],
-      address
+      address,
     )
     const newAvatar: Avatar = {
       ...profile.metadata.avatars[0],
       ...changes,
-      version: profile.metadata.avatars[0].version + 1
+      version: profile.metadata.avatars[0].version + 1,
     }
     const profileMetadata: Profile = {
-      avatars: [newAvatar, ...profile.metadata.avatars.slice(1)]
+      avatars: [newAvatar, ...profile.metadata.avatars.slice(1)],
     }
     const identity = getIdentity()
 
@@ -165,7 +165,7 @@ export function createProfileSaga({
         getHashesByKeyMap(newAvatar),
         EntityType.PROFILE,
         address,
-        identity
+        identity,
       )
     } else {
       throw new Error(NO_IDENTITY_FOUND_ERROR_MESSAGE)

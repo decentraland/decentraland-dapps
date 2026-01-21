@@ -4,7 +4,7 @@ import {
   connectWalletRequest,
   disconnectWalletRequest,
   enableWalletRequest,
-  switchNetworkRequest
+  switchNetworkRequest,
 } from './actions'
 import { INITIAL_STATE, WalletState } from './reducer'
 import {
@@ -23,7 +23,7 @@ import {
   isConnecting,
   isEnabling,
   isSwitchingNetwork,
-  isDisconnecting
+  isDisconnecting,
 } from './selectors'
 import { NetworkData, ProviderType, Wallet } from './types'
 import { Networks } from './types'
@@ -36,7 +36,7 @@ const providerType = ProviderType.INJECTED
 const network = Network.ETHEREUM
 const networks: Networks = {
   [Network.ETHEREUM]: {} as NetworkData,
-  [Network.MATIC]: {} as NetworkData
+  [Network.MATIC]: {} as NetworkData,
 }
 
 describe('Wallet selectors', () => {
@@ -81,8 +81,8 @@ describe('Wallet selectors', () => {
           ...initialState,
           wallet: {
             ...initialState.wallet,
-            data: {} as Wallet
-          }
+            data: {} as Wallet,
+          },
         }
       })
 
@@ -99,8 +99,8 @@ describe('Wallet selectors', () => {
           ...initialState,
           wallet: {
             ...initialState.wallet,
-            loading: [connectWalletRequest()]
-          }
+            loading: [connectWalletRequest()],
+          },
         }
       })
 
@@ -115,8 +115,8 @@ describe('Wallet selectors', () => {
           ...initialState,
           wallet: {
             ...initialState.wallet,
-            loading: []
-          }
+            loading: [],
+          },
         }
       })
 
@@ -136,8 +136,8 @@ describe('Wallet selectors', () => {
           ...initialState,
           wallet: {
             ...initialState.wallet,
-            loading: [enableWalletRequest(providerType)]
-          }
+            loading: [enableWalletRequest(providerType)],
+          },
         }
       })
 
@@ -152,8 +152,8 @@ describe('Wallet selectors', () => {
           ...initialState,
           wallet: {
             ...initialState.wallet,
-            loading: []
-          }
+            loading: [],
+          },
         }
       })
 
@@ -168,7 +168,7 @@ describe('Wallet selectors', () => {
     ['chainId', getChainId, chainId],
     ['providerType', getProviderType, providerType],
     ['network', getNetwork, network],
-    ['networks', getNetworks, networks]
+    ['networks', getNetworks, networks],
   ])('when getting the %s', (description, selector, expected) => {
     describe('and the user is connected', () => {
       beforeEach(() => {
@@ -181,9 +181,9 @@ describe('Wallet selectors', () => {
               chainId,
               providerType,
               network,
-              networks
-            } as Wallet
-          }
+              networks,
+            } as Wallet,
+          },
         }
       })
 
@@ -202,7 +202,7 @@ describe('Wallet selectors', () => {
   describe('when getting the app chain id state of the wallet', () => {
     it("should return the wallet state's app chain id", () => {
       expect(getAppChainId(initialState)).toEqual(
-        initialState.wallet.appChainId
+        initialState.wallet.appChainId,
       )
     })
   })
@@ -211,7 +211,7 @@ describe('Wallet selectors', () => {
     describe('and switch network request is loading', () => {
       beforeEach(() => {
         initialState.wallet.loading = [
-          switchNetworkRequest(ChainId.ETHEREUM_MAINNET)
+          switchNetworkRequest(ChainId.ETHEREUM_MAINNET),
         ]
       })
 
@@ -239,19 +239,19 @@ describe('Wallet selectors', () => {
             data: {
               networks: {
                 [Network.ETHEREUM]: {
-                  mana: 100
+                  mana: 100,
                 },
                 [Network.MATIC]: {
-                  mana: 200
-                }
-              }
-            }
-          }
+                  mana: 200,
+                },
+              },
+            },
+          },
         }
 
         const expectedManaBalances = {
           [Network.ETHEREUM]: 100,
-          [Network.MATIC]: 200
+          [Network.MATIC]: 200,
         }
 
         expect(getManaBalances(state)).toEqual(expectedManaBalances)
@@ -262,8 +262,8 @@ describe('Wallet selectors', () => {
       it('should return undefined', () => {
         const state = {
           wallet: {
-            data: null
-          }
+            data: null,
+          },
         }
 
         expect(getManaBalances(state)).toBeUndefined()

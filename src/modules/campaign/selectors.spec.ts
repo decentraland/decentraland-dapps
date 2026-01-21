@@ -15,7 +15,7 @@ import {
   getBannerAssets,
   getCampaignName,
   getAdditionalTags,
-  getContentfulNormalizedLocale
+  getContentfulNormalizedLocale,
 } from './selectors'
 import { CampaignState } from './types'
 
@@ -33,7 +33,7 @@ describe('Campaign selectors', () => {
     mockAsset = {
       metadata: {
         tags: [],
-        concepts: []
+        concepts: [],
       },
       sys: {
         id: 'asset1',
@@ -42,29 +42,29 @@ describe('Campaign selectors', () => {
         createdAt: '2021-01-01',
         updatedAt: '2021-01-01',
         environment: {
-          sys: { type: 'Link', linkType: 'Environment', id: 'env1' }
+          sys: { type: 'Link', linkType: 'Environment', id: 'env1' },
         },
         publishedVersion: 1,
-        revision: 1
+        revision: 1,
       },
       fields: {
         title: {
-          'en-US': 'Test Banner'
+          'en-US': 'Test Banner',
         },
         description: {
-          'en-US': 'Test Description'
+          'en-US': 'Test Description',
         },
         file: {
           'en-US': {
             url: 'test-url',
             details: {
-              size: 123
+              size: 123,
             },
             fileName: 'test.png',
-            contentType: 'image/png'
-          }
-        }
-      }
+            contentType: 'image/png',
+          },
+        },
+      },
     }
 
     mockBanner = {
@@ -74,39 +74,39 @@ describe('Campaign selectors', () => {
           sys: {
             type: 'Link',
             linkType: 'Asset',
-            id: 'asset1'
-          }
-        }
-      }
+            id: 'asset1',
+          },
+        },
+      },
     } as BannerFields & { id: string }
 
     mockState = {
       campaign: {
         data: {
           name: {
-            'en-US': 'Test Campaign'
+            'en-US': 'Test Campaign',
           },
           tabName: {
-            'en-US': 'testTab'
+            'en-US': 'testTab',
           },
           mainTag: 'main',
           additionalTags: ['tag1', 'tag2'],
           banners: {
-            banner1: mockBanner
+            banner1: mockBanner,
           },
           assets: {
-            asset1: mockAsset
-          }
+            asset1: mockAsset,
+          },
         },
         loading: [],
-        error: null
+        error: null,
       },
       translation: {
         data: {},
         locale: 'en',
         loading: [],
-        error: null
-      }
+        error: null,
+      },
     }
   })
 
@@ -198,7 +198,7 @@ describe('Campaign selectors', () => {
     describe('and the data exists', () => {
       it('should return the campaign name', () => {
         expect(getCampaignName(mockState)).toEqual({
-          'en-US': 'Test Campaign'
+          'en-US': 'Test Campaign',
         })
       })
     })
@@ -240,7 +240,7 @@ describe('Campaign selectors', () => {
 
       it('should return en-US', () => {
         expect(getContentfulNormalizedLocale(mockState)).toBe(
-          ContentfulLocale.enUS
+          ContentfulLocale.enUS,
         )
       })
     })
@@ -252,7 +252,7 @@ describe('Campaign selectors', () => {
 
       it('should return es', () => {
         expect(getContentfulNormalizedLocale(mockState)).toBe(
-          ContentfulLocale.es
+          ContentfulLocale.es,
         )
       })
     })
@@ -264,7 +264,7 @@ describe('Campaign selectors', () => {
 
       it('should return zh', () => {
         expect(getContentfulNormalizedLocale(mockState)).toBe(
-          ContentfulLocale.zh
+          ContentfulLocale.zh,
         )
       })
     })
@@ -276,7 +276,7 @@ describe('Campaign selectors', () => {
 
       it('should return en-US', () => {
         expect(getContentfulNormalizedLocale(mockState)).toBe(
-          ContentfulLocale.enUS
+          ContentfulLocale.enUS,
         )
       })
     })
@@ -322,7 +322,7 @@ describe('Campaign selectors', () => {
     describe('and the data exists', () => {
       it('should return the tab name', () => {
         expect(getTabName(mockState)).toEqual({
-          'en-US': 'testTab'
+          'en-US': 'testTab',
         })
       })
     })
@@ -366,7 +366,7 @@ describe('Campaign selectors', () => {
     describe('and the banner exists with assets', () => {
       it('should return the assets associated with the banner', () => {
         expect(getBannerAssets(mockState, 'banner1')).toEqual({
-          asset1: mockAsset
+          asset1: mockAsset,
         })
       })
     })

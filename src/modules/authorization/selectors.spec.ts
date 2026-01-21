@@ -11,13 +11,13 @@ import {
   getTransactions,
   getAllowTransactions,
   getApproveTransactions,
-  isAuthorizing
+  isAuthorizing,
 } from './selectors'
 import {
   AUTHORIZATION_FLOW_REQUEST,
   GRANT_TOKEN_SUCCESS,
   REVOKE_TOKEN_REQUEST,
-  REVOKE_TOKEN_SUCCESS
+  REVOKE_TOKEN_SUCCESS,
 } from './actions'
 import { AuthorizationType } from './types'
 
@@ -34,7 +34,7 @@ describe('Authorization selectors', () => {
       authorizedAddress: '0x3',
       contractName: ContractName.MANAToken,
       chainId: ChainId.ETHEREUM_MAINNET,
-      allowance: '1000'
+      allowance: '1000',
     }
 
     mockTransaction = {
@@ -42,8 +42,8 @@ describe('Authorization selectors', () => {
       from: '0x1',
       actionType: GRANT_TOKEN_SUCCESS,
       payload: {
-        authorization: mockAuthorization
-      }
+        authorization: mockAuthorization,
+      },
     }
 
     mockState = {
@@ -52,16 +52,16 @@ describe('Authorization selectors', () => {
         data: [mockAuthorization],
         loading: [{ type: AUTHORIZATION_FLOW_REQUEST }],
         error: 'test error',
-        authorizationFlowError: 'flow error'
+        authorizationFlowError: 'flow error',
       },
       transaction: {
-        data: [mockTransaction]
+        data: [mockTransaction],
       },
       wallet: {
         data: {
-          address: '0x1'
-        }
-      }
+          address: '0x1',
+        },
+      },
     }
   })
 
@@ -80,7 +80,7 @@ describe('Authorization selectors', () => {
   describe('when getting the loading state', () => {
     it('should return the loading state', () => {
       expect(getLoading(mockState)).toEqual([
-        { type: AUTHORIZATION_FLOW_REQUEST }
+        { type: AUTHORIZATION_FLOW_REQUEST },
       ])
     })
   })
@@ -125,15 +125,15 @@ describe('Authorization selectors', () => {
               mockTransaction,
               {
                 ...mockTransaction,
-                actionType: REVOKE_TOKEN_REQUEST
-              }
-            ]
+                actionType: REVOKE_TOKEN_REQUEST,
+              },
+            ],
           },
           wallet: {
             data: {
-              address: '0x1'
-            }
-          }
+              address: '0x1',
+            },
+          },
         }
       })
 
@@ -147,13 +147,13 @@ describe('Authorization selectors', () => {
         mockState = {
           ...mockState,
           transaction: {
-            data: []
+            data: [],
           },
           wallet: {
             data: {
-              address: '0x1'
-            }
-          }
+              address: '0x1',
+            },
+          },
         }
       })
 
@@ -176,17 +176,17 @@ describe('Authorization selectors', () => {
                 payload: {
                   authorization: {
                     ...mockAuthorization,
-                    type: AuthorizationType.APPROVAL
-                  }
-                }
-              }
-            ]
+                    type: AuthorizationType.APPROVAL,
+                  },
+                },
+              },
+            ],
           },
           wallet: {
             data: {
-              address: '0x1'
-            }
-          }
+              address: '0x1',
+            },
+          },
         }
       })
 
@@ -206,17 +206,17 @@ describe('Authorization selectors', () => {
                 payload: {
                   authorization: {
                     ...mockAuthorization,
-                    type: AuthorizationType.APPROVAL
-                  }
-                }
-              }
-            ]
+                    type: AuthorizationType.APPROVAL,
+                  },
+                },
+              },
+            ],
           },
           wallet: {
             data: {
-              address: '0x1'
-            }
-          }
+              address: '0x1',
+            },
+          },
         }
       })
 
@@ -234,9 +234,9 @@ describe('Authorization selectors', () => {
           payload: {
             authorization: {
               ...mockAuthorization,
-              type: AuthorizationType.APPROVAL
-            }
-          }
+              type: AuthorizationType.APPROVAL,
+            },
+          },
         }
 
         mockState = {
@@ -249,23 +249,23 @@ describe('Authorization selectors', () => {
                 payload: {
                   authorization: {
                     ...mockAuthorization,
-                    type: AuthorizationType.ALLOWANCE
-                  }
-                }
-              }
-            ]
+                    type: AuthorizationType.ALLOWANCE,
+                  },
+                },
+              },
+            ],
           },
           wallet: {
             data: {
-              address: '0x1'
-            }
-          }
+              address: '0x1',
+            },
+          },
         }
       })
 
       it('should return only APPROVAL type transactions', () => {
         expect(getApproveTransactions(mockState)).toEqual([
-          mockState.transaction.data[0]
+          mockState.transaction.data[0],
         ])
       })
     })
@@ -275,13 +275,13 @@ describe('Authorization selectors', () => {
         mockState = {
           ...mockState,
           transaction: {
-            data: [mockTransaction]
+            data: [mockTransaction],
           },
           wallet: {
             data: {
-              address: '0x1'
-            }
-          }
+              address: '0x1',
+            },
+          },
         }
       })
 

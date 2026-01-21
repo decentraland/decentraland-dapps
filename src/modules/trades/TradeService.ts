@@ -1,9 +1,9 @@
 import { Trade, TradeCreation } from '@dcl/schemas'
 import { AuthIdentity } from 'decentraland-crypto-fetch'
 import { getContract, getContractName } from 'decentraland-transactions'
-import { TradesAPI } from './api'
 import { getOnChainTrade } from '../../lib/trades'
 import { sendTransaction } from '../wallet/utils'
+import { TradesAPI } from './api'
 
 export class TradeService {
   private tradesAPI: TradesAPI
@@ -11,11 +11,11 @@ export class TradeService {
   constructor(
     signer: string,
     basePath: string,
-    getIdentity: () => AuthIdentity | undefined
+    getIdentity: () => AuthIdentity | undefined,
   ) {
     this.tradesAPI = new TradesAPI(signer, basePath, {
       identity: getIdentity,
-      retries: 0
+      retries: 0,
     })
   }
 

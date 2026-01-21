@@ -7,20 +7,20 @@ import {
   Trade,
   TradeAsset,
   TradeCreation,
-  TradeType
+  TradeType,
 } from '@dcl/schemas/dist/dapps/trade'
 import * as ethUtils from './eth'
 import {
   ContractData,
   ContractName,
-  getContract
+  getContract,
 } from 'decentraland-transactions'
 import { fromMillisecondsToSeconds } from '../lib/time'
 import {
   OFFCHAIN_MARKETPLACE_TYPES,
   getTradeSignature,
   getOnChainTrade,
-  getValueForTradeAsset
+  getValueForTradeAsset,
 } from './trades'
 
 jest.mock('./eth', () => {
@@ -31,7 +31,7 @@ jest.mock('./eth', () => {
       const wallet = ethers.Wallet.createRandom()
       wallet.connect(ethers.providers.getDefaultProvider())
       return Promise.resolve(wallet)
-    })
+    }),
   } as unknown
 })
 
@@ -42,13 +42,13 @@ describe('when getting the value for a trade asset', () => {
     beforeEach(() => {
       asset = {
         assetType: TradeAssetType.ERC20,
-        amount: '100'
+        amount: '100',
       } as ERC20TradeAsset
     })
 
     it('should return the amount', () => {
       expect(getValueForTradeAsset(asset)).toBe(
-        (asset as ERC20TradeAsset).amount
+        (asset as ERC20TradeAsset).amount,
       )
     })
   })
@@ -57,13 +57,13 @@ describe('when getting the value for a trade asset', () => {
     beforeEach(() => {
       asset = {
         assetType: TradeAssetType.ERC721,
-        tokenId: 'token-id'
+        tokenId: 'token-id',
       } as ERC721TradeAsset
     })
 
     it('should return the token id', () => {
       expect(getValueForTradeAsset(asset)).toBe(
-        (asset as ERC721TradeAsset).tokenId
+        (asset as ERC721TradeAsset).tokenId,
       )
     })
   })
@@ -72,13 +72,13 @@ describe('when getting the value for a trade asset', () => {
     beforeEach(() => {
       asset = {
         assetType: TradeAssetType.COLLECTION_ITEM,
-        itemId: 'item-id'
+        itemId: 'item-id',
       } as CollectionItemTradeAsset
     })
 
     it('should return the item id', () => {
       expect(getValueForTradeAsset(asset)).toBe(
-        (asset as CollectionItemTradeAsset).itemId
+        (asset as CollectionItemTradeAsset).itemId,
       )
     })
   })
@@ -90,13 +90,13 @@ describe('when getting the trade signature', () => {
   describe('when the contract does not exist for that chainId', () => {
     beforeEach(() => {
       trade = {
-        chainId: ChainId.ARBITRUM_MAINNET
+        chainId: ChainId.ARBITRUM_MAINNET,
       } as Omit<TradeCreation, 'signature'>
     })
 
     it.skip('should throw an error', async () => {
       await expect(getTradeSignature(trade)).rejects.toThrowError(
-        'Could not get a valid contract for OffChainMarketplace using chain 42161'
+        'Could not get a valid contract for OffChainMarketplace using chain 42161',
       )
     })
   })
@@ -110,7 +110,7 @@ describe('when getting the trade signature', () => {
 
     beforeEach(async () => {
       signer = ethers.Wallet.createRandom().connect(
-        ethers.providers.getDefaultProvider()
+        ethers.providers.getDefaultProvider(),
       )
       jest
         .spyOn(ethUtils, 'getSigner')
@@ -118,7 +118,7 @@ describe('when getting the trade signature', () => {
       signerAddress = (await signer.getAddress()).toLowerCase()
       offchainMarketplaceContract = getContract(
         ContractName.OffChainMarketplaceV2,
-        ChainId.ETHEREUM_SEPOLIA
+        ChainId.ETHEREUM_SEPOLIA,
       )
 
       trade = {
@@ -134,15 +134,15 @@ describe('when getting the trade signature', () => {
           allowedRoot: '0x',
           contractSignatureIndex: 0,
           externalChecks: [],
-          signerSignatureIndex: 0
+          signerSignatureIndex: 0,
         },
         sent: [
           {
             assetType: TradeAssetType.ERC20,
             contractAddress: offchainMarketplaceContract.address,
             amount: '2',
-            extra: ''
-          }
+            extra: '',
+          },
         ],
         received: [
           {
@@ -150,24 +150,24 @@ describe('when getting the trade signature', () => {
             contractAddress: offchainMarketplaceContract.address,
             tokenId: '1',
             extra: '',
-            beneficiary: signerAddress
-          }
-        ]
+            beneficiary: signerAddress,
+          },
+        ],
       }
 
       const SALT = ethers.utils.hexZeroPad(
         ethers.utils.hexlify(trade.chainId),
-        32
+        32,
       )
       offchainMarketplaceContract = getContract(
         ContractName.OffChainMarketplaceV2,
-        trade.chainId
+        trade.chainId,
       )
       domain = {
         name: offchainMarketplaceContract.name,
         version: offchainMarketplaceContract.version,
         verifyingContract: offchainMarketplaceContract.address,
-        salt: SALT
+        salt: SALT,
       }
 
       values = {
@@ -179,32 +179,32 @@ describe('when getting the trade signature', () => {
           contractSignatureIndex: trade.checks.contractSignatureIndex,
           signerSignatureIndex: trade.checks.signerSignatureIndex,
           allowedRoot: ethers.utils.hexZeroPad(trade.checks.allowedRoot, 32),
-          externalChecks: trade.checks.externalChecks?.map(externalCheck => ({
+          externalChecks: trade.checks.externalChecks?.map((externalCheck) => ({
             contractAddress: externalCheck.contractAddress,
             selector: externalCheck.selector,
             value: '0x',
-            required: externalCheck.required
-          }))
+            required: externalCheck.required,
+          })),
         },
-        sent: trade.sent.map(asset => ({
-          assetType: asset.assetType,
-          contractAddress: asset.contractAddress,
-          value: getValueForTradeAsset(asset),
-          extra: '0x'
-        })),
-        received: trade.received.map(asset => ({
+        sent: trade.sent.map((asset) => ({
           assetType: asset.assetType,
           contractAddress: asset.contractAddress,
           value: getValueForTradeAsset(asset),
           extra: '0x',
-          beneficiary: asset.beneficiary
-        }))
+        })),
+        received: trade.received.map((asset) => ({
+          assetType: asset.assetType,
+          contractAddress: asset.contractAddress,
+          value: getValueForTradeAsset(asset),
+          extra: '0x',
+          beneficiary: asset.beneficiary,
+        })),
       }
     })
 
     it('should return the signature', async () => {
       expect(await getTradeSignature(trade)).toBe(
-        await signer._signTypedData(domain, OFFCHAIN_MARKETPLACE_TYPES, values)
+        await signer._signTypedData(domain, OFFCHAIN_MARKETPLACE_TYPES, values),
       )
     })
   })
@@ -231,15 +231,15 @@ describe('when getting the trade to accept', () => {
         allowedRoot: '0x',
         contractSignatureIndex: 0,
         externalChecks: [],
-        signerSignatureIndex: 0
+        signerSignatureIndex: 0,
       },
       sent: [
         {
           assetType: TradeAssetType.ERC20,
           contractAddress: '0x123',
           amount: '2',
-          extra: ''
-        }
+          extra: '',
+        },
       ],
       received: [
         {
@@ -247,9 +247,9 @@ describe('when getting the trade to accept', () => {
           contractAddress: '0x123',
           tokenId: '1',
           extra: '',
-          beneficiary: '0x123123'
-        }
-      ]
+          beneficiary: '0x123123',
+        },
+      ],
     }
 
     beneficiaryAddress = '0x123123'
@@ -268,22 +268,22 @@ describe('when getting the trade to accept', () => {
         allowedProof: [],
         contractSignatureIndex: trade.checks.contractSignatureIndex,
         signerSignatureIndex: trade.checks.signerSignatureIndex,
-        externalChecks: trade.checks.externalChecks
+        externalChecks: trade.checks.externalChecks,
       },
-      sent: trade.sent.map(asset => ({
+      sent: trade.sent.map((asset) => ({
         assetType: asset.assetType,
         contractAddress: asset.contractAddress,
         value: getValueForTradeAsset(asset),
         extra: '0x',
-        beneficiary: beneficiaryAddress
+        beneficiary: beneficiaryAddress,
       })),
-      received: trade.received.map(asset => ({
+      received: trade.received.map((asset) => ({
         assetType: asset.assetType,
         contractAddress: asset.contractAddress,
         value: getValueForTradeAsset(asset),
         extra: '0x',
-        beneficiary: asset.beneficiary
-      }))
+        beneficiary: asset.beneficiary,
+      })),
     })
   })
 })

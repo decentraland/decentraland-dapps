@@ -1,37 +1,37 @@
+import { END, EventChannel, Task, eventChannel } from 'redux-saga'
 import {
-  takeEvery,
-  put,
   call,
-  delay,
-  take,
-  select,
-  race,
-  fork,
   cancel,
-  cancelled
+  cancelled,
+  delay,
+  fork,
+  put,
+  race,
+  select,
+  take,
+  takeEvery,
 } from 'redux-saga/effects'
-import { Task, eventChannel, EventChannel, END } from 'redux-saga'
 import { isErrorWithMessage } from '../../lib/error'
+import { isCreditsFeatureEnabled } from '../features/selectors'
 import { CONNECT_WALLET_SUCCESS, ConnectWalletSuccessAction } from '../wallet'
 import {
-  FetchCreditsRequestAction,
-  fetchCreditsSuccess,
-  fetchCreditsFailure,
-  fetchCreditsRequest,
-  PollCreditsBalanceRequestAction,
-  POLL_CREDITS_BALANCE_REQUEST,
+  FETCH_CREDITS_FAILURE,
   FETCH_CREDITS_REQUEST,
   FETCH_CREDITS_SUCCESS,
-  FETCH_CREDITS_FAILURE,
+  FetchCreditsRequestAction,
+  POLL_CREDITS_BALANCE_REQUEST,
+  PollCreditsBalanceRequestAction,
   START_CREDITS_SSE,
   STOP_CREDITS_SSE,
   StartCreditsSSEAction,
-  startCreditsSSE
+  fetchCreditsFailure,
+  fetchCreditsRequest,
+  fetchCreditsSuccess,
+  startCreditsSSE,
 } from './actions'
+import { CreditsClient } from './CreditsClient'
 import { getCredits } from './selectors'
 import { CreditsResponse } from './types'
-import { CreditsClient } from './CreditsClient'
-import { isCreditsFeatureEnabled } from '../features/selectors'
 
 export function* creditsSaga(options: { creditsClient: CreditsClient }) {
   yield takeEvery(FETCH_CREDITS_REQUEST, handleFetchCreditsRequest)
@@ -44,7 +44,7 @@ export function* creditsSaga(options: { creditsClient: CreditsClient }) {
 
     const isCreditsEnabled: boolean = yield select(
       isCreditsFeatureEnabled,
-      address
+      address,
     )
 
     if (!isCreditsEnabled) {
@@ -54,15 +54,15 @@ export function* creditsSaga(options: { creditsClient: CreditsClient }) {
     try {
       const credits: CreditsResponse = yield call(
         [options.creditsClient, 'fetchCredits'],
-        address
+        address,
       )
       yield put(fetchCreditsSuccess(address, credits))
     } catch (error) {
       yield put(
         fetchCreditsFailure(
           address,
-          isErrorWithMessage(error) ? error.message : 'Unknown error'
-        )
+          isErrorWithMessage(error) ? error.message : 'Unknown error',
+        ),
       )
     }
   }
@@ -72,7 +72,7 @@ export function* creditsSaga(options: { creditsClient: CreditsClient }) {
 
     const isCreditsEnabled: boolean = yield select(
       isCreditsFeatureEnabled,
-      address
+      address,
     )
 
     if (!isCreditsEnabled) {
@@ -83,7 +83,7 @@ export function* creditsSaga(options: { creditsClient: CreditsClient }) {
   }
 
   function* handlePollCreditsBalanceRequest(
-    action: PollCreditsBalanceRequestAction
+    action: PollCreditsBalanceRequestAction,
   ) {
     const { address, expectedBalance } = action.payload
     // max of 10 attempts
@@ -93,7 +93,7 @@ export function* creditsSaga(options: { creditsClient: CreditsClient }) {
       yield put(fetchCreditsRequest(address))
       const { success, failure } = yield race({
         success: take(FETCH_CREDITS_SUCCESS),
-        failure: take(FETCH_CREDITS_FAILURE)
+        failure: take(FETCH_CREDITS_FAILURE),
       })
       if (success) {
         const credits: CreditsResponse = yield select(getCredits, address)
@@ -112,7 +112,7 @@ export function* creditsSaga(options: { creditsClient: CreditsClient }) {
   }
 
   function* handleStartSSEConnection(
-    action: StartCreditsSSEAction
+    action: StartCreditsSSEAction,
   ): Generator<any, void, any> {
     const { address } = action.payload
     // Cancel any existing SSE connection task
@@ -135,7 +135,7 @@ export function* creditsSaga(options: { creditsClient: CreditsClient }) {
 
   function createCreditsEventChannel(
     address: string,
-    isCreditsEnabled: boolean
+    isCreditsEnabled: boolean,
   ): EventChannel<any> {
     return eventChannel((emit: (input: any) => void) => {
       if (!isCreditsEnabled) {
@@ -153,7 +153,7 @@ export function* creditsSaga(options: { creditsClient: CreditsClient }) {
           console.error('SSE connection error:', error)
           emit(fetchCreditsFailure(address, 'SSE connection error'))
           emit(END)
-        }
+        },
       )
 
       // Store the connection for cleanup
@@ -176,13 +176,13 @@ export function* creditsSaga(options: { creditsClient: CreditsClient }) {
     try {
       const isCreditsEnabled: boolean = yield select(
         isCreditsFeatureEnabled,
-        address
+        address,
       )
       // Create an event channel for SSE events
       const channel = yield call(
         createCreditsEventChannel,
         address,
-        isCreditsEnabled
+        isCreditsEnabled,
       )
 
       try {
@@ -219,6 +219,6 @@ export function* creditsSaga(options: { creditsClient: CreditsClient }) {
         currentSSEConnection.close()
         currentSSEConnection = null
       }
-    }
+    },
   )
 }

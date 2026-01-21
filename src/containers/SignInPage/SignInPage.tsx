@@ -1,13 +1,11 @@
 import * as React from 'react'
-
 import {
   SignIn,
-  SignInI18N
+  SignInI18N,
 } from 'decentraland-ui/dist/components/SignIn/SignIn'
-
-import { T } from '../../modules/translation/utils'
-import { isMobile } from '../../lib/utils'
 import { isCucumberProvider } from '../../lib/eth'
+import { isMobile } from '../../lib/utils'
+import { T } from '../../modules/translation/utils'
 import { SignInPageProps } from './SignInPage.types'
 
 export default class SignInPage extends React.PureComponent<SignInPageProps> {
@@ -41,7 +39,7 @@ export default class SignInPage extends React.PureComponent<SignInPageProps> {
               >
                 Samsung Blockchain Wallet
               </a>
-            )
+            ),
           }}
         />
       ) : isMobile() ? (
@@ -74,7 +72,7 @@ export default class SignInPage extends React.PureComponent<SignInPageProps> {
               >
                 imToken
               </a>
-            )
+            ),
           }}
         />
       ) : (
@@ -98,21 +96,16 @@ export default class SignInPage extends React.PureComponent<SignInPageProps> {
               >
                 Ledger Nano S
               </a>
-            )
+            ),
           }}
         />
-      )
+      ),
     }
   }
 
   render() {
-    const {
-      center,
-      isConnected,
-      isConnecting,
-      hasError,
-      onConnect
-    } = this.props
+    const { center, isConnected, isConnecting, hasError, onConnect } =
+      this.props
 
     return (
       <>

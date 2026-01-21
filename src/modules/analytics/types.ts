@@ -19,7 +19,7 @@ type SegmentPayload = {
 
 export type MiddlewareFunction = ({
   payload,
-  next
+  next,
 }: {
   payload: SegmentPayload
   next: (payload: SegmentPayload) => void

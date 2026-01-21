@@ -1,5 +1,5 @@
-import { AnyAction } from 'redux'
 import { isbot } from 'isbot'
+import { AnyAction } from 'redux'
 import { Wallet } from '../wallet/types'
 import {
   ActionType,
@@ -10,7 +10,7 @@ import {
   GetPayload,
   MiddlewareFunction,
   TransformPayload,
-  WindowWithWallets
+  WindowWithWallets,
 } from './types'
 
 export const trackedActions: { [key: string]: AnalyticsAction } = {}
@@ -20,11 +20,11 @@ let transformPayload: TransformPayload | null = null
 export function add(
   actionType: ActionType,
   eventName?: EventName,
-  getPayload?: GetPayload
+  getPayload?: GetPayload,
 ) {
   if (actionType in trackedActions) {
     console.warn(
-      `Analytics: the action type "${actionType}" is already being tracked!`
+      `Analytics: the action type "${actionType}" is already being tracked!`,
     )
     return
   }
@@ -54,7 +54,7 @@ export function track(action: AnyAction) {
 
     analytics.track(
       event,
-      transformPayload ? transformPayload(payload) : payload
+      transformPayload ? transformPayload(payload) : payload,
     )
   }
 }
@@ -96,7 +96,7 @@ export function trackConnectWallet(
     // The name of the wallet used to connect. Not to be confused with the providerType.
     // This would be, for example, "Trust Wallet" when connecting via WalletConnect.
     walletName?: string
-  }
+  },
 ) {
   const analytics = getAnalytics()
 
@@ -155,7 +155,10 @@ export function hasSolanaWallet() {
 
   const windowWallets = window as WindowWithWallets
   const solanaWallets = getSolanaWallets()
-  return windowWallets.solana !== undefined || (solanaWallets !== undefined && solanaWallets.length > 0)
+  return (
+    windowWallets.solana !== undefined ||
+    (solanaWallets !== undefined && solanaWallets.length > 0)
+  )
 }
 
 export function getSolanaWallets() {
@@ -173,7 +176,7 @@ export function getSolanaWallets() {
   if (windowWallets.braveSolana?.isBraveWallet === true) names.add('brave')
   if (windowWallets.solong !== undefined) names.add('solong')
   if (windowWallets.exodus?.solana !== undefined) names.add('exodus')
-  if (Boolean(windowWallets.glowSolana)) names.add('glow')
+  if (windowWallets.glowSolana) names.add('glow')
   if (windowWallets.solana?.isPhantom === true) names.add('phantom')
   if (windowWallets.solana?.isMathWallet === true) names.add('mathwallet')
   if (windowWallets.coin98 !== undefined) names.add('coin98')
@@ -198,12 +201,12 @@ const createWalletEnrichmentMiddleware = (): MiddlewareFunction => {
     const walletContext = {
       hasEvmWallet: hasEvmWallet(),
       hasSolanaWallet: hasSolanaWallet(),
-      userWallets: getAllWallets()
+      userWallets: getAllWallets(),
     }
 
     payload.obj.context = {
       ...payload.obj.context,
-      ...walletContext
+      ...walletContext,
     }
 
     next(payload)

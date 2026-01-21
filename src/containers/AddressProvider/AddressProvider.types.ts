@@ -1,9 +1,9 @@
-import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import React from 'react'
+import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 
 export enum AddressError {
   INVALID = 'invalid_address',
-  ENS_NOT_RESOLVED = 'ens_not_resolved'
+  ENS_NOT_RESOLVED = 'ens_not_resolved',
 }
 
 export type AddressProviderResult = {

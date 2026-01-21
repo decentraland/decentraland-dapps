@@ -49,12 +49,12 @@ export const setProfileAvatarAliasRequest = (address: string, alias: string) =>
 export const setProfileAvatarAliasSuccess = (
   address: string,
   alias: string,
-  version: number
+  version: number,
 ) =>
   action(SET_PROFILE_AVATAR_ALIAS_SUCCESS, {
     address,
     alias,
-    version
+    version,
   })
 export const setProfileAvatarAliasFailure = (address: string, error: string) =>
   action(SET_PROFILE_AVATAR_ALIAS_FAILURE, { address, error })
@@ -80,21 +80,21 @@ export const SET_PROFILE_AVATAR_DESCRIPTION_FAILURE =
 
 export const setProfileAvatarDescriptionRequest = (
   address: string,
-  description: string
+  description: string,
 ) => action(SET_PROFILE_AVATAR_DESCRIPTION_REQUEST, { address, description })
 export const setProfileAvatarDescriptionSuccess = (
   address: string,
   description: string,
-  version: number
+  version: number,
 ) =>
   action(SET_PROFILE_AVATAR_DESCRIPTION_SUCCESS, {
     address,
     description,
-    version
+    version,
   })
 export const setProfileAvatarDescriptionFailure = (
   address: string,
-  error: string
+  error: string,
 ) => action(SET_PROFILE_AVATAR_DESCRIPTION_FAILURE, { address, error })
 
 export type SetProfileAvatarDescriptionRequestAction = ReturnType<

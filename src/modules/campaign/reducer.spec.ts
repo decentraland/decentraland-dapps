@@ -2,7 +2,7 @@ import { loadingReducer } from '../loading/reducer'
 import {
   fetchCampaignRequest,
   fetchCampaignSuccess,
-  fetchCampaignFailure
+  fetchCampaignFailure,
 } from './actions'
 import { campaignReducer } from './reducer'
 import { CampaignState } from './types'
@@ -14,7 +14,7 @@ describe('Campaign reducer', () => {
     initialState = {
       data: null,
       loading: [],
-      error: null
+      error: null,
     }
   })
 
@@ -26,7 +26,7 @@ describe('Campaign reducer', () => {
       action = fetchCampaignRequest()
       const stateWithError: CampaignState = {
         ...initialState,
-        error: 'Some previous error'
+        error: 'Some previous error',
       }
       state = campaignReducer(stateWithError, action)
     })
@@ -35,7 +35,7 @@ describe('Campaign reducer', () => {
       expect(state).toEqual({
         data: null,
         loading: loadingReducer([], action),
-        error: null
+        error: null,
       })
     })
   })
@@ -54,7 +54,7 @@ describe('Campaign reducer', () => {
         mainTag: 'main-tag',
         additionalTags: ['tag1', 'tag2'],
         banners: {},
-        assets: {}
+        assets: {},
       }
 
       successAction = fetchCampaignSuccess(
@@ -63,7 +63,7 @@ describe('Campaign reducer', () => {
         campaignData.name,
         campaignData.tabName,
         campaignData.mainTag,
-        campaignData.additionalTags
+        campaignData.additionalTags,
       )
 
       const loadingState = campaignReducer(initialState, requestAction)
@@ -74,7 +74,7 @@ describe('Campaign reducer', () => {
       expect(state).toEqual({
         data: campaignData,
         loading: loadingReducer([requestAction], successAction),
-        error: null
+        error: null,
       })
     })
   })
@@ -98,7 +98,7 @@ describe('Campaign reducer', () => {
       expect(state).toEqual({
         data: null,
         loading: loadingReducer([requestAction], failureAction),
-        error: errorMessage
+        error: errorMessage,
       })
     })
   })

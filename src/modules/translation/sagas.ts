@@ -1,21 +1,21 @@
-import { takeEvery, put, call, ForkEffect } from 'redux-saga/effects'
 import flatten from 'flat'
-import { Translation, TranslationKeys, TranslationSagaOptions } from './types'
+import { ForkEffect, call, put, takeEvery } from 'redux-saga/effects'
 import {
-  fetchTranslationsSuccess,
-  fetchTranslationsFailure,
   FETCH_TRANSLATIONS_REQUEST,
-  FetchTranslationsRequestAction
+  FetchTranslationsRequestAction,
+  fetchTranslationsFailure,
+  fetchTranslationsSuccess,
 } from './actions'
-import { setCurrentLocale, mergeTranslations } from './utils'
 import * as defaultTranslations from './defaults'
+import { Translation, TranslationKeys, TranslationSagaOptions } from './types'
+import { mergeTranslations, setCurrentLocale } from './utils'
 
 export function createTranslationSaga({
   getTranslation,
-  translations
+  translations,
 }: TranslationSagaOptions): () => IterableIterator<ForkEffect> {
   function* handleFetchTranslationsRequest(
-    action: FetchTranslationsRequestAction
+    action: FetchTranslationsRequestAction,
   ) {
     try {
       const { locale } = action.payload
@@ -31,7 +31,7 @@ export function createTranslationSaga({
       // merge translations and defaults
       const allTransalations = mergeTranslations<TranslationKeys>(
         flatten(defaultTranslations[locale]),
-        flatten(result)
+        flatten(result),
       )
 
       setCurrentLocale(locale, allTransalations)

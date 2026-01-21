@@ -1,30 +1,30 @@
+import { LoadingState, loadingReducer } from '../loading/reducer'
+import {
+  CLEAR_TRANSACTION,
+  CLEAR_TRANSACTIONS,
+  ClearTransactionAction,
+  ClearTransactionsAction,
+  FETCH_TRANSACTION_FAILURE,
+  FETCH_TRANSACTION_REQUEST,
+  FETCH_TRANSACTION_SUCCESS,
+  FIX_REVERTED_TRANSACTION,
+  FetchTransactionFailureAction,
+  FetchTransactionRequestAction,
+  FetchTransactionSuccessAction,
+  FixRevertedTransactionAction,
+  REPLACE_TRANSACTION_SUCCESS,
+  ReplaceTransactionSuccessAction,
+  UPDATE_TRANSACTION_NONCE,
+  UPDATE_TRANSACTION_STATUS,
+  UpdateTransactionNonceAction,
+  UpdateTransactionStatusAction,
+} from './actions'
 import { Transaction, TransactionStatus } from './types'
 import {
   getTransactionFromAction,
   getTransactionHref,
-  isPending
+  isPending,
 } from './utils'
-import { loadingReducer, LoadingState } from '../loading/reducer'
-import {
-  FetchTransactionRequestAction,
-  FetchTransactionSuccessAction,
-  FetchTransactionFailureAction,
-  FETCH_TRANSACTION_REQUEST,
-  FETCH_TRANSACTION_SUCCESS,
-  FETCH_TRANSACTION_FAILURE,
-  UPDATE_TRANSACTION_STATUS,
-  UpdateTransactionStatusAction,
-  UPDATE_TRANSACTION_NONCE,
-  UpdateTransactionNonceAction,
-  REPLACE_TRANSACTION_SUCCESS,
-  ReplaceTransactionSuccessAction,
-  ClearTransactionsAction,
-  ClearTransactionAction,
-  CLEAR_TRANSACTIONS,
-  CLEAR_TRANSACTION,
-  FixRevertedTransactionAction,
-  FIX_REVERTED_TRANSACTION
-} from './actions'
 
 export type TransactionState = {
   data: Transaction[]
@@ -35,7 +35,7 @@ export type TransactionState = {
 const INITIAL_STATE: TransactionState = {
   data: [],
   loading: [],
-  error: null
+  error: null,
 }
 
 export type TransactionReducerAction =
@@ -51,14 +51,14 @@ export type TransactionReducerAction =
 
 export function transactionReducer(
   state = INITIAL_STATE,
-  action: TransactionReducerAction
+  action: TransactionReducerAction,
 ): TransactionState {
   switch (action.type) {
     case FETCH_TRANSACTION_REQUEST: {
       const actionRef = action.payload.action
       const transaction = getTransactionFromAction(actionRef)
       const otherTransactions = state.data.filter(
-        otherTransaction => otherTransaction.hash !== transaction.hash
+        (otherTransaction) => otherTransaction.hash !== transaction.hash,
       )
       return {
         loading: loadingReducer(state.loading, action),
@@ -71,9 +71,9 @@ export function transactionReducer(
             // these always start as null, and they get updated by the saga
             status: null,
             nonce: null,
-            replacedBy: null
-          }
-        ]
+            replacedBy: null,
+          },
+        ],
       }
     }
     case FETCH_TRANSACTION_SUCCESS: {
@@ -88,8 +88,8 @@ export function transactionReducer(
                 ...transaction,
                 ...actionTransaction
               }
-              : transaction
-        )
+              : transaction,
+        ),
       }
     }
     case FETCH_TRANSACTION_FAILURE: {
@@ -104,8 +104,8 @@ export function transactionReducer(
                 ...transaction,
                 status
               }
-              : transaction
-        )
+              : transaction,
+        ),
       }
     }
     case UPDATE_TRANSACTION_STATUS: {
@@ -119,8 +119,8 @@ export function transactionReducer(
                 ...transaction,
                 status: action.payload.status
               }
-              : transaction
-        )
+              : transaction,
+        ),
       }
     }
     case FIX_REVERTED_TRANSACTION: {
@@ -134,8 +134,8 @@ export function transactionReducer(
                 ...transaction,
                 status: TransactionStatus.CONFIRMED
               }
-              : transaction
-        )
+              : transaction,
+        ),
       }
     }
     case UPDATE_TRANSACTION_NONCE: {
@@ -146,10 +146,10 @@ export function transactionReducer(
           action.payload.hash === transaction.hash
             ? {
                 ...transaction,
-                nonce: action.payload.nonce
+                nonce: action.payload.nonce,
               }
-            : transaction
-        )
+            : transaction,
+        ),
       }
     }
     case REPLACE_TRANSACTION_SUCCESS: {
@@ -163,31 +163,31 @@ export function transactionReducer(
                 status: TransactionStatus.REPLACED,
                 url: getTransactionHref(
                   { txHash: action.payload.replaceBy },
-                  transaction.chainId
+                  transaction.chainId,
                 ),
-                replacedBy: action.payload.replaceBy
+                replacedBy: action.payload.replaceBy,
               }
-            : transaction
-        )
+            : transaction,
+        ),
       }
     }
     case CLEAR_TRANSACTIONS: {
       return {
         ...state,
         data: state.data.filter(
-          transaction =>
+          (transaction) =>
             transaction.from.toLowerCase() !==
               action.payload.address.toLowerCase() &&
-            (action.payload.clearPendings || !isPending(transaction.status))
-        )
+            (action.payload.clearPendings || !isPending(transaction.status)),
+        ),
       }
     }
     case CLEAR_TRANSACTION: {
       return {
         ...state,
         data: state.data.filter(
-          transaction => transaction.hash !== action.payload.hash
-        )
+          (transaction) => transaction.hash !== action.payload.hash,
+        ),
       }
     }
     default:

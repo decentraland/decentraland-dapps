@@ -8,7 +8,7 @@ describe('when checking if a wallet is a Web2 wallet', () => {
   describe('and the wallet is using MAGIC provider', () => {
     beforeEach(() => {
       wallet = {
-        providerType: ProviderType.MAGIC
+        providerType: ProviderType.MAGIC,
       } as Wallet
     })
 
@@ -20,7 +20,7 @@ describe('when checking if a wallet is a Web2 wallet', () => {
   describe('and the wallet is using MAGIC_TEST provider', () => {
     beforeEach(() => {
       wallet = {
-        providerType: ProviderType.MAGIC_TEST
+        providerType: ProviderType.MAGIC_TEST,
       } as Wallet
     })
 
@@ -33,11 +33,11 @@ describe('when checking if a wallet is a Web2 wallet', () => {
     [ProviderType.INJECTED, 'INJECTED'],
     [ProviderType.NETWORK, 'NETWORK'],
     [ProviderType.WALLET_CONNECT, 'WALLET_CONNECT'],
-    [ProviderType.WALLET_LINK, 'WALLET_LINK']
+    [ProviderType.WALLET_LINK, 'WALLET_LINK'],
   ])('and the wallet is using %s provider', (providerType, providerName) => {
     beforeEach(() => {
       wallet = {
-        providerType
+        providerType,
       } as Wallet
     })
 

@@ -1,12 +1,11 @@
 import React from 'react'
-import { Toasts } from 'decentraland-ui/dist/components/Toasts/Toasts'
 import { Toast } from 'decentraland-ui/dist/components/Toast/Toast'
-
+import { Toasts } from 'decentraland-ui/dist/components/Toasts/Toasts'
 import { DefaultProps, Props } from './ToastProvider.types'
 
 export default class ToastProvider extends React.PureComponent<Props> {
   static defaultProps: DefaultProps = {
-    children: null
+    children: null,
   }
 
   getCloseHandler = (id: number) => {
@@ -39,7 +38,7 @@ export default class ToastProvider extends React.PureComponent<Props> {
           icon={toast.icon}
           className={toast.className}
           onClose={this.getCloseHandler(toast.id)}
-        />
+        />,
       )
     }
 

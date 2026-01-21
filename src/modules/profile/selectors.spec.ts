@@ -3,7 +3,7 @@ import {
   loadProfileRequest,
   loadProfilesRequest,
   setProfileAvatarAliasRequest,
-  setProfileAvatarDescriptionRequest
+  setProfileAvatarDescriptionRequest,
 } from './actions'
 import { INITIAL_STATE, ProfileState } from './reducer'
 import {
@@ -19,7 +19,7 @@ import {
   getProfilesBeingLoaded,
   isLoadingProfile,
   isLoadingSomeProfiles,
-  isLoadingAllProfiles
+  isLoadingAllProfiles,
 } from './selectors'
 import { Profile } from './types'
 
@@ -44,9 +44,9 @@ describe('Profile selectors', () => {
           profile: {
             ...profileState.profile,
             loading: [
-              setProfileAvatarDescriptionRequest('anAddress', 'aDescription')
-            ]
-          }
+              setProfileAvatarDescriptionRequest('anAddress', 'aDescription'),
+            ],
+          },
         }
       })
 
@@ -61,8 +61,8 @@ describe('Profile selectors', () => {
           ...profileState,
           profile: {
             ...profileState.profile,
-            loading: []
-          }
+            loading: [],
+          },
         }
       })
 
@@ -79,8 +79,8 @@ describe('Profile selectors', () => {
           ...profileState,
           profile: {
             ...profileState.profile,
-            loading: [setProfileAvatarAliasRequest('anAlias', 'aDescription')]
-          }
+            loading: [setProfileAvatarAliasRequest('anAlias', 'aDescription')],
+          },
         }
       })
 
@@ -95,8 +95,8 @@ describe('Profile selectors', () => {
           ...profileState,
           profile: {
             ...profileState.profile,
-            loading: []
-          }
+            loading: [],
+          },
         }
       })
 
@@ -110,7 +110,7 @@ describe('Profile selectors', () => {
     beforeEach(() => {
       profileState = {
         ...profileState,
-        profile: { ...profileState.profile, data: { anAddress: profile } }
+        profile: { ...profileState.profile, data: { anAddress: profile } },
       }
     })
 
@@ -136,13 +136,13 @@ describe('Profile selectors', () => {
       beforeEach(() => {
         profileState = {
           ...profileState,
-          profile: { ...profileState.profile, data: { anAddress: profile } }
+          profile: { ...profileState.profile, data: { anAddress: profile } },
         }
       })
 
       it('should return the profile associated with the address', () => {
         expect(getProfileOfAddress(profileState, 'anAddress')).toEqual(
-          profileState.profile.data['anAddress']
+          profileState.profile.data['anAddress'],
         )
       })
     })
@@ -151,7 +151,7 @@ describe('Profile selectors', () => {
       beforeEach(() => {
         profileState = {
           ...profileState,
-          profile: { ...profileState.profile, data: {} }
+          profile: { ...profileState.profile, data: {} },
         }
       })
 
@@ -167,8 +167,8 @@ describe('Profile selectors', () => {
         ...profileState,
         profile: {
           ...profileState.profile,
-          error: 'aMessage'
-        }
+          error: 'aMessage',
+        },
       }
     })
 
@@ -189,9 +189,9 @@ describe('Profile selectors', () => {
         profile: {
           ...profileState.profile,
           data: {
-            [addresses[0]]: profiles[0]
-          }
-        }
+            [addresses[0]]: profiles[0],
+          },
+        },
       }
     })
 
@@ -212,9 +212,9 @@ describe('Profile selectors', () => {
             ...profileState.profile,
             loading: [
               loadProfileRequest(addresses[0]),
-              loadProfileRequest(addresses[1])
-            ]
-          }
+              loadProfileRequest(addresses[1]),
+            ],
+          },
         }
       })
 
@@ -232,9 +232,9 @@ describe('Profile selectors', () => {
             ...profileState.profile,
             loading: [
               loadProfilesRequest([addresses[0], addresses[1]]),
-              loadProfilesRequest([addresses[2]])
-            ]
-          }
+              loadProfilesRequest([addresses[2]]),
+            ],
+          },
         }
       })
 
@@ -252,9 +252,9 @@ describe('Profile selectors', () => {
             ...profileState.profile,
             loading: [
               loadProfileRequest(addresses[0]),
-              loadProfilesRequest([addresses[1], addresses[2]])
-            ]
-          }
+              loadProfilesRequest([addresses[1], addresses[2]]),
+            ],
+          },
         }
       })
 
@@ -275,7 +275,7 @@ describe('Profile selectors', () => {
       beforeEach(() => {
         profileState = {
           ...profileState,
-          profile: { ...profileState.profile, loading: [] }
+          profile: { ...profileState.profile, loading: [] },
         }
       })
 
@@ -290,8 +290,8 @@ describe('Profile selectors', () => {
           ...profileState,
           profile: {
             ...profileState.profile,
-            loading: [loadProfileRequest(address.toLowerCase())]
-          }
+            loading: [loadProfileRequest(address.toLowerCase())],
+          },
         }
       })
 
@@ -306,8 +306,8 @@ describe('Profile selectors', () => {
           ...profileState,
           profile: {
             ...profileState.profile,
-            loading: [loadProfilesRequest([address.toLowerCase()])]
-          }
+            loading: [loadProfilesRequest([address.toLowerCase()])],
+          },
         }
       })
 
@@ -321,8 +321,8 @@ describe('Profile selectors', () => {
     let addresses: string[]
 
     beforeEach(() => {
-      addresses = ['anAddress', 'anotherAddress'].map(address =>
-        address.toLowerCase()
+      addresses = ['anAddress', 'anotherAddress'].map((address) =>
+        address.toLowerCase(),
       )
     })
 
@@ -333,9 +333,11 @@ describe('Profile selectors', () => {
           profile: {
             ...profileState.profile,
             loading: [
-              loadProfileRequest('anAddressThatsNotPartOfTheRequestedAddresses')
-            ]
-          }
+              loadProfileRequest(
+                'anAddressThatsNotPartOfTheRequestedAddresses',
+              ),
+            ],
+          },
         }
       })
 
@@ -350,8 +352,8 @@ describe('Profile selectors', () => {
           ...profileState,
           profile: {
             ...profileState.profile,
-            loading: [loadProfileRequest(addresses[0])]
-          }
+            loading: [loadProfileRequest(addresses[0])],
+          },
         }
       })
 
@@ -365,8 +367,8 @@ describe('Profile selectors', () => {
     let addresses: string[]
 
     beforeEach(() => {
-      addresses = ['anAddress', 'anotherAddress'].map(address =>
-        address.toLowerCase()
+      addresses = ['anAddress', 'anotherAddress'].map((address) =>
+        address.toLowerCase(),
       )
     })
 
@@ -377,9 +379,11 @@ describe('Profile selectors', () => {
           profile: {
             ...profileState.profile,
             loading: [
-              loadProfileRequest('anAddressThatsNotPartOfTheRequestedAddresses')
-            ]
-          }
+              loadProfileRequest(
+                'anAddressThatsNotPartOfTheRequestedAddresses',
+              ),
+            ],
+          },
         }
       })
 
@@ -394,8 +398,8 @@ describe('Profile selectors', () => {
           ...profileState,
           profile: {
             ...profileState.profile,
-            loading: [loadProfileRequest(addresses[0])]
-          }
+            loading: [loadProfileRequest(addresses[0])],
+          },
         }
       })
 
@@ -410,8 +414,8 @@ describe('Profile selectors', () => {
           ...profileState,
           profile: {
             ...profileState.profile,
-            loading: [loadProfilesRequest(addresses)]
-          }
+            loading: [loadProfilesRequest(addresses)],
+          },
         }
       })
 

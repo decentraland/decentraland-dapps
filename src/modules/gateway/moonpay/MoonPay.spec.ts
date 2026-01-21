@@ -11,7 +11,7 @@ const mockConfig: MoonPayConfig = {
   apiKey: 'api-key',
   apiBaseUrl: 'http://moonpay-base.url.xyz',
   widgetBaseUrl: 'http://widget.base.url.xyz',
-  pollingDelay: 500
+  pollingDelay: 500,
 }
 
 const mockTransaction: MoonPayTransaction = {
@@ -56,7 +56,7 @@ const mockTransaction: MoonPayTransaction = {
     maxAmount: 10000,
     minAmount: 20,
     minBuyAmount: 20,
-    maxBuyAmount: 10000
+    maxBuyAmount: 10000,
   },
   currency: {
     id: '8d305f63-1fd7-4e01-a220-8445e591aec4',
@@ -83,7 +83,7 @@ const mockTransaction: MoonPayTransaction = {
     isSellSupported: true,
     confirmationsRequired: 12,
     minSellAmount: 0.03,
-    maxSellAmount: 3
+    maxSellAmount: 3,
   },
   externalCustomerId: '41e794f0-b9ee-48cd-842a-431edf6555b8',
   country: 'GBR',
@@ -92,7 +92,7 @@ const mockTransaction: MoonPayTransaction = {
       stage: 'stage_one_ordering',
       status: 'success',
       actions: [],
-      failureReason: null
+      failureReason: null,
     },
     {
       stage: 'stage_two_verification',
@@ -100,29 +100,28 @@ const mockTransaction: MoonPayTransaction = {
       actions: [
         {
           type: 'verify_card_by_code',
-          url:
-            'https://buy.moonpay.com/card_verification_code?cardId=68e46314-93e5-4420-ac10-485aef4e19d0'
+          url: 'https://buy.moonpay.com/card_verification_code?cardId=68e46314-93e5-4420-ac10-485aef4e19d0',
         },
         {
           type: 'retry_kyc',
-          url: 'https://buy.moonpay.com/identity_check'
-        }
+          url: 'https://buy.moonpay.com/identity_check',
+        },
       ],
-      failureReason: null
+      failureReason: null,
     },
     {
       stage: 'stage_three_processing',
       status: 'not_started',
       actions: [],
-      failureReason: null
+      failureReason: null,
     },
     {
       stage: 'stage_four_delivery',
       status: 'not_started',
       actions: [],
-      failureReason: null
-    }
-  ]
+      failureReason: null,
+    },
+  ],
 }
 
 describe('when interacting with MoonPay', () => {
@@ -142,7 +141,7 @@ describe('when interacting with MoonPay', () => {
 
     it('should return the widget url with the api key, currency code, and redirect url as query parameters', () => {
       return expect(moonPay.getWidgetUrl(Network.ETHEREUM)).toEqual(
-        mockOriginalURL
+        mockOriginalURL,
       )
     })
   })
@@ -158,11 +157,11 @@ describe('when interacting with MoonPay', () => {
         paymentMethod: 'credit_debit_card',
         timestamp: 1535398843748,
         gateway: NetworkGatewayType.MOON_PAY,
-        txHash: 'crypto-transaction-id'
+        txHash: 'crypto-transaction-id',
       }
 
       return expect(
-        moonPay.createPurchase(mockTransaction, Network.ETHEREUM)
+        moonPay.createPurchase(mockTransaction, Network.ETHEREUM),
       ).toEqual(expectedPurchase)
     })
   })

@@ -1,64 +1,64 @@
+import { BlockWithTransactions } from '@ethersproject/abstract-provider'
+import { TransactionResponse } from '@ethersproject/providers'
+import { ethers } from 'ethers'
 import {
+  ForkEffect,
   call,
+  delay,
+  fork,
   put,
   select,
   takeEvery,
-  ForkEffect,
-  fork,
-  delay
 } from 'redux-saga/effects'
-import { ethers } from 'ethers'
-import { TransactionResponse } from '@ethersproject/providers'
-import { BlockWithTransactions } from '@ethersproject/abstract-provider'
 import { StatusResponse } from 'decentraland-transactions/esm/crossChain/types'
 import { getNetworkWeb3Provider } from '../../lib/eth'
 import {
-  Transaction,
-  TransactionStatus,
-  AnyTransaction,
-  TransactionsConfig
-} from './types'
-import {
-  fetchTransactionFailure,
-  fetchTransactionSuccess,
-  FETCH_TRANSACTION_REQUEST,
-  WATCH_PENDING_TRANSACTIONS,
-  FetchTransactionRequestAction,
-  watchPendingTransactions,
-  updateTransactionStatus,
-  updateTransactionNonce,
-  ReplaceTransactionRequestAction,
-  replaceTransactionRequest,
-  watchDroppedTransactions,
-  WATCH_DROPPED_TRANSACTIONS,
-  replaceTransactionSuccess,
-  REPLACE_TRANSACTION_REQUEST,
-  fetchTransactionRequest,
-  watchRevertedTransaction,
-  WatchRevertedTransactionAction,
-  WATCH_REVERTED_TRANSACTION,
-  fixRevertedTransaction
-} from './actions'
-import {
   CONNECT_WALLET_SUCCESS,
-  ConnectWalletSuccessAction
+  ConnectWalletSuccessAction,
 } from '../wallet/actions'
+import { getAddress } from '../wallet/selectors'
+import {
+  FETCH_TRANSACTION_REQUEST,
+  FetchTransactionRequestAction,
+  REPLACE_TRANSACTION_REQUEST,
+  ReplaceTransactionRequestAction,
+  WATCH_DROPPED_TRANSACTIONS,
+  WATCH_PENDING_TRANSACTIONS,
+  WATCH_REVERTED_TRANSACTION,
+  WatchRevertedTransactionAction,
+  fetchTransactionFailure,
+  fetchTransactionRequest,
+  fetchTransactionSuccess,
+  fixRevertedTransaction,
+  replaceTransactionRequest,
+  replaceTransactionSuccess,
+  updateTransactionNonce,
+  updateTransactionStatus,
+  watchDroppedTransactions,
+  watchPendingTransactions,
+  watchRevertedTransaction,
+} from './actions'
 import {
   getData,
   getTransaction as getTransactionInState,
-  getTransactions
+  getTransactions,
 } from './selectors'
-import {
-  isPending,
-  buildActionRef,
-  isTransactionActionCrossChain,
-  getTransactionPayloadFromAction
-} from './utils'
 import { getTransaction as getTransactionFromChain } from './txUtils'
-import { getAddress } from '../wallet/selectors'
+import {
+  AnyTransaction,
+  Transaction,
+  TransactionStatus,
+  TransactionsConfig,
+} from './types'
+import {
+  buildActionRef,
+  getTransactionPayloadFromAction,
+  isPending,
+  isTransactionActionCrossChain,
+} from './utils'
 
 export function* transactionSaga(
-  config?: TransactionsConfig
+  config?: TransactionsConfig,
 ): IterableIterator<ForkEffect> {
   yield takeEvery(FETCH_TRANSACTION_REQUEST, handleFetchTransactionRequest)
   yield takeEvery(REPLACE_TRANSACTION_REQUEST, handleReplaceTransactionRequest)
@@ -68,7 +68,7 @@ export function* transactionSaga(
   yield takeEvery(CONNECT_WALLET_SUCCESS, handleConnectWalletSuccess)
 
   function* handleFetchTransactionRequest(
-    action: FetchTransactionRequestAction
+    action: FetchTransactionRequestAction,
   ) {
     const isCrossChain = isTransactionActionCrossChain(action.payload.action)
     if (isCrossChain) {
@@ -110,21 +110,21 @@ export class FailedTransactionError extends Error {
 
 export function* handleCrossChainTransactionRequest(
   action: FetchTransactionRequestAction,
-  config?: TransactionsConfig
+  config?: TransactionsConfig,
 ) {
   const transactionPayload = getTransactionPayloadFromAction(
-    action.payload.action
+    action.payload.action,
   )
 
   if (!config?.crossChainProviderUrl || !transactionPayload.requestId) {
     throw new Error('Squid URL not set')
   }
 
-  const CrossChainProvider: Awaited<ReturnType<
-    typeof config.getCrossChainProvider
-  >> = yield config.getCrossChainProvider()
+  const CrossChainProvider: Awaited<
+    ReturnType<typeof config.getCrossChainProvider>
+  > = yield config.getCrossChainProvider()
   const crossChainProvider = new CrossChainProvider(
-    config.crossChainProviderUrl
+    config.crossChainProviderUrl,
   )
 
   let statusResponse: StatusResponse | undefined
@@ -142,10 +142,10 @@ export function* handleCrossChainTransactionRequest(
       statusResponse = yield call(
         [crossChainProvider, 'getStatus'],
         transactionPayload.requestId,
-        transactionPayload.hash
+        transactionPayload.hash,
       )
-      txInState = yield select(state =>
-        getTransactionInState(state, action.payload.hash)
+      txInState = yield select((state) =>
+        getTransactionInState(state, action.payload.hash),
       )
       if (
         statusResponse &&
@@ -155,8 +155,8 @@ export function* handleCrossChainTransactionRequest(
         yield put(
           updateTransactionStatus(
             action.payload.hash,
-            TransactionStatus.PENDING
-          )
+            TransactionStatus.PENDING,
+          ),
         )
       } else if (
         statusResponse &&
@@ -164,7 +164,7 @@ export function* handleCrossChainTransactionRequest(
       ) {
         squidNotFoundRetries--
       }
-    } catch (_e) {
+    } catch {
       squidNotFoundRetries--
     }
 
@@ -173,7 +173,7 @@ export function* handleCrossChainTransactionRequest(
       (!statusResponse || statusResponse.squidTransactionStatus === 'not_found')
     ) {
       yield put(
-        updateTransactionStatus(action.payload.hash, TransactionStatus.DROPPED)
+        updateTransactionStatus(action.payload.hash, TransactionStatus.DROPPED),
       )
       return
     }
@@ -183,16 +183,16 @@ export function* handleCrossChainTransactionRequest(
     attempt++
   }
 
-  txInState = yield select(state =>
-    getTransactionInState(state, action.payload.hash)
+  txInState = yield select((state) =>
+    getTransactionInState(state, action.payload.hash),
   )
   switch (statusResponse.squidTransactionStatus) {
     case 'success':
       yield put(
         fetchTransactionSuccess({
           ...txInState,
-          status: TransactionStatus.CONFIRMED
-        })
+          status: TransactionStatus.CONFIRMED,
+        }),
       )
       break
     case 'partial_success':
@@ -206,19 +206,19 @@ export function* handleCrossChainTransactionRequest(
           action.payload.hash,
           TransactionStatus.REVERTED,
           error,
-          txInState
-        )
+          txInState,
+        ),
       )
       break
   }
 }
 
 export function* handleRegularTransactionRequest(
-  action: FetchTransactionRequestAction
+  action: FetchTransactionRequestAction,
 ) {
   const { hash, address } = action.payload
-  const transaction: Transaction = yield select(state =>
-    getTransactionInState(state, hash)
+  const transaction: Transaction = yield select((state) =>
+    getTransactionInState(state, hash),
   )
   if (!transaction) {
     console.warn(`Could not find a valid transaction for hash ${hash}`)
@@ -233,7 +233,7 @@ export function* handleRegularTransactionRequest(
       getTransactionFromChain,
       address,
       transaction.chainId,
-      hash
+      hash,
     )
     let isUnknown = tx == null
 
@@ -243,8 +243,8 @@ export function* handleRegularTransactionRequest(
       isPending(tx.status) ||
       tx.status === TransactionStatus.REPLACED // let replaced transactions be kept in the loop so it can be picked up as dropped
     ) {
-      const txInState: Transaction = yield select(state =>
-        getTransactionInState(state, hash)
+      const txInState: Transaction = yield select((state) =>
+        getTransactionInState(state, hash),
       )
 
       // update nonce
@@ -282,7 +282,7 @@ export function* handleRegularTransactionRequest(
         getTransactionFromChain,
         address,
         transaction.chainId,
-        hash
+        hash,
       )
       isUnknown = tx == null
     }
@@ -295,9 +295,9 @@ export function* handleRegularTransactionRequest(
           ...transaction,
           status: tx.status,
           receipt: {
-            logs: transaction.withReceipt ? tx.receipt.logs : []
-          }
-        })
+            logs: transaction.withReceipt ? tx.receipt.logs : [],
+          },
+        }),
       )
     } else {
       if (tx.status === TransactionStatus.REVERTED) {
@@ -311,8 +311,8 @@ export function* handleRegularTransactionRequest(
         error.hash,
         error.status,
         error.message,
-        transaction
-      )
+        transaction,
+      ),
     )
   }
 }
@@ -331,11 +331,11 @@ export function* getFibonacciDelay(attempt: number) {
 }
 
 export function* handleReplaceTransactionRequest(
-  action: ReplaceTransactionRequestAction
+  action: ReplaceTransactionRequestAction,
 ) {
   const { hash, nonce, address: account } = action.payload
-  const transaction: Transaction = yield select(state =>
-    getTransactionInState(state, hash)
+  const transaction: Transaction = yield select((state) =>
+    getTransactionInState(state, hash),
   )
   if (!transaction) {
     console.warn(`Could not find a valid transaction for hash ${hash}`)
@@ -363,7 +363,7 @@ export function* handleReplaceTransactionRequest(
 
     const eth: ethers.providers.Web3Provider = yield call(
       getNetworkWeb3Provider,
-      transaction.chainId
+      transaction.chainId,
     )
 
     // check if tx has status, this is to recover from a tx that is dropped momentarily
@@ -371,15 +371,15 @@ export function* handleReplaceTransactionRequest(
       getTransactionFromChain,
       account,
       transaction.chainId,
-      hash
+      hash,
     )
 
     if (tx != null) {
-      const txInState: Transaction = yield select(state =>
-        getTransactionInState(state, hash)
+      const txInState: Transaction = yield select((state) =>
+        getTransactionInState(state, hash),
       )
       yield put(
-        fetchTransactionRequest(account, hash, buildActionRef(txInState))
+        fetchTransactionRequest(account, hash, buildActionRef(txInState)),
       )
       break
     }
@@ -394,22 +394,22 @@ export function* handleReplaceTransactionRequest(
     const startBlock = blockNumber
     const endBlock = checkpoint || blockNumber - BLOCKS_DEPTH
     for (let i = startBlock; i > endBlock; i--) {
-      let block: BlockWithTransactions = yield call(
+      const block: BlockWithTransactions = yield call(
         [eth, 'getBlockWithTransactions'],
-        i
+        i,
       )
       const transactions: TransactionResponse[] =
         block != null && block.transactions != null ? block.transactions : []
 
       // look for a replacement tx, if so break the loop
       replacedBy = transactions.find(
-        tx => tx.nonce === nonce && tx.from.toString() === account
+        (tx) => tx.nonce === nonce && tx.from.toString() === account,
       )
       if (replacedBy) break
 
       // if no replacement is found, keep track of the highest nonce for the account
       highestNonce = transactions
-        .filter(tx => tx.from.toString() === account)
+        .filter((tx) => tx.from.toString() === account)
         .reduce((max, tx) => Math.max(max, tx.nonce), highestNonce)
     }
 
@@ -421,11 +421,11 @@ export function* handleReplaceTransactionRequest(
       // could be due to a race condition when fetching the account nonce
       // it will be sent back to the pending tx saga that will mark it as confirmed/reverted
       if (hash === replacedBy.hash) {
-        const txInState: Transaction = yield select(state =>
-          getTransactionInState(state, hash)
+        const txInState: Transaction = yield select((state) =>
+          getTransactionInState(state, hash),
         )
         yield put(
-          fetchTransactionRequest(account, hash, buildActionRef(txInState))
+          fetchTransactionRequest(account, hash, buildActionRef(txInState)),
         )
       } else {
         // replacement found!
@@ -437,7 +437,10 @@ export function* handleReplaceTransactionRequest(
     // if there was nonce higher to than the one in the tx, we can mark it as replaced (although we don't know which tx replaced it)
     if (highestNonce >= nonce) {
       yield put(
-        updateTransactionStatus(action.payload.hash, TransactionStatus.REPLACED)
+        updateTransactionStatus(
+          action.payload.hash,
+          TransactionStatus.REPLACED,
+        ),
       )
       break
     }
@@ -453,8 +456,8 @@ export function* handleReplaceTransactionRequest(
 
 export function* handleWatchPendingTransactions() {
   const transactions: Transaction[] = yield select(getData)
-  const pendingTransactions = transactions.filter(transaction =>
-    isPending(transaction.status)
+  const pendingTransactions = transactions.filter((transaction) =>
+    isPending(transaction.status),
   )
 
   for (const tx of pendingTransactions) {
@@ -463,7 +466,7 @@ export function* handleWatchPendingTransactions() {
       if (!isExpired(tx, PENDING_TRANSACTION_THRESHOLD)) {
         yield fork(
           handleRegularTransactionRequest,
-          fetchTransactionRequest(tx.from, tx.hash, buildActionRef(tx))
+          fetchTransactionRequest(tx.from, tx.hash, buildActionRef(tx)),
         )
       } else {
         // mark it as dropped if it's too old
@@ -476,29 +479,29 @@ export function* handleWatchPendingTransactions() {
 export function* handleWatchDroppedTransactions() {
   const transactions: Transaction[] = yield select(getData)
   const droppedTransactions = transactions.filter(
-    transaction =>
+    (transaction) =>
       transaction.status === TransactionStatus.DROPPED &&
       transaction.nonce != null &&
-      !isExpired(transaction, DROPPED_TRANSACTION_THRESHOLD)
+      !isExpired(transaction, DROPPED_TRANSACTION_THRESHOLD),
   )
 
   for (const tx of droppedTransactions) {
     if (!watchDroppedIndex[tx.hash] && !tx.isCrossChain) {
       yield fork(
         handleReplaceTransactionRequest,
-        replaceTransactionRequest(tx.hash, tx.nonce as number, tx.from)
+        replaceTransactionRequest(tx.hash, tx.nonce as number, tx.from),
       )
     }
   }
 }
 
 export function* handleWatchRevertedTransaction(
-  action: WatchRevertedTransactionAction
+  action: WatchRevertedTransactionAction,
 ) {
   const { hash } = action.payload
 
-  const txInState: Transaction = yield select(state =>
-    getTransactionInState(state, hash)
+  const txInState: Transaction = yield select((state) =>
+    getTransactionInState(state, hash),
   )
 
   // Don't watch for reverted cross chain transactions
@@ -506,7 +509,7 @@ export function* handleWatchRevertedTransaction(
     return
   }
 
-  const address: string = yield select(state => getAddress(state))
+  const address: string = yield select((state) => getAddress(state))
   let attempt = 0
 
   do {
@@ -515,7 +518,7 @@ export function* handleWatchRevertedTransaction(
     attempt++
 
     const txInNetwork: AnyTransaction | null = yield call(() =>
-      getTransactionFromChain(address, txInState.chainId, hash)
+      getTransactionFromChain(address, txInState.chainId, hash),
     )
     if (
       txInNetwork != null &&
@@ -525,7 +528,7 @@ export function* handleWatchRevertedTransaction(
       return
     } else if (txInNetwork == null && txInState.nonce) {
       yield put(
-        replaceTransactionRequest(hash, txInState.nonce, txInState.from)
+        replaceTransactionRequest(hash, txInState.nonce, txInState.from),
       )
       return
     }
@@ -537,14 +540,14 @@ export function* handleConnectWalletSuccess(_: ConnectWalletSuccessAction) {
   yield put(watchDroppedTransactions())
 
   // find reverted transactions and watch the latest ones
-  const address: string = yield select(state => getAddress(state))
-  const transactions: Transaction[] = yield select(state =>
-    getTransactions(state, address)
+  const address: string = yield select((state) => getAddress(state))
+  const transactions: Transaction[] = yield select((state) =>
+    getTransactions(state, address),
   )
   const revertedTransactions = transactions.filter(
-    transaction =>
+    (transaction) =>
       transaction.status === TransactionStatus.REVERTED &&
-      !isExpired(transaction, REVERTED_TRANSACTION_THRESHOLD)
+      !isExpired(transaction, REVERTED_TRANSACTION_THRESHOLD),
   )
   for (const transaction of revertedTransactions) {
     yield put(watchRevertedTransaction(transaction.hash))

@@ -20,11 +20,11 @@ describe('when adding a new trade', () => {
       body: JSON.stringify(trade),
       metadata: {
         signer: 'dcl:test',
-        intent: 'dcl:create-trade'
+        intent: 'dcl:create-trade',
       },
       headers: {
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     })
   })
 
@@ -67,7 +67,7 @@ describe('when fetching a trade by id', () => {
     await tradesApi.fetchTrade('tradeId')
 
     expect(fetchMock).toHaveBeenCalledWith('/v1/trades/tradeId', {
-      method: 'GET'
+      method: 'GET',
     })
   })
 })

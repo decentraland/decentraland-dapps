@@ -1,10 +1,10 @@
-import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { action } from 'typesafe-actions'
+import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { buildTransactionPayload } from '../transaction/utils'
 import {
   Authorization,
   AuthorizationAction,
-  AuthorizationOptions
+  AuthorizationOptions,
 } from './types'
 
 // Fetch authorizations
@@ -21,12 +21,12 @@ export const fetchAuthorizationsRequest = (authorizations: Authorization[]) =>
  * Necessary by the reducer to be able to remove authorizations fetched that now are not authorized anymore.
  */
 export const fetchAuthorizationsSuccess = (
-  authorizations: [Authorization, Authorization | null][]
+  authorizations: [Authorization, Authorization | null][],
 ) => action(FETCH_AUTHORIZATIONS_SUCCESS, { authorizations })
 
 export const fetchAuthorizationsFailure = (
   authorizations: Authorization[],
-  error: string
+  error: string,
 ) => action(FETCH_AUTHORIZATIONS_FAILURE, { authorizations, error })
 
 export type FetchAuthorizationsRequestAction = ReturnType<
@@ -47,24 +47,24 @@ export const GRANT_TOKEN_FAILURE = '[Failure] Grant Token'
 
 export const grantTokenRequest = (authorization: Authorization) =>
   action(GRANT_TOKEN_REQUEST, {
-    authorization
+    authorization,
   })
 
 export const grantTokenSuccess = (
   authorization: Authorization,
   chainId: ChainId,
-  txHash: string
+  txHash: string,
 ) =>
   action(GRANT_TOKEN_SUCCESS, {
     ...buildTransactionPayload(chainId, txHash, {
-      authorization
+      authorization,
     }),
-    authorization
+    authorization,
   })
 
 export const grantTokenFailure = (
   authorization: Authorization,
-  error: string
+  error: string,
 ) => action(GRANT_TOKEN_FAILURE, { authorization, error })
 
 export type GrantTokenRequestAction = ReturnType<typeof grantTokenRequest>
@@ -79,24 +79,24 @@ export const REVOKE_TOKEN_FAILURE = '[Failure] Revoke Token'
 
 export const revokeTokenRequest = (authorization: Authorization) =>
   action(REVOKE_TOKEN_REQUEST, {
-    authorization
+    authorization,
   })
 
 export const revokeTokenSuccess = (
   authorization: Authorization,
   chainId: ChainId,
-  txHash: string
+  txHash: string,
 ) =>
   action(REVOKE_TOKEN_SUCCESS, {
     ...buildTransactionPayload(chainId, txHash, {
-      authorization
+      authorization,
     }),
-    authorization
+    authorization,
   })
 
 export const revokeTokenFailure = (
   authorization: Authorization,
-  error: string
+  error: string,
 ) => action(REVOKE_TOKEN_FAILURE, { authorization, error })
 
 export type RevokeTokenRequestAction = ReturnType<typeof revokeTokenRequest>
@@ -112,7 +112,7 @@ export const AUTHORIZATION_FLOW_CLEAR = '[Clear] Authorization Flow'
 export const authorizationFlowRequest = (
   authorization: Authorization,
   authorizationAction: AuthorizationAction,
-  options?: AuthorizationOptions
+  options?: AuthorizationOptions,
 ) =>
   action(AUTHORIZATION_FLOW_REQUEST, {
     authorization,
@@ -120,17 +120,17 @@ export const authorizationFlowRequest = (
     requiredAllowance: options?.requiredAllowance,
     currentAllowance: options?.currentAllowance,
     traceId: options?.traceId,
-    onAuthorized: options?.onAuthorized
+    onAuthorized: options?.onAuthorized,
   })
 
 export const authorizationFlowSuccess = (authorization: Authorization) =>
   action(AUTHORIZATION_FLOW_SUCCESS, {
-    authorization
+    authorization,
   })
 
 export const authorizationFlowFailure = (
   authorization: Authorization,
-  error: string
+  error: string,
 ) => action(AUTHORIZATION_FLOW_FAILURE, { authorization, error })
 
 export const authorizationFlowClear = () => action(AUTHORIZATION_FLOW_CLEAR)
