@@ -1,2 +1,2 @@
-import TransactionLink from './TransactionLink.container'
-export default TransactionLink
+import TransactionLink from "./TransactionLink.container";
+export default TransactionLink;

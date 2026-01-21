@@ -1,23 +1,23 @@
-import React from 'react'
-import { getChainName } from '@dcl/schemas/dist/dapps/chain-id'
-import { Network } from '@dcl/schemas/dist/dapps/network'
-import { Button, Row } from 'decentraland-ui'
-import { getChainIdByNetwork } from '../../lib/eth'
-import { t } from '../../modules/translation/utils'
-import { Props } from './MetaTransactionError.types'
+import React from "react";
+import { getChainName } from "@dcl/schemas/dist/dapps/chain-id";
+import { Network } from "@dcl/schemas/dist/dapps/network";
+import { Button, Row } from "decentraland-ui";
+import { getChainIdByNetwork } from "../../lib/eth";
+import { t } from "../../modules/translation/utils";
+import { Props } from "./MetaTransactionError.types";
 
 export default class MetaTransactionError extends React.PureComponent<Props> {
   render() {
-    const { text, onSwitchNetwork, learnMoreLink } = this.props
-    const chainId = getChainIdByNetwork(Network.MATIC)
-    const network = getChainName(chainId)
+    const { text, onSwitchNetwork, learnMoreLink } = this.props;
+    const chainId = getChainIdByNetwork(Network.MATIC);
+    const network = getChainName(chainId);
     return (
       <div>
         <Row>{text}</Row>
         <br />
         <Row align="right">
           <Button basic onClick={() => onSwitchNetwork(chainId)}>
-            {t('@dapps.toasts.switch_network', { network })}
+            {t("@dapps.toasts.switch_network", { network })}
           </Button>
           &nbsp;
           {learnMoreLink ? (
@@ -27,11 +27,11 @@ export default class MetaTransactionError extends React.PureComponent<Props> {
               target="_blank"
               rel="noopener noreferrer"
             >
-              {t('@dapps.toasts.learn_more')}
+              {t("@dapps.toasts.learn_more")}
             </Button>
           ) : null}
         </Row>
       </div>
-    )
+    );
   }
 }

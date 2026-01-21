@@ -6,16 +6,16 @@ export async function graphql<T>(
 ) {
   try {
     const result: { data: T } = await fetch(url, {
-      method: 'post',
-      headers: { 'Content-Type': 'application/json' },
+      method: "post",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         query,
       }),
-    }).then((resp) => resp.json())
+    }).then((resp) => resp.json());
     if (!result || !result.data || Object.keys(result.data).length === 0) {
-      throw new Error('Invalid response')
+      throw new Error("Invalid response");
     }
-    return result.data
+    return result.data;
   } catch {
     // some naive retry logic
     return new Promise<T>((resolve, reject) => {
@@ -28,7 +28,7 @@ export async function graphql<T>(
               )
             : reject(),
         retryDelay,
-      )
-    })
+      );
+    });
   }
 }

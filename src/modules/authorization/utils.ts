@@ -1,16 +1,16 @@
-import { Provider } from '@ethersproject/providers'
-import { ethers } from 'ethers'
-import { Authorization, AuthorizationType } from './types'
+import { Provider } from "@ethersproject/providers";
+import { ethers } from "ethers";
+import { Authorization, AuthorizationType } from "./types";
 
 export enum AuthorizationError {
-  REVOKE_FAILED = 'revoke-failed-error',
-  GRANT_FAILED = 'grant-failed-error',
-  INSUFFICIENT_ALLOWANCE = 'insufficient-allowance',
-  FETCH_AUTHORIZATIONS_FAILURE = 'fetch-authorizations-failure',
+  REVOKE_FAILED = "revoke-failed-error",
+  GRANT_FAILED = "grant-failed-error",
+  INSUFFICIENT_ALLOWANCE = "insufficient-allowance",
+  FETCH_AUTHORIZATIONS_FAILURE = "fetch-authorizations-failure",
 }
 
 export function getTokenAmountToApprove(): ethers.BigNumber {
-  return ethers.BigNumber.from(2).pow(256).sub(1)
+  return ethers.BigNumber.from(2).pow(256).sub(1);
 }
 
 export function hasAuthorization(
@@ -19,7 +19,7 @@ export function hasAuthorization(
 ) {
   return authorizations.some((authorization) =>
     areEqual(authorization, authorizationToFind),
-  )
+  );
 }
 
 export function hasAuthorizationAndEnoughAllowance(
@@ -29,28 +29,28 @@ export function hasAuthorizationAndEnoughAllowance(
 ) {
   const foundAuth = authorizations.find((authorization) =>
     areEqual(authorization, authorizationToFind),
-  )
+  );
 
   if (!foundAuth) {
-    return false
+    return false;
   }
 
   // It should only care in the case of allowance authorizations.
   // The rest don't have allowance so they can be ignored.
   if (authorizationToFind.type !== AuthorizationType.ALLOWANCE) {
-    return true
+    return true;
   }
 
-  const { allowance: foundAuthAllowance } = foundAuth
+  const { allowance: foundAuthAllowance } = foundAuth;
 
   if (!foundAuthAllowance) {
-    return false
+    return false;
   }
 
-  const a = ethers.utils.parseEther(allowance)
-  const b = ethers.utils.parseEther(foundAuthAllowance)
+  const a = ethers.utils.parseEther(allowance);
+  const b = ethers.utils.parseEther(foundAuthAllowance);
 
-  return a.lte(b)
+  return a.lte(b);
 }
 
 export function areEqual(left: Authorization, right: Authorization) {
@@ -62,11 +62,11 @@ export function areEqual(left: Authorization, right: Authorization) {
       right.contractAddress.toLowerCase() &&
     left.chainId === right.chainId &&
     left.address.toLowerCase() === right.address.toLowerCase()
-  )
+  );
 }
 
 export function isValidType(type: string) {
-  return Object.values<string>(AuthorizationType).includes(type)
+  return Object.values<string>(AuthorizationType).includes(type);
 }
 
 export function getERC20ContractInstance(
@@ -76,10 +76,10 @@ export function getERC20ContractInstance(
   return new ethers.Contract(
     contractAddress,
     [
-      'function allowance(address owner, address spender) view returns (uint256)',
+      "function allowance(address owner, address spender) view returns (uint256)",
     ],
     provider,
-  )
+  );
 }
 
 export function getERC721ContractInstance(
@@ -89,10 +89,10 @@ export function getERC721ContractInstance(
   return new ethers.Contract(
     contractAddress,
     [
-      'function isApprovedForAll(address owner, address operator) view returns (bool)',
+      "function isApprovedForAll(address owner, address operator) view returns (bool)",
     ],
     provider,
-  )
+  );
 }
 
 export function getCollectionV2ContractInstance(
@@ -101,7 +101,7 @@ export function getCollectionV2ContractInstance(
 ) {
   return new ethers.Contract(
     contractAddress,
-    ['function globalMinters(address) view returns (bool)'],
+    ["function globalMinters(address) view returns (bool)"],
     provider,
-  )
+  );
 }

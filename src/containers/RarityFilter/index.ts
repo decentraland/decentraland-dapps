@@ -1,2 +1,2 @@
-export * from './RarityFilter'
-export * from './RarityFilters.types'
+export * from "./RarityFilter";
+export * from "./RarityFilters.types";

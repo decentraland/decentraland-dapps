@@ -1,2 +1,2 @@
-import BuyManaWithFiatModal from './BuyManaWithFiatModal.container'
-export default BuyManaWithFiatModal
+import BuyManaWithFiatModal from "./BuyManaWithFiatModal.container";
+export default BuyManaWithFiatModal;

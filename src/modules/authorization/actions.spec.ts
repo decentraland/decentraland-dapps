@@ -5,20 +5,20 @@ import {
   authorizationFlowFailure,
   authorizationFlowRequest,
   authorizationFlowSuccess,
-} from './actions'
-import { Authorization, AuthorizationAction } from './types'
+} from "./actions";
+import { Authorization, AuthorizationAction } from "./types";
 
-let authorization: Authorization
+let authorization: Authorization;
 
-describe('authorization flow actions', () => {
+describe("authorization flow actions", () => {
   beforeEach(() => {
-    authorization = {} as Authorization
-  })
+    authorization = {} as Authorization;
+  });
 
-  describe('when calling authorizationFlowRequest action', () => {
-    it('should return the correct action type and payload', () => {
-      const authorizationAction = AuthorizationAction.GRANT
-      const options = { requiredAllowance: '10' }
+  describe("when calling authorizationFlowRequest action", () => {
+    it("should return the correct action type and payload", () => {
+      const authorizationAction = AuthorizationAction.GRANT;
+      const options = { requiredAllowance: "10" };
       expect(
         authorizationFlowRequest(authorization, authorizationAction, options),
       ).toEqual({
@@ -31,31 +31,31 @@ describe('authorization flow actions', () => {
           onAuthorized: undefined,
           currentAllowance: undefined,
         },
-      })
-    })
-  })
+      });
+    });
+  });
 
-  describe('when calling authorizationFlowSuccess action', () => {
-    it('should return the correct action type and payload', () => {
+  describe("when calling authorizationFlowSuccess action", () => {
+    it("should return the correct action type and payload", () => {
       expect(authorizationFlowSuccess(authorization)).toEqual({
         type: AUTHORIZATION_FLOW_SUCCESS,
         payload: {
           authorization,
         },
-      })
-    })
-  })
+      });
+    });
+  });
 
-  describe('when calling authorizationFlowFailure action', () => {
-    it('should return the correct action type and payload', () => {
-      const error = 'some error'
+  describe("when calling authorizationFlowFailure action", () => {
+    it("should return the correct action type and payload", () => {
+      const error = "some error";
       expect(authorizationFlowFailure(authorization, error)).toEqual({
         type: AUTHORIZATION_FLOW_FAILURE,
         payload: {
           authorization,
           error,
         },
-      })
-    })
-  })
-})
+      });
+    });
+  });
+});

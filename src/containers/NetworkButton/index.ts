@@ -1,2 +1,2 @@
-import NetworkButton from './NetworkButton'
-export default NetworkButton
+import NetworkButton from "./NetworkButton";
+export default NetworkButton;

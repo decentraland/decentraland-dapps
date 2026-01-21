@@ -1,4 +1,4 @@
-import { Provider } from 'decentraland-connect'
+import { Provider } from "decentraland-connect";
 
 /**
  * Obtains the chain id through a provider.
@@ -10,17 +10,17 @@ import { Provider } from 'decentraland-connect'
 
 export async function getProviderChainId(provider: Provider): Promise<number> {
   const providerChainId = (await provider.request({
-    method: 'eth_chainId',
+    method: "eth_chainId",
     params: [],
-  })) as string | number
+  })) as string | number;
 
-  let chainId: number
+  let chainId: number;
 
-  if (typeof providerChainId === 'string') {
-    chainId = parseInt(providerChainId, 16)
+  if (typeof providerChainId === "string") {
+    chainId = parseInt(providerChainId, 16);
   } else {
-    chainId = providerChainId
+    chainId = providerChainId;
   }
 
-  return chainId
+  return chainId;
 }

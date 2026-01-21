@@ -1,6 +1,6 @@
-import { Avatar } from '@dcl/schemas/dist/platform/profile'
-import { profile } from '../../tests/profileMocks'
-import { loadingReducer } from '../loading/reducer'
+import { Avatar } from "@dcl/schemas/dist/platform/profile";
+import { profile } from "../../tests/profileMocks";
+import { loadingReducer } from "../loading/reducer";
 import {
   changeProfile,
   clearProfileError,
@@ -16,44 +16,44 @@ import {
   setProfileAvatarDescriptionFailure,
   setProfileAvatarDescriptionRequest,
   setProfileAvatarDescriptionSuccess,
-} from './actions'
-import { INITIAL_STATE, profileReducer, ProfileState } from './reducer'
-import { Profile } from './types'
+} from "./actions";
+import { INITIAL_STATE, profileReducer, ProfileState } from "./reducer";
+import { Profile } from "./types";
 
-const alias = 'anAlias'
-const address = 'anAddress'
-const error = 'anError'
-const description = 'aDescription'
-const version = 1234
+const alias = "anAlias";
+const address = "anAddress";
+const error = "anError";
+const description = "aDescription";
+const version = 1234;
 
 const requestActions = [
-  setProfileAvatarDescriptionRequest(address, 'aDescription'),
+  setProfileAvatarDescriptionRequest(address, "aDescription"),
   setProfileAvatarAliasRequest(address, alias),
   loadProfileRequest(address),
   loadProfilesRequest([address]),
-]
+];
 
 requestActions.forEach((action) => {
   describe(`when reducing the "${action.type}" action`, () => {
-    it('should return a state with the error nulled and the loading set', () => {
+    it("should return a state with the error nulled and the loading set", () => {
       const initialState = {
         ...INITIAL_STATE,
         error,
         loading: [],
-      }
+      };
 
       expect(profileReducer(initialState, action)).toEqual({
         ...INITIAL_STATE,
         error: null,
         loading: loadingReducer(initialState.loading, action),
-      })
-    })
-  })
-})
+      });
+    });
+  });
+});
 
 const failureActions = [
   {
-    request: setProfileAvatarDescriptionRequest(address, 'aDescription'),
+    request: setProfileAvatarDescriptionRequest(address, "aDescription"),
     failure: setProfileAvatarDescriptionFailure(address, error),
   },
   {
@@ -68,34 +68,34 @@ const failureActions = [
     request: loadProfilesRequest([address]),
     failure: loadProfilesFailure(error),
   },
-]
+];
 
 failureActions.forEach((action) => {
   describe(`when reducing the "${action.failure.type}" action`, () => {
-    it('should return a state with the error set and the loading state cleared', () => {
+    it("should return a state with the error set and the loading state cleared", () => {
       const initialState = {
         ...INITIAL_STATE,
         error: null,
         loading: loadingReducer([], action.request),
-      }
+      };
 
       expect(profileReducer(initialState, action.failure)).toEqual({
         ...INITIAL_STATE,
         error,
         loading: [],
-      })
-    })
-  })
-})
+      });
+    });
+  });
+});
 
-describe('when reducing the action that signals a successful profile load', () => {
-  it('should return a state with the profile set and the loading state cleared', () => {
-    const request = loadProfileRequest(address)
-    const success = loadProfileSuccess(address, profile)
+describe("when reducing the action that signals a successful profile load", () => {
+  it("should return a state with the profile set and the loading state cleared", () => {
+    const request = loadProfileRequest(address);
+    const success = loadProfileSuccess(address, profile);
     const initialState = {
       ...INITIAL_STATE,
       loading: loadingReducer([], request),
-    }
+    };
 
     expect(profileReducer(initialState, success)).toEqual({
       ...INITIAL_STATE,
@@ -104,18 +104,18 @@ describe('when reducing the action that signals a successful profile load', () =
         ...initialState.data,
         [address]: profile,
       },
-    })
-  })
-})
+    });
+  });
+});
 
-describe('when reducing the action that signals a successful profile avatar description change', () => {
-  it('should return a state with the avatar description and version changed and the loading state cleared', () => {
-    const request = setProfileAvatarDescriptionRequest(address, description)
+describe("when reducing the action that signals a successful profile avatar description change", () => {
+  it("should return a state with the avatar description and version changed and the loading state cleared", () => {
+    const request = setProfileAvatarDescriptionRequest(address, description);
     const success = setProfileAvatarDescriptionSuccess(
       address,
       description,
       version,
-    )
+    );
     const initialState: ProfileState = {
       ...INITIAL_STATE,
       data: {
@@ -123,13 +123,13 @@ describe('when reducing the action that signals a successful profile avatar desc
         [address]: profile,
       },
       loading: loadingReducer([], request),
-    }
+    };
 
     const expectedAvatar: Avatar = {
       ...initialState.data[address].avatars[0],
       version,
       description,
-    }
+    };
 
     expect(profileReducer(initialState, success)).toEqual({
       ...initialState,
@@ -144,14 +144,14 @@ describe('when reducing the action that signals a successful profile avatar desc
           ],
         },
       },
-    })
-  })
-})
+    });
+  });
+});
 
-describe('when reducing the action that signals a successful profile avatar alias change', () => {
-  it('should return a state with the avatar description and version changed and the loading state cleared', () => {
-    const request = setProfileAvatarAliasRequest(address, alias)
-    const success = setProfileAvatarAliasSuccess(address, alias, version)
+describe("when reducing the action that signals a successful profile avatar alias change", () => {
+  it("should return a state with the avatar description and version changed and the loading state cleared", () => {
+    const request = setProfileAvatarAliasRequest(address, alias);
+    const success = setProfileAvatarAliasSuccess(address, alias, version);
     const initialState: ProfileState = {
       ...INITIAL_STATE,
       data: {
@@ -159,14 +159,14 @@ describe('when reducing the action that signals a successful profile avatar alia
         [address]: profile,
       },
       loading: loadingReducer([], request),
-    }
+    };
 
     const expectedAvatar: Avatar = {
       ...initialState.data[address].avatars[0],
       version,
       hasClaimedName: true,
       name: alias,
-    }
+    };
 
     expect(profileReducer(initialState, success)).toEqual({
       ...initialState,
@@ -181,24 +181,24 @@ describe('when reducing the action that signals a successful profile avatar alia
           ],
         },
       },
-    })
-  })
-})
+    });
+  });
+});
 
-describe('when reducing the action to clear the profile error', () => {
-  it('should return a state with the profile error as null', () => {
-    const initialState = { ...INITIAL_STATE, error: 'someError' }
+describe("when reducing the action to clear the profile error", () => {
+  it("should return a state with the profile error as null", () => {
+    const initialState = { ...INITIAL_STATE, error: "someError" };
 
     expect(profileReducer(initialState, clearProfileError())).toEqual({
       ...INITIAL_STATE,
       error: null,
-    })
-  })
-})
+    });
+  });
+});
 
-describe('when reducing the action to change the profile', () => {
+describe("when reducing the action to change the profile", () => {
   describe("when there's no profile for a given address", () => {
-    it('should return a state with a stored profile for the given address', () => {
+    it("should return a state with a stored profile for the given address", () => {
       expect(
         profileReducer(INITIAL_STATE, changeProfile(address, profile)),
       ).toEqual({
@@ -206,17 +206,17 @@ describe('when reducing the action to change the profile', () => {
         data: {
           [address]: profile,
         },
-      })
-    })
-  })
-})
+      });
+    });
+  });
+});
 
-describe('when reducing the action that signals a successful load of multiple profiles', () => {
-  let profiles: Profile[]
-  let addresses: string[]
+describe("when reducing the action that signals a successful load of multiple profiles", () => {
+  let profiles: Profile[];
+  let addresses: string[];
 
   beforeEach(() => {
-    addresses = ['aUserId', 'anotherUserId']
+    addresses = ["aUserId", "anotherUserId"];
 
     profiles = [
       {
@@ -227,16 +227,16 @@ describe('when reducing the action that signals a successful load of multiple pr
         ...profile,
         avatars: [{ ...profile.avatars[0], userId: addresses[1] }],
       },
-    ]
-  })
+    ];
+  });
 
-  it('should return a state with the profiles set and the loading state cleared', () => {
-    const request = loadProfilesRequest(addresses)
-    const success = loadProfilesSuccess(profiles)
+  it("should return a state with the profiles set and the loading state cleared", () => {
+    const request = loadProfilesRequest(addresses);
+    const success = loadProfilesSuccess(profiles);
     const initialState = {
       ...INITIAL_STATE,
       loading: loadingReducer([], request),
-    }
+    };
 
     expect(profileReducer(initialState, success)).toEqual({
       ...INITIAL_STATE,
@@ -246,6 +246,6 @@ describe('when reducing the action that signals a successful load of multiple pr
         [addresses[0]]: profiles[0],
         [addresses[1]]: profiles[1],
       },
-    })
-  })
-})
+    });
+  });
+});

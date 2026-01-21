@@ -4,6 +4,6 @@ export class ClientError extends Error {
     public status: number | undefined,
     public data: unknown,
   ) {
-    super(message)
+    super(message);
   }
 }

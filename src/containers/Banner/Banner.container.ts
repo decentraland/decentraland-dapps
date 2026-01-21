@@ -1,13 +1,13 @@
-import { connect } from 'react-redux'
+import { connect } from "react-redux";
 import {
   getBanner,
   getBannerAssets,
   getContentfulNormalizedLocale,
   getError,
   isLoading,
-} from '../../modules/campaign'
-import { Banner } from './Banner'
-import { MapStateProps, OwnProps } from './Banner.types'
+} from "../../modules/campaign";
+import { Banner } from "./Banner";
+import { MapStateProps, OwnProps } from "./Banner.types";
 
 const mapState = (state: any, ownProps: OwnProps): MapStateProps => ({
   fields: getBanner(state, ownProps.id) ?? null,
@@ -15,6 +15,6 @@ const mapState = (state: any, ownProps: OwnProps): MapStateProps => ({
   isLoading: isLoading(state),
   error: getError(state),
   locale: getContentfulNormalizedLocale(state),
-})
+});
 
-export default connect<MapStateProps, {}, OwnProps>(mapState)(Banner)
+export default connect<MapStateProps, {}, OwnProps>(mapState)(Banner);

@@ -1,2 +1,2 @@
-import ChainProvider from './ChainProvider.container'
-export default ChainProvider
+import ChainProvider from "./ChainProvider.container";
+export default ChainProvider;

@@ -1,6 +1,6 @@
-import { AnyAction } from 'redux'
-import { fork, race, take } from 'redux-saga/effects'
-import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
+import { AnyAction } from "redux";
+import { fork, race, take } from "redux-saga/effects";
+import { ChainId } from "@dcl/schemas/dist/dapps/chain-id";
 import {
   FETCH_TRANSACTION_FAILURE,
   FETCH_TRANSACTION_REQUEST,
@@ -12,7 +12,7 @@ import {
   ReplaceTransactionSuccessAction,
   UPDATE_TRANSACTION_STATUS,
   UpdateTransactionStatusAction,
-} from './actions'
+} from "./actions";
 import {
   ActionWithTransactionPayload,
   CrossChainProviderType,
@@ -23,12 +23,12 @@ import {
   Transaction,
   TransactionPayload,
   TransactionStatus,
-} from './types'
+} from "./types";
 
 export function buildActionRef(transaction: Transaction) {
-  const { actionType, withReceipt, isCrossChain, payload } = transaction
+  const { actionType, withReceipt, isCrossChain, payload } = transaction;
 
-  let transactionPayload: TransactionPayload
+  let transactionPayload: TransactionPayload;
 
   if (
     isCrossChain &&
@@ -43,56 +43,56 @@ export function buildActionRef(transaction: Transaction) {
       transaction.requestId,
       payload,
       transaction.crossChainProviderType,
-    )
+    );
   } else {
     const buildFunction = withReceipt
       ? buildTransactionWithReceiptPayload
-      : buildTransactionPayload
+      : buildTransactionPayload;
     transactionPayload = buildFunction(
       transaction.chainId,
       transaction.hash,
       payload,
       transaction.chainId,
-    )
+    );
   }
 
   return {
     type: actionType,
     payload: transactionPayload,
-  }
+  };
 }
 
 export function isTransactionAction(
   action: AnyAction,
 ): action is ActionWithTransactionPayload {
-  return Boolean(action.payload && action.payload[TRANSACTION_ACTION_FLAG])
+  return Boolean(action.payload && action.payload[TRANSACTION_ACTION_FLAG]);
 }
 
 export function getTransactionPayloadFromAction(
   action: ActionWithTransactionPayload,
-): TransactionPayload['_watch_tx'] {
-  return action.payload[TRANSACTION_ACTION_FLAG]
+): TransactionPayload["_watch_tx"] {
+  return action.payload[TRANSACTION_ACTION_FLAG];
 }
 
 export function isTransactionActionCrossChain(action: AnyAction): boolean {
   if (isTransactionAction(action)) {
-    const { chainId, toChainId } = getTransactionPayloadFromAction(action)
-    return chainId !== toChainId && toChainId !== undefined
+    const { chainId, toChainId } = getTransactionPayloadFromAction(action);
+    return chainId !== toChainId && toChainId !== undefined;
   }
 
-  return false
+  return false;
 }
 
 export function getTransactionFromAction(action: AnyAction): Transaction {
-  const transactionPayload: TransactionPayload['_watch_tx'] =
-    action.payload[TRANSACTION_ACTION_FLAG]
+  const transactionPayload: TransactionPayload["_watch_tx"] =
+    action.payload[TRANSACTION_ACTION_FLAG];
   const isCrossChain =
-    transactionPayload.chainId !== transactionPayload.toChainId
+    transactionPayload.chainId !== transactionPayload.toChainId;
   return {
     events: [],
     hash: transactionPayload.hash,
     timestamp: Date.now(),
-    from: transactionPayload.from?.toLowerCase() || '',
+    from: transactionPayload.from?.toLowerCase() || "",
     actionType: action.type,
     url: getTransactionHref(
       {
@@ -113,19 +113,19 @@ export function getTransactionFromAction(action: AnyAction): Transaction {
     status: null,
     nonce: null,
     replacedBy: null,
-  }
+  };
 }
 
 export function getTransactionHashFromAction(
   action: ActionWithTransactionPayload,
-): Transaction['hash'] {
-  return getTransactionPayloadFromAction(action).hash
+): Transaction["hash"] {
+  return getTransactionPayloadFromAction(action).hash;
 }
 
 export function getTransactionAddressFromAction(
   action: ActionWithTransactionPayload,
-): Transaction['from'] | undefined {
-  return getTransactionPayloadFromAction(action).from
+): Transaction["from"] | undefined {
+  return getTransactionPayloadFromAction(action).from;
 }
 
 export function buildTransactionPayload(
@@ -141,7 +141,7 @@ export function buildTransactionPayload(
       hash,
       payload,
     },
-  }
+  };
 }
 
 export function buildCrossChainTransactionFromPayload(
@@ -152,10 +152,10 @@ export function buildCrossChainTransactionFromPayload(
   payload = {},
   providerType: CrossChainProviderType = CrossChainProviderType.SQUID,
 ) {
-  const txPayload = buildTransactionPayload(chainId, hash, payload, toChainId)
-  txPayload[TRANSACTION_ACTION_FLAG].requestId = requestId
-  txPayload[TRANSACTION_ACTION_FLAG].crossChainProviderType = providerType
-  return txPayload
+  const txPayload = buildTransactionPayload(chainId, hash, payload, toChainId);
+  txPayload[TRANSACTION_ACTION_FLAG].requestId = requestId;
+  txPayload[TRANSACTION_ACTION_FLAG].crossChainProviderType = providerType;
+  return txPayload;
 }
 
 export function buildTransactionWithReceiptPayload(
@@ -163,11 +163,11 @@ export function buildTransactionWithReceiptPayload(
   hash: string,
   payload = {},
 ): TransactionPayload {
-  const txPayload = buildTransactionPayload(chainId, hash, payload, chainId)
+  const txPayload = buildTransactionPayload(chainId, hash, payload, chainId);
 
-  txPayload[TRANSACTION_ACTION_FLAG].withReceipt = true
+  txPayload[TRANSACTION_ACTION_FLAG].withReceipt = true;
 
-  return txPayload
+  return txPayload;
 }
 
 export function buildTransactionWithFromPayload(
@@ -176,19 +176,19 @@ export function buildTransactionWithFromPayload(
   from: string,
   payload = {},
 ): TransactionPayload {
-  const txPayload = buildTransactionPayload(chainId, hash, payload, chainId)
+  const txPayload = buildTransactionPayload(chainId, hash, payload, chainId);
 
-  txPayload[TRANSACTION_ACTION_FLAG].from = from
+  txPayload[TRANSACTION_ACTION_FLAG].from = from;
 
-  return txPayload
+  return txPayload;
 }
 
 export type TransactionHrefOptions = {
-  txHash?: string
-  address?: string
-  crossChainProviderType?: CrossChainProviderType
-  blockNumber?: number
-}
+  txHash?: string;
+  address?: string;
+  crossChainProviderType?: CrossChainProviderType;
+  blockNumber?: number;
+};
 
 export function getTransactionHref(
   {
@@ -202,10 +202,10 @@ export function getTransactionHref(
   if (crossChainProviderType) {
     switch (crossChainProviderType) {
       case CrossChainProviderType.SQUID:
-        return `https://axelarscan.io/gmp/${txHash}`
+        return `https://axelarscan.io/gmp/${txHash}`;
       default:
-        console.error('getTransactionHref: Unknown cross chain provider')
-        return ''
+        console.error("getTransactionHref: Unknown cross chain provider");
+        return "";
     }
   }
 
@@ -213,9 +213,9 @@ export function getTransactionHref(
     ? `/address/${address}`
     : blockNumber
       ? `/block/${blockNumber}`
-      : `/tx/${txHash}`
+      : `/tx/${txHash}`;
 
-  return `${getTransactionOrigin(network)}${pathname}`
+  return `${getTransactionOrigin(network)}${pathname}`;
 }
 
 export function getTransactionOrigin(
@@ -223,34 +223,34 @@ export function getTransactionOrigin(
 ) {
   switch (chainId) {
     case ChainId.ETHEREUM_ROPSTEN:
-      return 'https://ropsten.etherscan.io'
+      return "https://ropsten.etherscan.io";
     case ChainId.ETHEREUM_RINKEBY:
-      return 'https://rinkeby.etherscan.io'
+      return "https://rinkeby.etherscan.io";
     case ChainId.ETHEREUM_GOERLI:
-      return 'https://goerli.etherscan.io'
+      return "https://goerli.etherscan.io";
     case ChainId.ETHEREUM_SEPOLIA:
-      return 'https://sepolia.etherscan.io'
+      return "https://sepolia.etherscan.io";
     case ChainId.MATIC_MAINNET:
-      return 'https://explorer-mainnet.maticvigil.com'
+      return "https://explorer-mainnet.maticvigil.com";
     case ChainId.MATIC_MUMBAI:
-      return 'https://explorer-mumbai.maticvigil.com'
+      return "https://explorer-mumbai.maticvigil.com";
     case ChainId.MATIC_AMOY:
-      return 'https://www.oklink.com/es-la/amoy'
+      return "https://www.oklink.com/es-la/amoy";
     default:
-      return 'https://etherscan.io'
+      return "https://etherscan.io";
   }
 }
 
 export function isPending(status: TransactionStatus | null): boolean {
-  return !(FINISHED_STATUS as any[]).includes(status)
+  return !(FINISHED_STATUS as any[]).includes(status);
 }
 
 export function hasFailed(status: TransactionStatus | null): boolean {
-  return (FAILED_STATUS as any[]).includes(status)
+  return (FAILED_STATUS as any[]).includes(status);
 }
 
 export function hasSucceeded(status: TransactionStatus | null): boolean {
-  return (SUCCESS_STATUS as any[]).includes(status)
+  return (SUCCESS_STATUS as any[]).includes(status);
 }
 
 /**
@@ -259,28 +259,28 @@ export function hasSucceeded(status: TransactionStatus | null): boolean {
  * @param txHash - The hash of the transaction to wait for.
  */
 export function* waitForTx(txHash: string) {
-  let txHashToWaitFor = txHash
+  let txHashToWaitFor = txHash;
 
   while (true) {
     const {
       success,
       failure,
     }: {
-      success: FetchTransactionSuccessAction | undefined
-      failure: FetchTransactionFailureAction | undefined
+      success: FetchTransactionSuccessAction | undefined;
+      failure: FetchTransactionFailureAction | undefined;
     } = yield race({
       success: take(FETCH_TRANSACTION_SUCCESS),
       failure: take(FETCH_TRANSACTION_FAILURE),
-    })
+    });
 
     if (success?.payload.transaction.hash === txHashToWaitFor) {
-      break
+      break;
     } else if (
       failure &&
       failure.payload.transaction.hash === txHashToWaitFor
     ) {
       if (failure.payload.status === TransactionStatus.DROPPED) {
-        let continueWaiting = true
+        let continueWaiting = true;
         // If the transaction was dropped, follow the procedure to check what to do
         while (true) {
           const {
@@ -288,44 +288,44 @@ export function* waitForTx(txHash: string) {
             fetchAgain,
             update,
           }: {
-            replace: ReplaceTransactionSuccessAction | undefined
-            fetchAgain: FetchTransactionRequestAction | undefined
-            update: UpdateTransactionStatusAction | undefined
+            replace: ReplaceTransactionSuccessAction | undefined;
+            fetchAgain: FetchTransactionRequestAction | undefined;
+            update: UpdateTransactionStatusAction | undefined;
           } = yield race({
             replace: take(REPLACE_TRANSACTION_SUCCESS),
             fetchAgain: take(FETCH_TRANSACTION_REQUEST),
             update: take(UPDATE_TRANSACTION_STATUS),
-          })
+          });
 
           if (fetchAgain && fetchAgain.payload.hash === txHashToWaitFor) {
             // Re start the transaction fetching process.
-            txHashToWaitFor = fetchAgain.payload.hash
-            continueWaiting = true
-            break
+            txHashToWaitFor = fetchAgain.payload.hash;
+            continueWaiting = true;
+            break;
           } else if (replace && replace.payload.hash === txHashToWaitFor) {
             // The transaction hash was replaced for another one, track the other transaction hash.
-            txHashToWaitFor = replace.payload.replaceBy
-            continueWaiting = true
-            break
+            txHashToWaitFor = replace.payload.replaceBy;
+            continueWaiting = true;
+            break;
           } else if (
             update &&
             update.payload.hash === txHashToWaitFor &&
             update.payload.status === TransactionStatus.REPLACED
           ) {
             // A new hash wasn't found, but the transaction was replaced. We should consider the wait finished because we don't know if it failed.
-            continueWaiting = false
-            break
+            continueWaiting = false;
+            break;
           }
         }
 
         if (continueWaiting) {
-          continue
+          continue;
         }
-        break
+        break;
       } else {
         throw new Error(
           `The transaction ${txHash} failed to be mined. The status is ${failure.payload.status}.`,
-        )
+        );
       }
     }
   }
@@ -340,10 +340,10 @@ export const takeEverySuccessfulTx = (
     while (true) {
       const action: FetchTransactionSuccessAction = yield take(
         FETCH_TRANSACTION_SUCCESS,
-      )
+      );
 
       if (action.payload.transaction.actionType === actionType) {
-        yield fork(worker, ...args.concat(action))
+        yield fork(worker, ...args.concat(action));
       }
     }
-  })
+  });

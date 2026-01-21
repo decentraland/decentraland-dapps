@@ -1,5 +1,5 @@
-import Navbar from './Navbar.container'
-import Navbar2 from './Navbar2.container'
+import Navbar from "./Navbar.container";
+import Navbar2 from "./Navbar2.container";
 
-export default Navbar
-export { Navbar2 }
+export default Navbar;
+export { Navbar2 };

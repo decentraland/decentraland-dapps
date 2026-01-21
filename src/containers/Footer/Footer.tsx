@@ -1,15 +1,15 @@
-import * as React from 'react'
+import * as React from "react";
 import {
   Footer as FooterComponent,
   FooterI18N,
-} from 'decentraland-ui/dist/components/Footer/Footer'
-import { T } from '../../modules/translation/utils'
-import { FooterProps } from './Footer.types'
+} from "decentraland-ui/dist/components/Footer/Footer";
+import { T } from "../../modules/translation/utils";
+import { FooterProps } from "./Footer.types";
 
 export default class Footer extends React.PureComponent<FooterProps> {
   getTranslations = (): FooterI18N | undefined => {
     if (!this.props.hasTranslations) {
-      return undefined
+      return undefined;
     }
     return {
       dropdown: {
@@ -27,15 +27,15 @@ export default class Footer extends React.PureComponent<FooterProps> {
         content: <T id="@dapps.footer.links.content" />,
         ethics: <T id="@dapps.footer.links.ethics" />,
       },
-    }
-  }
+    };
+  };
 
-  handleChange: FooterProps['onChange'] = (_, { value }) => {
-    const { locale, onChange } = this.props
+  handleChange: FooterProps["onChange"] = (_, { value }) => {
+    const { locale, onChange } = this.props;
     if (value && value !== locale && onChange) {
-      onChange(_, { value })
+      onChange(_, { value });
     }
-  }
+  };
 
   render() {
     return (
@@ -44,6 +44,6 @@ export default class Footer extends React.PureComponent<FooterProps> {
         onChange={this.handleChange}
         i18n={this.getTranslations()}
       />
-    )
+    );
   }
 }

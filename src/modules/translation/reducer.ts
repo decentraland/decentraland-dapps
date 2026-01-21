@@ -1,5 +1,5 @@
-import { Locale } from 'decentraland-ui/dist/components/Language/Language'
-import { LoadingState, loadingReducer } from '../loading/reducer'
+import { Locale } from "decentraland-ui/dist/components/Language/Language";
+import { LoadingState, loadingReducer } from "../loading/reducer";
 import {
   CHANGE_LOCALE,
   ChangeLocaleAction,
@@ -9,28 +9,28 @@ import {
   FetchTranslationsFailureAction,
   FetchTranslationsRequestAction,
   FetchTranslationsSuccessAction,
-} from './actions'
-import { Translation } from './types'
+} from "./actions";
+import { Translation } from "./types";
 
 export type TranslationState = {
-  data: Translation
-  locale: Locale
-  loading: LoadingState
-  error: string | null
-}
+  data: Translation;
+  locale: Locale;
+  loading: LoadingState;
+  error: string | null;
+};
 
 export const INITIAL_STATE: TranslationState = {
   data: {},
-  locale: 'en',
+  locale: "en",
   loading: [],
   error: null,
-}
+};
 
 export type TranslationReducerAction =
   | ChangeLocaleAction
   | FetchTranslationsRequestAction
   | FetchTranslationsSuccessAction
-  | FetchTranslationsFailureAction
+  | FetchTranslationsFailureAction;
 
 export function translationReducer(
   state = INITIAL_STATE,
@@ -41,7 +41,7 @@ export function translationReducer(
       return {
         ...state,
         locale: action.payload.locale,
-      }
+      };
     case FETCH_TRANSLATIONS_REQUEST:
       return {
         ...state,
@@ -50,7 +50,7 @@ export function translationReducer(
           ...state.data,
           [action.payload.locale]: null,
         },
-      }
+      };
     case FETCH_TRANSLATIONS_SUCCESS:
       return {
         ...state,
@@ -62,14 +62,14 @@ export function translationReducer(
             ...action.payload.translations,
           },
         },
-      }
+      };
     case FETCH_TRANSLATIONS_FAILURE:
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
         error: action.payload.error,
-      }
+      };
     default:
-      return state
+      return state;
   }
 }

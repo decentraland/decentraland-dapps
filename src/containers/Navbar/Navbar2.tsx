@@ -1,19 +1,19 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import { ethers } from 'ethers'
-import { ProviderType } from '@dcl/schemas'
-import { ChainId, getChainName } from '@dcl/schemas/dist/dapps/chain-id'
-import { Network } from '@dcl/schemas/dist/dapps/network'
-import { NotificationLocale } from 'decentraland-ui/dist/components/Notifications/types'
-import { Navbar as NavbarComponent } from 'decentraland-ui2'
-import useNotifications from '../../hooks/useNotifications'
-import { getConnectedProviderType } from '../../lib'
-import { getAvailableChains } from '../../lib/chainConfiguration'
-import { getBaseUrl } from '../../lib/utils'
-import { getAnalytics } from '../../modules/analytics/utils'
-import { getIdentityId } from '../../modules/identityId'
-import { t } from '../../modules/translation'
-import ChainProvider from '../ChainProvider'
-import UnsupportedNetworkModal from '../UnsupportedNetworkModal'
+import React, { useCallback, useEffect, useState } from "react";
+import { ethers } from "ethers";
+import { ProviderType } from "@dcl/schemas";
+import { ChainId, getChainName } from "@dcl/schemas/dist/dapps/chain-id";
+import { Network } from "@dcl/schemas/dist/dapps/network";
+import { NotificationLocale } from "decentraland-ui/dist/components/Notifications/types";
+import { Navbar as NavbarComponent } from "decentraland-ui2";
+import useNotifications from "../../hooks/useNotifications";
+import { getConnectedProviderType } from "../../lib";
+import { getAvailableChains } from "../../lib/chainConfiguration";
+import { getBaseUrl } from "../../lib/utils";
+import { getAnalytics } from "../../modules/analytics/utils";
+import { getIdentityId } from "../../modules/identityId";
+import { t } from "../../modules/translation";
+import ChainProvider from "../ChainProvider";
+import UnsupportedNetworkModal from "../UnsupportedNetworkModal";
 import {
   CHANGE_NETWORK,
   DROPDOWN_MENU_BALANCE_CLICK_EVENT,
@@ -23,11 +23,11 @@ import {
   NAVBAR_CLICK_EVENT,
   NAVBAR_DOWNLOAD_EVENT,
   NAVBAR_DOWNLOAD_EVENT_PLACE,
-} from './constants'
-import { NavbarProps2 } from './Navbar.types'
-import { NavbarContainer } from './Navbar2.styled'
+} from "./constants";
+import { NavbarProps2 } from "./Navbar.types";
+import { NavbarContainer } from "./Navbar2.styled";
 
-const BASE_URL = getBaseUrl()
+const BASE_URL = getBaseUrl();
 
 const Navbar2: React.FC<NavbarProps2> = ({
   appChainId,
@@ -35,15 +35,15 @@ const Navbar2: React.FC<NavbarProps2> = ({
   withNotifications,
   withChainSelector,
   identity,
-  docsUrl: _docsUrl = 'https://docs.decentraland.org',
+  docsUrl: _docsUrl = "https://docs.decentraland.org",
   enablePartialSupportAlert: _enablePartialSupportAlert = true,
   walletError,
   cdnLinks: _cdnLinks,
   hideSignInButton,
   ...props
 }: NavbarProps2) => {
-  const expectedChainName = getChainName(appChainId)
-  const analytics = getAnalytics()
+  const expectedChainName = getChainName(appChainId);
+  const analytics = getAnalytics();
 
   const {
     isModalOpen,
@@ -55,106 +55,106 @@ const Navbar2: React.FC<NavbarProps2> = ({
     handleOnBegin,
     handleOnChangeModalTab,
     handleRenderProfile,
-  } = useNotifications(identity, withNotifications || false)
+  } = useNotifications(identity, withNotifications || false);
 
   const handleSwitchNetwork = useCallback(() => {
-    props.onSwitchNetwork(appChainId)
-  }, [])
+    props.onSwitchNetwork(appChainId);
+  }, []);
 
   const [chainSelected, setChainSelected] = useState<ChainId | undefined>(
     undefined,
-  )
+  );
 
   useEffect(() => {
     if (walletError && chainSelected && withChainSelector) {
-      setChainSelected(undefined)
+      setChainSelected(undefined);
     }
-  }, [walletError, chainSelected, withChainSelector])
+  }, [walletError, chainSelected, withChainSelector]);
 
   const handleSwitchChain = useCallback(
     (chainId: ChainId) => {
-      setChainSelected(chainId)
-      props.onSwitchNetwork(chainId, props.chainId)
+      setChainSelected(chainId);
+      props.onSwitchNetwork(chainId, props.chainId);
       analytics?.track(CHANGE_NETWORK, {
         from_chain_id: props.chainId,
         to_chain_id: chainId,
-      })
+      });
     },
     [analytics],
-  )
+  );
 
   const handleClickBalance = useCallback(
     (
       e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement, MouseEvent>,
       network?: Network,
     ) => {
-      e.preventDefault()
-      analytics?.track(DROPDOWN_MENU_BALANCE_CLICK_EVENT, { network })
+      e.preventDefault();
+      analytics?.track(DROPDOWN_MENU_BALANCE_CLICK_EVENT, { network });
 
       setTimeout(() => {
-        window.open(`${BASE_URL}/account`, '_blank', 'noopener')
-      }, 300)
+        window.open(`${BASE_URL}/account`, "_blank", "noopener");
+      }, 300);
     },
     [analytics],
-  )
+  );
 
   const handleClickNavbarItem = useCallback(
     (
       _e: React.MouseEvent,
       options: {
-        eventTrackingName: string
-        url?: string
-        isExternal?: boolean
+        eventTrackingName: string;
+        url?: string;
+        isExternal?: boolean;
       },
     ) => {
-      analytics?.track(NAVBAR_CLICK_EVENT, options)
+      analytics?.track(NAVBAR_CLICK_EVENT, options);
     },
     [analytics],
-  )
+  );
 
   const handleClickUserMenuItem = useCallback(
     (
       _e: React.MouseEvent,
       options: { type: string; url?: string; track_uuid?: string },
     ) => {
-      analytics?.track(DROPDOWN_MENU_ITEM_CLICK_EVENT, options)
+      analytics?.track(DROPDOWN_MENU_ITEM_CLICK_EVENT, options);
     },
     [analytics],
-  )
+  );
 
   const handleClickDownload = useCallback(
     (_e: React.MouseEvent, options: { href: string }) => {
       analytics?.track(NAVBAR_DOWNLOAD_EVENT, {
         ...options,
         place: NAVBAR_DOWNLOAD_EVENT_PLACE,
-      })
+      });
     },
     [analytics],
-  )
+  );
 
   const handleClickOpen = useCallback(
     (_e: React.MouseEvent, track_uuid: string) => {
-      analytics?.track(DROPDOWN_MENU_DISPLAY_EVENT, { track_uuid })
+      analytics?.track(DROPDOWN_MENU_DISPLAY_EVENT, { track_uuid });
     },
     [analytics],
-  )
+  );
 
   const handleClickSignIn = useCallback(
     (_e: React.MouseEvent<HTMLElement, MouseEvent>) => {
-      props.onSignIn()
+      props.onSignIn();
     },
     [analytics],
-  )
+  );
 
   const handleClickSignOut = useCallback(
     (_e: React.MouseEvent<HTMLElement, MouseEvent>, track_uuid: string) => {
-      analytics?.track(DROPDOWN_MENU_SIGN_OUT_EVENT, { track_uuid })
+      analytics?.track(DROPDOWN_MENU_SIGN_OUT_EVENT, { track_uuid });
       setTimeout(() => {
-        props.onSignOut()
-      }, 300)
+        props.onSignOut();
+      }, 300);
     },
     [analytics],
-  )
+  );
 
   const creditsBalance = props.credits
     ? {
@@ -165,23 +165,23 @@ const Navbar2: React.FC<NavbarProps2> = ({
           ? Number(props.credits.credits[0].expiresAt * 1000)
           : 0,
       }
-    : undefined
+    : undefined;
 
   const handleGetIdentityId = useCallback(async (): Promise<
     string | undefined
   > => {
     if (identity?.authChain && identity?.ephemeralIdentity) {
       try {
-        const response = await getIdentityId(identity)
-        return response
+        const response = await getIdentityId(identity);
+        return response;
       } catch (error) {
-        console.error('Failed to create identity ID:', error)
-        return undefined
+        console.error("Failed to create identity ID:", error);
+        return undefined;
       }
     }
 
-    return undefined
-  }, [identity])
+    return undefined;
+  }, [identity]);
 
   return (
     <NavbarContainer>
@@ -224,12 +224,12 @@ const Navbar2: React.FC<NavbarProps2> = ({
                   chainSelected !== chainId ? chainSelected : undefined,
                 onSelectChain: handleSwitchChain,
                 i18nChainSelector: {
-                  title: t('@dapps.chain_selector.title'),
-                  connected: t('@dapps.chain_selector.connected'),
+                  title: t("@dapps.chain_selector.title"),
+                  connected: t("@dapps.chain_selector.connected"),
                   confirmInWallet:
                     getConnectedProviderType() === ProviderType.INJECTED // for injected ones, show label to confirm in wallet, the rest won't ask for confirmation
-                      ? t('@dapps.chain_selector.confirm_in_wallet')
-                      : t('@dapps.chain_selector.switching'),
+                      ? t("@dapps.chain_selector.confirm_in_wallet")
+                      : t("@dapps.chain_selector.switching"),
                 },
               })}
             />
@@ -245,7 +245,7 @@ const Navbar2: React.FC<NavbarProps2> = ({
         )}
       </ChainProvider>
     </NavbarContainer>
-  )
-}
+  );
+};
 
-export default React.memo(Navbar2)
+export default React.memo(Navbar2);

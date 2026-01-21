@@ -1,2 +1,2 @@
-import ModalProvider from './ModalProvider.container'
-export default ModalProvider
+import ModalProvider from "./ModalProvider.container";
+export default ModalProvider;

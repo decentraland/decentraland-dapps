@@ -1,19 +1,19 @@
-import { ActionType } from 'typesafe-actions'
-import { BannerFields, ContentfulAsset, LocalizedField } from '@dcl/schemas'
-import { LoadingState } from '../loading/reducer'
-import * as actions from './actions'
+import { ActionType } from "typesafe-actions";
+import { BannerFields, ContentfulAsset, LocalizedField } from "@dcl/schemas";
+import { LoadingState } from "../loading/reducer";
+import * as actions from "./actions";
 
 export type CampaignState = {
   data: {
-    name?: LocalizedField<string>
-    tabName?: LocalizedField<string>
-    mainTag?: string
-    additionalTags?: string[]
-    banners: Record<string, BannerFields & { id: string }>
-    assets: Record<string, ContentfulAsset>
-  } | null
-  loading: LoadingState
-  error: string | null
-}
+    name?: LocalizedField<string>;
+    tabName?: LocalizedField<string>;
+    mainTag?: string;
+    additionalTags?: string[];
+    banners: Record<string, BannerFields & { id: string }>;
+    assets: Record<string, ContentfulAsset>;
+  } | null;
+  loading: LoadingState;
+  error: string | null;
+};
 
-export type CampaignAction = ActionType<typeof actions>
+export type CampaignAction = ActionType<typeof actions>;

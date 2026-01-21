@@ -1,32 +1,32 @@
-import { Dispatch } from 'redux'
-import { ProviderType } from '@dcl/schemas/dist/dapps/provider-type'
-import { LoginModalProps } from 'decentraland-ui/dist/components/LoginModal/LoginModal'
-import { EnableWalletRequestAction } from '../../modules/wallet/actions'
-import { ModalProps } from '../../providers/ModalProvider/ModalProvider.types'
+import { Dispatch } from "redux";
+import { ProviderType } from "@dcl/schemas/dist/dapps/provider-type";
+import { LoginModalProps } from "decentraland-ui/dist/components/LoginModal/LoginModal";
+import { EnableWalletRequestAction } from "../../modules/wallet/actions";
+import { ModalProps } from "../../providers/ModalProvider/ModalProvider.types";
 
-export type DefaultProps = { isLoading: boolean }
+export type DefaultProps = { isLoading: boolean };
 
 export type Props = DefaultProps &
-  Omit<ModalProps, 'metadata'> &
+  Omit<ModalProps, "metadata"> &
   LoginModalProps & {
-    metadata?: Metadata
-    hasTranslations?: boolean
-    onConnect: (providerType: ProviderType) => any
-  }
+    metadata?: Metadata;
+    hasTranslations?: boolean;
+    onConnect: (providerType: ProviderType) => any;
+  };
 
 export type State = {
-  hasError: boolean
-}
+  hasError: boolean;
+};
 
-export type OwnProps = Pick<Props, 'metadata'>
+export type OwnProps = Pick<Props, "metadata">;
 
 export type Metadata = {
-  onConnect: (providerType: ProviderType) => any
-}
+  onConnect: (providerType: ProviderType) => any;
+};
 
 export type MapStateProps = Pick<
   Props,
-  'hasTranslations' | 'isLoading' | 'hasError'
->
-export type MapDispatchProps = Pick<Props, 'onConnect'>
-export type MapDispatch = Dispatch<EnableWalletRequestAction>
+  "hasTranslations" | "isLoading" | "hasError"
+>;
+export type MapDispatchProps = Pick<Props, "onConnect">;
+export type MapDispatch = Dispatch<EnableWalletRequestAction>;

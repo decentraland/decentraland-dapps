@@ -1,20 +1,20 @@
-import { Network } from '@dcl/schemas/dist/dapps/network'
-import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
-import { BaseAPI } from '../../../lib/api'
-import { MoonPayConfig, Purchase, PurchaseStatus } from '../types'
-import { MoonPayTransaction, MoonPayTransactionStatus } from './types'
+import { Network } from "@dcl/schemas/dist/dapps/network";
+import { NetworkGatewayType } from "decentraland-ui/dist/components/BuyManaWithFiatModal/Network";
+import { BaseAPI } from "../../../lib/api";
+import { MoonPayConfig, Purchase, PurchaseStatus } from "../types";
+import { MoonPayTransaction, MoonPayTransactionStatus } from "./types";
 
 export class MoonPay {
-  private readonly apiKey: string
-  private readonly widgetBaseUrl: string
-  private readonly moonPayAPI: BaseAPI
+  private readonly apiKey: string;
+  private readonly widgetBaseUrl: string;
+  private readonly moonPayAPI: BaseAPI;
 
   constructor(config: MoonPayConfig) {
-    const { apiKey, apiBaseUrl, widgetBaseUrl } = config
+    const { apiKey, apiBaseUrl, widgetBaseUrl } = config;
 
-    this.apiKey = apiKey
-    this.widgetBaseUrl = widgetBaseUrl
-    this.moonPayAPI = new BaseAPI(apiBaseUrl)
+    this.apiKey = apiKey;
+    this.widgetBaseUrl = widgetBaseUrl;
+    this.moonPayAPI = new BaseAPI(apiBaseUrl);
   }
 
   private getPurchaseStatus(status: MoonPayTransactionStatus): PurchaseStatus {
@@ -24,7 +24,7 @@ export class MoonPay {
       [MoonPayTransactionStatus.WAITING_AUTHORIZATION]: PurchaseStatus.PENDING,
       [MoonPayTransactionStatus.FAILED]: PurchaseStatus.FAILED,
       [MoonPayTransactionStatus.COMPLETED]: PurchaseStatus.COMPLETE,
-    }[status]
+    }[status];
   }
 
   /**
@@ -34,10 +34,10 @@ export class MoonPay {
    */
   async getTransaction(transactionId: string): Promise<MoonPayTransaction> {
     return await this.moonPayAPI.request(
-      'GET',
+      "GET",
       `/v1/transactions/${transactionId}`,
       { apiKey: this.apiKey },
-    )
+    );
   }
 
   /**
@@ -54,7 +54,7 @@ export class MoonPay {
       walletAddress,
       cryptoTransactionId,
       paymentMethod,
-    } = transaction
+    } = transaction;
 
     return {
       id,
@@ -66,15 +66,15 @@ export class MoonPay {
       address: walletAddress,
       gateway: NetworkGatewayType.MOON_PAY,
       txHash: cryptoTransactionId,
-    }
+    };
   }
 
   getWidgetUrl(network: Network) {
-    const redirectURL = `${window.location.origin}?network=${network}&gateway=${NetworkGatewayType.MOON_PAY}`
-    return `${this.widgetBaseUrl}?apiKey=${this.apiKey}&currencyCode=MANA&redirectURL=${encodeURIComponent(redirectURL)}`
+    const redirectURL = `${window.location.origin}?network=${network}&gateway=${NetworkGatewayType.MOON_PAY}`;
+    return `${this.widgetBaseUrl}?apiKey=${this.apiKey}&currencyCode=MANA&redirectURL=${encodeURIComponent(redirectURL)}`;
   }
 
   getTransactionReceiptUrl(transactionId: string) {
-    return `${this.widgetBaseUrl}/transaction_receipt?transactionId=${transactionId}`
+    return `${this.widgetBaseUrl}/transaction_receipt?transactionId=${transactionId}`;
   }
 }

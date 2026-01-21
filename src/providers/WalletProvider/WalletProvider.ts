@@ -1,6 +1,6 @@
-import React from 'react'
-import { getConnectedProvider } from '../../lib/eth'
-import { buildWallet } from '../../modules/wallet/utils/buildWallet'
+import React from "react";
+import { getConnectedProvider } from "../../lib/eth";
+import { buildWallet } from "../../modules/wallet/utils/buildWallet";
 import {
   AccountsChangedHandler,
   EmitterMethod,
@@ -8,52 +8,52 @@ import {
   Handler,
   NetworkChangedHandler,
   Props,
-} from './WalletProvider.types'
+} from "./WalletProvider.types";
 
 export default class WalletProvider extends React.PureComponent<Props> {
   handleChangeAccount = async () => {
     const { isConnected, isConnecting, address, onChangeAccount, appChainId } =
-      this.props
+      this.props;
     try {
-      const wallet = await buildWallet(appChainId)
+      const wallet = await buildWallet(appChainId);
       if (isConnected && !isConnecting && wallet.address !== address) {
-        onChangeAccount(wallet)
+        onChangeAccount(wallet);
       }
     } catch {
       // do nothing
     }
-  }
+  };
 
   handleChangeNetwork = async () => {
     const { isConnected, isConnecting, chainId, onChangeNetwork, appChainId } =
-      this.props
+      this.props;
     try {
-      const wallet = await buildWallet(appChainId)
+      const wallet = await buildWallet(appChainId);
       if (isConnected && !isConnecting && wallet.chainId !== chainId) {
-        onChangeNetwork(wallet)
+        onChangeNetwork(wallet);
       }
     } catch {
       // do nothing
     }
-  }
+  };
 
   async handle(method: EmitterMethod, type: EventType, handler: Handler) {
     // try to use ethers abstraction
-    const provider = await getConnectedProvider()
+    const provider = await getConnectedProvider();
     if (provider) {
       try {
         switch (type) {
-          case 'accountsChanged':
-            provider[method](type, handler as AccountsChangedHandler)
-            break
-          case 'chainChanged':
-            provider[method](type, handler as NetworkChangedHandler)
-            break
+          case "accountsChanged":
+            provider[method](type, handler as AccountsChangedHandler);
+            break;
+          case "chainChanged":
+            provider[method](type, handler as NetworkChangedHandler);
+            break;
           default:
             // do nothing
-            break
+            break;
         }
-        return // all good, early return
+        return; // all good, early return
       } catch {
         // it fails if there's legacy provider (ie. metamask legacy provider) but it shouldn't happen
       }
@@ -61,35 +61,35 @@ export default class WalletProvider extends React.PureComponent<Props> {
   }
 
   on(type: EventType, handler: Handler) {
-    this.handle('on', type, handler).catch((error) =>
+    this.handle("on", type, handler).catch((error) =>
       console.error(error.message),
-    )
+    );
   }
 
   off(type: EventType, handler: Handler) {
-    this.handle('removeListener', type, handler).catch((error) =>
+    this.handle("removeListener", type, handler).catch((error) =>
       console.error(error.message),
-    )
+    );
   }
 
   componentDidMount() {
     // try to connect wallet
-    const { onConnect } = this.props
-    onConnect()
+    const { onConnect } = this.props;
+    onConnect();
 
     // add listeners
-    this.on('accountsChanged', this.handleChangeAccount)
-    this.on('chainChanged', this.handleChangeNetwork)
+    this.on("accountsChanged", this.handleChangeAccount);
+    this.on("chainChanged", this.handleChangeNetwork);
   }
 
   componentWillUnmount() {
     // remove listeners
-    this.off('accountsChanged', this.handleChangeAccount)
-    this.off('chainChanged', this.handleChangeNetwork)
+    this.off("accountsChanged", this.handleChangeAccount);
+    this.off("chainChanged", this.handleChangeNetwork);
   }
 
   render() {
-    const { children } = this.props
-    return children
+    const { children } = this.props;
+    return children;
   }
 }

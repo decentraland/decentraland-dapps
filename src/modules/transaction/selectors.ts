@@ -1,22 +1,22 @@
-import { TransactionState } from './reducer'
-import { Transaction, TransactionStatus } from './types'
-import { isPending } from './utils'
+import { TransactionState } from "./reducer";
+import { Transaction, TransactionStatus } from "./types";
+import { isPending } from "./utils";
 
 const sortByTimestamp = (a: Transaction, b: Transaction) =>
-  a.timestamp > b.timestamp ? -1 : 1
+  a.timestamp > b.timestamp ? -1 : 1;
 
 export const getState: (state: any) => TransactionState = (state) =>
-  state.transaction
-export const getData: (state: any) => TransactionState['data'] = (state) =>
-  getState(state).data
-export const getLoading: (state: any) => TransactionState['loading'] = (
+  state.transaction;
+export const getData: (state: any) => TransactionState["data"] = (state) =>
+  getState(state).data;
+export const getLoading: (state: any) => TransactionState["loading"] = (
   state,
-) => getState(state).loading
+) => getState(state).loading;
 
 export const getTransaction = (
   state: any,
   hash: string,
-): Transaction | undefined => getData(state).find((tx) => tx.hash === hash)
+): Transaction | undefined => getData(state).find((tx) => tx.hash === hash);
 
 export const getTransactionsByStatus = (
   state: any,
@@ -25,12 +25,12 @@ export const getTransactionsByStatus = (
 ): Transaction[] =>
   getData(state)
     .filter((tx) => tx.from === address && tx.status === status)
-    .sort(sortByTimestamp)
+    .sort(sortByTimestamp);
 
 export const getTransactions = (state: any, address: string): Transaction[] =>
   getData(state)
     .filter((tx) => tx.from === address)
-    .sort(sortByTimestamp)
+    .sort(sortByTimestamp);
 
 export const getPendingTransactions = (
   state: any,
@@ -38,7 +38,7 @@ export const getPendingTransactions = (
 ): Transaction[] =>
   getData(state)
     .filter((tx) => tx.from === address && isPending(tx.status))
-    .sort(sortByTimestamp)
+    .sort(sortByTimestamp);
 
 export const getTransactionHistory = (
   state: any,
@@ -46,7 +46,7 @@ export const getTransactionHistory = (
 ): Transaction[] =>
   getData(state)
     .filter((tx) => tx.from === address && !isPending(tx.status))
-    .sort(sortByTimestamp)
+    .sort(sortByTimestamp);
 
 export const getTransactionsByType = (
   state: any,
@@ -55,4 +55,4 @@ export const getTransactionsByType = (
 ): Transaction[] =>
   getData(state)
     .filter((tx) => tx.from === address && tx.actionType === type)
-    .sort(sortByTimestamp)
+    .sort(sortByTimestamp);

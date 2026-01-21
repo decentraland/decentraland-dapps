@@ -1,20 +1,20 @@
-import { connect } from 'react-redux'
-import { fetchAuthorizationsRequest } from '../../../modules/authorization/actions'
+import { connect } from "react-redux";
+import { fetchAuthorizationsRequest } from "../../../modules/authorization/actions";
 import {
   getAuthorizationFlowError,
   getError,
-} from '../../../modules/authorization/selectors'
-import { AuthorizationAction } from '../../../modules/authorization/types'
-import { RootStateOrAny } from '../../../types'
-import { AuthorizationModal } from './AuthorizationModal'
-import { getStepStatus } from './utils'
+} from "../../../modules/authorization/selectors";
+import { AuthorizationAction } from "../../../modules/authorization/types";
+import { RootStateOrAny } from "../../../types";
+import { AuthorizationModal } from "./AuthorizationModal";
+import { getStepStatus } from "./utils";
 import {
   AuthorizationStepStatus,
   MapDispatch,
   MapDispatchProps,
   MapStateProps,
   OwnProps,
-} from './AuthorizationModal.types'
+} from "./AuthorizationModal.types";
 
 const mapState = (state: RootStateOrAny, ownProps: OwnProps): MapStateProps => {
   const {
@@ -22,7 +22,7 @@ const mapState = (state: RootStateOrAny, ownProps: OwnProps): MapStateProps => {
     requiredAllowance,
     getConfirmationStatus,
     getConfirmationError,
-  } = ownProps
+  } = ownProps;
   return {
     revokeStatus: getStepStatus(
       state,
@@ -42,9 +42,9 @@ const mapState = (state: RootStateOrAny, ownProps: OwnProps): MapStateProps => {
     confirmationError: getConfirmationError
       ? getConfirmationError(state)
       : null,
-    error: getAuthorizationFlowError(state) || getError(state) || '',
-  }
-}
+    error: getAuthorizationFlowError(state) || getError(state) || "",
+  };
+};
 
 const mapDispatch = (
   dispatch: MapDispatch,
@@ -52,6 +52,6 @@ const mapDispatch = (
 ): MapDispatchProps => ({
   onFetchAuthorizations: () =>
     dispatch(fetchAuthorizationsRequest([ownProps.authorization])),
-})
+});
 
-export default connect(mapState, mapDispatch)(AuthorizationModal)
+export default connect(mapState, mapDispatch)(AuthorizationModal);

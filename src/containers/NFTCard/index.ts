@@ -1,2 +1,2 @@
-export * from './NFTCard'
-export * from './NFTCard.types'
+export * from "./NFTCard";
+export * from "./NFTCard.types";

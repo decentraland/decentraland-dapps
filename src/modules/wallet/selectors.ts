@@ -1,78 +1,78 @@
-import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
-import { Network } from '@dcl/schemas/dist/dapps/network'
-import { UserMenuProps } from 'decentraland-ui/dist/components/UserMenu/UserMenu.types'
-import { isLoadingType } from '../loading/selectors'
+import { ChainId } from "@dcl/schemas/dist/dapps/chain-id";
+import { Network } from "@dcl/schemas/dist/dapps/network";
+import { UserMenuProps } from "decentraland-ui/dist/components/UserMenu/UserMenu.types";
+import { isLoadingType } from "../loading/selectors";
 import {
   CONNECT_WALLET_REQUEST,
   DISCONNECT_WALLET_REQUEST,
   ENABLE_WALLET_REQUEST,
   SWITCH_NETWORK_REQUEST,
-} from './actions'
-import { WalletState } from './reducer'
+} from "./actions";
+import { WalletState } from "./reducer";
 
-export const getState: (state: any) => WalletState = (state) => state.wallet
-export const getData = (state: any) => getState(state).data
-export const getLoading = (state: any) => getState(state).loading
-export const getError = (state: any) => getState(state).error
+export const getState: (state: any) => WalletState = (state) => state.wallet;
+export const getData = (state: any) => getState(state).data;
+export const getLoading = (state: any) => getState(state).loading;
+export const getError = (state: any) => getState(state).error;
 
-export const isConnected = (state: any) => getData(state) !== null
+export const isConnected = (state: any) => getData(state) !== null;
 export const isConnecting = (state: any) =>
-  isLoadingType(getLoading(state), CONNECT_WALLET_REQUEST)
+  isLoadingType(getLoading(state), CONNECT_WALLET_REQUEST);
 export const isEnabling = (state: any) =>
-  isLoadingType(getLoading(state), ENABLE_WALLET_REQUEST)
+  isLoadingType(getLoading(state), ENABLE_WALLET_REQUEST);
 export const isDisconnecting = (state: any) =>
-  isLoadingType(getLoading(state), DISCONNECT_WALLET_REQUEST)
+  isLoadingType(getLoading(state), DISCONNECT_WALLET_REQUEST);
 
 export const getAddress = (state: any) =>
-  isConnected(state) ? getData(state)!.address : undefined
+  isConnected(state) ? getData(state)!.address : undefined;
 
 export const getChainId = (state: any) =>
-  isConnected(state) ? getData(state)!.chainId : undefined
+  isConnected(state) ? getData(state)!.chainId : undefined;
 
 export const getProviderType = (state: any) =>
-  isConnected(state) ? getData(state)!.providerType : undefined
+  isConnected(state) ? getData(state)!.providerType : undefined;
 
 export const getNetwork = (state: any) =>
-  isConnected(state) ? getData(state)!.network : undefined
+  isConnected(state) ? getData(state)!.network : undefined;
 
 export const getNetworks = (state: any) =>
-  isConnected(state) ? getData(state)!.networks : undefined
+  isConnected(state) ? getData(state)!.networks : undefined;
 
 export const isSwitchingNetwork = (state: any) =>
-  isLoadingType(getLoading(state), SWITCH_NETWORK_REQUEST)
+  isLoadingType(getLoading(state), SWITCH_NETWORK_REQUEST);
 
 export const getSwitchingNetworkChain = (state: any) =>
-  getLoading(state).find((loading) => loading.type === SWITCH_NETWORK_REQUEST)
+  getLoading(state).find((loading) => loading.type === SWITCH_NETWORK_REQUEST);
 
 // Casting as ChainId since it will be initialized at the beginning
 export const getAppChainId = (state: any) =>
-  getState(state).appChainId as ChainId
+  getState(state).appChainId as ChainId;
 
 /**
  * @deprecated This method is deprecated, it only returns the MANA balance on Ethereum, use getNetworks() to get the MANA balances on all the networks.
  */
 export const getMana = (state: any) => {
   if (!isConnected(state)) {
-    return undefined
+    return undefined;
   }
-  const networks = getNetworks(state)!
-  return networks[Network.ETHEREUM].mana
-}
+  const networks = getNetworks(state)!;
+  return networks[Network.ETHEREUM].mana;
+};
 
 export const getManaBalances = (state: any): any => {
   if (!isConnected(state)) {
-    return undefined
+    return undefined;
   }
 
-  const manaBalances: UserMenuProps['manaBalances'] = {}
-  const networkList = [Network.ETHEREUM, Network.MATIC]
-  const networks = getNetworks(state)!
+  const manaBalances: UserMenuProps["manaBalances"] = {};
+  const networkList = [Network.ETHEREUM, Network.MATIC];
+  const networks = getNetworks(state)!;
   for (const network of networkList as [Network.ETHEREUM, Network.MATIC]) {
-    const networkData = networks[network]
+    const networkData = networks[network];
     if (networkData) {
-      manaBalances[network] = networks[network].mana
+      manaBalances[network] = networks[network].mana;
     }
   }
 
-  return manaBalances
-}
+  return manaBalances;
+};

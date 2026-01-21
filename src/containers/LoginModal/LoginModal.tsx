@@ -1,60 +1,60 @@
-import * as React from 'react'
-import { ProviderType } from '@dcl/schemas/dist/dapps/provider-type'
+import * as React from "react";
+import { ProviderType } from "@dcl/schemas/dist/dapps/provider-type";
 import {
   LoginModal as BaseLoginModal,
   LoginModalI18N,
   LoginModalOptionI18N,
   LoginModalOptionType,
-} from 'decentraland-ui/dist/components/LoginModal/LoginModal'
-import { connection } from 'decentraland-connect'
-import { T, t } from '../../modules/translation/utils'
-import { toModalOptionType, toProviderType } from './utils'
-import { DefaultProps, Props, State } from './LoginModal.types'
+} from "decentraland-ui/dist/components/LoginModal/LoginModal";
+import { connection } from "decentraland-connect";
+import { T, t } from "../../modules/translation/utils";
+import { toModalOptionType, toProviderType } from "./utils";
+import { DefaultProps, Props, State } from "./LoginModal.types";
 
 export default class LoginModal extends React.PureComponent<Props, State> {
   static defaultProps: DefaultProps = {
     isLoading: false,
-  }
+  };
 
   constructor(props: Props) {
-    super(props)
+    super(props);
     this.state = {
       hasError: false,
-    }
+    };
   }
 
   componentDidUpdate(prevProps: Props) {
     if (!prevProps.hasError && this.props.hasError) {
       this.setState({
         hasError: true,
-      })
+      });
     } else if (prevProps.hasError && !this.props.hasError) {
       this.setState({
         hasError: false,
-      })
+      });
     }
   }
 
   handleOnConnect = (loginType: LoginModalOptionType) => {
-    const onConnect = this.props.metadata?.onConnect ?? this.props.onConnect
-    const providerType: ProviderType = toProviderType(loginType)
-    onConnect(providerType)
-  }
+    const onConnect = this.props.metadata?.onConnect ?? this.props.onConnect;
+    const providerType: ProviderType = toProviderType(loginType);
+    onConnect(providerType);
+  };
 
   getModalTranslations = (): LoginModalI18N | undefined => {
     if (!this.props.hasTranslations) {
-      return undefined
+      return undefined;
     }
     return {
       title: <T id="@dapps.login.modal.title" />,
       subtitle: <T id="@dapps.login.modal.subtitle" />,
       error: <T id="@dapps.login.modal.error" />,
-    }
-  }
+    };
+  };
 
   getOptionTranslations = (): LoginModalOptionI18N | undefined => {
     if (!this.props.hasTranslations) {
-      return undefined
+      return undefined;
     }
     return {
       browser_extension: <T id="@dapps.login.option.browser_extension" />,
@@ -62,11 +62,11 @@ export default class LoginModal extends React.PureComponent<Props, State> {
       mobile: <T id="@dapps.login.option.mobile" />,
       mobile_and_browser: <T id="@dapps.login.option.mobile_and_browser" />,
       metamask_mobile: <T id="@dapps.login.option.metamask_mobile" />,
-    }
-  }
+    };
+  };
 
   renderLoginModalOption = (providerType: ProviderType) => {
-    const loginType = toModalOptionType(providerType)
+    const loginType = toModalOptionType(providerType);
 
     return loginType ? (
       <BaseLoginModal.Option
@@ -75,12 +75,12 @@ export default class LoginModal extends React.PureComponent<Props, State> {
         i18n={this.getOptionTranslations()}
         onClick={() => this.handleOnConnect(loginType)}
       />
-    ) : null
-  }
+    ) : null;
+  };
 
   render() {
-    const { className, isLoading, onClose } = this.props
-    const { hasError } = this.state
+    const { className, isLoading, onClose } = this.props;
+    const { hasError } = this.state;
 
     return (
       <BaseLoginModal
@@ -98,7 +98,7 @@ export default class LoginModal extends React.PureComponent<Props, State> {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  {t('@dapps.login.modal.trezor_link')}
+                  {t("@dapps.login.modal.trezor_link")}
                 </a>
               ),
             }}
@@ -110,6 +110,6 @@ export default class LoginModal extends React.PureComponent<Props, State> {
       >
         {connection.getAvailableProviders().map(this.renderLoginModalOption)}
       </BaseLoginModal>
-    )
+    );
   }
 }

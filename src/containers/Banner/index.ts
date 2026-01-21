@@ -1,4 +1,4 @@
-import Banner from './Banner.container'
+import Banner from "./Banner.container";
 
-export { Banner }
-export * from './Banner.types'
+export { Banner };
+export * from "./Banner.types";

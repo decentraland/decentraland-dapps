@@ -6,7 +6,7 @@ import {
   spawn,
   take,
   takeEvery,
-} from 'redux-saga/effects'
+} from "redux-saga/effects";
 import {
   FETCH_APPLICATION_FEATURES_FAILURE,
   FETCH_APPLICATION_FEATURES_REQUEST,
@@ -15,14 +15,14 @@ import {
   fetchApplicationFeaturesFailure,
   fetchApplicationFeaturesRequest,
   fetchApplicationFeaturesSuccess,
-} from './actions'
+} from "./actions";
 import {
   ApplicationFeatures,
   ApplicationName,
   FeatureSagasConfig,
   Polling,
-} from './types'
-import { fetchApplicationFeatures } from './utils'
+} from "./types";
+import { fetchApplicationFeatures } from "./utils";
 
 /**
  * Include this saga to be able to fetch feature flags for different applications.
@@ -31,32 +31,32 @@ import { fetchApplicationFeatures } from './utils'
  * @param config Configuration for the saga
  */
 export function* featuresSaga(config: FeatureSagasConfig) {
-  const { polling } = config
+  const { polling } = config;
 
   yield takeEvery(
     FETCH_APPLICATION_FEATURES_REQUEST,
     handleFetchApplicationFeaturesRequest,
-  )
+  );
 
   if (polling) {
-    yield spawn(getFetchApplicationFeaturesIntervalGenerator(polling))
+    yield spawn(getFetchApplicationFeaturesIntervalGenerator(polling));
   }
 }
 
 function* handleFetchApplicationFeaturesRequest(
   action: FetchApplicationFeaturesRequestAction,
 ) {
-  const { apps } = action.payload
+  const { apps } = action.payload;
 
   try {
     const features: Record<ApplicationName, ApplicationFeatures> = yield call(
       fetchApplicationFeatures,
       apps,
-    )
+    );
 
-    yield put(fetchApplicationFeaturesSuccess(apps, features))
+    yield put(fetchApplicationFeaturesSuccess(apps, features));
   } catch (e) {
-    yield put(fetchApplicationFeaturesFailure(apps, e.message))
+    yield put(fetchApplicationFeaturesFailure(apps, e.message));
   }
 }
 
@@ -66,14 +66,14 @@ export const getFetchApplicationFeaturesIntervalGenerator = (
   return function* () {
     while (true) {
       // Fetch application features for the configured applications.
-      yield put(fetchApplicationFeaturesRequest(polling.apps))
+      yield put(fetchApplicationFeaturesRequest(polling.apps));
       // Wait for the request to finish so there is no request overlap.
       yield race({
         success: take(FETCH_APPLICATION_FEATURES_SUCCESS),
         failure: take(FETCH_APPLICATION_FEATURES_FAILURE),
-      })
+      });
       // Wait for a certain amount of time before making the next request.
-      yield delay(polling.delay)
+      yield delay(polling.delay);
     }
-  }
-}
+  };
+};

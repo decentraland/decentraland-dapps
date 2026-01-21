@@ -98,29 +98,29 @@ This module takes care of connecting to MetaMask/Ledger, and insert in the state
 You can use the following selectors importing them from `decentraland-dapps/dist/modules/wallet/selectors`:
 
 ```tsx
-getData = (state: State) => BaseWallet
-getError = (state: State) => string
+getData = (state: State) => BaseWallet;
+getError = (state: State) => string;
 getNetwork = (state: State) =>
-  'mainnet' | 'ropsten' | 'rinkeby' | 'kovan' | 'localhost'
-getAddress = (state: State) => string
-isConnected = (state: State) => boolean
-isConnecting = (state: State) => boolean
+  "mainnet" | "ropsten" | "rinkeby" | "kovan" | "localhost";
+getAddress = (state: State) => string;
+isConnected = (state: State) => boolean;
+isConnecting = (state: State) => boolean;
 ```
 
 Also you can hook to the following actions from your reducers/sagas by importing them from `decentraland-dapps/dist/modules/wallet/actions`:
 
 ```tsx
-CONNECT_WALLET_REQUEST
-CONNECT_WALLET_SUCCESS
-CONNECT_WALLET_FAILURE
+CONNECT_WALLET_REQUEST;
+CONNECT_WALLET_SUCCESS;
+CONNECT_WALLET_FAILURE;
 ```
 
 Also you can import types for those actions from that same file:
 
 ```tsx
-ConnectWalletRequestAction
-ConnectWalletSuccessAction
-ConnectWalletFailureAction
+ConnectWalletRequestAction;
+ConnectWalletSuccessAction;
+ConnectWalletFailureAction;
 ```
 
 This is an example of how you can wait for the `CONNECT_WALLET_SUCCESS` action to trigger other actions:
@@ -131,15 +131,15 @@ This is an example of how you can wait for the `CONNECT_WALLET_SUCCESS` action t
 import {
   CONNECT_WALLET_SUCCESS,
   ConnectWalletSuccessAction,
-} from 'decentraland-dapps/dist/modules/wallet/actions'
-import { fetchSomethingRequest } from './actions'
+} from "decentraland-dapps/dist/modules/wallet/actions";
+import { fetchSomethingRequest } from "./actions";
 
 export function* saga() {
-  yield takeLatest(CONNECT_WALLET_SUCCESS, handleConnectWalletSuccess)
+  yield takeLatest(CONNECT_WALLET_SUCCESS, handleConnectWalletSuccess);
 }
 
 function* handleConnectWalletSuccess(action: ConnectWalletSuccessAction) {
-  yield put(fetchSomethingRequest())
+  yield put(fetchSomethingRequest());
 }
 ```
 
@@ -152,12 +152,12 @@ In order to install this module you will need to add a provider, a reducer and a
 Add the `<WalletProvider>` as a child of your `redux` provider. If you use `react-router-redux` or `connected-react-router` make sure the `<ConnectedRouter>` is a child of the `<WalletProvider>` and not the other way around, like this:
 
 ```tsx
-import * as React from 'react'
-import * as ReactDOM from 'react-dom'
-import { Provider } from 'react-redux'
-import { ConnectedRouter } from 'connected-react-router'
-import WalletProvider from 'decentraland-dapps/dist/providers/WalletProvider'
-import { store, history } from './store'
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+import { Provider } from "react-redux";
+import { ConnectedRouter } from "connected-react-router";
+import WalletProvider from "decentraland-dapps/dist/providers/WalletProvider";
+import { store, history } from "./store";
 
 ReactDOM.render(
   <Provider store={store}>
@@ -165,8 +165,8 @@ ReactDOM.render(
       <ConnectedRouter history={history}>{/* Your App */}</ConnectedRouter>
     </WalletProvider>
   </Provider>,
-  document.getElementById('root'),
-)
+  document.getElementById("root"),
+);
 ```
 
 **Reducer**:
@@ -174,13 +174,13 @@ ReactDOM.render(
 Import the `walletReducer` and add it at the root level of your dApp's reducer as `wallet`, like this:
 
 ```ts
-import { combineReducers } from 'redux'
-import { walletReducer as wallet } from 'decentraland-dapps/dist/modules/wallet/reducer'
+import { combineReducers } from "redux";
+import { walletReducer as wallet } from "decentraland-dapps/dist/modules/wallet/reducer";
 
 export const rootReducer = combineReducers({
   wallet,
   // your other reducers
-})
+});
 ```
 
 **Saga**:
@@ -188,14 +188,14 @@ export const rootReducer = combineReducers({
 You will need to create a `walletSaga` and add it to your `rootSaga`:
 
 ```ts
-import { all } from 'redux-saga/effects'
-import { walletSaga } from 'decentraland-dapps/dist/modules/wallet/sagas'
+import { all } from "redux-saga/effects";
+import { walletSaga } from "decentraland-dapps/dist/modules/wallet/sagas";
 
 export function* rootSaga() {
   yield all([
     walletSaga(),
     // your other sagas here
-  ])
+  ]);
 }
 ```
 
@@ -214,15 +214,15 @@ Instead of importing `walletSaga`, use `createWalletSaga`:
 **Saga**:
 
 ```ts
-import { all } from 'redux-saga/effects'
-import { createWalletSaga } from 'decentraland-dapps/dist/modules/wallet/sagas'
+import { all } from "redux-saga/effects";
+import { createWalletSaga } from "decentraland-dapps/dist/modules/wallet/sagas";
 
-const walletSaga = createWalletSaga({ CHAIN_ID: process.env.chainId })
+const walletSaga = createWalletSaga({ CHAIN_ID: process.env.chainId });
 export function* rootSaga() {
   yield all([
     walletSaga(),
     // your other sagas here
-  ])
+  ]);
 }
 ```
 
@@ -231,21 +231,21 @@ export function* rootSaga() {
 If you want to hook a callback to connect the wallet, there're two things to keep in mind. The process of connecting a wallet consists in two steps, first `enabling` it and then properly connecting it. The set of actions to keep in mind are the following (all from `decentraland-dapps/dist/modules/wallet/actions`):
 
 ```tsx
-enableWalletRequest
-enableWalletSuccess
-enableWalletFailure
+enableWalletRequest;
+enableWalletSuccess;
+enableWalletFailure;
 ```
 
 With it's corresponding actions and types from the same file:
 
 ```tsx
-ENABLE_WALLET_REQUEST
-ENABLE_WALLET_SUCCESS
-ENABLE_WALLET_FAILURE
+ENABLE_WALLET_REQUEST;
+ENABLE_WALLET_SUCCESS;
+ENABLE_WALLET_FAILURE;
 
-EnableWalletRequestAction
-EnableWalletSuccessAction
-EnableWalletFailureAction
+EnableWalletRequestAction;
+EnableWalletSuccessAction;
+EnableWalletFailureAction;
 ```
 
 The wallet saga will listen for `ENABLE_WALLET_SUCCESS` and automatically call `CONNECT_WALLET_REQUEST`. If you use `connect wallet` without enabling first it will only work if you enabled first and it'll stop working once the user disconnects the wallet from the site (if she ever does).
@@ -310,14 +310,14 @@ loadStorageMiddleware(store)
 export const migrations = {
   2: migrateToVersion2(data),
   3: migrateToVersion3(data),
-}
+};
 ```
 
 Where every `key` represent a migration and every `method` should return the new localstorage data:
 
 ```ts
 function migrateToVersion2(data) {
-  return omit(data, 'translations')
+  return omit(data, "translations");
 }
 ```
 
@@ -328,19 +328,19 @@ You don't need to care about updating the version of the migration because it wi
 You will need to add `storageReducer` as `storage` to your `rootReducer` and then wrap the whole reducer with `storageReducerWrapper`
 
 ```ts
-import { combineReducers } from 'redux'
+import { combineReducers } from "redux";
 
 import {
   storageReducer as storage,
   storageReducerWrapper,
-} from 'decentraland-dapps/dist/modules/storage/reducer'
+} from "decentraland-dapps/dist/modules/storage/reducer";
 
 export const rootReducer = storageReducerWrapper(
   combineReducers({
     storage,
     // your other reducers
   }),
-)
+);
 ```
 
 ### Advanced Usage
@@ -355,7 +355,7 @@ The first parameter of `createStorageMiddleware` is the key used to store the st
 The second parameter is an array of paths from the state that you want to be stored, ie:
 
 ```ts
-const paths = [['invites'][('user', 'name')]]
+const paths = [["invites"][("user", "name")]];
 ```
 
 That will make `state.invites` and `state.user.name` persistent. This parameter is optional and you don't have to configure it to use the `Transaction` and/or `Translation` modules.
@@ -363,7 +363,7 @@ That will make `state.invites` and `state.user.name` persistent. This parameter 
 The third parameter is an array of action types that will trigger a SAVE of the state in localStorage, ie:
 
 ```ts
-const actionTypes = [SEND_INVITE_SUCCESS]
+const actionTypes = [SEND_INVITE_SUCCESS];
 ```
 
 This parameter is optional and is and you don't have to configure it to use the `Transaction` and/or `Translation` modules.
@@ -384,19 +384,19 @@ This module requires you to install the [Storage](https://github.com/decentralan
 When you have an action that creates a transaction and you want to watch it, you can do with `buildTransactionPayload`:
 
 ```ts
-import { action } from 'typesafe-actions'
-import { buildTransactionPayload } from 'decentraland-dapps/dist/modules/transaction/utils'
+import { action } from "typesafe-actions";
+import { buildTransactionPayload } from "decentraland-dapps/dist/modules/transaction/utils";
 
 // Send Invite
 
-export const SEND_INVITE_REQUEST = '[Request] Send Invite'
-export const SEND_INVITE_SUCCESS = '[Success] Send Invite'
-export const SEND_INVITE_FAILURE = '[Failure] Send Invite'
+export const SEND_INVITE_REQUEST = "[Request] Send Invite";
+export const SEND_INVITE_SUCCESS = "[Success] Send Invite";
+export const SEND_INVITE_FAILURE = "[Failure] Send Invite";
 
 export const sendInvitesRequest = (address: string) =>
   action(SEND_INVITE_REQUEST, {
     address,
-  })
+  });
 
 export const sendInvitesSuccess = (txHash: string, address: string) =>
   action(SEND_INVITE_SUCCESS, {
@@ -404,17 +404,17 @@ export const sendInvitesSuccess = (txHash: string, address: string) =>
       address,
     }),
     address,
-  })
+  });
 
 export const sendInvitesFailure = (address: string, errorMessage: string) =>
   action(SEND_INVITE_FAILURE, {
     address,
     errorMessage,
-  })
+  });
 
-export type SendInvitesRequestAction = ReturnType<typeof sendInvitesRequest>
-export type SendInvitesSuccessAction = ReturnType<typeof sendInvitesSuccess>
-export type SendInvitesFailureAction = ReturnType<typeof sendInvitesFailure>
+export type SendInvitesRequestAction = ReturnType<typeof sendInvitesRequest>;
+export type SendInvitesSuccessAction = ReturnType<typeof sendInvitesSuccess>;
+export type SendInvitesFailureAction = ReturnType<typeof sendInvitesFailure>;
 ```
 
 Or `buildTransactionWithReceiptPayload` if you need the tx event logs
@@ -426,7 +426,7 @@ export const sendInvitesSuccess = (txHash: string, address: string) =>
       address,
     }),
     address,
-  })
+  });
 ```
 
 It will save the event logs inside `{ receipt: { logs: [] } }` after the tx was confirmed
@@ -443,13 +443,13 @@ Create the `transactionMiddleware` and apply it
 
 ```ts
 // store.ts
-import { createTransactionMiddleware } from 'decentraland-dapps/dist/modules/transaction/middleware'
-const transactionMiddleware = createTransactionMiddleware()
+import { createTransactionMiddleware } from "decentraland-dapps/dist/modules/transaction/middleware";
+const transactionMiddleware = createTransactionMiddleware();
 
 const middleware = applyMiddleware(
   // your other middlewares
   transactionMiddleware,
-)
+);
 ```
 
 **Reducer**:
@@ -457,13 +457,13 @@ const middleware = applyMiddleware(
 Add `transactionReducer` as `transaction` to your `rootReducer`
 
 ```ts
-import { combineReducers } from 'redux'
-import { transactionReducer as transaction } from 'decentraland-dapps/dist/modules/transaction/reducer'
+import { combineReducers } from "redux";
+import { transactionReducer as transaction } from "decentraland-dapps/dist/modules/transaction/reducer";
 
 export const rootReducer = combineReducers({
   transaction,
   // your other reducers
-})
+});
 ```
 
 **Saga**:
@@ -471,14 +471,14 @@ export const rootReducer = combineReducers({
 Add `transactionSaga` to your `rootSaga`
 
 ```ts
-import { all } from 'redux-saga/effects'
-import { transactionSaga } from 'decentraland-dapps/dist/modules/transaction/sagas'
+import { all } from "redux-saga/effects";
+import { transactionSaga } from "decentraland-dapps/dist/modules/transaction/sagas";
 
 export function* rootSaga() {
   yield all([
     transactionSaga(),
     // your other sagas
-  ])
+  ]);
 }
 ```
 
@@ -600,9 +600,9 @@ fetchAuthorizationsRequest(authorizations: Authorization[])
 That action will query the blockchain for each authorization and update the state so you can check it later. You can hook to:
 
 ```ts
-FETCH_AUTHORIZATIONS_REQUEST
-FETCH_AUTHORIZATIONS_SUCCESS
-FETCH_AUTHORIZATIONS_FAILURE
+FETCH_AUTHORIZATIONS_REQUEST;
+FETCH_AUTHORIZATIONS_SUCCESS;
+FETCH_AUTHORIZATIONS_FAILURE;
 ```
 
 Once you have this hooked up, you can either grant or revoke a token by using:
@@ -615,13 +615,13 @@ revokeTokenRequest(authorization: Authorization)
 You can hook to the following actions:
 
 ```ts
-GRANT_TOKEN_REQUEST
-GRANT_TOKEN_SUCCESS
-GRANT_TOKEN_FAILURE
+GRANT_TOKEN_REQUEST;
+GRANT_TOKEN_SUCCESS;
+GRANT_TOKEN_FAILURE;
 
-REVOKE_TOKEN_REQUEST
-REVOKE_TOKEN_SUCCESS
-REVOKE_TOKEN_FAILURE
+REVOKE_TOKEN_REQUEST;
+REVOKE_TOKEN_SUCCESS;
+REVOKE_TOKEN_FAILURE;
 ```
 
 Keep in mind that each of these actions send a transaction, so if you wan't to check if they're done, check the action type of the `FETCH_TRANSACTION_SUCCESS` action. More info on the [transactions](#transactions) module
@@ -633,13 +633,13 @@ Keep in mind that each of these actions send a transaction, so if you wan't to c
 Add the `authorizationReducer` as `authorization` to your `rootReducer`:
 
 ```ts
-import { combineReducers } from 'redux'
-import { authorizationReducer as authorization } from 'decentraland-dapps/dist/modules/authorization/reducer'
+import { combineReducers } from "redux";
+import { authorizationReducer as authorization } from "decentraland-dapps/dist/modules/authorization/reducer";
 
 export const rootReducer = combineReducers({
   authorization,
   // your other reducers
-})
+});
 ```
 
 **Sagas**
@@ -647,14 +647,14 @@ export const rootReducer = combineReducers({
 Add the `authorizationSaga` to the `rootSaga`:
 
 ```ts
-import { all } from 'redux-saga/effects'
-import { authorizationSaga } from 'decentraland-dapps/dist/modules/authorization/sagas'
+import { all } from "redux-saga/effects";
+import { authorizationSaga } from "decentraland-dapps/dist/modules/authorization/sagas";
 
 export function* rootSaga() {
   yield all([
     authorizationSaga(),
     // your other sagas
-  ])
+  ]);
 }
 ```
 
@@ -671,12 +671,12 @@ This module has an optional dependency on [Storage](https://github.com/decentral
 Using the helper `t()` you can add translations to your dApp
 
 ```tsx
-import * as React from 'react'
-import { t } from 'decentraland-dapps/dist/modules/translation/utils'
+import * as React from "react";
+import { t } from "decentraland-dapps/dist/modules/translation/utils";
 
 export default class BuyButton extends React.PureComponent {
   render() {
-    return <button>{t('but_page.buy_button')}</button>
+    return <button>{t("but_page.buy_button")}</button>;
   }
 }
 ```
@@ -714,21 +714,21 @@ You will need to add a provider, a reducer and a saga to use this module
 Add the `<TranslationProvider>` as a child of your `redux` provider, passing the `locales` that you want to support. If you use `react-router-redux` or `connected-react-router` make sure the `<ConnectedRouter>` is a child of the `<TranslationProvider>` and not the other way around, like this:
 
 ```tsx
-import * as React from 'react'
-import * as ReactDOM from 'react-dom'
-import { Provider } from 'react-redux'
-import { ConnectedRouter } from 'connected-react-router'
-import TranslationProvider from 'decentraland-dapps/dist/providers/TranslationProvider'
-import { store, history } from './store'
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+import { Provider } from "react-redux";
+import { ConnectedRouter } from "connected-react-router";
+import TranslationProvider from "decentraland-dapps/dist/providers/TranslationProvider";
+import { store, history } from "./store";
 
 ReactDOM.render(
   <Provider store={store}>
-    <TranslationProvider locales={['en', 'es', 'ko', 'zh']}>
+    <TranslationProvider locales={["en", "es", "ko", "zh"]}>
       <ConnectedRouter history={history}>{/* Your App */}</ConnectedRouter>
     </TranslationProvider>
   </Provider>,
-  document.getElementById('root'),
-)
+  document.getElementById("root"),
+);
 ```
 
 **Reducer**:
@@ -736,13 +736,13 @@ ReactDOM.render(
 Add the `translationReducer` as `translation` to your `rootReducer`:
 
 ```ts
-import { combineReducers } from 'redux'
-import { translationReducer as translation } from 'decentraland-dapps/dist/modules/translation/reducer'
+import { combineReducers } from "redux";
+import { translationReducer as translation } from "decentraland-dapps/dist/modules/translation/reducer";
 
 export const rootReducer = combineReducers({
   translation,
   // your other reducers
-})
+});
 ```
 
 **Saga**:
@@ -774,27 +774,27 @@ _es.json_
 _translations.ts_
 
 ```ts
-const en = require('./en.json')
-const es = require('./es.json')
-export { en, es }
+const en = require("./en.json");
+const es = require("./es.json");
+export { en, es };
 ```
 
 _sagas.ts_
 
 ```ts
-import { all } from 'redux-saga/effects'
-import { createTranslationSaga } from 'decentraland-dapps/dist/modules/translation/sagas'
-import * as translations from './translations'
+import { all } from "redux-saga/effects";
+import { createTranslationSaga } from "decentraland-dapps/dist/modules/translation/sagas";
+import * as translations from "./translations";
 
 export const translationSaga = createTranslationSaga({
   translations,
-})
+});
 
 export function* rootSaga() {
   yield all([
     translationSaga(),
     // your other sagas
-  ])
+  ]);
 }
 ```
 
@@ -803,19 +803,19 @@ export function* rootSaga() {
 _sagas.ts_
 
 ```ts
-import { all } from 'redux-saga/effects'
-import { createTranslationSaga } from 'decentraland-dapps/dist/modules/translation/sagas'
-import { api } from 'lib/api'
+import { all } from "redux-saga/effects";
+import { createTranslationSaga } from "decentraland-dapps/dist/modules/translation/sagas";
+import { api } from "lib/api";
 
 export const translationSaga = createTranslationSaga({
   getTranslation: (locale) => api.fetchTranslations(locale),
-})
+});
 
 export function* rootSaga() {
   yield all([
     translationSaga(),
     // your other sagas
-  ])
+  ]);
 }
 ```
 
@@ -834,9 +834,9 @@ After [installing the Storage module](https://github.com/decentraland/decentrala
 // store.ts
 
 const { storageMiddleware, loadStorageMiddleware } = createStorageMiddleware({
-  storageKey: 'my-dapp-storage',
-  paths: ['translation'],
-})
+  storageKey: "my-dapp-storage",
+  paths: ["translation"],
+});
 ```
 
 This will store the translation module in `localStorage`, so next time your application is started it will boot with all the translations populated before even fetching them from the server.
@@ -856,17 +856,17 @@ To send `track` events, add an `analytics.ts` file and require it from your entr
 
 ```ts
 // analytics.ts
-import { add } from 'decentraland-dapps/dist/modules/analytics/utils'
+import { add } from "decentraland-dapps/dist/modules/analytics/utils";
 import {
   CREATE_VOTE_SUCCESS,
   CreateVoteSuccessAction,
-} from 'modules/vote/actions'
+} from "modules/vote/actions";
 
-add(CREATE_VOTE_SUCCESS, 'Vote', (action: CreateVoteSuccessAction) => ({
+add(CREATE_VOTE_SUCCESS, "Vote", (action: CreateVoteSuccessAction) => ({
   poll_id: action.payload.vote.poll_id,
   option_id: action.payload.vote.option_id,
   address: action.payload.wallet.address,
-}))
+}));
 ```
 
 The first parameter is the action type that you want to track (required).
@@ -883,29 +883,29 @@ You need to apply a middleware and a saga to use this module
 
 ```ts
 // store.ts
-import { createAnalyticsMiddleware } from '@dapps/modules/analytics/middleware'
+import { createAnalyticsMiddleware } from "@dapps/modules/analytics/middleware";
 
-const analyticsMiddleware = createAnalyticsMiddleware('SEGMENT WRITE KEY')
+const analyticsMiddleware = createAnalyticsMiddleware("SEGMENT WRITE KEY");
 
 const middleware = applyMiddleware(
   // your other middlewares
   analyticsMiddleware,
-)
-const enhancer = composeEnhancers(middleware)
-const store = createStore(rootReducer, enhancer)
+);
+const enhancer = composeEnhancers(middleware);
+const store = createStore(rootReducer, enhancer);
 ```
 
 **Saga**:
 
 ```ts
-import { all } from 'redux-saga/effects'
-import { analyticsSaga } from 'decentraland-dapps/dist/modules/analytics/sagas'
+import { all } from "redux-saga/effects";
+import { analyticsSaga } from "decentraland-dapps/dist/modules/analytics/sagas";
 
 export function* rootSaga() {
   yield all([
     analyticsSaga(),
     // your other sagas
-  ])
+  ]);
 }
 ```
 
@@ -916,10 +916,10 @@ In order to track all page change you will need to use the analytics `page` func
 Note: It is important that this hook is triggered in any component inside the router provider.
 
 ```ts
-import usePageTracking from 'decentraland-dapps/dist/hooks/usePageTracking'
+import usePageTracking from "decentraland-dapps/dist/hooks/usePageTracking";
 
 function Routes() {
-  usePageTracking()
+  usePageTracking();
   /// Route rendering
 }
 ```
@@ -930,8 +930,8 @@ You can use the same redux action type to generate different Segment events if y
 
 ```ts
 add(AUTHORIZE_LAND_SUCCESS, (action) =>
-  action.isAuthorized ? 'Authorize LAND' : 'Unauthorize LAND',
-)
+  action.isAuthorized ? "Authorize LAND" : "Unauthorize LAND",
+);
 ```
 
 ## Loading
@@ -948,7 +948,7 @@ In order to use these selectors you need to use the `loadingReducer` within your
 import {
   loadingReducer,
   LoadingState,
-} from 'decentraland-dapps/dist/modules/loading/reducer'
+} from "decentraland-dapps/dist/modules/loading/reducer";
 import {
   FETCH_INVITES_REQUEST,
   FETCH_INVITES_SUCCESS,
@@ -956,26 +956,26 @@ import {
   FetchInvitesSuccessAction,
   FetchInvitesFailureAction,
   FetchInvitesRequestAction,
-} from './actions'
+} from "./actions";
 
 export type InviteState = {
-  loading: LoadingState
+  loading: LoadingState;
   data: {
-    [address: string]: number
-  }
-  error: null | string
-}
+    [address: string]: number;
+  };
+  error: null | string;
+};
 
 export const INITIAL_STATE: InviteState = {
   loading: [],
   data: {},
   error: null,
-}
+};
 
 export type InviteReducerAction =
   | FetchInvitesRequestAction
   | FetchInvitesSuccessAction
-  | FetchInvitesFailureAction
+  | FetchInvitesFailureAction;
 
 export function invitesReducer(
   state: InviteState = INITIAL_STATE,
@@ -986,7 +986,7 @@ export function invitesReducer(
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
-      }
+      };
     }
     case FETCH_INVITES_SUCCESS: {
       return {
@@ -996,17 +996,17 @@ export function invitesReducer(
           [action.payload.address]: action.payload.amount,
         },
         error: null,
-      }
+      };
     }
     case FETCH_INVITES_FAILURE: {
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
         error: action.payload.errorMessage,
-      }
+      };
     }
     default: {
-      return state
+      return state;
     }
   }
 }
@@ -1042,13 +1042,13 @@ In order to use this module you need to add a reducer and a provider.
 Add the `<ModalProvider>` as a parent of your routes. It takes an object of `{ {modalName: string]: React.Component }` as a prop (`components`). It'll use it to render the appropiate modal when you call `openModal(name: string)`
 
 ```tsx
-import * as React from 'react'
-import * as ReactDOM from 'react-dom'
-import { Provider } from 'react-redux'
-import { ConnectedRouter } from 'connected-react-router'
-import ModalProvider from 'decentraland-dapps/dist/providers/ModalProvider'
-import * as modals from 'components/Modals'
-import { store, history } from './store'
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+import { Provider } from "react-redux";
+import { ConnectedRouter } from "connected-react-router";
+import ModalProvider from "decentraland-dapps/dist/providers/ModalProvider";
+import * as modals from "components/Modals";
+import { store, history } from "./store";
 
 ReactDOM.render(
   <Provider store={store}>
@@ -1056,8 +1056,8 @@ ReactDOM.render(
       <ConnectedRouter history={history}>{/* Your App */}</ConnectedRouter>
     </ModalProvider>
   </Provider>,
-  document.getElementById('root'),
-)
+  document.getElementById("root"),
+);
 ```
 
 **Reducer**:
@@ -1065,13 +1065,13 @@ ReactDOM.render(
 Add the `modalReducer` as `modal` to your `rootReducer`:
 
 ```ts
-import { combineReducers } from 'redux'
-import { modalReducer as modal } from 'decentraland-dapps/dist/modules/modal/reducer'
+import { combineReducers } from "redux";
+import { modalReducer as modal } from "decentraland-dapps/dist/modules/modal/reducer";
 
 export const rootReducer = combineReducers({
   modal,
   // your other reducers
-})
+});
 ```
 
 ### Advanced Usage
@@ -1095,13 +1095,13 @@ export ModalName = keyof typeof modals
 
 ```ts
 // modules/modal/actions.ts
-import { getModalActions } from 'decentraland-dapps/dist/modules/modal/actions'
-import { ModalName } from './types'
+import { getModalActions } from "decentraland-dapps/dist/modules/modal/actions";
+import { ModalName } from "./types";
 
-const { openModal, closeModal, toggleModal } = getModalActions<ModalName>()
+const { openModal, closeModal, toggleModal } = getModalActions<ModalName>();
 
-export * from 'decentraland-dapps/dist/modules/modal/actions'
-export { openModal, closeModal, toggleModal }
+export * from "decentraland-dapps/dist/modules/modal/actions";
+export { openModal, closeModal, toggleModal };
 ```
 
 </p>
@@ -1133,13 +1133,13 @@ In order to use this module you need to add a reducer, a provider and a saga.
 Add the `<ToastProvider>` as a parent of your routes. It takes an optional `position` param to set where you want the toasts to appear. It'll default to `top left`
 
 ```tsx
-import * as React from 'react'
-import * as ReactDOM from 'react-dom'
-import { Provider } from 'react-redux'
-import { ConnectedRouter } from 'connected-react-router'
-import ToastProvider from 'decentraland-dapps/dist/providers/ToastProvider'
-import * as modals from 'components/Modals'
-import { store, history } from './store'
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+import { Provider } from "react-redux";
+import { ConnectedRouter } from "connected-react-router";
+import ToastProvider from "decentraland-dapps/dist/providers/ToastProvider";
+import * as modals from "components/Modals";
+import { store, history } from "./store";
 
 ReactDOM.render(
   <Provider store={store}>
@@ -1147,8 +1147,8 @@ ReactDOM.render(
       <ConnectedRouter history={history}>{/* Your App */}</ConnectedRouter>
     </ToastProvider>
   </Provider>,
-  document.getElementById('root'),
-)
+  document.getElementById("root"),
+);
 ```
 
 **Reducer**:
@@ -1156,13 +1156,13 @@ ReactDOM.render(
 Add the `toastReducer` as `toast` to your `rootReducer`:
 
 ```ts
-import { combineReducers } from 'redux'
-import { toastReducer as toast } from 'decentraland-dapps/dist/modules/toast/reducer'
+import { combineReducers } from "redux";
+import { toastReducer as toast } from "decentraland-dapps/dist/modules/toast/reducer";
 
 export const rootReducer = combineReducers({
   toast,
   // your other reducers
-})
+});
 ```
 
 **Saga**:
@@ -1170,14 +1170,14 @@ export const rootReducer = combineReducers({
 You will need to create a `toastSaga` and add it to your `rootSaga`:
 
 ```ts
-import { all } from 'redux-saga/effects'
-import { toastSaga } from 'decentraland-dapps/dist/modules/wallet/sagas'
+import { all } from "redux-saga/effects";
+import { toastSaga } from "decentraland-dapps/dist/modules/wallet/sagas";
 
 export function* rootSaga() {
   yield all([
     toastSaga(),
     // your other sagas here
-  ])
+  ]);
 }
 ```
 
@@ -1202,15 +1202,15 @@ The `clearProfileError` action will clear any profile request errors from the st
 To install the profile module, just import it and add it to the store by combining the existing reducers with the one provided in the profile module.
 
 ```ts
-import { profileReducer as profile } from 'decentraland-dapps/dist/modules/profile/reducer'
+import { profileReducer as profile } from "decentraland-dapps/dist/modules/profile/reducer";
 
 export const createRootReducer = (history: History) =>
   combineReducers({
     profile,
     otherReducer,
-  })
+  });
 
-export type RootState = ReturnType<ReturnType<typeof createRootReducer>>
+export type RootState = ReturnType<ReturnType<typeof createRootReducer>>;
 ```
 
 ## Credits
@@ -1225,13 +1225,13 @@ You can start and stop real-time credit updates using SSE:
 import {
   startCreditsSSE,
   stopCreditsSSE,
-} from 'decentraland-dapps/dist/modules/credits/actions'
+} from "decentraland-dapps/dist/modules/credits/actions";
 
 // Start real-time credit updates when component mounts
-dispatch(startCreditsSSE(address))
+dispatch(startCreditsSSE(address));
 
 // Stop real-time updates when component unmounts
-dispatch(stopCreditsSSE())
+dispatch(stopCreditsSSE());
 ```
 
 For backward compatibility, the following aliases are also available:
@@ -1240,7 +1240,7 @@ For backward compatibility, the following aliases are also available:
 import {
   startCreditsAutoPolling, // alias for startCreditsSSE
   stopCreditsAutoPolling, // alias for stopCreditsSSE
-} from 'decentraland-dapps/dist/modules/credits/actions'
+} from "decentraland-dapps/dist/modules/credits/actions";
 ```
 
 The module will automatically:
@@ -1253,9 +1253,9 @@ The module will automatically:
 **Selectors**:
 
 ```ts
-import { getCredits } from 'decentraland-dapps/dist/modules/credits/selectors'
+import { getCredits } from "decentraland-dapps/dist/modules/credits/selectors";
 
-const credits = getCredits(state, address)
+const credits = getCredits(state, address);
 ```
 
 **Installation**:
@@ -1263,30 +1263,30 @@ const credits = getCredits(state, address)
 Add the `creditsReducer` to your root reducer:
 
 ```ts
-import { combineReducers } from 'redux'
-import { creditsReducer as credits } from 'decentraland-dapps/dist/modules/credits/reducer'
+import { combineReducers } from "redux";
+import { creditsReducer as credits } from "decentraland-dapps/dist/modules/credits/reducer";
 
 export const rootReducer = combineReducers({
   credits,
   // your other reducers
-})
+});
 ```
 
 Add the `creditsSaga` to your root saga:
 
 ```ts
-import { all } from 'redux-saga/effects'
-import { creditsSaga } from 'decentraland-dapps/dist/modules/credits/sagas'
-import { CreditsClient } from 'decentraland-dapps/dist/modules/credits/CreditsClient'
+import { all } from "redux-saga/effects";
+import { creditsSaga } from "decentraland-dapps/dist/modules/credits/sagas";
+import { CreditsClient } from "decentraland-dapps/dist/modules/credits/CreditsClient";
 
 // Create a credits client - make sure your server supports SSE at /users/{address}/credits/stream
-const creditsClient = new CreditsClient(API_URL)
+const creditsClient = new CreditsClient(API_URL);
 
 export function* rootSaga() {
   yield all([
     creditsSaga({ creditsClient }),
     // your other sagas
-  ])
+  ]);
 }
 ```
 
@@ -1302,32 +1302,32 @@ Here's an example of how the server might implement the SSE endpoint:
 
 ```typescript
 // Server-side (Node.js with Express)
-app.get('/users/:address/credits/stream', (req, res) => {
-  const { address } = req.params
+app.get("/users/:address/credits/stream", (req, res) => {
+  const { address } = req.params;
 
   // Set up SSE connection
-  res.setHeader('Content-Type', 'text/event-stream')
-  res.setHeader('Cache-Control', 'no-cache')
-  res.setHeader('Connection', 'keep-alive')
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
 
   // Send initial credits data
-  sendCreditsUpdate(address, res)
+  sendCreditsUpdate(address, res);
 
   // Set up listener for credit changes for this address
   const listener = (updatedAddress, creditsData) => {
     if (updatedAddress === address) {
-      res.write(`data: ${JSON.stringify(creditsData)}\n\n`)
+      res.write(`data: ${JSON.stringify(creditsData)}\n\n`);
     }
-  }
+  };
 
   // Add listener to your event system
-  creditEventEmitter.on('credits-updated', listener)
+  creditEventEmitter.on("credits-updated", listener);
 
   // Clean up when connection closes
-  req.on('close', () => {
-    creditEventEmitter.off('credits-updated', listener)
-  })
-})
+  req.on("close", () => {
+    creditEventEmitter.off("credits-updated", listener);
+  });
+});
 ```
 
 # Lib
@@ -1342,17 +1342,17 @@ The `BaseAPI` class can be extended to make requests and it handles the unwrappi
 
 ```ts
 // lib/api
-import { BaseAPI } from 'decentraland-dapps/dist/lib/api'
+import { BaseAPI } from "decentraland-dapps/dist/lib/api";
 
-const URL = 'http://localhost/api'
+const URL = "http://localhost/api";
 
 export class API extends BaseAPI {
   fetchSomething() {
-    return this.request('get', '/something', {})
+    return this.request("get", "/something", {});
   }
 }
 
-export const api = new API(URL)
+export const api = new API(URL);
 ```
 
 ## ETH
@@ -1364,12 +1364,12 @@ Ethereum helpers
 Get user's connected provider without being wrapped by any library
 
 ```ts
-import { getConnectedProvider } from 'decentraland-dapps/dist/lib/eth'
+import { getConnectedProvider } from "decentraland-dapps/dist/lib/eth";
 
 async function wrapProviderToEthers() {
-  const provider = await getConnectedProvider()
+  const provider = await getConnectedProvider();
   if (provider) {
-    return new etheres.providers.Web3Provider(provider)
+    return new etheres.providers.Web3Provider(provider);
   }
 }
 ```
@@ -1379,18 +1379,18 @@ async function wrapProviderToEthers() {
 Get an Eth instance with your lib of choice
 
 ```ts
-import { Eth } from 'web3x/eth'
-import { getConnectedProvider } from 'decentraland-dapps/dist/lib/eth'
+import { Eth } from "web3x/eth";
+import { getConnectedProvider } from "decentraland-dapps/dist/lib/eth";
 
 async function doSomething() {
-  const provider = await getConnectedProvider()
-  if (!provider) throw new Error()
+  const provider = await getConnectedProvider();
+  if (!provider) throw new Error();
 
   // web3x
-  const eth = new Eth(provider) // or new Eth(new LegacyProviderAdapter(provider))
+  const eth = new Eth(provider); // or new Eth(new LegacyProviderAdapter(provider))
 
   // ethers
-  const eth = new ethers.providers.Web3Provider(provider)
+  const eth = new ethers.providers.Web3Provider(provider);
 }
 ```
 
@@ -1427,11 +1427,11 @@ The `getProfileEntity` gets the first profile of all the profiles an address has
 
 ```ts
 // lib/entities
-import { EntitesOperator } from 'decentraland-dapps/dist/lib/entities'
+import { EntitesOperator } from "decentraland-dapps/dist/lib/entities";
 
-const URL = 'http://localhost/api'
-const entitiesOperator = new EntitesOperator(URL)
-await entitiesOperator.getProfile(anAddress)
+const URL = "http://localhost/api";
+const entitiesOperator = new EntitesOperator(URL);
+await entitiesOperator.getProfile(anAddress);
 ```
 
 # Containers
@@ -1451,21 +1451,21 @@ This container requires you to install the [Wallet](https://github.com/decentral
 This is an example of a `SomePage` component that uses the `<Navbar>` container:
 
 ```tsx
-import * as React from 'react'
+import * as React from "react";
 
-import { Container } from 'decentraland-ui/dist/components/Container/Container'
-import { NavbarPages } from 'decentraland-ui/dist/components/Navbar/Navbar.types'
-import Navbar from 'decentraland-dapps/dist/containers/Navbar'
+import { Container } from "decentraland-ui/dist/components/Container/Container";
+import { NavbarPages } from "decentraland-ui/dist/components/Navbar/Navbar.types";
+import Navbar from "decentraland-dapps/dist/containers/Navbar";
 
-import './SomePage.css'
+import "./SomePage.css";
 
 export default class SomePage extends React.PureComponent {
   static defaultProps = {
     children: null,
-  }
+  };
 
   render() {
-    const { children } = this.props
+    const { children } = this.props;
 
     return (
       <>
@@ -1474,7 +1474,7 @@ export default class SomePage extends React.PureComponent {
           <Container>{children}</Container>
         </div>
       </>
-    )
+    );
   }
 }
 ```
@@ -1529,24 +1529,24 @@ The `<Footer>` container has support for i18n out of the box if you include the 
 This is an example of a `SomePage` component that uses the `<Footer>` container:
 
 ```tsx
-import * as React from 'react'
+import * as React from "react";
 
-import { Container } from 'decentraland-ui/dist/components/Container/Container'
-import Navbar from 'decentraland-dapps/dist/containers/Navbar'
+import { Container } from "decentraland-ui/dist/components/Container/Container";
+import Navbar from "decentraland-dapps/dist/containers/Navbar";
 
-import './SomePage.css'
+import "./SomePage.css";
 
 export default class SomePage extends React.PureComponent {
   render() {
-    const { children } = this.props
+    const { children } = this.props;
     return (
       <>
         <div className="SomePage">
           <Container>{children}</Container>
         </div>
-        <Footer locales={['en', 'es']} />
+        <Footer locales={["en", "es"]} />
       </>
-    )
+    );
   }
 }
 ```
@@ -1701,16 +1701,16 @@ This container requires you to install the [Wallet](https://github.com/decentral
 ### Usage
 
 ```tsx
-import * as React from 'react'
-import TransactionLink from 'decentraland-dapps/dist/containers/TransactionLink'
+import * as React from "react";
+import TransactionLink from "decentraland-dapps/dist/containers/TransactionLink";
 
 export default class MyComponent extends React.PureComponent {
   render() {
     return (
       <p>
-        You sent an <TransactionLink txHash={'0x...'}>invite</TransactionLink>
+        You sent an <TransactionLink txHash={"0x..."}>invite</TransactionLink>
       </p>
-    )
+    );
   }
 }
 ```
@@ -1726,8 +1726,8 @@ The `<Intercom>` will add an [intercom](https://www.intercom.com/) widget to you
 ### Usage
 
 ```tsx
-import * as React from 'react'
-import Intercom from 'decentraland-dapps/dist/components/Intercom'
+import * as React from "react";
+import Intercom from "decentraland-dapps/dist/components/Intercom";
 
 export default class MyComponent extends React.PureComponent {
   render() {
@@ -1739,7 +1739,7 @@ export default class MyComponent extends React.PureComponent {
           data={/*optional data sent to intercom */}
         />
       </div>
-    )
+    );
   }
 }
 ```
@@ -1755,19 +1755,19 @@ To use this feature:
 1. Start auto-polling when the user needs to see their updated credits:
 
 ```typescript
-import { startCreditsSSE } from 'decentraland-dapps/dist/modules/credits/actions'
+import { startCreditsSSE } from "decentraland-dapps/dist/modules/credits/actions";
 
 // Start auto-polling credits (address is the user's wallet address)
-dispatch(startCreditsSSE(address))
+dispatch(startCreditsSSE(address));
 ```
 
 2. Stop auto-polling when it's no longer needed (e.g., when the user navigates away or logs out):
 
 ```typescript
-import { stopCreditsSSE } from 'decentraland-dapps/dist/modules/credits/actions'
+import { stopCreditsSSE } from "decentraland-dapps/dist/modules/credits/actions";
 
 // Stop auto-polling credits
-dispatch(stopCreditsSSE())
+dispatch(stopCreditsSSE());
 ```
 
 The polling will automatically check if the credits feature is enabled before fetching credits, so there's no need for additional checks in your application code.

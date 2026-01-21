@@ -1,5 +1,5 @@
-import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
-import { LoadingState, loadingReducer } from '../loading/reducer'
+import { ChainId } from "@dcl/schemas/dist/dapps/chain-id";
+import { LoadingState, loadingReducer } from "../loading/reducer";
 import {
   CHANGE_ACCOUNT,
   CHANGE_NETWORK,
@@ -37,22 +37,22 @@ import {
   SwitchNetworkFailureAction,
   SwitchNetworkRequestAction,
   SwitchNetworkSuccessAction,
-} from './actions'
-import { Wallet } from './types'
+} from "./actions";
+import { Wallet } from "./types";
 
 export type WalletState = {
-  data: Wallet | null
-  loading: LoadingState
-  error: string | null
-  appChainId: ChainId | null
-}
+  data: Wallet | null;
+  loading: LoadingState;
+  error: string | null;
+  appChainId: ChainId | null;
+};
 
 export const INITIAL_STATE: WalletState = {
   data: null,
   loading: [],
   error: null,
   appChainId: null,
-}
+};
 
 export type WalletReducerAction =
   | ConnectWalletRequestAction
@@ -72,7 +72,7 @@ export type WalletReducerAction =
   | FetchWalletRequestAction
   | FetchWalletSuccessAction
   | FetchWalletFailureAction
-  | SetAppChainIdAction
+  | SetAppChainIdAction;
 
 export function walletReducer(
   state: WalletState = INITIAL_STATE,
@@ -86,7 +86,7 @@ export function walletReducer(
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
-      }
+      };
     }
 
     case SWITCH_NETWORK_REQUEST: {
@@ -94,7 +94,7 @@ export function walletReducer(
         ...state,
         loading: loadingReducer(state.loading, action),
         error: null,
-      }
+      };
     }
 
     case FETCH_WALLET_SUCCESS:
@@ -104,7 +104,7 @@ export function walletReducer(
         loading: loadingReducer(state.loading, action),
         error: null,
         data: action.payload.wallet,
-      }
+      };
     }
 
     case SWITCH_NETWORK_SUCCESS:
@@ -113,7 +113,7 @@ export function walletReducer(
         ...state,
         loading: loadingReducer(state.loading, action),
         error: null,
-      }
+      };
     }
 
     case DISCONNECT_WALLET_FAILURE:
@@ -121,7 +121,7 @@ export function walletReducer(
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
-      }
+      };
     }
 
     case SWITCH_NETWORK_FAILURE: {
@@ -129,7 +129,7 @@ export function walletReducer(
         ...state,
         error: action.payload.error,
         loading: loadingReducer(state.loading, action),
-      }
+      };
     }
 
     case CONNECT_WALLET_FAILURE: {
@@ -137,7 +137,7 @@ export function walletReducer(
         ...state,
         loading: loadingReducer(state.loading, action),
         data: null,
-      }
+      };
     }
 
     case ENABLE_WALLET_FAILURE: {
@@ -146,7 +146,7 @@ export function walletReducer(
         loading: loadingReducer(state.loading, action),
         error: action.payload.error,
         data: null,
-      }
+      };
     }
 
     case CHANGE_ACCOUNT:
@@ -155,7 +155,7 @@ export function walletReducer(
         ...state,
         error: null,
         data: action.payload.wallet,
-      }
+      };
     }
 
     case DISCONNECT_WALLET_SUCCESS: {
@@ -164,17 +164,17 @@ export function walletReducer(
         loading: loadingReducer(state.loading, action),
         error: null,
         data: null,
-      }
+      };
     }
 
     case SET_APP_CHAIN_ID: {
       return {
         ...state,
         appChainId: action.payload.chainId,
-      }
+      };
     }
 
     default:
-      return state
+      return state;
   }
 }

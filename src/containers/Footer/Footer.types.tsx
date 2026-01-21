@@ -1,9 +1,9 @@
-import { FooterProps as FooterComponentProps } from 'decentraland-ui/dist/components/Footer/Footer'
+import { FooterProps as FooterComponentProps } from "decentraland-ui/dist/components/Footer/Footer";
 
 export type FooterProps = FooterComponentProps & {
-  hasTranslations?: boolean
-}
+  hasTranslations?: boolean;
+};
 
-export type MapStateProps = Pick<FooterProps, 'locale' | 'hasTranslations'>
+export type MapStateProps = Pick<FooterProps, "locale" | "hasTranslations">;
 
-export type MapDispatchProps = Pick<FooterProps, 'onChange'>
+export type MapDispatchProps = Pick<FooterProps, "onChange">;

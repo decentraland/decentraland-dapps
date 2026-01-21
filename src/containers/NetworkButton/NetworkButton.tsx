@@ -1,20 +1,24 @@
-import React from 'react'
-import { Button as ButtonComponent } from 'decentraland-ui/dist/components/Button/Button'
-import NetworkCheck from '../NetworkCheck'
-import { Props } from './NetworkButton.types'
+import React from "react";
+import { Button as ButtonComponent } from "decentraland-ui/dist/components/Button/Button";
+import NetworkCheck from "../NetworkCheck";
+import { Props } from "./NetworkButton.types";
 
-const disabledStyle = { opacity: 0.5, cursor: 'not-allowed', transform: 'none' }
+const disabledStyle = {
+  opacity: 0.5,
+  cursor: "not-allowed",
+  transform: "none",
+};
 
 export default class NetworkButton extends React.PureComponent<Props> {
   render() {
-    const { network, onClick, ...rest } = this.props
+    const { network, onClick, ...rest } = this.props;
     return (
       <NetworkCheck network={network}>
         {(isEnabled) => {
-          const props = isEnabled ? { onClick } : { style: disabledStyle }
-          return <ButtonComponent {...rest} {...props} />
+          const props = isEnabled ? { onClick } : { style: disabledStyle };
+          return <ButtonComponent {...rest} {...props} />;
         }}
       </NetworkCheck>
-    )
+    );
   }
 }

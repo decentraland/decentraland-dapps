@@ -1,2 +1,2 @@
-import TranslationProvider from './TranslationProvider.container'
-export default TranslationProvider
+import TranslationProvider from "./TranslationProvider.container";
+export default TranslationProvider;

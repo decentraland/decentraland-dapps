@@ -1,10 +1,10 @@
-import { AuthIdentity } from 'decentraland-crypto-fetch'
+import { AuthIdentity } from "decentraland-crypto-fetch";
 import {
   OrderResponse,
   CustomizationOptions as TransakCustomizationOptions,
-} from '../modules/gateway/transak/types'
-import { WertPayload } from '../modules/gateway/types'
-import { BaseClient } from './BaseClient'
+} from "../modules/gateway/transak/types";
+import { WertPayload } from "../modules/gateway/types";
+import { BaseClient } from "./BaseClient";
 
 export class MarketplaceAPI extends BaseClient {
   async signWertMessageAndCreateSession(
@@ -13,19 +13,19 @@ export class MarketplaceAPI extends BaseClient {
   ): Promise<{ signature: string; sessionId: string }> {
     try {
       const response = await this.fetch<{
-        signature: string
-        sessionId: string
-      }>('/v1/wert/sign', {
-        method: 'POST',
+        signature: string;
+        sessionId: string;
+      }>("/v1/wert/sign", {
+        method: "POST",
         identity,
         body: JSON.stringify(body),
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-      })
-      return response
+      });
+      return response;
     } catch (error) {
-      throw new Error((error as Error).message)
+      throw new Error((error as Error).message);
     }
   }
   /**
@@ -34,7 +34,7 @@ export class MarketplaceAPI extends BaseClient {
    * @param orderId - Transak Order ID.
    */
   async getOrder(orderId: string): Promise<OrderResponse> {
-    return this.fetch<OrderResponse>(`/v1/transak/orders/${orderId}`)
+    return this.fetch<OrderResponse>(`/v1/transak/orders/${orderId}`);
   }
 
   /**
@@ -45,15 +45,15 @@ export class MarketplaceAPI extends BaseClient {
   async getTransakWidgetUrl(
     customizationOptions: Omit<
       TransakCustomizationOptions,
-      'widgetHeight' | 'widgetWidth'
+      "widgetHeight" | "widgetWidth"
     >,
   ): Promise<string> {
-    return this.fetch<string>('/v1/transak/widget-url', {
-      method: 'post',
+    return this.fetch<string>("/v1/transak/widget-url", {
+      method: "post",
       body: JSON.stringify(customizationOptions),
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-    })
+    });
   }
 }

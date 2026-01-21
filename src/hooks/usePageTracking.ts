@@ -1,14 +1,14 @@
-import { useEffect } from 'react'
-import { useLocation } from 'react-router'
-import { getAnalytics } from '../modules/analytics'
+import { useEffect } from "react";
+import { useLocation } from "react-router";
+import { getAnalytics } from "../modules/analytics";
 
 export function usePageTracking() {
-  const location = useLocation()
+  const location = useLocation();
 
   useEffect(() => {
-    const analytics = getAnalytics()
+    const analytics = getAnalytics();
     if (analytics) {
-      analytics.page()
+      analytics.page();
     }
-  }, [location])
+  }, [location]);
 }

@@ -1,22 +1,22 @@
-import * as React from 'react'
+import * as React from "react";
 import {
   SignIn,
   SignInI18N,
-} from 'decentraland-ui/dist/components/SignIn/SignIn'
-import { isCucumberProvider } from '../../lib/eth'
-import { isMobile } from '../../lib/utils'
-import { T } from '../../modules/translation/utils'
-import { SignInPageProps } from './SignInPage.types'
+} from "decentraland-ui/dist/components/SignIn/SignIn";
+import { isCucumberProvider } from "../../lib/eth";
+import { isMobile } from "../../lib/utils";
+import { T } from "../../modules/translation/utils";
+import { SignInPageProps } from "./SignInPage.types";
 
 export default class SignInPage extends React.PureComponent<SignInPageProps> {
   constructor(props: SignInPageProps) {
-    super(props)
+    super(props);
   }
 
   getTranslations = (): SignInI18N | undefined => {
-    const { hasTranslations, isConnected } = this.props
+    const { hasTranslations, isConnected } = this.props;
     if (!hasTranslations) {
-      return undefined
+      return undefined;
     }
 
     return {
@@ -100,12 +100,12 @@ export default class SignInPage extends React.PureComponent<SignInPageProps> {
           }}
         />
       ),
-    }
-  }
+    };
+  };
 
   render() {
     const { center, isConnected, isConnecting, hasError, onConnect } =
-      this.props
+      this.props;
 
     return (
       <>
@@ -118,6 +118,6 @@ export default class SignInPage extends React.PureComponent<SignInPageProps> {
           i18n={this.getTranslations()}
         />
       </>
-    )
+    );
   }
 }

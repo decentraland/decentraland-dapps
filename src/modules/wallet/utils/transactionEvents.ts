@@ -1,2 +1,2 @@
-import { EventEmitter } from 'events'
-export const transactionEvents = new EventEmitter()
+import { EventEmitter } from "events";
+export const transactionEvents = new EventEmitter();

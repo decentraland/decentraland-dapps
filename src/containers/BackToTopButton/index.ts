@@ -1,2 +1,2 @@
-export * from './BackToTopButton'
-export * from './BackToTopButton.types'
+export * from "./BackToTopButton";
+export * from "./BackToTopButton.types";

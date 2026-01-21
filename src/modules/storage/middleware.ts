@@ -1,11 +1,11 @@
-import { Store } from 'redux'
-import * as storage from 'redux-persistence'
-import createStorageEngine from 'redux-persistence-engine-localstorage'
-import filter from 'redux-storage-decorator-filter'
-import { disabledMiddleware } from '../../lib/disabledMiddleware'
-import { hasLocalStorage, migrateStorage } from '../../lib/localStorage'
-import { StorageOwnData } from '../../lib/types'
-import { SET_PURCHASE } from '../gateway/actions'
+import { Store } from "redux";
+import * as storage from "redux-persistence";
+import createStorageEngine from "redux-persistence-engine-localstorage";
+import filter from "redux-storage-decorator-filter";
+import { disabledMiddleware } from "../../lib/disabledMiddleware";
+import { hasLocalStorage, migrateStorage } from "../../lib/localStorage";
+import { StorageOwnData } from "../../lib/types";
+import { SET_PURCHASE } from "../gateway/actions";
 import {
   CLEAR_TRANSACTION,
   CLEAR_TRANSACTIONS,
@@ -16,46 +16,46 @@ import {
   REPLACE_TRANSACTION_SUCCESS,
   UPDATE_TRANSACTION_NONCE,
   UPDATE_TRANSACTION_STATUS,
-} from '../transaction/actions'
+} from "../transaction/actions";
 import {
   CHANGE_LOCALE,
   FETCH_TRANSLATIONS_SUCCESS,
-} from '../translation/actions'
-import { STORAGE_LOAD } from './actions'
-import { StorageMiddleware } from './types'
+} from "../translation/actions";
+import { STORAGE_LOAD } from "./actions";
+import { StorageMiddleware } from "./types";
 
 const disabledLoad = (store: any) =>
-  setTimeout(() => store.dispatch({ type: STORAGE_LOAD, payload: {} }))
+  setTimeout(() => store.dispatch({ type: STORAGE_LOAD, payload: {} }));
 
 export function createStorageMiddleware<T extends StorageOwnData>(
   options: StorageMiddleware<T>,
 ) {
-  const { storageKey, migrations = {}, paths = [], actions = [] } = options
+  const { storageKey, migrations = {}, paths = [], actions = [] } = options;
 
   if (!hasLocalStorage()) {
     return {
       storageMiddleware: disabledMiddleware as any,
       loadStorageMiddleware: disabledLoad as any,
-    }
+    };
   }
 
-  const localStorageState = migrateStorage(storageKey, migrations)
-  let setItemFailure = false
+  const localStorageState = migrateStorage(storageKey, migrations);
+  let setItemFailure = false;
 
   try {
-    localStorage.setItem(storageKey, JSON.stringify(localStorageState))
+    localStorage.setItem(storageKey, JSON.stringify(localStorageState));
   } catch (e) {
-    setItemFailure = true
-    console.warn(e.message)
+    setItemFailure = true;
+    console.warn(e.message);
   }
 
   const storageEngine = filter(createStorageEngine(storageKey), [
-    ['translation', 'locale'],
-    'transaction',
-    ['storage', 'version'],
-    ['gateway', 'data', 'purchases'],
+    ["translation", "locale"],
+    "transaction",
+    ["storage", "version"],
+    ["gateway", "data", "purchases"],
     ...paths,
-  ])
+  ]);
 
   const whitelist = new Set([
     CHANGE_LOCALE,
@@ -71,27 +71,27 @@ export function createStorageMiddleware<T extends StorageOwnData>(
     CLEAR_TRANSACTION,
     SET_PURCHASE,
     ...actions,
-  ])
+  ]);
 
   const storageMiddleware: any = storage.createMiddleware(storageEngine, {
     filterAction: (action: any) => whitelist.has(action.type),
     transform: options.transform,
     onError: options.onError,
-  })
+  });
 
   const load = (store: Store<any>) => {
     if (setItemFailure) {
       const unsubscribe = store.subscribe(() => {
-        const state = store.getState()
+        const state = store.getState();
         if (state.storage.loading === false) {
-          unsubscribe()
-          store.dispatch({ type: storage.LOAD, payload: localStorageState })
+          unsubscribe();
+          store.dispatch({ type: storage.LOAD, payload: localStorageState });
         }
-      })
+      });
     }
 
-    storage.createLoader(storageEngine)(store)
-  }
+    storage.createLoader(storageEngine)(store);
+  };
 
-  return { storageMiddleware, loadStorageMiddleware: load }
+  return { storageMiddleware, loadStorageMiddleware: load };
 }

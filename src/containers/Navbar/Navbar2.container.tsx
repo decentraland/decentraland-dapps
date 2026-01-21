@@ -1,17 +1,17 @@
-import { connect } from 'react-redux'
-import { ChainId } from '@dcl/schemas'
-import { getCredits } from '../../modules/credits/selectors'
-import { ApplicationName, FeatureName } from '../../modules/features'
+import { connect } from "react-redux";
+import { ChainId } from "@dcl/schemas";
+import { getCredits } from "../../modules/credits/selectors";
+import { ApplicationName, FeatureName } from "../../modules/features";
 import {
   getIsFeatureEnabled,
   getLauncherLinksVariant,
-} from '../../modules/features/selectors'
-import { getData as getProfiles } from '../../modules/profile/selectors'
-import { getLocale } from '../../modules/translation/selectors'
+} from "../../modules/features/selectors";
+import { getData as getProfiles } from "../../modules/profile/selectors";
+import { getLocale } from "../../modules/translation/selectors";
 import {
   disconnectWalletRequest,
   switchNetworkRequest,
-} from '../../modules/wallet/actions'
+} from "../../modules/wallet/actions";
 import {
   getAddress,
   getAppChainId,
@@ -22,14 +22,14 @@ import {
   isConnecting,
   isDisconnecting,
   isSwitchingNetwork,
-} from '../../modules/wallet/selectors'
-import { RootDispatch } from '../../types'
-import Navbar2 from './Navbar2'
-import { MapDispatchProps, MapStateProps, NavbarProps2 } from './Navbar.types'
+} from "../../modules/wallet/selectors";
+import { RootDispatch } from "../../types";
+import Navbar2 from "./Navbar2";
+import { MapDispatchProps, MapStateProps, NavbarProps2 } from "./Navbar.types";
 
 const mapState = (state: any): MapStateProps => {
-  const address = getAddress(state)
-  const profile = address ? getProfiles(state)[address] : undefined
+  const address = getAddress(state);
+  const profile = address ? getProfiles(state)[address] : undefined;
   return {
     avatar: profile ? profile.avatars[0] : undefined,
     chainId: getChainId(state),
@@ -49,14 +49,14 @@ const mapState = (state: any): MapStateProps => {
       ApplicationName.DAPPS,
       FeatureName.DOWNLOAD_IN_SUCCESS_PAGE,
     ),
-  }
-}
+  };
+};
 
 const mapDispatch = (dispatch: RootDispatch): MapDispatchProps => ({
   onSwitchNetwork: (chainId: ChainId, fromChainId: ChainId) =>
     dispatch(switchNetworkRequest(chainId, fromChainId)),
   onSignOut: () => dispatch(disconnectWalletRequest()),
-})
+});
 
 const mergeProps = (
   stateProps: MapStateProps,
@@ -66,6 +66,6 @@ const mergeProps = (
   ...stateProps,
   ...dispatchProps,
   ...ownProps,
-})
+});
 
-export default connect(mapState, mapDispatch, mergeProps)(Navbar2) as any
+export default connect(mapState, mapDispatch, mergeProps)(Navbar2) as any;

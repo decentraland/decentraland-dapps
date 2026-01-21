@@ -1,1 +1,1 @@
-export { MoonPay } from './MoonPay'
+export { MoonPay } from "./MoonPay";

@@ -1,18 +1,18 @@
-import { EventSource } from 'eventsource'
-import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
-import { BaseClient, BaseClientConfig } from '../../lib'
+import { EventSource } from "eventsource";
+import { ChainId } from "@dcl/schemas/dist/dapps/chain-id";
+import { BaseClient, BaseClientConfig } from "../../lib";
 import {
   CreditsNameRouteResponse,
   CreditsResponse,
   SeasonResponse,
-} from './types'
+} from "./types";
 
 export class CreditsClient extends BaseClient {
   constructor(
     public readonly url: string,
     config?: BaseClientConfig,
   ) {
-    super(url, config)
+    super(url, config);
   }
   /**
    * Fetches the credits for a user
@@ -23,11 +23,11 @@ export class CreditsClient extends BaseClient {
     try {
       const response = await this.fetch<CreditsResponse>(
         `/users/${address}/credits`,
-      )
-      return response
+      );
+      return response;
     } catch (error) {
-      console.error('Error fetching credits', error)
-      return { credits: [], totalCredits: 0 }
+      console.error("Error fetching credits", error);
+      return { credits: [], totalCredits: 0 };
     }
   }
 
@@ -37,11 +37,11 @@ export class CreditsClient extends BaseClient {
    */
   async fetchSeason(): Promise<SeasonResponse | null> {
     try {
-      const response = await this.fetch<SeasonResponse>('/season')
-      return response
+      const response = await this.fetch<SeasonResponse>("/season");
+      return response;
     } catch (error) {
-      console.error('Error fetching season data', error)
-      return null
+      console.error("Error fetching season data", error);
+      return null;
     }
   }
 
@@ -57,8 +57,8 @@ export class CreditsClient extends BaseClient {
   ): Promise<CreditsNameRouteResponse> {
     const response = await this.fetch<CreditsNameRouteResponse>(
       `/credits-name-route?name=${encodeURIComponent(name)}&chainId=${chainId}`,
-    )
-    return response
+    );
+    return response;
   }
 
   /**
@@ -73,17 +73,17 @@ export class CreditsClient extends BaseClient {
     onMessage: (data: CreditsResponse) => void,
     onError: (error: Event) => void,
   ): { close: () => void } {
-    let eventSource: EventSource | null = null
-    let retryCount = 0
-    let reconnectTimeout: number | null = null
-    const MAX_RETRIES = 5
-    const RETRY_DELAY_MS = 3000
+    let eventSource: EventSource | null = null;
+    let retryCount = 0;
+    let reconnectTimeout: number | null = null;
+    const MAX_RETRIES = 5;
+    const RETRY_DELAY_MS = 3000;
 
     const connect = () => {
       if (eventSource) {
         // Close existing connection before creating a new one
-        eventSource.close()
-        eventSource = null
+        eventSource.close();
+        eventSource = null;
       }
 
       eventSource = new EventSource(
@@ -91,67 +91,67 @@ export class CreditsClient extends BaseClient {
         {
           fetch: this.rawFetch.bind(this),
         },
-      )
+      );
 
       eventSource.onopen = () => {
         // Reset retry count on successful connection
-        retryCount = 0
-        console.log('SSE connection established')
-      }
+        retryCount = 0;
+        console.log("SSE connection established");
+      };
 
       eventSource.onmessage = (event) => {
         try {
-          const data = JSON.parse(event.data) as CreditsResponse
-          onMessage(data)
+          const data = JSON.parse(event.data) as CreditsResponse;
+          onMessage(data);
         } catch (error) {
-          console.error('Error parsing SSE event data:', error)
+          console.error("Error parsing SSE event data:", error);
         }
-      }
+      };
 
       eventSource.onerror = (error) => {
-        console.error('SSE connection error:', error)
+        console.error("SSE connection error:", error);
 
         // Close the connection
         if (eventSource) {
-          eventSource.close()
-          eventSource = null
+          eventSource.close();
+          eventSource = null;
         }
 
         // Attempt to reconnect if under max retries
         if (retryCount < MAX_RETRIES) {
-          retryCount++
+          retryCount++;
           console.log(
             `Reconnecting SSE (attempt ${retryCount}/${MAX_RETRIES})...`,
-          )
+          );
           // Store timeout ID so we can cancel it if needed
-          reconnectTimeout = window.setTimeout(connect, RETRY_DELAY_MS)
+          reconnectTimeout = window.setTimeout(connect, RETRY_DELAY_MS);
         } else {
           console.error(
             `Max SSE reconnection attempts (${MAX_RETRIES}) reached`,
-          )
-          onError(error)
+          );
+          onError(error);
         }
-      }
-    }
+      };
+    };
 
     // Initial connection
-    connect()
+    connect();
 
     // Return an object with a close method to allow manual disconnection
     return {
       close: () => {
         // Clear any pending reconnection attempts
         if (reconnectTimeout !== null) {
-          window.clearTimeout(reconnectTimeout)
-          reconnectTimeout = null
+          window.clearTimeout(reconnectTimeout);
+          reconnectTimeout = null;
         }
 
         // Close the EventSource if it exists
         if (eventSource) {
-          eventSource.close()
-          eventSource = null
+          eventSource.close();
+          eventSource = null;
         }
       },
-    }
+    };
   }
 }

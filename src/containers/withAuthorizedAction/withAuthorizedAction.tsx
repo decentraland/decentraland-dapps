@@ -1,38 +1,38 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import { connect } from 'react-redux'
-import { BigNumber, ethers } from 'ethers'
-import { v4 as uuid } from 'uuid'
-import { getNetworkProvider } from '../../lib/eth'
+import React, { useCallback, useEffect, useState } from "react";
+import { connect } from "react-redux";
+import { BigNumber, ethers } from "ethers";
+import { v4 as uuid } from "uuid";
+import { getNetworkProvider } from "../../lib/eth";
 import {
   authorizationFlowClear,
   authorizationFlowRequest,
-} from '../../modules/authorization/actions'
+} from "../../modules/authorization/actions";
 import {
   getAuthorizationFlowError,
   isAuthorizing,
-} from '../../modules/authorization/selectors'
+} from "../../modules/authorization/selectors";
 import {
   Authorization,
   AuthorizationAction,
   AuthorizationType,
-} from '../../modules/authorization/types'
+} from "../../modules/authorization/types";
 import {
   getCollectionV2ContractInstance,
   getERC20ContractInstance,
   getERC721ContractInstance,
-} from '../../modules/authorization/utils'
-import { ApplicationName, FeatureName } from '../../modules/features'
-import { getIsFeatureEnabled } from '../../modules/features/selectors'
-import { getData as getWallet } from '../../modules/wallet/selectors'
-import { isWeb2Wallet } from '../../modules/wallet/utils/providerChecks'
-import { RootStateOrAny } from '../../types'
+} from "../../modules/authorization/utils";
+import { ApplicationName, FeatureName } from "../../modules/features";
+import { getIsFeatureEnabled } from "../../modules/features/selectors";
+import { getData as getWallet } from "../../modules/wallet/selectors";
+import { isWeb2Wallet } from "../../modules/wallet/utils/providerChecks";
+import { RootStateOrAny } from "../../types";
 import {
   AuthorizationModal,
   OwnProps as AuthorizationModalOwnProps,
   AuthorizationStepStatus,
   AuthorizedAction,
   HandleGrantOptions,
-} from './AuthorizationModal'
+} from "./AuthorizationModal";
 import {
   AuthorizationTranslationKeys,
   AuthorizeActionOptions,
@@ -40,7 +40,7 @@ import {
   MapDispatchProps,
   MapStateProps,
   WithAuthorizedActionProps,
-} from './withAuthorizedAction.types'
+} from "./withAuthorizedAction.types";
 
 const mapState = (state: RootStateOrAny): MapStateProps => ({
   isMagicAutoSignEnabled: getIsFeatureEnabled(
@@ -51,7 +51,7 @@ const mapState = (state: RootStateOrAny): MapStateProps => ({
   authorizationError: getAuthorizationFlowError(state),
   authorizerWallet: getWallet(state),
   isAuthorizing: isAuthorizing(state),
-})
+});
 
 const mapDispatch = (dispatch: MapDispatch): MapDispatchProps => ({
   onClearAuthorizationFlow: () => dispatch(authorizationFlowClear()),
@@ -81,7 +81,7 @@ const mapDispatch = (dispatch: MapDispatch): MapDispatchProps => ({
         onAuthorized,
       }),
     ),
-})
+});
 
 export default function withAuthorizedAction<
   P extends WithAuthorizedActionProps,
@@ -105,21 +105,21 @@ export default function withAuthorizedAction<
       isAuthorizing,
       authorizationError,
       ...rest
-    } = props
-    const [showAuthorizationModal, setShowAuthorizationModal] = useState(false)
+    } = props;
+    const [showAuthorizationModal, setShowAuthorizationModal] = useState(false);
     const [authModalData, setAuthModalData] =
-      useState<Omit<AuthorizationModalOwnProps, 'onGrant' | 'onRevoke'>>()
-    const [isLoadingAuthorization, setIsLoadingAuthorization] = useState(false)
+      useState<Omit<AuthorizationModalOwnProps, "onGrant" | "onRevoke">>();
+    const [isLoadingAuthorization, setIsLoadingAuthorization] = useState(false);
     const isUserLoggedInWithMagic =
-      authorizerWallet && isWeb2Wallet(authorizerWallet)
-    const userAddress = authorizerWallet?.address
+      authorizerWallet && isWeb2Wallet(authorizerWallet);
+    const userAddress = authorizerWallet?.address;
 
     // Clear the authorization flow error when the component unmounts
     useEffect(() => {
       return () => {
-        onClearAuthorizationFlow()
-      }
-    }, [onClearAuthorizationFlow])
+        onClearAuthorizationFlow();
+      };
+    }, [onClearAuthorizationFlow]);
 
     const handleRevoke = useCallback(
       (
@@ -127,10 +127,10 @@ export default function withAuthorizedAction<
         analyticsTraceId: string,
         onAuthorized?: () => void,
       ) => {
-        onRevoke(analyticsTraceId, authorization, onAuthorized)
+        onRevoke(analyticsTraceId, authorization, onAuthorized);
       },
       [onRevoke],
-    )
+    );
 
     const handleGrant = useCallback(
       (authorization: Authorization, options?: HandleGrantOptions) => {
@@ -140,17 +140,17 @@ export default function withAuthorizedAction<
           options?.requiredAllowance,
           options?.currentAllowance,
           options?.onAuthorized,
-        )
+        );
       },
       [onGrant],
-    )
+    );
 
     const handleAuthorizedAction = useCallback(
       async (authorizeOptions: AuthorizeActionOptions) => {
         if (!userAddress) {
-          return
+          return;
         }
-        setIsLoadingAuthorization(true)
+        setIsLoadingAuthorization(true);
 
         const {
           authorizationType,
@@ -159,10 +159,12 @@ export default function withAuthorizedAction<
           targetContractName,
           authorizedContractLabel,
           onAuthorized,
-        } = authorizeOptions
+        } = authorizeOptions;
 
-        const networkProvider = await getNetworkProvider(targetContract.chainId)
-        const provider = new ethers.providers.Web3Provider(networkProvider)
+        const networkProvider = await getNetworkProvider(
+          targetContract.chainId,
+        );
+        const provider = new ethers.providers.Web3Provider(networkProvider);
 
         const authorization: Authorization = {
           type: authorizationType,
@@ -171,30 +173,30 @@ export default function withAuthorizedAction<
           contractAddress: targetContract.address,
           chainId: targetContract.chainId,
           contractName: targetContractName,
-        } as Authorization
+        } as Authorization;
 
         try {
           if (authorizationType === AuthorizationType.ALLOWANCE) {
-            const { requiredAllowanceInWei } = authorizeOptions
+            const { requiredAllowanceInWei } = authorizeOptions;
             if (BigNumber.from(requiredAllowanceInWei).isZero()) {
-              onAuthorized(true)
-              setIsLoadingAuthorization(false)
-              return
+              onAuthorized(true);
+              setIsLoadingAuthorization(false);
+              return;
             }
 
             const contract = getERC20ContractInstance(
               targetContract.address,
               provider,
-            )
+            );
             const currentAllowance: BigNumber = await contract.allowance(
               userAddress,
               authorizedAddress,
-            )
+            );
 
             if (currentAllowance.gte(BigNumber.from(requiredAllowanceInWei))) {
-              onAuthorized(true)
-              setIsLoadingAuthorization(false)
-              return
+              onAuthorized(true);
+              setIsLoadingAuthorization(false);
+              return;
             }
 
             if (
@@ -206,9 +208,9 @@ export default function withAuthorizedAction<
                 requiredAllowance: BigNumber.from(requiredAllowanceInWei),
                 currentAllowance: currentAllowance,
                 onAuthorized: () => onAuthorized(false),
-              })
-              setIsLoadingAuthorization(false)
-              return
+              });
+              setIsLoadingAuthorization(false);
+              return;
             }
 
             setAuthModalData({
@@ -223,24 +225,24 @@ export default function withAuthorizedAction<
               onAuthorized: () => onAuthorized(false),
               getConfirmationStatus,
               getConfirmationError,
-            })
+            });
           } else if (authorizationType === AuthorizationType.APPROVAL) {
             const contract = getERC721ContractInstance(
               targetContract.address,
               provider,
-            )
+            );
             const isApprovedForAll = await contract.isApprovedForAll(
               userAddress,
               authorizedAddress,
-            )
+            );
 
             if (isApprovedForAll) {
-              onAuthorized(true)
-              setIsLoadingAuthorization(false)
-              return
+              onAuthorized(true);
+              setIsLoadingAuthorization(false);
+              return;
             }
 
-            const { targetContractLabel } = authorizeOptions
+            const { targetContractLabel } = authorizeOptions;
 
             if (
               isMagicAutoSignEnabled &&
@@ -249,9 +251,9 @@ export default function withAuthorizedAction<
             ) {
               handleGrant(authorization, {
                 onAuthorized: () => onAuthorized(false),
-              })
-              setIsLoadingAuthorization(false)
-              return
+              });
+              setIsLoadingAuthorization(false);
+              return;
             }
 
             setAuthModalData({
@@ -265,21 +267,21 @@ export default function withAuthorizedAction<
               onAuthorized: () => onAuthorized(false),
               getConfirmationStatus,
               getConfirmationError,
-            })
+            });
           } else {
             const contract = getCollectionV2ContractInstance(
               targetContract.address,
               provider,
-            )
+            );
             const isMintingAllowed =
-              await contract.globalMinters(authorizedAddress)
+              await contract.globalMinters(authorizedAddress);
 
-            const { targetContractLabel } = authorizeOptions
+            const { targetContractLabel } = authorizeOptions;
 
             if (isMintingAllowed) {
-              onAuthorized(true)
-              setIsLoadingAuthorization(false)
-              return
+              onAuthorized(true);
+              setIsLoadingAuthorization(false);
+              return;
             }
 
             if (
@@ -289,9 +291,9 @@ export default function withAuthorizedAction<
             ) {
               handleGrant(authorization, {
                 onAuthorized: () => onAuthorized(false),
-              })
-              setIsLoadingAuthorization(false)
-              return
+              });
+              setIsLoadingAuthorization(false);
+              return;
             }
 
             setAuthModalData({
@@ -305,13 +307,13 @@ export default function withAuthorizedAction<
               onAuthorized: () => onAuthorized(false),
               getConfirmationStatus,
               getConfirmationError,
-            })
+            });
           }
 
-          setShowAuthorizationModal(true)
+          setShowAuthorizationModal(true);
         } catch (error) {
           // TODO: handle error scenario
-          console.error(error)
+          console.error(error);
         }
       },
       [
@@ -321,13 +323,13 @@ export default function withAuthorizedAction<
         handleGrant,
         handleRevoke,
       ],
-    )
+    );
 
     const handleClose = useCallback(() => {
-      setIsLoadingAuthorization(false)
-      setShowAuthorizationModal(false)
-      onClearAuthorizationFlow()
-    }, [onClearAuthorizationFlow])
+      setIsLoadingAuthorization(false);
+      setShowAuthorizationModal(false);
+      onClearAuthorizationFlow();
+    }, [onClearAuthorizationFlow]);
 
     return (
       <>
@@ -350,12 +352,12 @@ export default function withAuthorizedAction<
           />
         ) : null}
       </>
-    )
-  }
+    );
+  };
   return connect(
     mapState,
     mapDispatch,
   )(WithAuthorizedActionComponent) as React.ComponentType<
     Omit<P, keyof WithAuthorizedActionProps>
-  >
+  >;
 }

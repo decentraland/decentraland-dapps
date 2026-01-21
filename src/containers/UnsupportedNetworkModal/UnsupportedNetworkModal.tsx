@@ -1,9 +1,9 @@
-import React from 'react'
-import { Button } from 'decentraland-ui/dist/components/Button/Button'
-import { ModalNavigation } from 'decentraland-ui/dist/components/ModalNavigation/ModalNavigation'
-import Modal from '../../containers/Modal'
-import { T } from '../../modules/translation/utils'
-import { Props } from './UnsupportedNetworkModal.types'
+import React from "react";
+import { Button } from "decentraland-ui/dist/components/Button/Button";
+import { ModalNavigation } from "decentraland-ui/dist/components/ModalNavigation/ModalNavigation";
+import Modal from "../../containers/Modal";
+import { T } from "../../modules/translation/utils";
+import { Props } from "./UnsupportedNetworkModal.types";
 
 const UnsupportedNetworkModal: React.FC<Props> = ({
   chainName,
@@ -48,7 +48,7 @@ const UnsupportedNetworkModal: React.FC<Props> = ({
         </Button>
       </Modal.Actions>
     </Modal>
-  )
-}
+  );
+};
 
-export default UnsupportedNetworkModal
+export default UnsupportedNetworkModal;

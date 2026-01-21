@@ -5,16 +5,16 @@ import {
   HideToastAction,
   RENDER_TOAST,
   RenderToastAction,
-} from './actions'
+} from "./actions";
 
-export type ToastState = number[] // we only store ids here, check cache.ts for the entire data
+export type ToastState = number[]; // we only store ids here, check cache.ts for the entire data
 
-const INITIAL_STATE: ToastState = []
+const INITIAL_STATE: ToastState = [];
 
 export type ToastReducerAction =
   | RenderToastAction
   | HideToastAction
-  | HideAllToastsAction
+  | HideAllToastsAction;
 
 export function toastReducer(
   state = INITIAL_STATE,
@@ -22,17 +22,17 @@ export function toastReducer(
 ): ToastState {
   switch (action.type) {
     case RENDER_TOAST: {
-      const { id } = action.payload
-      return [...state, id]
+      const { id } = action.payload;
+      return [...state, id];
     }
     case HIDE_TOAST: {
-      const { id } = action.payload
-      return state.filter((stateId) => stateId !== id)
+      const { id } = action.payload;
+      return state.filter((stateId) => stateId !== id);
     }
     case HIDE_ALL_TOASTS: {
-      return []
+      return [];
     }
     default:
-      return state
+      return state;
   }
 }

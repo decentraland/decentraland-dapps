@@ -1,103 +1,103 @@
-import { Dispatch } from 'redux'
-import { Contract } from '@dcl/schemas'
-import { ContractName } from 'decentraland-transactions'
+import { Dispatch } from "redux";
+import { Contract } from "@dcl/schemas";
+import { ContractName } from "decentraland-transactions";
 import {
   AuthorizationFlowClearAction,
   AuthorizationFlowRequestAction,
   FetchAuthorizationsRequestAction,
   authorizationFlowClear,
   authorizationFlowRequest,
-} from '../../modules/authorization/actions'
+} from "../../modules/authorization/actions";
 import {
   Authorization,
   AuthorizationType,
-} from '../../modules/authorization/types'
-import { en } from '../../modules/translation/defaults'
-import { Wallet } from '../../modules/wallet/types'
+} from "../../modules/authorization/types";
+import { en } from "../../modules/translation/defaults";
+import { Wallet } from "../../modules/wallet/types";
 type AuthorizeBaseOptions = {
   /**
    * callback to run when authorization process is completed
    * @param alreadyAuthorized when true, the user was authorizarized when calling
    * onAuthorizedAction without the need to run the complete authorization flow
    * */
-  onAuthorized: (alreadyAuthorized: boolean) => void
+  onAuthorized: (alreadyAuthorized: boolean) => void;
   /** address that we want to authorize */
-  authorizedAddress: string
+  authorizedAddress: string;
   /** contract the should be called to check authorization and authorize */
-  targetContract: Contract
+  targetContract: Contract;
   /** name of the target contract */
-  targetContractName: ContractName
+  targetContractName: ContractName;
   /** name of authorized contract */
-  authorizedContractLabel?: string
-}
+  authorizedContractLabel?: string;
+};
 
 type ApprovalOptions = AuthorizeBaseOptions & {
-  authorizationType: AuthorizationType.APPROVAL
-  targetContractLabel?: string
-  tokenId: string
-}
+  authorizationType: AuthorizationType.APPROVAL;
+  targetContractLabel?: string;
+  tokenId: string;
+};
 
 type AllowanceOptions = AuthorizeBaseOptions & {
-  authorizationType: AuthorizationType.ALLOWANCE
-  requiredAllowanceInWei: string
-}
+  authorizationType: AuthorizationType.ALLOWANCE;
+  requiredAllowanceInWei: string;
+};
 
 type MintOptions = AuthorizeBaseOptions & {
-  authorizationType: AuthorizationType.MINT
-  targetContractLabel?: string
-}
+  authorizationType: AuthorizationType.MINT;
+  targetContractLabel?: string;
+};
 
 type ExtraAuthorizationOptions = {
-  manual?: boolean
-}
+  manual?: boolean;
+};
 
 export type AuthorizeActionOptions = (
   | ApprovalOptions
   | AllowanceOptions
   | MintOptions
 ) &
-  ExtraAuthorizationOptions
+  ExtraAuthorizationOptions;
 
 type RecursivePartial<T> = {
   [P in keyof T]?: T[P] extends (infer U)[]
     ? RecursivePartial<U>[]
     : T[P] extends object
       ? RecursivePartial<T[P]>
-      : T[P]
-}
+      : T[P];
+};
 
 export type AuthorizationTranslationKeys = RecursivePartial<
-  (typeof en)['@dapps']['authorization_modal']
->
+  (typeof en)["@dapps"]["authorization_modal"]
+>;
 
 export type WithAuthorizedActionProps = {
-  onAuthorizedAction: (options: AuthorizeActionOptions) => void
-  onCloseAuthorization: () => void
-  isLoadingAuthorization: boolean
-  authorizationError: string | null
-  isUsingMagic: boolean
-  isMagicAutoSignEnabled: boolean
-}
+  onAuthorizedAction: (options: AuthorizeActionOptions) => void;
+  onCloseAuthorization: () => void;
+  isLoadingAuthorization: boolean;
+  authorizationError: string | null;
+  isUsingMagic: boolean;
+  isMagicAutoSignEnabled: boolean;
+};
 
 export type MapStateProps = {
-  authorizerWallet: Wallet | null
-  isAuthorizing: boolean
-  authorizationError: string | null
-  isMagicAutoSignEnabled: boolean
-}
+  authorizerWallet: Wallet | null;
+  isAuthorizing: boolean;
+  authorizationError: string | null;
+  isMagicAutoSignEnabled: boolean;
+};
 export type MapDispatch = Dispatch<
   | AuthorizationFlowClearAction
   | AuthorizationFlowRequestAction
   | FetchAuthorizationsRequestAction
->
+>;
 export type MapDispatchProps = {
-  onClearAuthorizationFlow: typeof authorizationFlowClear
+  onClearAuthorizationFlow: typeof authorizationFlowClear;
   onRevoke: (
     traceId: string,
     authorization: Authorization,
-  ) => ReturnType<typeof authorizationFlowRequest>
+  ) => ReturnType<typeof authorizationFlowRequest>;
   onGrant: (
     traceId: string,
     authorization: Authorization,
-  ) => ReturnType<typeof authorizationFlowRequest>
-}
+  ) => ReturnType<typeof authorizationFlowRequest>;
+};

@@ -1,5 +1,5 @@
-import { fetchApplicationFeaturesRequest } from './actions'
-import { getMockApplicationFeaturesRecord } from './actions.spec'
+import { fetchApplicationFeaturesRequest } from "./actions";
+import { getMockApplicationFeaturesRecord } from "./actions.spec";
 import {
   getData,
   getError,
@@ -8,16 +8,16 @@ import {
   getLoading,
   hasLoadedInitialFlags,
   isLoadingFeatureFlags,
-} from './selectors'
-import { ApplicationName, StateWithFeatures } from './types'
+} from "./selectors";
+import { ApplicationName, StateWithFeatures } from "./types";
 
-describe('when getting the features state data', () => {
-  let data: ReturnType<typeof getMockApplicationFeaturesRecord>
-  let state: StateWithFeatures
+describe("when getting the features state data", () => {
+  let data: ReturnType<typeof getMockApplicationFeaturesRecord>;
+  let state: StateWithFeatures;
 
-  describe('when features is defined', () => {
+  describe("when features is defined", () => {
     beforeEach(() => {
-      data = getMockApplicationFeaturesRecord()
+      data = getMockApplicationFeaturesRecord();
 
       state = {
         features: {
@@ -26,35 +26,35 @@ describe('when getting the features state data', () => {
           hasLoadedInitialFlags: false,
           loading: [],
         },
-      }
-    })
+      };
+    });
 
-    it('should return the features data', () => {
-      expect(getData(state)).toEqual(data)
-    })
-  })
+    it("should return the features data", () => {
+      expect(getData(state)).toEqual(data);
+    });
+  });
 
-  describe('when features is undefined', () => {
+  describe("when features is undefined", () => {
     beforeEach(() => {
-      state = {}
-    })
+      state = {};
+    });
 
-    it('should throw an error indicating features reducer was not implemented', () => {
+    it("should throw an error indicating features reducer was not implemented", () => {
       expect(() => getData(state)).toThrowError(
         "'features' reducer not implemented",
-      )
-    })
-  })
-})
+      );
+    });
+  });
+});
 
-describe('when getting the features state loading', () => {
-  it('should return the loading state', () => {
+describe("when getting the features state loading", () => {
+  it("should return the loading state", () => {
     const loading = [
       fetchApplicationFeaturesRequest([
         ApplicationName.ACCOUNT,
         ApplicationName.BUILDER,
       ]),
-    ]
+    ];
 
     const result = getLoading({
       features: {
@@ -63,15 +63,15 @@ describe('when getting the features state loading', () => {
         hasLoadedInitialFlags: false,
         loading,
       },
-    })
+    });
 
-    expect(result).toEqual(loading)
-  })
-})
+    expect(result).toEqual(loading);
+  });
+});
 
-describe('when getting the features state error', () => {
-  it('should return the loading state', () => {
-    const error = 'error'
+describe("when getting the features state error", () => {
+  it("should return the loading state", () => {
+    const error = "error";
 
     const result = getError({
       features: {
@@ -80,18 +80,18 @@ describe('when getting the features state error', () => {
         hasLoadedInitialFlags: false,
         loading: [],
       },
-    })
+    });
 
-    expect(result).toEqual(error)
-  })
-})
+    expect(result).toEqual(error);
+  });
+});
 
-describe('when getting if a feature is enabled', () => {
-  let data: ReturnType<typeof getMockApplicationFeaturesRecord>
-  let state: StateWithFeatures
+describe("when getting if a feature is enabled", () => {
+  let data: ReturnType<typeof getMockApplicationFeaturesRecord>;
+  let state: StateWithFeatures;
 
   beforeEach(() => {
-    data = getMockApplicationFeaturesRecord()
+    data = getMockApplicationFeaturesRecord();
 
     state = {
       features: {
@@ -100,104 +100,104 @@ describe('when getting if a feature is enabled', () => {
         hasLoadedInitialFlags: false,
         loading: [],
       },
-    }
-  })
+    };
+  });
 
-  describe('when the application feature is stored as true', () => {
-    it('should return true', () => {
+  describe("when the application feature is stored as true", () => {
+    it("should return true", () => {
       expect(
-        getIsFeatureEnabled(state, ApplicationName.ACCOUNT, 'flag1'),
-      ).toEqual(true)
-    })
-  })
+        getIsFeatureEnabled(state, ApplicationName.ACCOUNT, "flag1"),
+      ).toEqual(true);
+    });
+  });
 
-  describe('when the application feature is stored as false', () => {
-    it('should return false', () => {
+  describe("when the application feature is stored as false", () => {
+    it("should return false", () => {
       expect(
-        getIsFeatureEnabled(state, ApplicationName.ACCOUNT, 'flag2'),
-      ).toEqual(false)
-    })
-  })
+        getIsFeatureEnabled(state, ApplicationName.ACCOUNT, "flag2"),
+      ).toEqual(false);
+    });
+  });
 
-  describe('when the application is not found in the state', () => {
-    it('should return false', () => {
+  describe("when the application is not found in the state", () => {
+    it("should return false", () => {
       expect(
-        getIsFeatureEnabled(state, ApplicationName.DAPPS, 'flag1'),
-      ).toEqual(false)
-    })
-  })
+        getIsFeatureEnabled(state, ApplicationName.DAPPS, "flag1"),
+      ).toEqual(false);
+    });
+  });
 
-  describe('when the feature is found in the env', () => {
-    const env = process.env
+  describe("when the feature is found in the env", () => {
+    const env = process.env;
 
-    let featureName: string
+    let featureName: string;
 
     beforeEach(() => {
-      process.env = { ...env }
+      process.env = { ...env };
 
-      featureName = 'crazy-feature-name'
-    })
+      featureName = "crazy-feature-name";
+    });
 
     afterEach(() => {
-      process.env = env
-    })
+      process.env = env;
+    });
 
-    describe('when the env is 1', () => {
+    describe("when the env is 1", () => {
       beforeEach(() => {
-        process.env.REACT_APP_FF_ACCOUNT_CRAZY_FEATURE_NAME = '1'
-      })
+        process.env.REACT_APP_FF_ACCOUNT_CRAZY_FEATURE_NAME = "1";
+      });
 
-      it('should return true', () => {
+      it("should return true", () => {
         expect(
           getIsFeatureEnabled(state, ApplicationName.ACCOUNT, featureName),
-        ).toEqual(true)
-      })
+        ).toEqual(true);
+      });
 
-      describe('and the feature reducer is undefined', () => {
+      describe("and the feature reducer is undefined", () => {
         beforeEach(() => {
-          state = {}
-        })
+          state = {};
+        });
 
-        it('should return true', () => {
+        it("should return true", () => {
           expect(
             getIsFeatureEnabled(state, ApplicationName.ACCOUNT, featureName),
-          ).toEqual(true)
-        })
-      })
-    })
+          ).toEqual(true);
+        });
+      });
+    });
 
-    describe('when the env is 0', () => {
+    describe("when the env is 0", () => {
       beforeEach(() => {
-        process.env.REACT_APP_FF_ACCOUNT_CRAZY_FEATURE_NAME = '0'
-      })
+        process.env.REACT_APP_FF_ACCOUNT_CRAZY_FEATURE_NAME = "0";
+      });
 
-      it('should return false', () => {
+      it("should return false", () => {
         expect(
           getIsFeatureEnabled(state, ApplicationName.ACCOUNT, featureName),
-        ).toEqual(false)
-      })
-    })
+        ).toEqual(false);
+      });
+    });
 
-    describe('when the env is neither 0 or 1', () => {
+    describe("when the env is neither 0 or 1", () => {
       beforeEach(() => {
-        process.env.REACT_APP_FF_ACCOUNT_CRAZY_FEATURE_NAME = 'pikachu'
-      })
+        process.env.REACT_APP_FF_ACCOUNT_CRAZY_FEATURE_NAME = "pikachu";
+      });
 
-      it('should return false', () => {
+      it("should return false", () => {
         expect(
           getIsFeatureEnabled(state, ApplicationName.ACCOUNT, featureName),
-        ).toEqual(false)
-      })
-    })
-  })
-})
+        ).toEqual(false);
+      });
+    });
+  });
+});
 
-describe('when getting a feature variant', () => {
-  let data: ReturnType<typeof getMockApplicationFeaturesRecord>
-  let state: StateWithFeatures
+describe("when getting a feature variant", () => {
+  let data: ReturnType<typeof getMockApplicationFeaturesRecord>;
+  let state: StateWithFeatures;
 
   beforeEach(() => {
-    data = getMockApplicationFeaturesRecord()
+    data = getMockApplicationFeaturesRecord();
     state = {
       features: {
         data,
@@ -205,34 +205,34 @@ describe('when getting a feature variant', () => {
         hasLoadedInitialFlags: false,
         loading: [],
       },
-    }
-  })
+    };
+  });
 
-  describe('when the variant is defined in the environment', () => {
+  describe("when the variant is defined in the environment", () => {
     beforeEach(() => {
-      process.env.REACT_APP_FF_VARIANT_DAPPS_TEST_FEATURE = 'test-variant'
-    })
+      process.env.REACT_APP_FF_VARIANT_DAPPS_TEST_FEATURE = "test-variant";
+    });
 
     afterEach(() => {
-      delete process.env.REACT_APP_FF_VARIANT_DAPPS_TEST_FEATURE
-    })
+      delete process.env.REACT_APP_FF_VARIANT_DAPPS_TEST_FEATURE;
+    });
 
-    it('should return a local variant with the environment value', () => {
+    it("should return a local variant with the environment value", () => {
       expect(
-        getFeatureVariant(state, ApplicationName.DAPPS, 'test-feature'),
+        getFeatureVariant(state, ApplicationName.DAPPS, "test-feature"),
       ).toEqual({
-        name: 'Local variant',
+        name: "Local variant",
         enabled: true,
         payload: {
-          type: 'string',
-          value: 'test-variant',
+          type: "string",
+          value: "test-variant",
         },
-      })
-    })
-  })
+      });
+    });
+  });
 
-  describe('when the variant is not defined in the environment', () => {
-    describe('and the application features are not loaded', () => {
+  describe("when the variant is not defined in the environment", () => {
+    describe("and the application features are not loaded", () => {
       beforeEach(() => {
         state = {
           features: {
@@ -241,18 +241,18 @@ describe('when getting a feature variant', () => {
             hasLoadedInitialFlags: false,
             loading: [],
           },
-        }
-      })
+        };
+      });
 
-      it('should return null', () => {
+      it("should return null", () => {
         expect(
-          getFeatureVariant(state, ApplicationName.DAPPS, 'test-feature'),
-        ).toBeNull()
-      })
-    })
+          getFeatureVariant(state, ApplicationName.DAPPS, "test-feature"),
+        ).toBeNull();
+      });
+    });
 
-    describe('and the application features are loaded', () => {
-      describe('and the variant exists', () => {
+    describe("and the application features are loaded", () => {
+      describe("and the variant exists", () => {
         beforeEach(() => {
           state = {
             features: {
@@ -261,12 +261,12 @@ describe('when getting a feature variant', () => {
                   name: ApplicationName.DAPPS,
                   flags: {},
                   variants: {
-                    'dapps-test-feature': {
-                      name: 'Remote variant',
+                    "dapps-test-feature": {
+                      name: "Remote variant",
                       enabled: true,
                       payload: {
-                        type: 'string',
-                        value: 'remote-variant',
+                        type: "string",
+                        value: "remote-variant",
                       },
                     },
                   },
@@ -276,24 +276,24 @@ describe('when getting a feature variant', () => {
               hasLoadedInitialFlags: true,
               loading: [],
             },
-          }
-        })
+          };
+        });
 
-        it('should return the variant from the store', () => {
+        it("should return the variant from the store", () => {
           expect(
-            getFeatureVariant(state, ApplicationName.DAPPS, 'test-feature'),
+            getFeatureVariant(state, ApplicationName.DAPPS, "test-feature"),
           ).toEqual({
-            name: 'Remote variant',
+            name: "Remote variant",
             enabled: true,
             payload: {
-              type: 'string',
-              value: 'remote-variant',
+              type: "string",
+              value: "remote-variant",
             },
-          })
-        })
-      })
+          });
+        });
+      });
 
-      describe('and the variant does not exist', () => {
+      describe("and the variant does not exist", () => {
         beforeEach(() => {
           state = {
             features: {
@@ -308,56 +308,21 @@ describe('when getting a feature variant', () => {
               hasLoadedInitialFlags: true,
               loading: [],
             },
-          }
-        })
+          };
+        });
 
-        it('should return null', () => {
+        it("should return null", () => {
           expect(
-            getFeatureVariant(state, ApplicationName.DAPPS, 'test-feature'),
-          ).toBeNull()
-        })
-      })
-    })
-  })
-})
+            getFeatureVariant(state, ApplicationName.DAPPS, "test-feature"),
+          ).toBeNull();
+        });
+      });
+    });
+  });
+});
 
-describe('when getting if the feature flags were loaded at least once', () => {
-  let state: StateWithFeatures
-
-  beforeEach(() => {
-    state = {
-      features: {
-        data: {},
-        error: null,
-        hasLoadedInitialFlags: false,
-        loading: [],
-      },
-    }
-  })
-
-  describe('and the feature flags were not loaded', () => {
-    beforeEach(() => {
-      state.features!.hasLoadedInitialFlags = false
-    })
-
-    it('should return false', () => {
-      expect(hasLoadedInitialFlags(state)).toBe(false)
-    })
-  })
-
-  describe('and the feature flags were loaded', () => {
-    beforeEach(() => {
-      state.features!.hasLoadedInitialFlags = true
-    })
-
-    it('should return true', () => {
-      expect(hasLoadedInitialFlags(state)).toBe(true)
-    })
-  })
-})
-
-describe('when getting is the feature flags are being loaded', () => {
-  let state: StateWithFeatures
+describe("when getting if the feature flags were loaded at least once", () => {
+  let state: StateWithFeatures;
 
   beforeEach(() => {
     state = {
@@ -367,31 +332,66 @@ describe('when getting is the feature flags are being loaded', () => {
         hasLoadedInitialFlags: false,
         loading: [],
       },
-    }
-  })
+    };
+  });
 
-  describe('and the feature flags are being loaded', () => {
+  describe("and the feature flags were not loaded", () => {
+    beforeEach(() => {
+      state.features!.hasLoadedInitialFlags = false;
+    });
+
+    it("should return false", () => {
+      expect(hasLoadedInitialFlags(state)).toBe(false);
+    });
+  });
+
+  describe("and the feature flags were loaded", () => {
+    beforeEach(() => {
+      state.features!.hasLoadedInitialFlags = true;
+    });
+
+    it("should return true", () => {
+      expect(hasLoadedInitialFlags(state)).toBe(true);
+    });
+  });
+});
+
+describe("when getting is the feature flags are being loaded", () => {
+  let state: StateWithFeatures;
+
+  beforeEach(() => {
+    state = {
+      features: {
+        data: {},
+        error: null,
+        hasLoadedInitialFlags: false,
+        loading: [],
+      },
+    };
+  });
+
+  describe("and the feature flags are being loaded", () => {
     beforeEach(() => {
       state.features!.loading = [
         fetchApplicationFeaturesRequest([
           ApplicationName.ACCOUNT,
           ApplicationName.BUILDER,
         ]),
-      ]
-    })
+      ];
+    });
 
-    it('should return true', () => {
-      expect(isLoadingFeatureFlags(state)).toBe(true)
-    })
-  })
+    it("should return true", () => {
+      expect(isLoadingFeatureFlags(state)).toBe(true);
+    });
+  });
 
-  describe('and the feature flags are not being loaded', () => {
+  describe("and the feature flags are not being loaded", () => {
     beforeEach(() => {
-      state.features!.loading = []
-    })
+      state.features!.loading = [];
+    });
 
-    it('should return false', () => {
-      expect(isLoadingFeatureFlags(state)).toBe(false)
-    })
-  })
-})
+    it("should return false", () => {
+      expect(isLoadingFeatureFlags(state)).toBe(false);
+    });
+  });
+});

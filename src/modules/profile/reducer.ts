@@ -1,4 +1,4 @@
-import { LoadingState, loadingReducer } from '../loading/reducer'
+import { LoadingState, loadingReducer } from "../loading/reducer";
 import {
   CHANGE_PROFILE,
   CLEAR_PROFILE_ERROR,
@@ -28,20 +28,20 @@ import {
   SetProfileAvatarDescriptionFailureAction,
   SetProfileAvatarDescriptionRequestAction,
   SetProfileAvatarDescriptionSuccessAction,
-} from './actions'
-import { Profile } from './types'
+} from "./actions";
+import { Profile } from "./types";
 
 export type ProfileState = {
-  data: Record<string, Profile>
-  loading: LoadingState
-  error: string | null
-}
+  data: Record<string, Profile>;
+  loading: LoadingState;
+  error: string | null;
+};
 
 export const INITIAL_STATE: ProfileState = {
   data: {},
   loading: [],
   error: null,
-}
+};
 
 export type ProfileReducerAction =
   | LoadProfileRequestAction
@@ -57,7 +57,7 @@ export type ProfileReducerAction =
   | ClearProfileErrorAction
   | SetProfileAvatarAliasRequestAction
   | SetProfileAvatarAliasSuccessAction
-  | SetProfileAvatarAliasFailureAction
+  | SetProfileAvatarAliasFailureAction;
 
 export const profileReducer = (
   state = INITIAL_STATE,
@@ -71,14 +71,14 @@ export const profileReducer = (
         ...state,
         loading: loadingReducer(state.loading, action),
         error: null,
-      }
+      };
     }
     case LOAD_PROFILES_REQUEST: {
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
         error: null,
-      }
+      };
     }
     case SET_PROFILE_AVATAR_DESCRIPTION_FAILURE:
     case SET_PROFILE_AVATAR_ALIAS_FAILURE:
@@ -87,23 +87,23 @@ export const profileReducer = (
         ...state,
         loading: loadingReducer(state.loading, action),
         error: action.payload.error,
-      }
+      };
     }
     case LOAD_PROFILE_FAILURE: {
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
         error: action.payload.error,
-      }
+      };
     }
     case SET_PROFILE_AVATAR_ALIAS_SUCCESS: {
-      const { address, alias, version } = action.payload
+      const { address, alias, version } = action.payload;
       const newAvatar = {
         ...state.data[address].avatars[0],
         hasClaimedName: true,
         version,
         name: alias,
-      }
+      };
 
       return {
         ...state,
@@ -115,15 +115,15 @@ export const profileReducer = (
           },
         },
         loading: loadingReducer(state.loading, action),
-      }
+      };
     }
     case SET_PROFILE_AVATAR_DESCRIPTION_SUCCESS: {
-      const { address, description, version } = action.payload
+      const { address, description, version } = action.payload;
       const newAvatar = {
         ...state.data[address].avatars[0],
         description,
         version,
-      }
+      };
 
       return {
         ...state,
@@ -135,10 +135,10 @@ export const profileReducer = (
           },
         },
         loading: loadingReducer(state.loading, action),
-      }
+      };
     }
     case LOAD_PROFILE_SUCCESS: {
-      const { address, profile } = action.payload
+      const { address, profile } = action.payload;
       return {
         ...state,
         data: {
@@ -146,17 +146,17 @@ export const profileReducer = (
           [address]: profile,
         },
         loading: loadingReducer(state.loading, action),
-      }
+      };
     }
     case LOAD_PROFILES_SUCCESS: {
-      const profiles = action.payload.profiles
+      const profiles = action.payload.profiles;
       const data = profiles.reduce(
         (acc, profile) => ({
           ...acc,
           [profile.avatars[0].userId]: profile,
         }),
         {},
-      )
+      );
       return {
         ...state,
         data: {
@@ -164,26 +164,26 @@ export const profileReducer = (
           ...data,
         },
         loading: loadingReducer(state.loading, action),
-      }
+      };
     }
     case CHANGE_PROFILE: {
-      const { address, profile } = action.payload
+      const { address, profile } = action.payload;
       return {
         ...state,
         data: {
           ...state.data,
           [address]: { ...state.data[address], ...profile },
         },
-      }
+      };
     }
     case CLEAR_PROFILE_ERROR: {
       return {
         ...state,
         error: null,
-      }
+      };
     }
 
     default:
-      return state
+      return state;
   }
-}
+};

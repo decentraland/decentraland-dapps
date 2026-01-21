@@ -1,2 +1,2 @@
-import AddressProvider from './AddressProvider.container'
-export { AddressProvider }
+import AddressProvider from "./AddressProvider.container";
+export { AddressProvider };
