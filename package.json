@@ -43,7 +43,7 @@
     "@dcl/ui-env": "^1.5.0",
     "decentraland-connect": "^11.0.0",
     "decentraland-ui": "^7.1.0",
-    "decentraland-ui2": "^1.1.6",
+    "decentraland-ui2": "^1.2.1",
     "ethers": "^5.7.2",
     "history": "^4.10.1",
     "react": "^18.0.0",
