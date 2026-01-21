@@ -1,30 +1,30 @@
-import React from "react";
-import { Toast } from "decentraland-ui/dist/components/Toast/Toast";
-import { Toasts } from "decentraland-ui/dist/components/Toasts/Toasts";
-import { DefaultProps, Props } from "./ToastProvider.types";
+import React from 'react'
+import { Toast } from 'decentraland-ui/dist/components/Toast/Toast'
+import { Toasts } from 'decentraland-ui/dist/components/Toasts/Toasts'
+import { DefaultProps, Props } from './ToastProvider.types'
 
 export default class ToastProvider extends React.PureComponent<Props> {
   static defaultProps: DefaultProps = {
-    children: null,
-  };
+    children: null
+  }
 
   getCloseHandler = (id: number) => {
-    return () => this.props.onClose(id);
-  };
+    return () => this.props.onClose(id)
+  }
 
   render() {
-    const { children, toasts, position: defaultPosition } = this.props;
+    const { children, toasts, position: defaultPosition } = this.props
 
-    const ToastComponents: JSX.Element[] = [];
+    const ToastComponents: JSX.Element[] = []
 
-    let position = defaultPosition;
+    let position = defaultPosition
 
     for (const id in toasts) {
-      const toast = toasts[id];
-      position = toast.position ?? position;
+      const toast = toasts[id]
+      position = toast.position ?? position
 
       if (!toast) {
-        throw new Error(`Couldn't find a toast for id "${id}"`);
+        throw new Error(`Couldn't find a toast for id "${id}"`)
       }
 
       ToastComponents.push(
@@ -38,8 +38,8 @@ export default class ToastProvider extends React.PureComponent<Props> {
           icon={toast.icon}
           className={toast.className}
           onClose={this.getCloseHandler(toast.id)}
-        />,
-      );
+        />
+      )
     }
 
     return (
@@ -47,6 +47,6 @@ export default class ToastProvider extends React.PureComponent<Props> {
         {children}
         <Toasts position={position}>{ToastComponents}</Toasts>
       </>
-    );
+    )
   }
 }

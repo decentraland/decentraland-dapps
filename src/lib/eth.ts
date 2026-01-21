@@ -1,30 +1,30 @@
-import { ethers } from "ethers";
-import { ChainId } from "@dcl/schemas/dist/dapps/chain-id";
-import { Network } from "@dcl/schemas/dist/dapps/network";
-import { ProviderType } from "@dcl/schemas/dist/dapps/provider-type";
-import { Provider, connection } from "decentraland-connect";
-import { getChainConfiguration } from "./chainConfiguration";
-import { isMobile } from "./utils";
+import { ethers } from 'ethers'
+import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
+import { Network } from '@dcl/schemas/dist/dapps/network'
+import { ProviderType } from '@dcl/schemas/dist/dapps/provider-type'
+import { Provider, connection } from 'decentraland-connect'
+import { getChainConfiguration } from './chainConfiguration'
+import { isMobile } from './utils'
 
 export type EthereumWindow = Window & {
   ethereum?: Provider & {
-    enable?: () => Promise<string[]>;
-    isCucumber?: boolean;
-    isDapper?: boolean;
-    isToshi?: boolean;
-  };
-};
+    enable?: () => Promise<string[]>
+    isCucumber?: boolean
+    isDapper?: boolean
+    isToshi?: boolean
+  }
+}
 
 /**
  * Internal getter/setter to store the app chain id
  */
-let appChainId: ChainId;
+let appChainId: ChainId
 
 /**
  * @internal
  */
 export function _getAppChainId() {
-  return appChainId;
+  return appChainId
 }
 
 /**
@@ -32,7 +32,7 @@ export function _getAppChainId() {
  * @param _appChainId
  */
 export function _setAppChainId(_appChainId: ChainId) {
-  appChainId = _appChainId;
+  appChainId = _appChainId
 }
 
 export async function getNetworkProvider(chainId: ChainId): Promise<Provider> {
@@ -40,84 +40,78 @@ export async function getNetworkProvider(chainId: ChainId): Promise<Provider> {
     We check if the connected provider is from the same chainId, if so we return that one instead of creating one.
     This is to avoid using our own RPCs that much, and use the ones provided by the provider when possible.
   */
-  const connectedProvider = await getConnectedProvider();
+  const connectedProvider = await getConnectedProvider()
   if (connectedProvider) {
-    const connectedChainId = await new ethers.providers.Web3Provider(
-      connectedProvider,
-    )
-      .getSigner()
-      .getChainId();
+    const connectedChainId = await new ethers.providers.Web3Provider(connectedProvider).getSigner().getChainId()
     if (chainId === connectedChainId) {
-      return connectedProvider;
+      return connectedProvider
     }
   }
-  return connection.createProvider(ProviderType.NETWORK, chainId);
+  return connection.createProvider(ProviderType.NETWORK, chainId)
 }
 
 export async function getNetworkWeb3Provider(chainId: ChainId) {
-  const provider = await getNetworkProvider(chainId);
-  return new ethers.providers.Web3Provider(provider);
+  const provider = await getNetworkProvider(chainId)
+  return new ethers.providers.Web3Provider(provider)
 }
 
 export async function getConnectedProvider(): Promise<Provider | null> {
   try {
-    return await connection.getProvider();
+    return await connection.getProvider()
   } catch {
     try {
-      const { provider } = await connection.tryPreviousConnection();
-      return provider;
+      const { provider } = await connection.tryPreviousConnection()
+      return provider
     } catch {
-      return null;
+      return null
     }
   }
 }
 
 export async function getSigner(): Promise<ethers.Signer> {
-  const provider = await getConnectedProvider();
+  const provider = await getConnectedProvider()
   if (!provider) {
-    throw new Error("Could not connect to provider");
+    throw new Error('Could not connect to provider')
   }
 
-  const eth = new ethers.providers.Web3Provider(provider);
-  return eth.getSigner();
+  const eth = new ethers.providers.Web3Provider(provider)
+  return eth.getSigner()
 }
 
 export function getConnectedProviderType(): ProviderType | null {
-  const connectionData = connection.getConnectionData();
-  return connectionData ? connectionData.providerType : null;
+  const connectionData = connection.getConnectionData()
+  return connectionData ? connectionData.providerType : null
 }
 
 export function getConnectedProviderChainId(): ChainId | null {
-  const connectionData = connection.getConnectionData();
-  return connectionData ? connectionData.chainId : null;
+  const connectionData = connection.getConnectionData()
+  return connectionData ? connectionData.chainId : null
 }
 
 export function isCucumberProvider() {
-  const provider = (window as EthereumWindow).ethereum;
-  return isMobile() && !!provider && !!provider.isCucumber;
+  const provider = (window as EthereumWindow).ethereum
+  return isMobile() && !!provider && !!provider.isCucumber
 }
 
 export function isDapperProvider() {
-  const provider = (window as EthereumWindow).ethereum;
-  return !!provider && !!provider.isDapper;
+  const provider = (window as EthereumWindow).ethereum
+  return !!provider && !!provider.isDapper
 }
 
 export function isCoinbaseProvider() {
-  const provider = (window as EthereumWindow).ethereum;
-  return !!provider && !!provider.isToshi;
+  const provider = (window as EthereumWindow).ethereum
+  return !!provider && !!provider.isToshi
 }
 
 export function isValidChainId(chainId: string | number) {
-  return Object.values(ChainId).includes(Number(chainId));
+  return Object.values(ChainId).includes(Number(chainId))
 }
 
 export function getChainIdByNetwork(network: Network) {
-  const appChainId = _getAppChainId();
+  const appChainId = _getAppChainId()
   if (!appChainId) {
-    throw new Error("Could not get app chain id");
+    throw new Error('Could not get app chain id')
   }
-  const config = getChainConfiguration(appChainId);
-  return network === Network.ETHEREUM || network === Network.MATIC
-    ? config.networkMapping[network]
-    : ChainId.ETHEREUM_MAINNET;
+  const config = getChainConfiguration(appChainId)
+  return network === Network.ETHEREUM || network === Network.MATIC ? config.networkMapping[network] : ChainId.ETHEREUM_MAINNET
 }

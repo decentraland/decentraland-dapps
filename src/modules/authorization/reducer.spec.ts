@@ -1,4 +1,4 @@
-import { ChainId } from "@dcl/schemas";
+import { ChainId } from '@dcl/schemas'
 import {
   FETCH_AUTHORIZATIONS_REQUEST,
   GRANT_TOKEN_REQUEST,
@@ -17,198 +17,183 @@ import {
   AuthorizationFlowFailureAction,
   AuthorizationFlowSuccessAction,
   authorizationFlowClear,
-  AuthorizationFlowClearAction,
-} from "./actions";
-import {
-  authorizationReducer,
-  AuthorizationState,
-  INITIAL_STATE,
-} from "./reducer";
-import { Authorization, AuthorizationAction } from "./types";
+  AuthorizationFlowClearAction
+} from './actions'
+import { authorizationReducer, AuthorizationState, INITIAL_STATE } from './reducer'
+import { Authorization, AuthorizationAction } from './types'
 
 describe.each([
   {
     type: GRANT_TOKEN_REQUEST,
     action: grantTokenRequest({} as Authorization),
-    addLoading: true,
+    addLoading: true
   },
   {
     type: REVOKE_TOKEN_REQUEST,
     action: revokeTokenRequest({} as Authorization),
-    addLoading: true,
+    addLoading: true
   },
   {
     type: GRANT_TOKEN_SUCCESS,
-    action: grantTokenSuccess(
-      {} as Authorization,
-      ChainId.ETHEREUM_GOERLI,
-      "tsx",
-    ),
+    action: grantTokenSuccess({} as Authorization, ChainId.ETHEREUM_GOERLI, 'tsx')
   },
   {
     type: REVOKE_TOKEN_SUCCESS,
-    action: revokeTokenSuccess(
-      {} as Authorization,
-      ChainId.ETHEREUM_GOERLI,
-      "tsx",
-    ),
+    action: revokeTokenSuccess({} as Authorization, ChainId.ETHEREUM_GOERLI, 'tsx')
   },
   {
     type: FETCH_AUTHORIZATIONS_REQUEST,
     action: fetchAuthorizationsRequest([]),
-    addLoading: true,
-  },
-])("when handling the $type action", ({ action, addLoading }) => {
-  it("should set error as null", () => {
+    addLoading: true
+  }
+])('when handling the $type action', ({ action, addLoading }) => {
+  it('should set error as null', () => {
     const initialStateWithError = {
       ...INITIAL_STATE,
-      error: "Something went wrong",
-    };
+      error: 'Something went wrong'
+    }
     expect(authorizationReducer(initialStateWithError, action)).toEqual(
       expect.objectContaining({
-        error: null,
-      }),
-    );
-  });
+        error: null
+      })
+    )
+  })
 
   if (addLoading) {
-    it("should add action to loading array", () => {
+    it('should add action to loading array', () => {
       expect(authorizationReducer(INITIAL_STATE, action)).toEqual(
         expect.objectContaining({
-          loading: [action],
-        }),
-      );
-    });
+          loading: [action]
+        })
+      )
+    })
   } else {
-    it("should remove an action from loading array", () => {
+    it('should remove an action from loading array', () => {
       const initialStateWithLoading = {
         ...INITIAL_STATE,
-        loading: [action],
-      };
+        loading: [action]
+      }
       expect(authorizationReducer(initialStateWithLoading, action)).toEqual(
         expect.objectContaining({
-          loading: [],
-        }),
-      );
-    });
+          loading: []
+        })
+      )
+    })
   }
-});
+})
 
-describe("authorization flow actions", () => {
-  let initialState: AuthorizationState;
+describe('authorization flow actions', () => {
+  let initialState: AuthorizationState
   let action:
     | AuthorizationFlowRequestAction
     | AuthorizationFlowFailureAction
     | AuthorizationFlowSuccessAction
-    | AuthorizationFlowClearAction;
+    | AuthorizationFlowClearAction
 
-  describe("when handling the AUTHORIZATION_FLOW_REQUEST action", () => {
+  describe('when handling the AUTHORIZATION_FLOW_REQUEST action', () => {
     beforeEach(() => {
-      action = authorizationFlowRequest(
-        {} as Authorization,
-        AuthorizationAction.GRANT,
-      );
+      action = authorizationFlowRequest({} as Authorization, AuthorizationAction.GRANT)
       initialState = {
         ...INITIAL_STATE,
-        authorizationFlowError: "test error",
-      };
-    });
+        authorizationFlowError: 'test error'
+      }
+    })
 
-    it("should add an action to loading array", () => {
+    it('should add an action to loading array', () => {
       expect(authorizationReducer(initialState, action)).toEqual(
         expect.objectContaining({
-          loading: [action],
-        }),
-      );
-    });
+          loading: [action]
+        })
+      )
+    })
 
-    it("should remove the authorizationFlow error", () => {
+    it('should remove the authorizationFlow error', () => {
       expect(authorizationReducer(initialState, action)).toEqual(
         expect.objectContaining({
-          authorizationFlowError: null,
-        }),
-      );
-    });
-  });
+          authorizationFlowError: null
+        })
+      )
+    })
+  })
 
-  describe("when handling the AUTHORIZATION_FLOW_SUCCESS action", () => {
+  describe('when handling the AUTHORIZATION_FLOW_SUCCESS action', () => {
     beforeEach(() => {
-      action = authorizationFlowSuccess({} as Authorization);
+      action = authorizationFlowSuccess({} as Authorization)
       initialState = {
         ...INITIAL_STATE,
         loading: [action],
-        authorizationFlowError: "test error",
-      };
-    });
+        authorizationFlowError: 'test error'
+      }
+    })
 
-    it("should remove an action from loading array", () => {
+    it('should remove an action from loading array', () => {
       expect(authorizationReducer(initialState, action)).toEqual(
         expect.objectContaining({
-          loading: [],
-        }),
-      );
-    });
+          loading: []
+        })
+      )
+    })
 
-    it("should remove the authorizationFlow error", () => {
+    it('should remove the authorizationFlow error', () => {
       expect(authorizationReducer(initialState, action)).toEqual(
         expect.objectContaining({
-          authorizationFlowError: null,
-        }),
-      );
-    });
-  });
+          authorizationFlowError: null
+        })
+      )
+    })
+  })
 
-  describe("when handling the AUTHORIZATION_FLOW_FAILURE action", () => {
+  describe('when handling the AUTHORIZATION_FLOW_FAILURE action', () => {
     beforeEach(() => {
-      action = authorizationFlowFailure({} as Authorization, "an error");
+      action = authorizationFlowFailure({} as Authorization, 'an error')
       initialState = {
         ...INITIAL_STATE,
         loading: [action],
-        authorizationFlowError: null,
-      };
-    });
+        authorizationFlowError: null
+      }
+    })
 
-    it("should remove an action from loading array", () => {
+    it('should remove an action from loading array', () => {
       expect(authorizationReducer(initialState, action)).toEqual(
         expect.objectContaining({
-          loading: [],
-        }),
-      );
-    });
+          loading: []
+        })
+      )
+    })
 
-    it("should add an error", () => {
+    it('should add an error', () => {
       expect(authorizationReducer(initialState, action)).toEqual(
         expect.objectContaining({
-          authorizationFlowError: "an error",
-        }),
-      );
-    });
-  });
+          authorizationFlowError: 'an error'
+        })
+      )
+    })
+  })
 
-  describe("when handling the AUTHORIZATION_FLOW_CLEAR action", () => {
+  describe('when handling the AUTHORIZATION_FLOW_CLEAR action', () => {
     beforeEach(() => {
-      action = authorizationFlowClear();
+      action = authorizationFlowClear()
       initialState = {
         ...INITIAL_STATE,
         loading: [action],
-        authorizationFlowError: null,
-      };
-    });
+        authorizationFlowError: null
+      }
+    })
 
-    it("should remove an action from loading array", () => {
+    it('should remove an action from loading array', () => {
       expect(authorizationReducer(initialState, action)).toEqual(
         expect.objectContaining({
-          loading: [],
-        }),
-      );
-    });
+          loading: []
+        })
+      )
+    })
 
-    it("should add an error", () => {
+    it('should add an error', () => {
       expect(authorizationReducer(initialState, action)).toEqual(
         expect.objectContaining({
-          authorizationFlowError: null,
-        }),
-      );
-    });
-  });
-});
+          authorizationFlowError: null
+        })
+      )
+    })
+  })
+})

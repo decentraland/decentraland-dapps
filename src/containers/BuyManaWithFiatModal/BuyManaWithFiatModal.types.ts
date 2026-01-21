@@ -1,59 +1,50 @@
-import { Dispatch } from "redux";
-import { Network } from "@dcl/schemas/dist/dapps/network";
+import { Dispatch } from 'redux'
+import { Network } from '@dcl/schemas/dist/dapps/network'
 import {
   BuyManaWithFiatModalProps as BaseBuyManaWithFiatModalProps,
   BuyManaWithFiatModalI18N,
   BuyManaWithFiatModalNetworkI18N,
-  BuyManaWithFiatModalNetworkProps,
-} from "decentraland-ui/dist/components/BuyManaWithFiatModal/BuyManaWithFiatModal";
-import { FeedbackModalI18N } from "decentraland-ui/dist/components/BuyManaWithFiatModal/FeedbackModal";
+  BuyManaWithFiatModalNetworkProps
+} from 'decentraland-ui/dist/components/BuyManaWithFiatModal/BuyManaWithFiatModal'
+import { FeedbackModalI18N } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/FeedbackModal'
 import {
   BuyWithFiatNetworkProps,
   NetworkGatewayI18N,
   NetworkGatewayType,
-  NetworkI18N,
-} from "decentraland-ui/dist/components/BuyManaWithFiatModal/Network";
-import { OpenManaFiatGatewayRequestAction } from "../../modules/gateway/actions";
-import { ModalProps } from "../../providers/ModalProvider/ModalProvider.types";
+  NetworkI18N
+} from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
+import { OpenManaFiatGatewayRequestAction } from '../../modules/gateway/actions'
+import { ModalProps } from '../../providers/ModalProvider/ModalProvider.types'
 
-type MakeOptional<Type, Key extends keyof Type> = Omit<Type, Key> &
-  Partial<Pick<Type, Key>>;
+type MakeOptional<Type, Key extends keyof Type> = Omit<Type, Key> & Partial<Pick<Type, Key>>
 
-export type BuyManaWithFiatModalProps = MakeOptional<
-  BaseBuyManaWithFiatModalProps,
-  "networks"
->;
+export type BuyManaWithFiatModalProps = MakeOptional<BaseBuyManaWithFiatModalProps, 'networks'>
 
 export type Metadata = {
-  selectedNetwork: Network;
-};
+  selectedNetwork: Network
+}
 
-export type DefaultProps = { isLoading: boolean };
+export type DefaultProps = { isLoading: boolean }
 
 export type Props = DefaultProps &
   BuyManaWithFiatModalProps &
-  Omit<ModalProps, "metadata"> & {
-    metadata: Metadata;
-    networks?:
-      | (BuyManaWithFiatModalNetworkProps & BuyWithFiatNetworkProps)[]
-      | undefined;
-    hasTranslations?: boolean;
-    onContinue: (network: Network, gateway: NetworkGatewayType) => void;
-  };
+  Omit<ModalProps, 'metadata'> & {
+    metadata: Metadata
+    networks?: (BuyManaWithFiatModalNetworkProps & BuyWithFiatNetworkProps)[] | undefined
+    hasTranslations?: boolean
+    onContinue: (network: Network, gateway: NetworkGatewayType) => void
+  }
 
 export type State = {
-  hasError: boolean;
-};
+  hasError: boolean
+}
 
-export type MapStateProps = Pick<
-  Props,
-  "hasTranslations" | "isLoading" | "hasError"
->;
-export type MapDispatchProps = Pick<Props, "onContinue" | "onInfo">;
-export type MapDispatch = Dispatch<OpenManaFiatGatewayRequestAction>;
+export type MapStateProps = Pick<Props, 'hasTranslations' | 'isLoading' | 'hasError'>
+export type MapDispatchProps = Pick<Props, 'onContinue' | 'onInfo'>
+export type MapDispatch = Dispatch<OpenManaFiatGatewayRequestAction>
 
 export type Translations =
   | BuyManaWithFiatModalI18N
   | (BuyManaWithFiatModalNetworkI18N & NetworkI18N)
   | NetworkGatewayI18N
-  | FeedbackModalI18N;
+  | FeedbackModalI18N

@@ -1,2 +1,2 @@
-import ChainButton from "./ChainButton";
-export default ChainButton;
+import ChainButton from './ChainButton'
+export default ChainButton

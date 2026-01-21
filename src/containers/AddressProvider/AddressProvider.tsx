@@ -1,46 +1,44 @@
-import React, { useEffect, useState } from "react";
-import { ethers } from "ethers";
-import { isENSAddress, resolveENSname } from "./utils";
-import { AddressError, Props } from "./AddressProvider.types";
+import React, { useEffect, useState } from 'react'
+import { ethers } from 'ethers'
+import { isENSAddress, resolveENSname } from './utils'
+import { AddressError, Props } from './AddressProvider.types'
 
 const AddressProvider = (props: Props) => {
-  const { children, input, chainId } = props;
-  const isENS = input && isENSAddress(input);
-  const [address, setAddress] = useState(input && !isENS ? input : null);
-  const [isLoading, setIsLoading] = useState(!!isENS);
-  const [error, setError] = useState<AddressError>();
+  const { children, input, chainId } = props
+  const isENS = input && isENSAddress(input)
+  const [address, setAddress] = useState(input && !isENS ? input : null)
+  const [isLoading, setIsLoading] = useState(!!isENS)
+  const [error, setError] = useState<AddressError>()
 
   useEffect(() => {
     if (address && !ethers.utils.isAddress(address) && !isENS) {
-      setError(AddressError.INVALID);
+      setError(AddressError.INVALID)
     }
-  }, [address, isENS]);
+  }, [address, isENS])
 
   // Resolves ENS name if needed
   useEffect(() => {
-    let cancel = false;
+    let cancel = false
     const resolveAddress = async () => {
       if (input && isENS) {
-        setIsLoading(true);
-        const resolvedAddress = await resolveENSname(input, chainId);
-        setIsLoading(false);
-        if (cancel) return;
+        setIsLoading(true)
+        const resolvedAddress = await resolveENSname(input, chainId)
+        setIsLoading(false)
+        if (cancel) return
         if (!resolvedAddress) {
-          setError(AddressError.ENS_NOT_RESOLVED);
-          return;
+          setError(AddressError.ENS_NOT_RESOLVED)
+          return
         }
-        setAddress(resolvedAddress);
+        setAddress(resolvedAddress)
       }
-    };
-    resolveAddress();
+    }
+    resolveAddress()
     return () => {
-      cancel = true;
-    };
-  }, [isENS, input]);
+      cancel = true
+    }
+  }, [isENS, input])
 
-  return (
-    <>{children({ address, ens: isENS ? input : null, isLoading, error })}</>
-  );
-};
+  return <>{children({ address, ens: isENS ? input : null, isLoading, error })}</>
+}
 
-export default React.memo(AddressProvider);
+export default React.memo(AddressProvider)

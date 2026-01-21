@@ -1,36 +1,33 @@
-import {
-  ContentClient,
-  createContentClient,
-} from "dcl-catalyst-client/dist/client/ContentClient";
-import { BuildEntityWithoutFilesOptions } from "dcl-catalyst-client/dist/client/types";
-import { buildEntityWithoutNewFiles } from "dcl-catalyst-client/dist/client/utils/DeploymentBuilder";
-import { AuthIdentity, Authenticator } from "@dcl/crypto";
-import { Entity, EntityType } from "@dcl/schemas/dist/platform/entity";
-import { fetcher } from "./fetcher";
-import { PeerAPI } from "./peer";
-import { ProfileEntity } from "./types";
+import { ContentClient, createContentClient } from 'dcl-catalyst-client/dist/client/ContentClient'
+import { BuildEntityWithoutFilesOptions } from 'dcl-catalyst-client/dist/client/types'
+import { buildEntityWithoutNewFiles } from 'dcl-catalyst-client/dist/client/utils/DeploymentBuilder'
+import { AuthIdentity, Authenticator } from '@dcl/crypto'
+import { Entity, EntityType } from '@dcl/schemas/dist/platform/entity'
+import { fetcher } from './fetcher'
+import { PeerAPI } from './peer'
+import { ProfileEntity } from './types'
 
 export class EntitiesOperator {
-  private catalystContentClient: ContentClient; // Undefined until initialization
+  private catalystContentClient: ContentClient // Undefined until initialization
   // this is a temporal work-around to fix profile deployment issues on catalysts with Garbage Collector
-  private catalystContentClientWithoutGbCollector: ContentClient | null; // Undefined until initialization
-  private readonly peerAPI: PeerAPI;
+  private catalystContentClientWithoutGbCollector: ContentClient | null // Undefined until initialization
+  private readonly peerAPI: PeerAPI
 
   constructor(
     private peerUrl: string,
-    private peerWithNoGbCollectorUrl?: string,
+    private peerWithNoGbCollectorUrl?: string
   ) {
     this.catalystContentClient = createContentClient({
       url: `${peerUrl}/content`,
-      fetcher,
-    });
+      fetcher
+    })
     this.catalystContentClientWithoutGbCollector = peerWithNoGbCollectorUrl
       ? createContentClient({
           url: `${peerUrl}/content`,
-          fetcher,
+          fetcher
         })
-      : null;
-    this.peerAPI = new PeerAPI(peerUrl);
+      : null
+    this.peerAPI = new PeerAPI(peerUrl)
   }
 
   /**
@@ -40,16 +37,13 @@ export class EntitiesOperator {
    * @param address - The address that owns the profile entity being retrieved.
    */
   async getProfileEntity(address: string): Promise<ProfileEntity> {
-    const entities: Entity[] =
-      await this.catalystContentClient.fetchEntitiesByPointers([
-        address.toLowerCase(),
-      ]);
+    const entities: Entity[] = await this.catalystContentClient.fetchEntitiesByPointers([address.toLowerCase()])
 
     if (entities.length > 0) {
-      return entities[0] as ProfileEntity;
+      return entities[0] as ProfileEntity
     }
 
-    return this.peerAPI.getDefaultProfileEntity();
+    return this.peerAPI.getDefaultProfileEntity()
   }
 
   /**
@@ -63,38 +57,33 @@ export class EntitiesOperator {
    * @param address - The owner / soon to be owner of the entity.
    */
   async deployEntityWithoutNewFiles(
-    entityMetadata: Entity["metadata"],
+    entityMetadata: Entity['metadata'],
     hashesByKey: Map<string, string>,
     entityType: EntityType,
     pointer: string,
-    identity: AuthIdentity,
+    identity: AuthIdentity
   ): Promise<any> {
     const options: BuildEntityWithoutFilesOptions = {
       type: entityType,
       pointers: [pointer],
       metadata: entityMetadata,
       hashesByKey,
-      timestamp: Date.now(),
-    };
+      timestamp: Date.now()
+    }
 
-    const catalystContentClient =
-      this.catalystContentClientWithoutGbCollector ??
-      this.catalystContentClient;
-    const contentUrl = this.peerWithNoGbCollectorUrl ?? this.peerUrl;
+    const catalystContentClient = this.catalystContentClientWithoutGbCollector ?? this.catalystContentClient
+    const contentUrl = this.peerWithNoGbCollectorUrl ?? this.peerUrl
 
     const entityToDeploy = await buildEntityWithoutNewFiles(fetcher, {
       contentUrl: `${contentUrl}/content`,
-      ...options,
-    });
+      ...options
+    })
 
-    const authChain = Authenticator.signPayload(
-      identity,
-      entityToDeploy.entityId,
-    );
+    const authChain = Authenticator.signPayload(identity, entityToDeploy.entityId)
 
     return catalystContentClient.deploy({
       ...entityToDeploy,
-      authChain,
-    });
+      authChain
+    })
   }
 }

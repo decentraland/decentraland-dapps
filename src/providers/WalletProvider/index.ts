@@ -1,2 +1,2 @@
-import WalletProvider from "./WalletProvider.container";
-export default WalletProvider;
+import WalletProvider from './WalletProvider.container'
+export default WalletProvider

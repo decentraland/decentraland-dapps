@@ -1,47 +1,42 @@
-import { AuthIdentity } from "@dcl/crypto";
-import { Env, getEnv } from "@dcl/ui-env";
-import { BaseClient, BaseClientConfig } from "../lib/BaseClient";
+import { AuthIdentity } from '@dcl/crypto'
+import { Env, getEnv } from '@dcl/ui-env'
+import { BaseClient, BaseClientConfig } from '../lib/BaseClient'
 
 export interface EphemeralIdentity {
-  address: string;
-  privateKey: string;
+  address: string
+  privateKey: string
 }
 
 export interface CreateIdentityRequest {
-  identity: AuthIdentity;
+  identity: AuthIdentity
 }
 
 export interface IdentityResponse {
-  identityId: string;
-  expiration: Date;
+  identityId: string
+  expiration: Date
 }
 
 export class AuthClient extends BaseClient {
   constructor(config: BaseClientConfig) {
-    const url =
-      getEnv() === Env.DEVELOPMENT
-        ? "https://auth-api.decentraland.zone"
-        : "https://auth-api.decentraland.org";
+    const url = getEnv() === Env.DEVELOPMENT ? 'https://auth-api.decentraland.zone' : 'https://auth-api.decentraland.org'
 
-    super(url, config);
+    super(url, config)
   }
 
-  async createIdentityId(
-    identityPayload: AuthIdentity,
-  ): Promise<IdentityResponse> {
-    const response = await this.fetch<IdentityResponse>("/identities", {
-      method: "POST",
+  async createIdentityId(identityPayload: AuthIdentity): Promise<IdentityResponse> {
+    const response = await this.fetch<IdentityResponse>('/identities', {
+      method: 'POST',
       body: JSON.stringify({ identity: identityPayload }),
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
       metadata: {
-        signer: "dcl:auth",
-        intent: "dcl:auth:create-identity",
-      },
-    });
+        signer: 'dcl:auth',
+        intent: 'dcl:auth:create-identity'
+      }
+    })
 
     return {
       ...response,
-      expiration: new Date(response.expiration),
-    };
+      expiration: new Date(response.expiration)
+    }
   }
 }

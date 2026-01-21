@@ -1,37 +1,24 @@
-import { Dispatch } from "redux";
-import { Network } from "@dcl/schemas/dist/dapps/network";
-import { NetworkGatewayType } from "decentraland-ui/dist/components/BuyManaWithFiatModal/Network";
-import {
-  OpenManaFiatGatewayRequestAction,
-  openManaFiatGatewayRequest,
-} from "../../../modules/gateway/actions";
-import { Purchase } from "../../../modules/gateway/types";
-import { OpenModalAction, openModal } from "../../../modules/modal/actions";
-import { ModalProps } from "../../../providers/ModalProvider/ModalProvider.types";
+import { Dispatch } from 'redux'
+import { Network } from '@dcl/schemas/dist/dapps/network'
+import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
+import { OpenManaFiatGatewayRequestAction, openManaFiatGatewayRequest } from '../../../modules/gateway/actions'
+import { Purchase } from '../../../modules/gateway/types'
+import { OpenModalAction, openModal } from '../../../modules/modal/actions'
+import { ModalProps } from '../../../providers/ModalProvider/ModalProvider.types'
 
 export type Metadata = {
-  purchase: Purchase;
-  goToUrl?: string;
-  transactionUrl?: string;
-};
+  purchase: Purchase
+  goToUrl?: string
+  transactionUrl?: string
+}
 
-export type Props = Omit<ModalProps, "metadata"> & {
-  metadata: Metadata;
-  onTryAgain: (
-    network: Network,
-    gateway: NetworkGatewayType,
-  ) => ReturnType<typeof openManaFiatGatewayRequest>;
+export type Props = Omit<ModalProps, 'metadata'> & {
+  metadata: Metadata
+  onTryAgain: (network: Network, gateway: NetworkGatewayType) => ReturnType<typeof openManaFiatGatewayRequest>
 
-  onSelectOtherProvider: (
-    selectedNetwork: Network,
-  ) => ReturnType<typeof openModal>;
-};
+  onSelectOtherProvider: (selectedNetwork: Network) => ReturnType<typeof openModal>
+}
 
-export type OwnProps = Pick<Props, "metadata">;
-export type MapDispatchProps = Pick<
-  Props,
-  "onTryAgain" | "onSelectOtherProvider"
->;
-export type MapDispatch = Dispatch<
-  OpenModalAction | OpenManaFiatGatewayRequestAction
->;
+export type OwnProps = Pick<Props, 'metadata'>
+export type MapDispatchProps = Pick<Props, 'onTryAgain' | 'onSelectOtherProvider'>
+export type MapDispatch = Dispatch<OpenModalAction | OpenManaFiatGatewayRequestAction>

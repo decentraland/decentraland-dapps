@@ -1,2 +1,2 @@
-import EnhancedIntercom from "./EnhancedIntercom.container";
-export { EnhancedIntercom };
+import EnhancedIntercom from './EnhancedIntercom.container'
+export { EnhancedIntercom }

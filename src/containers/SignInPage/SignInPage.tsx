@@ -1,22 +1,19 @@
-import * as React from "react";
-import {
-  SignIn,
-  SignInI18N,
-} from "decentraland-ui/dist/components/SignIn/SignIn";
-import { isCucumberProvider } from "../../lib/eth";
-import { isMobile } from "../../lib/utils";
-import { T } from "../../modules/translation/utils";
-import { SignInPageProps } from "./SignInPage.types";
+import * as React from 'react'
+import { SignIn, SignInI18N } from 'decentraland-ui/dist/components/SignIn/SignIn'
+import { isCucumberProvider } from '../../lib/eth'
+import { isMobile } from '../../lib/utils'
+import { T } from '../../modules/translation/utils'
+import { SignInPageProps } from './SignInPage.types'
 
 export default class SignInPage extends React.PureComponent<SignInPageProps> {
   constructor(props: SignInPageProps) {
-    super(props);
+    super(props)
   }
 
   getTranslations = (): SignInI18N | undefined => {
-    const { hasTranslations, isConnected } = this.props;
+    const { hasTranslations, isConnected } = this.props
     if (!hasTranslations) {
-      return undefined;
+      return undefined
     }
 
     return {
@@ -32,14 +29,10 @@ export default class SignInPage extends React.PureComponent<SignInPageProps> {
           id="@dapps.sign_in.options.samsung"
           values={{
             samsung_link: (
-              <a
-                href="https://www.samsung.com/global/galaxy/apps/samsung-blockchain/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a href="https://www.samsung.com/global/galaxy/apps/samsung-blockchain/" target="_blank" rel="noopener noreferrer">
                 Samsung Blockchain Wallet
               </a>
-            ),
+            )
           }}
         />
       ) : isMobile() ? (
@@ -47,32 +40,20 @@ export default class SignInPage extends React.PureComponent<SignInPageProps> {
           id="@dapps.sign_in.options.mobile"
           values={{
             metamask_link: (
-              <a
-                href="https://metamask.io"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a href="https://metamask.io" target="_blank" rel="noopener noreferrer">
                 MetaMask
               </a>
             ),
             coinbase_link: (
-              <a
-                href="https://wallet.coinbase.com"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a href="https://wallet.coinbase.com" target="_blank" rel="noopener noreferrer">
                 Coinbase Wallet
               </a>
             ),
             imtoken_link: (
-              <a
-                href="https://token.im"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a href="https://token.im" target="_blank" rel="noopener noreferrer">
                 imToken
               </a>
-            ),
+            )
           }}
         />
       ) : (
@@ -80,32 +61,23 @@ export default class SignInPage extends React.PureComponent<SignInPageProps> {
           id="@dapps.sign_in.options.desktop"
           values={{
             metamask_link: (
-              <a
-                href="https://metamask.io"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a href="https://metamask.io" target="_blank" rel="noopener noreferrer">
                 MetaMask
               </a>
             ),
             ledger_nano_link: (
-              <a
-                href="https://www.ledger.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a href="https://www.ledger.com/" target="_blank" rel="noopener noreferrer">
                 Ledger Nano S
               </a>
-            ),
+            )
           }}
         />
-      ),
-    };
-  };
+      )
+    }
+  }
 
   render() {
-    const { center, isConnected, isConnecting, hasError, onConnect } =
-      this.props;
+    const { center, isConnected, isConnecting, hasError, onConnect } = this.props
 
     return (
       <>
@@ -118,6 +90,6 @@ export default class SignInPage extends React.PureComponent<SignInPageProps> {
           i18n={this.getTranslations()}
         />
       </>
-    );
+    )
   }
 }

@@ -1,2 +1,2 @@
-import Intercom from "./Intercom";
-export default Intercom;
+import Intercom from './Intercom'
+export default Intercom

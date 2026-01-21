@@ -1,64 +1,61 @@
-import { LoadingState, loadingReducer } from "../loading/reducer";
+import { LoadingState, loadingReducer } from '../loading/reducer'
 import {
   FETCH_APPLICATION_FEATURES_FAILURE,
   FETCH_APPLICATION_FEATURES_REQUEST,
   FETCH_APPLICATION_FEATURES_SUCCESS,
   FetchApplicationFeaturesFailureAction,
   FetchApplicationFeaturesRequestAction,
-  FetchApplicationFeaturesSuccessAction,
-} from "./actions";
-import { ApplicationFeatures } from "./types";
+  FetchApplicationFeaturesSuccessAction
+} from './actions'
+import { ApplicationFeatures } from './types'
 
 export type FeaturesState = {
-  data: Record<string, ApplicationFeatures>;
-  loading: LoadingState;
-  hasLoadedInitialFlags: boolean;
-  error: string | null;
-};
+  data: Record<string, ApplicationFeatures>
+  loading: LoadingState
+  hasLoadedInitialFlags: boolean
+  error: string | null
+}
 
 export const INITIAL_STATE: FeaturesState = {
   data: {},
   loading: [],
   hasLoadedInitialFlags: false,
-  error: null,
-};
+  error: null
+}
 
 export type FeaturesReducerAction =
   | FetchApplicationFeaturesRequestAction
   | FetchApplicationFeaturesSuccessAction
-  | FetchApplicationFeaturesFailureAction;
+  | FetchApplicationFeaturesFailureAction
 
-export const featuresReducer = (
-  state = INITIAL_STATE,
-  action: FeaturesReducerAction,
-): FeaturesState => {
+export const featuresReducer = (state = INITIAL_STATE, action: FeaturesReducerAction): FeaturesState => {
   switch (action.type) {
     case FETCH_APPLICATION_FEATURES_REQUEST: {
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
-        error: null,
-      };
+        error: null
+      }
     }
     case FETCH_APPLICATION_FEATURES_SUCCESS: {
-      const { features } = action.payload;
+      const { features } = action.payload
 
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
         hasLoadedInitialFlags: true,
-        data: features,
-      };
+        data: features
+      }
     }
     case FETCH_APPLICATION_FEATURES_FAILURE: {
-      const { error } = action.payload;
+      const { error } = action.payload
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
-        error,
-      };
+        error
+      }
     }
     default:
-      return state;
+      return state
   }
-};
+}

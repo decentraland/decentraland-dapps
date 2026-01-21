@@ -1,110 +1,94 @@
-import { EventChannel, eventChannel } from "redux-saga";
-import { call, fork, put, select, take, takeEvery } from "redux-saga/effects";
-import { ErrorCode, MetaTransactionError } from "decentraland-transactions";
-import { SWITCH_NETWORK_SUCCESS } from "../wallet/actions";
-import { transactionEvents } from "../wallet/utils/transactionEvents";
-import {
-  TransactionEventData,
-  TransactionEventType,
-} from "../wallet/utils/types";
-import {
-  HIDE_TOAST,
-  HideToastAction,
-  SHOW_TOAST,
-  ShowToastAction,
-  hideAllToasts,
-  renderToast,
-  showToast,
-} from "./actions";
-import * as cache from "./cache";
-import { getState } from "./selectors";
+import { EventChannel, eventChannel } from 'redux-saga'
+import { call, fork, put, select, take, takeEvery } from 'redux-saga/effects'
+import { ErrorCode, MetaTransactionError } from 'decentraland-transactions'
+import { SWITCH_NETWORK_SUCCESS } from '../wallet/actions'
+import { transactionEvents } from '../wallet/utils/transactionEvents'
+import { TransactionEventData, TransactionEventType } from '../wallet/utils/types'
+import { HIDE_TOAST, HideToastAction, SHOW_TOAST, ShowToastAction, hideAllToasts, renderToast, showToast } from './actions'
+import * as cache from './cache'
+import { getState } from './selectors'
 import {
   getContractAccountErrorToast,
   getHighCongestionErrorToast,
   getInvalidAddressErrorToast,
   getSalePriceTooLowErrorToast,
-  getUnknownErrorToast,
-} from "./toasts/meta-transactions";
+  getUnknownErrorToast
+} from './toasts/meta-transactions'
 
 export function* toastSaga() {
-  yield fork(watchMetaTransactionErrors);
-  yield takeEvery(SHOW_TOAST, handleShowToast);
-  yield takeEvery(HIDE_TOAST, handleHideToast);
-  yield takeEvery(SWITCH_NETWORK_SUCCESS, handleSwitchNetworkSuccess);
+  yield fork(watchMetaTransactionErrors)
+  yield takeEvery(SHOW_TOAST, handleShowToast)
+  yield takeEvery(HIDE_TOAST, handleHideToast)
+  yield takeEvery(SWITCH_NETWORK_SUCCESS, handleSwitchNetworkSuccess)
 }
 
 function* handleShowToast(action: ShowToastAction) {
-  const { toast, position } = action.payload;
+  const { toast, position } = action.payload
 
-  const ids: number[] = yield select(getState);
-  const lastId = Number(ids[ids.length - 1] || 0);
-  const id = lastId + 1;
+  const ids: number[] = yield select(getState)
+  const lastId = Number(ids[ids.length - 1] || 0)
+  const id = lastId + 1
 
-  cache.set(id, toast, position);
+  cache.set(id, toast, position)
 
-  yield put(renderToast(id));
+  yield put(renderToast(id))
 }
 
 function* handleHideToast(action: HideToastAction) {
-  const { id } = action.payload;
-  cache.remove(id);
+  const { id } = action.payload
+  cache.remove(id)
 }
 
 export function createMetaTransactionsErrorChannel() {
-  return eventChannel<ErrorCode>((emitter) => {
-    function handleError(
-      data: TransactionEventData<TransactionEventType.ERROR>,
-    ) {
+  return eventChannel<ErrorCode>(emitter => {
+    function handleError(data: TransactionEventData<TransactionEventType.ERROR>) {
       if (data.error instanceof MetaTransactionError) {
-        emitter(data.error.code);
+        emitter(data.error.code)
       }
     }
-    transactionEvents.on(TransactionEventType.ERROR, handleError);
-    return () =>
-      transactionEvents.removeListener(TransactionEventType.ERROR, handleError);
-  });
+    transactionEvents.on(TransactionEventType.ERROR, handleError)
+    return () => transactionEvents.removeListener(TransactionEventType.ERROR, handleError)
+  })
 }
 
 export function* watchMetaTransactionErrors() {
-  const channel: EventChannel<ErrorCode> = yield call(
-    createMetaTransactionsErrorChannel,
-  );
+  const channel: EventChannel<ErrorCode> = yield call(createMetaTransactionsErrorChannel)
   while (true) {
-    const code: ErrorCode = yield take(channel);
-    yield call(handleMetaTransactionError, code);
+    const code: ErrorCode = yield take(channel)
+    yield call(handleMetaTransactionError, code)
   }
 }
 
 export function* handleMetaTransactionError(code: ErrorCode) {
   switch (code) {
     case ErrorCode.CONTRACT_ACCOUNT: {
-      yield put(showToast(getContractAccountErrorToast()));
-      break;
+      yield put(showToast(getContractAccountErrorToast()))
+      break
     }
     case ErrorCode.INVALID_ADDRESS: {
-      yield put(showToast(getInvalidAddressErrorToast()));
-      break;
+      yield put(showToast(getInvalidAddressErrorToast()))
+      break
     }
     case ErrorCode.SALE_PRICE_TOO_LOW: {
-      yield put(showToast(getSalePriceTooLowErrorToast()));
-      break;
+      yield put(showToast(getSalePriceTooLowErrorToast()))
+      break
     }
     case ErrorCode.USER_DENIED: {
       // do nothing
-      break;
+      break
     }
     case ErrorCode.HIGH_CONGESTION: {
-      yield put(showToast(getHighCongestionErrorToast()));
-      break;
+      yield put(showToast(getHighCongestionErrorToast()))
+      break
     }
     case ErrorCode.UNKNOWN:
     default: {
-      yield put(showToast(getUnknownErrorToast()));
-      break;
+      yield put(showToast(getUnknownErrorToast()))
+      break
     }
   }
 }
 
 function* handleSwitchNetworkSuccess() {
-  yield put(hideAllToasts());
+  yield put(hideAllToasts())
 }

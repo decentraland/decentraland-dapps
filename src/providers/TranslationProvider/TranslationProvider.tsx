@@ -1,31 +1,31 @@
-import * as React from "react";
-import { Loader } from "decentraland-ui/dist/components/Loader/Loader";
-import { I18nProvider } from "../../modules/translation/utils";
-import { Props } from "./TranslationProvider.types";
+import * as React from 'react'
+import { Loader } from 'decentraland-ui/dist/components/Loader/Loader'
+import { I18nProvider } from '../../modules/translation/utils'
+import { Props } from './TranslationProvider.types'
 
 export default class TranslationProvider extends React.PureComponent<Props> {
   componentDidMount() {
-    const { locale, onFetchTranslations } = this.props;
+    const { locale, onFetchTranslations } = this.props
 
     if (locale) {
-      onFetchTranslations(locale);
+      onFetchTranslations(locale)
     }
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { locale, onFetchTranslations } = this.props;
+    const { locale, onFetchTranslations } = this.props
 
     if (locale && prevProps.locale !== locale) {
-      onFetchTranslations(locale);
+      onFetchTranslations(locale)
     }
   }
 
   renderLoading() {
-    return <Loader active size="massive" />;
+    return <Loader active size="massive" />
   }
 
   render() {
-    const { children, locale, translations } = this.props;
+    const { children, locale, translations } = this.props
 
     return translations && locale ? (
       <I18nProvider key={locale} locale={locale} messages={translations}>
@@ -33,6 +33,6 @@ export default class TranslationProvider extends React.PureComponent<Props> {
       </I18nProvider>
     ) : (
       this.renderLoading()
-    );
+    )
   }
 }

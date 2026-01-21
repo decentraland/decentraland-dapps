@@ -1,4 +1,4 @@
-import type { IFetchComponent } from "@well-known-components/interfaces";
+import type { IFetchComponent } from '@well-known-components/interfaces'
 
 /**
  * Wrapper for fetch that preserves the browser context.
@@ -12,5 +12,5 @@ import type { IFetchComponent } from "@well-known-components/interfaces";
  * This wrapper solves the problem by maintaining the correct context.
  */
 export const fetcher = {
-  fetch: (url: string, init?: RequestInit) => fetch(url, init),
-} as unknown as IFetchComponent;
+  fetch: (url: string, init?: RequestInit) => fetch(url, init)
+} as unknown as IFetchComponent

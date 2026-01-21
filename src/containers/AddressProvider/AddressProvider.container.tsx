@@ -1,10 +1,10 @@
-import { connect } from "react-redux";
-import { getAppChainId } from "../../modules/wallet/selectors";
-import AddressProvider from "./AddressProvider";
-import { MapStateProps } from "./AddressProvider.types";
+import { connect } from 'react-redux'
+import { getAppChainId } from '../../modules/wallet/selectors'
+import AddressProvider from './AddressProvider'
+import { MapStateProps } from './AddressProvider.types'
 
 const mapState = (state: any): MapStateProps => ({
-  chainId: getAppChainId(state),
-});
+  chainId: getAppChainId(state)
+})
 
-export default connect(mapState)(AddressProvider);
+export default connect(mapState)(AddressProvider)

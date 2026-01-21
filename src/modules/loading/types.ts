@@ -1,5 +1,5 @@
-import { AnyAction } from "redux";
+import { AnyAction } from 'redux'
 
 export interface LoadingActions extends AnyAction {}
 
-export type LoadingState = AnyAction[];
+export type LoadingState = AnyAction[]

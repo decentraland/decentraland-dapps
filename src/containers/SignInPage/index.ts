@@ -1,2 +1,2 @@
-import SignInPage from "./SignInPage.container";
-export default SignInPage;
+import SignInPage from './SignInPage.container'
+export default SignInPage

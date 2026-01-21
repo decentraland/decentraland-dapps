@@ -1,5 +1,5 @@
-import { Locale } from "decentraland-ui/dist/components/Language/Language";
-import { LoadingState, loadingReducer } from "../loading/reducer";
+import { Locale } from 'decentraland-ui/dist/components/Language/Language'
+import { LoadingState, loadingReducer } from '../loading/reducer'
 import {
   CHANGE_LOCALE,
   ChangeLocaleAction,
@@ -8,49 +8,46 @@ import {
   FETCH_TRANSLATIONS_SUCCESS,
   FetchTranslationsFailureAction,
   FetchTranslationsRequestAction,
-  FetchTranslationsSuccessAction,
-} from "./actions";
-import { Translation } from "./types";
+  FetchTranslationsSuccessAction
+} from './actions'
+import { Translation } from './types'
 
 export type TranslationState = {
-  data: Translation;
-  locale: Locale;
-  loading: LoadingState;
-  error: string | null;
-};
+  data: Translation
+  locale: Locale
+  loading: LoadingState
+  error: string | null
+}
 
 export const INITIAL_STATE: TranslationState = {
   data: {},
-  locale: "en",
+  locale: 'en',
   loading: [],
-  error: null,
-};
+  error: null
+}
 
 export type TranslationReducerAction =
   | ChangeLocaleAction
   | FetchTranslationsRequestAction
   | FetchTranslationsSuccessAction
-  | FetchTranslationsFailureAction;
+  | FetchTranslationsFailureAction
 
-export function translationReducer(
-  state = INITIAL_STATE,
-  action: TranslationReducerAction,
-): TranslationState {
+export function translationReducer(state = INITIAL_STATE, action: TranslationReducerAction): TranslationState {
   switch (action.type) {
     case CHANGE_LOCALE:
       return {
         ...state,
-        locale: action.payload.locale,
-      };
+        locale: action.payload.locale
+      }
     case FETCH_TRANSLATIONS_REQUEST:
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
         data: {
           ...state.data,
-          [action.payload.locale]: null,
-        },
-      };
+          [action.payload.locale]: null
+        }
+      }
     case FETCH_TRANSLATIONS_SUCCESS:
       return {
         ...state,
@@ -59,17 +56,17 @@ export function translationReducer(
         data: {
           ...state.data,
           [action.payload.locale]: {
-            ...action.payload.translations,
-          },
-        },
-      };
+            ...action.payload.translations
+          }
+        }
+      }
     case FETCH_TRANSLATIONS_FAILURE:
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
-        error: action.payload.error,
-      };
+        error: action.payload.error
+      }
     default:
-      return state;
+      return state
   }
 }

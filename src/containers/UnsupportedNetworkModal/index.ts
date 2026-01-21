@@ -1,2 +1,2 @@
-import UnsupportedNetworkModal from "./UnsupportedNetworkModal";
-export default UnsupportedNetworkModal;
+import UnsupportedNetworkModal from './UnsupportedNetworkModal'
+export default UnsupportedNetworkModal

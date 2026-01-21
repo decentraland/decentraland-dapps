@@ -1,9 +1,9 @@
-import { MiddlewareOptions } from "redux-persistence/dist/types";
-import { Migrations } from "../../lib/types";
+import { MiddlewareOptions } from 'redux-persistence/dist/types'
+import { Migrations } from '../../lib/types'
 
 export interface StorageMiddleware<T> extends MiddlewareOptions<T> {
-  storageKey: string;
-  paths?: (string | string[])[];
-  actions?: string[];
-  migrations?: Migrations<T>;
+  storageKey: string
+  paths?: (string | string[])[]
+  actions?: string[]
+  migrations?: Migrations<T>
 }

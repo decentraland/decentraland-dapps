@@ -1,10 +1,10 @@
-import type { Avatar } from "@dcl/schemas/dist/platform/profile";
+import type { Avatar } from '@dcl/schemas/dist/platform/profile'
 
 export type Profile = {
-  avatars: Avatar[];
-};
+  avatars: Avatar[]
+}
 
 export type EntityDeploymentError = {
-  message: string;
-  code?: number;
-};
+  message: string
+  code?: number
+}

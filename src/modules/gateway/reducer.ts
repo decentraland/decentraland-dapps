@@ -20,24 +20,24 @@ import {
   PollPurchaseStatusRequestAction,
   PollPurchaseStatusSuccessAction,
   SET_PURCHASE,
-  SetPurchaseAction,
-} from "../gateway/actions";
-import { LoadingState, loadingReducer } from "../loading/reducer";
-import { Purchase } from "./types";
+  SetPurchaseAction
+} from '../gateway/actions'
+import { LoadingState, loadingReducer } from '../loading/reducer'
+import { Purchase } from './types'
 
 export type GatewayState = {
   data: {
-    purchases: Purchase[];
-  };
-  loading: LoadingState;
-  error: string | null;
-};
+    purchases: Purchase[]
+  }
+  loading: LoadingState
+  error: string | null
+}
 
 export const INITIAL_STATE: GatewayState = {
   data: { purchases: [] },
   loading: [],
-  error: null,
-};
+  error: null
+}
 
 export type ManaFiatGatewayReducerAction =
   | OpenBuyManaWithFiatModalRequestAction
@@ -50,99 +50,91 @@ export type ManaFiatGatewayReducerAction =
   | SetPurchaseAction
   | PollPurchaseStatusRequestAction
   | PollPurchaseStatusSuccessAction
-  | PollPurchaseStatusFailureAction;
+  | PollPurchaseStatusFailureAction
 
-export function gatewayReducer(
-  state: GatewayState = INITIAL_STATE,
-  action: ManaFiatGatewayReducerAction,
-): GatewayState {
+export function gatewayReducer(state: GatewayState = INITIAL_STATE, action: ManaFiatGatewayReducerAction): GatewayState {
   switch (action.type) {
     case OPEN_BUY_MANA_WITH_FIAT_MODAL_REQUEST: {
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
-        error: null,
-      };
+        error: null
+      }
     }
     case OPEN_BUY_MANA_WITH_FIAT_MODAL_SUCCESS: {
       return {
         ...state,
-        loading: loadingReducer(state.loading, action),
-      };
+        loading: loadingReducer(state.loading, action)
+      }
     }
     case OPEN_BUY_MANA_WITH_FIAT_MODAL_FAILURE: {
-      const { error } = action.payload;
+      const { error } = action.payload
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
-        error,
-      };
+        error
+      }
     }
     case OPEN_MANA_FIAT_GATEWAY_REQUEST: {
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
-        error: null,
-      };
+        error: null
+      }
     }
     case OPEN_MANA_FIAT_GATEWAY_SUCCESS: {
       return {
         ...state,
-        loading: loadingReducer(state.loading, action),
-      };
+        loading: loadingReducer(state.loading, action)
+      }
     }
     case OPEN_MANA_FIAT_GATEWAY_FAILURE: {
-      const { error } = action.payload;
+      const { error } = action.payload
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
-        error,
-      };
+        error
+      }
     }
     case MANA_FIAT_GATEWAY_PURCHASE_COMPLETED_FAILURE: {
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
-        error: action.payload.error,
-      };
+        error: action.payload.error
+      }
     }
     case SET_PURCHASE: {
-      const { purchase } = action.payload;
+      const { purchase } = action.payload
       return {
         ...state,
         data: {
           ...state.data,
-          purchases: [
-            ...state.data.purchases.filter(
-              (_purchase) => _purchase.id !== purchase.id,
-            ),
-            purchase,
-          ],
-        },
-      };
+          purchases: [...state.data.purchases.filter(_purchase => _purchase.id !== purchase.id), purchase]
+        }
+      }
     }
     case POLL_PURCHASE_STATUS_REQUEST: {
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
-        error: null,
-      };
+        error: null
+      }
     }
     case POLL_PURCHASE_STATUS_SUCCESS: {
       return {
         ...state,
-        loading: loadingReducer(state.loading, action),
-      };
+        loading: loadingReducer(state.loading, action)
+      }
     }
     case POLL_PURCHASE_STATUS_FAILURE: {
-      const { error } = action.payload;
+      const { error } = action.payload
       return {
         ...state,
         loading: loadingReducer(state.loading, action),
-        error,
-      };
+        error
+      }
     }
     default:
-      return state;
+      return state
   }
 }

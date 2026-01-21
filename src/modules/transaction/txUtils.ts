@@ -1,7 +1,7 @@
-import { TransactionResponse } from "@ethersproject/providers";
-import { ethers } from "ethers";
-import { ChainId } from "@dcl/schemas/dist/dapps/chain-id";
-import { getNetworkProvider } from "../../lib/eth";
+import { TransactionResponse } from '@ethersproject/providers'
+import { ethers } from 'ethers'
+import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
+import { getNetworkProvider } from '../../lib/eth'
 import {
   AnyTransaction,
   ConfirmedTransaction,
@@ -9,43 +9,36 @@ import {
   QueuedTransaction,
   ReplacedTransaction,
   RevertedTransaction,
-  TransactionStatus,
-} from "./types";
+  TransactionStatus
+} from './types'
 
-export async function getTransaction(
-  address: string,
-  chainId: ChainId,
-  hash: string,
-): Promise<AnyTransaction | null> {
-  const provider = await getNetworkProvider(chainId);
-  if (!provider) return null;
+export async function getTransaction(address: string, chainId: ChainId, hash: string): Promise<AnyTransaction | null> {
+  const provider = await getNetworkProvider(chainId)
+  if (!provider) return null
 
-  const eth = new ethers.providers.Web3Provider(provider);
+  const eth = new ethers.providers.Web3Provider(provider)
 
   if (!address) {
-    return null;
+    return null
   }
 
-  let currentNonce: number | null = null;
+  let currentNonce: number | null = null
   try {
-    currentNonce = await eth.getTransactionCount(address);
+    currentNonce = await eth.getTransactionCount(address)
   } catch (error) {
-    console.warn(
-      `Could not get current nonce for account "${address}"`,
-      error.message,
-    );
+    console.warn(`Could not get current nonce for account "${address}"`, error.message)
   }
 
-  let response: TransactionResponse | null = null;
+  let response: TransactionResponse | null = null
   try {
-    response = await eth.getTransaction(hash);
+    response = await eth.getTransaction(hash)
   } catch (error) {
-    console.warn(`Could not get transaction for hash "${hash}"`, error.message);
+    console.warn(`Could not get transaction for hash "${hash}"`, error.message)
   }
 
   // not found
   if (response == null) {
-    return null;
+    return null
   }
 
   if (response.blockNumber == null) {
@@ -55,9 +48,9 @@ export async function getTransaction(
         const tx: ReplacedTransaction = {
           hash,
           status: TransactionStatus.REPLACED,
-          nonce: response.nonce,
-        };
-        return tx;
+          nonce: response.nonce
+        }
+        return tx
       }
 
       // queued
@@ -65,36 +58,36 @@ export async function getTransaction(
         const tx: QueuedTransaction = {
           hash,
           status: TransactionStatus.QUEUED,
-          nonce: response.nonce,
-        };
-        return tx;
+          nonce: response.nonce
+        }
+        return tx
       }
     }
 
     // pending
     const tx: PendingTransaction = {
       status: TransactionStatus.PENDING,
-      ...response,
-    };
-    return tx;
+      ...response
+    }
+    return tx
   }
 
-  const receipt = await eth.getTransactionReceipt(hash);
+  const receipt = await eth.getTransactionReceipt(hash)
 
   // reverted
   if (receipt == null || !receipt.status) {
     const tx: RevertedTransaction = {
       status: TransactionStatus.REVERTED,
-      ...response,
-    };
-    return tx;
+      ...response
+    }
+    return tx
   }
 
   // confirmed
   const tx: ConfirmedTransaction = {
     status: TransactionStatus.CONFIRMED,
     ...response,
-    receipt,
-  };
-  return tx;
+    receipt
+  }
+  return tx
 }

@@ -1,48 +1,48 @@
-import { ProviderType } from "@dcl/schemas/dist/dapps/provider-type";
-import { Wallet } from "../types";
-import { isWeb2Wallet } from "./providerChecks";
+import { ProviderType } from '@dcl/schemas/dist/dapps/provider-type'
+import { Wallet } from '../types'
+import { isWeb2Wallet } from './providerChecks'
 
-let wallet: Wallet;
+let wallet: Wallet
 
-describe("when checking if a wallet is a Web2 wallet", () => {
-  describe("and the wallet is using MAGIC provider", () => {
+describe('when checking if a wallet is a Web2 wallet', () => {
+  describe('and the wallet is using MAGIC provider', () => {
     beforeEach(() => {
       wallet = {
-        providerType: ProviderType.MAGIC,
-      } as Wallet;
-    });
+        providerType: ProviderType.MAGIC
+      } as Wallet
+    })
 
-    it("should return true", () => {
-      expect(isWeb2Wallet(wallet)).toBe(true);
-    });
-  });
+    it('should return true', () => {
+      expect(isWeb2Wallet(wallet)).toBe(true)
+    })
+  })
 
-  describe("and the wallet is using MAGIC_TEST provider", () => {
+  describe('and the wallet is using MAGIC_TEST provider', () => {
     beforeEach(() => {
       wallet = {
-        providerType: ProviderType.MAGIC_TEST,
-      } as Wallet;
-    });
+        providerType: ProviderType.MAGIC_TEST
+      } as Wallet
+    })
 
-    it("should return true", () => {
-      expect(isWeb2Wallet(wallet)).toBe(true);
-    });
-  });
+    it('should return true', () => {
+      expect(isWeb2Wallet(wallet)).toBe(true)
+    })
+  })
 
   describe.each([
-    [ProviderType.INJECTED, "INJECTED"],
-    [ProviderType.NETWORK, "NETWORK"],
-    [ProviderType.WALLET_CONNECT, "WALLET_CONNECT"],
-    [ProviderType.WALLET_LINK, "WALLET_LINK"],
-  ])("and the wallet is using %s provider", (providerType, providerName) => {
+    [ProviderType.INJECTED, 'INJECTED'],
+    [ProviderType.NETWORK, 'NETWORK'],
+    [ProviderType.WALLET_CONNECT, 'WALLET_CONNECT'],
+    [ProviderType.WALLET_LINK, 'WALLET_LINK']
+  ])('and the wallet is using %s provider', (providerType, providerName) => {
     beforeEach(() => {
       wallet = {
-        providerType,
-      } as Wallet;
-    });
+        providerType
+      } as Wallet
+    })
 
     it(`should return false for ${providerName} provider`, () => {
-      expect(isWeb2Wallet(wallet)).toBe(false);
-    });
-  });
-});
+      expect(isWeb2Wallet(wallet)).toBe(false)
+    })
+  })
+})

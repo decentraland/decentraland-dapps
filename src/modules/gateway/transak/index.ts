@@ -1,1 +1,1 @@
-export { Transak } from "./Transak";
+export { Transak } from './Transak'

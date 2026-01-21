@@ -1,4 +1,4 @@
-import { LoadingState, loadingReducer } from "../loading/reducer";
+import { LoadingState, loadingReducer } from '../loading/reducer'
 import {
   CLEAR_TRANSACTION,
   CLEAR_TRANSACTIONS,
@@ -17,26 +17,22 @@ import {
   UPDATE_TRANSACTION_NONCE,
   UPDATE_TRANSACTION_STATUS,
   UpdateTransactionNonceAction,
-  UpdateTransactionStatusAction,
-} from "./actions";
-import { Transaction, TransactionStatus } from "./types";
-import {
-  getTransactionFromAction,
-  getTransactionHref,
-  isPending,
-} from "./utils";
+  UpdateTransactionStatusAction
+} from './actions'
+import { Transaction, TransactionStatus } from './types'
+import { getTransactionFromAction, getTransactionHref, isPending } from './utils'
 
 export type TransactionState = {
-  data: Transaction[];
-  loading: LoadingState;
-  error: string | null;
-};
+  data: Transaction[]
+  loading: LoadingState
+  error: string | null
+}
 
 const INITIAL_STATE: TransactionState = {
   data: [],
   loading: [],
-  error: null,
-};
+  error: null
+}
 
 export type TransactionReducerAction =
   | FetchTransactionRequestAction
@@ -47,19 +43,14 @@ export type TransactionReducerAction =
   | ReplaceTransactionSuccessAction
   | FixRevertedTransactionAction
   | ClearTransactionsAction
-  | ClearTransactionAction;
+  | ClearTransactionAction
 
-export function transactionReducer(
-  state = INITIAL_STATE,
-  action: TransactionReducerAction,
-): TransactionState {
+export function transactionReducer(state = INITIAL_STATE, action: TransactionReducerAction): TransactionState {
   switch (action.type) {
     case FETCH_TRANSACTION_REQUEST: {
-      const actionRef = action.payload.action;
-      const transaction = getTransactionFromAction(actionRef);
-      const otherTransactions = state.data.filter(
-        (otherTransaction) => otherTransaction.hash !== transaction.hash,
-      );
+      const actionRef = action.payload.action
+      const transaction = getTransactionFromAction(actionRef)
+      const otherTransactions = state.data.filter(otherTransaction => otherTransaction.hash !== transaction.hash)
       return {
         loading: loadingReducer(state.loading, action),
         error: null,
@@ -71,13 +62,13 @@ export function transactionReducer(
             // these always start as null, and they get updated by the saga
             status: null,
             nonce: null,
-            replacedBy: null,
-          },
-        ],
-      };
+            replacedBy: null
+          }
+        ]
+      }
     }
     case FETCH_TRANSACTION_SUCCESS: {
-      const actionTransaction = action.payload.transaction;
+      const actionTransaction = action.payload.transaction
       return {
         loading: loadingReducer(state.loading, action),
         error: null,
@@ -88,12 +79,12 @@ export function transactionReducer(
                 ...transaction,
                 ...actionTransaction
               }
-              : transaction,
-        ),
-      };
+              : transaction
+        )
+      }
     }
     case FETCH_TRANSACTION_FAILURE: {
-      const { hash, status, message } = action.payload;
+      const { hash, status, message } = action.payload
       return {
         loading: loadingReducer(state.loading, action),
         error: message,
@@ -104,9 +95,9 @@ export function transactionReducer(
                 ...transaction,
                 status
               }
-              : transaction,
-        ),
-      };
+              : transaction
+        )
+      }
     }
     case UPDATE_TRANSACTION_STATUS: {
       return {
@@ -119,9 +110,9 @@ export function transactionReducer(
                 ...transaction,
                 status: action.payload.status
               }
-              : transaction,
-        ),
-      };
+              : transaction
+        )
+      }
     }
     case FIX_REVERTED_TRANSACTION: {
       return {
@@ -134,9 +125,9 @@ export function transactionReducer(
                 ...transaction,
                 status: TransactionStatus.CONFIRMED
               }
-              : transaction,
-        ),
-      };
+              : transaction
+        )
+      }
     }
     case UPDATE_TRANSACTION_NONCE: {
       return {
@@ -146,11 +137,11 @@ export function transactionReducer(
           action.payload.hash === transaction.hash
             ? {
                 ...transaction,
-                nonce: action.payload.nonce,
+                nonce: action.payload.nonce
               }
-            : transaction,
-        ),
-      };
+            : transaction
+        )
+      }
     }
     case REPLACE_TRANSACTION_SUCCESS: {
       return {
@@ -161,36 +152,30 @@ export function transactionReducer(
             ? {
                 ...transaction,
                 status: TransactionStatus.REPLACED,
-                url: getTransactionHref(
-                  { txHash: action.payload.replaceBy },
-                  transaction.chainId,
-                ),
-                replacedBy: action.payload.replaceBy,
+                url: getTransactionHref({ txHash: action.payload.replaceBy }, transaction.chainId),
+                replacedBy: action.payload.replaceBy
               }
-            : transaction,
-        ),
-      };
+            : transaction
+        )
+      }
     }
     case CLEAR_TRANSACTIONS: {
       return {
         ...state,
         data: state.data.filter(
-          (transaction) =>
-            transaction.from.toLowerCase() !==
-              action.payload.address.toLowerCase() &&
-            (action.payload.clearPendings || !isPending(transaction.status)),
-        ),
-      };
+          transaction =>
+            transaction.from.toLowerCase() !== action.payload.address.toLowerCase() &&
+            (action.payload.clearPendings || !isPending(transaction.status))
+        )
+      }
     }
     case CLEAR_TRANSACTION: {
       return {
         ...state,
-        data: state.data.filter(
-          (transaction) => transaction.hash !== action.payload.hash,
-        ),
-      };
+        data: state.data.filter(transaction => transaction.hash !== action.payload.hash)
+      }
     }
     default:
-      return state;
+      return state
   }
 }

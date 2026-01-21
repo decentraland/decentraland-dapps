@@ -1,98 +1,73 @@
-import {
-  FormattedMessage,
-  IntlProvider,
-  createIntl,
-  createIntlCache,
-} from "react-intl";
-import { Locale } from "decentraland-ui/dist/components/Language/Language";
+import { FormattedMessage, IntlProvider, createIntl, createIntlCache } from 'react-intl'
+import { Locale } from 'decentraland-ui/dist/components/Language/Language'
 
-const cache = createIntlCache();
-let currentLocale: ReturnType<typeof createIntl>;
+const cache = createIntlCache()
+let currentLocale: ReturnType<typeof createIntl>
 
-export const I18nProvider = IntlProvider;
+export const I18nProvider = IntlProvider
 
 export function getPreferredLocale(availableLocales: Locale[]): Locale | null {
   if (!availableLocales) {
-    throw new Error("Failed to get preferred locale: Missing locale list");
+    throw new Error('Failed to get preferred locale: Missing locale list')
   }
 
-  const navigator = window.navigator;
+  const navigator = window.navigator
 
-  const navigatorLocale =
-    (navigator.languages && navigator.languages[0]) || navigator.language;
+  const navigatorLocale = (navigator.languages && navigator.languages[0]) || navigator.language
 
-  const locale: Locale = navigatorLocale.slice(0, 2) as Locale;
+  const locale: Locale = navigatorLocale.slice(0, 2) as Locale
 
   if (!availableLocales.includes(locale)) {
-    return null;
+    return null
   }
 
-  return locale;
+  return locale
 }
 
-export function setCurrentLocale(
-  localeName: Locale,
-  messages: Record<string, string>,
-) {
+export function setCurrentLocale(localeName: Locale, messages: Record<string, string>) {
   const locale = {
-    en: "en-EN",
-    es: "es-ES",
-    fr: "fr-FR",
-    ko: "ko-KR",
-    zh: "zh-CN",
-    ja: "ja-JP",
-  }[localeName];
+    en: 'en-EN',
+    es: 'es-ES',
+    fr: 'fr-FR',
+    ko: 'ko-KR',
+    zh: 'zh-CN',
+    ja: 'ja-JP'
+  }[localeName]
 
-  currentLocale = createIntl({ locale, messages }, cache);
+  currentLocale = createIntl({ locale, messages }, cache)
 }
 
 export function getCurrentLocale() {
-  return currentLocale;
+  return currentLocale
 }
 
 export function t(id: string, values?: any) {
-  return currentLocale.formatMessage({ id }, values);
+  return currentLocale.formatMessage({ id }, values)
 }
 
-export function t_cond(
-  id: string | undefined,
-  defaultId: string,
-  values?: any,
-) {
+export function t_cond(id: string | undefined, defaultId: string, values?: any) {
   if (!id) {
-    return currentLocale.formatMessage({ id: defaultId }, values);
+    return currentLocale.formatMessage({ id: defaultId }, values)
   }
 
-  const message = currentLocale.formatMessage({ id }, values);
+  const message = currentLocale.formatMessage({ id }, values)
   if (message === id || !message) {
-    return currentLocale.formatMessage({ id: defaultId }, values);
+    return currentLocale.formatMessage({ id: defaultId }, values)
   }
-  return message;
+  return message
 }
 
-export const T = FormattedMessage;
+export const T = FormattedMessage
 
-export function mergeTranslations<T extends { [key: string]: T | string }>(
-  target: T = {} as T,
-  ...sources: (T | undefined)[]
-) {
-  return [target, ...sources].reduce<T>(
-    (result, obj) => _mergeTranslations<T>(result, obj),
-    {} as T,
-  );
+export function mergeTranslations<T extends { [key: string]: T | string }>(target: T = {} as T, ...sources: (T | undefined)[]) {
+  return [target, ...sources].reduce<T>((result, obj) => _mergeTranslations<T>(result, obj), {} as T)
 }
 
-function _mergeTranslations<T extends { [key: string]: T | string }>(
-  target: T = {} as T,
-  source: T = {} as T,
-) {
+function _mergeTranslations<T extends { [key: string]: T | string }>(target: T = {} as T, source: T = {} as T) {
   const merged: T = Object.keys(source).reduce((result: T, key: string) => {
     // @ts-ignore
-    result[key] =
-      typeof source[key] === "object"
-        ? _mergeTranslations(target[key] as T, source[key])
-        : source[key];
-    return result;
-  }, target);
-  return merged;
+    result[key] = typeof source[key] === 'object' ? _mergeTranslations(target[key] as T, source[key]) : source[key]
+    return result
+  }, target)
+  return merged
 }

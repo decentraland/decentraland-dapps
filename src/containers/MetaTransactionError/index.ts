@@ -1,2 +1,2 @@
-import MetaTransactionError from "./MetaTransactionError.container";
-export default MetaTransactionError;
+import MetaTransactionError from './MetaTransactionError.container'
+export default MetaTransactionError

@@ -6,73 +6,66 @@ import {
   OPEN_MODAL,
   OpenModalAction,
   TOGGLE_MODAL,
-  ToggleModalAction,
-} from "./actions";
-import { Modal } from "./types";
+  ToggleModalAction
+} from './actions'
+import { Modal } from './types'
 
-export type ModalState = Record<string, Modal>;
+export type ModalState = Record<string, Modal>
 
-const INITIAL_STATE: ModalState = {};
+const INITIAL_STATE: ModalState = {}
 
-export type ModalReducerAction =
-  | OpenModalAction
-  | CloseModalAction
-  | CloseAllModalsAction
-  | ToggleModalAction;
+export type ModalReducerAction = OpenModalAction | CloseModalAction | CloseAllModalsAction | ToggleModalAction
 
-export function modalReducer(
-  state = INITIAL_STATE,
-  action: ModalReducerAction,
-) {
+export function modalReducer(state = INITIAL_STATE, action: ModalReducerAction) {
   switch (action.type) {
     case OPEN_MODAL: {
-      const { name, metadata } = action.payload;
+      const { name, metadata } = action.payload
 
       return {
         ...state,
         [name]: {
           open: true,
           name,
-          metadata,
-        },
-      };
+          metadata
+        }
+      }
     }
     case CLOSE_MODAL: {
-      const { name } = action.payload;
+      const { name } = action.payload
 
       if (state[name]) {
         return {
           ...state,
           [name]: {
             ...state[name],
-            open: false,
-          },
-        };
+            open: false
+          }
+        }
       } else {
         // Invalid modal name
-        return state;
+        return state
       }
     }
     case TOGGLE_MODAL: {
-      const { name } = action.payload;
-      const modal = state[name] || { open: false };
+      const { name } = action.payload
+      const modal = state[name] || { open: false }
 
       return {
         ...state,
         [name]: {
           ...modal,
-          open: !modal.open,
-        },
-      };
+          open: !modal.open
+        }
+      }
     }
     case CLOSE_ALL_MODALS: {
-      const newState: ModalState = {};
+      const newState: ModalState = {}
       for (const name in state) {
-        newState[name] = { ...state[name], open: false };
+        newState[name] = { ...state[name], open: false }
       }
-      return newState;
+      return newState
     }
     default:
-      return state;
+      return state
   }
 }
