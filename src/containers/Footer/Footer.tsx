@@ -1,12 +1,7 @@
 import * as React from 'react'
-
-import {
-  Footer as FooterComponent,
-  FooterI18N
-} from 'decentraland-ui/dist/components/Footer/Footer'
-
-import { FooterProps } from './Footer.types'
+import { Footer as FooterComponent, FooterI18N } from 'decentraland-ui/dist/components/Footer/Footer'
 import { T } from '../../modules/translation/utils'
+import { FooterProps } from './Footer.types'
 
 export default class Footer extends React.PureComponent<FooterProps> {
   getTranslations = (): FooterI18N | undefined => {
@@ -40,12 +35,6 @@ export default class Footer extends React.PureComponent<FooterProps> {
   }
 
   render() {
-    return (
-      <FooterComponent
-        {...this.props}
-        onChange={this.handleChange}
-        i18n={this.getTranslations()}
-      />
-    )
+    return <FooterComponent {...this.props} onChange={this.handleChange} i18n={this.getTranslations()} />
   }
 }

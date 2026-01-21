@@ -1,63 +1,47 @@
 import { ethers } from 'ethers'
-import {
-  put,
-  call,
-  all,
-  takeEvery,
-  race,
-  take,
-  delay,
-  select,
-  fork
-} from 'redux-saga/effects'
+import { all, call, delay, fork, put, race, select, take, takeEvery } from 'redux-saga/effects'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
-import { connection, Provider } from 'decentraland-connect'
-import {
-  _getAppChainId,
-  getConnectedProvider,
-  isCucumberProvider,
-  isValidChainId,
-  _setAppChainId
-} from '../../lib/eth'
-import {
-  connectWalletSuccess,
-  connectWalletFailure,
-  CONNECT_WALLET_REQUEST,
-  EnableWalletRequestAction,
-  enableWalletFailure,
-  enableWalletSuccess,
-  EnableWalletSuccessAction,
-  connectWalletRequest,
-  ENABLE_WALLET_REQUEST,
-  ENABLE_WALLET_SUCCESS,
-  DisconnectWalletRequestAction,
-  DISCONNECT_WALLET_REQUEST,
-  FETCH_WALLET_REQUEST,
-  FetchWalletRequestAction,
-  fetchWalletSuccess,
-  fetchWalletFailure,
-  fetchWalletRequest,
-  FETCH_WALLET_SUCCESS,
-  FETCH_WALLET_FAILURE,
-  FetchWalletSuccessAction,
-  FetchWalletFailureAction,
-  CONNECT_WALLET_SUCCESS,
-  SWITCH_NETWORK_REQUEST,
-  SwitchNetworkRequestAction,
-  switchNetworkSuccess,
-  switchNetworkFailure,
-  setAppChainId,
-  disconnectWalletSuccess,
-  disconnectWalletFailure
-} from './actions'
+import { Provider, connection } from 'decentraland-connect'
+import { isErrorWithMessage } from '../../lib'
+import { _getAppChainId, _setAppChainId, getConnectedProvider, isCucumberProvider, isValidChainId } from '../../lib/eth'
 import { showToast } from '../toast'
 import { getSwitchChainErrorToast } from '../toast/toasts'
-import { getTransactionsApiUrl, setTransactionsApiUrl } from './utils'
-import { switchProviderChainId } from './utils/switchProviderChainId'
-import { buildWallet } from './utils/buildWallet'
-import { CreateWalletOptions, ProviderType, Wallet } from './types'
+import {
+  CONNECT_WALLET_REQUEST,
+  CONNECT_WALLET_SUCCESS,
+  DISCONNECT_WALLET_REQUEST,
+  DisconnectWalletRequestAction,
+  ENABLE_WALLET_REQUEST,
+  ENABLE_WALLET_SUCCESS,
+  EnableWalletRequestAction,
+  EnableWalletSuccessAction,
+  FETCH_WALLET_FAILURE,
+  FETCH_WALLET_REQUEST,
+  FETCH_WALLET_SUCCESS,
+  FetchWalletFailureAction,
+  FetchWalletRequestAction,
+  FetchWalletSuccessAction,
+  SWITCH_NETWORK_REQUEST,
+  SwitchNetworkRequestAction,
+  connectWalletFailure,
+  connectWalletRequest,
+  connectWalletSuccess,
+  disconnectWalletFailure,
+  disconnectWalletSuccess,
+  enableWalletFailure,
+  enableWalletSuccess,
+  fetchWalletFailure,
+  fetchWalletRequest,
+  fetchWalletSuccess,
+  setAppChainId,
+  switchNetworkFailure,
+  switchNetworkSuccess
+} from './actions'
 import { getAppChainId, isConnected } from './selectors'
-import { isErrorWithMessage } from '../../lib'
+import { CreateWalletOptions, ProviderType, Wallet } from './types'
+import { getTransactionsApiUrl, setTransactionsApiUrl } from './utils'
+import { buildWallet } from './utils/buildWallet'
+import { switchProviderChainId } from './utils/switchProviderChainId'
 
 // Patch Samsung's Cucumber provider send to support promises
 const provider = (window as any).ethereum as ethers.providers.Web3Provider
@@ -69,9 +53,7 @@ if (isCucumberProvider()) {
   const _send = provider.send
   cucumberProviderSend = (...args: any[]) => {
     try {
-      return Promise.resolve(_send.apply(provider, args)).then(
-        accounts => accounts?.result || []
-      )
+      return Promise.resolve(_send.apply(provider, args)).then(accounts => accounts?.result || [])
     } catch (err) {
       return Promise.reject(err)
     }
@@ -84,9 +66,7 @@ export async function getAccount(providerType: ProviderType) {
   }
 
   const { account } = await connection.connect(
-    providerType === ProviderType.WALLET_CONNECT
-      ? ProviderType.WALLET_CONNECT_V2
-      : providerType,
+    providerType === ProviderType.WALLET_CONNECT ? ProviderType.WALLET_CONNECT_V2 : providerType,
     _getAppChainId()
   )
 
@@ -156,18 +136,12 @@ function* handleEnableWalletSuccess(_action: EnableWalletSuccessAction) {
   yield put(connectWalletRequest())
 }
 
-function* handleDisconnectWalletRequest(
-  _action: DisconnectWalletRequestAction
-) {
+function* handleDisconnectWalletRequest(_action: DisconnectWalletRequestAction) {
   try {
     yield call([connection, 'disconnect'])
     yield put(disconnectWalletSuccess())
   } catch (error) {
-    yield put(
-      disconnectWalletFailure(
-        isErrorWithMessage(error) ? error.message : 'Error disconnecting wallet'
-      )
-    )
+    yield put(disconnectWalletFailure(isErrorWithMessage(error) ? error.message : 'Error disconnecting wallet'))
   }
   // stop polling wallet balances
   polling = false
@@ -202,12 +176,7 @@ function* handleSwitchNetworkRequest(action: SwitchNetworkRequestAction) {
   const provider: Provider | null = yield call(getConnectedProvider)
 
   if (!provider) {
-    yield put(
-      switchNetworkFailure(
-        chainId,
-        'Error switching network: Could not get provider'
-      )
-    )
+    yield put(switchNetworkFailure(chainId, 'Error switching network: Could not get provider'))
   } else {
     try {
       const { timeout } = yield race({
@@ -236,11 +205,7 @@ export function createWalletSaga(options: CreateWalletOptions) {
   if (isValidChainId(options.CHAIN_ID)) {
     _setAppChainId(Number(options.CHAIN_ID))
   } else {
-    throw new Error(
-      `Invalid Chain id ${options.CHAIN_ID}. Valid options are ${Object.values(
-        ChainId
-      )}`
-    )
+    throw new Error(`Invalid Chain id ${options.CHAIN_ID}. Valid options are ${Object.values(ChainId)}`)
   }
 
   if (options.MANA_ADDRESS) {
@@ -256,9 +221,7 @@ export function createWalletSaga(options: CreateWalletOptions) {
   if (options.TRANSACTIONS_API_URL) {
     setTransactionsApiUrl(options.TRANSACTIONS_API_URL)
   } else {
-    console.warn(
-      `"TRANSACTIONS_API_URL" not provided on createWalletSaga, using default value "${getTransactionsApiUrl()}".`
-    )
+    console.warn(`"TRANSACTIONS_API_URL" not provided on createWalletSaga, using default value "${getTransactionsApiUrl()}".`)
   }
 
   return walletSaga

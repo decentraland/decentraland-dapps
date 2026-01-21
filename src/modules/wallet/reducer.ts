@@ -1,44 +1,44 @@
-import { loadingReducer, LoadingState } from '../loading/reducer'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
-import { Wallet } from './types'
+import { LoadingState, loadingReducer } from '../loading/reducer'
 import {
-  ConnectWalletRequestAction,
-  ConnectWalletSuccessAction,
-  ConnectWalletFailureAction,
-  CONNECT_WALLET_REQUEST,
-  CONNECT_WALLET_SUCCESS,
-  CONNECT_WALLET_FAILURE,
-  ChangeAccountAction,
-  ChangeNetworkAction,
   CHANGE_ACCOUNT,
   CHANGE_NETWORK,
-  EnableWalletRequestAction,
-  EnableWalletSuccessAction,
-  EnableWalletFailureAction,
-  ENABLE_WALLET_REQUEST,
-  ENABLE_WALLET_SUCCESS,
-  ENABLE_WALLET_FAILURE,
-  FETCH_WALLET_REQUEST,
-  FetchWalletRequestAction,
-  FetchWalletSuccessAction,
-  FetchWalletFailureAction,
-  FETCH_WALLET_SUCCESS,
-  FETCH_WALLET_FAILURE,
-  SetAppChainIdAction,
-  SET_APP_CHAIN_ID,
-  SWITCH_NETWORK_REQUEST,
-  SwitchNetworkRequestAction,
-  SwitchNetworkSuccessAction,
-  SwitchNetworkFailureAction,
-  SWITCH_NETWORK_SUCCESS,
-  SWITCH_NETWORK_FAILURE,
-  DISCONNECT_WALLET_SUCCESS,
+  CONNECT_WALLET_FAILURE,
+  CONNECT_WALLET_REQUEST,
+  CONNECT_WALLET_SUCCESS,
+  ChangeAccountAction,
+  ChangeNetworkAction,
+  ConnectWalletFailureAction,
+  ConnectWalletRequestAction,
+  ConnectWalletSuccessAction,
+  DISCONNECT_WALLET_FAILURE,
   DISCONNECT_WALLET_REQUEST,
-  DisconnectWalletSuccessAction,
+  DISCONNECT_WALLET_SUCCESS,
   DisconnectWalletFailureAction,
   DisconnectWalletRequestAction,
-  DISCONNECT_WALLET_FAILURE
+  DisconnectWalletSuccessAction,
+  ENABLE_WALLET_FAILURE,
+  ENABLE_WALLET_REQUEST,
+  ENABLE_WALLET_SUCCESS,
+  EnableWalletFailureAction,
+  EnableWalletRequestAction,
+  EnableWalletSuccessAction,
+  FETCH_WALLET_FAILURE,
+  FETCH_WALLET_REQUEST,
+  FETCH_WALLET_SUCCESS,
+  FetchWalletFailureAction,
+  FetchWalletRequestAction,
+  FetchWalletSuccessAction,
+  SET_APP_CHAIN_ID,
+  SWITCH_NETWORK_FAILURE,
+  SWITCH_NETWORK_REQUEST,
+  SWITCH_NETWORK_SUCCESS,
+  SetAppChainIdAction,
+  SwitchNetworkFailureAction,
+  SwitchNetworkRequestAction,
+  SwitchNetworkSuccessAction
 } from './actions'
+import { Wallet } from './types'
 
 export type WalletState = {
   data: Wallet | null
@@ -74,10 +74,7 @@ export type WalletReducerAction =
   | FetchWalletFailureAction
   | SetAppChainIdAction
 
-export function walletReducer(
-  state: WalletState = INITIAL_STATE,
-  action: WalletReducerAction
-): WalletState {
+export function walletReducer(state: WalletState = INITIAL_STATE, action: WalletReducerAction): WalletState {
   switch (action.type) {
     case FETCH_WALLET_REQUEST:
     case ENABLE_WALLET_REQUEST:

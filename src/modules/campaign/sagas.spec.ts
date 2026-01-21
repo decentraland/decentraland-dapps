@@ -1,27 +1,11 @@
 import { expectSaga } from 'redux-saga-test-plan'
 import * as matchers from 'redux-saga-test-plan/matchers'
 import { throwError } from 'redux-saga-test-plan/providers'
-import {
-  ContentfulResponse,
-  MarketingAdminFields,
-  ContentfulEntry,
-  LocalizedField,
-  ContentfulAsset,
-  BannerFields
-} from '@dcl/schemas'
-import {
-  mockAdminEntry,
-  marketplaceHomepageBannerAssets,
-  mockCampaignEntry,
-  mockHomepageBannerEntry
-} from '../../tests/contentfulMocks'
+import { ContentfulResponse, MarketingAdminFields, ContentfulEntry, LocalizedField, ContentfulAsset, BannerFields } from '@dcl/schemas'
+import { mockAdminEntry, marketplaceHomepageBannerAssets, mockCampaignEntry, mockHomepageBannerEntry } from '../../tests/contentfulMocks'
 import { ContentfulClient } from './ContentfulClient'
 import { campaignSagas } from './sagas'
-import {
-  fetchCampaignRequest,
-  fetchCampaignSuccess,
-  fetchCampaignFailure
-} from './actions'
+import { fetchCampaignRequest, fetchCampaignSuccess, fetchCampaignFailure } from './actions'
 
 describe('when handling the fetch campaign request', () => {
   const BANNER_CONTENT_TYPE = 'banner'
@@ -67,10 +51,13 @@ describe('when handling the fetch campaign request', () => {
           id: mockHomepageBannerEntry.sys.id
         }
       },
-      assets: marketplaceHomepageBannerAssets.reduce((acc, asset) => {
-        acc[asset.sys.id] = asset
-        return acc
-      }, {} as Record<string, ContentfulAsset>),
+      assets: marketplaceHomepageBannerAssets.reduce(
+        (acc, asset) => {
+          acc[asset.sys.id] = asset
+          return acc
+        },
+        {} as Record<string, ContentfulAsset>
+      ),
       name: mockCampaignEntry.fields.name,
       tabName: mockCampaignEntry.fields.marketplaceTabName,
       mainTag: mockCampaignEntry.fields.mainTag?.['en-US'],
@@ -83,37 +70,22 @@ describe('when handling the fetch campaign request', () => {
       return expectSaga(campaignSagas, mockClient, mockConfig)
         .provide([
           [
-            matchers.call(
-              [mockClient, 'fetchEntryAllLocales'],
-              mockConfig.space,
-              mockConfig.environment,
-              mockConfig.id
-            ),
+            matchers.call([mockClient, 'fetchEntryAllLocales'], mockConfig.space, mockConfig.environment, mockConfig.id),
             Promise.resolve(mockAdminEntry)
           ],
           [
-            matchers.call(
-              [mockClient, 'fetchEntriesFromEntryFields'],
-              mockConfig.space,
-              mockConfig.environment,
-              mockAdminEntry.fields
-            ),
+            matchers.call([mockClient, 'fetchEntriesFromEntryFields'], mockConfig.space, mockConfig.environment, mockAdminEntry.fields),
             Promise.resolve({
               [mockCampaignEntry.sys.id]: mockCampaignEntry,
               [mockHomepageBannerEntry.sys.id]: mockHomepageBannerEntry
             })
           ],
           [
-            matchers.call(
-              [mockClient, 'fetchAssetsFromEntryFields'],
-              mockConfig.space,
-              mockConfig.environment,
-              [
-                mockAdminEntry.fields,
-                mockCampaignEntry.fields,
-                mockHomepageBannerEntry.fields
-              ]
-            ),
+            matchers.call([mockClient, 'fetchAssetsFromEntryFields'], mockConfig.space, mockConfig.environment, [
+              mockAdminEntry.fields,
+              mockCampaignEntry.fields,
+              mockHomepageBannerEntry.fields
+            ]),
             Promise.resolve(mockResponse.assets)
           ]
         ])
@@ -138,15 +110,7 @@ describe('when handling the fetch campaign request', () => {
 
       return expectSaga(campaignSagas, mockClient, mockConfig)
         .provide([
-          [
-            matchers.call(
-              [mockClient, 'fetchEntryAllLocales'],
-              mockConfig.space,
-              mockConfig.environment,
-              mockConfig.id
-            ),
-            throwError(error)
-          ]
+          [matchers.call([mockClient, 'fetchEntryAllLocales'], mockConfig.space, mockConfig.environment, mockConfig.id), throwError(error)]
         ])
         .put(fetchCampaignFailure('Network error'))
         .dispatch(fetchCampaignRequest())
@@ -159,12 +123,7 @@ describe('when handling the fetch campaign request', () => {
       return expectSaga(campaignSagas, mockClient, mockConfig)
         .provide([
           [
-            matchers.call(
-              [mockClient, 'fetchEntryAllLocales'],
-              mockConfig.space,
-              mockConfig.environment,
-              mockConfig.id
-            ),
+            matchers.call([mockClient, 'fetchEntryAllLocales'], mockConfig.space, mockConfig.environment, mockConfig.id),
             throwError(new Error('Failed to fetch campaign data'))
           ]
         ])

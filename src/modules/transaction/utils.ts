@@ -1,29 +1,29 @@
 import { AnyAction } from 'redux'
-import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { fork, race, take } from 'redux-saga/effects'
+import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import {
-  Transaction,
-  TransactionPayload,
-  FINISHED_STATUS,
-  TransactionStatus,
-  FAILED_STATUS,
-  SUCCESS_STATUS,
-  ActionWithTransactionPayload,
-  CrossChainProviderType,
-  TRANSACTION_ACTION_FLAG
-} from './types'
-import {
-  FetchTransactionFailureAction,
-  FetchTransactionSuccessAction,
-  ReplaceTransactionSuccessAction,
   FETCH_TRANSACTION_FAILURE,
   FETCH_TRANSACTION_REQUEST,
   FETCH_TRANSACTION_SUCCESS,
-  REPLACE_TRANSACTION_SUCCESS,
-  UPDATE_TRANSACTION_STATUS,
+  FetchTransactionFailureAction,
   FetchTransactionRequestAction,
+  FetchTransactionSuccessAction,
+  REPLACE_TRANSACTION_SUCCESS,
+  ReplaceTransactionSuccessAction,
+  UPDATE_TRANSACTION_STATUS,
   UpdateTransactionStatusAction
 } from './actions'
+import {
+  ActionWithTransactionPayload,
+  CrossChainProviderType,
+  FAILED_STATUS,
+  FINISHED_STATUS,
+  SUCCESS_STATUS,
+  TRANSACTION_ACTION_FLAG,
+  Transaction,
+  TransactionPayload,
+  TransactionStatus
+} from './types'
 
 export function buildActionRef(transaction: Transaction) {
   const { actionType, withReceipt, isCrossChain, payload } = transaction
@@ -45,15 +45,8 @@ export function buildActionRef(transaction: Transaction) {
       transaction.crossChainProviderType
     )
   } else {
-    const buildFunction = withReceipt
-      ? buildTransactionWithReceiptPayload
-      : buildTransactionPayload
-    transactionPayload = buildFunction(
-      transaction.chainId,
-      transaction.hash,
-      payload,
-      transaction.chainId
-    )
+    const buildFunction = withReceipt ? buildTransactionWithReceiptPayload : buildTransactionPayload
+    transactionPayload = buildFunction(transaction.chainId, transaction.hash, payload, transaction.chainId)
   }
 
   return {
@@ -62,15 +55,11 @@ export function buildActionRef(transaction: Transaction) {
   }
 }
 
-export function isTransactionAction(
-  action: AnyAction
-): action is ActionWithTransactionPayload {
+export function isTransactionAction(action: AnyAction): action is ActionWithTransactionPayload {
   return Boolean(action.payload && action.payload[TRANSACTION_ACTION_FLAG])
 }
 
-export function getTransactionPayloadFromAction(
-  action: ActionWithTransactionPayload
-): TransactionPayload['_watch_tx'] {
+export function getTransactionPayloadFromAction(action: ActionWithTransactionPayload): TransactionPayload['_watch_tx'] {
   return action.payload[TRANSACTION_ACTION_FLAG]
 }
 
@@ -84,10 +73,8 @@ export function isTransactionActionCrossChain(action: AnyAction): boolean {
 }
 
 export function getTransactionFromAction(action: AnyAction): Transaction {
-  const transactionPayload: TransactionPayload['_watch_tx'] =
-    action.payload[TRANSACTION_ACTION_FLAG]
-  const isCrossChain =
-    transactionPayload.chainId !== transactionPayload.toChainId
+  const transactionPayload: TransactionPayload['_watch_tx'] = action.payload[TRANSACTION_ACTION_FLAG]
+  const isCrossChain = transactionPayload.chainId !== transactionPayload.toChainId
   return {
     events: [],
     hash: transactionPayload.hash,
@@ -116,24 +103,15 @@ export function getTransactionFromAction(action: AnyAction): Transaction {
   }
 }
 
-export function getTransactionHashFromAction(
-  action: ActionWithTransactionPayload
-): Transaction['hash'] {
+export function getTransactionHashFromAction(action: ActionWithTransactionPayload): Transaction['hash'] {
   return getTransactionPayloadFromAction(action).hash
 }
 
-export function getTransactionAddressFromAction(
-  action: ActionWithTransactionPayload
-): Transaction['from'] | undefined {
+export function getTransactionAddressFromAction(action: ActionWithTransactionPayload): Transaction['from'] | undefined {
   return getTransactionPayloadFromAction(action).from
 }
 
-export function buildTransactionPayload(
-  chainId: ChainId,
-  hash: string,
-  payload = {},
-  toChainId?: ChainId
-): TransactionPayload {
+export function buildTransactionPayload(chainId: ChainId, hash: string, payload = {}, toChainId?: ChainId): TransactionPayload {
   return {
     [TRANSACTION_ACTION_FLAG]: {
       chainId,
@@ -158,11 +136,7 @@ export function buildCrossChainTransactionFromPayload(
   return txPayload
 }
 
-export function buildTransactionWithReceiptPayload(
-  chainId: ChainId,
-  hash: string,
-  payload = {}
-): TransactionPayload {
+export function buildTransactionWithReceiptPayload(chainId: ChainId, hash: string, payload = {}): TransactionPayload {
   const txPayload = buildTransactionPayload(chainId, hash, payload, chainId)
 
   txPayload[TRANSACTION_ACTION_FLAG].withReceipt = true
@@ -170,12 +144,7 @@ export function buildTransactionWithReceiptPayload(
   return txPayload
 }
 
-export function buildTransactionWithFromPayload(
-  chainId: ChainId,
-  hash: string,
-  from: string,
-  payload = {}
-): TransactionPayload {
+export function buildTransactionWithFromPayload(chainId: ChainId, hash: string, from: string, payload = {}): TransactionPayload {
   const txPayload = buildTransactionPayload(chainId, hash, payload, chainId)
 
   txPayload[TRANSACTION_ACTION_FLAG].from = from
@@ -190,15 +159,7 @@ export type TransactionHrefOptions = {
   blockNumber?: number
 }
 
-export function getTransactionHref(
-  {
-    txHash,
-    address,
-    blockNumber,
-    crossChainProviderType
-  }: TransactionHrefOptions,
-  network?: number
-) {
+export function getTransactionHref({ txHash, address, blockNumber, crossChainProviderType }: TransactionHrefOptions, network?: number) {
   if (crossChainProviderType) {
     switch (crossChainProviderType) {
       case CrossChainProviderType.SQUID:
@@ -209,18 +170,12 @@ export function getTransactionHref(
     }
   }
 
-  const pathname = address
-    ? `/address/${address}`
-    : blockNumber
-    ? `/block/${blockNumber}`
-    : `/tx/${txHash}`
+  const pathname = address ? `/address/${address}` : blockNumber ? `/block/${blockNumber}` : `/tx/${txHash}`
 
   return `${getTransactionOrigin(network)}${pathname}`
 }
 
-export function getTransactionOrigin(
-  chainId: number = ChainId.ETHEREUM_MAINNET
-) {
+export function getTransactionOrigin(chainId: number = ChainId.ETHEREUM_MAINNET) {
   switch (chainId) {
     case ChainId.ETHEREUM_ROPSTEN:
       return 'https://ropsten.etherscan.io'
@@ -275,10 +230,7 @@ export function* waitForTx(txHash: string) {
 
     if (success?.payload.transaction.hash === txHashToWaitFor) {
       break
-    } else if (
-      failure &&
-      failure.payload.transaction.hash === txHashToWaitFor
-    ) {
+    } else if (failure && failure.payload.transaction.hash === txHashToWaitFor) {
       if (failure.payload.status === TransactionStatus.DROPPED) {
         let continueWaiting = true
         // If the transaction was dropped, follow the procedure to check what to do
@@ -307,11 +259,7 @@ export function* waitForTx(txHash: string) {
             txHashToWaitFor = replace.payload.replaceBy
             continueWaiting = true
             break
-          } else if (
-            update &&
-            update.payload.hash === txHashToWaitFor &&
-            update.payload.status === TransactionStatus.REPLACED
-          ) {
+          } else if (update && update.payload.hash === txHashToWaitFor && update.payload.status === TransactionStatus.REPLACED) {
             // A new hash wasn't found, but the transaction was replaced. We should consider the wait finished because we don't know if it failed.
             continueWaiting = false
             break
@@ -323,24 +271,16 @@ export function* waitForTx(txHash: string) {
         }
         break
       } else {
-        throw new Error(
-          `The transaction ${txHash} failed to be mined. The status is ${failure.payload.status}.`
-        )
+        throw new Error(`The transaction ${txHash} failed to be mined. The status is ${failure.payload.status}.`)
       }
     }
   }
 }
 
-export const takeEverySuccessfulTx = (
-  actionType: string,
-  worker: (...args: any[]) => any,
-  ...args: Parameters<(...args: any[]) => any>
-) =>
-  fork(function*() {
+export const takeEverySuccessfulTx = (actionType: string, worker: (...args: any[]) => any, ...args: Parameters<(...args: any[]) => any>) =>
+  fork(function* () {
     while (true) {
-      const action: FetchTransactionSuccessAction = yield take(
-        FETCH_TRANSACTION_SUCCESS
-      )
+      const action: FetchTransactionSuccessAction = yield take(FETCH_TRANSACTION_SUCCESS)
 
       if (action.payload.transaction.actionType === actionType) {
         yield fork(worker, ...args.concat(action))

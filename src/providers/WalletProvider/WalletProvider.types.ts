@@ -2,12 +2,12 @@ import { ethers } from 'ethers'
 import { Dispatch } from 'redux'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import {
-  connectWalletRequest,
+  ChangeAccountAction,
+  ChangeNetworkAction,
   ConnectWalletRequestAction,
   changeAccount,
   changeNetwork,
-  ChangeAccountAction,
-  ChangeNetworkAction
+  connectWalletRequest
 } from '../../modules/wallet/actions'
 
 export type Props = {
@@ -22,17 +22,9 @@ export type Props = {
   onChangeNetwork: typeof changeNetwork
 }
 
-export type MapStateProps = Pick<
-  Props,
-  'address' | 'chainId' | 'appChainId' | 'isConnected' | 'isConnecting'
->
-export type MapDispatchProps = Pick<
-  Props,
-  'address' | 'chainId' | 'onConnect' | 'onChangeAccount' | 'onChangeNetwork'
->
-export type MapDispatch = Dispatch<
-  ConnectWalletRequestAction | ChangeAccountAction | ChangeNetworkAction
->
+export type MapStateProps = Pick<Props, 'address' | 'chainId' | 'appChainId' | 'isConnected' | 'isConnecting'>
+export type MapDispatchProps = Pick<Props, 'address' | 'chainId' | 'onConnect' | 'onChangeAccount' | 'onChangeNetwork'>
+export type MapDispatch = Dispatch<ConnectWalletRequestAction | ChangeAccountAction | ChangeNetworkAction>
 
 export type EventType = 'accountsChanged' | 'chainChanged' | 'networkChanged'
 export type EmitterMethod = 'on' | 'removeListener'

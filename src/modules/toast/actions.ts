@@ -6,8 +6,7 @@ import { Toast } from './types'
 
 export const SHOW_TOAST = 'Show toast'
 
-export const showToast = (toast: Omit<Toast, 'id'>, position?: ToastPosition) =>
-  action(SHOW_TOAST, { toast, position })
+export const showToast = (toast: Omit<Toast, 'id'>, position?: ToastPosition) => action(SHOW_TOAST, { toast, position })
 
 export type ShowToastAction = ReturnType<typeof showToast>
 

@@ -1,25 +1,22 @@
 import { connect } from 'react-redux'
+import { ChainId } from '@dcl/schemas'
+import { getData as getProfiles } from '../../modules/profile/selectors'
+import { getLocale } from '../../modules/translation/selectors'
+import { disconnectWalletRequest, switchNetworkRequest } from '../../modules/wallet/actions'
 import {
+  getAddress,
+  getAppChainId,
+  getChainId,
+  getManaBalances,
+  getError as getWalletError,
   isConnected,
   isConnecting,
-  getAddress,
-  getChainId,
-  getAppChainId,
-  getManaBalances,
-  isSwitchingNetwork,
-  isDisconnecting
+  isDisconnecting,
+  isSwitchingNetwork
 } from '../../modules/wallet/selectors'
-import { getData as getProfiles } from '../../modules/profile/selectors'
-import { getError as getWalletError } from '../../modules/wallet/selectors'
-import { getLocale } from '../../modules/translation/selectors'
-import {
-  disconnectWalletRequest,
-  switchNetworkRequest
-} from '../../modules/wallet/actions'
 import { RootDispatch } from '../../types'
-import { NavbarProps, MapStateProps, MapDispatchProps } from './Navbar.types'
 import Navbar from './Navbar'
-import { ChainId } from '@dcl/schemas'
+import { MapDispatchProps, MapStateProps, NavbarProps } from './Navbar.types'
 
 const mapState = (state: any): MapStateProps => {
   const address = getAddress(state)
@@ -40,16 +37,11 @@ const mapState = (state: any): MapStateProps => {
 }
 
 const mapDispatch = (dispatch: RootDispatch): MapDispatchProps => ({
-  onSwitchNetwork: (chainId: ChainId, fromChainId: ChainId) =>
-    dispatch(switchNetworkRequest(chainId, fromChainId)),
+  onSwitchNetwork: (chainId: ChainId, fromChainId: ChainId) => dispatch(switchNetworkRequest(chainId, fromChainId)),
   onSignOut: () => dispatch(disconnectWalletRequest())
 })
 
-const mergeProps = (
-  stateProps: MapStateProps,
-  dispatchProps: MapDispatchProps,
-  ownProps: NavbarProps
-): NavbarProps => ({
+const mergeProps = (stateProps: MapStateProps, dispatchProps: MapDispatchProps, ownProps: NavbarProps): NavbarProps => ({
   ...stateProps,
   ...dispatchProps,
   ...ownProps

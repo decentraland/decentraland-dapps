@@ -3,18 +3,11 @@ import { BigNumber } from 'ethers'
 import { render, RenderResult, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Network } from '@dcl/schemas'
-import {
-  Authorization,
-  AuthorizationType
-} from '../../../modules/authorization/types'
+import { Authorization, AuthorizationType } from '../../../modules/authorization/types'
 import { t } from '../../../modules/translation/utils'
 import * as analyticsUtils from '../../../modules/analytics/utils'
 import { AuthorizationModal } from './AuthorizationModal'
-import {
-  AuthorizationStepStatus,
-  AuthorizedAction,
-  Props
-} from './AuthorizationModal.types'
+import { AuthorizationStepStatus, AuthorizedAction, Props } from './AuthorizationModal.types'
 
 jest.mock('../../../containers', () => ({
   TransactionLink: () => 'test'
@@ -40,9 +33,7 @@ function getAuthorizationModal(props: Partial<Props>) {
       onGrant={jest.fn()}
       onFetchAuthorizations={jest.fn()}
       onAuthorized={jest.fn()}
-      getConfirmationStatus={jest
-        .fn()
-        .mockReturnValue(AuthorizationStepStatus.PENDING)}
+      getConfirmationStatus={jest.fn().mockReturnValue(AuthorizationStepStatus.PENDING)}
       getConfirmationError={jest.fn()}
       error={''}
       translationKeys={{}}
@@ -221,9 +212,7 @@ describe('when authorization type is ALLOWANCE', () => {
         })
 
         it('should show waiting wallet for approval message', () => {
-          expect(
-            screen.getByText(t('@dapps.authorization_modal.waiting_wallet'))
-          ).toBeInTheDocument()
+          expect(screen.getByText(t('@dapps.authorization_modal.waiting_wallet'))).toBeInTheDocument()
         })
 
         it('should show loading icon', () => {
@@ -232,11 +221,7 @@ describe('when authorization type is ALLOWANCE', () => {
 
         it('should not show action button', () => {
           const revokeStep = screen.getByTestId('revoke-step')
-          expect(
-            within(revokeStep).queryByText(
-              t('@dapps.authorization_modal.authorize_mana.action')
-            )
-          ).not.toBeInTheDocument()
+          expect(within(revokeStep).queryByText(t('@dapps.authorization_modal.authorize_mana.action'))).not.toBeInTheDocument()
         })
       })
 
@@ -250,11 +235,7 @@ describe('when authorization type is ALLOWANCE', () => {
         })
 
         it('should show waiting wallet for approval message', () => {
-          expect(
-            screen.getByText(
-              t('@dapps.authorization_modal.waiting_confirmation')
-            )
-          ).toBeInTheDocument()
+          expect(screen.getByText(t('@dapps.authorization_modal.waiting_confirmation'))).toBeInTheDocument()
         })
 
         it('should show loading icon', () => {
@@ -263,11 +244,7 @@ describe('when authorization type is ALLOWANCE', () => {
 
         it('should not show action button', () => {
           const revokeStep = screen.getByTestId('revoke-step')
-          expect(
-            within(revokeStep).queryByText(
-              t('@dapps.authorization_modal.authorize_mana.action')
-            )
-          ).not.toBeInTheDocument()
+          expect(within(revokeStep).queryByText(t('@dapps.authorization_modal.authorize_mana.action'))).not.toBeInTheDocument()
         })
       })
 
@@ -281,9 +258,7 @@ describe('when authorization type is ALLOWANCE', () => {
         })
 
         it('should show waiting wallet for approval message', () => {
-          expect(
-            screen.getByText(t('@dapps.authorization_modal.done'))
-          ).toBeInTheDocument()
+          expect(screen.getByText(t('@dapps.authorization_modal.done'))).toBeInTheDocument()
         })
 
         it('should not show loading icon', () => {
@@ -292,11 +267,7 @@ describe('when authorization type is ALLOWANCE', () => {
 
         it('should not show action button', () => {
           const revokeStep = screen.getByTestId('revoke-step')
-          expect(
-            within(revokeStep).queryByText(
-              t('@dapps.authorization_modal.authorize_mana.action')
-            )
-          ).not.toBeInTheDocument()
+          expect(within(revokeStep).queryByText(t('@dapps.authorization_modal.authorize_mana.action'))).not.toBeInTheDocument()
         })
       })
     })
@@ -333,25 +304,15 @@ describe('when authorization type is ALLOWANCE', () => {
         })
 
         it('should show waiting wallet for approval message', () => {
-          expect(
-            within(grantStatusStep).getByText(
-              t('@dapps.authorization_modal.waiting_wallet')
-            )
-          ).toBeInTheDocument()
+          expect(within(grantStatusStep).getByText(t('@dapps.authorization_modal.waiting_wallet'))).toBeInTheDocument()
         })
 
         it('should show loading icon', () => {
-          expect(
-            within(grantStatusStep).getByTestId('step-loader')
-          ).toBeInTheDocument()
+          expect(within(grantStatusStep).getByTestId('step-loader')).toBeInTheDocument()
         })
 
         it('should not show action button', () => {
-          expect(
-            within(grantStatusStep).queryByText(
-              t('@dapps.authorization_modal.authorize_mana.action')
-            )
-          ).not.toBeInTheDocument()
+          expect(within(grantStatusStep).queryByText(t('@dapps.authorization_modal.authorize_mana.action'))).not.toBeInTheDocument()
         })
       })
 
@@ -370,25 +331,15 @@ describe('when authorization type is ALLOWANCE', () => {
         })
 
         it('should show waiting wallet for approval message', () => {
-          expect(
-            within(grantStatusStep).getByText(
-              t('@dapps.authorization_modal.waiting_confirmation')
-            )
-          ).toBeInTheDocument()
+          expect(within(grantStatusStep).getByText(t('@dapps.authorization_modal.waiting_confirmation'))).toBeInTheDocument()
         })
 
         it('should show loading icon', () => {
-          expect(
-            within(grantStatusStep).getByTestId('step-loader')
-          ).toBeInTheDocument()
+          expect(within(grantStatusStep).getByTestId('step-loader')).toBeInTheDocument()
         })
 
         it('should not show action button', () => {
-          expect(
-            within(grantStatusStep).queryByText(
-              t('@dapps.authorization_modal.authorize_mana.action')
-            )
-          ).not.toBeInTheDocument()
+          expect(within(grantStatusStep).queryByText(t('@dapps.authorization_modal.authorize_mana.action'))).not.toBeInTheDocument()
         })
       })
 
@@ -408,25 +359,15 @@ describe('when authorization type is ALLOWANCE', () => {
         })
 
         it('should show done message', () => {
-          expect(
-            within(grantStatusStep).getByText(
-              t('@dapps.authorization_modal.done')
-            )
-          ).toBeInTheDocument()
+          expect(within(grantStatusStep).getByText(t('@dapps.authorization_modal.done'))).toBeInTheDocument()
         })
 
         it('should not show loading icon', () => {
-          expect(
-            within(grantStatusStep).queryByTestId('step-loader')
-          ).not.toBeInTheDocument()
+          expect(within(grantStatusStep).queryByTestId('step-loader')).not.toBeInTheDocument()
         })
 
         it('should not show action button', () => {
-          expect(
-            within(grantStatusStep).queryByText(
-              t('@dapps.authorization_modal.authorize_mana.action')
-            )
-          ).not.toBeInTheDocument()
+          expect(within(grantStatusStep).queryByText(t('@dapps.authorization_modal.authorize_mana.action'))).not.toBeInTheDocument()
         })
       })
 
@@ -449,27 +390,16 @@ describe('when authorization type is ALLOWANCE', () => {
 
         it('should show allowance error message', () => {
           expect(
-            within(reauthorizeStep).getByText(
-              t(
-                '@dapps.authorization_modal.insufficient_amount_error.message',
-                { price: '1' }
-              )
-            )
+            within(reauthorizeStep).getByText(t('@dapps.authorization_modal.insufficient_amount_error.message', { price: '1' }))
           ).toBeInTheDocument()
         })
 
         it('should not show loading icon', () => {
-          expect(
-            within(reauthorizeStep).queryByTestId('step-loader')
-          ).not.toBeInTheDocument()
+          expect(within(reauthorizeStep).queryByTestId('step-loader')).not.toBeInTheDocument()
         })
 
         it('should show revoke action button', () => {
-          expect(
-            within(reauthorizeStep).getByText(
-              t('@dapps.authorization_modal.insufficient_amount_error.action')
-            )
-          ).toBeInTheDocument()
+          expect(within(reauthorizeStep).getByText(t('@dapps.authorization_modal.insufficient_amount_error.action'))).toBeInTheDocument()
         })
       })
     })
@@ -581,9 +511,9 @@ describe('when clicking revoke authorization button', () => {
   beforeEach(async () => {
     onRevokeMock = jest.fn()
     trackMock = jest.fn()
-    jest.spyOn(analyticsUtils, 'getAnalytics').mockReturnValue(({
+    jest.spyOn(analyticsUtils, 'getAnalytics').mockReturnValue({
       track: trackMock
-    } as any) as SegmentAnalytics.AnalyticsJS)
+    } as any as SegmentAnalytics.AnalyticsJS)
     screen = renderAuthorizationModal({
       authorizationType: AuthorizationType.ALLOWANCE,
       revokeStatus: AuthorizationStepStatus.PENDING,
@@ -606,13 +536,10 @@ describe('when clicking revoke authorization button', () => {
   })
 
   it('should track revoke authorization event', () => {
-    expect(trackMock).toHaveBeenCalledWith(
-      '[Authorization Flow] Authorize Revoke Click',
-      {
-        action: AuthorizedAction.BUY,
-        traceId: expect.any(String)
-      }
-    )
+    expect(trackMock).toHaveBeenCalledWith('[Authorization Flow] Authorize Revoke Click', {
+      action: AuthorizedAction.BUY,
+      traceId: expect.any(String)
+    })
   })
 })
 
@@ -625,9 +552,9 @@ describe('when clicking grant authorization button', () => {
     onGrantMock = jest.fn()
     trackMock = jest.fn()
 
-    jest.spyOn(analyticsUtils, 'getAnalytics').mockReturnValue(({
+    jest.spyOn(analyticsUtils, 'getAnalytics').mockReturnValue({
       track: trackMock
-    } as any) as SegmentAnalytics.AnalyticsJS)
+    } as any as SegmentAnalytics.AnalyticsJS)
 
     screen = renderAuthorizationModal({
       authorizationType: AuthorizationType.ALLOWANCE,
@@ -664,12 +591,9 @@ describe('when clicking grant authorization button', () => {
   })
 
   it('should track grant authorization event', () => {
-    expect(trackMock).toHaveBeenCalledWith(
-      '[Authorization Flow] Authorize Grant Click',
-      {
-        action: AuthorizedAction.BUY,
-        traceId: expect.any(String)
-      }
-    )
+    expect(trackMock).toHaveBeenCalledWith('[Authorization Flow] Authorize Grant Click', {
+      action: AuthorizedAction.BUY,
+      traceId: expect.any(String)
+    })
   })
 })

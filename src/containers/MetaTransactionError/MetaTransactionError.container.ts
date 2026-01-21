@@ -1,7 +1,7 @@
 import { connect } from 'react-redux'
 import { switchNetworkRequest } from '../../modules/wallet/actions'
-import { MapDispatchProps, MapDispatch } from './MetaTransactionError.types'
 import MetaTransactionError from './MetaTransactionError'
+import { MapDispatch, MapDispatchProps } from './MetaTransactionError.types'
 
 const mapState = (_state: any) => ({})
 

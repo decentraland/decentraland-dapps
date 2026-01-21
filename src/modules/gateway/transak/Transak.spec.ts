@@ -9,19 +9,8 @@ import { fetchWalletRequest } from '../../wallet/actions'
 import { getChainId } from '../../wallet/selectors'
 import { Transak } from '../transak/Transak'
 import { createGatewaySaga } from '../sagas'
-import {
-  FiatGateway,
-  GatewaySagasConfig,
-  NFTPurchase,
-  Purchase,
-  PurchaseStatus
-} from '../types'
-import {
-  CustomizationOptions,
-  OrderData,
-  TradeType,
-  TransakOrderStatus
-} from './types'
+import { FiatGateway, GatewaySagasConfig, NFTPurchase, Purchase, PurchaseStatus } from '../types'
+import { CustomizationOptions, OrderData, TradeType, TransakOrderStatus } from './types'
 
 jest.mock('../../../lib/eth')
 
@@ -40,9 +29,7 @@ jest.mock('@transak/transak-sdk', () => {
   }
 })
 
-const mockGetChainIdByNetwork = getChainIdByNetwork as jest.MockedFunction<
-  typeof getChainIdByNetwork
->
+const mockGetChainIdByNetwork = getChainIdByNetwork as jest.MockedFunction<typeof getChainIdByNetwork>
 
 const mockConfig: GatewaySagasConfig = {
   [FiatGateway.WERT]: {
@@ -194,17 +181,13 @@ describe('when interacting with Transak', () => {
         beforeEach(() => {
           Object.defineProperty(window, 'location', {
             value: {
-              href:
-                'https://decentraland.zone/contracts/contractAddress/tokens/123'
+              href: 'https://decentraland.zone/contracts/contractAddress/tokens/123'
             }
           })
         })
 
         it('should put a new message in the channel signaling the set of the purchase with the nft info and the token id', () => {
-          transak.emitPurchaseEvent(
-            mockOrderDataWithNftAssetInfo.status,
-            Network.ETHEREUM
-          )
+          transak.emitPurchaseEvent(mockOrderDataWithNftAssetInfo.status, Network.ETHEREUM)
 
           return expectSaga(gatewaySaga)
             .put(setPurchase({ ...mockNftPurchase, amount: 1 }))
@@ -216,16 +199,12 @@ describe('when interacting with Transak', () => {
         beforeEach(() => {
           Object.defineProperty(window, 'location', {
             value: {
-              href:
-                'https://decentraland.zone/contracts/contractAddress/items/234'
+              href: 'https://decentraland.zone/contracts/contractAddress/items/234'
             }
           })
         })
         it('should put a new message in the channel signaling the set of the purchase with the nft info and the item id', () => {
-          transak.emitPurchaseEvent(
-            mockOrderDataWithNftAssetInfo.status,
-            Network.ETHEREUM
-          )
+          transak.emitPurchaseEvent(mockOrderDataWithNftAssetInfo.status, Network.ETHEREUM)
           return expectSaga(gatewaySaga)
             .put(
               setPurchase({
@@ -246,17 +225,12 @@ describe('when interacting with Transak', () => {
   })
 
   describe('when opening the widget', () => {
-    let getTransakWidgetUrlSpy: jest.SpyInstance<
-      Promise<string>,
-      [Omit<CustomizationOptions, 'widgetHeight' | 'widgetWidth'>]
-    >
+    let getTransakWidgetUrlSpy: jest.SpyInstance<Promise<string>, [Omit<CustomizationOptions, 'widgetHeight' | 'widgetWidth'>]>
     const mockWidgetUrl = 'https://transak-widget.url'
 
     beforeEach(() => {
       initMock = jest.fn()
-      getTransakWidgetUrlSpy = jest
-        .spyOn(transak['marketplaceAPI'], 'getTransakWidgetUrl')
-        .mockResolvedValue(mockWidgetUrl)
+      getTransakWidgetUrlSpy = jest.spyOn(transak['marketplaceAPI'], 'getTransakWidgetUrl').mockResolvedValue(mockWidgetUrl)
     })
 
     it('should get the widget url and call the init method from the Transak SDK', async () => {

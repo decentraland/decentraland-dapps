@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { ethers } from 'ethers'
-import { AddressError, Props } from './AddressProvider.types'
 import { isENSAddress, resolveENSname } from './utils'
+import { AddressError, Props } from './AddressProvider.types'
 
 const AddressProvider = (props: Props) => {
   const { children, input, chainId } = props
@@ -38,9 +38,7 @@ const AddressProvider = (props: Props) => {
     }
   }, [isENS, input])
 
-  return (
-    <>{children({ address, ens: isENS ? input : null, isLoading, error })}</>
-  )
+  return <>{children({ address, ens: isENS ? input : null, isLoading, error })}</>
 }
 
 export default React.memo(AddressProvider)

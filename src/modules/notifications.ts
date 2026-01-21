@@ -1,17 +1,13 @@
-import { getEnv, Env } from '@dcl/ui-env'
 import { Subscription, SubscriptionDetails } from '@dcl/schemas'
+import { Env, getEnv } from '@dcl/ui-env'
 import { DCLNotification } from 'decentraland-ui/dist/components/Notifications/types'
-
 import { BaseClient, BaseClientConfig } from '../lib/BaseClient'
 
 export const NOTIFICATIONS_LIMIT = 50
 
 export class NotificationsAPI extends BaseClient {
   constructor(config: BaseClientConfig) {
-    const url =
-      getEnv() === Env.DEVELOPMENT
-        ? 'https://notifications.decentraland.zone'
-        : 'https://notifications.decentraland.org'
+    const url = getEnv() === Env.DEVELOPMENT ? 'https://notifications.decentraland.zone' : 'https://notifications.decentraland.org'
 
     super(url, config)
   }
@@ -29,17 +25,12 @@ export class NotificationsAPI extends BaseClient {
 
     const { notifications } = await this.fetch<{
       notifications: Array<DCLNotification>
-    }>(
-      `/notifications${
-        params.toString().length ? `?${params.toString()}` : ''
-      }`,
-      {
-        metadata: {
-          signer: 'dcl:navbar',
-          intent: 'dcl:navbar:see-notifications'
-        }
+    }>(`/notifications${params.toString().length ? `?${params.toString()}` : ''}`, {
+      metadata: {
+        signer: 'dcl:navbar',
+        intent: 'dcl:navbar:see-notifications'
       }
-    )
+    })
 
     return notifications.map(parseNotification)
   }
@@ -94,7 +85,7 @@ export class NotificationsAPI extends BaseClient {
     })
   }
 
-  async postEmailConfirmationCode(body: { address: string; code: string, turnstileToken?: string, source?: string }) {
+  async postEmailConfirmationCode(body: { address: string; code: string; turnstileToken?: string; source?: string }) {
     return this.fetch('/confirm-email', {
       method: 'PUT',
       body: JSON.stringify(body),

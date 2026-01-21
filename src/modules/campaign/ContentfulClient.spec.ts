@@ -1,10 +1,6 @@
 import nock from 'nock'
 import { ContentfulClient } from './ContentfulClient'
-import {
-  mockAdminEntryEn,
-  marketplaceHomepageBannerAssets,
-  mockHomepageBannerEntry
-} from '../../tests/contentfulMocks'
+import { mockAdminEntryEn, marketplaceHomepageBannerAssets, mockHomepageBannerEntry } from '../../tests/contentfulMocks'
 import { ContentfulLocale, LocalizedField } from '@dcl/schemas'
 import { ContentfulEntryWithoutLocales } from './ContentfulClient.types'
 
@@ -88,9 +84,7 @@ describe('ContentfulClient', () => {
     }
 
     nock(CMS_URL)
-      .get(
-        `/spaces/${mockSpace}/environments/${mockEnvironment}/assets/${mockId}/`
-      )
+      .get(`/spaces/${mockSpace}/environments/${mockEnvironment}/assets/${mockId}/`)
       .reply(200, marketplaceHomepageBannerAssets[0])
 
     nock.cleanAll()
@@ -103,10 +97,7 @@ describe('ContentfulClient', () => {
   describe('fetchEntry', () => {
     describe('and the request is successful', () => {
       beforeEach(() => {
-        nock(CMS_URL)
-          .get('/spaces/space-id/environments/env-id/entries/entry-id/')
-          .query({ locale: 'en-US' })
-          .reply(200, mockAdminEntryEn)
+        nock(CMS_URL).get('/spaces/space-id/environments/env-id/entries/entry-id/').query({ locale: 'en-US' }).reply(200, mockAdminEntryEn)
       })
 
       it('should return the entry data', async () => {
@@ -117,16 +108,11 @@ describe('ContentfulClient', () => {
 
     describe('and the request fails', () => {
       beforeEach(() => {
-        nock(CMS_URL)
-          .get('/spaces/space-id/environments/env-id/entries/entry-id/')
-          .query({ locale: 'en-US' })
-          .reply(500)
+        nock(CMS_URL).get('/spaces/space-id/environments/env-id/entries/entry-id/').query({ locale: 'en-US' }).reply(500)
       })
 
       it('should throw an error', async () => {
-        await expect(
-          client.fetchEntry('space-id', 'env-id', 'entry-id')
-        ).rejects.toThrow('Failed to fetch entity data')
+        await expect(client.fetchEntry('space-id', 'env-id', 'entry-id')).rejects.toThrow('Failed to fetch entity data')
       })
     })
   })
@@ -135,29 +121,19 @@ describe('ContentfulClient', () => {
     describe('when the request is successful', () => {
       beforeEach(() => {
         nock(CMS_URL)
-          .get(
-            `/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockId}/`
-          )
+          .get(`/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockId}/`)
           .query({ locale: ContentfulLocale.enUS })
           .reply(200, mockedEnResponse)
-          .get(
-            `/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockId}/`
-          )
+          .get(`/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockId}/`)
           .query({ locale: ContentfulLocale.es })
           .reply(200, mockedEsResponse)
-          .get(
-            `/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockId}/`
-          )
+          .get(`/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockId}/`)
           .query({ locale: ContentfulLocale.zh })
           .reply(200, mockedZhResponse)
       })
 
       it('should combine fields from all available locales', async () => {
-        const result = await client.fetchEntryAllLocales(
-          mockSpace,
-          mockEnvironment,
-          mockId
-        )
+        const result = await client.fetchEntryAllLocales(mockSpace, mockEnvironment, mockId)
 
         expect(result).toEqual({
           fields: {
@@ -176,17 +152,13 @@ describe('ContentfulClient', () => {
     describe('when the request fails', () => {
       beforeEach(() => {
         nock(CMS_URL)
-          .get(
-            `/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockId}/`
-          )
+          .get(`/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockId}/`)
           .query({ locale: ContentfulLocale.enUS })
           .reply(500)
       })
 
       it('should throw an error', async () => {
-        await expect(
-          client.fetchEntryAllLocales(mockSpace, mockEnvironment, mockId)
-        ).rejects.toThrow('Error fetching entry in all locales')
+        await expect(client.fetchEntryAllLocales(mockSpace, mockEnvironment, mockId)).rejects.toThrow('Error fetching entry in all locales')
       })
     })
   })
@@ -195,18 +167,12 @@ describe('ContentfulClient', () => {
     describe('when the request is successful', () => {
       beforeEach(() => {
         nock(CMS_URL)
-          .get(
-            `/spaces/${mockSpace}/environments/${mockEnvironment}/assets/${mockId}/`
-          )
+          .get(`/spaces/${mockSpace}/environments/${mockEnvironment}/assets/${mockId}/`)
           .reply(200, marketplaceHomepageBannerAssets[0])
       })
 
       it('should fetch and transform an asset to the correct format', async () => {
-        const result = await client.fetchAsset(
-          mockSpace,
-          mockEnvironment,
-          mockId
-        )
+        const result = await client.fetchAsset(mockSpace, mockEnvironment, mockId)
 
         expect(result.fields).toHaveProperty('title.en-US')
         expect(result.fields).toHaveProperty('description.en-US')
@@ -217,16 +183,12 @@ describe('ContentfulClient', () => {
     describe('when the request fails', () => {
       beforeEach(() => {
         nock(CMS_URL)
-          .get(
-            `/spaces/${mockSpace}/environments/${mockEnvironment}/assets/${mockId}/`
-          )
+          .get(`/spaces/${mockSpace}/environments/${mockEnvironment}/assets/${mockId}/`)
           .replyWithError('Failed to fetch asset data')
       })
 
       it('should throw an error', async () => {
-        await expect(
-          client.fetchAsset(mockSpace, mockEnvironment, mockId)
-        ).rejects.toThrow('Failed to fetch asset data')
+        await expect(client.fetchAsset(mockSpace, mockEnvironment, mockId)).rejects.toThrow('Failed to fetch asset data')
       })
     })
   })
@@ -235,18 +197,12 @@ describe('ContentfulClient', () => {
     describe('when there are fields to get the assets from', () => {
       beforeEach(() => {
         nock(CMS_URL)
-          .get(
-            `/spaces/${mockSpace}/environments/${mockEnvironment}/assets/${marketplaceHomepageBannerAssets[0].sys.id}/`
-          )
+          .get(`/spaces/${mockSpace}/environments/${mockEnvironment}/assets/${marketplaceHomepageBannerAssets[0].sys.id}/`)
           .reply(200, marketplaceHomepageBannerAssets[0])
       })
 
       it('should get all assets referenced in the entry fields', async () => {
-        const result = await client.fetchAssetsFromEntryFields(
-          mockSpace,
-          mockEnvironment,
-          [mockFields]
-        )
+        const result = await client.fetchAssetsFromEntryFields(mockSpace, mockEnvironment, [mockFields])
 
         expect(result).toHaveProperty(marketplaceHomepageBannerAssets[0].sys.id)
         expect(Object.keys(result)).toHaveLength(1)
@@ -255,11 +211,7 @@ describe('ContentfulClient', () => {
 
     describe('when there are no entry fields to look assets from', () => {
       it('should return empty object', async () => {
-        const result = await client.fetchAssetsFromEntryFields(
-          mockSpace,
-          mockEnvironment,
-          []
-        )
+        const result = await client.fetchAssetsFromEntryFields(mockSpace, mockEnvironment, [])
         expect(result).toEqual({})
       })
     })
@@ -269,19 +221,13 @@ describe('ContentfulClient', () => {
     describe('when there are entries to fetch', () => {
       beforeEach(() => {
         nock(CMS_URL)
-          .get(
-            `/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockHomepageBannerEntry.sys.id}/`
-          )
+          .get(`/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockHomepageBannerEntry.sys.id}/`)
           .query({ locale: ContentfulLocale.enUS })
           .reply(200, mockHomepageBannerEntry)
-          .get(
-            `/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockHomepageBannerEntry.sys.id}/`
-          )
+          .get(`/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockHomepageBannerEntry.sys.id}/`)
           .query({ locale: ContentfulLocale.es })
           .reply(200, mockHomepageBannerEntry)
-          .get(
-            `/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockHomepageBannerEntry.sys.id}/`
-          )
+          .get(`/spaces/${mockSpace}/environments/${mockEnvironment}/entries/${mockHomepageBannerEntry.sys.id}/`)
           .query({ locale: ContentfulLocale.zh })
           .reply(200, mockHomepageBannerEntry)
       })
@@ -299,11 +245,7 @@ describe('ContentfulClient', () => {
           }
         }
 
-        const result = await client.fetchEntriesFromEntryFields(
-          mockSpace,
-          mockEnvironment,
-          mockFieldsWithEntry
-        )
+        const result = await client.fetchEntriesFromEntryFields(mockSpace, mockEnvironment, mockFieldsWithEntry)
 
         expect(result).toEqual({
           [mockHomepageBannerEntry.sys.id]: {
@@ -329,11 +271,7 @@ describe('ContentfulClient', () => {
 
     describe('when there are no entries to fetch', () => {
       it('should return empty object', async () => {
-        const result = await client.fetchEntriesFromEntryFields(
-          mockSpace,
-          mockEnvironment,
-          {}
-        )
+        const result = await client.fetchEntriesFromEntryFields(mockSpace, mockEnvironment, {})
         expect(result).toEqual({})
       })
     })

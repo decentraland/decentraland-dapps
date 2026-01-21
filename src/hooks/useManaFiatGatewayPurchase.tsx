@@ -1,9 +1,9 @@
+import { useDispatch } from 'react-redux'
+import { useHistory, useLocation } from 'react-router'
 import { Network } from '@dcl/schemas'
 import { NetworkGatewayType } from 'decentraland-ui'
-import { useHistory, useLocation } from 'react-router'
-import { MoonPayTransactionStatus } from '../modules/gateway/moonpay/types'
-import { useDispatch } from 'react-redux'
 import { manaFiatGatewayPurchaseCompleted } from '../modules/gateway'
+import { MoonPayTransactionStatus } from '../modules/gateway/moonpay/types'
 
 export default function useManaFiatGatewayPurchase() {
   const location = useLocation()
@@ -11,9 +11,7 @@ export default function useManaFiatGatewayPurchase() {
   const network = query.get('network') as Network
   const gateway = query.get('gateway') as NetworkGatewayType
   const transactionId = query.get('transactionId') as string
-  const transactionStatus = query.get(
-    'transactionStatus'
-  ) as MoonPayTransactionStatus
+  const transactionStatus = query.get('transactionStatus') as MoonPayTransactionStatus
   const history = useHistory()
   const dispatch = useDispatch()
 
@@ -25,13 +23,6 @@ export default function useManaFiatGatewayPurchase() {
 
     history.replace(`${location.pathname}?${queryParams.toString()}`)
 
-    dispatch(
-      manaFiatGatewayPurchaseCompleted(
-        network,
-        gateway,
-        transactionId,
-        transactionStatus
-      )
-    )
+    dispatch(manaFiatGatewayPurchaseCompleted(network, gateway, transactionId, transactionStatus))
   }
 }

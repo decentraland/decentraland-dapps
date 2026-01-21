@@ -1,5 +1,5 @@
-import { signedFetchFactory, type AuthIdentity, type SignedRequestInit } from 'decentraland-crypto-fetch'
 import nodeURL from 'url'
+import { type AuthIdentity, type SignedRequestInit, signedFetchFactory } from 'decentraland-crypto-fetch'
 import { ClientError } from './ClientError'
 
 const DEFAULT_RETRIES = 3
@@ -22,10 +22,7 @@ export abstract class BaseClient {
   private readonly retries: number
   private readonly retryDelay: number
   private readonly nonRetryableStatuses: number[]
-  private readonly identity:
-    | AuthIdentity
-    | ((...args: unknown[]) => AuthIdentity | undefined)
-    | undefined
+  private readonly identity: AuthIdentity | ((...args: unknown[]) => AuthIdentity | undefined) | undefined
 
   constructor(url: string, config?: BaseClientConfig) {
     this.baseUrl = url
@@ -40,8 +37,7 @@ export abstract class BaseClient {
       setTimeout(resolve, delay)
     })
 
-  protected getIdentity = () =>
-    this.identity instanceof Function ? this.identity() : this.identity
+  protected getIdentity = () => (this.identity instanceof Function ? this.identity() : this.identity)
 
   protected rawFetch = (path: string, init?: SignedRequestInit): Promise<Response> => {
     const fullUrl = new URL(path, this.baseUrl)
@@ -58,8 +54,8 @@ export abstract class BaseClient {
         try {
           response = await this.rawFetch(path, init)
           const bodyText = await response.text()
-          if(bodyText.length === 0) {
-            parsedResponse = {ok: true, data: null}
+          if (bodyText.length === 0) {
+            parsedResponse = { ok: true, data: null }
           } else {
             parsedResponse = JSON.parse(bodyText)
           }
@@ -68,14 +64,8 @@ export abstract class BaseClient {
         }
 
         if (!response.ok || parsedResponse.ok === false) {
-          const errorMessage: string | undefined =
-            parsedResponse.message ?? parsedResponse.error
-          throw new ClientError(
-            errorMessage ??
-            `Request failed with status code ${response.status}`,
-            response.status,
-            parsedResponse.data
-          )
+          const errorMessage: string | undefined = parsedResponse.message ?? parsedResponse.error
+          throw new ClientError(errorMessage ?? `Request failed with status code ${response.status}`, response.status, parsedResponse.data)
         }
 
         if (parsedResponse.ok === true) {
@@ -84,10 +74,7 @@ export abstract class BaseClient {
           return parsedResponse as T
         }
       } catch (error) {
-        console.error(
-          `[API] HTTP request failed: ${error.message || ''}`,
-          error
-        )
+        console.error(`[API] HTTP request failed: ${error.message || ''}`, error)
         if (this.retries === attempt || (error.status && this.nonRetryableStatuses.includes(error.status))) throw error
         await this.sleep(this.retryDelay)
       }

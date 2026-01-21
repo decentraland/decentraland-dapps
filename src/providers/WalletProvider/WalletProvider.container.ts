@@ -1,22 +1,8 @@
 import { connect } from 'react-redux'
-import {
-  getAddress,
-  getAppChainId,
-  getChainId,
-  isConnected,
-  isConnecting
-} from '../../modules/wallet/selectors'
-import {
-  connectWalletRequest,
-  changeAccount,
-  changeNetwork
-} from '../../modules/wallet/actions'
-import {
-  MapStateProps,
-  MapDispatchProps,
-  MapDispatch
-} from './WalletProvider.types'
+import { changeAccount, changeNetwork, connectWalletRequest } from '../../modules/wallet/actions'
+import { getAddress, getAppChainId, getChainId, isConnected, isConnecting } from '../../modules/wallet/selectors'
 import WalletProvider from './WalletProvider'
+import { MapDispatch, MapDispatchProps, MapStateProps } from './WalletProvider.types'
 
 const mapState = (state: any): MapStateProps => ({
   address: getAddress(state),

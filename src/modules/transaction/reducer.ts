@@ -1,30 +1,26 @@
-import { Transaction, TransactionStatus } from './types'
+import { LoadingState, loadingReducer } from '../loading/reducer'
 import {
-  getTransactionFromAction,
-  getTransactionHref,
-  isPending
-} from './utils'
-import { loadingReducer, LoadingState } from '../loading/reducer'
-import {
-  FetchTransactionRequestAction,
-  FetchTransactionSuccessAction,
-  FetchTransactionFailureAction,
+  CLEAR_TRANSACTION,
+  CLEAR_TRANSACTIONS,
+  ClearTransactionAction,
+  ClearTransactionsAction,
+  FETCH_TRANSACTION_FAILURE,
   FETCH_TRANSACTION_REQUEST,
   FETCH_TRANSACTION_SUCCESS,
-  FETCH_TRANSACTION_FAILURE,
-  UPDATE_TRANSACTION_STATUS,
-  UpdateTransactionStatusAction,
-  UPDATE_TRANSACTION_NONCE,
-  UpdateTransactionNonceAction,
+  FIX_REVERTED_TRANSACTION,
+  FetchTransactionFailureAction,
+  FetchTransactionRequestAction,
+  FetchTransactionSuccessAction,
+  FixRevertedTransactionAction,
   REPLACE_TRANSACTION_SUCCESS,
   ReplaceTransactionSuccessAction,
-  ClearTransactionsAction,
-  ClearTransactionAction,
-  CLEAR_TRANSACTIONS,
-  CLEAR_TRANSACTION,
-  FixRevertedTransactionAction,
-  FIX_REVERTED_TRANSACTION
+  UPDATE_TRANSACTION_NONCE,
+  UPDATE_TRANSACTION_STATUS,
+  UpdateTransactionNonceAction,
+  UpdateTransactionStatusAction
 } from './actions'
+import { Transaction, TransactionStatus } from './types'
+import { getTransactionFromAction, getTransactionHref, isPending } from './utils'
 
 export type TransactionState = {
   data: Transaction[]
@@ -49,17 +45,12 @@ export type TransactionReducerAction =
   | ClearTransactionsAction
   | ClearTransactionAction
 
-export function transactionReducer(
-  state = INITIAL_STATE,
-  action: TransactionReducerAction
-): TransactionState {
+export function transactionReducer(state = INITIAL_STATE, action: TransactionReducerAction): TransactionState {
   switch (action.type) {
     case FETCH_TRANSACTION_REQUEST: {
       const actionRef = action.payload.action
       const transaction = getTransactionFromAction(actionRef)
-      const otherTransactions = state.data.filter(
-        otherTransaction => otherTransaction.hash !== transaction.hash
-      )
+      const otherTransactions = state.data.filter(otherTransaction => otherTransaction.hash !== transaction.hash)
       return {
         loading: loadingReducer(state.loading, action),
         error: null,
@@ -161,10 +152,7 @@ export function transactionReducer(
             ? {
                 ...transaction,
                 status: TransactionStatus.REPLACED,
-                url: getTransactionHref(
-                  { txHash: action.payload.replaceBy },
-                  transaction.chainId
-                ),
+                url: getTransactionHref({ txHash: action.payload.replaceBy }, transaction.chainId),
                 replacedBy: action.payload.replaceBy
               }
             : transaction
@@ -176,8 +164,7 @@ export function transactionReducer(
         ...state,
         data: state.data.filter(
           transaction =>
-            transaction.from.toLowerCase() !==
-              action.payload.address.toLowerCase() &&
+            transaction.from.toLowerCase() !== action.payload.address.toLowerCase() &&
             (action.payload.clearPendings || !isPending(transaction.status))
         )
       }
@@ -185,9 +172,7 @@ export function transactionReducer(
     case CLEAR_TRANSACTION: {
       return {
         ...state,
-        data: state.data.filter(
-          transaction => transaction.hash !== action.payload.hash
-        )
+        data: state.data.filter(transaction => transaction.hash !== action.payload.hash)
       }
     }
     default:

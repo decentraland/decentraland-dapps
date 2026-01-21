@@ -1,5 +1,5 @@
-import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import React from 'react'
+import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 
 export enum AddressError {
   INVALID = 'invalid_address',

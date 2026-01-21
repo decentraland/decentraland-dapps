@@ -1,5 +1,5 @@
-import { AnyAction } from 'redux'
 import { isbot } from 'isbot'
+import { AnyAction } from 'redux'
 import { Wallet } from '../wallet/types'
 import {
   ActionType,
@@ -17,15 +17,9 @@ export const trackedActions: { [key: string]: AnalyticsAction } = {}
 
 let transformPayload: TransformPayload | null = null
 
-export function add(
-  actionType: ActionType,
-  eventName?: EventName,
-  getPayload?: GetPayload
-) {
+export function add(actionType: ActionType, eventName?: EventName, getPayload?: GetPayload) {
   if (actionType in trackedActions) {
-    console.warn(
-      `Analytics: the action type "${actionType}" is already being tracked!`
-    )
+    console.warn(`Analytics: the action type "${actionType}" is already being tracked!`)
     return
   }
   trackedActions[actionType] = { actionType, eventName, getPayload }
@@ -52,10 +46,7 @@ export function track(action: AnyAction) {
       payload = getPayload(action)
     }
 
-    analytics.track(
-      event,
-      transformPayload ? transformPayload(payload) : payload
-    )
+    analytics.track(event, transformPayload ? transformPayload(payload) : payload)
   }
 }
 
@@ -173,7 +164,7 @@ export function getSolanaWallets() {
   if (windowWallets.braveSolana?.isBraveWallet === true) names.add('brave')
   if (windowWallets.solong !== undefined) names.add('solong')
   if (windowWallets.exodus?.solana !== undefined) names.add('exodus')
-  if (Boolean(windowWallets.glowSolana)) names.add('glow')
+  if (windowWallets.glowSolana) names.add('glow')
   if (windowWallets.solana?.isPhantom === true) names.add('phantom')
   if (windowWallets.solana?.isMathWallet === true) names.add('mathwallet')
   if (windowWallets.coin98 !== undefined) names.add('coin98')
@@ -181,8 +172,7 @@ export function getSolanaWallets() {
   if (windowWallets.clover_solana !== undefined) names.add('clover')
   if (windowWallets.Slope !== undefined) names.add('slope')
   if (windowWallets.huobiWallet?.isHuobiWallet === true) names.add('huobi')
-  if (typeof windowWallets?.nightly?.solana !== 'undefined')
-    names.add('nightly')
+  if (typeof windowWallets?.nightly?.solana !== 'undefined') names.add('nightly')
 
   return Array.from(names)
 }

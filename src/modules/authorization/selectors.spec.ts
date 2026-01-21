@@ -13,12 +13,7 @@ import {
   getApproveTransactions,
   isAuthorizing
 } from './selectors'
-import {
-  AUTHORIZATION_FLOW_REQUEST,
-  GRANT_TOKEN_SUCCESS,
-  REVOKE_TOKEN_REQUEST,
-  REVOKE_TOKEN_SUCCESS
-} from './actions'
+import { AUTHORIZATION_FLOW_REQUEST, GRANT_TOKEN_SUCCESS, REVOKE_TOKEN_REQUEST, REVOKE_TOKEN_SUCCESS } from './actions'
 import { AuthorizationType } from './types'
 
 describe('Authorization selectors', () => {
@@ -79,9 +74,7 @@ describe('Authorization selectors', () => {
 
   describe('when getting the loading state', () => {
     it('should return the loading state', () => {
-      expect(getLoading(mockState)).toEqual([
-        { type: AUTHORIZATION_FLOW_REQUEST }
-      ])
+      expect(getLoading(mockState)).toEqual([{ type: AUTHORIZATION_FLOW_REQUEST }])
     })
   })
 
@@ -264,9 +257,7 @@ describe('Authorization selectors', () => {
       })
 
       it('should return only APPROVAL type transactions', () => {
-        expect(getApproveTransactions(mockState)).toEqual([
-          mockState.transaction.data[0]
-        ])
+        expect(getApproveTransactions(mockState)).toEqual([mockState.transaction.data[0]])
       })
     })
 

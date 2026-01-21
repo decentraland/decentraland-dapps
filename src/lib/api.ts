@@ -1,4 +1,4 @@
-import axios, { AxiosResponse, AxiosRequestConfig } from 'axios'
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 
 const httpClient = axios.create()
 
@@ -38,7 +38,7 @@ export class BaseAPI {
     retryParams?: RetryParams
   ) {
     const retry = retryParams ?? this.retry
-    let options: AxiosRequestConfig = {
+    const options: AxiosRequestConfig = {
       ...axiosRequestConfig,
       method,
       url: this.getUrl(path)
@@ -61,10 +61,7 @@ export class BaseAPI {
 
         return !ok || error ? Promise.reject({ message: error, data }) : data
       } catch (error) {
-        console.error(
-          `[API] HTTP request failed: ${error.message || ''}`,
-          error
-        )
+        console.error(`[API] HTTP request failed: ${error.message || ''}`, error)
         if (retry.attempts <= attempts) throw error
         attempts++
       }

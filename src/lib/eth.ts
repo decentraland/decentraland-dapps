@@ -1,8 +1,8 @@
-import { connection, Provider } from 'decentraland-connect'
+import { ethers } from 'ethers'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { Network } from '@dcl/schemas/dist/dapps/network'
-import { ethers } from 'ethers'
 import { ProviderType } from '@dcl/schemas/dist/dapps/provider-type'
+import { Provider, connection } from 'decentraland-connect'
 import { getChainConfiguration } from './chainConfiguration'
 import { isMobile } from './utils'
 
@@ -42,11 +42,7 @@ export async function getNetworkProvider(chainId: ChainId): Promise<Provider> {
   */
   const connectedProvider = await getConnectedProvider()
   if (connectedProvider) {
-    const connectedChainId = await new ethers.providers.Web3Provider(
-      connectedProvider
-    )
-      .getSigner()
-      .getChainId()
+    const connectedChainId = await new ethers.providers.Web3Provider(connectedProvider).getSigner().getChainId()
     if (chainId === connectedChainId) {
       return connectedProvider
     }
@@ -62,11 +58,11 @@ export async function getNetworkWeb3Provider(chainId: ChainId) {
 export async function getConnectedProvider(): Promise<Provider | null> {
   try {
     return await connection.getProvider()
-  } catch (_e) {
+  } catch {
     try {
       const { provider } = await connection.tryPreviousConnection()
       return provider
-    } catch (error) {
+    } catch {
       return null
     }
   }
@@ -117,7 +113,5 @@ export function getChainIdByNetwork(network: Network) {
     throw new Error('Could not get app chain id')
   }
   const config = getChainConfiguration(appChainId)
-  return network === Network.ETHEREUM || network === Network.MATIC
-    ? config.networkMapping[network]
-    : ChainId.ETHEREUM_MAINNET
+  return network === Network.ETHEREUM || network === Network.MATIC ? config.networkMapping[network] : ChainId.ETHEREUM_MAINNET
 }

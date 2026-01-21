@@ -1,10 +1,7 @@
-import { takeLatest, ForkEffect } from 'redux-saga/effects'
+import { ForkEffect, takeLatest } from 'redux-saga/effects'
 import { connection } from 'decentraland-connect'
+import { CONNECT_WALLET_SUCCESS, ConnectWalletSuccessAction } from '../wallet/actions'
 import { getAnalytics, trackConnectWallet } from './utils'
-import {
-  CONNECT_WALLET_SUCCESS,
-  ConnectWalletSuccessAction
-} from '../wallet/actions'
 
 export function createAnalyticsSaga() {
   return function* analyticsSaga(): IterableIterator<ForkEffect> {

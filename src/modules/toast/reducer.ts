@@ -1,25 +1,12 @@
-import {
-  RENDER_TOAST,
-  HIDE_TOAST,
-  RenderToastAction,
-  HideToastAction,
-  HIDE_ALL_TOASTS,
-  HideAllToastsAction
-} from './actions'
+import { HIDE_ALL_TOASTS, HIDE_TOAST, HideAllToastsAction, HideToastAction, RENDER_TOAST, RenderToastAction } from './actions'
 
 export type ToastState = number[] // we only store ids here, check cache.ts for the entire data
 
 const INITIAL_STATE: ToastState = []
 
-export type ToastReducerAction =
-  | RenderToastAction
-  | HideToastAction
-  | HideAllToastsAction
+export type ToastReducerAction = RenderToastAction | HideToastAction | HideAllToastsAction
 
-export function toastReducer(
-  state = INITIAL_STATE,
-  action: ToastReducerAction
-): ToastState {
+export function toastReducer(state = INITIAL_STATE, action: ToastReducerAction): ToastState {
   switch (action.type) {
     case RENDER_TOAST: {
       const { id } = action.payload

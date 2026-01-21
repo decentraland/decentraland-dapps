@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Web2TransactionModal as UIWeb2TransactionModal } from 'decentraland-ui/dist/components/Web2TransactionModal'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
+import { Web2TransactionModal as UIWeb2TransactionModal } from 'decentraland-ui/dist/components/Web2TransactionModal'
 import { t } from '../../modules/translation'
+import { isWeb2Wallet } from '../../modules/wallet/utils/providerChecks'
 import { transactionEvents } from '../../modules/wallet/utils/transactionEvents'
 import { TransactionEventType } from '../../modules/wallet/utils/types'
-import { isWeb2Wallet } from '../../modules/wallet/utils/providerChecks'
 import { Web2TransactionModalProps } from './Web2TransactionsModal.types'
 
 type EventData = {
@@ -79,16 +79,10 @@ export const Web2TransactionsModal = (props: Web2TransactionModalProps) => {
             </a>
           )
         }),
-        transactionCostTitle: t(
-          '@dapps.web2_transactions.transactionCostTitle'
-        ),
+        transactionCostTitle: t('@dapps.web2_transactions.transactionCostTitle'),
         userBalanceTitle: t('@dapps.web2_transactions.userBalanceTitle'),
-        balanceNotEnoughTitle: t(
-          '@dapps.web2_transactions.balanceNotEnoughTitle'
-        ),
-        balanceNotEnoughContent: t(
-          '@dapps.web2_transactions.balanceNotEnoughContent'
-        ),
+        balanceNotEnoughTitle: t('@dapps.web2_transactions.balanceNotEnoughTitle'),
+        balanceNotEnoughContent: t('@dapps.web2_transactions.balanceNotEnoughContent'),
         accept: t('@dapps.web2_transactions.accept'),
         reject: t('@dapps.web2_transactions.reject')
       }}

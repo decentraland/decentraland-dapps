@@ -5,7 +5,4 @@ export type Web2TransactionModalProps = {
   wallet: Wallet | null
 }
 
-export type MapStateProps = Pick<
-  Web2TransactionModalProps,
-  'wallet' | 'isMagicAutoSignEnabled'
->
+export type MapStateProps = Pick<Web2TransactionModalProps, 'wallet' | 'isMagicAutoSignEnabled'>

@@ -11,17 +11,4 @@ import * as transaction from './transaction'
 import * as translation from './translation'
 import * as wallet from './wallet'
 
-export {
-  analytics,
-  authorization,
-  features,
-  gateway,
-  identity,
-  loading,
-  modal,
-  profile,
-  toast,
-  transaction,
-  translation,
-  wallet
-}
+export { analytics, authorization, features, gateway, identity, loading, modal, profile, toast, transaction, translation, wallet }

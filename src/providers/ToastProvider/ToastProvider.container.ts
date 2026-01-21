@@ -1,9 +1,9 @@
 import { connect } from 'react-redux'
 // import { RootDispatch } from '../../types'
-import { getToasts } from '../../modules/toast/selectors'
 import { hideToast } from '../../modules/toast/actions'
-import { MapStateProps, MapDispatchProps } from './ToastProvider.types'
+import { getToasts } from '../../modules/toast/selectors'
 import ToastProvider from './ToastProvider'
+import { MapDispatchProps, MapStateProps } from './ToastProvider.types'
 
 type RootDispatch = any
 

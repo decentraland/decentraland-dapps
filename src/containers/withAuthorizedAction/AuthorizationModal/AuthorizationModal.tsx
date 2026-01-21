@@ -1,28 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { v4 as uuid } from 'uuid'
 import { Network } from '@dcl/schemas'
-import {
-  AuthorizationStep,
-  AuthorizationModal as BaseAuthorizationModal
-} from 'decentraland-ui'
+import { AuthorizationStep, AuthorizationModal as BaseAuthorizationModal } from 'decentraland-ui'
 import { getAnalytics } from '../../../modules/analytics'
-import {
-  AuthorizationStepAction,
-  AuthorizationStepStatus,
-  Props
-} from './AuthorizationModal.types'
-import {
-  getPriceInMana,
-  getStepMessage,
-  getSteps,
-  getTranslation
-} from './utils'
+import { getPriceInMana, getStepMessage, getSteps, getTranslation } from './utils'
+import { AuthorizationStepAction, AuthorizationStepStatus, Props } from './AuthorizationModal.types'
 
-const LOADING_STATUS = [
-  AuthorizationStepStatus.LOADING_INFO,
-  AuthorizationStepStatus.PROCESSING,
-  AuthorizationStepStatus.WAITING
-]
+const LOADING_STATUS = [AuthorizationStepStatus.LOADING_INFO, AuthorizationStepStatus.PROCESSING, AuthorizationStepStatus.WAITING]
 
 export function AuthorizationModal({
   authorization,
@@ -117,33 +101,19 @@ export function AuthorizationModal({
     ]
       .map(step => {
         if (step.actionType === AuthorizationStepAction.GRANT) {
-          if (
-            shouldReauthorize ||
-            (grantStatus === AuthorizationStepStatus.ALLOWANCE_AMOUNT_ERROR &&
-              network === Network.ETHEREUM)
-          ) {
+          if (shouldReauthorize || (grantStatus === AuthorizationStepStatus.ALLOWANCE_AMOUNT_ERROR && network === Network.ETHEREUM)) {
             return {
               ...step,
-              error: getTranslation(
-                translationKeys,
-                'insufficient_amount_error.message',
-                {
-                  price: requiredAllowanceAsEth
-                }
-              ),
+              error: getTranslation(translationKeys, 'insufficient_amount_error.message', {
+                price: requiredAllowanceAsEth
+              }),
               action: 'Revoke',
               status: revokeStatus,
               message: !LOADING_STATUS.includes(revokeStatus) ? (
                 <div className="authorization-error">
-                  {getTranslation(
-                    translationKeys,
-                    'insufficient_amount_error.message',
-                    { price: requiredAllowanceAsEth }
-                  )}
+                  {getTranslation(translationKeys, 'insufficient_amount_error.message', { price: requiredAllowanceAsEth })}
                 </div>
-              ) : (
-                undefined
-              ),
+              ) : undefined,
               actionType: AuthorizationStepAction.REVOKE,
               testId: 'reauthorize-step',
               onActionClick: handleRevokeToken
@@ -151,10 +121,7 @@ export function AuthorizationModal({
           }
           return {
             ...step,
-            action:
-              grantStatus === AuthorizationStepStatus.DONE
-                ? undefined
-                : getTranslation(translationKeys, 'set_cap.action'),
+            action: grantStatus === AuthorizationStepStatus.DONE ? undefined : getTranslation(translationKeys, 'set_cap.action'),
             error,
             status: grantStatus,
             onActionClick: handleGrantToken
@@ -164,10 +131,7 @@ export function AuthorizationModal({
         if (step.actionType === AuthorizationStepAction.REVOKE) {
           return {
             ...step,
-            action:
-              revokeStatus === AuthorizationStepStatus.DONE
-                ? undefined
-                : getTranslation(translationKeys, 'revoke_cap.action'),
+            action: revokeStatus === AuthorizationStepStatus.DONE ? undefined : getTranslation(translationKeys, 'revoke_cap.action'),
             error,
             status: revokeStatus,
             onActionClick: handleRevokeToken
@@ -179,8 +143,7 @@ export function AuthorizationModal({
       .map((step, index) => {
         return {
           ...step,
-          isLoading:
-            index === currentStep && LOADING_STATUS.includes(step.status),
+          isLoading: index === currentStep && LOADING_STATUS.includes(step.status),
           message:
             'message' in step && step.message
               ? step.message
@@ -220,10 +183,7 @@ export function AuthorizationModal({
   useEffect(() => {
     const currentStepData = steps[currentStep]
 
-    if (
-      currentStepData.status === AuthorizationStepStatus.DONE &&
-      currentStepData.actionType === loading
-    ) {
+    if (currentStepData.status === AuthorizationStepStatus.DONE && currentStepData.actionType === loading) {
       if (shouldReauthorize) {
         setShouldReauthorize(false)
       } else {
@@ -232,14 +192,10 @@ export function AuthorizationModal({
       }
     }
     // We only want to run this when there is a change in the current steps status
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [steps[currentStep].status])
 
   useEffect(() => {
-    if (
-      grantStatus === AuthorizationStepStatus.ALLOWANCE_AMOUNT_ERROR &&
-      network === Network.ETHEREUM
-    ) {
+    if (grantStatus === AuthorizationStepStatus.ALLOWANCE_AMOUNT_ERROR && network === Network.ETHEREUM) {
       setShouldReauthorize(true)
     }
   }, [grantStatus, network, setShouldReauthorize])

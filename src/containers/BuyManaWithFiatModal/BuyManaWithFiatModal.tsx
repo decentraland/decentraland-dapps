@@ -12,19 +12,11 @@ import {
   NetworkGatewayType,
   NetworkI18N
 } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
-import { t } from '../../modules/translation/utils'
 import { getAnalytics } from '../../modules/analytics/utils'
-import {
-  DefaultProps,
-  Props,
-  State,
-  Translations
-} from './BuyManaWithFiatModal.types'
+import { t } from '../../modules/translation/utils'
+import { DefaultProps, Props, State, Translations } from './BuyManaWithFiatModal.types'
 
-export default class BuyManaWithFiatModal extends React.PureComponent<
-  Props,
-  State
-> {
+export default class BuyManaWithFiatModal extends React.PureComponent<Props, State> {
   analytics = getAnalytics()
 
   static defaultProps: DefaultProps = {
@@ -50,44 +42,29 @@ export default class BuyManaWithFiatModal extends React.PureComponent<
     }
   }
 
-  private getDefaultTranslations<
-    T extends Translations,
-    Key extends keyof T & string
-  >(basePath: string, props: Key[]): T | undefined {
+  private getDefaultTranslations<T extends Translations, Key extends keyof T & string>(basePath: string, props: Key[]): T | undefined {
     if (!this.props.hasTranslations) {
       return undefined
     }
 
-    return Object.fromEntries(
-      props.map(it => [it, t(`${basePath}.${it}`)])
-    ) as T
+    return Object.fromEntries(props.map(it => [it, t(`${basePath}.${it}`)])) as T
   }
 
   getDefaultModalTranslations = (): BuyManaWithFiatModalI18N | undefined => {
-    return this.getDefaultTranslations('@dapps.buyManaWithFiat.modal', [
+    return this.getDefaultTranslations('@dapps.buyManaWithFiat.modal', ['title', 'subtitle', 'error'])
+  }
+
+  getDefaultNetworkTranslations = (network: Network): (BuyManaWithFiatModalNetworkI18N & NetworkI18N) | undefined => {
+    return this.getDefaultTranslations(`@dapps.buyManaWithFiat.network.${network.toLowerCase()}`, ['cta', 'ctaSubtitle', 'title', 'error'])
+  }
+
+  getDefaultGatewayTranslations = (network: Network, gateway: NetworkGatewayType): NetworkGatewayI18N | undefined => {
+    return this.getDefaultTranslations(`@dapps.buyManaWithFiat.network.${network.toLowerCase()}.${gateway}`, [
       'title',
       'subtitle',
-      'error'
+      'continueButtonText',
+      'learnMoreText'
     ])
-  }
-
-  getDefaultNetworkTranslations = (
-    network: Network
-  ): (BuyManaWithFiatModalNetworkI18N & NetworkI18N) | undefined => {
-    return this.getDefaultTranslations(
-      `@dapps.buyManaWithFiat.network.${network.toLowerCase()}`,
-      ['cta', 'ctaSubtitle', 'title', 'error']
-    )
-  }
-
-  getDefaultGatewayTranslations = (
-    network: Network,
-    gateway: NetworkGatewayType
-  ): NetworkGatewayI18N | undefined => {
-    return this.getDefaultTranslations(
-      `@dapps.buyManaWithFiat.network.${network.toLowerCase()}.${gateway}`,
-      ['title', 'subtitle', 'continueButtonText', 'learnMoreText']
-    )
   }
 
   getDefaultNetworks() {
@@ -115,7 +92,7 @@ export default class BuyManaWithFiatModal extends React.PureComponent<
               onContinue: () => this.handleOnContinue(network, gateway)
             })),
           onClick: () => this.handleNetworkOnClick(network)
-        } as BuyManaWithFiatModalNetworkProps & BuyWithFiatNetworkProps)
+        }) as BuyManaWithFiatModalNetworkProps & BuyWithFiatNetworkProps
     )
   }
 
@@ -139,13 +116,7 @@ export default class BuyManaWithFiatModal extends React.PureComponent<
         open
         className={className}
         i18n={i18n || this.getDefaultModalTranslations()}
-        networks={
-          metadata?.selectedNetwork
-            ? networks.filter(
-                network => network.type === metadata.selectedNetwork
-              )
-            : networks
-        }
+        networks={metadata?.selectedNetwork ? networks.filter(network => network.type === metadata.selectedNetwork) : networks}
         loading={isLoading}
         hasError={hasError}
         onClose={onClose}

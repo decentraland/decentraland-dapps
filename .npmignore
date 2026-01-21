@@ -1,6 +1,8 @@
 src
 tsconfig.json
-tslint.json
+eslint.config.cjs
+.npmpackagejsonlintrc.json
+.prettierrc
 .nyc_output
 .git
 .circleci
