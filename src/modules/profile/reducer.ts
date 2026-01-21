@@ -1,35 +1,35 @@
-import { loadingReducer, LoadingState } from '../loading/reducer'
-import { Profile } from './types'
+import { LoadingState, loadingReducer } from '../loading/reducer'
 import {
-  LoadProfileRequestAction,
-  LoadProfileSuccessAction,
-  LoadProfileFailureAction,
-  LoadProfilesRequestAction,
-  LoadProfilesFailureAction,
-  LoadProfilesSuccessAction,
+  CHANGE_PROFILE,
+  CLEAR_PROFILE_ERROR,
+  ChangeProfileAction,
+  ClearProfileErrorAction,
+  LOAD_PROFILES_FAILURE,
+  LOAD_PROFILES_REQUEST,
+  LOAD_PROFILES_SUCCESS,
+  LOAD_PROFILE_FAILURE,
   LOAD_PROFILE_REQUEST,
   LOAD_PROFILE_SUCCESS,
-  LOAD_PROFILE_FAILURE,
-  CHANGE_PROFILE,
-  ChangeProfileAction,
-  SET_PROFILE_AVATAR_DESCRIPTION_REQUEST,
-  SET_PROFILE_AVATAR_DESCRIPTION_SUCCESS,
-  SetProfileAvatarDescriptionRequestAction,
-  SetProfileAvatarDescriptionSuccessAction,
-  SetProfileAvatarDescriptionFailureAction,
-  SET_PROFILE_AVATAR_DESCRIPTION_FAILURE,
-  CLEAR_PROFILE_ERROR,
-  ClearProfileErrorAction,
-  SET_PROFILE_AVATAR_ALIAS_SUCCESS,
+  LoadProfileFailureAction,
+  LoadProfileRequestAction,
+  LoadProfileSuccessAction,
+  LoadProfilesFailureAction,
+  LoadProfilesRequestAction,
+  LoadProfilesSuccessAction,
   SET_PROFILE_AVATAR_ALIAS_FAILURE,
   SET_PROFILE_AVATAR_ALIAS_REQUEST,
+  SET_PROFILE_AVATAR_ALIAS_SUCCESS,
+  SET_PROFILE_AVATAR_DESCRIPTION_FAILURE,
+  SET_PROFILE_AVATAR_DESCRIPTION_REQUEST,
+  SET_PROFILE_AVATAR_DESCRIPTION_SUCCESS,
   SetProfileAvatarAliasFailureAction,
   SetProfileAvatarAliasRequestAction,
   SetProfileAvatarAliasSuccessAction,
-  LOAD_PROFILES_REQUEST,
-  LOAD_PROFILES_FAILURE,
-  LOAD_PROFILES_SUCCESS
+  SetProfileAvatarDescriptionFailureAction,
+  SetProfileAvatarDescriptionRequestAction,
+  SetProfileAvatarDescriptionSuccessAction
 } from './actions'
+import { Profile } from './types'
 
 export type ProfileState = {
   data: Record<string, Profile>
@@ -59,10 +59,7 @@ export type ProfileReducerAction =
   | SetProfileAvatarAliasSuccessAction
   | SetProfileAvatarAliasFailureAction
 
-export const profileReducer = (
-  state = INITIAL_STATE,
-  action: ProfileReducerAction
-): ProfileState => {
+export const profileReducer = (state = INITIAL_STATE, action: ProfileReducerAction): ProfileState => {
   switch (action.type) {
     case SET_PROFILE_AVATAR_DESCRIPTION_REQUEST:
     case SET_PROFILE_AVATAR_ALIAS_REQUEST:

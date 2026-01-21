@@ -1,14 +1,10 @@
 import { connect } from 'react-redux'
 import { Locale } from 'decentraland-ui/dist/components/Language/Language'
-
+import { ChangeLocaleAction, changeLocale } from '../../modules/translation/actions'
+import { getLocale, isEnabled } from '../../modules/translation/selectors'
+import { RootDispatch } from '../../types'
 import Footer from './Footer'
 import { FooterProps, MapDispatchProps, MapStateProps } from './Footer.types'
-import { RootDispatch } from '../../types'
-import { getLocale, isEnabled } from '../../modules/translation/selectors'
-import {
-  changeLocale,
-  ChangeLocaleAction
-} from '../../modules/translation/actions'
 
 const mapState = (state: any): MapStateProps => {
   return {
@@ -17,24 +13,14 @@ const mapState = (state: any): MapStateProps => {
   }
 }
 
-const mapDispatch = (
-  dispatch: RootDispatch<ChangeLocaleAction>
-): MapDispatchProps => ({
+const mapDispatch = (dispatch: RootDispatch<ChangeLocaleAction>): MapDispatchProps => ({
   onChange: (_, { value }) => dispatch(changeLocale(value as Locale))
 })
 
-const mergeProps = (
-  stateProps: MapStateProps,
-  dispatchProps: MapDispatchProps,
-  ownProps: FooterProps
-): FooterProps => ({
+const mergeProps = (stateProps: MapStateProps, dispatchProps: MapDispatchProps, ownProps: FooterProps): FooterProps => ({
   ...stateProps,
   ...dispatchProps,
   ...ownProps
 })
 
-export default connect(
-  mapState,
-  mapDispatch,
-  mergeProps
-)(Footer) as any
+export default connect(mapState, mapDispatch, mergeProps)(Footer) as any

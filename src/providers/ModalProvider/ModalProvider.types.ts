@@ -1,5 +1,5 @@
-import { ModalState } from '../../modules/modal/reducer'
 import { closeModal } from '../../modules/modal/actions'
+import { ModalState } from '../../modules/modal/reducer'
 
 export type ModalProps = {
   name: string

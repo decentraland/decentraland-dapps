@@ -1,15 +1,15 @@
 import * as React from 'react'
-import { connection } from 'decentraland-connect'
+import { ProviderType } from '@dcl/schemas/dist/dapps/provider-type'
 import {
   LoginModal as BaseLoginModal,
   LoginModalI18N,
   LoginModalOptionI18N,
   LoginModalOptionType
 } from 'decentraland-ui/dist/components/LoginModal/LoginModal'
-import { ProviderType } from '@dcl/schemas/dist/dapps/provider-type'
+import { connection } from 'decentraland-connect'
 import { T, t } from '../../modules/translation/utils'
-import { DefaultProps, Props, State } from './LoginModal.types'
 import { toModalOptionType, toProviderType } from './utils'
+import { DefaultProps, Props, State } from './LoginModal.types'
 
 export default class LoginModal extends React.PureComponent<Props, State> {
   static defaultProps: DefaultProps = {
@@ -93,11 +93,7 @@ export default class LoginModal extends React.PureComponent<Props, State> {
             values={{
               br: <br />,
               trezor_link: (
-                <a
-                  href="https://github.com/trezor/trezor-firmware/pull/1568"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
+                <a href="https://github.com/trezor/trezor-firmware/pull/1568" target="_blank" rel="noopener noreferrer">
                   {t('@dapps.login.modal.trezor_link')}
                 </a>
               )

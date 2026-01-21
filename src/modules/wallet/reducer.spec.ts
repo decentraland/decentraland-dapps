@@ -77,28 +77,25 @@ const fetchAndConnectSuccessActions = [
   }
 ]
 
-describe.each(fetchAndConnectSuccessActions)(
-  `when reducing the successful action of $action`,
-  ({ request, success }) => {
-    let initialState: WalletState
+describe.each(fetchAndConnectSuccessActions)(`when reducing the successful action of $action`, ({ request, success }) => {
+  let initialState: WalletState
 
-    beforeEach(() => {
-      initialState = {
-        ...INITIAL_STATE,
-        loading: loadingReducer([], request())
-      }
-    })
+  beforeEach(() => {
+    initialState = {
+      ...INITIAL_STATE,
+      loading: loadingReducer([], request())
+    }
+  })
 
-    it('should return a state with the error and loading state clear and the new wallet as the data', () => {
-      expect(walletReducer(initialState, success(wallet))).toEqual({
-        ...INITIAL_STATE,
-        loading: [],
-        error: null,
-        data: wallet
-      })
+  it('should return a state with the error and loading state clear and the new wallet as the data', () => {
+    expect(walletReducer(initialState, success(wallet))).toEqual({
+      ...INITIAL_STATE,
+      loading: [],
+      error: null,
+      data: wallet
     })
-  }
-)
+  })
+})
 
 describe(`when reducing the successful action of enabling the wallet`, () => {
   let initialState: WalletState
@@ -228,28 +225,25 @@ describe('when reducing the failure action of enabling the wallet', () => {
   })
 })
 
-describe.each([changeAccount(wallet), changeNetwork(wallet)])(
-  'when reducing the $type action',
-  action => {
-    let initialState: WalletState
+describe.each([changeAccount(wallet), changeNetwork(wallet)])('when reducing the $type action', action => {
+  let initialState: WalletState
 
-    beforeEach(() => {
-      initialState = {
-        ...INITIAL_STATE,
-        error,
-        data: null
-      }
-    })
+  beforeEach(() => {
+    initialState = {
+      ...INITIAL_STATE,
+      error,
+      data: null
+    }
+  })
 
-    it('should return a state with the error state cleared and the wallet in the data state', () => {
-      expect(walletReducer(initialState, action)).toEqual({
-        ...INITIAL_STATE,
-        error: null,
-        data: wallet
-      })
+  it('should return a state with the error state cleared and the wallet in the data state', () => {
+    expect(walletReducer(initialState, action)).toEqual({
+      ...INITIAL_STATE,
+      error: null,
+      data: wallet
     })
-  }
-)
+  })
+})
 
 describe('when reducing the failure action of disconnecting a wallet', () => {
   let initialState: WalletState
@@ -263,13 +257,11 @@ describe('when reducing the failure action of disconnecting a wallet', () => {
   })
 
   it('should return a state with the loading state cleared', () => {
-    expect(walletReducer(initialState, disconnectWalletFailure(error))).toEqual(
-      {
-        ...INITIAL_STATE,
-        loading: [],
-        data: wallet
-      }
-    )
+    expect(walletReducer(initialState, disconnectWalletFailure(error))).toEqual({
+      ...INITIAL_STATE,
+      loading: [],
+      data: wallet
+    })
   })
 })
 

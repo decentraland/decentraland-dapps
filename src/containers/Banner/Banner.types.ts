@@ -5,7 +5,4 @@ export type BannerProps = Omit<UIBannerProps, 'fields'> & {
   fields: (BannerFields & { id: string }) | null
 } & { id: string }
 export type OwnProps = Pick<BannerProps, 'id'>
-export type MapStateProps = Pick<
-  BannerProps,
-  'fields' | 'assets' | 'isLoading' | 'error' | 'locale'
->
+export type MapStateProps = Pick<BannerProps, 'fields' | 'assets' | 'isLoading' | 'error' | 'locale'>

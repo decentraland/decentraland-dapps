@@ -14,10 +14,8 @@ export const avatar: Avatar = {
   avatar: {
     bodyShape: 'aShape',
     snapshots: {
-      body:
-        'https://peer.decentraland.zone/content/contents/bafkreibxwevyktyrqikrlbbfohyec3ayvvjoolzagnlhppyph7q3l5qcky',
-      face256:
-        'https://peer.decentraland.zone/content/contents/bafkreiamoamfdlzqodg6yserd74cseci62o7qq4uuwgglz2awxowgw737q'
+      body: 'https://peer.decentraland.zone/content/contents/bafkreibxwevyktyrqikrlbbfohyec3ayvvjoolzagnlhppyph7q3l5qcky',
+      face256: 'https://peer.decentraland.zone/content/contents/bafkreiamoamfdlzqodg6yserd74cseci62o7qq4uuwgglz2awxowgw737q'
     },
     eyes: {
       color: { r: 255, g: 255, b: 255 }

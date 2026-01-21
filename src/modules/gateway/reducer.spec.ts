@@ -1,11 +1,6 @@
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
-import {
-  pollPurchaseStatusFailure,
-  pollPurchaseStatusRequest,
-  pollPurchaseStatusSuccess,
-  setPurchase
-} from '../gateway/actions'
+import { pollPurchaseStatusFailure, pollPurchaseStatusRequest, pollPurchaseStatusSuccess, setPurchase } from '../gateway/actions'
 import { Purchase, PurchaseStatus } from './types'
 import {
   manaFiatGatewayPurchaseCompletedFailure,
@@ -35,10 +30,7 @@ describe('when handling the open buy mana with fiat modal request', () => {
     it('should set error to null and add the action to the loading state', () => {
       const action = openBuyManaWithFiatModalRequest()
 
-      const state = gatewayReducer(
-        { data: { purchases: [] }, loading: [], error: 'error' },
-        action
-      )
+      const state = gatewayReducer({ data: { purchases: [] }, loading: [], error: 'error' }, action)
 
       expect(state).toEqual({
         data: { purchases: [] },
@@ -52,10 +44,7 @@ describe('when handling the open buy mana with fiat modal request', () => {
     it('should set error to null and add the action to the loading state', () => {
       const action = openBuyManaWithFiatModalRequest(Network.ETHEREUM)
 
-      const state = gatewayReducer(
-        { data: { purchases: [] }, loading: [], error: 'error' },
-        action
-      )
+      const state = gatewayReducer({ data: { purchases: [] }, loading: [], error: 'error' }, action)
 
       expect(state).toEqual({
         data: { purchases: [] },
@@ -71,12 +60,13 @@ describe('when handling the open buy mana with fiat modal success', () => {
     const requestAction = openBuyManaWithFiatModalRequest()
     const successAction = openBuyManaWithFiatModalSuccess()
 
-    const state = gatewayReducer(
-      { data: { purchases: [] }, loading: [requestAction], error: null },
-      successAction
-    )
+    const state = gatewayReducer({ data: { purchases: [] }, loading: [requestAction], error: null }, successAction)
 
-    expect(state).toEqual({ data: { purchases: [] }, loading: [], error: null })
+    expect(state).toEqual({
+      data: { purchases: [] },
+      loading: [],
+      error: null
+    })
   })
 })
 
@@ -86,10 +76,7 @@ describe('when handling the open buy mana with fiat modal failure', () => {
     const error = 'error'
     const failureAction = openBuyManaWithFiatModalFailure(error)
 
-    const state = gatewayReducer(
-      { data: { purchases: [] }, loading: [requestAction], error: null },
-      failureAction
-    )
+    const state = gatewayReducer({ data: { purchases: [] }, loading: [requestAction], error: null }, failureAction)
 
     expect(state).toEqual({ data: { purchases: [] }, loading: [], error })
   })
@@ -97,15 +84,9 @@ describe('when handling the open buy mana with fiat modal failure', () => {
 
 describe('when handling the open mana fiat gateway modal request', () => {
   it('should set error to null and add the action to the loading state', () => {
-    const action = openManaFiatGatewayRequest(
-      Network.ETHEREUM,
-      NetworkGatewayType.MOON_PAY
-    )
+    const action = openManaFiatGatewayRequest(Network.ETHEREUM, NetworkGatewayType.MOON_PAY)
 
-    const state = gatewayReducer(
-      { data: { purchases: [] }, loading: [], error: 'error' },
-      action
-    )
+    const state = gatewayReducer({ data: { purchases: [] }, loading: [], error: 'error' }, action)
 
     expect(state).toEqual({
       data: { purchases: [] },
@@ -117,38 +98,26 @@ describe('when handling the open mana fiat gateway modal request', () => {
 
 describe('when handling the open mana fiat gateway modal success', () => {
   it('should remove the request action from the loading state and remove the error', () => {
-    const requestAction = openManaFiatGatewayRequest(
-      Network.ETHEREUM,
-      NetworkGatewayType.MOON_PAY
-    )
+    const requestAction = openManaFiatGatewayRequest(Network.ETHEREUM, NetworkGatewayType.MOON_PAY)
     const successAction = openManaFiatGatewaySuccess()
 
-    const state = gatewayReducer(
-      { data: { purchases: [] }, loading: [requestAction], error: null },
-      successAction
-    )
+    const state = gatewayReducer({ data: { purchases: [] }, loading: [requestAction], error: null }, successAction)
 
-    expect(state).toEqual({ data: { purchases: [] }, loading: [], error: null })
+    expect(state).toEqual({
+      data: { purchases: [] },
+      loading: [],
+      error: null
+    })
   })
 })
 
 describe('when handling the open mana fiat gateway modal failure', () => {
   it('should update the error and remove the request action from the loading state', () => {
-    const requestAction = openManaFiatGatewayRequest(
-      Network.ETHEREUM,
-      NetworkGatewayType.MOON_PAY
-    )
+    const requestAction = openManaFiatGatewayRequest(Network.ETHEREUM, NetworkGatewayType.MOON_PAY)
     const error = 'error'
-    const failureAction = openManaFiatGatewayFailure(
-      Network.ETHEREUM,
-      NetworkGatewayType.MOON_PAY,
-      error
-    )
+    const failureAction = openManaFiatGatewayFailure(Network.ETHEREUM, NetworkGatewayType.MOON_PAY, error)
 
-    const state = gatewayReducer(
-      { data: { purchases: [] }, loading: [requestAction], error: null },
-      failureAction
-    )
+    const state = gatewayReducer({ data: { purchases: [] }, loading: [requestAction], error: null }, failureAction)
 
     expect(state).toEqual({ data: { purchases: [] }, loading: [], error })
   })
@@ -161,17 +130,7 @@ describe('when handling the failure on purchase completion', () => {
     const gateway = NetworkGatewayType.MOON_PAY
     const transactionId = 'aTransactionId'
     const error = 'anError'
-    expect(
-      gatewayReducer(
-        state,
-        manaFiatGatewayPurchaseCompletedFailure(
-          network,
-          gateway,
-          transactionId,
-          error
-        )
-      )
-    ).toEqual({
+    expect(gatewayReducer(state, manaFiatGatewayPurchaseCompletedFailure(network, gateway, transactionId, error))).toEqual({
       ...state,
       error
     })
@@ -204,9 +163,7 @@ describe('when handling the set purchase', () => {
         ...mockPurchase,
         status: PurchaseStatus.COMPLETE
       }
-      expect(
-        gatewayReducer(stateWithPurchases, setPurchase(completeMockPurchase))
-      ).toEqual({
+      expect(gatewayReducer(stateWithPurchases, setPurchase(completeMockPurchase))).toEqual({
         ...stateWithPurchases,
         data: {
           ...state.data,
@@ -221,10 +178,7 @@ describe('when handling the poll purchase status request', () => {
   it('should set error to null and add the action to the loading state', () => {
     const action = pollPurchaseStatusRequest(mockPurchase)
 
-    const state = gatewayReducer(
-      { data: { purchases: [] }, loading: [], error: 'error' },
-      action
-    )
+    const state = gatewayReducer({ data: { purchases: [] }, loading: [], error: 'error' }, action)
 
     expect(state).toEqual({
       data: { purchases: [] },
@@ -239,12 +193,13 @@ describe('when handling the poll purchase status success', () => {
     const requestAction = pollPurchaseStatusRequest(mockPurchase)
     const successAction = pollPurchaseStatusSuccess()
 
-    const state = gatewayReducer(
-      { data: { purchases: [] }, loading: [requestAction], error: null },
-      successAction
-    )
+    const state = gatewayReducer({ data: { purchases: [] }, loading: [requestAction], error: null }, successAction)
 
-    expect(state).toEqual({ data: { purchases: [] }, loading: [], error: null })
+    expect(state).toEqual({
+      data: { purchases: [] },
+      loading: [],
+      error: null
+    })
   })
 })
 
@@ -254,10 +209,7 @@ describe('when handling the poll purchase status failure', () => {
     const error = 'error'
     const failureAction = pollPurchaseStatusFailure(error)
 
-    const state = gatewayReducer(
-      { data: { purchases: [] }, loading: [requestAction], error: null },
-      failureAction
-    )
+    const state = gatewayReducer({ data: { purchases: [] }, loading: [requestAction], error: null }, failureAction)
 
     expect(state).toEqual({ data: { purchases: [] }, loading: [], error })
   })

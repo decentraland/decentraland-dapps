@@ -1,9 +1,13 @@
 import React from 'react'
 import { Button as ButtonComponent } from 'decentraland-ui/dist/components/Button/Button'
-import { Props } from './NetworkButton.types'
 import NetworkCheck from '../NetworkCheck'
+import { Props } from './NetworkButton.types'
 
-const disabledStyle = { opacity: 0.5, cursor: 'not-allowed', transform: 'none' }
+const disabledStyle = {
+  opacity: 0.5,
+  cursor: 'not-allowed',
+  transform: 'none'
+}
 
 export default class NetworkButton extends React.PureComponent<Props> {
   render() {

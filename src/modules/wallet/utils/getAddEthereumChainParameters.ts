@@ -2,9 +2,7 @@ import { ChainId, getChainName } from '@dcl/schemas/dist/dapps/chain-id'
 import { getChainConfiguration } from '../../../lib/chainConfiguration'
 import { AddEthereumChainParameters } from '../types'
 
-export function getAddEthereumChainParameters(
-  chainId: ChainId
-): AddEthereumChainParameters {
+export function getAddEthereumChainParameters(chainId: ChainId): AddEthereumChainParameters {
   const hexChainId = '0x' + chainId.toString(16)
   const chainName = getChainName(chainId)!
   const config = getChainConfiguration(chainId)

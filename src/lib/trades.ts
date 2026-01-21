@@ -1,18 +1,6 @@
 import { TypedDataDomain, TypedDataField, ethers } from 'ethers'
-import {
-  ChainId,
-  OnChainTrade,
-  OnChainTradeAsset,
-  Trade,
-  TradeAsset,
-  TradeAssetType,
-  TradeCreation
-} from '@dcl/schemas'
-import {
-  ContractData,
-  ContractName,
-  getContract
-} from 'decentraland-transactions'
+import { ChainId, OnChainTrade, OnChainTradeAsset, Trade, TradeAsset, TradeAssetType, TradeCreation } from '@dcl/schemas'
+import { ContractData, ContractName, getContract } from 'decentraland-transactions'
 import { getNetworkProvider, getSigner } from './eth'
 import { fromMillisecondsToSeconds } from './time'
 
@@ -58,15 +46,8 @@ export async function getOffChainMarketplaceContract(chainId: ChainId) {
   if (!provider) {
     throw new Error('Could not get connected provider')
   }
-  const { address, abi } = getContract(
-    ContractName.OffChainMarketplaceV2,
-    chainId
-  )
-  const instance = new ethers.Contract(
-    address,
-    abi,
-    new ethers.providers.Web3Provider(provider)
-  )
+  const { address, abi } = getContract(ContractName.OffChainMarketplaceV2, chainId)
+  const instance = new ethers.Contract(address, abi, new ethers.providers.Web3Provider(provider))
   return instance
 }
 
@@ -120,10 +101,7 @@ export function generateTradeValues(trade: Omit<TradeCreation, 'signature'>) {
   }
 }
 
-export function getOnChainTrade(
-  trade: Trade,
-  sentBeneficiaryAddress: string
-): OnChainTrade {
+export function getOnChainTrade(trade: Trade, sentBeneficiaryAddress: string): OnChainTrade {
   const tradeValues = generateTradeValues(trade)
 
   return {
@@ -142,18 +120,11 @@ export function getOnChainTrade(
   }
 }
 
-export async function getTradeSignature(
-  trade: Omit<TradeCreation, 'signature'>
-) {
-  const marketplaceContract: ContractData = getContract(
-    ContractName.OffChainMarketplaceV2,
-    trade.chainId
-  )
+export async function getTradeSignature(trade: Omit<TradeCreation, 'signature'>) {
+  const marketplaceContract: ContractData = getContract(ContractName.OffChainMarketplaceV2, trade.chainId)
 
   if (!marketplaceContract) {
-    throw new Error(
-      `The ${ContractName.OffChainMarketplace} contract doesn't exist on chain ${trade.chainId}`
-    )
+    throw new Error(`The ${ContractName.OffChainMarketplace} contract doesn't exist on chain ${trade.chainId}`)
   }
 
   const signer = (await getSigner()) as ethers.providers.JsonRpcSigner
@@ -165,10 +136,6 @@ export async function getTradeSignature(
     verifyingContract: marketplaceContract.address
   }
 
-  const signature = await signer._signTypedData(
-    domain,
-    OFFCHAIN_MARKETPLACE_TYPES,
-    generateTradeValues(trade)
-  )
+  const signature = await signer._signTypedData(domain, OFFCHAIN_MARKETPLACE_TYPES, generateTradeValues(trade))
   return signature
 }

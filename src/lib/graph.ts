@@ -1,9 +1,4 @@
-export async function graphql<T>(
-  url: string,
-  query: string,
-  retryDelay = 500,
-  retryAttempts = 10
-) {
+export async function graphql<T>(url: string, query: string, retryDelay = 500, retryAttempts = 10) {
   try {
     const result: { data: T } = await fetch(url, {
       method: 'post',
@@ -16,17 +11,13 @@ export async function graphql<T>(
       throw new Error('Invalid response')
     }
     return result.data
-  } catch (error) {
+  } catch {
     // some naive retry logic
     return new Promise<T>((resolve, reject) => {
       setTimeout(
         () =>
           // duplicate delay time on each attempt if there are attempts left
-          retryAttempts > 0
-            ? graphql<T>(url, query, retryDelay * 2, retryAttempts - 1).then(
-                result => resolve(result)
-              )
-            : reject(),
+          retryAttempts > 0 ? graphql<T>(url, query, retryDelay * 2, retryAttempts - 1).then(result => resolve(result)) : reject(),
         retryDelay
       )
     })

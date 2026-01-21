@@ -2,34 +2,28 @@ import { Store } from 'redux'
 import * as storage from 'redux-persistence'
 import createStorageEngine from 'redux-persistence-engine-localstorage'
 import filter from 'redux-storage-decorator-filter'
-import { hasLocalStorage, migrateStorage } from '../../lib/localStorage'
 import { disabledMiddleware } from '../../lib/disabledMiddleware'
+import { hasLocalStorage, migrateStorage } from '../../lib/localStorage'
 import { StorageOwnData } from '../../lib/types'
+import { SET_PURCHASE } from '../gateway/actions'
 import {
-  CHANGE_LOCALE,
-  FETCH_TRANSLATIONS_SUCCESS
-} from '../translation/actions'
-import {
+  CLEAR_TRANSACTION,
+  CLEAR_TRANSACTIONS,
+  FETCH_TRANSACTION_FAILURE,
   FETCH_TRANSACTION_REQUEST,
   FETCH_TRANSACTION_SUCCESS,
-  FETCH_TRANSACTION_FAILURE,
-  UPDATE_TRANSACTION_STATUS,
-  UPDATE_TRANSACTION_NONCE,
-  REPLACE_TRANSACTION_SUCCESS,
   FIX_REVERTED_TRANSACTION,
-  CLEAR_TRANSACTIONS,
-  CLEAR_TRANSACTION
+  REPLACE_TRANSACTION_SUCCESS,
+  UPDATE_TRANSACTION_NONCE,
+  UPDATE_TRANSACTION_STATUS
 } from '../transaction/actions'
-import { SET_PURCHASE } from '../gateway/actions'
+import { CHANGE_LOCALE, FETCH_TRANSLATIONS_SUCCESS } from '../translation/actions'
 import { STORAGE_LOAD } from './actions'
 import { StorageMiddleware } from './types'
 
-const disabledLoad = (store: any) =>
-  setTimeout(() => store.dispatch({ type: STORAGE_LOAD, payload: {} }))
+const disabledLoad = (store: any) => setTimeout(() => store.dispatch({ type: STORAGE_LOAD, payload: {} }))
 
-export function createStorageMiddleware<T extends StorageOwnData>(
-  options: StorageMiddleware<T>
-) {
+export function createStorageMiddleware<T extends StorageOwnData>(options: StorageMiddleware<T>) {
   const { storageKey, migrations = {}, paths = [], actions = [] } = options
 
   if (!hasLocalStorage()) {

@@ -22,13 +22,5 @@
     "esModuleInterop": true
   },
   "include": ["src"],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "jest.config.cjs",
-    "src/setupTests.ts",
-    "src/tests",
-    "src/**/*.spec.ts",
-    "src/**/*.spec.tsx"
-  ]
+  "exclude": ["node_modules", "dist", "jest.config.cjs", "src/setupTests.ts", "src/tests", "src/**/*.spec.ts", "src/**/*.spec.tsx"]
 }

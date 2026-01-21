@@ -14,4 +14,3 @@ import type { IFetchComponent } from '@well-known-components/interfaces'
 export const fetcher = {
   fetch: (url: string, init?: RequestInit) => fetch(url, init)
 } as unknown as IFetchComponent
-

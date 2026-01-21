@@ -28,9 +28,7 @@ describe('peerAPI', () => {
           peerApi.cache = { [address]: Promise.resolve(profile) }
         })
         it('should get the result from the cache', async () => {
-          expect(await peerApi.fetchProfile(address, { useCache: true })).toBe(
-            profile
-          )
+          expect(await peerApi.fetchProfile(address, { useCache: true })).toBe(profile)
         })
       })
 
@@ -49,17 +47,11 @@ describe('peerAPI', () => {
             ]
           } as Profile
           peerApi.cache = {}
-          jest
-            .spyOn(peerApi.lambdasClient, 'getAvatarsDetailsByPost')
-            .mockImplementation(() => Promise.resolve([profileUpdated]))
+          jest.spyOn(peerApi.lambdasClient, 'getAvatarsDetailsByPost').mockImplementation(() => Promise.resolve([profileUpdated]))
         })
         it('should fetch the profile', async () => {
-          expect(await peerApi.fetchProfile(address, { useCache: true })).toBe(
-            profileUpdated
-          )
-          await expect(peerApi.cache[address]).resolves.toStrictEqual(
-            profileUpdated
-          )
+          expect(await peerApi.fetchProfile(address, { useCache: true })).toBe(profileUpdated)
+          await expect(peerApi.cache[address]).resolves.toStrictEqual(profileUpdated)
         })
       })
     })
@@ -80,18 +72,12 @@ describe('peerAPI', () => {
           ]
         } as Profile
         peerApi.cache = {}
-        jest
-          .spyOn(peerApi.lambdasClient, 'getAvatarsDetailsByPost')
-          .mockImplementationOnce(() => Promise.resolve([profileUpdated]))
+        jest.spyOn(peerApi.lambdasClient, 'getAvatarsDetailsByPost').mockImplementationOnce(() => Promise.resolve([profileUpdated]))
       })
 
       it('should fetch the profile', async () => {
-        expect(await peerApi.fetchProfile(address, { useCache: false })).toBe(
-          profileUpdated
-        )
-        await expect(peerApi.cache[address]).resolves.toStrictEqual(
-          profileUpdated
-        )
+        expect(await peerApi.fetchProfile(address, { useCache: false })).toBe(profileUpdated)
+        await expect(peerApi.cache[address]).resolves.toStrictEqual(profileUpdated)
       })
     })
   })
@@ -117,9 +103,7 @@ describe('peerAPI', () => {
           ]
         } as Profile
       ]
-      jest
-        .spyOn(peerApi.lambdasClient, 'getAvatarsDetailsByPost')
-        .mockImplementationOnce(() => Promise.resolve(profiles))
+      jest.spyOn(peerApi.lambdasClient, 'getAvatarsDetailsByPost').mockImplementationOnce(() => Promise.resolve(profiles))
     })
 
     it('should return fetch and return the profiles', async () => {

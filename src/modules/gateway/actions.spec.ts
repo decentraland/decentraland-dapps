@@ -37,18 +37,11 @@ import {
   openFiatGatewayWidgetFailure,
   OPEN_FIAT_GATEWAY_WIDGET_FAILURE
 } from './actions'
-import {
-  FiatGateway,
-  FiatGatewayOptions,
-  Purchase,
-  PurchaseStatus
-} from './types'
+import { FiatGateway, FiatGatewayOptions, Purchase, PurchaseStatus } from './types'
 
 jest.mock('../../lib/eth')
 
-const mockGetChainIdByNetwork = getChainIdByNetwork as jest.MockedFunction<
-  typeof getChainIdByNetwork
->
+const mockGetChainIdByNetwork = getChainIdByNetwork as jest.MockedFunction<typeof getChainIdByNetwork>
 
 const mockPurchase: Purchase = {
   address: 'mock-address',
@@ -111,9 +104,7 @@ describe('when creating the action that signals the unsuccessful opening of the 
 
 describe('when creating the action that signals the start of a mana fiat gateway modal opening', () => {
   it('should return an object representing the action', () => {
-    expect(
-      openManaFiatGatewayRequest(Network.ETHEREUM, NetworkGatewayType.TRANSAK)
-    ).toEqual({
+    expect(openManaFiatGatewayRequest(Network.ETHEREUM, NetworkGatewayType.TRANSAK)).toEqual({
       meta: undefined,
       payload: {
         network: Network.ETHEREUM,
@@ -136,13 +127,7 @@ describe('when creating the action that signals the successful opening of the ma
 describe('when creating the action that signals the unsuccessful opening of the mana fiat gateway modal', () => {
   it('should return an action signaling the unsuccess of the mana fiat gateway modal opening', () => {
     const defaultError = 'Default error'
-    expect(
-      openManaFiatGatewayFailure(
-        Network.ETHEREUM,
-        NetworkGatewayType.MOON_PAY,
-        defaultError
-      )
-    ).toEqual({
+    expect(openManaFiatGatewayFailure(Network.ETHEREUM, NetworkGatewayType.MOON_PAY, defaultError)).toEqual({
       meta: undefined,
       payload: {
         network: Network.ETHEREUM,
@@ -160,9 +145,7 @@ describe('when creating the action to signal a completed purchase', () => {
       gateway = NetworkGatewayType.MOON_PAY,
       transactionId = 'transcation-id',
       status = MoonPayTransactionStatus.PENDING
-    expect(
-      manaFiatGatewayPurchaseCompleted(network, gateway, transactionId, status)
-    ).toEqual({
+    expect(manaFiatGatewayPurchaseCompleted(network, gateway, transactionId, status)).toEqual({
       meta: undefined,
       payload: {
         network,
@@ -181,14 +164,7 @@ describe('when creating the action to signal a failure after a purchase was comp
       gateway = NetworkGatewayType.MOON_PAY,
       transactionId = 'transcation-id',
       error = 'some error'
-    expect(
-      manaFiatGatewayPurchaseCompletedFailure(
-        network,
-        gateway,
-        transactionId,
-        error
-      )
-    ).toEqual({
+    expect(manaFiatGatewayPurchaseCompletedFailure(network, gateway, transactionId, error)).toEqual({
       meta: undefined,
       payload: {
         network,

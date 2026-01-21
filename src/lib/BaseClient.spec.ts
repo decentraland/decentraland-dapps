@@ -5,24 +5,17 @@ import { Wallet } from '@ethersproject/wallet'
 
 import { BaseClient, BaseClientConfig } from './BaseClient'
 import type { AuthIdentity, SignedRequestInit } from 'decentraland-crypto-fetch'
-import {
-  createIdentity,
-  firstHeaderValueMatcher,
-  secondHeaderValueMatcher,
-  thirdHeaderValueMatcher
-} from '../tests/authentication'
+import { createIdentity, firstHeaderValueMatcher, secondHeaderValueMatcher, thirdHeaderValueMatcher } from '../tests/authentication'
 
 const urlTest = 'http://test.com'
-const fakePrivateKey =
-  '8da4ef21b864d2cc526dbdb2a120bd2874c36c9d0a1fb7f8c63d7f7a8b41de8f'
+const fakePrivateKey = '8da4ef21b864d2cc526dbdb2a120bd2874c36c9d0a1fb7f8c63d7f7a8b41de8f'
 const FIRST_AUTH_HEADER = 'x-identity-auth-chain-0'
 const SECOND_AUTH_HEADER = 'x-identity-auth-chain-1'
 const THIRD_AUTH_HEADER = 'x-identity-auth-chain-2'
 
 nock.disableNetConnect()
 class TestBaseClient extends BaseClient {
-  public performRequest = (path: string, init?: SignedRequestInit) =>
-    this.fetch(path, init)
+  public performRequest = (path: string, init?: SignedRequestInit) => this.fetch(path, init)
 }
 
 let baseClient: TestBaseClient
@@ -43,12 +36,9 @@ beforeEach(() => {
 
 describe('when the request fails with a server error', () => {
   beforeEach(() => {
-    nock(urlTest)
-      .get('/test')
-      .reply(500, {})
-      .defaultReplyHeaders({
-        'Access-Control-Allow-Origin': '*'
-      })
+    nock(urlTest).get('/test').reply(500, {}).defaultReplyHeaders({
+      'Access-Control-Allow-Origin': '*'
+    })
   })
 
   describe('and there is one attempt left', () => {
@@ -59,22 +49,14 @@ describe('when the request fails with a server error', () => {
       }
       baseClient = new TestBaseClient(urlTest, config)
 
-      nock(urlTest)
-        .get('/test')
-        .reply(500, {})
-        .defaultReplyHeaders({
-          'Access-Control-Allow-Origin': '*'
-        })
+      nock(urlTest).get('/test').reply(500, {}).defaultReplyHeaders({
+        'Access-Control-Allow-Origin': '*'
+      })
     })
 
     it('should retry 1 time and throw with the response error', async () => {
-      await expect(baseClient.performRequest('/test')).rejects.toThrowError(
-        'Request failed with status code 500'
-      )
-      expect(setTimeout).toHaveBeenCalledWith(
-        expect.anything(),
-        config.retryDelay
-      )
+      await expect(baseClient.performRequest('/test')).rejects.toThrowError('Request failed with status code 500')
+      expect(setTimeout).toHaveBeenCalledWith(expect.anything(), config.retryDelay)
       expect(nock.isDone()).toBeTruthy()
     })
   })
@@ -87,23 +69,14 @@ describe('when the request fails with a server error', () => {
       }
       baseClient = new TestBaseClient(urlTest, config)
 
-      nock(urlTest)
-        .get('/test')
-        .times(3)
-        .reply(500, {})
-        .defaultReplyHeaders({
-          'Access-Control-Allow-Origin': '*'
-        })
+      nock(urlTest).get('/test').times(3).reply(500, {}).defaultReplyHeaders({
+        'Access-Control-Allow-Origin': '*'
+      })
     })
 
     it('should retry 3 times and throw with the response error', async () => {
-      await expect(baseClient.performRequest('/test')).rejects.toThrowError(
-        'Request failed with status code 500'
-      )
-      expect(setTimeout).toHaveBeenCalledWith(
-        expect.anything(),
-        config.retryDelay
-      )
+      await expect(baseClient.performRequest('/test')).rejects.toThrowError('Request failed with status code 500')
+      expect(setTimeout).toHaveBeenCalledWith(expect.anything(), config.retryDelay)
       expect(nock.isDone()).toBeTruthy()
     })
   })
@@ -118,9 +91,7 @@ describe('when the request fails with a server error', () => {
     })
 
     it('should throw an error', async () => {
-      await expect(baseClient.performRequest('/test')).rejects.toThrowError(
-        'Request failed with status code 500'
-      )
+      await expect(baseClient.performRequest('/test')).rejects.toThrowError('Request failed with status code 500')
       expect(nock.isDone()).toBeTruthy()
     })
   })
@@ -134,21 +105,13 @@ describe('when the request fails with a server error', () => {
 
       baseClient = new TestBaseClient(urlTest, config)
 
-      nock(urlTest)
-        .get('/test')
-        .reply(200, { data: 'my test data', ok: true })
-        .defaultReplyHeaders({
-          'Access-Control-Allow-Origin': '*'
-        })
+      nock(urlTest).get('/test').reply(200, { data: 'my test data', ok: true }).defaultReplyHeaders({
+        'Access-Control-Allow-Origin': '*'
+      })
     })
     it('should retry 1 time and resolve with the response data', async () => {
-      await expect(baseClient.performRequest('/test')).resolves.toEqual(
-        'my test data'
-      )
-      expect(setTimeout).toHaveBeenCalledWith(
-        expect.anything(),
-        config.retryDelay
-      )
+      await expect(baseClient.performRequest('/test')).resolves.toEqual('my test data')
+      expect(setTimeout).toHaveBeenCalledWith(expect.anything(), config.retryDelay)
       expect(nock.isDone()).toBeTruthy()
     })
   })
@@ -156,12 +119,9 @@ describe('when the request fails with a server error', () => {
 
 describe('when the request fails with a client non-retryable error', () => {
   beforeEach(() => {
-    nock(urlTest)
-      .get('/test')
-      .reply(422, {})
-      .defaultReplyHeaders({
-        'Access-Control-Allow-Origin': '*'
-      })
+    nock(urlTest).get('/test').reply(422, {}).defaultReplyHeaders({
+      'Access-Control-Allow-Origin': '*'
+    })
   })
 
   describe.each([1, 3, 5])('and there is %s attempt left', retries => {
@@ -175,9 +135,7 @@ describe('when the request fails with a client non-retryable error', () => {
     })
 
     it('should not retry, but throw with the response error as soon as the request fails', async () => {
-      await expect(baseClient.performRequest('/test')).rejects.toThrowError(
-        'Request failed with status code 422'
-      )
+      await expect(baseClient.performRequest('/test')).rejects.toThrowError('Request failed with status code 422')
       expect(nock.isDone()).toBeTruthy()
     })
   })
@@ -193,18 +151,13 @@ describe('when the request is successful', () => {
       }
       baseClient = new TestBaseClient(urlTest, config)
 
-      nock(urlTest)
-        .get('/test')
-        .reply(201, { data: 'my test data', ok: true })
-        .defaultReplyHeaders({
-          'Access-Control-Allow-Origin': '*'
-        })
+      nock(urlTest).get('/test').reply(201, { data: 'my test data', ok: true }).defaultReplyHeaders({
+        'Access-Control-Allow-Origin': '*'
+      })
     })
 
     it('should resolve with the response data', async () => {
-      await expect(baseClient.performRequest('/test')).resolves.toEqual(
-        'my test data'
-      )
+      await expect(baseClient.performRequest('/test')).resolves.toEqual('my test data')
       expect(nock.isDone()).toBeTruthy()
     })
   })
@@ -218,23 +171,18 @@ describe('when the request is successful', () => {
       }
       baseClient = new TestBaseClient(urlTest, config)
 
-      nock(urlTest)
-        .get('/test')
-        .reply(201, ['my test data'])
-        .defaultReplyHeaders({
-          'Access-Control-Allow-Origin': '*'
-        })
+      nock(urlTest).get('/test').reply(201, ['my test data']).defaultReplyHeaders({
+        'Access-Control-Allow-Origin': '*'
+      })
     })
 
     it('should resolve with the response', async () => {
-      await expect(baseClient.performRequest('/test')).resolves.toEqual([
-        'my test data'
-      ])
+      await expect(baseClient.performRequest('/test')).resolves.toEqual(['my test data'])
       expect(nock.isDone()).toBeTruthy()
     })
   })
 
-  describe("and the response has no body", () => {
+  describe('and the response has no body', () => {
     beforeEach(() => {
       nock.cleanAll()
       config = {
@@ -243,12 +191,9 @@ describe('when the request is successful', () => {
       }
       baseClient = new TestBaseClient(urlTest, config)
 
-      nock(urlTest)
-        .get('/test')
-        .reply(204)
-        .defaultReplyHeaders({
-          'Access-Control-Allow-Origin': '*'
-        })
+      nock(urlTest).get('/test').reply(204).defaultReplyHeaders({
+        'Access-Control-Allow-Origin': '*'
+      })
     })
 
     it('should resolve as null', async () => {
@@ -286,9 +231,7 @@ describe('when the client is authenticated', () => {
     })
 
     it('should include the authentication headers and resolve with the response data', async () => {
-      await expect(baseClient.performRequest('/test')).resolves.toEqual(
-        'my test data'
-      )
+      await expect(baseClient.performRequest('/test')).resolves.toEqual('my test data')
       expect(nock.isDone()).toBeTruthy()
     })
   })
@@ -312,9 +255,7 @@ describe('when the client is authenticated', () => {
     })
 
     it('should include the authentication headers and resolve with the response data', async () => {
-      await expect(baseClient.performRequest('/test')).resolves.toEqual(
-        'my test data'
-      )
+      await expect(baseClient.performRequest('/test')).resolves.toEqual('my test data')
       expect(nock.isDone()).toBeTruthy()
     })
   })
@@ -337,9 +278,7 @@ describe('when the client is authenticated', () => {
     })
 
     it('should include the authentication headers and resolve with the response data', async () => {
-      await expect(
-        baseClient.performRequest('/test', { identity })
-      ).resolves.toEqual('my test data')
+      await expect(baseClient.performRequest('/test', { identity })).resolves.toEqual('my test data')
       expect(nock.isDone()).toBeTruthy()
     })
   })
