@@ -11,12 +11,7 @@ import {
   getSalePriceTooLowErrorToast,
   getUnknownErrorToast
 } from './toasts/meta-transactions'
-import {
-  createMetaTransactionsErrorChannel,
-  handleMetaTransactionError,
-  toastSaga,
-  watchMetaTransactionErrors
-} from './sagas'
+import { createMetaTransactionsErrorChannel, handleMetaTransactionError, toastSaga, watchMetaTransactionErrors } from './sagas'
 import { getToasts } from './selectors'
 import { hideAllToasts, showToast } from './actions'
 
@@ -32,18 +27,16 @@ describe('when handling a SWITCH_NETWORK_SUCCESS action', () => {
 
 describe('when running the toastSaga', () => {
   it('should fork the watchMetaTransactionErrors saga', () => {
-    return expectSaga(toastSaga)
-      .fork(watchMetaTransactionErrors)
-      .silentRun()
+    return expectSaga(toastSaga).fork(watchMetaTransactionErrors).silentRun()
   })
 })
 
 describe('when running the watchMetaTransactionErrors', () => {
   it('should take actions from channel and forward them to the handleMetaTransactionError saga', () => {
     const fakeChannel = {
-      take() { },
-      flush() { },
-      close() { }
+      take() {},
+      flush() {},
+      close() {}
     }
 
     return expectSaga(watchMetaTransactionErrors)
@@ -59,53 +52,37 @@ describe('when running the watchMetaTransactionErrors', () => {
 describe('when handling a meta-transaction error', () => {
   describe('when the error code is CONTRACT_ACCOUNT', () => {
     it('should show a contract account error toast', () => {
-      return expectSaga(handleMetaTransactionError, ErrorCode.CONTRACT_ACCOUNT)
-        .put(showToast(getContractAccountErrorToast()))
-        .silentRun()
+      return expectSaga(handleMetaTransactionError, ErrorCode.CONTRACT_ACCOUNT).put(showToast(getContractAccountErrorToast())).silentRun()
     })
   })
 
   describe('when the error code is INVALID_ADDRESS', () => {
     it('should show an invalid address error toast', () => {
-      return expectSaga(handleMetaTransactionError, ErrorCode.INVALID_ADDRESS)
-        .put(showToast(getInvalidAddressErrorToast()))
-        .silentRun()
+      return expectSaga(handleMetaTransactionError, ErrorCode.INVALID_ADDRESS).put(showToast(getInvalidAddressErrorToast())).silentRun()
     })
   })
 
   describe('when the error code is USER_DENIED', () => {
     it('should not show a toast', () => {
-      return expectSaga(
-        handleMetaTransactionError,
-        ErrorCode.USER_DENIED
-      ).silentRun()
+      return expectSaga(handleMetaTransactionError, ErrorCode.USER_DENIED).silentRun()
     })
   })
 
   describe('when the error code is SALE_PRICE_TOO_LOW', () => {
     it('should show a sales price too low error toast', () => {
-      return expectSaga(
-        handleMetaTransactionError,
-        ErrorCode.SALE_PRICE_TOO_LOW
-      )
-        .put(showToast(getSalePriceTooLowErrorToast()))
-        .silentRun()
+      return expectSaga(handleMetaTransactionError, ErrorCode.SALE_PRICE_TOO_LOW).put(showToast(getSalePriceTooLowErrorToast())).silentRun()
     })
   })
 
   describe('when the error code is UNKNOWN', () => {
     it('should show an unknown error toast', () => {
-      return expectSaga(handleMetaTransactionError, ErrorCode.UNKNOWN)
-        .put(showToast(getUnknownErrorToast()))
-        .silentRun()
+      return expectSaga(handleMetaTransactionError, ErrorCode.UNKNOWN).put(showToast(getUnknownErrorToast())).silentRun()
     })
   })
 
   describe('when the error code is HIGH_CONGESTION', () => {
     it('should show an high congestion error toast', () => {
-      return expectSaga(handleMetaTransactionError, ErrorCode.HIGH_CONGESTION)
-        .put(showToast(getHighCongestionErrorToast()))
-        .silentRun()
+      return expectSaga(handleMetaTransactionError, ErrorCode.HIGH_CONGESTION).put(showToast(getHighCongestionErrorToast())).silentRun()
     })
   })
 })

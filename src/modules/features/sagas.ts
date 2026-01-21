@@ -1,27 +1,14 @@
+import { call, delay, put, race, spawn, take, takeEvery } from 'redux-saga/effects'
 import {
-  call,
-  delay,
-  put,
-  race,
-  spawn,
-  take,
-  takeEvery
-} from 'redux-saga/effects'
-import {
-  fetchApplicationFeaturesFailure,
-  fetchApplicationFeaturesRequest,
-  FetchApplicationFeaturesRequestAction,
-  fetchApplicationFeaturesSuccess,
   FETCH_APPLICATION_FEATURES_FAILURE,
   FETCH_APPLICATION_FEATURES_REQUEST,
-  FETCH_APPLICATION_FEATURES_SUCCESS
+  FETCH_APPLICATION_FEATURES_SUCCESS,
+  FetchApplicationFeaturesRequestAction,
+  fetchApplicationFeaturesFailure,
+  fetchApplicationFeaturesRequest,
+  fetchApplicationFeaturesSuccess
 } from './actions'
-import {
-  ApplicationName,
-  ApplicationFeatures,
-  FeatureSagasConfig,
-  Polling
-} from './types'
+import { ApplicationFeatures, ApplicationName, FeatureSagasConfig, Polling } from './types'
 import { fetchApplicationFeatures } from './utils'
 
 /**
@@ -33,26 +20,18 @@ import { fetchApplicationFeatures } from './utils'
 export function* featuresSaga(config: FeatureSagasConfig) {
   const { polling } = config
 
-  yield takeEvery(
-    FETCH_APPLICATION_FEATURES_REQUEST,
-    handleFetchApplicationFeaturesRequest
-  )
+  yield takeEvery(FETCH_APPLICATION_FEATURES_REQUEST, handleFetchApplicationFeaturesRequest)
 
   if (polling) {
     yield spawn(getFetchApplicationFeaturesIntervalGenerator(polling))
   }
 }
 
-function* handleFetchApplicationFeaturesRequest(
-  action: FetchApplicationFeaturesRequestAction
-) {
+function* handleFetchApplicationFeaturesRequest(action: FetchApplicationFeaturesRequestAction) {
   const { apps } = action.payload
 
   try {
-    const features: Record<ApplicationName, ApplicationFeatures> = yield call(
-      fetchApplicationFeatures,
-      apps
-    )
+    const features: Record<ApplicationName, ApplicationFeatures> = yield call(fetchApplicationFeatures, apps)
 
     yield put(fetchApplicationFeaturesSuccess(apps, features))
   } catch (e) {
@@ -60,10 +39,8 @@ function* handleFetchApplicationFeaturesRequest(
   }
 }
 
-export const getFetchApplicationFeaturesIntervalGenerator = (
-  polling: Polling
-) => {
-  return function*() {
+export const getFetchApplicationFeaturesIntervalGenerator = (polling: Polling) => {
+  return function* () {
     while (true) {
       // Fetch application features for the configured applications.
       yield put(fetchApplicationFeaturesRequest(polling.apps))

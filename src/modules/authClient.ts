@@ -1,5 +1,5 @@
-import { getEnv, Env } from '@dcl/ui-env'
 import { AuthIdentity } from '@dcl/crypto'
+import { Env, getEnv } from '@dcl/ui-env'
 import { BaseClient, BaseClientConfig } from '../lib/BaseClient'
 
 export interface EphemeralIdentity {
@@ -18,17 +18,12 @@ export interface IdentityResponse {
 
 export class AuthClient extends BaseClient {
   constructor(config: BaseClientConfig) {
-    const url =
-      getEnv() === Env.DEVELOPMENT
-        ? 'https://auth-api.decentraland.zone'
-        : 'https://auth-api.decentraland.org'
+    const url = getEnv() === Env.DEVELOPMENT ? 'https://auth-api.decentraland.zone' : 'https://auth-api.decentraland.org'
 
     super(url, config)
   }
 
-  async createIdentityId(
-    identityPayload: AuthIdentity
-  ): Promise<IdentityResponse> {
+  async createIdentityId(identityPayload: AuthIdentity): Promise<IdentityResponse> {
     const response = await this.fetch<IdentityResponse>('/identities', {
       method: 'POST',
       body: JSON.stringify({ identity: identityPayload }),

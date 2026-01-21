@@ -104,15 +104,8 @@ describe('Wallet sagas', () => {
     describe('when getting the connected provider fails', () => {
       it('should dispatch an action to signal that the request failed', () => {
         return expectSaga(walletSaga)
-          .provide([
-            [matchers.call.fn(getConnectedProvider), Promise.resolve(null)]
-          ])
-          .put(
-            switchNetworkFailure(
-              ChainId.ETHEREUM_MAINNET,
-              'Error switching network: Could not get provider'
-            )
-          )
+          .provide([[matchers.call.fn(getConnectedProvider), Promise.resolve(null)]])
+          .put(switchNetworkFailure(ChainId.ETHEREUM_MAINNET, 'Error switching network: Could not get provider'))
           .dispatch(switchNetworkRequest(ChainId.ETHEREUM_MAINNET))
           .run({ silenceTimeout: true })
       })
@@ -122,17 +115,10 @@ describe('Wallet sagas', () => {
         it('should dispatch an action to signal that the request succeeded', () => {
           return expectSaga(walletSaga)
             .provide([
-              [
-                matchers.call.fn(getConnectedProvider),
-                Promise.resolve(mockProvider)
-              ],
+              [matchers.call.fn(getConnectedProvider), Promise.resolve(mockProvider)],
               [
                 race({
-                  switched: call(
-                    switchProviderChainId,
-                    mockProvider,
-                    ChainId.ETHEREUM_MAINNET
-                  ),
+                  switched: call(switchProviderChainId, mockProvider, ChainId.ETHEREUM_MAINNET),
                   timeout: delay(SWITCH_NETWORK_TIMEOUT)
                 }),
                 { switched: true }
@@ -159,18 +145,10 @@ describe('Wallet sagas', () => {
           switchError.code = 4902
           return expectSaga(walletSaga)
             .provide([
-              [
-                matchers.call.fn(getConnectedProvider),
-                Promise.resolve(mockProvider)
-              ],
-              [
-                call(switchProviderChainId, mockProvider, 1),
-                Promise.reject(switchError)
-              ]
+              [matchers.call.fn(getConnectedProvider), Promise.resolve(mockProvider)],
+              [call(switchProviderChainId, mockProvider, 1), Promise.reject(switchError)]
             ])
-            .put(
-              switchNetworkFailure(ChainId.ETHEREUM_MAINNET, 'Could not switch')
-            )
+            .put(switchNetworkFailure(ChainId.ETHEREUM_MAINNET, 'Could not switch'))
             .dispatch(switchNetworkRequest(ChainId.ETHEREUM_MAINNET))
             .run({ silenceTimeout: true })
         })
@@ -179,28 +157,16 @@ describe('Wallet sagas', () => {
         it('should put the failure action', () => {
           return expectSaga(walletSaga)
             .provide([
-              [
-                matchers.call.fn(getConnectedProvider),
-                Promise.resolve(mockProvider)
-              ],
+              [matchers.call.fn(getConnectedProvider), Promise.resolve(mockProvider)],
               [
                 race({
-                  switched: call(
-                    switchProviderChainId,
-                    mockProvider,
-                    ChainId.ETHEREUM_MAINNET
-                  ),
+                  switched: call(switchProviderChainId, mockProvider, ChainId.ETHEREUM_MAINNET),
                   timeout: delay(SWITCH_NETWORK_TIMEOUT)
                 }),
                 { timeout: true }
               ]
             ])
-            .put(
-              switchNetworkFailure(
-                ChainId.ETHEREUM_MAINNET,
-                'Error switching network: Operation timed out'
-              )
-            )
+            .put(switchNetworkFailure(ChainId.ETHEREUM_MAINNET, 'Error switching network: Operation timed out'))
             .dispatch(switchNetworkRequest(ChainId.ETHEREUM_MAINNET))
             .run({ silenceTimeout: true })
         })
@@ -217,9 +183,7 @@ describe('Wallet sagas', () => {
 
       it('should dispatch an action to signal the failure', () => {
         return expectSaga(walletSaga)
-          .provide([
-            [call([connection, 'disconnect']), Promise.reject(new Error(error))]
-          ])
+          .provide([[call([connection, 'disconnect']), Promise.reject(new Error(error))]])
           .put(disconnectWalletFailure(error))
           .dispatch(disconnectWalletRequest())
           .run({ silenceTimeout: true })

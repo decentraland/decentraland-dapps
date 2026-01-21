@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { getTransactionHref } from '../../modules/transaction/utils'
-import { Props, DefaultProps } from './TransactionLink.types'
+import { DefaultProps, Props } from './TransactionLink.types'
 
 export default class TransactionLink extends React.PureComponent<Props> {
   static defaultProps: DefaultProps = {
@@ -13,9 +13,7 @@ export default class TransactionLink extends React.PureComponent<Props> {
     const { address, txHash } = this.props
 
     if (!address && !txHash) {
-      console.warn(
-        'Tried to render an TransactionLink without either an address or tx hash. Please supply one of those'
-      )
+      console.warn('Tried to render an TransactionLink without either an address or tx hash. Please supply one of those')
       return null
     }
 

@@ -1,11 +1,11 @@
 import {
-  OPEN_MODAL,
-  CLOSE_MODAL,
   CLOSE_ALL_MODALS,
-  TOGGLE_MODAL,
-  OpenModalAction,
-  CloseModalAction,
+  CLOSE_MODAL,
   CloseAllModalsAction,
+  CloseModalAction,
+  OPEN_MODAL,
+  OpenModalAction,
+  TOGGLE_MODAL,
   ToggleModalAction
 } from './actions'
 import { Modal } from './types'
@@ -14,16 +14,9 @@ export type ModalState = Record<string, Modal>
 
 const INITIAL_STATE: ModalState = {}
 
-export type ModalReducerAction =
-  | OpenModalAction
-  | CloseModalAction
-  | CloseAllModalsAction
-  | ToggleModalAction
+export type ModalReducerAction = OpenModalAction | CloseModalAction | CloseAllModalsAction | ToggleModalAction
 
-export function modalReducer(
-  state = INITIAL_STATE,
-  action: ModalReducerAction
-) {
+export function modalReducer(state = INITIAL_STATE, action: ModalReducerAction) {
   switch (action.type) {
     case OPEN_MODAL: {
       const { name, metadata } = action.payload

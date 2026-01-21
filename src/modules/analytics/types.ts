@@ -17,13 +17,7 @@ type SegmentPayload = {
   }
 }
 
-export type MiddlewareFunction = ({
-  payload,
-  next
-}: {
-  payload: SegmentPayload
-  next: (payload: SegmentPayload) => void
-}) => void
+export type MiddlewareFunction = ({ payload, next }: { payload: SegmentPayload; next: (payload: SegmentPayload) => void }) => void
 
 export type ActionType = AnyAction['type']
 export type EventName = string | ((action: AnyAction) => string)

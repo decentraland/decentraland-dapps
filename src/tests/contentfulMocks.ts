@@ -1,19 +1,7 @@
-import {
-  ContentfulAsset,
-  MarketingAdminFields,
-  BannerFields,
-  ContentfulEntry,
-  CampaignFields
-} from '@dcl/schemas'
-import {
-  MarketingAdminFieldsWithoutLocales,
-  ContentfulContentWithoutLocales
-} from '../modules/campaign/ContentfulClient.types'
+import { ContentfulAsset, MarketingAdminFields, BannerFields, ContentfulEntry, CampaignFields } from '@dcl/schemas'
+import { MarketingAdminFieldsWithoutLocales, ContentfulContentWithoutLocales } from '../modules/campaign/ContentfulClient.types'
 
-const mockAdminEntryEn: ContentfulContentWithoutLocales<
-  'Entry',
-  MarketingAdminFieldsWithoutLocales
-> = {
+const mockAdminEntryEn: ContentfulContentWithoutLocales<'Entry', MarketingAdminFieldsWithoutLocales> = {
   metadata: {
     tags: [],
     concepts: []
@@ -447,8 +435,7 @@ const marketplaceHomepageBannerAssets: ContentfulAsset[] = [
       },
       file: {
         'en-US': {
-          url:
-            'https://cms-images.decentraland.org/ea2ybdmmn1kv/5XKf4HY4MRWv2fzZD8lXoK/7bf434e90b6115c5394ab13eec5583f9/static-1920-300.jpg',
+          url: 'https://cms-images.decentraland.org/ea2ybdmmn1kv/5XKf4HY4MRWv2fzZD8lXoK/7bf434e90b6115c5394ab13eec5583f9/static-1920-300.jpg',
           details: {
             size: 117325,
             image: {
@@ -520,8 +507,7 @@ const marketplaceHomepageBannerAssets: ContentfulAsset[] = [
       },
       file: {
         'en-US': {
-          url:
-            'https://cms-images.decentraland.org/ea2ybdmmn1kv/5YhMhFL4mjaGvFryUCET2b/3b3955fb6518b3523ea766e305f30f8e/Marketplace_Mobile_Banner_Test.jpg',
+          url: 'https://cms-images.decentraland.org/ea2ybdmmn1kv/5YhMhFL4mjaGvFryUCET2b/3b3955fb6518b3523ea766e305f30f8e/Marketplace_Mobile_Banner_Test.jpg',
           details: {
             size: 39941,
             image: {
@@ -537,10 +523,4 @@ const marketplaceHomepageBannerAssets: ContentfulAsset[] = [
   }
 ]
 
-export {
-  mockAdminEntryEn,
-  mockAdminEntry,
-  mockCampaignEntry,
-  mockHomepageBannerEntry,
-  marketplaceHomepageBannerAssets
-}
+export { mockAdminEntryEn, mockAdminEntry, mockCampaignEntry, mockHomepageBannerEntry, marketplaceHomepageBannerAssets }

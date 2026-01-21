@@ -54,11 +54,7 @@ describe('modules', () => {
         })
 
         it('should return a new object with the transaction flag an the action inside', () => {
-          const txPayload = buildTransactionPayload(
-            chainId,
-            tx.hash,
-            tx.payload
-          )
+          const txPayload = buildTransactionPayload(chainId, tx.hash, tx.payload)
 
           expect(txPayload).toEqual({
             [TRANSACTION_ACTION_FLAG]: tx
@@ -80,11 +76,7 @@ describe('modules', () => {
         })
 
         it('should return a new object with the transaction flag an the action inside', () => {
-          const txPayload = buildTransactionWithReceiptPayload(
-            chainId,
-            txWithReceipt.hash,
-            txWithReceipt.payload
-          )
+          const txPayload = buildTransactionWithReceiptPayload(chainId, txWithReceipt.hash, txWithReceipt.payload)
 
           expect(txPayload).toEqual({
             [TRANSACTION_ACTION_FLAG]: txWithReceipt
@@ -105,13 +97,8 @@ describe('modules', () => {
           }
         })
 
-        it('should return a new object with the transaction flag and the action inside', function() {
-          const txPayload = buildTransactionWithFromPayload(
-            chainId,
-            txWithFrom.hash,
-            from,
-            payload
-          )
+        it('should return a new object with the transaction flag and the action inside', function () {
+          const txPayload = buildTransactionWithFromPayload(chainId, txWithFrom.hash, from, payload)
 
           expect(txPayload).toEqual({
             [TRANSACTION_ACTION_FLAG]: txWithFrom
@@ -121,11 +108,7 @@ describe('modules', () => {
 
       describe('isTransactionAction', () => {
         it('should return true if the action was built with buildTransactionPayload', () => {
-          const txPayload = buildTransactionPayload(
-            chainId,
-            tx.hash,
-            tx.payload
-          )
+          const txPayload = buildTransactionPayload(chainId, tx.hash, tx.payload)
           const action = {
             type: '[Success] Transaction action',
             payload: txPayload
@@ -134,12 +117,8 @@ describe('modules', () => {
           expect(isTransactionAction(action)).toBe(true)
         })
 
-        it('should return true if the action was built with buildTransactionWithReceiptPayload', function() {
-          const txPayload = buildTransactionWithReceiptPayload(
-            chainId,
-            tx.hash,
-            tx.payload
-          )
+        it('should return true if the action was built with buildTransactionWithReceiptPayload', function () {
+          const txPayload = buildTransactionWithReceiptPayload(chainId, tx.hash, tx.payload)
           const action = {
             type: '[Success] Transaction action',
             payload: txPayload
@@ -148,7 +127,7 @@ describe('modules', () => {
           expect(isTransactionAction(action)).toBe(true)
         })
 
-        it('should return false for normal actions', function() {
+        it('should return false for normal actions', function () {
           expect(
             isTransactionAction({
               type: '[Success] Some success action'
@@ -189,11 +168,7 @@ describe('modules', () => {
 
         describe('when building a transaction with buildTransactionWithReceiptPayload', () => {
           beforeEach(() => {
-            const txPayload = buildTransactionWithReceiptPayload(
-              chainId,
-              tx.hash,
-              tx.payload
-            )
+            const txPayload = buildTransactionWithReceiptPayload(chainId, tx.hash, tx.payload)
             action = {
               type: '[Success] Transaction action',
               payload: {
@@ -207,10 +182,7 @@ describe('modules', () => {
               ...expectedTx,
               actionType: action.type,
               hash: action.payload._watch_tx.hash,
-              url: getTransactionHref(
-                { txHash: action.payload._watch_tx.hash },
-                chainId
-              ),
+              url: getTransactionHref({ txHash: action.payload._watch_tx.hash }, chainId),
               payload: action.payload._watch_tx.payload,
               toChainId: action.payload._watch_tx.toChainId,
               withReceipt: action.payload._watch_tx.withReceipt
@@ -224,11 +196,7 @@ describe('modules', () => {
 
         describe('when building a transaction with buildTransactionPayload', () => {
           beforeEach(() => {
-            const txPayload = buildTransactionPayload(
-              chainId,
-              tx.hash,
-              tx.payload
-            )
+            const txPayload = buildTransactionPayload(chainId, tx.hash, tx.payload)
             action = {
               type: '[Success] Transaction action',
               payload: {
@@ -242,10 +210,7 @@ describe('modules', () => {
               ...expectedTx,
               actionType: action.type,
               hash: action.payload._watch_tx.hash,
-              url: getTransactionHref(
-                { txHash: action.payload._watch_tx.hash },
-                chainId
-              ),
+              url: getTransactionHref({ txHash: action.payload._watch_tx.hash }, chainId),
               toChainId: action.payload._watch_tx.toChainId,
               payload: action.payload._watch_tx.payload
             }
@@ -297,8 +262,7 @@ describe('modules', () => {
               isCrossChain: true,
               requestId: action.payload._watch_tx.requestId,
               toChainId: action.payload._watch_tx.toChainId,
-              crossChainProviderType:
-                action.payload._watch_tx.crossChainProviderType,
+              crossChainProviderType: action.payload._watch_tx.crossChainProviderType,
               payload: action.payload._watch_tx.payload
             }
           })
@@ -310,12 +274,8 @@ describe('modules', () => {
       })
 
       describe('getTransactionHashFromAction', () => {
-        it('should return the transaction hash from a built transaction action with buildTransactionPayload', function() {
-          const txPayload = buildTransactionPayload(
-            chainId,
-            tx.hash,
-            tx.payload
-          )
+        it('should return the transaction hash from a built transaction action with buildTransactionPayload', function () {
+          const txPayload = buildTransactionPayload(chainId, tx.hash, tx.payload)
           const action = {
             type: '[Success] Transaction action',
             payload: { data: ['a', 3], ...txPayload }
@@ -324,12 +284,8 @@ describe('modules', () => {
           expect(getTransactionHashFromAction(action)).toEqual(tx.hash)
         })
 
-        it('should return the transaction hash from a built transaction action with buildTransactionWithReceiptPayload', function() {
-          const txPayload = buildTransactionWithReceiptPayload(
-            chainId,
-            tx.hash,
-            tx.payload
-          )
+        it('should return the transaction hash from a built transaction action with buildTransactionWithReceiptPayload', function () {
+          const txPayload = buildTransactionWithReceiptPayload(chainId, tx.hash, tx.payload)
           const action = {
             type: '[Success] Transaction action',
             payload: { data: ['a', 3], ...txPayload }
@@ -338,7 +294,7 @@ describe('modules', () => {
           expect(getTransactionHashFromAction(action)).toEqual(tx.hash)
         })
 
-        it('should throw for a normal action (use isTransactionAction to avoid it)', function() {
+        it('should throw for a normal action (use isTransactionAction to avoid it)', function () {
           const action = {
             type: '[Success] Transaction action',
             payload: { more: 2 }
@@ -352,8 +308,7 @@ describe('modules', () => {
 })
 
 describe('when waiting for a transaction to be completed', () => {
-  const txHash =
-    '0x654439c89c379f2b3083b4bdbd28c9cf57a0754d625c1353c800c09e073040c6'
+  const txHash = '0x654439c89c379f2b3083b4bdbd28c9cf57a0754d625c1353c800c09e073040c6'
   const senderAddress = '0xc4445E5BCDE63C318909fd10318734b27906f7b6'
   const anotherAddress = '0x2Da846e95E22cd84fdF7986dE99db221e6765444'
   let transaction: Transaction
@@ -384,31 +339,15 @@ describe('when waiting for a transaction to be completed', () => {
   })
 
   afterEach(() => {
-    ;((global.console.error as unknown) as jest.SpyInstance).mockRestore()
+    ;(global.console.error as unknown as jest.SpyInstance).mockRestore()
   })
 
   describe('and the transaction results in a REVERTED failure', () => {
     it('should throw an error saying that the transaction was not successful', () => {
       return expectSaga(waitForTx, txHash)
-        .dispatch(
-          fetchTransactionFailure(
-            anotherAddress,
-            TransactionStatus.REVERTED,
-            'aFailureMessage',
-            anotherTransaction
-          )
-        )
-        .dispatch(
-          fetchTransactionFailure(
-            txHash,
-            TransactionStatus.REVERTED,
-            'aFailureMessage',
-            transaction
-          )
-        )
-        .throws(
-          `The transaction ${txHash} failed to be mined. The status is ${TransactionStatus.REVERTED}.`
-        )
+        .dispatch(fetchTransactionFailure(anotherAddress, TransactionStatus.REVERTED, 'aFailureMessage', anotherTransaction))
+        .dispatch(fetchTransactionFailure(txHash, TransactionStatus.REVERTED, 'aFailureMessage', transaction))
+        .throws(`The transaction ${txHash} failed to be mined. The status is ${TransactionStatus.REVERTED}.`)
         .silentRun()
     })
   })
@@ -423,26 +362,10 @@ describe('when waiting for a transaction to be completed', () => {
     describe('and the new transaction is REVERTED', () => {
       it('should throw an error saying that the transaction was not successful', () => {
         return expectSaga(waitForTx, txHash)
-          .dispatch(
-            fetchTransactionFailure(
-              txHash,
-              TransactionStatus.DROPPED,
-              'aFailureMessage',
-              transaction
-            )
-          )
+          .dispatch(fetchTransactionFailure(txHash, TransactionStatus.DROPPED, 'aFailureMessage', transaction))
           .dispatch(replaceTransactionSuccess(txHash, newTxHash))
-          .dispatch(
-            fetchTransactionFailure(
-              newTxHash,
-              TransactionStatus.REVERTED,
-              'aFailureMessage',
-              { ...transaction, hash: newTxHash }
-            )
-          )
-          .throws(
-            `The transaction ${newTxHash} failed to be mined. The status is ${TransactionStatus.REVERTED}.`
-          )
+          .dispatch(fetchTransactionFailure(newTxHash, TransactionStatus.REVERTED, 'aFailureMessage', { ...transaction, hash: newTxHash }))
+          .throws(`The transaction ${newTxHash} failed to be mined. The status is ${TransactionStatus.REVERTED}.`)
           .silentRun()
       })
     })
@@ -450,18 +373,9 @@ describe('when waiting for a transaction to be completed', () => {
     describe('and the new transaction is CONFIRMED', () => {
       it("should finish the saga's execution", () => {
         return expectSaga(waitForTx, txHash)
-          .dispatch(
-            fetchTransactionFailure(
-              txHash,
-              TransactionStatus.DROPPED,
-              'aFailureMessage',
-              transaction
-            )
-          )
+          .dispatch(fetchTransactionFailure(txHash, TransactionStatus.DROPPED, 'aFailureMessage', transaction))
           .dispatch(replaceTransactionSuccess(txHash, newTxHash))
-          .dispatch(
-            fetchTransactionSuccess({ ...transaction, hash: newTxHash })
-          )
+          .dispatch(fetchTransactionSuccess({ ...transaction, hash: newTxHash }))
           .silentRun()
       })
     })
@@ -471,31 +385,15 @@ describe('when waiting for a transaction to be completed', () => {
     describe('and the new transaction is REVERTED', () => {
       it('should throw an error saying that the transaction was not successful', () => {
         return expectSaga(waitForTx, txHash)
-          .dispatch(
-            fetchTransactionFailure(
-              txHash,
-              TransactionStatus.DROPPED,
-              'aFailureMessage',
-              transaction
-            )
-          )
+          .dispatch(fetchTransactionFailure(txHash, TransactionStatus.DROPPED, 'aFailureMessage', transaction))
           .dispatch(
             fetchTransactionRequest('anAddress', txHash, {
               type: 'SomeAction',
               payload: { _watch_tx: { hash: txHash } } as TransactionPayload
             })
           )
-          .dispatch(
-            fetchTransactionFailure(
-              txHash,
-              TransactionStatus.REVERTED,
-              'aFailureMessage',
-              transaction
-            )
-          )
-          .throws(
-            `The transaction ${txHash} failed to be mined. The status is ${TransactionStatus.REVERTED}.`
-          )
+          .dispatch(fetchTransactionFailure(txHash, TransactionStatus.REVERTED, 'aFailureMessage', transaction))
+          .throws(`The transaction ${txHash} failed to be mined. The status is ${TransactionStatus.REVERTED}.`)
           .silentRun()
       })
     })
@@ -503,14 +401,7 @@ describe('when waiting for a transaction to be completed', () => {
     describe('and the new transaction is CONFIRMED', () => {
       it("should finish the saga's execution", () => {
         return expectSaga(waitForTx, txHash)
-          .dispatch(
-            fetchTransactionFailure(
-              txHash,
-              TransactionStatus.DROPPED,
-              'aFailureMessage',
-              transaction
-            )
-          )
+          .dispatch(fetchTransactionFailure(txHash, TransactionStatus.DROPPED, 'aFailureMessage', transaction))
           .dispatch(
             fetchTransactionRequest('anAddress', txHash, {
               type: 'SomeAction',
@@ -526,14 +417,7 @@ describe('when waiting for a transaction to be completed', () => {
   describe('and the transaction results in a DROPPED failure that results in the transaction updated to REPLACED', () => {
     it("should finish the saga's execution", () => {
       return expectSaga(waitForTx, txHash)
-        .dispatch(
-          fetchTransactionFailure(
-            txHash,
-            TransactionStatus.DROPPED,
-            'aFailureMessage',
-            transaction
-          )
-        )
+        .dispatch(fetchTransactionFailure(txHash, TransactionStatus.DROPPED, 'aFailureMessage', transaction))
         .dispatch(updateTransactionStatus(txHash, TransactionStatus.REPLACED))
         .silentRun()
     })
@@ -568,9 +452,7 @@ describe('when getting the transaction href', () => {
       })
 
       it('should return the link to the Axelar site', () => {
-        expect(getTransactionHref({ txHash, crossChainProviderType })).toBe(
-          `https://axelarscan.io/gmp/${txHash}`
-        )
+        expect(getTransactionHref({ txHash, crossChainProviderType })).toBe(`https://axelarscan.io/gmp/${txHash}`)
       })
     })
 
@@ -596,9 +478,7 @@ describe('when getting the transaction href', () => {
       })
 
       it('should return the link to the Etherscan site pointing to the address', () => {
-        expect(getTransactionHref({ address })).toBe(
-          `https://etherscan.io/address/${address}`
-        )
+        expect(getTransactionHref({ address })).toBe(`https://etherscan.io/address/${address}`)
       })
     })
 
@@ -613,9 +493,7 @@ describe('when getting the transaction href', () => {
         })
 
         it('should return the link to the Etherscan site pointing to the block number', () => {
-          expect(getTransactionHref({ blockNumber })).toBe(
-            `https://etherscan.io/block/${blockNumber}`
-          )
+          expect(getTransactionHref({ blockNumber })).toBe(`https://etherscan.io/block/${blockNumber}`)
         })
       })
 
@@ -625,9 +503,7 @@ describe('when getting the transaction href', () => {
         })
 
         it('should return the link to the Etherscan site pointing to the transaction', () => {
-          expect(getTransactionHref({ txHash })).toBe(
-            `https://etherscan.io/tx/${txHash}`
-          )
+          expect(getTransactionHref({ txHash })).toBe(`https://etherscan.io/tx/${txHash}`)
         })
       })
     })
@@ -638,9 +514,7 @@ describe('when getting the transaction href', () => {
       })
 
       it('should return the link to the Sepolia site', () => {
-        expect(getTransactionHref({ txHash }, network)).toBe(
-          `https://sepolia.etherscan.io/tx/${txHash}`
-        )
+        expect(getTransactionHref({ txHash }, network)).toBe(`https://sepolia.etherscan.io/tx/${txHash}`)
       })
     })
   })

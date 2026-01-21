@@ -37,13 +37,7 @@ import { MoonPay } from './moonpay'
 import { MoonPayTransaction, MoonPayTransactionStatus } from './moonpay/types'
 import { NO_IDENTITY_ERROR, createGatewaySaga } from './sagas'
 import { Transak } from './transak'
-import {
-  FiatGateway,
-  GatewaySagasConfig,
-  Purchase,
-  PurchaseStatus,
-  WertOptions
-} from './types'
+import { FiatGateway, GatewaySagasConfig, Purchase, PurchaseStatus, WertOptions } from './types'
 import { getPendingManaPurchase, getPendingPurchases } from './selectors'
 import { OrderResponse, TransakOrderStatus } from './transak/types'
 import { generateIdentityFailure } from '../identity'
@@ -53,9 +47,7 @@ jest.mock('@wert-io/widget-initializer')
 jest.mock('../../lib/marketplaceApi')
 jest.mock('../../lib/eth')
 
-const mockGetChainIdByNetwork = getChainIdByNetwork as jest.MockedFunction<
-  typeof getChainIdByNetwork
->
+const mockGetChainIdByNetwork = getChainIdByNetwork as jest.MockedFunction<typeof getChainIdByNetwork>
 
 const mockConfig: GatewaySagasConfig = {
   [FiatGateway.WERT]: {
@@ -101,8 +93,7 @@ const mockTransaction: MoonPayTransaction = {
   walletAddress: '0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2',
   walletAddressTag: null,
   cryptoTransactionId: mockCryptoTransactionId,
-  returnUrl:
-    'https://buy.moonpay.com/transaction_receipt?transactionId=354b1f46-480c-4307-9896-f4c81c1e1e17',
+  returnUrl: 'https://buy.moonpay.com/transaction_receipt?transactionId=354b1f46-480c-4307-9896-f4c81c1e1e17',
   redirectUrl: null,
   widgetRedirectUrl: 'https://my-crypto-wallet.io',
   baseCurrencyId: '71435a8d-211c-4664-a59e-2a5361a6c5a7',
@@ -172,8 +163,7 @@ const mockTransaction: MoonPayTransaction = {
       actions: [
         {
           type: 'verify_card_by_code',
-          url:
-            'https://buy.moonpay.com/card_verification_code?cardId=68e46314-93e5-4420-ac10-485aef4e19d0'
+          url: 'https://buy.moonpay.com/card_verification_code?cardId=68e46314-93e5-4420-ac10-485aef4e19d0'
         },
         {
           type: 'retry_kyc',
@@ -239,9 +229,7 @@ describe('when handling the request to open the Buy MANA with FIAT modal', () =>
   describe('when the pending purchase selector fails', () => {
     it('should put the failure action', async () => {
       return expectSaga(gatewaySaga)
-        .provide([
-          [select(getPendingManaPurchase), Promise.reject(new Error(error))]
-        ])
+        .provide([[select(getPendingManaPurchase), Promise.reject(new Error(error))]])
         .dispatch(openBuyManaWithFiatModalRequest())
         .put(openBuyManaWithFiatModalFailure(error))
         .silentRun()
@@ -256,9 +244,7 @@ describe('when handling the request to open the Buy MANA with FIAT modal', () =>
         return expectSaga(gatewaySaga)
           .provide([[select(getPendingManaPurchase), undefined]])
           .dispatch(openBuyManaWithFiatModalRequest())
-          .put(
-            openModal(buyManaWithFiatModalName, { selectedNetwork: undefined })
-          )
+          .put(openModal(buyManaWithFiatModalName, { selectedNetwork: undefined }))
           .put(openBuyManaWithFiatModalSuccess())
           .silentRun()
       })
@@ -306,21 +292,14 @@ describe('when handling the request to open the Buy MANA with FIAT modal', () =>
   describe('when the selected gateway was Moon Pay', () => {
     describe('when failing on trying to get the transaction receipt url', () => {
       beforeEach(() => {
-        jest
-          .spyOn(MoonPay.prototype, 'getTransactionReceiptUrl')
-          .mockImplementation(() => {
-            throw new Error(error)
-          })
+        jest.spyOn(MoonPay.prototype, 'getTransactionReceiptUrl').mockImplementation(() => {
+          throw new Error(error)
+        })
       })
 
       it('should put the failure action', async () => {
         return expectSaga(gatewaySaga)
-          .provide([
-            [
-              select(getPendingManaPurchase),
-              mockPurchaseWithCryptoTransactionId
-            ]
-          ])
+          .provide([[select(getPendingManaPurchase), mockPurchaseWithCryptoTransactionId]])
           .dispatch(openBuyManaWithFiatModalRequest())
           .put(openBuyManaWithFiatModalFailure(error))
           .silentRun()
@@ -332,19 +311,12 @@ describe('when handling the request to open the Buy MANA with FIAT modal', () =>
         mockConfig[NetworkGatewayType.MOON_PAY]!.widgetBaseUrl
       }/transaction_receipt?transactionId=${mockPurchase.id}`
       beforeEach(() => {
-        jest
-          .spyOn(MoonPay.prototype, 'getTransactionReceiptUrl')
-          .mockReturnValue(mockTxReceiptUrl)
+        jest.spyOn(MoonPay.prototype, 'getTransactionReceiptUrl').mockReturnValue(mockTxReceiptUrl)
       })
 
       it('should put the action signaling the opening of the Feedback Modal in pending status with the go to url, and that the request succeed', async () => {
         return expectSaga(gatewaySaga)
-          .provide([
-            [
-              select(getPendingManaPurchase),
-              mockPurchaseWithCryptoTransactionId
-            ]
-          ])
+          .provide([[select(getPendingManaPurchase), mockPurchaseWithCryptoTransactionId]])
           .dispatch(openBuyManaWithFiatModalRequest())
           .put(
             openModal(buyManaWithFiatFeedbackModalName, {
@@ -376,36 +348,18 @@ describe('when handling the request to open the MANA-FIAT gateway', () => {
       it('should put the failure action', async () => {
         return expectSaga(gatewaySaga)
           .provide([[select(getAddress), mockAddress]])
-          .dispatch(
-            openManaFiatGatewayRequest(
-              Network.ETHEREUM,
-              NetworkGatewayType.TRANSAK
-            )
-          )
-          .put(
-            openManaFiatGatewayFailure(
-              Network.ETHEREUM,
-              NetworkGatewayType.TRANSAK,
-              error
-            )
-          )
+          .dispatch(openManaFiatGatewayRequest(Network.ETHEREUM, NetworkGatewayType.TRANSAK))
+          .put(openManaFiatGatewayFailure(Network.ETHEREUM, NetworkGatewayType.TRANSAK, error))
           .silentRun()
       })
     })
 
     it('should init its SDK and put the success action', () => {
-      jest
-        .spyOn(Transak.prototype, 'openWidget')
-        .mockImplementation(() => Promise.resolve())
+      jest.spyOn(Transak.prototype, 'openWidget').mockImplementation(() => Promise.resolve())
 
       return expectSaga(gatewaySaga)
         .provide([[select(getAddress), mockAddress]])
-        .dispatch(
-          openManaFiatGatewayRequest(
-            Network.ETHEREUM,
-            NetworkGatewayType.TRANSAK
-          )
-        )
+        .dispatch(openManaFiatGatewayRequest(Network.ETHEREUM, NetworkGatewayType.TRANSAK))
         .put(openManaFiatGatewaySuccess())
         .silentRun()
         .then(() => {
@@ -431,43 +385,21 @@ describe('when handling the request to open the MANA-FIAT gateway', () => {
 
       it('should put the failure action', async () => {
         return expectSaga(gatewaySaga)
-          .dispatch(
-            openManaFiatGatewayRequest(
-              Network.ETHEREUM,
-              NetworkGatewayType.MOON_PAY
-            )
-          )
-          .put(
-            openManaFiatGatewayFailure(
-              Network.ETHEREUM,
-              NetworkGatewayType.MOON_PAY,
-              error
-            )
-          )
+          .dispatch(openManaFiatGatewayRequest(Network.ETHEREUM, NetworkGatewayType.MOON_PAY))
+          .put(openManaFiatGatewayFailure(Network.ETHEREUM, NetworkGatewayType.MOON_PAY, error))
           .silentRun()
       })
     })
 
     it('should open a new tab with the widget url and put the success action', () => {
-      jest
-        .spyOn(MoonPay.prototype, 'getWidgetUrl')
-        .mockReturnValueOnce(mockWidgetUrl)
+      jest.spyOn(MoonPay.prototype, 'getWidgetUrl').mockReturnValueOnce(mockWidgetUrl)
 
       return expectSaga(gatewaySaga)
-        .dispatch(
-          openManaFiatGatewayRequest(
-            Network.ETHEREUM,
-            NetworkGatewayType.MOON_PAY
-          )
-        )
+        .dispatch(openManaFiatGatewayRequest(Network.ETHEREUM, NetworkGatewayType.MOON_PAY))
         .put(openManaFiatGatewaySuccess())
         .silentRun()
         .then(() => {
-          expect(window.open).toHaveBeenCalledWith(
-            mockWidgetUrl,
-            '_blank',
-            'noopener,noreferrer'
-          )
+          expect(window.open).toHaveBeenCalledWith(mockWidgetUrl, '_blank', 'noopener,noreferrer')
         })
     })
   })
@@ -494,20 +426,8 @@ describe('when handling the completion of the purchase', () => {
         const error = '404 - Transaction not found'
 
         return expectSaga(gatewaySaga)
-          .provide([
-            [
-              matchers.call.fn(moonPay.getTransaction),
-              Promise.reject(new Error(error))
-            ]
-          ])
-          .put(
-            manaFiatGatewayPurchaseCompletedFailure(
-              Network.ETHEREUM,
-              NetworkGatewayType.MOON_PAY,
-              mockTransaction.id,
-              error
-            )
-          )
+          .provide([[matchers.call.fn(moonPay.getTransaction), Promise.reject(new Error(error))]])
+          .put(manaFiatGatewayPurchaseCompletedFailure(Network.ETHEREUM, NetworkGatewayType.MOON_PAY, mockTransaction.id, error))
           .dispatch(
             manaFiatGatewayPurchaseCompleted(
               Network.ETHEREUM,
@@ -536,10 +456,7 @@ describe('when handling the completion of the purchase', () => {
                 status: MoonPayTransactionStatus.COMPLETED
               }
             ],
-            [
-              call(getChainIdByNetwork, Network.ETHEREUM),
-              ChainId.ETHEREUM_GOERLI
-            ]
+            [call(getChainIdByNetwork, Network.ETHEREUM), ChainId.ETHEREUM_GOERLI]
           ])
 
           .put(setPurchase(expectedPurchase))
@@ -582,17 +499,11 @@ describe('when handling the completion of the purchase', () => {
         }
 
         return expectSaga(gatewaySaga)
-          .provide([
-            [
-              call(getChainIdByNetwork, Network.ETHEREUM),
-              ChainId.ETHEREUM_GOERLI
-            ]
-          ])
+          .provide([[call(getChainIdByNetwork, Network.ETHEREUM), ChainId.ETHEREUM_GOERLI]])
           .put(
             openModal(buyManaWithFiatFeedbackModalName, {
               purchase: mockPurchaseWithCryptoTransactionId,
-              goToUrl:
-                'http://widget.base.url.xyz/transaction_receipt?transactionId=354b1f46-480c-4307-9896-f4c81c1e1e17'
+              goToUrl: 'http://widget.base.url.xyz/transaction_receipt?transactionId=354b1f46-480c-4307-9896-f4c81c1e1e17'
             })
           )
           .put(setPurchase(mockPurchaseWithCryptoTransactionId))
@@ -687,12 +598,7 @@ describe('when handling the action signaling the set purchase', () => {
         }
 
         return expectSaga(gatewaySaga)
-          .provide([
-            [
-              call(getChainIdByNetwork, Network.ETHEREUM),
-              ChainId.ETHEREUM_GOERLI
-            ]
-          ])
+          .provide([[call(getChainIdByNetwork, Network.ETHEREUM), ChainId.ETHEREUM_GOERLI]])
           .dispatch(setPurchase(expectedPurchase))
           .put(fetchWalletRequest())
           .put(addManaPurchaseAsTransaction(expectedPurchase))
@@ -768,9 +674,7 @@ describe('when handling the action signaling the load of the local storage into 
     describe('when it is a MoonPay purchase', () => {
       it('should put the action signaling the completion of the purchase', async () => {
         return expectSaga(gatewaySaga)
-          .provide([
-            [select(getPendingPurchases), [mockPurchaseWithCryptoTransactionId]]
-          ])
+          .provide([[select(getPendingPurchases), [mockPurchaseWithCryptoTransactionId]]])
           .dispatch(load({}))
           .put(
             manaFiatGatewayPurchaseCompleted(
@@ -786,9 +690,7 @@ describe('when handling the action signaling the load of the local storage into 
 
     describe('when it is a Transak purchase', () => {
       beforeEach(() => {
-        jest
-          .spyOn(Transak.prototype, 'getOrder')
-          .mockResolvedValue(mockTransakOrderResponse)
+        jest.spyOn(Transak.prototype, 'getOrder').mockResolvedValue(mockTransakOrderResponse)
       })
 
       describe("and there is no identity and it's generate function failed", () => {
@@ -820,9 +722,7 @@ describe('when handling the action signaling the load of the local storage into 
 
       describe('and there is identity', () => {
         beforeEach(() => {
-          jest
-            .spyOn(MarketplaceAPI.prototype, 'getOrder')
-            .mockResolvedValue(mockTransakOrderResponse)
+          jest.spyOn(MarketplaceAPI.prototype, 'getOrder').mockResolvedValue(mockTransakOrderResponse)
         })
         it('should put the action signaling the start pof the purchase status polling request', async () => {
           const transakPurchase = {
@@ -865,9 +765,7 @@ describe('when handling the action signaling the load of the local storage into 
 
     describe('when it is possible to get the order from Transak API', () => {
       beforeEach(() => {
-        jest
-          .spyOn(MarketplaceAPI.prototype, 'getOrder')
-          .mockResolvedValue(mockTransakOrderResponse)
+        jest.spyOn(MarketplaceAPI.prototype, 'getOrder').mockResolvedValue(mockTransakOrderResponse)
       })
 
       it('should get the order, put the action signaling the set of updated purchase, and the action signaling the success of the poll purchase status request', async () => {
@@ -889,9 +787,7 @@ describe('when handling the action signaling the load of the local storage into 
 
     describe('when it is not possible to get the order from Transak API because the request fails', () => {
       beforeEach(() => {
-        jest
-          .spyOn(MarketplaceAPI.prototype, 'getOrder')
-          .mockRejectedValue(new Error(error))
+        jest.spyOn(MarketplaceAPI.prototype, 'getOrder').mockRejectedValue(new Error(error))
       })
 
       it('should get the order, put the action signaling the set of updated purchase, and the action signaling the success of the poll purchase status request', async () => {
@@ -928,9 +824,7 @@ describe('when handling the action signaling the opening of the fiat gateway wid
       })
       describe('and the marketplace server api call succeeds', () => {
         beforeEach(() => {
-          jest
-            .spyOn(MarketplaceAPI.prototype, 'signWertMessageAndCreateSession')
-            .mockResolvedValue(response)
+          jest.spyOn(MarketplaceAPI.prototype, 'signWertMessageAndCreateSession').mockResolvedValue(response)
         })
 
         describe('and has all the required data to sign', () => {
@@ -948,16 +842,9 @@ describe('when handling the action signaling the opening of the fiat gateway wid
               .provide([
                 [select(getData), { address: wallet.address }],
                 [call(getIdentityOrRedirect), identity],
-                [
-                  matchers.call.fn(
-                    MarketplaceAPI.prototype.signWertMessageAndCreateSession
-                  ),
-                  response
-                ]
+                [matchers.call.fn(MarketplaceAPI.prototype.signWertMessageAndCreateSession), response]
               ])
-              .dispatch(
-                openFiatGatewayWidgetRequest(FiatGateway.WERT, wertOptions)
-              )
+              .dispatch(openFiatGatewayWidgetRequest(FiatGateway.WERT, wertOptions))
               .silentRun()
               .then(() => {
                 expect(WertWidget).toHaveBeenCalledWith(
@@ -975,18 +862,12 @@ describe('when handling the action signaling the opening of the fiat gateway wid
           })
           it('should put the failure action', () => {
             return expectSaga(gatewaySaga)
-              .put(
-                openFiatGatewayWidgetFailure(
-                  'Missing data needed for the message to sign'
-                )
-              )
+              .put(openFiatGatewayWidgetFailure('Missing data needed for the message to sign'))
               .provide([
                 [select(getData), { address: wallet.address }],
                 [call(getIdentityOrRedirect), identity]
               ])
-              .dispatch(
-                openFiatGatewayWidgetRequest(FiatGateway.WERT, wertOptions)
-              )
+              .dispatch(openFiatGatewayWidgetRequest(FiatGateway.WERT, wertOptions))
               .silentRun()
           })
         })
@@ -1001,8 +882,7 @@ describe('when handling the action signaling the opening of the fiat gateway wid
             sc_address: '0x0',
             sc_input_data: '0x0'
           } as WertOptions
-          ;(MarketplaceAPI.prototype
-            .signWertMessageAndCreateSession as jest.Mock).mockRejectedValue({
+          ;(MarketplaceAPI.prototype.signWertMessageAndCreateSession as jest.Mock).mockRejectedValue({
             message: error
           })
         })
@@ -1013,9 +893,7 @@ describe('when handling the action signaling the opening of the fiat gateway wid
               [select(getData), { address: wallet.address }],
               [call(getIdentityOrRedirect), identity]
             ])
-            .dispatch(
-              openFiatGatewayWidgetRequest(FiatGateway.WERT, wertOptions)
-            )
+            .dispatch(openFiatGatewayWidgetRequest(FiatGateway.WERT, wertOptions))
             .silentRun()
         })
       })

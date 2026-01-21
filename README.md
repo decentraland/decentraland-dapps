@@ -100,8 +100,7 @@ You can use the following selectors importing them from `decentraland-dapps/dist
 ```tsx
 getData = (state: State) => BaseWallet
 getError = (state: State) => string
-getNetwork = (state: State) =>
-  'mainnet' | 'ropsten' | 'rinkeby' | 'kovan' | 'localhost'
+getNetwork = (state: State) => 'mainnet' | 'ropsten' | 'rinkeby' | 'kovan' | 'localhost'
 getAddress = (state: State) => string
 isConnected = (state: State) => boolean
 isConnecting = (state: State) => boolean
@@ -128,10 +127,7 @@ This is an example of how you can wait for the `CONNECT_WALLET_SUCCESS` action t
 ```tsx
 // modules/something/sagas.ts
 
-import {
-  CONNECT_WALLET_SUCCESS,
-  ConnectWalletSuccessAction
-} from 'decentraland-dapps/dist/modules/wallet/actions'
+import { CONNECT_WALLET_SUCCESS, ConnectWalletSuccessAction } from 'decentraland-dapps/dist/modules/wallet/actions'
 import { fetchSomethingRequest } from './actions'
 
 export function* saga() {
@@ -330,10 +326,7 @@ You will need to add `storageReducer` as `storage` to your `rootReducer` and the
 ```ts
 import { combineReducers } from 'redux'
 
-import {
-  storageReducer as storage,
-  storageReducerWrapper
-} from 'decentraland-dapps/dist/modules/storage/reducer'
+import { storageReducer as storage, storageReducerWrapper } from 'decentraland-dapps/dist/modules/storage/reducer'
 
 export const rootReducer = storageReducerWrapper(
   combineReducers({
@@ -857,10 +850,7 @@ To send `track` events, add an `analytics.ts` file and require it from your entr
 ```ts
 // analytics.ts
 import { add } from 'decentraland-dapps/dist/modules/analytics/utils'
-import {
-  CREATE_VOTE_SUCCESS,
-  CreateVoteSuccessAction
-} from 'modules/vote/actions'
+import { CREATE_VOTE_SUCCESS, CreateVoteSuccessAction } from 'modules/vote/actions'
 
 add(CREATE_VOTE_SUCCESS, 'Vote', (action: CreateVoteSuccessAction) => ({
   poll_id: action.payload.vote.poll_id,
@@ -929,9 +919,7 @@ function Routes() {
 You can use the same redux action type to generate different Segment events if you pass a function as the second parameter instead of a string:
 
 ```ts
-add(AUTHORIZE_LAND_SUCCESS, action =>
-  action.isAuthorized ? 'Authorize LAND' : 'Unauthorize LAND'
-)
+add(AUTHORIZE_LAND_SUCCESS, action => (action.isAuthorized ? 'Authorize LAND' : 'Unauthorize LAND'))
 ```
 
 ## Loading
@@ -945,10 +933,7 @@ You can use the selectors `isLoading(state)` and `isLoadingType(state, ACTION_TY
 In order to use these selectors you need to use the `loadingReducer` within your domain reducers, here is an example:
 
 ```ts
-import {
-  loadingReducer,
-  LoadingState
-} from 'decentraland-dapps/dist/modules/loading/reducer'
+import { loadingReducer, LoadingState } from 'decentraland-dapps/dist/modules/loading/reducer'
 import {
   FETCH_INVITES_REQUEST,
   FETCH_INVITES_SUCCESS,
@@ -972,15 +957,9 @@ export const INITIAL_STATE: InviteState = {
   error: null
 }
 
-export type InviteReducerAction =
-  | FetchInvitesRequestAction
-  | FetchInvitesSuccessAction
-  | FetchInvitesFailureAction
+export type InviteReducerAction = FetchInvitesRequestAction | FetchInvitesSuccessAction | FetchInvitesFailureAction
 
-export function invitesReducer(
-  state: InviteState = INITIAL_STATE,
-  action: InviteReducerAction
-): InviteState {
+export function invitesReducer(state: InviteState = INITIAL_STATE, action: InviteReducerAction): InviteState {
   switch (action.type) {
     case FETCH_INVITES_REQUEST: {
       return {
@@ -1222,10 +1201,7 @@ This module helps manage credits in the Decentraland marketplace. It handles fet
 You can start and stop real-time credit updates using SSE:
 
 ```ts
-import {
-  startCreditsSSE,
-  stopCreditsSSE
-} from 'decentraland-dapps/dist/modules/credits/actions'
+import { startCreditsSSE, stopCreditsSSE } from 'decentraland-dapps/dist/modules/credits/actions'
 
 // Start real-time credit updates when component mounts
 dispatch(startCreditsSSE(address))
@@ -1734,10 +1710,7 @@ export default class MyComponent extends React.PureComponent {
     return (
       <div>
         {/* (...) */}
-        <Intercom
-          appId={YOUR_APP_ID}
-          data={/*optional data sent to intercom */}
-        />
+        <Intercom appId={YOUR_APP_ID} data={/*optional data sent to intercom */} />
       </div>
     )
   }

@@ -58,9 +58,7 @@ describe('when fetching a trade by id', () => {
 
   beforeEach(() => {
     tradesApi = new TradesAPI('dcl:test', 'https://test.com')
-    fetchMock = jest
-      .spyOn(tradesApi as any, 'fetch')
-      .mockResolvedValue({} as Trade)
+    fetchMock = jest.spyOn(tradesApi as any, 'fetch').mockResolvedValue({} as Trade)
   })
 
   it('should call the marketplace api with the right parameters', async () => {

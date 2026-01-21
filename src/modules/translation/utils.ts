@@ -1,9 +1,4 @@
-import {
-  IntlProvider,
-  createIntl,
-  createIntlCache,
-  FormattedMessage
-} from 'react-intl'
+import { FormattedMessage, IntlProvider, createIntl, createIntlCache } from 'react-intl'
 import { Locale } from 'decentraland-ui/dist/components/Language/Language'
 
 const cache = createIntlCache()
@@ -18,10 +13,9 @@ export function getPreferredLocale(availableLocales: Locale[]): Locale | null {
 
   const navigator = window.navigator
 
-  const navigatorLocale =
-    (navigator.languages && navigator.languages[0]) || navigator.language
+  const navigatorLocale = (navigator.languages && navigator.languages[0]) || navigator.language
 
-  let locale: Locale = navigatorLocale.slice(0, 2) as Locale
+  const locale: Locale = navigatorLocale.slice(0, 2) as Locale
 
   if (!availableLocales.includes(locale)) {
     return null
@@ -30,10 +24,7 @@ export function getPreferredLocale(availableLocales: Locale[]): Locale | null {
   return locale
 }
 
-export function setCurrentLocale(
-  localeName: Locale,
-  messages: Record<string, string>
-) {
+export function setCurrentLocale(localeName: Locale, messages: Record<string, string>) {
   const locale = {
     en: 'en-EN',
     es: 'es-ES',
@@ -54,11 +45,7 @@ export function t(id: string, values?: any) {
   return currentLocale.formatMessage({ id }, values)
 }
 
-export function t_cond(
-  id: string | undefined,
-  defaultId: string,
-  values?: any
-) {
+export function t_cond(id: string | undefined, defaultId: string, values?: any) {
   if (!id) {
     return currentLocale.formatMessage({ id: defaultId }, values)
   }
@@ -72,26 +59,14 @@ export function t_cond(
 
 export const T = FormattedMessage
 
-export function mergeTranslations<T extends { [key: string]: T | string }>(
-  target: T = {} as T,
-  ...sources: (T | undefined)[]
-) {
-  return [target, ...sources].reduce<T>(
-    (result, obj) => _mergeTranslations<T>(result, obj),
-    {} as T
-  )
+export function mergeTranslations<T extends { [key: string]: T | string }>(target: T = {} as T, ...sources: (T | undefined)[]) {
+  return [target, ...sources].reduce<T>((result, obj) => _mergeTranslations<T>(result, obj), {} as T)
 }
 
-function _mergeTranslations<T extends { [key: string]: T | string }>(
-  target: T = {} as T,
-  source: T = {} as T
-) {
+function _mergeTranslations<T extends { [key: string]: T | string }>(target: T = {} as T, source: T = {} as T) {
   const merged: T = Object.keys(source).reduce((result: T, key: string) => {
     // @ts-ignore
-    result[key] =
-      typeof source[key] === 'object'
-        ? _mergeTranslations(target[key] as T, source[key] as T)
-        : source[key]
+    result[key] = typeof source[key] === 'object' ? _mergeTranslations(target[key] as T, source[key]) : source[key]
     return result
   }, target)
   return merged

@@ -1,17 +1,11 @@
 import React from 'react'
-
 import { Button } from 'decentraland-ui/dist/components/Button/Button'
 import { ModalNavigation } from 'decentraland-ui/dist/components/ModalNavigation/ModalNavigation'
-import { T } from '../../modules/translation/utils'
 import Modal from '../../containers/Modal'
+import { T } from '../../modules/translation/utils'
 import { Props } from './UnsupportedNetworkModal.types'
 
-const UnsupportedNetworkModal: React.FC<Props> = ({
-  chainName,
-  expectedChainName,
-  isSwitchingNetwork,
-  onSwitchNetwork
-}: Props) => {
+const UnsupportedNetworkModal: React.FC<Props> = ({ chainName, expectedChainName, isSwitchingNetwork, onSwitchNetwork }: Props) => {
   return (
     <Modal open size="tiny">
       <ModalNavigation title={<T id="@dapps.navbar.wrong_network.header" />} />
@@ -34,12 +28,7 @@ const UnsupportedNetworkModal: React.FC<Props> = ({
         )}
       </Modal.Content>
       <Modal.Actions>
-        <Button
-          primary
-          disabled={isSwitchingNetwork}
-          loading={isSwitchingNetwork}
-          onClick={onSwitchNetwork}
-        >
+        <Button primary disabled={isSwitchingNetwork} loading={isSwitchingNetwork} onClick={onSwitchNetwork}>
           <T
             id="@dapps.navbar.wrong_network.switch_button"
             values={{

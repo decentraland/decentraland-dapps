@@ -1,6 +1,5 @@
 import * as React from 'react'
-
-import { DefaultProps, Props, ModalComponent } from './ModalProvider.types'
+import { DefaultProps, ModalComponent, Props } from './ModalProvider.types'
 
 export default class ModalProvider extends React.PureComponent<Props> {
   static defaultProps: DefaultProps = {
@@ -29,14 +28,7 @@ export default class ModalProvider extends React.PureComponent<Props> {
       }
 
       const onClose = this.getCloseHandler(modal.name)
-      ModalComponents.push(
-        <Component
-          key={name}
-          name={name}
-          metadata={modal.metadata}
-          onClose={onClose}
-        />
-      )
+      ModalComponents.push(<Component key={name} name={name} metadata={modal.metadata} onClose={onClose} />)
     }
 
     return (

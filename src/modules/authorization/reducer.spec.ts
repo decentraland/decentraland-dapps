@@ -19,11 +19,7 @@ import {
   authorizationFlowClear,
   AuthorizationFlowClearAction
 } from './actions'
-import {
-  authorizationReducer,
-  AuthorizationState,
-  INITIAL_STATE
-} from './reducer'
+import { authorizationReducer, AuthorizationState, INITIAL_STATE } from './reducer'
 import { Authorization, AuthorizationAction } from './types'
 
 describe.each([
@@ -39,19 +35,11 @@ describe.each([
   },
   {
     type: GRANT_TOKEN_SUCCESS,
-    action: grantTokenSuccess(
-      {} as Authorization,
-      ChainId.ETHEREUM_GOERLI,
-      'tsx'
-    )
+    action: grantTokenSuccess({} as Authorization, ChainId.ETHEREUM_GOERLI, 'tsx')
   },
   {
     type: REVOKE_TOKEN_SUCCESS,
-    action: revokeTokenSuccess(
-      {} as Authorization,
-      ChainId.ETHEREUM_GOERLI,
-      'tsx'
-    )
+    action: revokeTokenSuccess({} as Authorization, ChainId.ETHEREUM_GOERLI, 'tsx')
   },
   {
     type: FETCH_AUTHORIZATIONS_REQUEST,
@@ -104,10 +92,7 @@ describe('authorization flow actions', () => {
 
   describe('when handling the AUTHORIZATION_FLOW_REQUEST action', () => {
     beforeEach(() => {
-      action = authorizationFlowRequest(
-        {} as Authorization,
-        AuthorizationAction.GRANT
-      )
+      action = authorizationFlowRequest({} as Authorization, AuthorizationAction.GRANT)
       initialState = {
         ...INITIAL_STATE,
         authorizationFlowError: 'test error'

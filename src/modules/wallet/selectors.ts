@@ -1,13 +1,8 @@
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { Network } from '@dcl/schemas/dist/dapps/network'
-import { isLoadingType } from '../loading/selectors'
 import { UserMenuProps } from 'decentraland-ui/dist/components/UserMenu/UserMenu.types'
-import {
-  CONNECT_WALLET_REQUEST,
-  DISCONNECT_WALLET_REQUEST,
-  ENABLE_WALLET_REQUEST,
-  SWITCH_NETWORK_REQUEST
-} from './actions'
+import { isLoadingType } from '../loading/selectors'
+import { CONNECT_WALLET_REQUEST, DISCONNECT_WALLET_REQUEST, ENABLE_WALLET_REQUEST, SWITCH_NETWORK_REQUEST } from './actions'
 import { WalletState } from './reducer'
 
 export const getState: (state: any) => WalletState = state => state.wallet
@@ -16,37 +11,26 @@ export const getLoading = (state: any) => getState(state).loading
 export const getError = (state: any) => getState(state).error
 
 export const isConnected = (state: any) => getData(state) !== null
-export const isConnecting = (state: any) =>
-  isLoadingType(getLoading(state), CONNECT_WALLET_REQUEST)
-export const isEnabling = (state: any) =>
-  isLoadingType(getLoading(state), ENABLE_WALLET_REQUEST)
-export const isDisconnecting = (state: any) =>
-  isLoadingType(getLoading(state), DISCONNECT_WALLET_REQUEST)
+export const isConnecting = (state: any) => isLoadingType(getLoading(state), CONNECT_WALLET_REQUEST)
+export const isEnabling = (state: any) => isLoadingType(getLoading(state), ENABLE_WALLET_REQUEST)
+export const isDisconnecting = (state: any) => isLoadingType(getLoading(state), DISCONNECT_WALLET_REQUEST)
 
-export const getAddress = (state: any) =>
-  isConnected(state) ? getData(state)!.address : undefined
+export const getAddress = (state: any) => (isConnected(state) ? getData(state)!.address : undefined)
 
-export const getChainId = (state: any) =>
-  isConnected(state) ? getData(state)!.chainId : undefined
+export const getChainId = (state: any) => (isConnected(state) ? getData(state)!.chainId : undefined)
 
-export const getProviderType = (state: any) =>
-  isConnected(state) ? getData(state)!.providerType : undefined
+export const getProviderType = (state: any) => (isConnected(state) ? getData(state)!.providerType : undefined)
 
-export const getNetwork = (state: any) =>
-  isConnected(state) ? getData(state)!.network : undefined
+export const getNetwork = (state: any) => (isConnected(state) ? getData(state)!.network : undefined)
 
-export const getNetworks = (state: any) =>
-  isConnected(state) ? getData(state)!.networks : undefined
+export const getNetworks = (state: any) => (isConnected(state) ? getData(state)!.networks : undefined)
 
-export const isSwitchingNetwork = (state: any) =>
-  isLoadingType(getLoading(state), SWITCH_NETWORK_REQUEST)
+export const isSwitchingNetwork = (state: any) => isLoadingType(getLoading(state), SWITCH_NETWORK_REQUEST)
 
-export const getSwitchingNetworkChain = (state: any) =>
-  getLoading(state).find(loading => loading.type === SWITCH_NETWORK_REQUEST)
+export const getSwitchingNetworkChain = (state: any) => getLoading(state).find(loading => loading.type === SWITCH_NETWORK_REQUEST)
 
 // Casting as ChainId since it will be initialized at the beginning
-export const getAppChainId = (state: any) =>
-  getState(state).appChainId as ChainId
+export const getAppChainId = (state: any) => getState(state).appChainId as ChainId
 
 /**
  * @deprecated This method is deprecated, it only returns the MANA balance on Ethereum, use getNetworks() to get the MANA balances on all the networks.

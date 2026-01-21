@@ -2,13 +2,7 @@ import { LoadingState } from '../loading/reducer'
 import { isLoadingType } from '../loading/selectors'
 import { FETCH_APPLICATION_FEATURES_REQUEST } from './actions'
 import { FeaturesState } from './reducer'
-import {
-  ApplicationName,
-  ApplicationFeatures,
-  StateWithFeatures,
-  Variant,
-  FeatureName
-} from './types'
+import { ApplicationFeatures, ApplicationName, FeatureName, StateWithFeatures, Variant } from './types'
 
 export const getState = (state: StateWithFeatures): FeaturesState => {
   const { features } = state
@@ -22,15 +16,11 @@ export const getState = (state: StateWithFeatures): FeaturesState => {
   return features
 }
 
-export const getData = (
-  state: StateWithFeatures
-): Record<ApplicationName, ApplicationFeatures> => getState(state).data
+export const getData = (state: StateWithFeatures): Record<ApplicationName, ApplicationFeatures> => getState(state).data
 
-export const getLoading = (state: StateWithFeatures): LoadingState =>
-  getState(state).loading
+export const getLoading = (state: StateWithFeatures): LoadingState => getState(state).loading
 
-export const getError = (state: StateWithFeatures): string | null =>
-  getState(state).error
+export const getError = (state: StateWithFeatures): string | null => getState(state).error
 
 /**
  * Helper to get whether a feature flag is enabled or disabled.
@@ -47,11 +37,7 @@ export const getError = (state: StateWithFeatures): string | null =>
  *
  * @returns Whether the feature is enabled or not.
  */
-export const getIsFeatureEnabled = (
-  state: StateWithFeatures,
-  app: ApplicationName,
-  feature: string
-): boolean => {
+export const getIsFeatureEnabled = (state: StateWithFeatures, app: ApplicationName, feature: string): boolean => {
   const env = getFromEnv(app, feature)
 
   // Return the flag value if it has been defined in the env.
@@ -75,11 +61,7 @@ export const isLoadingFeatureFlags = (state: StateWithFeatures) => {
   return isLoadingType(getLoading(state), FETCH_APPLICATION_FEATURES_REQUEST)
 }
 
-export const getFeatureVariant = (
-  state: StateWithFeatures,
-  app: ApplicationName,
-  feature: string
-): Variant | null => {
+export const getFeatureVariant = (state: StateWithFeatures, app: ApplicationName, feature: string): Variant | null => {
   const variant = getVariantFromEnv(app, feature)
 
   // Return the flag variant if it has been defined in the env.
@@ -111,10 +93,7 @@ export const hasLoadedInitialFlags = (state: StateWithFeatures) => {
   return getState(state).hasLoadedInitialFlags
 }
 
-const getFromEnv = (
-  application: ApplicationName,
-  flag: string
-): boolean | null => {
+const getFromEnv = (application: ApplicationName, flag: string): boolean | null => {
   const envify = (word: string) => word.toUpperCase().replace(/-/g, '_')
   const key = `REACT_APP_FF_${envify(application)}_${envify(flag)}`
   const value = process.env[key]
@@ -122,10 +101,7 @@ const getFromEnv = (
   return !value || value === '' ? null : value === '1' ? true : false
 }
 
-const getVariantFromEnv = (
-  application: ApplicationName,
-  flag: string
-): string | null => {
+const getVariantFromEnv = (application: ApplicationName, flag: string): string | null => {
   const envify = (word: string) => word.toUpperCase().replace(/-/g, '_')
   const key = `REACT_APP_FF_VARIANT_${envify(application)}_${envify(flag)}`
   const value = process.env[key]
@@ -139,20 +115,9 @@ const getVariantFromEnv = (
  * Then it will check if the user wallets variant is defined, if not, it will return true.
  * Then it will check if the address is in the user wallets variant, if not, it will return false.
  */
-export const isCreditsFeatureEnabled = (
-  state: StateWithFeatures,
-  address: string
-) => {
-  const userWalletsVariant = getFeatureVariant(
-    state,
-    ApplicationName.EXPLORER,
-    FeatureName.USER_WALLETS
-  )
-  const isMarketplaceCreditsEnabled = getIsFeatureEnabled(
-    state,
-    ApplicationName.MARKETPLACE,
-    FeatureName.CREDITS
-  )
+export const isCreditsFeatureEnabled = (state: StateWithFeatures, address: string) => {
+  const userWalletsVariant = getFeatureVariant(state, ApplicationName.EXPLORER, FeatureName.USER_WALLETS)
+  const isMarketplaceCreditsEnabled = getIsFeatureEnabled(state, ApplicationName.MARKETPLACE, FeatureName.CREDITS)
 
   if (!isMarketplaceCreditsEnabled) {
     return false
@@ -172,11 +137,7 @@ export const isCreditsFeatureEnabled = (
 }
 
 export const getIsLauncherLinksFeatureEnabled = (state: StateWithFeatures) => {
-  const isLauncherLinksEnabled = getIsFeatureEnabled(
-    state,
-    ApplicationName.DAPPS,
-    FeatureName.LAUNCHER_LINKS
-  )
+  const isLauncherLinksEnabled = getIsFeatureEnabled(state, ApplicationName.DAPPS, FeatureName.LAUNCHER_LINKS)
 
   return isLauncherLinksEnabled
 }
@@ -186,16 +147,10 @@ export const getLauncherLinksVariant = (state: StateWithFeatures) => {
     return undefined
   }
 
-  const launcherLinks = getFeatureVariant(
-    state,
-    ApplicationName.DAPPS,
-    FeatureName.LAUNCHER_LINKS
-  )
+  const launcherLinks = getFeatureVariant(state, ApplicationName.DAPPS, FeatureName.LAUNCHER_LINKS)
 
   try {
-    return launcherLinks?.payload?.value
-      ? JSON.parse(launcherLinks.payload.value)
-      : undefined
+    return launcherLinks?.payload?.value ? JSON.parse(launcherLinks.payload.value) : undefined
   } catch (error) {
     console.error('Error parsing launcher links', error)
     return undefined

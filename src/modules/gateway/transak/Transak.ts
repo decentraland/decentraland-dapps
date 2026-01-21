@@ -1,19 +1,12 @@
 import { Transak as TransakSDK } from '@transak/transak-sdk'
-import { AuthIdentity } from 'decentraland-crypto-fetch'
 import Pusher from 'pusher-js'
 import { Network } from '@dcl/schemas/dist/dapps/network'
+import { AuthIdentity } from 'decentraland-crypto-fetch'
 import { NetworkGatewayType } from 'decentraland-ui'
 import { MarketplaceAPI } from '../../../lib/marketplaceApi'
-import { TransakConfig, Purchase, PurchaseStatus } from '../types'
+import { Purchase, PurchaseStatus, TransakConfig } from '../types'
 import { purchaseEventsChannel } from '../utils'
-import {
-  CustomizationOptions,
-  OrderData,
-  OrderResponse,
-  TradeType,
-  TransakOrderStatus,
-  WebSocketEvents
-} from './types'
+import { CustomizationOptions, OrderData, OrderResponse, TradeType, TransakOrderStatus, WebSocketEvents } from './types'
 
 const PURCHASE_EVENT = 'Purchase status change'
 
@@ -42,34 +35,26 @@ export class Transak {
     if (!TransakSDK.EVENTS) {
       return
     }
-    TransakSDK.on(
-      TransakSDK.EVENTS.TRANSAK_ORDER_CREATED,
-      (orderData: OrderData) => {
-        const events = [
-          WebSocketEvents.ORDER_PAYMENT_VERIFYING,
-          WebSocketEvents.ORDER_PROCESSING,
-          WebSocketEvents.ORDER_COMPLETED,
-          WebSocketEvents.ORDER_FAILED
-        ]
+    TransakSDK.on(TransakSDK.EVENTS.TRANSAK_ORDER_CREATED, (orderData: OrderData) => {
+      const events = [
+        WebSocketEvents.ORDER_PAYMENT_VERIFYING,
+        WebSocketEvents.ORDER_PROCESSING,
+        WebSocketEvents.ORDER_COMPLETED,
+        WebSocketEvents.ORDER_FAILED
+      ]
 
-        const channel = this.pusher.subscribe(orderData.id)
-        this.emitPurchaseEvent(orderData, network)
+      const channel = this.pusher.subscribe(orderData.id)
+      this.emitPurchaseEvent(orderData, network)
 
-        events.forEach(event => {
-          channel.bind(event, (orderData: OrderData) => {
-            this.emitPurchaseEvent(orderData, network)
-            if (
-              [
-                WebSocketEvents.ORDER_COMPLETED,
-                WebSocketEvents.ORDER_FAILED
-              ].includes(event)
-            ) {
-              this.pusher.unsubscribe(orderData.id)
-            }
-          })
+      events.forEach(event => {
+        channel.bind(event, (orderData: OrderData) => {
+          this.emitPurchaseEvent(orderData, network)
+          if ([WebSocketEvents.ORDER_COMPLETED, WebSocketEvents.ORDER_FAILED].includes(event)) {
+            this.pusher.unsubscribe(orderData.id)
+          }
         })
-      }
-    )
+      })
+    })
 
     TransakSDK.on(TransakSDK.EVENTS.TRANSAK_WIDGET_CLOSE, () => {
       setTimeout(() => {
@@ -84,10 +69,8 @@ export class Transak {
       [TransakOrderStatus.AWAITING_PAYMENT_FROM_USER]: PurchaseStatus.PENDING,
       [TransakOrderStatus.PAYMENT_DONE_MARKED_BY_USER]: PurchaseStatus.PENDING,
       [TransakOrderStatus.PROCESSING]: PurchaseStatus.PENDING,
-      [TransakOrderStatus.PENDING_DELIVERY_FROM_TRANSAK]:
-        PurchaseStatus.PENDING,
-      [TransakOrderStatus.ON_HOLD_PENDING_DELIVERY_FROM_TRANSAK]:
-        PurchaseStatus.PENDING,
+      [TransakOrderStatus.PENDING_DELIVERY_FROM_TRANSAK]: PurchaseStatus.PENDING,
+      [TransakOrderStatus.ON_HOLD_PENDING_DELIVERY_FROM_TRANSAK]: PurchaseStatus.PENDING,
       [TransakOrderStatus.COMPLETED]: PurchaseStatus.COMPLETE,
       [TransakOrderStatus.REFUNDED]: PurchaseStatus.REFUNDED,
       [TransakOrderStatus.CANCELLED]: PurchaseStatus.CANCELLED,
@@ -125,17 +108,7 @@ export class Transak {
    * @param status - Status of the order.
    */
   private createPurchase(orderData: OrderData, network: Network): Purchase {
-    const {
-      id,
-      cryptoAmount,
-      createdAt,
-      status,
-      isNFTOrder,
-      nftAssetInfo,
-      transactionHash,
-      walletAddress,
-      paymentOptionId
-    } = orderData
+    const { id, cryptoAmount, createdAt, status, isNFTOrder, nftAssetInfo, transactionHash, walletAddress, paymentOptionId } = orderData
 
     // read if there's item in the URL and set the item id otherwise set the token id
     const itemId = this.getItemIdFromUrl(window.location.href)
@@ -185,9 +158,7 @@ export class Transak {
    * @param address - Address of the connected wallet.
    * @param network - Network in which the transaction will be done.
    */
-  async openWidget(
-    customizationOptions: Partial<CustomizationOptions> & { network: Network }
-  ) {
+  async openWidget(customizationOptions: Partial<CustomizationOptions> & { network: Network }) {
     const { network, widgetHeight, widgetWidth, ...rest } = customizationOptions
     const transakNetwork = network === Network.MATIC ? 'polygon' : 'ethereum'
 

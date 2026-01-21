@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
-import { Props as BackToTopButtonUIProps } from 'decentraland-ui/dist/components/BackToTopButton/BackToTopButton.types'
 import { BackToTopButton as BackToTopButtonUI } from 'decentraland-ui/dist/components/BackToTopButton'
+import { Props as BackToTopButtonUIProps } from 'decentraland-ui/dist/components/BackToTopButton/BackToTopButton.types'
 import { t } from '../../modules/translation/utils'
 
 export const BackToTopButton = (props: BackToTopButtonUIProps) => {
