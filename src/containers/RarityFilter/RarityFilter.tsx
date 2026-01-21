@@ -17,8 +17,7 @@ export const RarityFilter = (props: RarityFilterProps) => {
     },
     title: t('@dapps.rarities_filter.title'),
     all_rarities: t('@dapps.rarities_filter.all_rarities'),
-    count_rarities: (count: number) =>
-      t('@dapps.rarities_filter.count_rarities', { count: count }),
+    count_rarities: (count: number) => t('@dapps.rarities_filter.count_rarities', { count: count }),
     tooltip: t('@dapps.rarities_filter.tooltip')
   }
 

@@ -13,7 +13,7 @@ jest.mock('./sagas', () => {
   return {
     ...actual,
     BACKOFF_DELAY_MULTIPLIER: 0.01,
-    getFibonacciDelay: function*(attempt: number) {
+    getFibonacciDelay: function* (attempt: number) {
       const fib = [1, 1]
       for (let i = 2; i <= attempt + 1; i++) {
         fib[i] = fib[i - 1] + fib[i - 2]
@@ -31,11 +31,7 @@ import * as matchers from 'redux-saga-test-plan/matchers'
 import { call, delay, select } from 'redux-saga/effects'
 import { TransactionStatus, Transaction } from './types'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
-import {
-  getFibonacciDelay,
-  handleRegularTransactionRequest,
-  handleWatchRevertedTransaction
-} from './sagas'
+import { getFibonacciDelay, handleRegularTransactionRequest, handleWatchRevertedTransaction } from './sagas'
 import { fetchTransactionSuccess, watchRevertedTransaction } from './actions'
 import { getTransaction as getTransactionInState } from './selectors'
 import { buildTransactionPayload } from './utils'
@@ -58,9 +54,7 @@ describe('when using fibonacci backoff for transaction polling', () => {
 
     cases.forEach(({ attempt, expected }) => {
       it(`should return ${expected}ms for attempt ${attempt}`, () => {
-        return expectSaga(getFibonacciDelay, attempt)
-          .returns(expected)
-          .run()
+        return expectSaga(getFibonacciDelay, attempt).returns(expected).run()
       })
     })
   })
@@ -108,12 +102,7 @@ describe('when using fibonacci backoff for transaction polling', () => {
             address: '0x123',
             action: {
               type: 'SOME_ACTION',
-              payload: buildTransactionPayload(
-                transaction.chainId,
-                hash,
-                {},
-                transaction.chainId
-              )
+              payload: buildTransactionPayload(transaction.chainId, hash, {}, transaction.chainId)
             }
           }
         }
@@ -188,13 +177,8 @@ describe('when using fibonacci backoff for transaction polling', () => {
           timestamp: Date.now() - 25 * 60 * 60 * 1000 // 25 hours ago
         }
 
-        return expectSaga(
-          handleWatchRevertedTransaction,
-          watchRevertedTransaction(hash)
-        )
-          .provide([
-            [matchers.select(getTransactionInState, hash), expiredTransaction]
-          ])
+        return expectSaga(handleWatchRevertedTransaction, watchRevertedTransaction(hash))
+          .provide([[matchers.select(getTransactionInState, hash), expiredTransaction]])
           .withState({
             transaction: {
               data: [expiredTransaction]

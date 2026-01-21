@@ -20,15 +20,7 @@ export type Props = ChainData & {
 
 export type MapStateProps = Pick<
   Props,
-  | 'chainId'
-  | 'chainName'
-  | 'network'
-  | 'appChainId'
-  | 'appChainName'
-  | 'appNetwork'
-  | 'isConnected'
-  | 'isSupported'
-  | 'isUnsupported'
+  'chainId' | 'chainName' | 'network' | 'appChainId' | 'appChainName' | 'appNetwork' | 'isConnected' | 'isSupported' | 'isUnsupported'
 >
 export type MapDispatchProps = {}
 export type MapDispatch = Dispatch

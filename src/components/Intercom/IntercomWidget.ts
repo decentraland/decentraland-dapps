@@ -1,8 +1,7 @@
-import { isMobile, insertScript } from '../../lib/utils'
+import { insertScript, isMobile } from '../../lib/utils'
+import { IntercomSettings, IntercomWindow } from './Intercom.types'
 
-import { IntercomWindow, IntercomSettings } from './Intercom.types'
-
-const intercomWindow = (window as unknown) as IntercomWindow
+const intercomWindow = window as unknown as IntercomWindow
 
 export class IntercomWidget {
   private _appId: string
@@ -82,9 +81,7 @@ export class IntercomWidget {
 function getWindowClient(appId: string) {
   return (...args: any[]) => {
     if (!appId) {
-      return console.warn(
-        'Intercom app id empty. Check that the environment is propery set'
-      )
+      return console.warn('Intercom app id empty. Check that the environment is propery set')
     }
 
     if (isMobile()) {

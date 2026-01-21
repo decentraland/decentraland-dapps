@@ -19,35 +19,15 @@ const transactionStatuses = {
   [PurchaseStatus.REFUNDED]: TransactionStatus.FAILURE
 }
 
-const camelToSnakeCase = (str: string) =>
-  str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`)
+const camelToSnakeCase = (str: string) => str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`)
 
 const propsToTranslateByStatus = {
-  [TransactionStatus.PENDING]: [
-    'title',
-    'statusTitle',
-    'description',
-    'goToText'
-  ],
-  [TransactionStatus.SUCCESS]: [
-    'title',
-    'description',
-    'cta',
-    'viewTransaction'
-  ],
-  [TransactionStatus.FAILURE]: [
-    'title',
-    'statusTitle',
-    'description',
-    'cta',
-    'secondaryCta'
-  ]
+  [TransactionStatus.PENDING]: ['title', 'statusTitle', 'description', 'goToText'],
+  [TransactionStatus.SUCCESS]: ['title', 'description', 'cta', 'viewTransaction'],
+  [TransactionStatus.FAILURE]: ['title', 'statusTitle', 'description', 'cta', 'secondaryCta']
 }
 
-const getDefaultFeedbackTranslations = (
-  { network, gateway }: Purchase,
-  status: TransactionStatus
-): FeedbackModalI18N => {
+const getDefaultFeedbackTranslations = ({ network, gateway }: Purchase, status: TransactionStatus): FeedbackModalI18N => {
   const basePath = `@dapps.buyManaWithFiat.feedback_modal.${status}`
   return Object.fromEntries(
     propsToTranslateByStatus[status].map(prop => [
@@ -96,14 +76,7 @@ const BuyManaWithFiatFeedbackModal = ({
       onSelectOtherProvider(network)
       onClose()
     }
-  }, [
-    transactionStatus,
-    analytics,
-    network,
-    gateway,
-    onSelectOtherProvider,
-    onClose
-  ])
+  }, [transactionStatus, analytics, network, gateway, onSelectOtherProvider, onClose])
 
   return (
     <BaseBuyManaWithFiatFeedbackModal

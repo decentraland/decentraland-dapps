@@ -111,11 +111,7 @@ describe('when reducing the action that signals a successful profile load', () =
 describe('when reducing the action that signals a successful profile avatar description change', () => {
   it('should return a state with the avatar description and version changed and the loading state cleared', () => {
     const request = setProfileAvatarDescriptionRequest(address, description)
-    const success = setProfileAvatarDescriptionSuccess(
-      address,
-      description,
-      version
-    )
+    const success = setProfileAvatarDescriptionSuccess(address, description, version)
     const initialState: ProfileState = {
       ...INITIAL_STATE,
       data: {
@@ -138,10 +134,7 @@ describe('when reducing the action that signals a successful profile avatar desc
         ...initialState.data,
         [address]: {
           ...profile,
-          avatars: [
-            expectedAvatar,
-            ...initialState.data[address].avatars.slice(1)
-          ]
+          avatars: [expectedAvatar, ...initialState.data[address].avatars.slice(1)]
         }
       }
     })
@@ -175,10 +168,7 @@ describe('when reducing the action that signals a successful profile avatar alia
         ...initialState.data,
         [address]: {
           ...profile,
-          avatars: [
-            expectedAvatar,
-            ...initialState.data[address].avatars.slice(1)
-          ]
+          avatars: [expectedAvatar, ...initialState.data[address].avatars.slice(1)]
         }
       }
     })
@@ -199,9 +189,7 @@ describe('when reducing the action to clear the profile error', () => {
 describe('when reducing the action to change the profile', () => {
   describe("when there's no profile for a given address", () => {
     it('should return a state with a stored profile for the given address', () => {
-      expect(
-        profileReducer(INITIAL_STATE, changeProfile(address, profile))
-      ).toEqual({
+      expect(profileReducer(INITIAL_STATE, changeProfile(address, profile))).toEqual({
         ...INITIAL_STATE,
         data: {
           [address]: profile

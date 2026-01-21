@@ -1,5 +1,5 @@
-import { Network } from '@dcl/schemas/dist/dapps/network'
 import { Options, WidgetEvents } from '@wert-io/widget-initializer/types'
+import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 import { TradeType } from './transak/types'
 
@@ -109,8 +109,7 @@ export type FiatGatewaySagasConfig = {
   [FiatGateway.WERT]?: WertConfig
 }
 
-export type GatewaySagasConfig = FiatGatewaySagasConfig &
-  ManaFiatGatewaySagasConfig
+export type GatewaySagasConfig = FiatGatewaySagasConfig & ManaFiatGatewaySagasConfig
 
 export enum PurchaseStatus {
   PENDING = 'pending',

@@ -1,7 +1,4 @@
-import {
-  AddressFieldProps,
-  AddressField as AddressFieldUI
-} from 'decentraland-ui/dist/components/AddressField'
+import { AddressFieldProps, AddressField as AddressFieldUI } from 'decentraland-ui/dist/components/AddressField'
 import { resolveName } from './utils'
 
 type Props = Omit<AddressFieldProps, 'resolveName'>

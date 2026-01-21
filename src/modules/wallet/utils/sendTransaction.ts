@@ -1,12 +1,12 @@
+import { Contract, PopulatedTransaction } from '@ethersproject/contracts'
 import { BigNumber, utils } from 'ethers'
 import { ContractData, sendMetaTransaction } from 'decentraland-transactions'
-import { Contract, PopulatedTransaction } from '@ethersproject/contracts'
 import { getConnectedProvider } from '../../../lib/eth'
+import { getProviderChainId } from './getProviderChainId'
 import { getTargetNetworkProvider } from './getTargetNetworkProvider'
 import { transactionEvents } from './transactionEvents'
 import { TransactionEventData, TransactionEventType } from './types'
 import { getTransactionsApiUrl } from './urls'
-import { getProviderChainId } from './getProviderChainId'
 
 const acceptOrRejectTransaction = () => {
   return new Promise((resolve, reject) => {
@@ -31,11 +31,7 @@ const acceptOrRejectTransaction = () => {
  * @param contractMethodName - The name of the contract method to call.
  * @param contractMethodArgs - The arguments to pass to the contract method.
  */
-export async function sendTransaction(
-  contract: ContractData,
-  contractMethodName: string,
-  ...contractArguments: any[]
-): Promise<string>
+export async function sendTransaction(contract: ContractData, contractMethodName: string, ...contractArguments: any[]): Promise<string>
 
 /**
  * @deprecated
@@ -47,17 +43,11 @@ export async function sendTransaction(
  */
 export async function sendTransaction(
   contract: ContractData,
-  getPopulatedTransaction: (
-    populateTransaction: Contract['populateTransaction']
-  ) => Promise<PopulatedTransaction>
+  getPopulatedTransaction: (populateTransaction: Contract['populateTransaction']) => Promise<PopulatedTransaction>
 ): Promise<string>
 
 export async function sendTransaction(...args: any[]) {
-  const [
-    contract,
-    contractMethodNameOrGetPopulatedTransaction,
-    ...contractArguments
-  ] = args as [ContractData, string | Function, any[]]
+  const [contract, contractMethodNameOrGetPopulatedTransaction, ...contractArguments] = args as [ContractData, string | Function, any[]]
 
   try {
     const connectedProvider = await getConnectedProvider()
@@ -67,25 +57,14 @@ export async function sendTransaction(...args: any[]) {
 
     const chainId = await getProviderChainId(connectedProvider)
 
-    const targetNetworkProvider = await getTargetNetworkProvider(
-      contract.chainId
-    )
+    const targetNetworkProvider = await getTargetNetworkProvider(contract.chainId)
 
-    const contractInstance = new Contract(
-      contract.address,
-      contract.abi,
-      targetNetworkProvider
-    )
+    const contractInstance = new Contract(contract.address, contract.abi, targetNetworkProvider)
 
     // Populate the transaction data
-    const unsignedTx = await (typeof contractMethodNameOrGetPopulatedTransaction ===
-    'function'
-      ? contractMethodNameOrGetPopulatedTransaction(
-          contractInstance.populateTransaction
-        )
-      : contractInstance.populateTransaction[
-          contractMethodNameOrGetPopulatedTransaction
-        ](...contractArguments))
+    const unsignedTx = await (typeof contractMethodNameOrGetPopulatedTransaction === 'function'
+      ? contractMethodNameOrGetPopulatedTransaction(contractInstance.populateTransaction)
+      : contractInstance.populateTransaction[contractMethodNameOrGetPopulatedTransaction](...contractArguments))
 
     // If the connected provider is in the target network, use it to sign and send the tx
     if (chainId === contract.chainId) {
@@ -98,7 +77,9 @@ export async function sendTransaction(...args: any[]) {
           const gasPrice = await signer.getGasPrice()
           const transactionGasCost = await signer.estimateGas(unsignedTx)
           transactionGasPrice = gasPrice.mul(transactionGasCost)
-        } catch (_e) {}
+        } catch {
+          // Ignore gas estimation errors
+        }
 
         // If the transaction gas price is not zero, we need to wait for the user to accept or reject the transaction
         if (!transactionGasPrice.isZero()) {
@@ -119,15 +100,9 @@ export async function sendTransaction(...args: any[]) {
       return tx.hash
     } else {
       // otherwise, send it as a meta tx
-      const txHash = await sendMetaTransaction(
-        connectedProvider,
-        targetNetworkProvider,
-        unsignedTx.data!,
-        contract,
-        {
-          serverURL: getTransactionsApiUrl()
-        }
-      )
+      const txHash = await sendMetaTransaction(connectedProvider, targetNetworkProvider, unsignedTx.data, contract, {
+        serverURL: getTransactionsApiUrl()
+      })
       transactionEvents.emit(TransactionEventType.SUCCESS, { txHash })
       return txHash
     }

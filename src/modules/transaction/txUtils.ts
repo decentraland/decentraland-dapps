@@ -1,22 +1,18 @@
-import { ethers } from 'ethers'
 import { TransactionResponse } from '@ethersproject/providers'
+import { ethers } from 'ethers'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { getNetworkProvider } from '../../lib/eth'
 import {
-  ReplacedTransaction,
-  TransactionStatus,
   AnyTransaction,
-  QueuedTransaction,
+  ConfirmedTransaction,
   PendingTransaction,
+  QueuedTransaction,
+  ReplacedTransaction,
   RevertedTransaction,
-  ConfirmedTransaction
+  TransactionStatus
 } from './types'
 
-export async function getTransaction(
-  address: string,
-  chainId: ChainId,
-  hash: string
-): Promise<AnyTransaction | null> {
+export async function getTransaction(address: string, chainId: ChainId, hash: string): Promise<AnyTransaction | null> {
   const provider = await getNetworkProvider(chainId)
   if (!provider) return null
 
@@ -30,10 +26,7 @@ export async function getTransaction(
   try {
     currentNonce = await eth.getTransactionCount(address)
   } catch (error) {
-    console.warn(
-      `Could not get current nonce for account "${address}"`,
-      error.message
-    )
+    console.warn(`Could not get current nonce for account "${address}"`, error.message)
   }
 
   let response: TransactionResponse | null = null

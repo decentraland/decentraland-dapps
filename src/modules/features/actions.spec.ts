@@ -60,7 +60,7 @@ export const getMockApplicationFeaturesRecord = () =>
         }
       }
     } as ApplicationFeatures
-  } as Record<ApplicationName, ApplicationFeatures>)
+  }) as Record<ApplicationName, ApplicationFeatures>
 
 describe('when fetching application features', () => {
   describe('when calling the request action creator', () => {

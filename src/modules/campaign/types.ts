@@ -1,5 +1,5 @@
-import { ContentfulAsset, BannerFields, LocalizedField } from '@dcl/schemas'
 import { ActionType } from 'typesafe-actions'
+import { BannerFields, ContentfulAsset, LocalizedField } from '@dcl/schemas'
 import { LoadingState } from '../loading/reducer'
 import * as actions from './actions'
 

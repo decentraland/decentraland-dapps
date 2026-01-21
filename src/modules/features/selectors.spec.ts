@@ -40,21 +40,14 @@ describe('when getting the features state data', () => {
     })
 
     it('should throw an error indicating features reducer was not implemented', () => {
-      expect(() => getData(state)).toThrowError(
-        "'features' reducer not implemented"
-      )
+      expect(() => getData(state)).toThrowError("'features' reducer not implemented")
     })
   })
 })
 
 describe('when getting the features state loading', () => {
   it('should return the loading state', () => {
-    const loading = [
-      fetchApplicationFeaturesRequest([
-        ApplicationName.ACCOUNT,
-        ApplicationName.BUILDER
-      ])
-    ]
+    const loading = [fetchApplicationFeaturesRequest([ApplicationName.ACCOUNT, ApplicationName.BUILDER])]
 
     const result = getLoading({
       features: {
@@ -105,25 +98,19 @@ describe('when getting if a feature is enabled', () => {
 
   describe('when the application feature is stored as true', () => {
     it('should return true', () => {
-      expect(
-        getIsFeatureEnabled(state, ApplicationName.ACCOUNT, 'flag1')
-      ).toEqual(true)
+      expect(getIsFeatureEnabled(state, ApplicationName.ACCOUNT, 'flag1')).toEqual(true)
     })
   })
 
   describe('when the application feature is stored as false', () => {
     it('should return false', () => {
-      expect(
-        getIsFeatureEnabled(state, ApplicationName.ACCOUNT, 'flag2')
-      ).toEqual(false)
+      expect(getIsFeatureEnabled(state, ApplicationName.ACCOUNT, 'flag2')).toEqual(false)
     })
   })
 
   describe('when the application is not found in the state', () => {
     it('should return false', () => {
-      expect(
-        getIsFeatureEnabled(state, ApplicationName.DAPPS, 'flag1')
-      ).toEqual(false)
+      expect(getIsFeatureEnabled(state, ApplicationName.DAPPS, 'flag1')).toEqual(false)
     })
   })
 
@@ -148,9 +135,7 @@ describe('when getting if a feature is enabled', () => {
       })
 
       it('should return true', () => {
-        expect(
-          getIsFeatureEnabled(state, ApplicationName.ACCOUNT, featureName)
-        ).toEqual(true)
+        expect(getIsFeatureEnabled(state, ApplicationName.ACCOUNT, featureName)).toEqual(true)
       })
 
       describe('and the feature reducer is undefined', () => {
@@ -159,9 +144,7 @@ describe('when getting if a feature is enabled', () => {
         })
 
         it('should return true', () => {
-          expect(
-            getIsFeatureEnabled(state, ApplicationName.ACCOUNT, featureName)
-          ).toEqual(true)
+          expect(getIsFeatureEnabled(state, ApplicationName.ACCOUNT, featureName)).toEqual(true)
         })
       })
     })
@@ -172,9 +155,7 @@ describe('when getting if a feature is enabled', () => {
       })
 
       it('should return false', () => {
-        expect(
-          getIsFeatureEnabled(state, ApplicationName.ACCOUNT, featureName)
-        ).toEqual(false)
+        expect(getIsFeatureEnabled(state, ApplicationName.ACCOUNT, featureName)).toEqual(false)
       })
     })
 
@@ -184,9 +165,7 @@ describe('when getting if a feature is enabled', () => {
       })
 
       it('should return false', () => {
-        expect(
-          getIsFeatureEnabled(state, ApplicationName.ACCOUNT, featureName)
-        ).toEqual(false)
+        expect(getIsFeatureEnabled(state, ApplicationName.ACCOUNT, featureName)).toEqual(false)
       })
     })
   })
@@ -364,12 +343,7 @@ describe('when getting is the feature flags are being loaded', () => {
 
   describe('and the feature flags are being loaded', () => {
     beforeEach(() => {
-      state.features!.loading = [
-        fetchApplicationFeaturesRequest([
-          ApplicationName.ACCOUNT,
-          ApplicationName.BUILDER
-        ])
-      ]
+      state.features!.loading = [fetchApplicationFeaturesRequest([ApplicationName.ACCOUNT, ApplicationName.BUILDER])]
     })
 
     it('should return true', () => {

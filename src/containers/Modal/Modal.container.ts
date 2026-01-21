@@ -1,30 +1,19 @@
 import { connect } from 'react-redux'
-
-import Modal from './Modal'
-import { ModalProps, MapStateProps, MapDispatchProps } from './Modal.types'
+import { CloseModalAction, closeModal } from '../../modules/modal/actions'
 import { RootDispatch } from '../../types'
-import { closeModal, CloseModalAction } from '../../modules/modal/actions'
+import Modal from './Modal'
+import { MapDispatchProps, MapStateProps, ModalProps } from './Modal.types'
 
 const mapState = (_: any): MapStateProps => ({})
 
-const mapDispatch = (
-  dispatch: RootDispatch<CloseModalAction>
-): MapDispatchProps => ({
+const mapDispatch = (dispatch: RootDispatch<CloseModalAction>): MapDispatchProps => ({
   onCloseModal: (name: string) => dispatch(closeModal(name))
 })
 
-const mergeProps = (
-  stateProps: MapStateProps,
-  dispatchProps: MapDispatchProps,
-  ownProps: ModalProps
-): ModalProps => ({
+const mergeProps = (stateProps: MapStateProps, dispatchProps: MapDispatchProps, ownProps: ModalProps): ModalProps => ({
   ...stateProps,
   ...dispatchProps,
   ...ownProps
 })
 
-export default connect(
-  mapState,
-  mapDispatch,
-  mergeProps
-)(Modal) as any
+export default connect(mapState, mapDispatch, mergeProps)(Modal) as any

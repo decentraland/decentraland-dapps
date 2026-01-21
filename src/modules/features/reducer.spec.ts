@@ -1,23 +1,13 @@
-import {
-  fetchApplicationFeaturesFailure,
-  fetchApplicationFeaturesRequest,
-  fetchApplicationFeaturesSuccess
-} from './actions'
+import { fetchApplicationFeaturesFailure, fetchApplicationFeaturesRequest, fetchApplicationFeaturesSuccess } from './actions'
 import { getMockApplicationFeaturesRecord } from './actions.spec'
 import { featuresReducer } from './reducer'
 import { ApplicationName } from './types'
 
 describe('when handling the fetch features request', () => {
   it('should set error to null and add the action to the loading state', () => {
-    const action = fetchApplicationFeaturesRequest([
-      ApplicationName.ACCOUNT,
-      ApplicationName.BUILDER
-    ])
+    const action = fetchApplicationFeaturesRequest([ApplicationName.ACCOUNT, ApplicationName.BUILDER])
 
-    const state = featuresReducer(
-      { data: {}, hasLoadedInitialFlags: false, loading: [], error: 'error' },
-      action
-    )
+    const state = featuresReducer({ data: {}, hasLoadedInitialFlags: false, loading: [], error: 'error' }, action)
 
     expect(state).toEqual({
       data: {},

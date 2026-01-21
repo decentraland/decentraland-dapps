@@ -1,14 +1,10 @@
 import { Dispatch } from 'redux'
-import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { AuthIdentity } from '@dcl/crypto'
+import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { NavbarProps as NavbarComponentProps } from 'decentraland-ui/dist/components/Navbar/Navbar.types'
 import { NavbarProps as NavbarComponentProps2 } from 'decentraland-ui2'
-import {
-  disconnectWalletRequest,
-  switchNetworkRequest,
-  SwitchNetworkRequestAction
-} from '../../modules/wallet/actions'
 import { getCredits } from '../../modules/credits/selectors'
+import { SwitchNetworkRequestAction, disconnectWalletRequest, switchNetworkRequest } from '../../modules/wallet/actions'
 
 export type NavbarProps = NavbarComponentProps & {
   withChainSelector?: boolean
@@ -59,8 +55,5 @@ export type MapStateProps = Pick<
 > &
   Pick<NavbarProps2, 'credits' | 'cdnLinks' | 'shouldDownloadBeforeRedirect'>
 
-export type MapDispatchProps = Pick<
-  NavbarProps,
-  'onSwitchNetwork' | 'onSignOut'
->
+export type MapDispatchProps = Pick<NavbarProps, 'onSwitchNetwork' | 'onSignOut'>
 export type MapDispatch = Dispatch<SwitchNetworkRequestAction>

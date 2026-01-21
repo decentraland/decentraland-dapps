@@ -1,9 +1,6 @@
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
-import {
-  manaFiatGatewayPurchaseCompleted,
-  openManaFiatGatewayRequest
-} from './actions'
+import { manaFiatGatewayPurchaseCompleted, openManaFiatGatewayRequest } from './actions'
 import { MoonPayTransactionStatus } from './moonpay/types'
 import { INITIAL_STATE } from './reducer'
 import {
@@ -79,9 +76,7 @@ describe('MANA-FIAT Gateway selectors', () => {
 
   describe('when getting the purchases', () => {
     it("should return the array of purchases in the gateway's state", () => {
-      expect(getPurchases(initialState)).toEqual(
-        initialState.gateway.data.purchases
-      )
+      expect(getPurchases(initialState)).toEqual(initialState.gateway.data.purchases)
     })
   })
 
@@ -93,20 +88,13 @@ describe('MANA-FIAT Gateway selectors', () => {
           gateway: {
             ...initialState.gateway,
             data: { purchases: [mockManaPurchase] },
-            loading: [
-              openManaFiatGatewayRequest(
-                Network.ETHEREUM,
-                NetworkGatewayType.MOON_PAY
-              )
-            ]
+            loading: [openManaFiatGatewayRequest(Network.ETHEREUM, NetworkGatewayType.MOON_PAY)]
           }
         }
       })
 
       it('should return it', () => {
-        expect(getPendingPurchases(initialState)).toStrictEqual([
-          mockManaPurchase
-        ])
+        expect(getPendingPurchases(initialState)).toStrictEqual([mockManaPurchase])
       })
     })
 
@@ -135,12 +123,7 @@ describe('MANA-FIAT Gateway selectors', () => {
           gateway: {
             ...initialState.gateway,
             data: { purchases: [mockManaPurchase] },
-            loading: [
-              openManaFiatGatewayRequest(
-                Network.ETHEREUM,
-                NetworkGatewayType.MOON_PAY
-              )
-            ]
+            loading: [openManaFiatGatewayRequest(Network.ETHEREUM, NetworkGatewayType.MOON_PAY)]
           }
         }
       })
@@ -181,9 +164,7 @@ describe('MANA-FIAT Gateway selectors', () => {
       })
 
       it('should return it', () => {
-        expect(
-          getNFTPurchase(initialState, mockContractAddress, mockTokenId)
-        ).toBe(mockNFTPurchase)
+        expect(getNFTPurchase(initialState, mockContractAddress, mockTokenId)).toBe(mockNFTPurchase)
       })
     })
 
@@ -211,9 +192,7 @@ describe('MANA-FIAT Gateway selectors', () => {
       })
 
       it('should return it', () => {
-        expect(
-          getNFTPurchase(initialState, mockContractAddress, mockTokenId)
-        ).toBe(mockNftPurchaseWithItemId)
+        expect(getNFTPurchase(initialState, mockContractAddress, mockTokenId)).toBe(mockNftPurchaseWithItemId)
       })
     })
 
@@ -239,9 +218,7 @@ describe('MANA-FIAT Gateway selectors', () => {
       })
 
       it('should return it', () => {
-        expect(
-          getNFTPurchase(initialState, mockContractAddress, mockTokenId)
-        ).toBe(mockLastNFTPurchase)
+        expect(getNFTPurchase(initialState, mockContractAddress, mockTokenId)).toBe(mockLastNFTPurchase)
       })
     })
 
@@ -257,9 +234,7 @@ describe('MANA-FIAT Gateway selectors', () => {
       })
 
       it('should return undefined', () => {
-        expect(
-          getNFTPurchase(initialState, mockContractAddress, mockTokenId)
-        ).toBeUndefined()
+        expect(getNFTPurchase(initialState, mockContractAddress, mockTokenId)).toBeUndefined()
       })
     })
   })
@@ -312,12 +287,7 @@ describe('MANA-FIAT Gateway selectors', () => {
           ...initialState,
           gateway: {
             ...initialState.gateway,
-            loading: [
-              openManaFiatGatewayRequest(
-                Network.ETHEREUM,
-                NetworkGatewayType.MOON_PAY
-              )
-            ]
+            loading: [openManaFiatGatewayRequest(Network.ETHEREUM, NetworkGatewayType.MOON_PAY)]
           }
         }
       })

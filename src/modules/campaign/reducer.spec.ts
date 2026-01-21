@@ -1,9 +1,5 @@
 import { loadingReducer } from '../loading/reducer'
-import {
-  fetchCampaignRequest,
-  fetchCampaignSuccess,
-  fetchCampaignFailure
-} from './actions'
+import { fetchCampaignRequest, fetchCampaignSuccess, fetchCampaignFailure } from './actions'
 import { campaignReducer } from './reducer'
 import { CampaignState } from './types'
 

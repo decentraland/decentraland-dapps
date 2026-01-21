@@ -1,10 +1,6 @@
 import { expectSaga } from 'redux-saga-test-plan'
 import { call } from 'redux-saga/effects'
-import {
-  fetchApplicationFeaturesFailure,
-  fetchApplicationFeaturesRequest,
-  fetchApplicationFeaturesSuccess
-} from './actions'
+import { fetchApplicationFeaturesFailure, fetchApplicationFeaturesRequest, fetchApplicationFeaturesSuccess } from './actions'
 import { getMockApplicationFeaturesRecord } from './actions.spec'
 import { featuresSaga } from './sagas'
 import { ApplicationName, FeatureSagasConfig } from './types'
@@ -28,12 +24,7 @@ describe('when handling the request for fetching application features', () => {
       const error = 'error'
 
       await expectSaga(featuresSaga, {})
-        .provide([
-          [
-            call(fetchApplicationFeatures, apps),
-            Promise.reject(new Error(error))
-          ]
-        ])
+        .provide([[call(fetchApplicationFeatures, apps), Promise.reject(new Error(error))]])
         .dispatch(fetchApplicationFeaturesRequest(apps))
         .put(fetchApplicationFeaturesFailure(apps, error))
         .silentRun()
@@ -74,12 +65,7 @@ describe('when providing a polling object in the saga configuration', () => {
       const error = 'error'
 
       await expectSaga(featuresSaga, config)
-        .provide([
-          [
-            call(fetchApplicationFeatures, apps),
-            Promise.reject(new Error(error))
-          ]
-        ])
+        .provide([[call(fetchApplicationFeatures, apps), Promise.reject(new Error(error))]])
         .put(fetchApplicationFeaturesRequest(apps))
         .put(fetchApplicationFeaturesFailure(apps, error))
         .delay(delay)

@@ -1,20 +1,13 @@
-import { takeLatest, call, put } from 'redux-saga/effects'
+import { call, put, takeLatest } from 'redux-saga/effects'
 import { AuthIdentity } from '@dcl/crypto'
-import {
-  localStorageGetIdentity,
-  localStorageClearIdentity
-} from '@dcl/single-sign-on-client'
+import { localStorageClearIdentity, localStorageGetIdentity } from '@dcl/single-sign-on-client'
 import {
   CONNECT_WALLET_SUCCESS,
+  ConnectWalletSuccessAction,
   DISCONNECT_WALLET_SUCCESS,
   DisconnectWalletSuccessAction
 } from '../wallet/actions'
-import { ConnectWalletSuccessAction } from '../wallet/actions'
-import {
-  GENERATE_IDENTITY_REQUEST,
-  GenerateIdentityRequestAction,
-  generateIdentitySuccess
-} from './actions'
+import { GENERATE_IDENTITY_REQUEST, GenerateIdentityRequestAction, generateIdentitySuccess } from './actions'
 
 type IdentitySagaConfig = {
   authURL: string
@@ -40,9 +33,7 @@ export function createIdentitySaga(options: IdentitySagaConfig) {
     const { address } = action.payload
     const identity: AuthIdentity | null = localStorageGetIdentity(address)
     if (!identity) {
-      window.location.replace(
-        `${authURL}/login?redirectTo=${window.location.href}`
-      )
+      window.location.replace(`${authURL}/login?redirectTo=${window.location.href}`)
       return
     }
     yield put(generateIdentitySuccess(address, identity))
@@ -55,11 +46,7 @@ export function createIdentitySaga(options: IdentitySagaConfig) {
 
     const identity: AuthIdentity | null = localStorageGetIdentity(address)
     if (!identity) {
-      window.location.replace(
-        `${authURL}/login?redirectTo=${encodeURIComponent(
-          window.location.href
-        )}`
-      )
+      window.location.replace(`${authURL}/login?redirectTo=${encodeURIComponent(window.location.href)}`)
     }
   }
 
@@ -79,11 +66,7 @@ export function* getIdentityOrRedirect() {
 
   const identity: AuthIdentity | null = localStorageGetIdentity(auxAddress)
   if (!identity) {
-    window.location.replace(
-      `${dappAuthURL}/login?redirectTo=${encodeURIComponent(
-        window.location.href
-      )}`
-    )
+    window.location.replace(`${dappAuthURL}/login?redirectTo=${encodeURIComponent(window.location.href)}`)
     return
   }
   return identity

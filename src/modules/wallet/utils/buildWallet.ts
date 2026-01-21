@@ -1,13 +1,10 @@
 import { ethers } from 'ethers'
+import { Network } from '@dcl/schemas'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
-import {
-  getConnectedProvider,
-  getConnectedProviderType
-} from '../../../lib/eth'
 import { getChainConfiguration } from '../../../lib/chainConfiguration'
+import { getConnectedProvider, getConnectedProviderType } from '../../../lib/eth'
 import { Networks, Wallet } from '../types'
 import { fetchManaBalance } from './fetchManaBalance'
-import { Network } from '@dcl/schemas'
 
 export async function buildWallet(appChainId: ChainId): Promise<Wallet> {
   const provider = await getConnectedProvider()
@@ -31,10 +28,7 @@ export async function buildWallet(appChainId: ChainId): Promise<Wallet> {
   const appChainConfig = getChainConfiguration(appChainId)
   const networks: Partial<Networks> = {}
 
-  for (const network of Object.keys(appChainConfig.networkMapping) as (
-    | Network.ETHEREUM
-    | Network.MATIC
-  )[]) {
+  for (const network of Object.keys(appChainConfig.networkMapping) as (Network.ETHEREUM | Network.MATIC)[]) {
     const networkChainId = appChainConfig.networkMapping[network]
     networks[network] = {
       chainId: networkChainId,

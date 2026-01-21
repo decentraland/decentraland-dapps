@@ -1,17 +1,14 @@
-import { Dispatch } from 'redux'
 import { BigNumber } from 'ethers'
+import { Dispatch } from 'redux'
 import { Network } from '@dcl/schemas'
 import {
   AuthorizationFlowRequestAction,
-  fetchAuthorizationsRequest,
-  FetchAuthorizationsRequestAction
+  FetchAuthorizationsRequestAction,
+  fetchAuthorizationsRequest
 } from '../../../modules/authorization/actions'
-import {
-  Authorization,
-  AuthorizationType
-} from '../../../modules/authorization/types'
-import { AuthorizationTranslationKeys } from '../withAuthorizedAction.types'
+import { Authorization, AuthorizationType } from '../../../modules/authorization/types'
 import { RootStateOrAny } from '../../../types'
+import { AuthorizationTranslationKeys } from '../withAuthorizedAction.types'
 
 // Action to perform after authorization step is finished
 export enum AuthorizedAction {
@@ -74,9 +71,7 @@ export type Props = {
 }
 
 export type MapDispatchProps = Pick<Props, 'onFetchAuthorizations'>
-export type MapDispatch = Dispatch<
-  AuthorizationFlowRequestAction | FetchAuthorizationsRequestAction
->
+export type MapDispatch = Dispatch<AuthorizationFlowRequestAction | FetchAuthorizationsRequestAction>
 export type OwnProps = Pick<
   Props,
   | 'isWeb2AutoSigning'
@@ -95,11 +90,4 @@ export type OwnProps = Pick<
   | 'onGrant'
   | 'onRevoke'
 >
-export type MapStateProps = Pick<
-  Props,
-  | 'revokeStatus'
-  | 'grantStatus'
-  | 'error'
-  | 'confirmationStatus'
-  | 'confirmationError'
->
+export type MapStateProps = Pick<Props, 'revokeStatus' | 'grantStatus' | 'error' | 'confirmationStatus' | 'confirmationError'>

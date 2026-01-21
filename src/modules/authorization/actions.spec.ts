@@ -19,9 +19,7 @@ describe('authorization flow actions', () => {
     it('should return the correct action type and payload', () => {
       const authorizationAction = AuthorizationAction.GRANT
       const options = { requiredAllowance: '10' }
-      expect(
-        authorizationFlowRequest(authorization, authorizationAction, options)
-      ).toEqual({
+      expect(authorizationFlowRequest(authorization, authorizationAction, options)).toEqual({
         type: AUTHORIZATION_FLOW_REQUEST,
         payload: {
           authorization,
