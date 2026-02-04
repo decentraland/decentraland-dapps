@@ -1,7 +1,7 @@
 import { call, put, takeEvery, takeLatest } from 'redux-saga/effects'
 import { AuthIdentity } from '@dcl/crypto'
+import { Avatar, AvatarInfo } from '@dcl/schemas/dist/platform/profile'
 import { EntityType } from '@dcl/schemas/dist/platform/entity'
-import { Avatar } from '@dcl/schemas/dist/platform/profile'
 import { ProfileEntity } from '../../lib'
 import { EntitiesOperator } from '../../lib/entities'
 import { PeerAPI } from '../../lib/peer'
@@ -26,7 +26,6 @@ import {
   setProfileAvatarDescriptionSuccess
 } from './actions'
 import { Profile } from './types'
-import { getHashesByKeyMap } from './utils'
 
 export const NO_IDENTITY_FOUND_ERROR_MESSAGE = 'No identity found'
 
@@ -106,25 +105,23 @@ export function createProfileSaga({ getIdentity, peerUrl, peerWithNoGbCollectorU
 
   function* updateProfileAvatarWithoutNewFiles(address: string, changes: Partial<Avatar>) {
     const profile: ProfileEntity = yield call([entities, 'getProfileEntity'], address)
-    const newAvatar: Avatar = {
-      ...profile.metadata.avatars[0],
+    const { avatar: avatarInfo, ...restOfAvatar } = profile.metadata.avatars[0]
+    const { snapshots, ...avatarInfoWithoutSnapshots } = avatarInfo
+    const newAvatar: Omit<Avatar, 'avatar'> & {
+      avatar: Omit<AvatarInfo, 'snapshots'>
+    } = {
+      ...restOfAvatar,
+      avatar: avatarInfoWithoutSnapshots,
       ...changes,
       version: profile.metadata.avatars[0].version + 1
     }
-    const profileMetadata: Profile = {
+    const profileMetadata = {
       avatars: [newAvatar, ...profile.metadata.avatars.slice(1)]
-    }
+    } as Profile
     const identity = getIdentity()
 
     if (identity) {
-      yield call(
-        [entities, 'deployEntityWithoutNewFiles'],
-        profileMetadata,
-        getHashesByKeyMap(newAvatar),
-        EntityType.PROFILE,
-        address,
-        identity
-      )
+      yield call([entities, 'deployEntityWithoutFiles'], EntityType.PROFILE, profileMetadata, address, identity)
     } else {
       throw new Error(NO_IDENTITY_FOUND_ERROR_MESSAGE)
     }

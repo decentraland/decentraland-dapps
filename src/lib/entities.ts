@@ -6,6 +6,7 @@ import { Entity, EntityType } from '@dcl/schemas/dist/platform/entity'
 import { fetcher } from './fetcher'
 import { PeerAPI } from './peer'
 import { ProfileEntity } from './types'
+import { DeploymentBuilder } from 'dcl-catalyst-client/dist/client/utils'
 
 export class EntitiesOperator {
   private catalystContentClient: ContentClient // Undefined until initialization
@@ -13,10 +14,7 @@ export class EntitiesOperator {
   private catalystContentClientWithoutGbCollector: ContentClient | null // Undefined until initialization
   private readonly peerAPI: PeerAPI
 
-  constructor(
-    private peerUrl: string,
-    private peerWithNoGbCollectorUrl?: string
-  ) {
+  constructor(private peerUrl: string, private peerWithNoGbCollectorUrl?: string) {
     this.catalystContentClient = createContentClient({
       url: `${peerUrl}/content`,
       fetcher
@@ -46,6 +44,29 @@ export class EntitiesOperator {
     return this.peerAPI.getDefaultProfileEntity()
   }
 
+  async deployEntityWithoutFiles(
+    entityType: EntityType,
+    entityMetadata: Entity['metadata'],
+    pointer: string,
+    identity: AuthIdentity
+  ): Promise<any> {
+    const catalystContentClient = this.catalystContentClientWithoutGbCollector ?? this.catalystContentClient
+
+    const deploymentEntity = await DeploymentBuilder.buildEntity({
+      type: entityType,
+      pointers: [pointer],
+      metadata: entityMetadata,
+      timestamp: Date.now()
+    })
+
+    const authChain = Authenticator.signPayload(identity, deploymentEntity.entityId)
+
+    return catalystContentClient.deploy({
+      ...deploymentEntity,
+      authChain
+    })
+  }
+
   /**
    * Deploys an entity of a determined type.
    * This method will build everything related to the deployment of
@@ -73,7 +94,6 @@ export class EntitiesOperator {
 
     const catalystContentClient = this.catalystContentClientWithoutGbCollector ?? this.catalystContentClient
     const contentUrl = this.peerWithNoGbCollectorUrl ?? this.peerUrl
-
     const entityToDeploy = await buildEntityWithoutNewFiles(fetcher, {
       contentUrl: `${contentUrl}/content`,
       ...options
