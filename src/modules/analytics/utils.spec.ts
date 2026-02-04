@@ -103,9 +103,7 @@ describe('Analytics Utils', () => {
       it('should log a warning message', () => {
         add(actionType)
 
-        expect(consoleSpy).toHaveBeenCalledWith(
-          `Analytics: the action type "${actionType}" is already being tracked!`
-        )
+        expect(consoleSpy).toHaveBeenCalledWith(`Analytics: the action type "${actionType}" is already being tracked!`)
       })
 
       it('should not update the existing tracked action', () => {
@@ -195,10 +193,7 @@ describe('Analytics Utils', () => {
       it('should use the result as the event name', () => {
         track(action)
 
-        expect(mockAnalytics.track).toHaveBeenCalledWith(
-          'Dynamic Event 123',
-          undefined
-        )
+        expect(mockAnalytics.track).toHaveBeenCalledWith('Dynamic Event 123', undefined)
       })
     })
 
@@ -215,10 +210,7 @@ describe('Analytics Utils', () => {
       it('should use the action type as the event name', () => {
         track(action)
 
-        expect(mockAnalytics.track).toHaveBeenCalledWith(
-          'NO_EVENT_NAME_ACTION',
-          undefined
-        )
+        expect(mockAnalytics.track).toHaveBeenCalledWith('NO_EVENT_NAME_ACTION', undefined)
       })
     })
   })
@@ -267,9 +259,7 @@ describe('Analytics Utils', () => {
       it('should log a warning and return false for null action', () => {
         const result = isTrackable(null as any)
 
-        expect(consoleSpy).toHaveBeenCalledWith(
-          'Analytics: invalid action "null"'
-        )
+        expect(consoleSpy).toHaveBeenCalledWith('Analytics: invalid action "null"')
         expect(result).toBe(false)
       })
 
@@ -277,9 +267,7 @@ describe('Analytics Utils', () => {
         const action = { payload: 'test' } as any
         const result = isTrackable(action)
 
-        expect(consoleSpy).toHaveBeenCalledWith(
-          `Analytics: invalid action "${JSON.stringify(action)}"`
-        )
+        expect(consoleSpy).toHaveBeenCalledWith(`Analytics: invalid action "${JSON.stringify(action)}"`)
         expect(result).toBe(false)
       })
     })
@@ -388,10 +376,7 @@ describe('Analytics Utils', () => {
       it('should call analytics.track with Connect Wallet event', () => {
         trackConnectWallet(props)
 
-        expect(mockAnalytics.track).toHaveBeenCalledWith(
-          'Connect Wallet',
-          props
-        )
+        expect(mockAnalytics.track).toHaveBeenCalledWith('Connect Wallet', props)
       })
     })
 

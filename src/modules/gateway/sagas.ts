@@ -1,79 +1,55 @@
-import {
-  call,
-  delay,
-  ForkEffect,
-  put,
-  race,
-  select,
-  take,
-  takeEvery,
-  takeLatest
-} from 'redux-saga/effects'
 import WertWidget from '@wert-io/widget-initializer'
 import { LOAD } from 'redux-persistence'
-import { Env, getEnv } from '@dcl/ui-env'
+import { ForkEffect, call, delay, put, race, select, take, takeEvery, takeLatest } from 'redux-saga/effects'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { Network } from '@dcl/schemas/dist/dapps/network'
+import { Env, getEnv } from '@dcl/ui-env'
 import { NetworkGatewayType } from 'decentraland-ui/dist/components/BuyManaWithFiatModal/Network'
 import { AuthIdentity } from 'decentraland-crypto-fetch'
-import { MarketplaceAPI } from '../../lib/marketplaceApi'
-import { getIdentityOrRedirect } from '../identity/sagas'
+import { isErrorWithMessage } from '../../lib/error'
 import { getChainIdByNetwork } from '../../lib/eth'
+import { MarketplaceAPI } from '../../lib/marketplaceApi'
 import {
-  pollPurchaseStatusFailure,
-  pollPurchaseStatusRequest,
-  PollPurchaseStatusRequestAction,
-  pollPurchaseStatusSuccess,
-  POLL_PURCHASE_STATUS_REQUEST,
-  setPurchase,
-  SetPurchaseAction,
-  SET_PURCHASE,
-  OPEN_FIAT_GATEWAY_WIDGET_REQUEST,
-  OpenFiatGatewayWidgetRequestAction,
-  openFiatGatewayWidgetFailure,
-  openFiatGatewayWidgetSuccess
-} from '../gateway/actions'
-import { openModal } from '../modal/actions'
-import { getTransactionHref } from '../transaction/utils'
-import { getAddress, getData as getWalletData } from '../wallet/selectors'
-import { fetchWalletRequest } from '../wallet/actions'
-import {
-  OPEN_MANA_FIAT_GATEWAY_REQUEST,
-  OpenManaFiatGatewayRequestAction,
   MANA_FIAT_GATEWAY_PURCHASE_COMPLETED,
   ManaFiatGatewayPurchaseCompletedAction,
-  manaFiatGatewayPurchaseCompletedFailure,
-  openManaFiatGatewaySuccess,
-  openManaFiatGatewayFailure,
   OPEN_BUY_MANA_WITH_FIAT_MODAL_REQUEST,
+  OPEN_FIAT_GATEWAY_WIDGET_REQUEST,
+  OPEN_MANA_FIAT_GATEWAY_REQUEST,
   OpenBuyManaWithFiatModalRequestAction,
+  OpenFiatGatewayWidgetRequestAction,
+  OpenManaFiatGatewayRequestAction,
+  POLL_PURCHASE_STATUS_REQUEST,
+  PollPurchaseStatusRequestAction,
+  SET_PURCHASE,
+  SetPurchaseAction,
+  addManaPurchaseAsTransaction,
+  manaFiatGatewayPurchaseCompleted,
+  manaFiatGatewayPurchaseCompletedFailure,
   openBuyManaWithFiatModalFailure,
   openBuyManaWithFiatModalSuccess,
-  addManaPurchaseAsTransaction,
-  manaFiatGatewayPurchaseCompleted
-} from './actions'
+  openFiatGatewayWidgetFailure,
+  openFiatGatewayWidgetSuccess,
+  openManaFiatGatewayFailure,
+  openManaFiatGatewaySuccess,
+  pollPurchaseStatusFailure,
+  pollPurchaseStatusRequest,
+  pollPurchaseStatusSuccess,
+  setPurchase
+} from '../gateway/actions'
+import { GENERATE_IDENTITY_FAILURE, GENERATE_IDENTITY_SUCCESS, GenerateIdentitySuccessAction } from '../identity'
+import { getIdentityOrRedirect } from '../identity/sagas'
+import { openModal } from '../modal/actions'
+import { getTransactionHref } from '../transaction/utils'
+import { fetchWalletRequest } from '../wallet/actions'
+import { getAddress, getData as getWalletData } from '../wallet/selectors'
+import { Wallet } from '../wallet/types'
 import { MoonPay } from './moonpay'
 import { MoonPayTransaction, MoonPayTransactionStatus } from './moonpay/types'
 import { getPendingManaPurchase, getPendingPurchases } from './selectors'
 import { Transak } from './transak'
 import { CustomizationOptions, OrderResponse } from './transak/types'
-import {
-  FiatGateway,
-  GatewaySagasConfig,
-  Purchase,
-  PurchaseStatus,
-  WertMessage,
-  WertPayload,
-  WertSession
-} from './types'
+import { FiatGateway, GatewaySagasConfig, Purchase, PurchaseStatus, WertMessage, WertPayload, WertSession } from './types'
 import { isManaPurchase, purchaseEventsChannel } from './utils'
-import { Wallet } from '../wallet/types'
-import { isErrorWithMessage } from '../../lib/error'
-import {
-  GENERATE_IDENTITY_FAILURE,
-  GENERATE_IDENTITY_SUCCESS,
-  GenerateIdentitySuccessAction
-} from '../identity'
 
 const DEFAULT_POLLING_DELAY = 3000
 const BUY_MANA_WITH_FIAT_FEEDBACK_MODAL_NAME = 'BuyManaWithFiatFeedbackModal'
@@ -83,25 +59,13 @@ export const MISSING_DATA_ERROR = 'Missing data needed for the message to sign'
 
 export function createGatewaySaga(config: GatewaySagasConfig) {
   function* gatewaySaga(): IterableIterator<ForkEffect> {
-    yield takeEvery(
-      OPEN_FIAT_GATEWAY_WIDGET_REQUEST,
-      handleOpenFiatGatewayWidget
-    )
-    yield takeEvery(
-      OPEN_BUY_MANA_WITH_FIAT_MODAL_REQUEST,
-      handleOpenBuyManaWithFiatModal
-    )
+    yield takeEvery(OPEN_FIAT_GATEWAY_WIDGET_REQUEST, handleOpenFiatGatewayWidget)
+    yield takeEvery(OPEN_BUY_MANA_WITH_FIAT_MODAL_REQUEST, handleOpenBuyManaWithFiatModal)
     yield takeEvery(OPEN_MANA_FIAT_GATEWAY_REQUEST, handleOpenFiatGateway)
-    yield takeEvery(
-      MANA_FIAT_GATEWAY_PURCHASE_COMPLETED,
-      handleFiatGatewayPurchaseCompleted
-    )
+    yield takeEvery(MANA_FIAT_GATEWAY_PURCHASE_COMPLETED, handleFiatGatewayPurchaseCompleted)
     yield takeEvery(SET_PURCHASE, handleSetPurchase)
     yield takeLatest(LOAD, handleStorageLoad)
-    yield takeEvery(
-      POLL_PURCHASE_STATUS_REQUEST,
-      handlePollPurchaseStatusRequest
-    )
+    yield takeEvery(POLL_PURCHASE_STATUS_REQUEST, handlePollPurchaseStatusRequest)
     yield takeEvery(purchaseEventsChannel, handlePurchaseChannelEvent)
 
     function* handlePurchaseChannelEvent(action: { purchase: Purchase }) {
@@ -110,9 +74,7 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
     }
   }
 
-  function* handleOpenFiatGatewayWidget(
-    action: OpenFiatGatewayWidgetRequestAction
-  ) {
+  function* handleOpenFiatGatewayWidget(action: OpenFiatGatewayWidgetRequestAction) {
     const { gateway, listeners } = action.payload
     const { target, ...data } = action.payload.data
     try {
@@ -128,9 +90,7 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
 
           const wallet: Wallet | null = yield select(getWalletData)
           if (wallet) {
-            const identity: AuthIdentity | null = yield call(
-              getIdentityOrRedirect
-            )
+            const identity: AuthIdentity | null = yield call(getIdentityOrRedirect)
 
             if (!identity) {
               yield put(openFiatGatewayWidgetFailure(NO_IDENTITY_ERROR))
@@ -138,12 +98,7 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
             }
 
             const isDev = getEnv() === Env.DEVELOPMENT
-            const {
-              commodity,
-              commodity_amount,
-              sc_address,
-              sc_input_data
-            } = data
+            const { commodity, commodity_amount, sc_address, sc_input_data } = data
 
             if (commodity && commodity_amount && sc_address && sc_input_data) {
               const { address } = wallet
@@ -177,11 +132,7 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
               const response: {
                 signature: string
                 sessionId: string
-              } = yield call(
-                [marketplaceAPI, 'signWertMessageAndCreateSession'],
-                payload,
-                identity
-              )
+              } = yield call([marketplaceAPI, 'signWertMessageAndCreateSession'], payload, identity)
 
               const { signature, sessionId } = response
 
@@ -216,22 +167,14 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
           }
       }
     } catch (error) {
-      yield put(
-        openFiatGatewayWidgetFailure(
-          isErrorWithMessage(error) ? error.message : 'Unknown'
-        )
-      )
+      yield put(openFiatGatewayWidgetFailure(isErrorWithMessage(error) ? error.message : 'Unknown'))
     }
   }
 
-  function* handleOpenBuyManaWithFiatModal(
-    action: OpenBuyManaWithFiatModalRequestAction
-  ) {
+  function* handleOpenBuyManaWithFiatModal(action: OpenBuyManaWithFiatModalRequestAction) {
     try {
       const { selectedNetwork } = action.payload
-      const pendingManaPurchase: Purchase | undefined = yield select(
-        getPendingManaPurchase
-      )
+      const pendingManaPurchase: Purchase | undefined = yield select(getPendingManaPurchase)
 
       if (pendingManaPurchase) {
         let goToUrl: string | undefined
@@ -242,9 +185,7 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
             throw new Error('MoonPay config not found')
           }
 
-          goToUrl = new MoonPay(moonPayConfig).getTransactionReceiptUrl(
-            pendingManaPurchase.id
-          )
+          goToUrl = new MoonPay(moonPayConfig).getTransactionReceiptUrl(pendingManaPurchase.id)
         }
 
         yield put(
@@ -301,18 +242,12 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
       yield put(openManaFiatGatewayFailure(network, gateway, error.message))
     }
   }
-  function* upsertPurchase(
-    moonPay: MoonPay,
-    transaction: MoonPayTransaction,
-    network: Network
-  ) {
-    let purchase: Purchase = moonPay.createPurchase(transaction, network)
+  function* upsertPurchase(moonPay: MoonPay, transaction: MoonPayTransaction, network: Network) {
+    const purchase: Purchase = moonPay.createPurchase(transaction, network)
     yield put(setPurchase(purchase))
   }
   function* handleStorageLoad() {
-    const pendingPurchases: ReturnType<typeof getPendingPurchases> = yield select(
-      getPendingPurchases
-    )
+    const pendingPurchases: ReturnType<typeof getPendingPurchases> = yield select(getPendingPurchases)
 
     if (pendingPurchases) {
       for (const pendingPurchase of pendingPurchases) {
@@ -322,22 +257,13 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
             yield put(pollPurchaseStatusRequest(pendingPurchase))
             break
           case NetworkGatewayType.MOON_PAY:
-            yield put(
-              manaFiatGatewayPurchaseCompleted(
-                network,
-                gateway,
-                id,
-                MoonPayTransactionStatus.PENDING
-              )
-            )
+            yield put(manaFiatGatewayPurchaseCompleted(network, gateway, id, MoonPayTransactionStatus.PENDING))
             break
         }
       }
     }
   }
-  function* handlePollPurchaseStatusRequest(
-    action: PollPurchaseStatusRequestAction
-  ) {
+  function* handlePollPurchaseStatusRequest(action: PollPurchaseStatusRequestAction) {
     const { purchase } = action.payload
     const { gateway, id } = purchase
 
@@ -379,10 +305,7 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
             const {
               data: { status, transactionHash, errorMessage }
             }: OrderResponse = yield call([marketplaceAPI, 'getOrder'], id)
-            const newStatus: PurchaseStatus = yield call(
-              [transak, transak.getPurchaseStatus],
-              status
-            )
+            const newStatus: PurchaseStatus = yield call([transak, transak.getPurchaseStatus], status)
             if (newStatus !== purchase.status) {
               statusHasChanged = true
               yield put(
@@ -408,9 +331,7 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
     }
     return gatewaySaga
   }
-  function* handleFiatGatewayPurchaseCompleted(
-    action: ManaFiatGatewayPurchaseCompletedAction
-  ) {
+  function* handleFiatGatewayPurchaseCompleted(action: ManaFiatGatewayPurchaseCompletedAction) {
     const { network, gateway, transactionId, status } = action.payload
 
     try {
@@ -421,16 +342,10 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
             throw new Error('MoonPay config not found')
           }
 
-          const finalStatuses = [
-            MoonPayTransactionStatus.COMPLETED,
-            MoonPayTransactionStatus.FAILED
-          ]
+          const finalStatuses = [MoonPayTransactionStatus.COMPLETED, MoonPayTransactionStatus.FAILED]
           const moonPay: MoonPay = new MoonPay(moonPayConfig)
           let statusHasChanged: boolean = false
-          let transaction: MoonPayTransaction = yield call(
-            [moonPay, moonPay.getTransaction],
-            transactionId
-          )
+          let transaction: MoonPayTransaction = yield call([moonPay, moonPay.getTransaction], transactionId)
 
           if (!finalStatuses.includes(transaction.status)) {
             yield put(
@@ -454,32 +369,17 @@ export function createGatewaySaga(config: GatewaySagasConfig) {
 
             yield delay(moonPayConfig.pollingDelay || DEFAULT_POLLING_DELAY)
 
-            transaction = yield call(
-              [moonPay, moonPay.getTransaction],
-              transactionId
-            )
+            transaction = yield call([moonPay, moonPay.getTransaction], transactionId)
           }
         default:
           break
       }
     } catch (error) {
-      yield put(
-        manaFiatGatewayPurchaseCompletedFailure(
-          network,
-          gateway,
-          transactionId,
-          error.message
-        )
-      )
+      yield put(manaFiatGatewayPurchaseCompletedFailure(network, gateway, transactionId, error.message))
     }
   }
   function* handleSetManaPurchase(purchase: Purchase) {
-    const finalStatuses = [
-      PurchaseStatus.COMPLETE,
-      PurchaseStatus.REFUNDED,
-      PurchaseStatus.FAILED,
-      PurchaseStatus.CANCELLED
-    ]
+    const finalStatuses = [PurchaseStatus.COMPLETE, PurchaseStatus.REFUNDED, PurchaseStatus.FAILED, PurchaseStatus.CANCELLED]
     const { status, network, txHash } = purchase
 
     if (finalStatuses.includes(status)) {

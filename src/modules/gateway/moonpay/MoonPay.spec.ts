@@ -29,8 +29,7 @@ const mockTransaction: MoonPayTransaction = {
   walletAddress: '0x9c76ae45c36a4da3801a5ba387bbfa3c073ecae2',
   walletAddressTag: null,
   cryptoTransactionId: 'crypto-transaction-id',
-  returnUrl:
-    'https://buy.moonpay.com/transaction_receipt?transactionId=354b1f46-480c-4307-9896-f4c81c1e1e17',
+  returnUrl: 'https://buy.moonpay.com/transaction_receipt?transactionId=354b1f46-480c-4307-9896-f4c81c1e1e17',
   redirectUrl: null,
   widgetRedirectUrl: 'https://my-crypto-wallet.io',
   baseCurrencyId: '71435a8d-211c-4664-a59e-2a5361a6c5a7',
@@ -100,8 +99,7 @@ const mockTransaction: MoonPayTransaction = {
       actions: [
         {
           type: 'verify_card_by_code',
-          url:
-            'https://buy.moonpay.com/card_verification_code?cardId=68e46314-93e5-4420-ac10-485aef4e19d0'
+          url: 'https://buy.moonpay.com/card_verification_code?cardId=68e46314-93e5-4420-ac10-485aef4e19d0'
         },
         {
           type: 'retry_kyc',
@@ -141,9 +139,7 @@ describe('when interacting with MoonPay', () => {
       'http://widget.base.url.xyz?apiKey=api-key&currencyCode=MANA&redirectURL=http%3A%2F%2Flocalhost%3Fnetwork%3DETHEREUM%26gateway%3DmoonPay'
 
     it('should return the widget url with the api key, currency code, and redirect url as query parameters', () => {
-      return expect(moonPay.getWidgetUrl(Network.ETHEREUM)).toEqual(
-        mockOriginalURL
-      )
+      return expect(moonPay.getWidgetUrl(Network.ETHEREUM)).toEqual(mockOriginalURL)
     })
   })
 
@@ -161,9 +157,7 @@ describe('when interacting with MoonPay', () => {
         txHash: 'crypto-transaction-id'
       }
 
-      return expect(
-        moonPay.createPurchase(mockTransaction, Network.ETHEREUM)
-      ).toEqual(expectedPurchase)
+      return expect(moonPay.createPurchase(mockTransaction, Network.ETHEREUM)).toEqual(expectedPurchase)
     })
   })
 })

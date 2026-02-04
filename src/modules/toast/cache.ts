@@ -3,11 +3,7 @@ import { Toast } from './types'
 
 const cache: Record<string, Toast> = {}
 
-export function set(
-  id: number,
-  toast: Toast | Omit<Toast, 'id'>,
-  position?: ToastPosition
-) {
+export function set(id: number, toast: Toast | Omit<Toast, 'id'>, position?: ToastPosition) {
   cache[id] = { ...toast, id, position }
 }
 

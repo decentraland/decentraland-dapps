@@ -1,9 +1,6 @@
 import { AnyAction } from 'redux'
 
-export function removeLast(
-  actions: AnyAction[],
-  comparator: (action: any) => boolean
-) {
+export function removeLast(actions: AnyAction[], comparator: (action: any) => boolean) {
   // TODO: accomplish the same in one loop
   const last = actions.filter(comparator).pop()
   return actions.filter(action => action !== last)

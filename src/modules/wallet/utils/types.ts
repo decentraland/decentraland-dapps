@@ -8,8 +8,4 @@ export enum TransactionEventType {
 
 export type TransactionEventData<T extends TransactionEventType> = {
   type: T
-} & (T extends TransactionEventType.ERROR
-  ? { error: Error }
-  : T extends TransactionEventType.SUCCESS
-  ? { txHash: string }
-  : {})
+} & (T extends TransactionEventType.ERROR ? { error: Error } : T extends TransactionEventType.SUCCESS ? { txHash: string } : {})

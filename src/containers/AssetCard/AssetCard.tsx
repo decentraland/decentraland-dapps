@@ -1,11 +1,8 @@
 import React, { useMemo } from 'react'
 import { Item, Rarity } from '@dcl/schemas'
-import {
-  CatalogCard as AssetCardUi,
-  CatalogCardProps as AssetCardUiProps
-} from 'decentraland-ui/dist/components/CatalogCard/CatalogCard'
-import { formatWeiToAssetCardEther, getCatalogCardInformation } from './utils'
+import { CatalogCard as AssetCardUi, CatalogCardProps as AssetCardUiProps } from 'decentraland-ui/dist/components/CatalogCard/CatalogCard'
 import { t } from '../../modules/translation/utils'
+import { formatWeiToAssetCardEther, getCatalogCardInformation, getOwnersText } from './utils'
 
 export type AssetCardTranslations = {
   also_minting: React.ReactNode
@@ -42,9 +39,7 @@ export const AssetCard = (props: AssetCardProps) => {
     listing: t('@dapps.asset_card.listing'),
     listings: t('@dapps.asset_card.listings'),
     available_for_mint: t('@dapps.asset_card.available_for_mint'),
-    available_listings_in_range: t(
-      '@dapps.asset_card.available_listings_in_range'
-    ),
+    available_listings_in_range: t('@dapps.asset_card.available_listings_in_range'),
     cheapest_listing: t('@dapps.asset_card.cheapest_listing'),
     not_for_sale: t('@dapps.asset_card.not_for_sale'),
     owner: t('@dapps.asset_card.owner'),
@@ -65,14 +60,12 @@ export const AssetCard = (props: AssetCardProps) => {
 
   const price = useMemo(() => {
     return catalogItemInformation.price?.includes('-')
-      ? `${formatWeiToAssetCardEther(
-          catalogItemInformation.price.split(' - ')[0]
-        )} - ${formatWeiToAssetCardEther(
+      ? `${formatWeiToAssetCardEther(catalogItemInformation.price.split(' - ')[0])} - ${formatWeiToAssetCardEther(
           catalogItemInformation.price.split(' - ')[1]
         )}`
       : catalogItemInformation.price
-      ? formatWeiToAssetCardEther(catalogItemInformation.price)
-      : undefined
+        ? formatWeiToAssetCardEther(catalogItemInformation.price)
+        : undefined
   }, [catalogItemInformation.price])
 
   const propsCard: AssetCardUiProps = {
@@ -90,7 +83,7 @@ export const AssetCard = (props: AssetCardProps) => {
     extraInformation: catalogItemInformation.extraInformation,
     notForSale: notForSale,
     price: price,
-    owners: `${asset.owners} ${asset.owners === 1 ? i18n.owner : i18n.owners}`,
+    owners: getOwnersText(asset.owners, i18n),
     i18n: {
       rarities: {
         [Rarity.COMMON]: t('@dapps.rarities.common'),

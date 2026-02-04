@@ -1,11 +1,11 @@
-import { loadingReducer, LoadingState } from '../loading/reducer'
+import { LoadingState, loadingReducer } from '../loading/reducer'
 import {
-  FetchCreditsRequestAction,
-  FetchCreditsSuccessAction,
-  FetchCreditsFailureAction,
+  FETCH_CREDITS_FAILURE,
   FETCH_CREDITS_REQUEST,
   FETCH_CREDITS_SUCCESS,
-  FETCH_CREDITS_FAILURE
+  FetchCreditsFailureAction,
+  FetchCreditsRequestAction,
+  FetchCreditsSuccessAction
 } from './actions'
 import { CreditsResponse } from './types'
 
@@ -21,15 +21,9 @@ const INITIAL_STATE: CreditsState = {
   error: null
 }
 
-type CreditsReducerAction =
-  | FetchCreditsRequestAction
-  | FetchCreditsSuccessAction
-  | FetchCreditsFailureAction
+type CreditsReducerAction = FetchCreditsRequestAction | FetchCreditsSuccessAction | FetchCreditsFailureAction
 
-export function creditsReducer(
-  state = INITIAL_STATE,
-  action: CreditsReducerAction
-): CreditsState {
+export function creditsReducer(state = INITIAL_STATE, action: CreditsReducerAction): CreditsState {
   switch (action.type) {
     case FETCH_CREDITS_REQUEST: {
       return {

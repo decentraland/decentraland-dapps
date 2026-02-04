@@ -15,17 +15,11 @@ import { getCredits } from './selectors'
 import { CreditsResponse } from './types'
 import { CreditsClient } from './CreditsClient'
 import { connectWalletSuccess } from '../wallet/actions'
-import {
-  getFeatureVariant,
-  getIsFeatureEnabled,
-  isCreditsFeatureEnabled
-} from '../features/selectors'
+import { getFeatureVariant, getIsFeatureEnabled, isCreditsFeatureEnabled } from '../features/selectors'
 import { ApplicationName, FeatureName } from '../features/types'
 import { Wallet } from '../wallet'
 
-const creditsClient = new CreditsClient(
-  'https://credits-server.decentraland.zone'
-)
+const creditsClient = new CreditsClient('https://credits-server.decentraland.zone')
 
 describe('Credits saga', () => {
   const address = '0x123'
@@ -120,10 +114,7 @@ describe('Credits saga', () => {
         })
           .provide([
             [select(isCreditsFeatureEnabled, address), true],
-            [
-              call([creditsClient, 'fetchCredits'], address),
-              throwError({} as Error)
-            ]
+            [call([creditsClient, 'fetchCredits'], address), throwError({} as Error)]
           ])
           .put(fetchCreditsFailure(address, 'Unknown error'))
           .dispatch(fetchCreditsRequest(address))
@@ -168,17 +159,13 @@ describe('Credits saga', () => {
   describe('when handling startCreditsSSE action', () => {
     it('should establish SSE connection and dispatch initial fetch', () => {
       // Mock the createSSEConnection method
-      const mockEventSource = new MockEventSource(
-        `https://example.com/users/${address}/credits/stream`
-      )
-      const createSSEConnectionMock = jest
-        .spyOn(creditsClient, 'createSSEConnection')
-        .mockImplementation((addr, onMessage, onError) => {
-          // Store callbacks to simulate events later
-          mockEventSource.onmessage = onMessage as any
-          mockEventSource.onerror = onError as any
-          return mockEventSource as any
-        })
+      const mockEventSource = new MockEventSource(`https://example.com/users/${address}/credits/stream`)
+      const createSSEConnectionMock = jest.spyOn(creditsClient, 'createSSEConnection').mockImplementation((addr, onMessage, onError) => {
+        // Store callbacks to simulate events later
+        mockEventSource.onmessage = onMessage as any
+        mockEventSource.onerror = onError as any
+        return mockEventSource as any
+      })
 
       const saga = expectSaga(creditsSaga, {
         creditsClient
@@ -192,11 +179,7 @@ describe('Credits saga', () => {
 
       return saga.silentRun().then(() => {
         // Verify that createSSEConnection was called
-        expect(createSSEConnectionMock).toHaveBeenCalledWith(
-          address,
-          expect.any(Function),
-          expect.any(Function)
-        )
+        expect(createSSEConnectionMock).toHaveBeenCalledWith(address, expect.any(Function), expect.any(Function))
 
         createSSEConnectionMock.mockRestore()
       })
@@ -221,15 +204,11 @@ describe('Credits saga', () => {
   describe('when handling stopCreditsSSE action', () => {
     it('should close SSE connection and cancel saga', () => {
       // Create a spy on EventSource.close
-      const mockEventSource = new MockEventSource(
-        `https://example.com/users/${address}/credits/stream`
-      )
+      const mockEventSource = new MockEventSource(`https://example.com/users/${address}/credits/stream`)
       const closeSpy = jest.spyOn(mockEventSource, 'close')
 
       // Mock the createSSEConnection method
-      const createSSEConnectionMock = jest
-        .spyOn(creditsClient, 'createSSEConnection')
-        .mockImplementation(() => mockEventSource as any)
+      const createSSEConnectionMock = jest.spyOn(creditsClient, 'createSSEConnection').mockImplementation(() => mockEventSource as any)
 
       // First start polling, then stop it
       return expectSaga(creditsSaga, { creditsClient })

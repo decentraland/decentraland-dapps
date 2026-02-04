@@ -7,11 +7,7 @@ export enum MoonPayTransactionStatus {
 }
 
 type Stage = {
-  stage:
-    | 'stage_one_ordering'
-    | 'stage_two_verification'
-    | 'stage_three_processing'
-    | 'stage_four_delivery'
+  stage: 'stage_one_ordering' | 'stage_two_verification' | 'stage_three_processing' | 'stage_four_delivery'
   status: 'not_started' | 'in_progress' | 'success' | 'failed'
   actions: StageAction[]
   failureReason:
@@ -33,11 +29,7 @@ type Stage = {
 }
 
 type StageAction = {
-  type:
-    | 'complete_bank_transfer'
-    | 'retry_kyc'
-    | 'verify_card_by_code'
-    | 'verify_card_by_file'
+  type: 'complete_bank_transfer' | 'retry_kyc' | 'verify_card_by_code' | 'verify_card_by_file'
   url: string
 }
 

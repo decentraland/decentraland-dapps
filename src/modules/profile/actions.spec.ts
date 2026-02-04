@@ -141,9 +141,7 @@ describe("when creating the action to signal a failure in the request to set the
 
 describe("when creating the action to signal a successful request to set the description of a profile's avatar", () => {
   it('should return an object representing the action', () => {
-    expect(
-      setProfileAvatarDescriptionSuccess(address, description, version)
-    ).toEqual({
+    expect(setProfileAvatarDescriptionSuccess(address, description, version)).toEqual({
       type: SET_PROFILE_AVATAR_DESCRIPTION_SUCCESS,
       meta: undefined,
       payload: { address, description, version }

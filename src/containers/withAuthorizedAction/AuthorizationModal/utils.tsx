@@ -1,46 +1,22 @@
 import { BigNumber, ethers } from 'ethers'
 import { Network } from '@dcl/schemas'
-import {
-  getAuthorizationFlowError,
-  getError,
-  getLoading
-} from '../../../modules/authorization/selectors'
-import {
-  Authorization,
-  AuthorizationAction,
-  AuthorizationType
-} from '../../../modules/authorization/types'
-import {
-  AuthorizationError,
-  areEqual,
-  hasAuthorization,
-  hasAuthorizationAndEnoughAllowance
-} from '../../../modules/authorization/utils'
 import { TransactionLink } from '../..'
+import { AUTHORIZATION_FLOW_REQUEST, GRANT_TOKEN_REQUEST, REVOKE_TOKEN_REQUEST } from '../../../modules/authorization/actions'
+import { getAuthorizationFlowError, getData as getAuthorizations, getError, getLoading } from '../../../modules/authorization/selectors'
+import { Authorization, AuthorizationAction, AuthorizationType } from '../../../modules/authorization/types'
+import { AuthorizationError, areEqual, hasAuthorization, hasAuthorizationAndEnoughAllowance } from '../../../modules/authorization/utils'
 import { isLoadingType } from '../../../modules/loading/selectors'
 import { getType } from '../../../modules/loading/utils'
 import { getTransactions } from '../../../modules/transaction/selectors'
 import { isPending } from '../../../modules/transaction/utils'
 import { t_cond } from '../../../modules/translation/utils'
-import { getData as getAuthorizations } from '../../../modules/authorization/selectors'
-import {
-  AUTHORIZATION_FLOW_REQUEST,
-  GRANT_TOKEN_REQUEST,
-  REVOKE_TOKEN_REQUEST
-} from '../../../modules/authorization/actions'
-import {
-  AuthorizationStepAction,
-  AuthorizationStepStatus
-} from './AuthorizationModal.types'
-import { AuthorizationTranslationKeys } from '../withAuthorizedAction.types'
 import { RootStateOrAny } from '../../../types'
+import { AuthorizationTranslationKeys } from '../withAuthorizedAction.types'
+import { AuthorizationStepAction, AuthorizationStepStatus } from './AuthorizationModal.types'
 
 const MAX_ERROR_LENGTH = 150
 
-export function safeGet(
-  obj: AuthorizationTranslationKeys,
-  key: string
-): string | undefined {
+export function safeGet(obj: AuthorizationTranslationKeys, key: string): string | undefined {
   const keyParts = key.split('.')
   const value = keyParts.reduce((o, key) => {
     if (o === undefined) {
@@ -53,16 +29,8 @@ export function safeGet(
   return typeof value !== 'string' ? undefined : value
 }
 
-export function getTranslation(
-  translationKeys: AuthorizationTranslationKeys,
-  key: string,
-  values?: any
-) {
-  return t_cond(
-    safeGet(translationKeys, key),
-    `@dapps.authorization_modal.${key}`,
-    values
-  )
+export function getTranslation(translationKeys: AuthorizationTranslationKeys, key: string, values?: any) {
+  return t_cond(safeGet(translationKeys, key), `@dapps.authorization_modal.${key}`, values)
 }
 
 export function getStepStatus(
@@ -71,23 +39,16 @@ export function getStepStatus(
   authorization: Authorization,
   allowance: BigNumber | undefined
 ): AuthorizationStepStatus {
-  const actionType =
-    authorizationAction === AuthorizationAction.REVOKE
-      ? REVOKE_TOKEN_REQUEST
-      : GRANT_TOKEN_REQUEST
+  const actionType = authorizationAction === AuthorizationAction.REVOKE ? REVOKE_TOKEN_REQUEST : GRANT_TOKEN_REQUEST
 
   if (isLoadingType(getLoading(state), actionType)) {
     return AuthorizationStepStatus.WAITING
   }
 
-  const pendingActionTypeTransactions = getTransactions(
-    state,
-    authorization.address
-  ).filter(
+  const pendingActionTypeTransactions = getTransactions(state, authorization.address).filter(
     transaction =>
       isPending(transaction.status) &&
-      getType({ type: actionType }) ===
-        getType({ type: transaction.actionType }) &&
+      getType({ type: actionType }) === getType({ type: transaction.actionType }) &&
       areEqual(transaction.payload.authorization, authorization)
   )
 
@@ -114,11 +75,7 @@ export function getStepStatus(
       isDone = !hasAuthorization(authorizations, authorization)
     } else {
       // grant action
-      isDone = hasAuthorizationAndEnoughAllowance(
-        authorizations,
-        authorization,
-        allowance.toString()
-      )
+      isDone = hasAuthorizationAndEnoughAllowance(authorizations, authorization, allowance.toString())
     }
   } else {
     isDone = hasAuthorization(authorizations, authorization)
@@ -130,10 +87,7 @@ export function getStepStatus(
 
   if (
     isLoadingType(getLoading(state), AUTHORIZATION_FLOW_REQUEST) &&
-    getLoading(state).find(
-      loadingAction =>
-        loadingAction.payload?.authorizationAction === authorizationAction
-    )
+    getLoading(state).find(loadingAction => loadingAction.payload?.authorizationAction === authorizationAction)
   ) {
     return AuthorizationStepStatus.LOADING_INFO
   }
@@ -141,11 +95,7 @@ export function getStepStatus(
   return AuthorizationStepStatus.PENDING
 }
 
-export function getStepError(
-  error: string | null,
-  action: AuthorizationStepAction,
-  translationKeys: AuthorizationTranslationKeys
-) {
+export function getStepError(error: string | null, action: AuthorizationStepAction, translationKeys: AuthorizationTranslationKeys) {
   if (!error) {
     return undefined
   }
@@ -155,9 +105,7 @@ export function getStepError(
     return getTranslation(translationKeys, 'revoke_cap_error')
   }
 
-  return error.length > MAX_ERROR_LENGTH
-    ? getTranslation(translationKeys, 'generic_error')
-    : error
+  return error.length > MAX_ERROR_LENGTH ? getTranslation(translationKeys, 'generic_error') : error
 }
 
 export function getStepMessage(
@@ -180,23 +128,13 @@ export function getStepMessage(
 
   switch (stepStatus) {
     case AuthorizationStepStatus.WAITING:
-      return !!isWeb2AutoSigning
-        ? getTranslation(translationKeys, 'waiting_confirmation')
-        : getTranslation(translationKeys, 'waiting_wallet')
+      return isWeb2AutoSigning ? getTranslation(translationKeys, 'waiting_confirmation') : getTranslation(translationKeys, 'waiting_wallet')
     case AuthorizationStepStatus.PROCESSING:
       return getTranslation(translationKeys, 'waiting_confirmation')
     case AuthorizationStepStatus.ERROR:
-      return (
-        <div className="authorization-error">
-          {getStepError(error, action, translationKeys)}
-        </div>
-      )
+      return <div className="authorization-error">{getStepError(error, action, translationKeys)}</div>
     case AuthorizationStepStatus.ALLOWANCE_AMOUNT_ERROR:
-      return (
-        <div className="authorization-error">
-          {getTranslation(translationKeys, 'spending_cap_error', { price })}
-        </div>
-      )
+      return <div className="authorization-error">{getTranslation(translationKeys, 'spending_cap_error', { price })}</div>
     case AuthorizationStepStatus.DONE:
       return getTranslation(translationKeys, 'done')
     default:
@@ -259,49 +197,30 @@ export function getSteps({
       {
         title: getTranslation(translationKeys, 'authorize_mana.title', {
           contract: () => (
-            <TransactionLink
-              address={authorization.authorizedAddress || ''}
-              chainId={authorization.chainId}
-              txHash=""
-            >
+            <TransactionLink address={authorization.authorizedAddress || ''} chainId={authorization.chainId} txHash="">
               {authorizedContractLabel || authorization.authorizedAddress}
             </TransactionLink>
           )
         }),
-        description: getTranslation(
-          translationKeys,
-          'authorize_mana.description',
-          {
-            price: requiredAllowanceAsEth
-          }
-        ),
+        description: getTranslation(translationKeys, 'authorize_mana.description', {
+          price: requiredAllowanceAsEth
+        }),
         actionType: AuthorizationStepAction.GRANT
       }
     ]
   }
 
-  const title =
-    authorizationType === AuthorizationType.APPROVAL
-      ? 'authorize_nft.title'
-      : 'authorize_item.title'
+  const title = authorizationType === AuthorizationType.APPROVAL ? 'authorize_nft.title' : 'authorize_item.title'
   return [
     {
       title: getTranslation(translationKeys, title, {
         contract: () => (
-          <TransactionLink
-            address={authorization.authorizedAddress || ''}
-            chainId={authorization.chainId}
-            txHash=""
-          >
+          <TransactionLink address={authorization.authorizedAddress || ''} chainId={authorization.chainId} txHash="">
             {authorizedContractLabel || authorization.authorizedAddress}
           </TransactionLink>
         ),
         targetContract: () => (
-          <TransactionLink
-            address={authorization.contractAddress || ''}
-            chainId={authorization.chainId}
-            txHash=""
-          >
+          <TransactionLink address={authorization.contractAddress || ''} chainId={authorization.chainId} txHash="">
             {targetContractLabel || authorization.contractAddress}
           </TransactionLink>
         )

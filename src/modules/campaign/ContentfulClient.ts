@@ -1,10 +1,4 @@
-import {
-  ContentfulEntry,
-  LocalizedField,
-  LocalizedFieldType,
-  ContentfulAsset,
-  ContentfulLocale
-} from '@dcl/schemas'
+import { ContentfulAsset, ContentfulEntry, ContentfulLocale, LocalizedField, LocalizedFieldType } from '@dcl/schemas'
 import { BaseClient } from '../../lib'
 import { ContentfulEntryWithoutLocales, Fields } from './ContentfulClient.types'
 
@@ -53,10 +47,7 @@ export class ContentfulClient extends BaseClient {
       locale: ContentfulLocale
     }[]
   ): ContentfulEntry<T> {
-    const combinedFields = {} as Record<
-      string,
-      LocalizedField<LocalizedFieldType>
-    >
+    const combinedFields = {} as Record<string, LocalizedField<LocalizedFieldType>>
 
     for (const { entry, locale } of content) {
       Object.entries(entry.fields).forEach(([key, value]) => {
@@ -73,9 +64,7 @@ export class ContentfulClient extends BaseClient {
     }
   }
 
-  async fetchEntryAllLocales<
-    T extends Record<string, LocalizedField<LocalizedFieldType>>
-  >(
+  async fetchEntryAllLocales<T extends Record<string, LocalizedField<LocalizedFieldType>>>(
     space: string,
     environment: string,
     id: string
@@ -102,17 +91,16 @@ export class ContentfulClient extends BaseClient {
             locale: ContentfulLocale.zh
           }
         ])
-      } catch (error) {
+      } catch {
         throw new Error('Error fetching entry in all locales')
       }
-    } catch (error) {
+    } catch {
       throw new Error('Error fetching entry in all locales')
     }
   }
 
   isWebpSupported() {
-    const elem =
-      typeof document !== 'undefined' && document.createElement('canvas')
+    const elem = typeof document !== 'undefined' && document.createElement('canvas')
     if (elem && elem.getContext && elem.getContext('2d')) {
       // was able or not to get WebP representation
       return elem.toDataURL('image/webp').startsWith('data:image/webp')
@@ -155,23 +143,23 @@ export class ContentfulClient extends BaseClient {
             ? webp
             : jpg
           : url.pathname.endsWith('.webp')
-          ? webp
-          : url.pathname.endsWith('.png')
-          ? png
-          : url.pathname.endsWith('.gif')
-          ? gif
-          : undefined
+            ? webp
+            : url.pathname.endsWith('.png')
+              ? png
+              : url.pathname.endsWith('.gif')
+                ? gif
+                : undefined
 
       const originalFormat =
         url.pathname.endsWith('.jpg') || url.pathname.endsWith('.jpeg')
           ? 'jpg'
           : url.pathname.endsWith('.png')
-          ? 'png'
-          : url.pathname.endsWith('.webp')
-          ? 'webp'
-          : url.pathname.endsWith('.gif')
-          ? 'gif'
-          : undefined
+            ? 'png'
+            : url.pathname.endsWith('.webp')
+              ? 'webp'
+              : url.pathname.endsWith('.gif')
+                ? 'gif'
+                : undefined
 
       return {
         jpg: jpg.toString(),
@@ -183,19 +171,13 @@ export class ContentfulClient extends BaseClient {
         originalFormat
       }
     } catch (err) {
-      console.error(`Error optimizing:`, image, err)
+      console.error('Error optimizing:', image, err)
       return {}
     }
   }
 
-  async fetchAsset(
-    space: string,
-    environment: string,
-    id: string
-  ): Promise<ContentfulAsset> {
-    const response = await this.rawFetch(
-      `/spaces/${space}/environments/${environment}/assets/${id}/`
-    )
+  async fetchAsset(space: string, environment: string, id: string): Promise<ContentfulAsset> {
+    const response = await this.rawFetch(`/spaces/${space}/environments/${environment}/assets/${id}/`)
 
     if (!response.ok) {
       throw new Error('Failed to fetch asset data')
@@ -214,9 +196,7 @@ export class ContentfulClient extends BaseClient {
       file: {
         [locale]: {
           ...asset.fields.file,
-          url:
-            this.optimize(asset.fields.file.url).optimized ||
-            asset.fields.file.url
+          url: this.optimize(asset.fields.file.url).optimized || asset.fields.file.url
         }
       }
     }
@@ -227,9 +207,7 @@ export class ContentfulClient extends BaseClient {
     }
   }
 
-  async fetchAssetsFromEntryFields<
-    T extends Record<string, LocalizedField<LocalizedFieldType>>
-  >(
+  async fetchAssetsFromEntryFields<T extends Record<string, LocalizedField<LocalizedFieldType>>>(
     space: string,
     environment: string,
     fieldsInArray: T[]
@@ -249,19 +227,18 @@ export class ContentfulClient extends BaseClient {
       return {}
     }
 
-    const assets = await Promise.all(
-      Array.from(assetIds).map(id => this.fetchAsset(space, environment, id))
-    )
+    const assets = await Promise.all(Array.from(assetIds).map(id => this.fetchAsset(space, environment, id)))
 
-    return assets.reduce((acc, asset) => {
-      acc[asset.sys.id] = asset
-      return acc
-    }, {} as Record<string, ContentfulAsset>)
+    return assets.reduce(
+      (acc, asset) => {
+        acc[asset.sys.id] = asset
+        return acc
+      },
+      {} as Record<string, ContentfulAsset>
+    )
   }
 
-  async fetchEntriesFromEntryFields<
-    T extends Record<string, LocalizedField<LocalizedFieldType>>
-  >(
+  async fetchEntriesFromEntryFields<T extends Record<string, LocalizedField<LocalizedFieldType>>>(
     space: string,
     environment: string,
     fields: T
@@ -280,15 +257,14 @@ export class ContentfulClient extends BaseClient {
       return {}
     }
 
-    const entries = await Promise.all(
-      Array.from(entryIds).map(id =>
-        this.fetchEntryAllLocales<T>(space, environment, id)
-      )
-    )
+    const entries = await Promise.all(Array.from(entryIds).map(id => this.fetchEntryAllLocales<T>(space, environment, id)))
 
-    return entries.reduce((acc, entry) => {
-      acc[entry.sys.id] = entry
-      return acc
-    }, {} as Record<string, ContentfulEntry<T>>)
+    return entries.reduce(
+      (acc, entry) => {
+        acc[entry.sys.id] = entry
+        return acc
+      },
+      {} as Record<string, ContentfulEntry<T>>
+    )
   }
 }

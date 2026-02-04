@@ -13,10 +13,7 @@ export const INITIAL_STATE: StorageState = {
   loading: true
 }
 
-export function storageReducerWrapper(
-  reducer: any,
-  merger?: StateMerger
-): Reducer<{} | undefined> {
+export function storageReducerWrapper(reducer: any, merger?: StateMerger): Reducer<{} | undefined> {
   return storage.reducer(reducer, merger)
 }
 

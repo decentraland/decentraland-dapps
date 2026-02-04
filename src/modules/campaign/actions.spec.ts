@@ -1,8 +1,5 @@
 import { ContentfulAsset, BannerFields } from '@dcl/schemas'
-import {
-  marketplaceHomepageBannerAssets,
-  mockHomepageBannerEntry
-} from '../../tests/contentfulMocks'
+import { marketplaceHomepageBannerAssets, mockHomepageBannerEntry } from '../../tests/contentfulMocks'
 import {
   fetchCampaignRequest,
   fetchCampaignSuccess,
@@ -47,17 +44,9 @@ describe('Campaign actions', () => {
           [mockHomepageBannerEntry.sys.id]: mockHomepageBannerEntry.fields
         }
         const assets: Record<string, ContentfulAsset> = {
-          [marketplaceHomepageBannerAssets[0].sys.id]:
-            marketplaceHomepageBannerAssets[0]
+          [marketplaceHomepageBannerAssets[0].sys.id]: marketplaceHomepageBannerAssets[0]
         }
-        action = fetchCampaignSuccess(
-          banners,
-          assets,
-          name,
-          tabName,
-          mainTag,
-          additionalTags
-        )
+        action = fetchCampaignSuccess(banners, assets, name, tabName, mainTag, additionalTags)
         expectedAction = {
           type: FETCH_CAMPAIGN_SUCCESS,
           payload: {

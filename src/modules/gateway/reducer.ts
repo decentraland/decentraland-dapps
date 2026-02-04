@@ -1,31 +1,29 @@
-import { loadingReducer, LoadingState } from '../loading/reducer'
 import {
-  PollPurchaseStatusFailureAction,
-  PollPurchaseStatusRequestAction,
-  PollPurchaseStatusSuccessAction,
-  POLL_PURCHASE_STATUS_FAILURE,
-  POLL_PURCHASE_STATUS_REQUEST,
-  POLL_PURCHASE_STATUS_SUCCESS,
-  SetPurchaseAction,
-  SET_PURCHASE
-} from '../gateway/actions'
-import { Purchase } from './types'
-import {
-  ManaFiatGatewayPurchaseCompletedFailureAction,
   MANA_FIAT_GATEWAY_PURCHASE_COMPLETED_FAILURE,
+  ManaFiatGatewayPurchaseCompletedFailureAction,
+  OPEN_BUY_MANA_WITH_FIAT_MODAL_FAILURE,
+  OPEN_BUY_MANA_WITH_FIAT_MODAL_REQUEST,
+  OPEN_BUY_MANA_WITH_FIAT_MODAL_SUCCESS,
+  OPEN_MANA_FIAT_GATEWAY_FAILURE,
+  OPEN_MANA_FIAT_GATEWAY_REQUEST,
+  OPEN_MANA_FIAT_GATEWAY_SUCCESS,
   OpenBuyManaWithFiatModalFailureAction,
   OpenBuyManaWithFiatModalRequestAction,
   OpenBuyManaWithFiatModalSuccessAction,
   OpenManaFiatGatewayFailureAction,
   OpenManaFiatGatewayRequestAction,
   OpenManaFiatGatewaySuccessAction,
-  OPEN_BUY_MANA_WITH_FIAT_MODAL_FAILURE,
-  OPEN_BUY_MANA_WITH_FIAT_MODAL_REQUEST,
-  OPEN_BUY_MANA_WITH_FIAT_MODAL_SUCCESS,
-  OPEN_MANA_FIAT_GATEWAY_FAILURE,
-  OPEN_MANA_FIAT_GATEWAY_REQUEST,
-  OPEN_MANA_FIAT_GATEWAY_SUCCESS
-} from './actions'
+  POLL_PURCHASE_STATUS_FAILURE,
+  POLL_PURCHASE_STATUS_REQUEST,
+  POLL_PURCHASE_STATUS_SUCCESS,
+  PollPurchaseStatusFailureAction,
+  PollPurchaseStatusRequestAction,
+  PollPurchaseStatusSuccessAction,
+  SET_PURCHASE,
+  SetPurchaseAction
+} from '../gateway/actions'
+import { LoadingState, loadingReducer } from '../loading/reducer'
+import { Purchase } from './types'
 
 export type GatewayState = {
   data: {
@@ -54,10 +52,7 @@ export type ManaFiatGatewayReducerAction =
   | PollPurchaseStatusSuccessAction
   | PollPurchaseStatusFailureAction
 
-export function gatewayReducer(
-  state: GatewayState = INITIAL_STATE,
-  action: ManaFiatGatewayReducerAction
-): GatewayState {
+export function gatewayReducer(state: GatewayState = INITIAL_STATE, action: ManaFiatGatewayReducerAction): GatewayState {
   switch (action.type) {
     case OPEN_BUY_MANA_WITH_FIAT_MODAL_REQUEST: {
       return {
@@ -114,12 +109,7 @@ export function gatewayReducer(
         ...state,
         data: {
           ...state.data,
-          purchases: [
-            ...state.data.purchases.filter(
-              _purchase => _purchase.id !== purchase.id
-            ),
-            purchase
-          ]
+          purchases: [...state.data.purchases.filter(_purchase => _purchase.id !== purchase.id), purchase]
         }
       }
     }

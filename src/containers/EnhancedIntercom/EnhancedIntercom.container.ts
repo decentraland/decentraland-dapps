@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
-import { getData as getWallet } from '../../modules/wallet/selectors'
 import Intercom from '../../components/Intercom/Intercom'
+import { getData as getWallet } from '../../modules/wallet/selectors'
 import { MapStateProps, Props } from './EnhancedIntercom.types'
 
 const mapState = (state: any, ownProps: Props): MapStateProps => {

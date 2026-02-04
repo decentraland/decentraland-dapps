@@ -33,11 +33,7 @@ export class MoonPay {
    * @param transactionId - MoonPay Transaction ID.
    */
   async getTransaction(transactionId: string): Promise<MoonPayTransaction> {
-    return await this.moonPayAPI.request(
-      'GET',
-      `/v1/transactions/${transactionId}`,
-      { apiKey: this.apiKey }
-    )
+    return await this.moonPayAPI.request('GET', `/v1/transactions/${transactionId}`, { apiKey: this.apiKey })
   }
 
   /**
@@ -46,15 +42,7 @@ export class MoonPay {
    * @param transaction - MoonPay Transaction.
    */
   createPurchase(transaction: MoonPayTransaction, network: Network): Purchase {
-    const {
-      id,
-      quoteCurrencyAmount,
-      createdAt,
-      status,
-      walletAddress,
-      cryptoTransactionId,
-      paymentMethod
-    } = transaction
+    const { id, quoteCurrencyAmount, createdAt, status, walletAddress, cryptoTransactionId, paymentMethod } = transaction
 
     return {
       id,
@@ -71,9 +59,7 @@ export class MoonPay {
 
   getWidgetUrl(network: Network) {
     const redirectURL = `${window.location.origin}?network=${network}&gateway=${NetworkGatewayType.MOON_PAY}`
-    return `${this.widgetBaseUrl}?apiKey=${
-      this.apiKey
-    }&currencyCode=MANA&redirectURL=${encodeURIComponent(redirectURL)}`
+    return `${this.widgetBaseUrl}?apiKey=${this.apiKey}&currencyCode=MANA&redirectURL=${encodeURIComponent(redirectURL)}`
   }
 
   getTransactionReceiptUrl(transactionId: string) {

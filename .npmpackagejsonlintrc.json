@@ -1,0 +1,1 @@
+{ "extends": "@dcl/eslint-config/npm-package-json-lint" }

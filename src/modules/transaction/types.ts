@@ -1,10 +1,7 @@
+import { TransactionReceipt, TransactionResponse } from '@ethersproject/providers'
 import type { AnyAction } from 'redux'
-import type { CrossChainProvider } from 'decentraland-transactions/esm/crossChain/types'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
-import {
-  TransactionResponse,
-  TransactionReceipt
-} from '@ethersproject/providers'
+import type { CrossChainProvider } from 'decentraland-transactions/esm/crossChain/types'
 
 // Special flag used to determine transaction hashes to be monitored
 export const TRANSACTION_ACTION_FLAG = '_watch_tx'
@@ -69,15 +66,9 @@ export const FINISHED_STATUS = [
   TransactionStatus.REPLACED
 ]
 
-export const FAILED_STATUS = [
-  TransactionStatus.DROPPED,
-  TransactionStatus.REVERTED
-]
+export const FAILED_STATUS = [TransactionStatus.DROPPED, TransactionStatus.REVERTED]
 
-export const SUCCESS_STATUS = [
-  TransactionStatus.REPLACED,
-  TransactionStatus.CONFIRMED
-]
+export const SUCCESS_STATUS = [TransactionStatus.REPLACED, TransactionStatus.CONFIRMED]
 
 export type Transaction = {
   events: string[]
@@ -100,7 +91,7 @@ export type Transaction = {
 }
 
 export type TransactionPayload = {
-  [key: string]: any,
+  [key: string]: any
   [TRANSACTION_ACTION_FLAG]: {
     chainId: ChainId
     toChainId?: ChainId
@@ -113,7 +104,9 @@ export type TransactionPayload = {
   }
 }
 
-export type ActionWithTransactionPayload = AnyAction & { payload: TransactionPayload }
+export type ActionWithTransactionPayload = AnyAction & {
+  payload: TransactionPayload
+}
 
 export type Arg = {
   name: string

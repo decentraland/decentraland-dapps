@@ -1,27 +1,8 @@
 import { ethers } from 'ethers'
-import {
-  ChainId,
-  ERC20TradeAsset,
-  Item,
-  Network,
-  NFT,
-  Order,
-  Trade,
-  TradeAssetType,
-  TradeType
-} from '@dcl/schemas'
-import {
-  ContractData,
-  ContractName,
-  getContract
-} from 'decentraland-transactions'
+import { ChainId, ERC20TradeAsset, Item, Network, NFT, Order, Trade, TradeAssetType, TradeType } from '@dcl/schemas'
+import { ContractData, ContractName, getContract } from 'decentraland-transactions'
 import { Credit } from '../modules/credits/types'
-import {
-  CreditsService,
-  CreditsData,
-  ExternalCallParams,
-  CollectionManagerCreateCollectionArgs
-} from './credits'
+import { CreditsService, CreditsData, ExternalCallParams, CollectionManagerCreateCollectionArgs } from './credits'
 import { getOnChainTrade } from './trades'
 
 // Only mock external dependencies
@@ -53,18 +34,15 @@ describe('CreditsService', () => {
     // Mock getOnChainTrade implementation
     mockGetOnChainTrade.mockReturnValue({
       signer: '0x0000000000000000000000000000000000000123',
-      signature:
-        '0x0000000000000000000000000000000000000000000000000000000000000000',
+      signature: '0x0000000000000000000000000000000000000000000000000000000000000000',
       checks: {
         uses: 1,
         expiration: 1234567890,
         effective: 1234567890,
-        salt:
-          '0x0000000000000000000000000000000000000000000000000000000000000000',
+        salt: '0x0000000000000000000000000000000000000000000000000000000000000000',
         contractSignatureIndex: 0,
         signerSignatureIndex: 0,
-        allowedRoot:
-          '0x0000000000000000000000000000000000000000000000000000000000000000',
+        allowedRoot: '0x0000000000000000000000000000000000000000000000000000000000000000',
         allowedProof: [],
         externalChecks: []
       },
@@ -109,8 +87,7 @@ describe('CreditsService', () => {
           expiresAt: '1234567890',
           signature: '0xsignature1',
           availableAmount: '100',
-          contract: getContract(ContractName.CreditsManager, ChainId.MATIC_AMOY)
-            .address,
+          contract: getContract(ContractName.CreditsManager, ChainId.MATIC_AMOY).address,
           season: 1,
           timestamp: '1234567890',
           userAddress: '0xuser'
@@ -121,18 +98,14 @@ describe('CreditsService', () => {
           expiresAt: '1234567890',
           signature: '0xsignature2',
           availableAmount: '200',
-          contract: getContract(ContractName.CreditsManager, ChainId.MATIC_AMOY)
-            .address,
+          contract: getContract(ContractName.CreditsManager, ChainId.MATIC_AMOY).address,
           season: 1,
           timestamp: '1234567890',
           userAddress: '0xuser'
         }
       ]
 
-      const result = creditsService['prepareCreditsData'](
-        credits,
-        ChainId.MATIC_AMOY
-      )
+      const result = creditsService['prepareCreditsData'](credits, ChainId.MATIC_AMOY)
 
       // Just check the structure and specific values but not the exact salt transformation
       expect(result.creditsData[0].value).toEqual('100')
@@ -176,9 +149,7 @@ describe('CreditsService', () => {
         version: '1',
         chainId: ChainId.MATIC_AMOY
       }
-      const creditsData: CreditsData[] = [
-        { value: '100', expiresAt: 1234567890, salt: '0xsalt1' }
-      ]
+      const creditsData: CreditsData[] = [{ value: '100', expiresAt: 1234567890, salt: '0xsalt1' }]
       const creditsSignatures = ['0xsignature1']
       const externalCall: ExtendedExternalCall = {
         target: '0xtarget',
@@ -214,14 +185,14 @@ describe('CreditsService', () => {
   describe('prepareCreditsCollectionStore', () => {
     let item: Item
     beforeEach(() => {
-      item = ({
+      item = {
         id: 'item1',
         name: 'Item 1',
         itemId: '1',
         contractAddress: '0x74b1b01874724bb6223f863d4899e65cf51aaa9f',
         price: '1000',
         chainId: ChainId.MATIC_AMOY
-      } as unknown) as Item
+      } as unknown as Item
     })
 
     it('should prepare credits data for collection store call', () => {
@@ -234,19 +205,14 @@ describe('CreditsService', () => {
           expiresAt: '1234567890',
           signature: '0xsignature1',
           availableAmount: '100',
-          contract: getContract(ContractName.CreditsManager, ChainId.MATIC_AMOY)
-            .address,
+          contract: getContract(ContractName.CreditsManager, ChainId.MATIC_AMOY).address,
           season: 1,
           timestamp: '1234567890',
           userAddress: '0xuser'
         }
       ]
 
-      const result = creditsService.prepareCreditsCollectionStore(
-        item,
-        walletAddress,
-        credits
-      )
+      const result = creditsService.prepareCreditsCollectionStore(item, walletAddress, credits)
 
       expect(result).toEqual({
         contract: getContract(ContractName.CreditsManager, ChainId.MATIC_AMOY),
@@ -259,13 +225,10 @@ describe('CreditsService', () => {
         ],
         creditsSignatures: ['0xsignature1'],
         externalCall: {
-          target: getContract(ContractName.CollectionStore, ChainId.MATIC_AMOY)
-            .address,
+          target: getContract(ContractName.CollectionStore, ChainId.MATIC_AMOY).address,
           selector: '0xa4fdc78a',
           data: ethers.utils.defaultAbiCoder.encode(
-            [
-              'tuple(address collection, uint256[] ids, uint256[] prices, address[] beneficiaries)[]'
-            ],
+            ['tuple(address collection, uint256[] ids, uint256[] prices, address[] beneficiaries)[]'],
             [
               [
                 {
@@ -288,7 +251,7 @@ describe('CreditsService', () => {
 
   describe('useCreditsCollectionStore', () => {
     it('should execute useCredits for collection store', async () => {
-      const item = ({
+      const item = {
         id: 'item1',
         name: 'Item 1',
         description: 'Description',
@@ -296,7 +259,7 @@ describe('CreditsService', () => {
         contractAddress: '0xitemContract',
         price: '1000',
         chainId: ChainId.MATIC_AMOY
-      } as unknown) as Item
+      } as unknown as Item
 
       const walletAddress = '0xuser'
       const credits: Credit[] = [
@@ -322,36 +285,24 @@ describe('CreditsService', () => {
         expiresAt: 1234567890
       }
 
-      jest
-        .spyOn(creditsService, 'prepareCreditsCollectionStore')
-        .mockReturnValue({
-          contract: {
-            name: 'CreditsManager',
-            address: '0xCreditsManagerAddress',
-            abi: [],
-            version: '1',
-            chainId: ChainId.MATIC_AMOY
-          },
-          creditsData: [
-            { value: '100', expiresAt: 1234567890, salt: '0xsalt1' }
-          ],
-          creditsSignatures: ['0xsignature1'],
-          externalCall: extendedExternalCall,
-          maxUncreditedValue: '900',
-          maxCreditedValue: '1000'
-        })
+      jest.spyOn(creditsService, 'prepareCreditsCollectionStore').mockReturnValue({
+        contract: {
+          name: 'CreditsManager',
+          address: '0xCreditsManagerAddress',
+          abi: [],
+          version: '1',
+          chainId: ChainId.MATIC_AMOY
+        },
+        creditsData: [{ value: '100', expiresAt: 1234567890, salt: '0xsalt1' }],
+        creditsSignatures: ['0xsignature1'],
+        externalCall: extendedExternalCall,
+        maxUncreditedValue: '900',
+        maxCreditedValue: '1000'
+      })
 
-      await creditsService.useCreditsCollectionStore(
-        item,
-        walletAddress,
-        credits
-      )
+      await creditsService.useCreditsCollectionStore(item, walletAddress, credits)
 
-      expect(creditsService.prepareCreditsCollectionStore).toHaveBeenCalledWith(
-        item,
-        walletAddress,
-        credits
-      )
+      expect(creditsService.prepareCreditsCollectionStore).toHaveBeenCalledWith(item, walletAddress, credits)
       expect(mockSendTransaction).toHaveBeenCalledWith(
         {
           name: 'CreditsManager',
@@ -380,13 +331,9 @@ describe('CreditsService', () => {
         id: 'trade1',
         createdAt: Date.now(),
         signer: '0x0000000000000000000000000000000000000123',
-        signature:
-          '0x0000000000000000000000000000000000000000000000000000000000000000',
+        signature: '0x0000000000000000000000000000000000000000000000000000000000000000',
         type: TradeType.PUBLIC_NFT_ORDER,
-        contract: getContract(
-          ContractName.OffChainMarketplaceV2,
-          ChainId.MATIC_AMOY
-        ).address,
+        contract: getContract(ContractName.OffChainMarketplaceV2, ChainId.MATIC_AMOY).address,
         network: Network.MATIC,
         chainId: ChainId.MATIC_AMOY,
         checks: {
@@ -428,19 +375,14 @@ describe('CreditsService', () => {
           expiresAt: '1234567890',
           signature: '0xsignature1',
           availableAmount: '1000000000000000000',
-          contract: getContract(ContractName.CreditsManager, ChainId.MATIC_AMOY)
-            .address,
+          contract: getContract(ContractName.CreditsManager, ChainId.MATIC_AMOY).address,
           season: 1,
           timestamp: '1234567890',
           userAddress: walletAddress
         }
       ]
 
-      const result = creditsService.prepareCreditsMarketplace(
-        trade,
-        walletAddress,
-        credits
-      )
+      const result = creditsService.prepareCreditsMarketplace(trade, walletAddress, credits)
 
       expect(result).toEqual({
         contract: getContract(ContractName.CreditsManager, ChainId.MATIC_AMOY),
@@ -453,10 +395,7 @@ describe('CreditsService', () => {
         ],
         creditsSignatures: ['0xsignature1'],
         externalCall: {
-          target: getContract(
-            ContractName.OffChainMarketplaceV2,
-            ChainId.MATIC_AMOY
-          ).address,
+          target: getContract(ContractName.OffChainMarketplaceV2, ChainId.MATIC_AMOY).address,
           selector: '0x961a547e',
           data: ethers.utils.defaultAbiCoder.encode(
             [
@@ -467,10 +406,7 @@ describe('CreditsService', () => {
           expiresAt: expect.any(Number),
           salt: expect.any(String)
         },
-        maxUncreditedValue: (
-          BigInt((trade.received[0] as ERC20TradeAsset).amount) -
-          BigInt(credits[0].amount)
-        ).toString(),
+        maxUncreditedValue: (BigInt((trade.received[0] as ERC20TradeAsset).amount) - BigInt(credits[0].amount)).toString(),
         maxCreditedValue: (trade.received[0] as ERC20TradeAsset).amount
       })
     })
@@ -478,7 +414,7 @@ describe('CreditsService', () => {
 
   describe('useCreditsMarketplace', () => {
     it('should execute useCredits for marketplace', async () => {
-      const trade = ({
+      const trade = {
         id: 'trade1',
         chainId: ChainId.MATIC_AMOY,
         type: TradeType.BID,
@@ -505,7 +441,7 @@ describe('CreditsService', () => {
             beneficiary: '0xbeneficiary'
           }
         ]
-      } as unknown) as Trade
+      } as unknown as Trade
 
       const walletAddress = '0xuser'
       const credits: Credit[] = [
@@ -548,11 +484,7 @@ describe('CreditsService', () => {
 
       await creditsService.useCreditsMarketplace(trade, walletAddress, credits)
 
-      expect(creditsService.prepareCreditsMarketplace).toHaveBeenCalledWith(
-        trade,
-        walletAddress,
-        credits
-      )
+      expect(creditsService.prepareCreditsMarketplace).toHaveBeenCalledWith(trade, walletAddress, credits)
       expect(mockSendTransaction).toHaveBeenCalledWith(
         {
           name: 'CreditsManager',
@@ -578,15 +510,15 @@ describe('CreditsService', () => {
     let nft: NFT
     let order: Order
     beforeEach(() => {
-      nft = ({
+      nft = {
         id: 'nft1',
         name: 'NFT 1',
         tokenId: '1',
         contractAddress: '0x74b1b01874724bb6223f863d4899e65cf51aaa9f',
         chainId: ChainId.MATIC_AMOY,
         network: Network.MATIC
-      } as unknown) as NFT
-      order = ({
+      } as unknown as NFT
+      order = {
         id: 'order1',
         price: '1000',
         chainId: ChainId.MATIC_AMOY,
@@ -595,7 +527,7 @@ describe('CreditsService', () => {
         contractAddress: '0x74b1b01874724bb6223f863d4899e65cf51aaa9f',
         tokenId: '1',
         owner: '0xowner'
-      } as unknown) as Order
+      } as unknown as Order
     })
     it('should prepare credits data correctly', () => {
       const credits: Credit[] = [
@@ -605,23 +537,16 @@ describe('CreditsService', () => {
           expiresAt: '1234567890',
           signature: '0xsignature1',
           availableAmount: '100',
-          contract: getContract(ContractName.CreditsManager, ChainId.MATIC_AMOY)
-            .address,
+          contract: getContract(ContractName.CreditsManager, ChainId.MATIC_AMOY).address,
           season: 1,
           timestamp: '1234567890',
           userAddress: '0xuser'
         }
       ]
 
-      const result = creditsService['prepareCreditsLegacyMarketplace'](
-        nft,
-        order,
-        credits
-      )
+      const result = creditsService['prepareCreditsLegacyMarketplace'](nft, order, credits)
 
-      expect(result.contract).toEqual(
-        getContract(ContractName.CreditsManager, ChainId.MATIC_AMOY)
-      )
+      expect(result.contract).toEqual(getContract(ContractName.CreditsManager, ChainId.MATIC_AMOY))
       expect(result.creditsData).toEqual([
         {
           value: '100',
@@ -631,13 +556,9 @@ describe('CreditsService', () => {
       ])
       expect(result.creditsSignatures).toEqual(['0xsignature1'])
       expect(result.externalCall).toEqual({
-        target: getContract(ContractName.MarketplaceV2, ChainId.MATIC_AMOY)
-          .address,
+        target: getContract(ContractName.MarketplaceV2, ChainId.MATIC_AMOY).address,
         selector: '0xae7b0333',
-        data: ethers.utils.defaultAbiCoder.encode(
-          ['address', 'uint256', 'uint256'],
-          [nft.contractAddress, nft.tokenId, order.price]
-        ),
+        data: ethers.utils.defaultAbiCoder.encode(['address', 'uint256', 'uint256'], [nft.contractAddress, nft.tokenId, order.price]),
         expiresAt: expect.any(Number),
         salt: expect.any(String)
       })
@@ -648,7 +569,7 @@ describe('CreditsService', () => {
 
   describe('useCreditsLegacyMarketplace', () => {
     it('should execute useCredits for legacy marketplace', async () => {
-      const nft = ({
+      const nft = {
         id: 'nft1',
         name: 'NFT 1',
         description: 'Description',
@@ -656,14 +577,14 @@ describe('CreditsService', () => {
         contractAddress: '0xnftContract',
         chainId: ChainId.MATIC_AMOY,
         network: Network.ETHEREUM
-      } as unknown) as NFT
+      } as unknown as NFT
 
-      const order = ({
+      const order = {
         id: 'order1',
         price: '1000',
         chainId: ChainId.MATIC_AMOY,
         network: Network.ETHEREUM
-      } as unknown) as Order
+      } as unknown as Order
 
       const credits: Credit[] = [
         {
@@ -688,30 +609,24 @@ describe('CreditsService', () => {
         expiresAt: 1234567890
       }
 
-      jest
-        .spyOn(creditsService, 'prepareCreditsLegacyMarketplace')
-        .mockReturnValue({
-          contract: {
-            name: 'CreditsManager',
-            address: '0xCreditsManagerAddress',
-            abi: [],
-            version: '1',
-            chainId: ChainId.MATIC_AMOY
-          },
-          creditsData: [
-            { value: '100', expiresAt: 1234567890, salt: '0xsalt1' }
-          ],
-          creditsSignatures: ['0xsignature1'],
-          externalCall: extendedExternalCall,
-          maxUncreditedValue: '900',
-          maxCreditedValue: '1000'
-        })
+      jest.spyOn(creditsService, 'prepareCreditsLegacyMarketplace').mockReturnValue({
+        contract: {
+          name: 'CreditsManager',
+          address: '0xCreditsManagerAddress',
+          abi: [],
+          version: '1',
+          chainId: ChainId.MATIC_AMOY
+        },
+        creditsData: [{ value: '100', expiresAt: 1234567890, salt: '0xsalt1' }],
+        creditsSignatures: ['0xsignature1'],
+        externalCall: extendedExternalCall,
+        maxUncreditedValue: '900',
+        maxCreditedValue: '1000'
+      })
 
       await creditsService.useCreditsLegacyMarketplace(nft, order, credits)
 
-      expect(
-        creditsService.prepareCreditsLegacyMarketplace
-      ).toHaveBeenCalledWith(nft, order, credits)
+      expect(creditsService.prepareCreditsLegacyMarketplace).toHaveBeenCalledWith(nft, order, credits)
       expect(mockSendTransaction).toHaveBeenCalledWith(
         {
           name: 'CreditsManager',
@@ -735,7 +650,7 @@ describe('CreditsService', () => {
 
   describe('getTradePrice', () => {
     it('should get the price from an ERC20 trade asset in received', () => {
-      const trade = ({
+      const trade = {
         received: [
           {
             assetType: TradeAssetType.ERC20,
@@ -743,7 +658,7 @@ describe('CreditsService', () => {
             contractAddress: '0xmana'
           }
         ]
-      } as unknown) as Trade
+      } as unknown as Trade
 
       // @ts-ignore: Accessing private method
       const result = creditsService['getTradePrice'](trade)
@@ -751,7 +666,7 @@ describe('CreditsService', () => {
     })
 
     it('should return 0 if no ERC20 asset is found', () => {
-      const trade = ({
+      const trade = {
         received: [
           {
             assetType: TradeAssetType.ERC721,
@@ -759,7 +674,7 @@ describe('CreditsService', () => {
             contractAddress: '0xnft'
           }
         ]
-      } as unknown) as Trade
+      } as unknown as Trade
 
       // @ts-ignore: Accessing private method
       const result = creditsService['getTradePrice'](trade)
@@ -780,8 +695,7 @@ describe('CreditsService', () => {
           expiresAt: '1234567890',
           signature: '0xsignature1',
           availableAmount: '100',
-          contract: getContract(ContractName.CreditsManager, ChainId.MATIC_AMOY)
-            .address,
+          contract: getContract(ContractName.CreditsManager, ChainId.MATIC_AMOY).address,
           season: 1,
           timestamp: '1234567890',
           userAddress: '0xuser'
@@ -795,29 +709,15 @@ describe('CreditsService', () => {
         'COL',
         'baseURI',
         '0x0000000000000000000000000000000000000003', // creator - valid address
-        [
-          [
-            'rarity1',
-            '1000',
-            '0x0000000000000000000000000000000000000004',
-            'metadata'
-          ]
-        ]
+        [['rarity1', '1000', '0x0000000000000000000000000000000000000004', 'metadata']]
       ]
       totalPrice = '1000'
     })
 
     it('should prepare credits data for collection manager call', () => {
-      const result = creditsService.prepareCreditsCollectionManager(
-        credits,
-        ChainId.MATIC_AMOY,
-        collectionManagerArgs,
-        totalPrice
-      )
+      const result = creditsService.prepareCreditsCollectionManager(credits, ChainId.MATIC_AMOY, collectionManagerArgs, totalPrice)
 
-      expect(result.contract).toEqual(
-        getContract(ContractName.CreditsManager, ChainId.MATIC_AMOY)
-      )
+      expect(result.contract).toEqual(getContract(ContractName.CreditsManager, ChainId.MATIC_AMOY))
       expect(result.creditsData).toEqual([
         {
           value: '100',
@@ -826,13 +726,9 @@ describe('CreditsService', () => {
         }
       ])
       expect(result.creditsSignatures).toEqual(['0xsignature1'])
-      expect(result.externalCall.target).toEqual(
-        getContract(ContractName.CollectionManager, ChainId.MATIC_AMOY).address
-      )
+      expect(result.externalCall.target).toEqual(getContract(ContractName.CollectionManager, ChainId.MATIC_AMOY).address)
       expect(result.externalCall.selector).toBeDefined()
-      expect(result.externalCall.data).toContain(
-        '436f6c6c656374696f6e204e616d65'
-      ) // "Collection Name" in hex
+      expect(result.externalCall.data).toContain('436f6c6c656374696f6e204e616d65') // "Collection Name" in hex
       expect(result.externalCall.data).toContain('434f4c') // "COL" in hex
       expect(result.externalCall.expiresAt).toBeDefined()
       expect(result.externalCall.salt).toBeDefined()
@@ -878,10 +774,7 @@ describe('CreditsService', () => {
             expiresAt: '1234567890',
             signature: '0xsignature1',
             availableAmount: '100',
-            contract: getContract(
-              ContractName.CreditsManager,
-              ChainId.MATIC_AMOY
-            ).address,
+            contract: getContract(ContractName.CreditsManager, ChainId.MATIC_AMOY).address,
             season: 1,
             timestamp: '1234567890',
             userAddress: '0xuser'
@@ -895,14 +788,7 @@ describe('CreditsService', () => {
           'COL',
           'baseURI',
           '0x0000000000000000000000000000000000000003',
-          [
-            [
-              'rarity1',
-              '1000',
-              '0x0000000000000000000000000000000000000004',
-              'metadata'
-            ]
-          ]
+          [['rarity1', '1000', '0x0000000000000000000000000000000000000004', 'metadata']]
         ]
         totalPrice = '1000'
         creditsServerUrl = 'https://credits-server.com'
@@ -971,10 +857,7 @@ describe('CreditsService', () => {
                 expiresAt: '1234567890',
                 signature: '0xsignature1',
                 availableAmount: '100',
-                contract: getContract(
-                  ContractName.CreditsManager,
-                  ChainId.MATIC_AMOY
-                ).address,
+                contract: getContract(ContractName.CreditsManager, ChainId.MATIC_AMOY).address,
                 season: 1,
                 timestamp: '1234567890',
                 userAddress: '0xuser'
@@ -1029,10 +912,7 @@ describe('CreditsService', () => {
             expiresAt: '1234567890',
             signature: '0xsignature1',
             availableAmount: '150000000000000000000',
-            contract: getContract(
-              ContractName.CreditsManager,
-              ChainId.MATIC_MAINNET
-            ).address,
+            contract: getContract(ContractName.CreditsManager, ChainId.MATIC_MAINNET).address,
             season: 1,
             timestamp: '1234567890',
             userAddress: '0xuser'
@@ -1041,13 +921,7 @@ describe('CreditsService', () => {
       })
 
       it('should calculate maxUncreditedValue as 0', async () => {
-        await creditsService.useCreditsWithExternalCall(
-          price,
-          credits,
-          chainId,
-          externalCall,
-          customExternalCallSignature
-        )
+        await creditsService.useCreditsWithExternalCall(price, credits, chainId, externalCall, customExternalCallSignature)
 
         // Credits (150) > Price (100), so maxUncreditedValue should be '0'
         expect(mockSendTransaction).toHaveBeenCalledWith(
@@ -1062,13 +936,7 @@ describe('CreditsService', () => {
       })
 
       it('should execute useCredits with correct parameters', async () => {
-        await creditsService.useCreditsWithExternalCall(
-          price,
-          credits,
-          chainId,
-          externalCall,
-          customExternalCallSignature
-        )
+        await creditsService.useCreditsWithExternalCall(price, credits, chainId, externalCall, customExternalCallSignature)
 
         expect(mockSendTransaction).toHaveBeenCalledWith(
           expect.objectContaining({
@@ -1096,13 +964,7 @@ describe('CreditsService', () => {
       })
 
       it('should return transaction hash', async () => {
-        const txHash = await creditsService.useCreditsWithExternalCall(
-          price,
-          credits,
-          chainId,
-          externalCall,
-          customExternalCallSignature
-        )
+        const txHash = await creditsService.useCreditsWithExternalCall(price, credits, chainId, externalCall, customExternalCallSignature)
 
         expect(txHash).toBe('0xtransactionHash')
       })
@@ -1119,10 +981,7 @@ describe('CreditsService', () => {
             expiresAt: '1234567890',
             signature: '0xsignature1',
             availableAmount: '50000000000000000000',
-            contract: getContract(
-              ContractName.CreditsManager,
-              ChainId.MATIC_MAINNET
-            ).address,
+            contract: getContract(ContractName.CreditsManager, ChainId.MATIC_MAINNET).address,
             season: 1,
             timestamp: '1234567890',
             userAddress: '0xuser'
@@ -1131,13 +990,7 @@ describe('CreditsService', () => {
       })
 
       it('should calculate maxUncreditedValue correctly for hybrid purchase', async () => {
-        await creditsService.useCreditsWithExternalCall(
-          price,
-          credits,
-          chainId,
-          externalCall,
-          customExternalCallSignature
-        )
+        await creditsService.useCreditsWithExternalCall(price, credits, chainId, externalCall, customExternalCallSignature)
 
         // Credits (50) < Price (100), so user needs to pay 50 MANA
         expect(mockSendTransaction).toHaveBeenCalledWith(
@@ -1152,13 +1005,7 @@ describe('CreditsService', () => {
       })
 
       it('should execute useCredits with correct parameters', async () => {
-        await creditsService.useCreditsWithExternalCall(
-          price,
-          credits,
-          chainId,
-          externalCall,
-          customExternalCallSignature
-        )
+        await creditsService.useCreditsWithExternalCall(price, credits, chainId, externalCall, customExternalCallSignature)
 
         expect(mockSendTransaction).toHaveBeenCalledWith(
           expect.objectContaining({
@@ -1186,13 +1033,7 @@ describe('CreditsService', () => {
       })
 
       it('should return transaction hash', async () => {
-        const txHash = await creditsService.useCreditsWithExternalCall(
-          price,
-          credits,
-          chainId,
-          externalCall,
-          customExternalCallSignature
-        )
+        const txHash = await creditsService.useCreditsWithExternalCall(price, credits, chainId, externalCall, customExternalCallSignature)
 
         expect(txHash).toBe('0xtransactionHash')
       })

@@ -1,16 +1,10 @@
-import {
-  ChainId,
-  getNetwork,
-  getNetworkMapping
-} from '@dcl/schemas/dist/dapps/chain-id'
+import { ChainId, getNetwork, getNetworkMapping } from '@dcl/schemas/dist/dapps/chain-id'
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { ProviderType } from '@dcl/schemas/dist/dapps/provider-type'
 import { Env, getEnv } from '@dcl/ui-env'
 import { getRpcUrls } from 'decentraland-connect'
 
-const RPC_URLS: { [key in ChainId]: string } = getRpcUrls(
-  ProviderType.NETWORK
-) as any
+const RPC_URLS: { [key in ChainId]: string } = getRpcUrls(ProviderType.NETWORK) as any
 
 type ChainConfiguration = {
   network: Network

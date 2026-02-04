@@ -89,21 +89,13 @@ describe('handleAuthorizationFlowRequest', () => {
               .put(authorizationFlowSuccess(authorization))
               .fork(onAuthorized!)
               .dispatch(
-                authorizationFlowRequest(
-                  authorization,
-                  AuthorizationAction.GRANT,
-                  {
-                    requiredAllowance: '10',
-                    currentAllowance,
-                    onAuthorized
-                  }
-                )
+                authorizationFlowRequest(authorization, AuthorizationAction.GRANT, {
+                  requiredAllowance: '10',
+                  currentAllowance,
+                  onAuthorized
+                })
               )
-              .dispatch(
-                fetchAuthorizationsSuccess([
-                  [authorization, { ...authorization, allowance: '10000' }]
-                ])
-              )
+              .dispatch(fetchAuthorizationsSuccess([[authorization, { ...authorization, allowance: '10000' }]]))
               .run({ silenceTimeout: true })
           })
         })
@@ -127,31 +119,15 @@ describe('handleAuthorizationFlowRequest', () => {
               .not.put(revokeTokenRequest(authorization))
               .fork(onAuthorized!)
               .dispatch(
-                authorizationFlowRequest(
-                  authorization,
-                  AuthorizationAction.GRANT,
-                  {
-                    requiredAllowance: '10',
-                    currentAllowance,
-                    onAuthorized
-                  }
-                )
+                authorizationFlowRequest(authorization, AuthorizationAction.GRANT, {
+                  requiredAllowance: '10',
+                  currentAllowance,
+                  onAuthorized
+                })
               )
-              .dispatch(
-                grantTokenSuccess(
-                  authorization,
-                  authorization.chainId,
-                  'tx-hash'
-                )
-              )
-              .dispatch(
-                fetchAuthorizationsSuccess([
-                  [authorization, { ...authorization, allowance: '10000' }]
-                ])
-              )
-              .dispatch(
-                fetchTransactionSuccess({ hash: 'tx-hash' } as Transaction)
-              )
+              .dispatch(grantTokenSuccess(authorization, authorization.chainId, 'tx-hash'))
+              .dispatch(fetchAuthorizationsSuccess([[authorization, { ...authorization, allowance: '10000' }]]))
+              .dispatch(fetchTransactionSuccess({ hash: 'tx-hash' } as Transaction))
               .run({ silenceTimeout: true })
           })
         })
@@ -175,30 +151,14 @@ describe('handleAuthorizationFlowRequest', () => {
               // No fork was called
               .not.fork.like({ fn: () => {} })
               .dispatch(
-                authorizationFlowRequest(
-                  authorization,
-                  AuthorizationAction.GRANT,
-                  {
-                    requiredAllowance: '10',
-                    onAuthorized
-                  }
-                )
+                authorizationFlowRequest(authorization, AuthorizationAction.GRANT, {
+                  requiredAllowance: '10',
+                  onAuthorized
+                })
               )
-              .dispatch(
-                grantTokenSuccess(
-                  authorization,
-                  authorization.chainId,
-                  'tx-hash'
-                )
-              )
-              .dispatch(
-                fetchAuthorizationsSuccess([
-                  [authorization, { ...authorization, allowance: '10000' }]
-                ])
-              )
-              .dispatch(
-                fetchTransactionSuccess({ hash: 'tx-hash' } as Transaction)
-              )
+              .dispatch(grantTokenSuccess(authorization, authorization.chainId, 'tx-hash'))
+              .dispatch(fetchAuthorizationsSuccess([[authorization, { ...authorization, allowance: '10000' }]]))
+              .dispatch(fetchTransactionSuccess({ hash: 'tx-hash' } as Transaction))
               .run({ silenceTimeout: true })
           )
         })
@@ -213,10 +173,7 @@ describe('handleAuthorizationFlowRequest', () => {
             [put(grantTokenRequest(authorization)), undefined],
             [call(waitForTx, 'tx-hash'), undefined],
             [put(fetchAuthorizationsRequest([authorization])), undefined],
-            [
-              matchers.select(getData),
-              [{ ...authorization, allowance: '10000' }]
-            ]
+            [matchers.select(getData), [{ ...authorization, allowance: '10000' }]]
           ])
           .put(authorizationFlowFailure(authorization, error.message))
           .dispatch(
@@ -245,9 +202,7 @@ describe('handleAuthorizationFlowRequest', () => {
               requiredAllowance: '10'
             })
           )
-          .dispatch(
-            grantTokenSuccess(authorization, authorization.chainId, 'tx-hash')
-          )
+          .dispatch(grantTokenSuccess(authorization, authorization.chainId, 'tx-hash'))
           .dispatch(fetchTransactionSuccess({ hash: 'tx-hash' } as Transaction))
           .dispatch(fetchAuthorizationsFailure([], error.message))
           .run({ silenceTimeout: true })
@@ -263,20 +218,13 @@ describe('handleAuthorizationFlowRequest', () => {
             [put(fetchAuthorizationsRequest([authorization])), undefined],
             [select(getData), [{ ...authorization, allowance: '1' }]]
           ])
-          .put(
-            authorizationFlowFailure(
-              authorization,
-              AuthorizationError.INSUFFICIENT_ALLOWANCE
-            )
-          )
+          .put(authorizationFlowFailure(authorization, AuthorizationError.INSUFFICIENT_ALLOWANCE))
           .dispatch(
             authorizationFlowRequest(authorization, AuthorizationAction.GRANT, {
               requiredAllowance: '10'
             })
           )
-          .dispatch(
-            grantTokenSuccess(authorization, authorization.chainId, 'tx-hash')
-          )
+          .dispatch(grantTokenSuccess(authorization, authorization.chainId, 'tx-hash'))
           .dispatch(fetchTransactionSuccess({ hash: 'tx-hash' } as Transaction))
           .dispatch(fetchAuthorizationsSuccess([]))
           .run({ silenceTimeout: true })
@@ -297,21 +245,10 @@ describe('handleAuthorizationFlowRequest', () => {
               [put(fetchAuthorizationsRequest([approvalAuth])), undefined],
               [select(getData), []]
             ])
-            .put(
-              authorizationFlowFailure(
-                approvalAuth,
-                AuthorizationError.GRANT_FAILED
-              )
-            )
-            .dispatch(
-              authorizationFlowRequest(approvalAuth, AuthorizationAction.GRANT)
-            )
-            .dispatch(
-              grantTokenSuccess(approvalAuth, approvalAuth.chainId, 'tx-hash')
-            )
-            .dispatch(
-              fetchTransactionSuccess({ hash: 'tx-hash' } as Transaction)
-            )
+            .put(authorizationFlowFailure(approvalAuth, AuthorizationError.GRANT_FAILED))
+            .dispatch(authorizationFlowRequest(approvalAuth, AuthorizationAction.GRANT))
+            .dispatch(grantTokenSuccess(approvalAuth, approvalAuth.chainId, 'tx-hash'))
+            .dispatch(fetchTransactionSuccess({ hash: 'tx-hash' } as Transaction))
             .dispatch(fetchAuthorizationsSuccess([]))
             .run({ silenceTimeout: true })
         })
@@ -330,12 +267,8 @@ describe('handleAuthorizationFlowRequest', () => {
             [select(getData), []]
           ])
           .put(authorizationFlowSuccess(authorization))
-          .dispatch(
-            authorizationFlowRequest(authorization, AuthorizationAction.REVOKE)
-          )
-          .dispatch(
-            revokeTokenSuccess(authorization, authorization.chainId, 'tx-hash')
-          )
+          .dispatch(authorizationFlowRequest(authorization, AuthorizationAction.REVOKE))
+          .dispatch(revokeTokenSuccess(authorization, authorization.chainId, 'tx-hash'))
           .dispatch(fetchAuthorizationsSuccess([[authorization, null]]))
           .dispatch(fetchTransactionSuccess({ hash: 'tx-hash' } as Transaction))
           .run({ silenceTimeout: true })
@@ -353,9 +286,7 @@ describe('handleAuthorizationFlowRequest', () => {
             [select(getData), []]
           ])
           .put(authorizationFlowFailure(authorization, error.message))
-          .dispatch(
-            authorizationFlowRequest(authorization, AuthorizationAction.REVOKE)
-          )
+          .dispatch(authorizationFlowRequest(authorization, AuthorizationAction.REVOKE))
           .dispatch(revokeTokenFailure(authorization, error.message))
           .run({ silenceTimeout: true })
       })
@@ -372,12 +303,8 @@ describe('handleAuthorizationFlowRequest', () => {
             [select(getData), []]
           ])
           .put(authorizationFlowFailure(authorization, error.message))
-          .dispatch(
-            authorizationFlowRequest(authorization, AuthorizationAction.REVOKE)
-          )
-          .dispatch(
-            revokeTokenSuccess(authorization, authorization.chainId, 'tx-hash')
-          )
+          .dispatch(authorizationFlowRequest(authorization, AuthorizationAction.REVOKE))
+          .dispatch(revokeTokenSuccess(authorization, authorization.chainId, 'tx-hash'))
           .dispatch(fetchTransactionSuccess({ hash: 'tx-hash' } as Transaction))
           .dispatch(fetchAuthorizationsFailure([], error.message))
           .run({ silenceTimeout: true })
@@ -393,18 +320,9 @@ describe('handleAuthorizationFlowRequest', () => {
             [call(waitForTx, 'tx-hash'), undefined],
             [select(getData), [{ ...authorization, allowance: '1' }]]
           ])
-          .put(
-            authorizationFlowFailure(
-              authorization,
-              AuthorizationError.REVOKE_FAILED
-            )
-          )
-          .dispatch(
-            authorizationFlowRequest(authorization, AuthorizationAction.REVOKE)
-          )
-          .dispatch(
-            revokeTokenSuccess(authorization, authorization.chainId, 'tx-hash')
-          )
+          .put(authorizationFlowFailure(authorization, AuthorizationError.REVOKE_FAILED))
+          .dispatch(authorizationFlowRequest(authorization, AuthorizationAction.REVOKE))
+          .dispatch(revokeTokenSuccess(authorization, authorization.chainId, 'tx-hash'))
           .dispatch(fetchTransactionSuccess({ hash: 'tx-hash' } as Transaction))
           .dispatch(fetchAuthorizationsSuccess([]))
           .run({ silenceTimeout: true })

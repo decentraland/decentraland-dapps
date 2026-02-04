@@ -1,25 +1,10 @@
 import { ProviderType } from '@dcl/schemas/dist/dapps/provider-type'
 import { LoginModalOptionType } from 'decentraland-ui/dist/components/LoginModal/LoginModal'
-import {
-  isCoinbaseProvider,
-  isCucumberProvider,
-  isDapperProvider
-} from '../../lib/eth'
+import { isCoinbaseProvider, isCucumberProvider, isDapperProvider } from '../../lib/eth'
 
-const {
-  METAMASK,
-  DAPPER,
-  SAMSUNG,
-  FORTMATIC,
-  COINBASE,
-  WALLET_CONNECT,
-  WALLET_LINK,
-  METAMASK_MOBILE
-} = LoginModalOptionType
+const { METAMASK, DAPPER, SAMSUNG, FORTMATIC, COINBASE, WALLET_CONNECT, WALLET_LINK, METAMASK_MOBILE } = LoginModalOptionType
 
-export function toModalOptionType(
-  providerType: ProviderType
-): LoginModalOptionType | undefined {
+export function toModalOptionType(providerType: ProviderType): LoginModalOptionType | undefined {
   switch (providerType) {
     case ProviderType.METAMASK_MOBILE:
       return METAMASK_MOBILE
@@ -45,9 +30,7 @@ export function toModalOptionType(
   }
 }
 
-export function toProviderType(
-  modalOptionType: LoginModalOptionType
-): ProviderType {
+export function toProviderType(modalOptionType: LoginModalOptionType): ProviderType {
   switch (modalOptionType) {
     // we're using the same logic of wallet connect for metamask in mobile
     case METAMASK_MOBILE:

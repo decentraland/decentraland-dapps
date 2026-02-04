@@ -10,18 +10,9 @@ import {
   TradeType
 } from '@dcl/schemas/dist/dapps/trade'
 import * as ethUtils from './eth'
-import {
-  ContractData,
-  ContractName,
-  getContract
-} from 'decentraland-transactions'
+import { ContractData, ContractName, getContract } from 'decentraland-transactions'
 import { fromMillisecondsToSeconds } from '../lib/time'
-import {
-  OFFCHAIN_MARKETPLACE_TYPES,
-  getTradeSignature,
-  getOnChainTrade,
-  getValueForTradeAsset
-} from './trades'
+import { OFFCHAIN_MARKETPLACE_TYPES, getTradeSignature, getOnChainTrade, getValueForTradeAsset } from './trades'
 
 jest.mock('./eth', () => {
   const module = jest.requireActual('./eth')
@@ -47,9 +38,7 @@ describe('when getting the value for a trade asset', () => {
     })
 
     it('should return the amount', () => {
-      expect(getValueForTradeAsset(asset)).toBe(
-        (asset as ERC20TradeAsset).amount
-      )
+      expect(getValueForTradeAsset(asset)).toBe((asset as ERC20TradeAsset).amount)
     })
   })
 
@@ -62,9 +51,7 @@ describe('when getting the value for a trade asset', () => {
     })
 
     it('should return the token id', () => {
-      expect(getValueForTradeAsset(asset)).toBe(
-        (asset as ERC721TradeAsset).tokenId
-      )
+      expect(getValueForTradeAsset(asset)).toBe((asset as ERC721TradeAsset).tokenId)
     })
   })
 
@@ -77,9 +64,7 @@ describe('when getting the value for a trade asset', () => {
     })
 
     it('should return the item id', () => {
-      expect(getValueForTradeAsset(asset)).toBe(
-        (asset as CollectionItemTradeAsset).itemId
-      )
+      expect(getValueForTradeAsset(asset)).toBe((asset as CollectionItemTradeAsset).itemId)
     })
   })
 })
@@ -109,17 +94,10 @@ describe('when getting the trade signature', () => {
     let domain: TypedDataDomain
 
     beforeEach(async () => {
-      signer = ethers.Wallet.createRandom().connect(
-        ethers.providers.getDefaultProvider()
-      )
-      jest
-        .spyOn(ethUtils, 'getSigner')
-        .mockImplementation(() => Promise.resolve(signer))
+      signer = ethers.Wallet.createRandom().connect(ethers.providers.getDefaultProvider())
+      jest.spyOn(ethUtils, 'getSigner').mockImplementation(() => Promise.resolve(signer))
       signerAddress = (await signer.getAddress()).toLowerCase()
-      offchainMarketplaceContract = getContract(
-        ContractName.OffChainMarketplaceV2,
-        ChainId.ETHEREUM_SEPOLIA
-      )
+      offchainMarketplaceContract = getContract(ContractName.OffChainMarketplaceV2, ChainId.ETHEREUM_SEPOLIA)
 
       trade = {
         signer: signerAddress,
@@ -155,14 +133,8 @@ describe('when getting the trade signature', () => {
         ]
       }
 
-      const SALT = ethers.utils.hexZeroPad(
-        ethers.utils.hexlify(trade.chainId),
-        32
-      )
-      offchainMarketplaceContract = getContract(
-        ContractName.OffChainMarketplaceV2,
-        trade.chainId
-      )
+      const SALT = ethers.utils.hexZeroPad(ethers.utils.hexlify(trade.chainId), 32)
+      offchainMarketplaceContract = getContract(ContractName.OffChainMarketplaceV2, trade.chainId)
       domain = {
         name: offchainMarketplaceContract.name,
         version: offchainMarketplaceContract.version,
@@ -203,9 +175,7 @@ describe('when getting the trade signature', () => {
     })
 
     it('should return the signature', async () => {
-      expect(await getTradeSignature(trade)).toBe(
-        await signer._signTypedData(domain, OFFCHAIN_MARKETPLACE_TYPES, values)
-      )
+      expect(await getTradeSignature(trade)).toBe(await signer._signTypedData(domain, OFFCHAIN_MARKETPLACE_TYPES, values))
     })
   })
 })

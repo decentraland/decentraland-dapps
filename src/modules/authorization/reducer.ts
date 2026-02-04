@@ -1,35 +1,32 @@
 import { LoadingState, loadingReducer } from '../loading/reducer'
+import { FETCH_TRANSACTION_SUCCESS, FetchTransactionSuccessAction } from '../transaction/actions'
 import {
-  FetchTransactionSuccessAction,
-  FETCH_TRANSACTION_SUCCESS
-} from '../transaction/actions'
-import {
-  FetchAuthorizationsRequestAction,
-  FetchAuthorizationsSuccessAction,
-  FetchAuthorizationsFailureAction,
-  GrantTokenRequestAction,
-  GrantTokenSuccessAction,
-  GrantTokenFailureAction,
-  RevokeTokenRequestAction,
-  RevokeTokenSuccessAction,
-  RevokeTokenFailureAction,
-  FETCH_AUTHORIZATIONS_REQUEST,
-  FETCH_AUTHORIZATIONS_SUCCESS,
-  FETCH_AUTHORIZATIONS_FAILURE,
-  GRANT_TOKEN_REQUEST,
-  GRANT_TOKEN_SUCCESS,
-  GRANT_TOKEN_FAILURE,
-  REVOKE_TOKEN_REQUEST,
-  REVOKE_TOKEN_SUCCESS,
-  REVOKE_TOKEN_FAILURE,
+  AUTHORIZATION_FLOW_CLEAR,
   AUTHORIZATION_FLOW_FAILURE,
-  AuthorizationFlowRequestAction,
-  AuthorizationFlowSuccessAction,
-  AuthorizationFlowFailureAction,
   AUTHORIZATION_FLOW_REQUEST,
   AUTHORIZATION_FLOW_SUCCESS,
   AuthorizationFlowClearAction,
-  AUTHORIZATION_FLOW_CLEAR
+  AuthorizationFlowFailureAction,
+  AuthorizationFlowRequestAction,
+  AuthorizationFlowSuccessAction,
+  FETCH_AUTHORIZATIONS_FAILURE,
+  FETCH_AUTHORIZATIONS_REQUEST,
+  FETCH_AUTHORIZATIONS_SUCCESS,
+  FetchAuthorizationsFailureAction,
+  FetchAuthorizationsRequestAction,
+  FetchAuthorizationsSuccessAction,
+  GRANT_TOKEN_FAILURE,
+  GRANT_TOKEN_REQUEST,
+  GRANT_TOKEN_SUCCESS,
+  GrantTokenFailureAction,
+  GrantTokenRequestAction,
+  GrantTokenSuccessAction,
+  REVOKE_TOKEN_FAILURE,
+  REVOKE_TOKEN_REQUEST,
+  REVOKE_TOKEN_SUCCESS,
+  RevokeTokenFailureAction,
+  RevokeTokenRequestAction,
+  RevokeTokenSuccessAction
 } from './actions'
 import { Authorization } from './types'
 import { areEqual } from './utils'
@@ -64,10 +61,7 @@ type AuthorizationReducerAction =
   | AuthorizationFlowFailureAction
   | AuthorizationFlowClearAction
 
-export function authorizationReducer(
-  state: AuthorizationState = INITIAL_STATE,
-  action: AuthorizationReducerAction
-) {
+export function authorizationReducer(state: AuthorizationState = INITIAL_STATE, action: AuthorizationReducerAction) {
   switch (action.type) {
     case GRANT_TOKEN_REQUEST:
     case REVOKE_TOKEN_REQUEST:
@@ -98,15 +92,12 @@ export function authorizationReducer(
 
       // TODO: Optimize with some sort of Map structure to prevent O(n^2)
       // Filters out all authorizations in the state that have been obtained in the fetch to prevent duplication.
-      const baseAuthorizations = state.data.filter(
-        stateAuth =>
-          !authorizations.some(([original]) => areEqual(original, stateAuth))
-      )
+      const baseAuthorizations = state.data.filter(stateAuth => !authorizations.some(([original]) => areEqual(original, stateAuth)))
 
       // Get from the fetched authorizations the ones that are not null.
       const newAuthorizations = authorizations.reduce((acc, next) => {
         const [_, result] = next
-        if (!!result) {
+        if (result) {
           acc.push(result)
         }
         return acc
@@ -142,9 +133,7 @@ export function authorizationReducer(
       switch (transaction.actionType) {
         case GRANT_TOKEN_SUCCESS: {
           const { authorization } = transaction.payload
-          const data = state.data.filter(
-            stateAuthorization => !areEqual(stateAuthorization, authorization)
-          )
+          const data = state.data.filter(stateAuthorization => !areEqual(stateAuthorization, authorization))
           data.push(authorization)
 
           return {
@@ -157,12 +146,7 @@ export function authorizationReducer(
 
           return {
             ...state,
-            data: [
-              ...state.data.filter(
-                stateAuthorization =>
-                  !areEqual(stateAuthorization, authorization)
-              )
-            ]
+            data: [...state.data.filter(stateAuthorization => !areEqual(stateAuthorization, authorization))]
           }
         }
         default:

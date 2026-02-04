@@ -239,9 +239,7 @@ describe('Campaign selectors', () => {
       })
 
       it('should return en-US', () => {
-        expect(getContentfulNormalizedLocale(mockState)).toBe(
-          ContentfulLocale.enUS
-        )
+        expect(getContentfulNormalizedLocale(mockState)).toBe(ContentfulLocale.enUS)
       })
     })
 
@@ -251,9 +249,7 @@ describe('Campaign selectors', () => {
       })
 
       it('should return es', () => {
-        expect(getContentfulNormalizedLocale(mockState)).toBe(
-          ContentfulLocale.es
-        )
+        expect(getContentfulNormalizedLocale(mockState)).toBe(ContentfulLocale.es)
       })
     })
 
@@ -263,9 +259,7 @@ describe('Campaign selectors', () => {
       })
 
       it('should return zh', () => {
-        expect(getContentfulNormalizedLocale(mockState)).toBe(
-          ContentfulLocale.zh
-        )
+        expect(getContentfulNormalizedLocale(mockState)).toBe(ContentfulLocale.zh)
       })
     })
 
@@ -275,9 +269,7 @@ describe('Campaign selectors', () => {
       })
 
       it('should return en-US', () => {
-        expect(getContentfulNormalizedLocale(mockState)).toBe(
-          ContentfulLocale.enUS
-        )
+        expect(getContentfulNormalizedLocale(mockState)).toBe(ContentfulLocale.enUS)
       })
     })
   })

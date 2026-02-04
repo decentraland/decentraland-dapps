@@ -1,4 +1,3 @@
-import { AnyAction } from 'redux'
 import { RootMiddleware } from '../../types'
 import { getAnalytics, track } from './utils'
 import './snippet'
@@ -15,16 +14,14 @@ export function createAnalyticsMiddleware(apiKey: string): RootMiddleware {
 
   const analytics = getAnalytics()
   if (!analytics) {
-    console.warn(
-      'Analytics: middleware disabled because `window.analytics` is not present'
-    )
+    console.warn('Analytics: middleware disabled because `window.analytics` is not present')
     return disabledMiddleware
   }
 
   analytics.load(apiKey)
 
   return _ => next => action => {
-    track(action as AnyAction)
+    track(action)
     next(action)
   }
 }

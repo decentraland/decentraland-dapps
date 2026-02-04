@@ -1,11 +1,11 @@
-import { loadingReducer, LoadingState } from '../loading/reducer'
+import { LoadingState, loadingReducer } from '../loading/reducer'
 import {
-  FetchApplicationFeaturesFailureAction,
-  FetchApplicationFeaturesRequestAction,
-  FetchApplicationFeaturesSuccessAction,
   FETCH_APPLICATION_FEATURES_FAILURE,
   FETCH_APPLICATION_FEATURES_REQUEST,
-  FETCH_APPLICATION_FEATURES_SUCCESS
+  FETCH_APPLICATION_FEATURES_SUCCESS,
+  FetchApplicationFeaturesFailureAction,
+  FetchApplicationFeaturesRequestAction,
+  FetchApplicationFeaturesSuccessAction
 } from './actions'
 import { ApplicationFeatures } from './types'
 
@@ -28,10 +28,7 @@ export type FeaturesReducerAction =
   | FetchApplicationFeaturesSuccessAction
   | FetchApplicationFeaturesFailureAction
 
-export const featuresReducer = (
-  state = INITIAL_STATE,
-  action: FeaturesReducerAction
-): FeaturesState => {
+export const featuresReducer = (state = INITIAL_STATE, action: FeaturesReducerAction): FeaturesState => {
   switch (action.type) {
     case FETCH_APPLICATION_FEATURES_REQUEST: {
       return {

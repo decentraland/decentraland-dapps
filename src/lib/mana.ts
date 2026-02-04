@@ -6,10 +6,7 @@ export const MAXIMUM_FRACTION_DIGITS = 2
  * Parses the mana value with the supplied amount of decimals. It uses MAXIMUM_FRACTION_DIGITS as a default (recommended).
  * It'll return the value as is if it's an invalid number or it doesn't have more than decimals than the upper limit.
  */
-export function toFixedMANAValue(
-  strValue: string,
-  maximumFractionDigits = MAXIMUM_FRACTION_DIGITS
-): string {
+export function toFixedMANAValue(strValue: string, maximumFractionDigits = MAXIMUM_FRACTION_DIGITS): string {
   const value = parseFloat(strValue)
 
   if (!isNaN(value)) {

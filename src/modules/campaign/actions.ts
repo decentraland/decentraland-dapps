@@ -24,8 +24,7 @@ export const fetchCampaignSuccess = (
     assets
   })
 
-export const fetchCampaignFailure = (error: string) =>
-  action(FETCH_CAMPAIGN_FAILURE, { error })
+export const fetchCampaignFailure = (error: string) => action(FETCH_CAMPAIGN_FAILURE, { error })
 
 export type FetchCampaignRequestAction = ReturnType<typeof fetchCampaignRequest>
 export type FetchCampaignSuccessAction = ReturnType<typeof fetchCampaignSuccess>

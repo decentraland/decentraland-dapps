@@ -33,12 +33,7 @@ describe('when handling the action to set the profile avatar description', () =>
   describe('and getting the profile entity fails', () => {
     it('should dispatch an action to signal that the request failed', () => {
       return expectSaga(profileSagas)
-        .provide([
-          [
-            matchers.call.fn(EntitiesOperator.prototype.getProfileEntity),
-            Promise.reject(new Error(errorMessage))
-          ]
-        ])
+        .provide([[matchers.call.fn(EntitiesOperator.prototype.getProfileEntity), Promise.reject(new Error(errorMessage))]])
         .put(setProfileAvatarDescriptionFailure(address, errorMessage))
         .dispatch(setProfileAvatarDescriptionRequest(address, description))
         .silentRun()
@@ -49,16 +44,8 @@ describe('when handling the action to set the profile avatar description', () =>
     it('should dispatch an action to signal that the request failed', () => {
       return expectSaga(profileSagas)
         .provide([
-          [
-            matchers.call.fn(EntitiesOperator.prototype.getProfileEntity),
-            Promise.resolve(profileFromContent)
-          ],
-          [
-            matchers.call.fn(
-              EntitiesOperator.prototype.deployEntityWithoutFiles
-            ),
-            Promise.reject(new Error(errorMessage))
-          ]
+          [matchers.call.fn(EntitiesOperator.prototype.getProfileEntity), Promise.resolve(profileFromContent)],
+          [matchers.call.fn(EntitiesOperator.prototype.deployEntityWithoutFiles), Promise.reject(new Error(errorMessage))]
         ])
         .put(setProfileAvatarDescriptionFailure(address, errorMessage))
         .dispatch(setProfileAvatarDescriptionRequest(address, description))
@@ -87,33 +74,14 @@ describe('when handling the action to set the profile avatar description', () =>
         .provide([
           [
             matchers.call.fn(EntitiesOperator.prototype.getProfileEntity),
-            dynamicDeepParametersEquality(
-              [address],
-              Promise.resolve(profileFromContent)
-            )
+            dynamicDeepParametersEquality([address], Promise.resolve(profileFromContent))
           ],
           [
-            matchers.call.fn(
-              EntitiesOperator.prototype.deployEntityWithoutFiles
-            ),
-            dynamicDeepParametersEquality(
-              [
-                EntityType.PROFILE,
-                newProfileMetadata,
-                address,
-                mockAuthIdentity
-              ],
-              Promise.resolve(undefined)
-            )
+            matchers.call.fn(EntitiesOperator.prototype.deployEntityWithoutFiles),
+            dynamicDeepParametersEquality([EntityType.PROFILE, newProfileMetadata, address, mockAuthIdentity], Promise.resolve(undefined))
           ]
         ])
-        .put(
-          setProfileAvatarDescriptionSuccess(
-            address,
-            description,
-            newAvatar.version
-          )
-        )
+        .put(setProfileAvatarDescriptionSuccess(address, description, newAvatar.version))
         .dispatch(setProfileAvatarDescriptionRequest(address, description))
         .silentRun()
     })
@@ -126,12 +94,7 @@ describe('when handling the action to set the profile avatar alias', () => {
   describe('and getting the profile entity fails', () => {
     it('should dispatch an action to signal that the request failed', () => {
       return expectSaga(profileSagas)
-        .provide([
-          [
-            matchers.call.fn(EntitiesOperator.prototype.getProfileEntity),
-            Promise.reject(new Error(errorMessage))
-          ]
-        ])
+        .provide([[matchers.call.fn(EntitiesOperator.prototype.getProfileEntity), Promise.reject(new Error(errorMessage))]])
         .put(setProfileAvatarAliasFailure(address, errorMessage))
         .dispatch(setProfileAvatarAliasRequest(address, alias))
         .silentRun()
@@ -150,15 +113,10 @@ describe('when handling the action to set the profile avatar alias', () => {
         .provide([
           [
             matchers.call.fn(EntitiesOperator.prototype.getProfileEntity),
-            dynamicDeepParametersEquality(
-              [address],
-              Promise.resolve(profileFromContent)
-            )
+            dynamicDeepParametersEquality([address], Promise.resolve(profileFromContent))
           ]
         ])
-        .put(
-          setProfileAvatarAliasFailure(address, NO_IDENTITY_FOUND_ERROR_MESSAGE)
-        )
+        .put(setProfileAvatarAliasFailure(address, NO_IDENTITY_FOUND_ERROR_MESSAGE))
         .dispatch(setProfileAvatarAliasRequest(address, alias))
         .silentRun()
     })
@@ -168,16 +126,8 @@ describe('when handling the action to set the profile avatar alias', () => {
     it('should dispatch an action to signal that the request failed', () => {
       return expectSaga(profileSagas)
         .provide([
-          [
-            matchers.call.fn(EntitiesOperator.prototype.getProfileEntity),
-            Promise.resolve(profileFromContent)
-          ],
-          [
-            matchers.call.fn(
-              EntitiesOperator.prototype.deployEntityWithoutFiles
-            ),
-            Promise.reject(new Error(errorMessage))
-          ]
+          [matchers.call.fn(EntitiesOperator.prototype.getProfileEntity), Promise.resolve(profileFromContent)],
+          [matchers.call.fn(EntitiesOperator.prototype.deployEntityWithoutFiles), Promise.reject(new Error(errorMessage))]
         ])
         .put(setProfileAvatarAliasFailure(address, errorMessage))
         .dispatch(setProfileAvatarAliasRequest(address, alias))
@@ -207,24 +157,11 @@ describe('when handling the action to set the profile avatar alias', () => {
         .provide([
           [
             matchers.call.fn(EntitiesOperator.prototype.getProfileEntity),
-            dynamicDeepParametersEquality(
-              [address],
-              Promise.resolve(profileFromContent)
-            )
+            dynamicDeepParametersEquality([address], Promise.resolve(profileFromContent))
           ],
           [
-            matchers.call.fn(
-              EntitiesOperator.prototype.deployEntityWithoutFiles
-            ),
-            dynamicDeepParametersEquality(
-              [
-                EntityType.PROFILE,
-                newProfileMetadata,
-                address,
-                mockAuthIdentity
-              ],
-              Promise.resolve(undefined)
-            )
+            matchers.call.fn(EntitiesOperator.prototype.deployEntityWithoutFiles),
+            dynamicDeepParametersEquality([EntityType.PROFILE, newProfileMetadata, address, mockAuthIdentity], Promise.resolve(undefined))
           ]
         ])
         .put(setProfileAvatarAliasSuccess(address, alias, newAvatar.version))
@@ -239,12 +176,7 @@ describe('when handling the action to load multiple profiles', () => {
     it('should put the load profiles failure action with the error', () => {
       const error = new Error('anError')
       return expectSaga(profileSagas)
-        .provide([
-          [
-            matchers.call.fn(PeerAPI.prototype.fetchProfiles),
-            Promise.reject(error)
-          ]
-        ])
+        .provide([[matchers.call.fn(PeerAPI.prototype.fetchProfiles), Promise.reject(error)]])
         .put(loadProfilesFailure(error.message))
         .dispatch(loadProfilesRequest(['anAddress']))
         .silentRun()
@@ -255,12 +187,7 @@ describe('when handling the action to load multiple profiles', () => {
     it('should put the load profiles success action with the profiles', () => {
       const profiles = [profileFromLambda]
       return expectSaga(profileSagas)
-        .provide([
-          [
-            matchers.call.fn(PeerAPI.prototype.fetchProfiles),
-            Promise.resolve(profiles)
-          ]
-        ])
+        .provide([[matchers.call.fn(PeerAPI.prototype.fetchProfiles), Promise.resolve(profiles)]])
         .put(loadProfilesSuccess(profiles))
         .dispatch(loadProfilesRequest([profiles[0].avatars[0].userId]))
         .silentRun()
