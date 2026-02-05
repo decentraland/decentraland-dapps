@@ -1,4 +1,5 @@
-import { ethers } from 'ethers'
+import type { Signer } from '@ethersproject/abstract-signer'
+import { Web3Provider } from '@ethersproject/providers'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { ProviderType } from '@dcl/schemas/dist/dapps/provider-type'
@@ -42,7 +43,7 @@ export async function getNetworkProvider(chainId: ChainId): Promise<Provider> {
   */
   const connectedProvider = await getConnectedProvider()
   if (connectedProvider) {
-    const connectedChainId = await new ethers.providers.Web3Provider(connectedProvider).getSigner().getChainId()
+    const connectedChainId = await new Web3Provider(connectedProvider).getSigner().getChainId()
     if (chainId === connectedChainId) {
       return connectedProvider
     }
@@ -52,7 +53,7 @@ export async function getNetworkProvider(chainId: ChainId): Promise<Provider> {
 
 export async function getNetworkWeb3Provider(chainId: ChainId) {
   const provider = await getNetworkProvider(chainId)
-  return new ethers.providers.Web3Provider(provider)
+  return new Web3Provider(provider)
 }
 
 export async function getConnectedProvider(): Promise<Provider | null> {
@@ -68,13 +69,13 @@ export async function getConnectedProvider(): Promise<Provider | null> {
   }
 }
 
-export async function getSigner(): Promise<ethers.Signer> {
+export async function getSigner(): Promise<Signer> {
   const provider = await getConnectedProvider()
   if (!provider) {
     throw new Error('Could not connect to provider')
   }
 
-  const eth = new ethers.providers.Web3Provider(provider)
+  const eth = new Web3Provider(provider)
   return eth.getSigner()
 }
 

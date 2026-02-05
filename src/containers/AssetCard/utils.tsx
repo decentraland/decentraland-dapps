@@ -1,5 +1,6 @@
 import React from 'react'
-import { BigNumber, ethers } from 'ethers'
+import { BigNumber } from '@ethersproject/bignumber'
+import { formatEther, parseUnits } from '@ethersproject/units'
 import { CatalogSortBy } from '@dcl/schemas'
 import { Item } from '@dcl/schemas/dist/dapps/item'
 import { AssetCardFilters, AssetCardTranslations } from './AssetCard'
@@ -28,8 +29,8 @@ export function getListingsRangePrice(asset: Item) {
 
 export function getIsMintPriceInRange(asset: Item, appliedFilters: AssetCardFilters) {
   return (
-    (!appliedFilters.minPrice || BigNumber.from(asset.price).gte(ethers.utils.parseUnits(appliedFilters.minPrice))) &&
-    (!appliedFilters.maxPrice || BigNumber.from(asset.price).lte(ethers.utils.parseUnits(appliedFilters.maxPrice)))
+    (!appliedFilters.minPrice || BigNumber.from(asset.price).gte(parseUnits(appliedFilters.minPrice))) &&
+    (!appliedFilters.maxPrice || BigNumber.from(asset.price).lte(parseUnits(appliedFilters.maxPrice)))
   )
 }
 
@@ -53,7 +54,7 @@ export function getAssetListingsRangeInfoText(asset: Item, translations: AssetCa
 
 export function formatWeiToAssetCardEther(wei: string): string {
   const maximumFractionDigits = 2
-  const value = Number(ethers.utils.formatEther(wei))
+  const value = Number(formatEther(wei))
 
   if (value === 0) {
     return '0'
@@ -121,7 +122,7 @@ export function getCatalogCardInformation(
       if (hasRangeApplied) {
         info.price = asset.minPrice ?? asset.price
         if (appliedFilters.minPrice) {
-          const isMintingLessThanMinPriceFilter = BigNumber.from(asset.price).lt(ethers.utils.parseUnits(appliedFilters.minPrice))
+          const isMintingLessThanMinPriceFilter = BigNumber.from(asset.price).lt(parseUnits(appliedFilters.minPrice))
           info.extraInformation = isMintingLessThanMinPriceFilter
             ? getAlsoAvailableForMintingText(asset, translations.available_for_mint)
             : null
@@ -183,7 +184,7 @@ export function getCatalogCardInformation(
       info.extraInformation = isMintInRange ? getAssetListingsRangeInfoText(asset, translations) : null
 
       if (appliedFilters.minPrice) {
-        const isMintingLessThanMinPriceFilter = BigNumber.from(asset.price).lt(ethers.utils.parseUnits(appliedFilters.minPrice))
+        const isMintingLessThanMinPriceFilter = BigNumber.from(asset.price).lt(parseUnits(appliedFilters.minPrice))
         info.extraInformation =
           !isMintInRange && isMintingLessThanMinPriceFilter
             ? getAlsoAvailableForMintingText(asset, translations.available_for_mint)

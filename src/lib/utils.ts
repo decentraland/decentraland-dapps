@@ -1,11 +1,32 @@
 import dateFnsDistanceInWordsToNow from 'date-fns/distance_in_words_to_now'
 import dateFnsFormat from 'date-fns/format'
+import en from 'date-fns/locale/en'
+import es from 'date-fns/locale/es'
+import zh_cn from 'date-fns/locale/zh_cn'
 import { Env, getEnv } from '@dcl/ui-env'
-import { getCurrentLocale } from '../modules/translation/utils'
-import { DataByKey, Model, ModelById } from './types'
+import type { Locale } from 'decentraland-ui/dist/components/Language/Language'
+import type { DataByKey, Model, ModelById } from './types'
+
+// Map app locales to date-fns locales (only import the ones we need)
+const dateFnsLocales: Partial<Record<Locale, object>> = {
+  en,
+  es,
+  zh: zh_cn
+}
+
+// Store current locale for date-fns
+let currentDateFnsLocale: Locale = 'en'
+
+export function setDateFnsLocale(locale: Locale) {
+  currentDateFnsLocale = locale
+}
+
+function getDateFnsLocale() {
+  return dateFnsLocales[currentDateFnsLocale] || en
+}
 
 export function isMobile() {
-  // WARN: Super naive mobile device check.
+  // WARN:  Super naive mobile device check.
   // we're using it on low-stake checks, where failing to detect some browsers is not a big deal.
   // If you need more specificity you may want to change this implementation.
   const navigator = window.navigator
@@ -39,19 +60,19 @@ export function toObjectByKey<T extends object>(values: T[], currentValues: Data
 export function distanceInWordsToNow(date: number | string, addSuffix = true) {
   return dateFnsDistanceInWordsToNow(date, {
     addSuffix,
-    locale: getCurrentLocale()
+    locale: getDateFnsLocale()
   })
 }
 
 export function formatDate(date: number | string, format = 'MMMM Do, YYYY') {
   return dateFnsFormat(date, format, {
-    locale: getCurrentLocale()
+    locale: getDateFnsLocale()
   })
 }
 
 export function formatDateTime(date: number | string, format = 'MMMM Do, YYYY - hh:mm aa') {
   return dateFnsFormat(date, format, {
-    locale: getCurrentLocale()
+    locale: getDateFnsLocale()
   })
 }
 

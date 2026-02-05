@@ -1,5 +1,8 @@
 import { providers } from '@0xsequence/multicall'
-import { BigNumber, ethers } from 'ethers'
+import { BigNumber } from '@ethersproject/bignumber'
+import { Contract } from '@ethersproject/contracts'
+import type { Provider as EthersProvider } from '@ethersproject/providers'
+import { Web3Provider } from '@ethersproject/providers'
 import { call, fork, put, race, select, take, takeEvery } from 'redux-saga/effects'
 import { Provider } from 'decentraland-connect'
 import { ContractData, getContract } from 'decentraland-transactions'
@@ -73,7 +76,7 @@ export function createAuthorizationSaga() {
         if (!multicallProviders[chainId]) {
           // provider party 🎉
           const provider: Provider = yield call(() => getNetworkProvider(chainId))
-          const ethersProvider = new ethers.providers.Web3Provider(provider)
+          const ethersProvider = new Web3Provider(provider)
           const multicallProvider = new providers.MulticallProvider(
             ethersProvider,
             { batchSize: 500 } // defaults to 50
@@ -89,7 +92,7 @@ export function createAuthorizationSaga() {
               // @ts-ignore
               erc20
                 .allowance(authorization.address, authorization.authorizedAddress)
-                .then<Authorization | null>((allowance: ethers.BigNumber) => {
+                .then<Authorization | null>((allowance: BigNumber) => {
                   return [
                     authorization,
                     allowance.gt(0)
@@ -288,16 +291,16 @@ export function createAuthorizationSaga() {
 }
 
 // TODO: Use decentraland-transactions
-function getERC20ContractInstance(authorization: Authorization, provider: ethers.providers.Provider) {
-  return new ethers.Contract(
+function getERC20ContractInstance(authorization: Authorization, provider: EthersProvider) {
+  return new Contract(
     authorization.contractAddress,
     ['function allowance(address owner, address spender) view returns (uint256)'],
     provider
   )
 }
 
-function getERC721ContractInstance(authorization: Authorization, provider: ethers.providers.Provider) {
-  return new ethers.Contract(
+function getERC721ContractInstance(authorization: Authorization, provider: EthersProvider) {
+  return new Contract(
     authorization.contractAddress,
     ['function isApprovedForAll(address owner, address operator) view returns (bool)'],
     provider

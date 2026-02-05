@@ -1,4 +1,4 @@
-import { ethers } from 'ethers'
+import { Web3Provider } from '@ethersproject/providers'
 import { all, call, delay, fork, put, race, select, take, takeEvery } from 'redux-saga/effects'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { Provider, connection } from 'decentraland-connect'
@@ -44,7 +44,7 @@ import { buildWallet } from './utils/buildWallet'
 import { switchProviderChainId } from './utils/switchProviderChainId'
 
 // Patch Samsung's Cucumber provider send to support promises
-const provider = (window as any).ethereum as ethers.providers.Web3Provider
+const provider = (window as any).ethereum as Web3Provider
 
 export const SWITCH_NETWORK_TIMEOUT = 10000 // 10 seconds
 

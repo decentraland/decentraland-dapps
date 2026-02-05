@@ -1,4 +1,6 @@
-import { ethers } from 'ethers'
+import { Interface, defaultAbiCoder } from '@ethersproject/abi'
+import { hexZeroPad, hexlify } from '@ethersproject/bytes'
+import { randomBytes } from '@ethersproject/random'
 import { ChainId, Item, NFT, Network, Order, Trade, TradeAssetType } from '@dcl/schemas'
 import { ContractData, ContractName, getContract, getContractName } from 'decentraland-transactions'
 import { Credit } from '../modules/credits/types'
@@ -77,10 +79,10 @@ export class CreditsService {
       if (credit.id) {
         if (!credit.id.startsWith('0x')) {
           // If it's not a hex string, convert it to one
-          salt = ethers.utils.hexZeroPad('0x' + Buffer.from(credit.id).toString('hex'), 32)
+          salt = hexZeroPad('0x' + Buffer.from(credit.id).toString('hex'), 32)
         } else {
           // If it's already a hex string, ensure it's 32 bytes
-          salt = ethers.utils.hexZeroPad(credit.id, 32)
+          salt = hexZeroPad(credit.id, 32)
         }
       }
 
@@ -107,7 +109,7 @@ export class CreditsService {
     const expiresAt = Math.floor(Date.now() / 1000) + 3600 * 24 // 24 hours from now
 
     // Random salt for the external call
-    const salt = ethers.utils.hexlify(ethers.utils.randomBytes(32))
+    const salt = hexlify(randomBytes(32))
     // Prepare the external call
     return {
       target,
@@ -180,7 +182,7 @@ export class CreditsService {
     const collectionStoreAddress = collectionStoreContract.address
 
     // Create a contract interface for the CollectionStore to get the function selector
-    const collectionStoreInterface = new ethers.utils.Interface(collectionStoreContract.abi)
+    const collectionStoreInterface = new Interface(collectionStoreContract.abi)
 
     // The selector for the buy function in the CollectionStore contract
     const buySelector = collectionStoreInterface.getSighash('buy')
@@ -196,7 +198,7 @@ export class CreditsService {
     ]
 
     // Encode the buy function parameters using abi.encode
-    const buyData = ethers.utils.defaultAbiCoder.encode(
+    const buyData = defaultAbiCoder.encode(
       ['tuple(address collection, uint256[] ids, uint256[] prices, address[] beneficiaries)[]'],
       [itemsToBuy]
     )
@@ -256,14 +258,14 @@ export class CreditsService {
     const marketplaceAddress = marketplaceContract.address
 
     // Create a contract interface for the OffChainMarketplace to get the function selector
-    const marketplaceInterface = new ethers.utils.Interface(marketplaceContract.abi)
+    const marketplaceInterface = new Interface(marketplaceContract.abi)
 
     // The selector for the accept function in the OffChainMarketplace contract
     const acceptSelector = marketplaceInterface.getSighash('accept')
     const onChainTrade = getOnChainTrade(trade, walletAddress)
 
     // Encode the accept function parameters based on the correct ABI
-    const acceptData = ethers.utils.defaultAbiCoder.encode(
+    const acceptData = defaultAbiCoder.encode(
       [
         'tuple(address signer, bytes signature, tuple(uint256 uses, uint256 expiration, uint256 effective, bytes32 salt, uint256 contractSignatureIndex, uint256 signerSignatureIndex, bytes32 allowedRoot, bytes32[] allowedProof, tuple(address contractAddress, bytes4 selector, bytes value, bool required)[] externalChecks) checks, tuple(uint256 assetType, address contractAddress, uint256 value, address beneficiary, bytes extra)[] sent, tuple(uint256 assetType, address contractAddress, uint256 value, address beneficiary, bytes extra)[] received)[]'
       ],
@@ -334,13 +336,13 @@ export class CreditsService {
     const marketplaceAddress = marketplaceContract.address
 
     // Create a contract interface for the Marketplace to get the function selector
-    const marketplaceInterface = new ethers.utils.Interface(marketplaceContract.abi)
+    const marketplaceInterface = new Interface(marketplaceContract.abi)
 
     // The selector for the executeOrder function in the Marketplace contract
     const executeOrderSelector = marketplaceInterface.getSighash('executeOrder')
 
     // Encode the executeOrder function parameters
-    const executeOrderData = ethers.utils.defaultAbiCoder.encode(
+    const executeOrderData = defaultAbiCoder.encode(
       ['address', 'uint256', 'uint256'],
       [nft.contractAddress, nft.tokenId, order.price]
     )
@@ -415,13 +417,13 @@ export class CreditsService {
     const collectionManagerAddress = collectionManagerContract.address
 
     // Create a contract interface for the CollectionManager to get the function selector
-    const collectionManagerInterface = new ethers.utils.Interface(collectionManagerContract.abi)
+    const collectionManagerInterface = new Interface(collectionManagerContract.abi)
 
     // The selector for the createCollection function in the CollectionManager contract
     const createCollectionSelector = collectionManagerInterface.getSighash('createCollection')
 
     // Encode the createCollection function parameters
-    const createCollectionData = ethers.utils.defaultAbiCoder.encode(
+    const createCollectionData = defaultAbiCoder.encode(
       [
         'address', // forwarder
         'address', // factory

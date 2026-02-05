@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { ethers } from 'ethers'
+import { formatEther } from '@ethersproject/units'
 import { ProviderType } from '@dcl/schemas'
 import { ChainId, getChainName } from '@dcl/schemas/dist/dapps/chain-id'
 import { Network } from '@dcl/schemas/dist/dapps/network'
@@ -150,7 +150,7 @@ const Navbar2: React.FC<NavbarProps2> = ({
 
   const creditsBalance = props.credits
     ? {
-        balance: Number(ethers.utils.formatEther(props.credits?.totalCredits.toString() ?? 0)),
+        balance: Number(formatEther(props.credits?.totalCredits.toString() ?? 0)),
         expiresAt: props.credits?.credits[0]?.expiresAt ? Number(props.credits.credits[0].expiresAt * 1000) : 0
       }
     : undefined

@@ -1,4 +1,4 @@
-import { ethers } from 'ethers'
+import type { Web3Provider } from '@ethersproject/providers'
 import { Dispatch } from 'redux'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import {
@@ -32,5 +32,5 @@ export type AccountsChangedHandler = (accounts: string[]) => void
 export type NetworkChangedHandler = (chainId: string) => void
 export type Handler = AccountsChangedHandler | NetworkChangedHandler
 export type ProviderWindow = Window & {
-  ethereum?: ethers.providers.Web3Provider
+  ethereum?: Web3Provider
 }

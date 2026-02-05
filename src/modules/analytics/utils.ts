@@ -113,7 +113,7 @@ export function hasEvmWallet() {
     return undefined
   }
 
-  return window.ethereum !== undefined
+  return (window as any).ethereum !== undefined
 }
 
 export function getEvmWallets() {

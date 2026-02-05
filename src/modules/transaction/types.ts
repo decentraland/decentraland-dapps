@@ -1,6 +1,6 @@
-import { TransactionReceipt, TransactionResponse } from '@ethersproject/providers'
+import type { TransactionReceipt, TransactionResponse } from '@ethersproject/providers'
 import type { AnyAction } from 'redux'
-import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
+import type { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import type { CrossChainProvider } from 'decentraland-transactions/esm/crossChain/types'
 
 // Special flag used to determine transaction hashes to be monitored
