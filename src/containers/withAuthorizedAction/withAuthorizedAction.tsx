@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { connect } from 'react-redux'
-import { BigNumber, ethers } from 'ethers'
+import { BigNumber } from '@ethersproject/bignumber'
+import { Web3Provider } from '@ethersproject/providers'
 import { v4 as uuid } from 'uuid'
 import { getNetworkProvider } from '../../lib/eth'
 import { authorizationFlowClear, authorizationFlowRequest } from '../../modules/authorization/actions'
@@ -118,7 +119,7 @@ export default function withAuthorizedAction<P extends WithAuthorizedActionProps
           authorizeOptions
 
         const networkProvider = await getNetworkProvider(targetContract.chainId)
-        const provider = new ethers.providers.Web3Provider(networkProvider)
+        const provider = new Web3Provider(networkProvider)
 
         const authorization: Authorization = {
           type: authorizationType,

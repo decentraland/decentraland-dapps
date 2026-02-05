@@ -1,12 +1,14 @@
-import { Provider } from '@ethersproject/providers'
-import { ethers } from 'ethers'
-import { namehash } from 'ethers/lib/utils'
+import { AddressZero } from '@ethersproject/constants'
+import { Contract } from '@ethersproject/contracts'
+import { namehash } from '@ethersproject/hash'
+import type { Provider } from '@ethersproject/providers'
+import { Web3Provider } from '@ethersproject/providers'
 import { ChainId } from '@dcl/schemas'
 import { getConnectedProvider } from '../../lib/eth'
 import { getAnalytics } from '../../modules/analytics/utils'
 
 function getResolverContract(contractAddress: string, provider: Provider) {
-  return new ethers.Contract(
+  return new Contract(
     contractAddress,
     ['function addr(bytes32 node) public view virtual override returns (address payable)'],
     provider
@@ -20,7 +22,7 @@ export async function resolveName(name: string) {
     throw new Error("Couldn't get connected provider to resolve name")
   }
 
-  const provider = new ethers.providers.Web3Provider(connectedProvider)
+  const provider = new Web3Provider(connectedProvider)
   const { chainId } = await provider.getNetwork()
 
   const resolverAddress =
@@ -28,7 +30,7 @@ export async function resolveName(name: string) {
 
   const resolverContract = getResolverContract(resolverAddress, provider)
   const resolvedAddress: string = await resolverContract.addr(nodehash)
-  if (resolvedAddress !== ethers.constants.AddressZero) {
+  if (resolvedAddress !== AddressZero) {
     const analytics = getAnalytics()
     if (analytics) {
       analytics.track('Resolve Address from Name', {

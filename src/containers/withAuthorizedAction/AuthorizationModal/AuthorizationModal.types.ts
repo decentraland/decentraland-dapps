@@ -1,4 +1,4 @@
-import { BigNumber } from 'ethers'
+import { BigNumber } from '@ethersproject/bignumber'
 import { Dispatch } from 'redux'
 import { Network } from '@dcl/schemas'
 import {

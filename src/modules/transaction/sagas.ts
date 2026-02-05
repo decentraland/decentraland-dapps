@@ -1,8 +1,7 @@
-import { BlockWithTransactions } from '@ethersproject/abstract-provider'
-import { TransactionResponse } from '@ethersproject/providers'
-import { ethers } from 'ethers'
+import type { BlockWithTransactions } from '@ethersproject/abstract-provider'
+import type { TransactionResponse, Web3Provider } from '@ethersproject/providers'
 import { ForkEffect, call, delay, fork, put, select, takeEvery } from 'redux-saga/effects'
-import { StatusResponse } from 'decentraland-transactions/esm/crossChain/types'
+import type { StatusResponse } from 'decentraland-transactions/esm/crossChain/types'
 import { getNetworkWeb3Provider } from '../../lib/eth'
 import { CONNECT_WALLET_SUCCESS, ConnectWalletSuccessAction } from '../wallet/actions'
 import { getAddress } from '../wallet/selectors'
@@ -255,7 +254,7 @@ export function* handleReplaceTransactionRequest(action: ReplaceTransactionReque
       break
     }
 
-    const eth: ethers.providers.Web3Provider = yield call(getNetworkWeb3Provider, transaction.chainId)
+    const eth: Web3Provider = yield call(getNetworkWeb3Provider, transaction.chainId)
 
     // check if tx has status, this is to recover from a tx that is dropped momentarily
     const tx: AnyTransaction = yield call(getTransactionFromChain, account, transaction.chainId, hash)

@@ -1,6 +1,6 @@
-import { TransactionResponse } from '@ethersproject/providers'
-import { ethers } from 'ethers'
-import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
+import type { TransactionResponse } from '@ethersproject/providers'
+import { Web3Provider } from '@ethersproject/providers'
+import type { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { getNetworkProvider } from '../../lib/eth'
 import {
   AnyTransaction,
@@ -16,7 +16,7 @@ export async function getTransaction(address: string, chainId: ChainId, hash: st
   const provider = await getNetworkProvider(chainId)
   if (!provider) return null
 
-  const eth = new ethers.providers.Web3Provider(provider)
+  const eth = new Web3Provider(provider)
 
   if (!address) {
     return null

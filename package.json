@@ -1,9 +1,11 @@
 {
   "name": "decentraland-dapps",
-  "version": "26.0.0",
+  "version": "27.5.0",
   "description": "Common modules for Decentraland dApps",
   "main": "dist/index.js",
+  "module": "dist/index.js",
   "type": "module",
+  "sideEffects": false,
   "files": [
     "dist"
   ],

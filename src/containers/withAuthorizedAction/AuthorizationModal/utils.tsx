@@ -1,4 +1,5 @@
-import { BigNumber, ethers } from 'ethers'
+import { BigNumber } from '@ethersproject/bignumber'
+import { formatEther } from '@ethersproject/units'
 import { Network } from '@dcl/schemas'
 import { TransactionLink } from '../..'
 import { AUTHORIZATION_FLOW_REQUEST, GRANT_TOKEN_REQUEST, REVOKE_TOKEN_REQUEST } from '../../../modules/authorization/actions'
@@ -144,7 +145,7 @@ export function getStepMessage(
 
 export function getPriceInMana(requiredAllowance?: BigNumber): string {
   if (!requiredAllowance) return ''
-  const mana = Number.parseFloat(ethers.utils.formatEther(requiredAllowance))
+  const mana = Number.parseFloat(formatEther(requiredAllowance))
   const twoDecimalsMana = Math.ceil(mana * 100) / 100
   return twoDecimalsMana.toString().replace(/\.0+$/, '')
 }

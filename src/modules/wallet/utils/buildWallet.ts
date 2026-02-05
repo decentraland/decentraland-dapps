@@ -1,4 +1,4 @@
-import { ethers } from 'ethers'
+import { Web3Provider } from '@ethersproject/providers'
 import { Network } from '@dcl/schemas'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { getChainConfiguration } from '../../../lib/chainConfiguration'
@@ -14,7 +14,7 @@ export async function buildWallet(appChainId: ChainId): Promise<Wallet> {
     throw new Error('Could not connect to Ethereum')
   }
 
-  const eth = new ethers.providers.Web3Provider(provider)
+  const eth = new Web3Provider(provider)
 
   const accounts: string[] = await eth.listAccounts()
   if (accounts.length === 0) {

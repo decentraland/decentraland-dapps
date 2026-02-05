@@ -1,4 +1,8 @@
-import { TypedDataDomain, TypedDataField, ethers } from 'ethers'
+import type { TypedDataDomain, TypedDataField } from '@ethersproject/abstract-signer'
+import { hexZeroPad, hexlify } from '@ethersproject/bytes'
+import { Contract } from '@ethersproject/contracts'
+import type { JsonRpcSigner } from '@ethersproject/providers'
+import { Web3Provider } from '@ethersproject/providers'
 import { ChainId, OnChainTrade, OnChainTradeAsset, Trade, TradeAsset, TradeAssetType, TradeCreation } from '@dcl/schemas'
 import { ContractData, ContractName, getContract } from 'decentraland-transactions'
 import { getNetworkProvider, getSigner } from './eth'
@@ -47,7 +51,7 @@ export async function getOffChainMarketplaceContract(chainId: ChainId) {
     throw new Error('Could not get connected provider')
   }
   const { address, abi } = getContract(ContractName.OffChainMarketplaceV2, chainId)
-  const instance = new ethers.Contract(address, abi, new ethers.providers.Web3Provider(provider))
+  const instance = new Contract(address, abi, new Web3Provider(provider))
   return instance
 }
 
@@ -71,10 +75,10 @@ export function generateTradeValues(trade: Omit<TradeCreation, 'signature'>) {
       uses: trade.checks.uses,
       expiration: fromMillisecondsToSeconds(trade.checks.expiration),
       effective: fromMillisecondsToSeconds(trade.checks.effective),
-      salt: ethers.utils.hexZeroPad(trade.checks.salt, 32),
+      salt: hexZeroPad(trade.checks.salt, 32),
       contractSignatureIndex: trade.checks.contractSignatureIndex,
       signerSignatureIndex: trade.checks.signerSignatureIndex,
-      allowedRoot: ethers.utils.hexZeroPad(trade.checks.allowedRoot, 32),
+      allowedRoot: hexZeroPad(trade.checks.allowedRoot, 32),
       externalChecks: trade.checks.externalChecks?.map(externalCheck => ({
         contractAddress: externalCheck.contractAddress,
         selector: externalCheck.selector,
@@ -127,8 +131,8 @@ export async function getTradeSignature(trade: Omit<TradeCreation, 'signature'>)
     throw new Error(`The ${ContractName.OffChainMarketplace} contract doesn't exist on chain ${trade.chainId}`)
   }
 
-  const signer = (await getSigner()) as ethers.providers.JsonRpcSigner
-  const SALT = ethers.utils.hexZeroPad(ethers.utils.hexlify(trade.chainId), 32)
+  const signer = (await getSigner()) as JsonRpcSigner
+  const SALT = hexZeroPad(hexlify(trade.chainId), 32)
   const domain: TypedDataDomain = {
     name: marketplaceContract.name,
     version: marketplaceContract.version,

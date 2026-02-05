@@ -1,28 +1,32 @@
-import { AnyAction } from 'redux'
+import type { AnyAction } from 'redux'
 import { fork, race, take } from 'redux-saga/effects'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import {
   FETCH_TRANSACTION_FAILURE,
   FETCH_TRANSACTION_REQUEST,
   FETCH_TRANSACTION_SUCCESS,
+  REPLACE_TRANSACTION_SUCCESS,
+  UPDATE_TRANSACTION_STATUS
+} from './actions'
+import type {
   FetchTransactionFailureAction,
   FetchTransactionRequestAction,
   FetchTransactionSuccessAction,
-  REPLACE_TRANSACTION_SUCCESS,
   ReplaceTransactionSuccessAction,
-  UPDATE_TRANSACTION_STATUS,
   UpdateTransactionStatusAction
 } from './actions'
 import {
-  ActionWithTransactionPayload,
   CrossChainProviderType,
   FAILED_STATUS,
   FINISHED_STATUS,
   SUCCESS_STATUS,
   TRANSACTION_ACTION_FLAG,
-  Transaction,
-  TransactionPayload,
   TransactionStatus
+} from './types'
+import type {
+  ActionWithTransactionPayload,
+  Transaction,
+  TransactionPayload
 } from './types'
 
 export function buildActionRef(transaction: Transaction) {
