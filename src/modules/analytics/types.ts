@@ -32,7 +32,7 @@ export interface AnalyticsAction {
 }
 
 export interface WindowWithWallets extends Window {
-  ethereum?: Ethereum & {
+  ethereum?: any & {
     // rabby injected provider: https://rabby.io/docs/integrating-rabby-wallet/
     isRabby?: boolean
     // metamask injected provider: https://docs.metamask.io/wallet/reference/provider-api/#ismetamask

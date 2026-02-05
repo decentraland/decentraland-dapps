@@ -1,5 +1,6 @@
 import { FormattedMessage, IntlProvider, createIntl, createIntlCache } from 'react-intl'
 import { Locale } from 'decentraland-ui/dist/components/Language/Language'
+import { setDateFnsLocale } from '../../lib/utils'
 
 const cache = createIntlCache()
 let currentLocale: ReturnType<typeof createIntl>
@@ -35,6 +36,7 @@ export function setCurrentLocale(localeName: Locale, messages: Record<string, st
   }[localeName]
 
   currentLocale = createIntl({ locale, messages }, cache)
+  setDateFnsLocale(localeName)
 }
 
 export function getCurrentLocale() {
