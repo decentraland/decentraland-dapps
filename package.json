@@ -5,7 +5,9 @@
   "main": "dist/index.js",
   "module": "dist/index.js",
   "type": "module",
-  "sideEffects": false,
+  "sideEffects": [
+    "./dist/modules/analytics/snippet.js"
+  ],
   "files": [
     "dist"
   ],
