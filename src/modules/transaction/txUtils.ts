@@ -74,11 +74,21 @@ export async function getTransaction(address: string, chainId: ChainId, hash: st
 
   const receipt = await eth.getTransactionReceipt(hash)
 
+  if (receipt == null) {
+    // pending (in block, but not yet mined)
+    const tx: PendingTransaction = {
+      status: TransactionStatus.PENDING,
+      ...response
+    }
+    return tx
+  }
+
   // reverted
-  if (receipt == null || !receipt.status) {
+  if (!receipt.status) {
     const tx: RevertedTransaction = {
       status: TransactionStatus.REVERTED,
-      ...response
+      ...response,
+      receipt
     }
     return tx
   }
