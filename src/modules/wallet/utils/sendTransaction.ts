@@ -70,8 +70,8 @@ export async function sendTransaction(...args: any[]) {
     // If the connected provider is in the target network, use it to sign and send the tx
     if (chainId === contract.chainId) {
       const signer = targetNetworkProvider.getSigner()
-      // Only on magic, prompt the user to accept or reject the transaction via the Web2TransactionModal
-      if (connectedProvider.isMagic) {
+      // On web2 wallets (Magic/Thirdweb), prompt the user to accept or reject the transaction via the Web2TransactionModal
+      if (connectedProvider.isMagic || connectedProvider.isThirdweb) {
         let transactionGasPrice: BigNumber = BigNumber.from(0)
         try {
           // Compute the cost of the transaction
