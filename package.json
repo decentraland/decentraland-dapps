@@ -47,7 +47,7 @@
   },
   "peerDependencies": {
     "@dcl/crypto": "^3.3.1",
-    "@dcl/schemas": "^25.1.0",
+    "@dcl/schemas": "^26.0.0",
     "@dcl/ui-env": "^2.0.0",
     "decentraland-connect": "^12.0.0",
     "decentraland-ui": "^7.1.0",
@@ -64,7 +64,7 @@
   "devDependencies": {
     "@dcl/crypto": "^3.3.1",
     "@dcl/eslint-config": "^3.1.0",
-    "@dcl/schemas": "^25.1.0",
+    "@dcl/schemas": "^26.0.0",
     "@dcl/ui-env": "^2.0.0",
     "@swc/core": "1.10.7",
     "@swc/jest": "0.2.37",
