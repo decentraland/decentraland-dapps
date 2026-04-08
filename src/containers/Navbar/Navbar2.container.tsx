@@ -12,12 +12,11 @@ import {
   getError as getWalletError,
   isConnected,
   isConnecting,
-  isDisconnecting,
   isSwitchingNetwork
 } from '../../modules/wallet/selectors'
 import { RootDispatch } from '../../types'
 import Navbar2 from './Navbar2'
-import { MapDispatchProps, MapStateProps, NavbarProps2 } from './Navbar.types'
+import { MapDispatchProps, MapStateProps } from './Navbar.types'
 
 const mapState = (state: any): MapStateProps => {
   const address = getAddress(state)
@@ -30,7 +29,6 @@ const mapState = (state: any): MapStateProps => {
     address: getAddress(state),
     locale: getLocale(state),
     isSignedIn: isConnected(state),
-    isDisconnecting: isDisconnecting(state),
     isSigningIn: isConnecting(state),
     appChainId: getAppChainId(state),
     isSwitchingNetwork: isSwitchingNetwork(state),
@@ -43,10 +41,4 @@ const mapDispatch = (dispatch: RootDispatch): MapDispatchProps => ({
   onSignOut: () => dispatch(disconnectWalletRequest())
 })
 
-const mergeProps = (stateProps: MapStateProps, dispatchProps: MapDispatchProps, ownProps: NavbarProps2): NavbarProps2 => ({
-  ...stateProps,
-  ...dispatchProps,
-  ...ownProps
-})
-
-export default connect(mapState, mapDispatch, mergeProps)(Navbar2) as any
+export default connect(mapState, mapDispatch)(Navbar2)

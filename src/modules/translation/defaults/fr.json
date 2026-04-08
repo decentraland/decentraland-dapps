@@ -1,5 +1,10 @@
 {
   "@dapps": {
+    "notifications": {
+      "title": "Notifications",
+      "loading": "Chargement...",
+      "empty": "Aucune notification pour le moment"
+    },
     "footer": {
       "button": {
         "network_not_supported": "Vous devez être connecté à {expectedChainName} pour effectuer cette action"

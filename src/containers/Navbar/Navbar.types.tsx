@@ -26,7 +26,6 @@ export type NavbarProps2 = Omit<NavbarComponentProps2, 'onClickSignIn' | 'onClic
   withChainSelector?: boolean
   chainId?: ChainId
   appChainId: ChainId
-  enablePartialSupportAlert?: boolean
   isSwitchingNetwork?: boolean
   withNotifications?: boolean
   identity?: AuthIdentity

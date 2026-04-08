@@ -2,20 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { formatEther } from '@ethersproject/units'
 import { ChainId, getChainName } from '@dcl/schemas/dist/dapps/chain-id'
 import { Network } from '@dcl/schemas/dist/dapps/network'
-import {
-  Navbar as NavbarComponent,
-  BellButton,
-  NotificationBadge,
-  NotificationEmpty,
-  NotificationHeader,
-  NotificationList,
-  NotificationPanel,
-  NotificationTitle,
-  NotificationWrapper
-} from 'decentraland-ui2'
-import { NotificationComponentByType } from 'decentraland-ui2/dist/components/Notifications/utils'
-import { BellIcon } from 'decentraland-ui2/dist/components/Navbar/icons'
-import type { NotificationLocale } from 'decentraland-ui2'
+import { Navbar as NavbarComponent } from 'decentraland-ui2'
 import useNotifications from '../../hooks/useNotifications'
 import { getAvailableChains } from '../../lib/chainConfiguration'
 import { getBaseUrl } from '../../lib/utils'
@@ -27,53 +14,11 @@ import {
   DROPDOWN_MENU_BALANCE_CLICK_EVENT,
   DROPDOWN_MENU_SIGN_OUT_EVENT
 } from './constants'
+import NotificationSlot from './NotificationSlot'
 import { NavbarProps2 } from './Navbar.types'
 import { NavbarContainer } from './Navbar2.styled'
 
 const BASE_URL = getBaseUrl()
-
-const NotificationSlot: React.FC<{
-  locale: string
-  notifications: any[]
-  isLoading: boolean
-  isOpen: boolean
-  onToggle: () => void
-  renderProfile?: (address: string) => JSX.Element | string | null
-}> = ({ locale, notifications, isLoading, isOpen, onToggle, renderProfile }) => {
-  const unreadCount = useMemo(() => notifications.filter(n => !n.read).length, [notifications])
-
-  return (
-    <NotificationWrapper>
-      <BellButton onClick={onToggle} className={unreadCount > 0 ? 'has-unread' : ''}>
-        <BellIcon />
-        {unreadCount > 0 && <NotificationBadge>{unreadCount > 99 ? '99+' : unreadCount}</NotificationBadge>}
-      </BellButton>
-      {isOpen && (
-        <NotificationPanel>
-          <NotificationHeader>
-            <NotificationTitle>Notifications</NotificationTitle>
-          </NotificationHeader>
-          <NotificationList>
-            {isLoading && notifications.length === 0 && <NotificationEmpty>Loading...</NotificationEmpty>}
-            {!isLoading && notifications.length === 0 && <NotificationEmpty>No notifications yet</NotificationEmpty>}
-            {notifications.map(notification => {
-              const Component = NotificationComponentByType[notification.type as keyof typeof NotificationComponentByType]
-              if (!Component) return null
-              return (
-                <Component
-                  key={notification.id}
-                  notification={notification}
-                  locale={locale as NotificationLocale}
-                  renderProfile={renderProfile}
-                />
-              )
-            })}
-          </NotificationList>
-        </NotificationPanel>
-      )}
-    </NotificationWrapper>
-  )
-}
 
 const Navbar2: React.FC<NavbarProps2> = ({
   appChainId,
@@ -81,7 +26,6 @@ const Navbar2: React.FC<NavbarProps2> = ({
   withNotifications,
   withChainSelector,
   identity,
-  enablePartialSupportAlert: _enablePartialSupportAlert = true,
   walletError,
   credits,
   locale,
@@ -104,7 +48,7 @@ const Navbar2: React.FC<NavbarProps2> = ({
 
   const handleSwitchNetwork = useCallback(() => {
     onSwitchNetwork(appChainId)
-  }, [])
+  }, [onSwitchNetwork, appChainId])
 
   const [chainSelected, setChainSelected] = useState<ChainId | undefined>(undefined)
 
@@ -129,30 +73,26 @@ const Navbar2: React.FC<NavbarProps2> = ({
   const handleClickBalance = useCallback(
     (network: Network) => {
       analytics?.track(DROPDOWN_MENU_BALANCE_CLICK_EVENT, { network })
-      setTimeout(() => {
-        window.open(`${BASE_URL}/account`, '_blank', 'noopener')
-      }, 300)
+      window.open(`${BASE_URL}/account`, '_blank', 'noopener')
     },
     [analytics]
   )
 
-  const handleClickSignIn = useCallback(() => {
-    onSignIn()
-  }, [onSignIn])
-
   const handleClickSignOut = useCallback(() => {
     analytics?.track(DROPDOWN_MENU_SIGN_OUT_EVENT, {})
-    setTimeout(() => {
-      onSignOut()
-    }, 300)
+    onSignOut()
   }, [analytics, onSignOut])
 
-  const creditsBalance = credits
-    ? {
-        balance: Number(formatEther(credits?.totalCredits.toString() ?? 0)),
-        expiresAt: credits?.credits[0]?.expiresAt ? Number(credits.credits[0].expiresAt * 1000) : 0
-      }
-    : undefined
+  const creditsBalance = useMemo(
+    () =>
+      credits
+        ? {
+            balance: Number(formatEther(credits.totalCredits.toString() ?? 0)),
+            expiresAt: credits.credits[0]?.expiresAt ? Number(credits.credits[0].expiresAt * 1000) : 0
+          }
+        : undefined,
+    [credits]
+  )
 
   const notificationSlot = withNotifications ? (
     <NotificationSlot
@@ -174,7 +114,7 @@ const Navbar2: React.FC<NavbarProps2> = ({
               {...navbarProps}
               creditsBalance={creditsBalance}
               notificationSlot={notificationSlot}
-              onClickSignIn={handleClickSignIn}
+              onClickSignIn={onSignIn}
               onClickSignOut={handleClickSignOut}
               onClickBalance={handleClickBalance}
               onToggleUserCard={isOpen => {
