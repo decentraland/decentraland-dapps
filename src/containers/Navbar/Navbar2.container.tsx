@@ -1,8 +1,6 @@
 import { connect } from 'react-redux'
 import { ChainId } from '@dcl/schemas'
 import { getCredits } from '../../modules/credits/selectors'
-import { ApplicationName, FeatureName } from '../../modules/features'
-import { getIsFeatureEnabled, getLauncherLinksVariant } from '../../modules/features/selectors'
 import { getData as getProfiles } from '../../modules/profile/selectors'
 import { getLocale } from '../../modules/translation/selectors'
 import { disconnectWalletRequest, switchNetworkRequest } from '../../modules/wallet/actions'
@@ -36,9 +34,7 @@ const mapState = (state: any): MapStateProps => {
     isSigningIn: isConnecting(state),
     appChainId: getAppChainId(state),
     isSwitchingNetwork: isSwitchingNetwork(state),
-    walletError: getWalletError(state),
-    cdnLinks: getLauncherLinksVariant(state),
-    shouldDownloadBeforeRedirect: !getIsFeatureEnabled(state, ApplicationName.DAPPS, FeatureName.DOWNLOAD_IN_SUCCESS_PAGE)
+    walletError: getWalletError(state)
   }
 }
 
