@@ -44,6 +44,7 @@ export type PendingTransaction = TransactionResponse & {
 
 export type RevertedTransaction = TransactionResponse & {
   status: TransactionStatus.REVERTED
+  receipt: TransactionReceipt
 }
 
 export type ConfirmedTransaction = TransactionResponse & {
