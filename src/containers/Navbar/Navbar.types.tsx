@@ -28,6 +28,7 @@ export type NavbarProps2 = Omit<NavbarComponentProps2, 'onClickSignIn' | 'onClic
   appChainId: ChainId
   isSwitchingNetwork?: boolean
   withNotifications?: boolean
+  withCredits?: boolean
   identity?: AuthIdentity
   locale: string
   walletError: string | null
