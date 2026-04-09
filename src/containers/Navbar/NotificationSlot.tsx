@@ -42,7 +42,9 @@ const NotificationSlot: React.FC<NotificationSlotProps> = ({ locale, notificatio
             {isLoading && notifications.length === 0 && <NotificationEmpty>{t('@dapps.notifications.loading')}</NotificationEmpty>}
             {!isLoading && notifications.length === 0 && <NotificationEmpty>{t('@dapps.notifications.empty')}</NotificationEmpty>}
             {notifications.map(notification => {
-              const Component = NotificationComponentByType[notification.type as keyof typeof NotificationComponentByType]
+              const Component = notification.type in NotificationComponentByType
+                ? NotificationComponentByType[notification.type as keyof typeof NotificationComponentByType]
+                : null
               if (!Component) return null
               return (
                 <Component
