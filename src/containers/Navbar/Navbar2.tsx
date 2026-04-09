@@ -9,11 +9,7 @@ import { getBaseUrl } from '../../lib/utils'
 import { getAnalytics } from '../../modules/analytics/utils'
 import ChainProvider from '../ChainProvider'
 import UnsupportedNetworkModal from '../UnsupportedNetworkModal'
-import {
-  CHANGE_NETWORK,
-  DROPDOWN_MENU_BALANCE_CLICK_EVENT,
-  DROPDOWN_MENU_SIGN_OUT_EVENT
-} from './constants'
+import { CHANGE_NETWORK, DROPDOWN_MENU_BALANCE_CLICK_EVENT, DROPDOWN_MENU_SIGN_OUT_EVENT } from './constants'
 import NotificationSlot from './NotificationSlot'
 import { NavbarProps2 } from './Navbar.types'
 import { NavbarContainer } from './Navbar2.styled'
@@ -38,13 +34,10 @@ const Navbar2: React.FC<NavbarProps2> = ({
   const expectedChainName = getChainName(appChainId)
   const analytics = getAnalytics()
 
-  const {
-    isModalOpen,
-    isLoading,
-    notifications,
-    handleNotificationsOpen,
-    handleRenderProfile
-  } = useNotifications(identity, withNotifications || false)
+  const { isModalOpen, isLoading, notifications, handleNotificationsOpen, handleRenderProfile } = useNotifications(
+    identity,
+    withNotifications || false
+  )
 
   const handleSwitchNetwork = useCallback(() => {
     onSwitchNetwork(appChainId)
@@ -73,14 +66,18 @@ const Navbar2: React.FC<NavbarProps2> = ({
   const handleClickBalance = useCallback(
     (network: Network) => {
       analytics?.track(DROPDOWN_MENU_BALANCE_CLICK_EVENT, { network })
-      window.open(`${BASE_URL}/account`, '_blank', 'noopener')
+      setTimeout(() => {
+        window.open(`${BASE_URL}/account`, '_blank', 'noopener')
+      }, 300)
     },
     [analytics]
   )
 
   const handleClickSignOut = useCallback(() => {
     analytics?.track(DROPDOWN_MENU_SIGN_OUT_EVENT, {})
-    onSignOut()
+    setTimeout(() => {
+      onSignOut()
+    }, 300)
   }, [analytics, onSignOut])
 
   const creditsBalance = useMemo(
