@@ -26,6 +26,7 @@ const Navbar2: React.FC<NavbarProps2> = ({
   credits,
   locale,
   chainId,
+  manaBalances,
   onSwitchNetwork,
   onSignIn,
   onSignOut,
@@ -33,6 +34,11 @@ const Navbar2: React.FC<NavbarProps2> = ({
 }: NavbarProps2) => {
   const expectedChainName = getChainName(appChainId)
   const analytics = getAnalytics()
+
+  const hasMana = useMemo(() => {
+    if (!manaBalances) return false
+    return Object.values(manaBalances).some(balance => balance !== undefined && balance > 0)
+  }, [manaBalances])
 
   const { isModalOpen, isLoading, notifications, handleNotificationsOpen, handleRenderProfile } = useNotifications(
     identity,
@@ -113,13 +119,16 @@ const Navbar2: React.FC<NavbarProps2> = ({
               notificationSlot={notificationSlot}
               onClickSignIn={onSignIn}
               onClickSignOut={handleClickSignOut}
-              onClickBalance={handleClickBalance}
               onToggleUserCard={isOpen => {
                 if (isOpen && isModalOpen) {
                   handleNotificationsOpen()
                 }
               }}
-              {...(withChainSelector && {
+              {...(hasMana && {
+                manaBalances,
+                onClickBalance: handleClickBalance
+              })}
+              {...(withChainSelector && hasMana && {
                 chains: getAvailableChains(),
                 selectedChain: currentChainId ?? undefined,
                 onSelectChain: handleSwitchChain
