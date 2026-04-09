@@ -1,29 +1,16 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { formatEther } from '@ethersproject/units'
-import { ProviderType } from '@dcl/schemas'
 import { ChainId, getChainName } from '@dcl/schemas/dist/dapps/chain-id'
 import { Network } from '@dcl/schemas/dist/dapps/network'
-import { NotificationLocale } from 'decentraland-ui/dist/components/Notifications/types'
 import { Navbar as NavbarComponent } from 'decentraland-ui2'
 import useNotifications from '../../hooks/useNotifications'
-import { getConnectedProviderType } from '../../lib'
 import { getAvailableChains } from '../../lib/chainConfiguration'
 import { getBaseUrl } from '../../lib/utils'
 import { getAnalytics } from '../../modules/analytics/utils'
-import { getIdentityId } from '../../modules/identityId'
-import { t } from '../../modules/translation'
 import ChainProvider from '../ChainProvider'
 import UnsupportedNetworkModal from '../UnsupportedNetworkModal'
-import {
-  CHANGE_NETWORK,
-  DROPDOWN_MENU_BALANCE_CLICK_EVENT,
-  DROPDOWN_MENU_DISPLAY_EVENT,
-  DROPDOWN_MENU_ITEM_CLICK_EVENT,
-  DROPDOWN_MENU_SIGN_OUT_EVENT,
-  NAVBAR_CLICK_EVENT,
-  NAVBAR_DOWNLOAD_EVENT,
-  NAVBAR_DOWNLOAD_EVENT_PLACE
-} from './constants'
+import { CHANGE_NETWORK, DROPDOWN_MENU_BALANCE_CLICK_EVENT, DROPDOWN_MENU_SIGN_OUT_EVENT } from './constants'
+import NotificationSlot from './NotificationSlot'
 import { NavbarProps2 } from './Navbar.types'
 import { NavbarContainer } from './Navbar2.styled'
 
@@ -35,31 +22,26 @@ const Navbar2: React.FC<NavbarProps2> = ({
   withNotifications,
   withChainSelector,
   identity,
-  docsUrl: _docsUrl = 'https://docs.decentraland.org',
-  enablePartialSupportAlert: _enablePartialSupportAlert = true,
   walletError,
-  cdnLinks: _cdnLinks,
-  hideSignInButton,
-  ...props
+  credits,
+  locale,
+  chainId,
+  onSwitchNetwork,
+  onSignIn,
+  onSignOut,
+  ...navbarProps
 }: NavbarProps2) => {
   const expectedChainName = getChainName(appChainId)
   const analytics = getAnalytics()
 
-  const {
-    isModalOpen,
-    isNotificationsOnboarding,
-    modalActiveTab,
-    isLoading,
-    notifications,
-    handleNotificationsOpen,
-    handleOnBegin,
-    handleOnChangeModalTab,
-    handleRenderProfile
-  } = useNotifications(identity, withNotifications || false)
+  const { isModalOpen, isLoading, notifications, handleNotificationsOpen, handleRenderProfile } = useNotifications(
+    identity,
+    withNotifications || false
+  )
 
   const handleSwitchNetwork = useCallback(() => {
-    props.onSwitchNetwork(appChainId)
-  }, [])
+    onSwitchNetwork(appChainId)
+  }, [onSwitchNetwork, appChainId])
 
   const [chainSelected, setChainSelected] = useState<ChainId | undefined>(undefined)
 
@@ -70,22 +52,20 @@ const Navbar2: React.FC<NavbarProps2> = ({
   }, [walletError, chainSelected, withChainSelector])
 
   const handleSwitchChain = useCallback(
-    (chainId: ChainId) => {
-      setChainSelected(chainId)
-      props.onSwitchNetwork(chainId, props.chainId)
+    (selectedChain: ChainId) => {
+      setChainSelected(selectedChain)
+      onSwitchNetwork(selectedChain, chainId)
       analytics?.track(CHANGE_NETWORK, {
-        from_chain_id: props.chainId,
-        to_chain_id: chainId
+        from_chain_id: chainId,
+        to_chain_id: selectedChain
       })
     },
-    [analytics]
+    [analytics, chainId, onSwitchNetwork]
   )
 
   const handleClickBalance = useCallback(
-    (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement, MouseEvent>, network?: Network) => {
-      e.preventDefault()
+    (network: Network) => {
       analytics?.track(DROPDOWN_MENU_BALANCE_CLICK_EVENT, { network })
-
       setTimeout(() => {
         window.open(`${BASE_URL}/account`, '_blank', 'noopener')
       }, 300)
@@ -93,134 +73,61 @@ const Navbar2: React.FC<NavbarProps2> = ({
     [analytics]
   )
 
-  const handleClickNavbarItem = useCallback(
-    (
-      _e: React.MouseEvent,
-      options: {
-        eventTrackingName: string
-        url?: string
-        isExternal?: boolean
-      }
-    ) => {
-      analytics?.track(NAVBAR_CLICK_EVENT, options)
-    },
-    [analytics]
+  const handleClickSignOut = useCallback(() => {
+    analytics?.track(DROPDOWN_MENU_SIGN_OUT_EVENT, {})
+    setTimeout(() => {
+      onSignOut()
+    }, 300)
+  }, [analytics, onSignOut])
+
+  const creditsBalance = useMemo(
+    () =>
+      credits
+        ? {
+            balance: Number(formatEther(credits.totalCredits.toString() ?? 0)),
+            expiresAt: credits.credits[0]?.expiresAt ? Number(credits.credits[0].expiresAt * 1000) : 0
+          }
+        : undefined,
+    [credits]
   )
 
-  const handleClickUserMenuItem = useCallback(
-    (_e: React.MouseEvent, options: { type: string; url?: string; track_uuid?: string }) => {
-      analytics?.track(DROPDOWN_MENU_ITEM_CLICK_EVENT, options)
-    },
-    [analytics]
-  )
-
-  const handleClickDownload = useCallback(
-    (_e: React.MouseEvent, options: { href: string }) => {
-      analytics?.track(NAVBAR_DOWNLOAD_EVENT, {
-        ...options,
-        place: NAVBAR_DOWNLOAD_EVENT_PLACE
-      })
-    },
-    [analytics]
-  )
-
-  const handleClickOpen = useCallback(
-    (_e: React.MouseEvent, track_uuid: string) => {
-      analytics?.track(DROPDOWN_MENU_DISPLAY_EVENT, { track_uuid })
-    },
-    [analytics]
-  )
-
-  const handleClickSignIn = useCallback(
-    (_e: React.MouseEvent<HTMLElement, MouseEvent>) => {
-      props.onSignIn()
-    },
-    [analytics]
-  )
-
-  const handleClickSignOut = useCallback(
-    (_e: React.MouseEvent<HTMLElement, MouseEvent>, track_uuid: string) => {
-      analytics?.track(DROPDOWN_MENU_SIGN_OUT_EVENT, { track_uuid })
-      setTimeout(() => {
-        props.onSignOut()
-      }, 300)
-    },
-    [analytics]
-  )
-
-  const creditsBalance = props.credits
-    ? {
-        balance: Number(formatEther(props.credits?.totalCredits.toString() ?? 0)),
-        expiresAt: props.credits?.credits[0]?.expiresAt ? Number(props.credits.credits[0].expiresAt * 1000) : 0
-      }
-    : undefined
-
-  const handleGetIdentityId = useCallback(async (): Promise<string | undefined> => {
-    if (identity?.authChain && identity?.ephemeralIdentity) {
-      try {
-        const response = await getIdentityId(identity)
-        return response
-      } catch (error) {
-        console.error('Failed to create identity ID:', error)
-        return undefined
-      }
-    }
-
-    return undefined
-  }, [identity])
+  const notificationSlot = withNotifications ? (
+    <NotificationSlot
+      locale={locale}
+      notifications={notifications}
+      isLoading={isLoading}
+      isOpen={isModalOpen}
+      onToggle={handleNotificationsOpen}
+      renderProfile={handleRenderProfile}
+    />
+  ) : undefined
 
   return (
     <NavbarContainer>
       <ChainProvider>
-        {({ chainId, isUnsupported }) => (
+        {({ chainId: currentChainId, isUnsupported }) => (
           <>
             <NavbarComponent
-              {...props}
+              {...navbarProps}
               creditsBalance={creditsBalance}
-              notifications={
-                withNotifications
-                  ? {
-                      locale: props.locale as NotificationLocale,
-                      isLoading,
-                      isOnboarding: isNotificationsOnboarding,
-                      isOpen: isModalOpen,
-                      items: notifications,
-                      activeTab: modalActiveTab,
-                      onClick: handleNotificationsOpen,
-                      onClose: handleNotificationsOpen,
-                      onBegin: handleOnBegin,
-                      onChangeTab: (_, tab) => handleOnChangeModalTab(tab),
-                      renderProfile: handleRenderProfile
-                    }
-                  : undefined
-              }
-              getIdentityId={handleGetIdentityId}
-              hideSignInButton={hideSignInButton}
-              onClickBalance={handleClickBalance}
-              onClickNavbarItem={handleClickNavbarItem}
-              onClickUserMenuItem={handleClickUserMenuItem}
-              onClickOpen={handleClickOpen}
-              onClickSignIn={handleClickSignIn}
+              notificationSlot={notificationSlot}
+              onClickSignIn={onSignIn}
               onClickSignOut={handleClickSignOut}
-              onClickDownload={handleClickDownload}
+              onClickBalance={handleClickBalance}
+              onToggleUserCard={isOpen => {
+                if (isOpen && isModalOpen) {
+                  handleNotificationsOpen()
+                }
+              }}
               {...(withChainSelector && {
                 chains: getAvailableChains(),
-                selectedChain: chainId ?? undefined,
-                chainBeingConfirmed: chainSelected !== chainId ? chainSelected : undefined,
-                onSelectChain: handleSwitchChain,
-                i18nChainSelector: {
-                  title: t('@dapps.chain_selector.title'),
-                  connected: t('@dapps.chain_selector.connected'),
-                  confirmInWallet:
-                    getConnectedProviderType() === ProviderType.INJECTED // for injected ones, show label to confirm in wallet, the rest won't ask for confirmation
-                      ? t('@dapps.chain_selector.confirm_in_wallet')
-                      : t('@dapps.chain_selector.switching')
-                }
+                selectedChain: currentChainId ?? undefined,
+                onSelectChain: handleSwitchChain
               })}
             />
             {isUnsupported ? (
               <UnsupportedNetworkModal
-                chainName={getChainName(chainId!)}
+                chainName={getChainName(currentChainId!)}
                 expectedChainName={expectedChainName!}
                 isSwitchingNetwork={isSwitchingNetwork}
                 onSwitchNetwork={handleSwitchNetwork}

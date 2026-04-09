@@ -22,12 +22,10 @@ export type NavbarProps = NavbarComponentProps & {
   onSignIn: () => void
 }
 
-export type NavbarProps2 = NavbarComponentProps2 & {
+export type NavbarProps2 = Omit<NavbarComponentProps2, 'onClickSignIn' | 'onClickSignOut' | 'notificationSlot' | 'creditsBalance'> & {
   withChainSelector?: boolean
   chainId?: ChainId
   appChainId: ChainId
-  docsUrl?: string
-  enablePartialSupportAlert?: boolean
   isSwitchingNetwork?: boolean
   withNotifications?: boolean
   identity?: AuthIdentity
@@ -53,7 +51,7 @@ export type MapStateProps = Pick<
   | 'locale'
   | 'walletError'
 > &
-  Pick<NavbarProps2, 'credits' | 'cdnLinks' | 'shouldDownloadBeforeRedirect'>
+  Pick<NavbarProps2, 'credits'>
 
 export type MapDispatchProps = Pick<NavbarProps, 'onSwitchNetwork' | 'onSignOut'>
 export type MapDispatch = Dispatch<SwitchNetworkRequestAction>
