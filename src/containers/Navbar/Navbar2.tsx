@@ -21,6 +21,7 @@ const Navbar2: React.FC<NavbarProps2> = ({
   isSwitchingNetwork,
   withNotifications,
   withChainSelector,
+  withCredits = true,
   identity,
   walletError,
   credits,
@@ -112,7 +113,7 @@ const Navbar2: React.FC<NavbarProps2> = ({
           <>
             <NavbarComponent
               {...navbarProps}
-              creditsBalance={creditsBalance}
+              creditsBalance={withCredits ? creditsBalance : undefined}
               notificationSlot={notificationSlot}
               manaBalances={hasMana ? manaBalances : undefined}
               onClickBalance={hasMana ? handleClickBalance : undefined}
