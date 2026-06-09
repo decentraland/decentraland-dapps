@@ -2,6 +2,8 @@ import { Interface, defaultAbiCoder } from '@ethersproject/abi'
 import { hexZeroPad, hexlify } from '@ethersproject/bytes'
 import { randomBytes } from '@ethersproject/random'
 import { ChainId, Item, NFT, Network, Order, Trade, TradeAssetType } from '@dcl/schemas'
+import { localStorageGetIdentity } from '@dcl/single-sign-on-client'
+import { signedFetchFactory } from 'decentraland-crypto-fetch'
 import { ContractData, ContractName, getContract, getContractName } from 'decentraland-transactions'
 import { Credit } from '../modules/credits/types'
 import { sendTransaction } from '../modules/wallet/utils'
@@ -478,7 +480,16 @@ export class CreditsService {
     const { contract, creditsData, creditsSignatures, externalCall, maxUncreditedValue, maxCreditedValue } =
       this.prepareCreditsCollectionManager(credits, chainId, collectionManagerArgs, totalPrice)
 
-    const signatureResponse = await fetch(`${creditsServerUrl}/sign-external-call`, {
+    // The credits server requires an ADR-44 signed-fetch request and binds the
+    // signature to the authenticated wallet, so this call must be signed with
+    // the user's identity rather than sent as a plain fetch.
+    const identity = localStorageGetIdentity(walletAddress)
+    if (!identity) {
+      throw new Error(`Could not find an identity for ${walletAddress} to sign the external call request`)
+    }
+
+    const signedFetch = signedFetchFactory()
+    const signatureResponse = await signedFetch(`${creditsServerUrl}/sign-external-call`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -488,7 +499,8 @@ export class CreditsService {
         chainId: chainId,
         creditsManagerAddress: contract.address,
         externalCall: externalCall
-      })
+      }),
+      identity
     })
 
     if (!signatureResponse.ok) {
