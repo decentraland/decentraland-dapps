@@ -23,6 +23,10 @@ jobs:
         run: npm test
       - name: Publish
         if: github.ref == 'refs/heads/master'
+        uses: decentraland/oddish-action@0074f2d535c43b5c83f136525304a6277166d77f
+        with:
+          registry-url: 'https://registry.npmjs.org'
+          access: public
+          provenance: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm run semantic-release
