@@ -8,10 +8,21 @@ import { getOnChainTrade } from './trades'
 // Only mock external dependencies
 const mockSendTransaction = jest.fn()
 const mockGetOnChainTrade = jest.fn()
+const mockSignedFetch = jest.fn()
+const mockGetIdentity = jest.fn()
 
 // Mock wallet utils
 jest.mock('../modules/wallet/utils', () => ({
   sendTransaction: (...args) => mockSendTransaction(...args)
+}))
+
+// Mock signed fetch and identity used by the credits server signing call
+jest.mock('decentraland-crypto-fetch', () => ({
+  signedFetchFactory: () => mockSignedFetch
+}))
+
+jest.mock('@dcl/single-sign-on-client', () => ({
+  localStorageGetIdentity: (...args: unknown[]) => mockGetIdentity(...args)
 }))
 
 // Mock trades utils
@@ -738,24 +749,14 @@ describe('CreditsService', () => {
   })
 
   describe('useCreditsCollectionManager', () => {
-    let mockFetch: jest.Mock
-    let originalFetch: typeof global.fetch
-
     beforeEach(() => {
-      originalFetch = global.fetch
-      mockFetch = jest.fn()
-      global.fetch = mockFetch
-
-      mockFetch.mockResolvedValue({
+      mockGetIdentity.mockReturnValue({ authChain: [], ephemeralIdentity: {}, expiration: new Date() } as any)
+      mockSignedFetch.mockResolvedValue({
         ok: true,
         json: jest.fn().mockResolvedValue({
           signature: '0xcustomSignature'
         })
       } as any)
-    })
-
-    afterEach(() => {
-      global.fetch = originalFetch
     })
 
     describe('when signing the external call', () => {
@@ -804,14 +805,15 @@ describe('CreditsService', () => {
           creditsServerUrl
         )
 
-        expect(mockFetch).toHaveBeenCalledWith(
+        expect(mockSignedFetch).toHaveBeenCalledWith(
           `${creditsServerUrl}/sign-external-call`,
           expect.objectContaining({
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
             },
-            body: expect.stringContaining(walletAddress)
+            body: expect.stringContaining(walletAddress),
+            identity: expect.anything()
           })
         )
       })
@@ -838,7 +840,8 @@ describe('CreditsService', () => {
 
     describe('and the signature request fails', () => {
       beforeEach(() => {
-        mockFetch.mockResolvedValue({
+        mockGetIdentity.mockReturnValue({ authChain: [], ephemeralIdentity: {}, expiration: new Date() } as any)
+        mockSignedFetch.mockResolvedValue({
           ok: false,
           json: jest.fn().mockResolvedValue({
             error: 'Signature failed'
@@ -878,6 +881,47 @@ describe('CreditsService', () => {
             'https://credits-server.com'
           )
         ).rejects.toThrow('Failed to get external call signature')
+      })
+    })
+
+    describe('and there is no identity for the wallet', () => {
+      beforeEach(() => {
+        mockGetIdentity.mockReturnValue(null)
+      })
+
+      it('should throw an error and not call the credits server', async () => {
+        await expect(
+          creditsService.useCreditsCollectionManager(
+            '0xuser',
+            [
+              {
+                id: 'credit1',
+                amount: '100',
+                expiresAt: '1234567890',
+                signature: '0xsignature1',
+                availableAmount: '100',
+                contract: getContract(ContractName.CreditsManager, ChainId.MATIC_AMOY).address,
+                season: 1,
+                timestamp: '1234567890',
+                userAddress: '0xuser'
+              }
+            ],
+            ChainId.MATIC_AMOY,
+            [
+              '0x0000000000000000000000000000000000000001',
+              '0x0000000000000000000000000000000000000002',
+              ethers.utils.hexZeroPad('0x123', 32),
+              'Name',
+              'SYM',
+              'uri',
+              '0x0000000000000000000000000000000000000003',
+              []
+            ],
+            '1000',
+            'https://credits-server.com'
+          )
+        ).rejects.toThrow('Could not find an identity')
+        expect(mockSignedFetch).not.toHaveBeenCalled()
       })
     })
   })
