@@ -9,6 +9,13 @@ import { Credit } from '../modules/credits/types'
 import { sendTransaction } from '../modules/wallet/utils'
 import { getOnChainTrade } from './trades'
 
+// Instantiate the signed-fetch helper once (lazily); the factory is stateless.
+let signedFetch: ReturnType<typeof signedFetchFactory> | null = null
+function getSignedFetch() {
+  if (!signedFetch) signedFetch = signedFetchFactory()
+  return signedFetch
+}
+
 export type CreditsData = {
   value: string
   expiresAt: number
@@ -488,8 +495,7 @@ export class CreditsService {
       throw new Error(`Could not find an identity for ${walletAddress} to sign the external call request`)
     }
 
-    const signedFetch = signedFetchFactory()
-    const signatureResponse = await signedFetch(`${creditsServerUrl}/sign-external-call`, {
+    const signatureResponse = await getSignedFetch()(`${creditsServerUrl}/sign-external-call`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
