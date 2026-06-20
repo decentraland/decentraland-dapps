@@ -1,8 +1,4 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
-
-const httpClient = axios.create()
-
-export type APIMethod = AxiosRequestConfig['method']
+export type APIMethod = string
 export interface APIParam {
   [key: string]: any
 }
@@ -30,25 +26,26 @@ export class BaseAPI {
       setTimeout(resolve, delay)
     })
 
-  async request(
-    method: APIMethod,
-    path: string,
-    params: APIParam | null = null,
-    axiosRequestConfig: AxiosRequestConfig = {},
-    retryParams?: RetryParams
-  ) {
+  async request(method: APIMethod, path: string, params: APIParam | null = null, requestInit: RequestInit = {}, retryParams?: RetryParams) {
     const retry = retryParams ?? this.retry
-    const options: AxiosRequestConfig = {
-      ...axiosRequestConfig,
-      method,
-      url: this.getUrl(path)
+    let url = this.getUrl(path)
+    const init: RequestInit = {
+      ...requestInit,
+      method: method?.toUpperCase()
     }
 
     if (params) {
       if (method?.toLowerCase() === 'get') {
-        options.params = params
+        const query = new URLSearchParams(params).toString()
+        if (query) {
+          url += (url.includes('?') ? '&' : '?') + query
+        }
       } else {
-        options.data = params
+        init.body = JSON.stringify(params)
+        init.headers = {
+          'Content-Type': 'application/json',
+          ...requestInit.headers
+        }
       }
     }
 
@@ -56,8 +53,13 @@ export class BaseAPI {
 
     while (true) {
       try {
-        const axiosResponse = await httpClient.request(options)
-        const { ok, data, error } = this.parseResponse(axiosResponse)
+        const response = await fetch(url, init)
+
+        if (!response.ok) {
+          throw new Error(`Request failed with status code ${response.status}`)
+        }
+
+        const { ok, data, error } = await this.parseResponse(response)
 
         return !ok || error ? Promise.reject({ message: error, data }) : data
       } catch (error) {
@@ -73,13 +75,22 @@ export class BaseAPI {
     return `${this.url}${path}`
   }
 
-  private parseResponse(axiosResponse: AxiosResponse): Response {
-    const response = axiosResponse.data
+  private async parseResponse(response: globalThis.Response): Promise<Response> {
+    const text = await response.text()
+    let parsed: any = text
 
-    if (typeof response.ok === 'boolean') {
-      return response
+    if (text) {
+      try {
+        parsed = JSON.parse(text)
+      } catch {
+        parsed = text
+      }
     }
 
-    return { ok: true, data: response, error: '' }
+    if (parsed && typeof parsed.ok === 'boolean') {
+      return parsed
+    }
+
+    return { ok: true, data: parsed, error: '' }
   }
 }

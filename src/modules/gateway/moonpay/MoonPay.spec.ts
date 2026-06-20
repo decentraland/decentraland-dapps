@@ -1,11 +1,8 @@
-import axios from 'axios'
 import { Network } from '@dcl/schemas/dist/dapps/network'
 import { NetworkGatewayType } from 'decentraland-ui'
 import { MoonPay } from './MoonPay'
 import { MoonPayConfig, Purchase, PurchaseStatus } from '../types'
 import { MoonPayTransaction, MoonPayTransactionStatus } from './types'
-
-axios.defaults.adapter = require('axios/lib/adapters/http')
 
 const mockConfig: MoonPayConfig = {
   apiKey: 'api-key',
