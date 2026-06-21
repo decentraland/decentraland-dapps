@@ -6,11 +6,15 @@ jobs:
   build-test-publish:
     name: Build and Test
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+      issues: write
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: '24'
       - name: Install dependencies
         run: npm install
       - name: Build
@@ -19,7 +23,10 @@ jobs:
         run: npm test
       - name: Publish
         if: github.ref == 'refs/heads/master'
+        uses: decentraland/oddish-action@0074f2d535c43b5c83f136525304a6277166d77f
+        with:
+          registry-url: 'https://registry.npmjs.org'
+          access: public
+          provenance: true
         env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm run semantic-release

@@ -1,5 +1,10 @@
 {
   "@dapps": {
+    "notifications": {
+      "title": "알림",
+      "loading": "로딩 중...",
+      "empty": "아직 알림이 없습니다"
+    },
     "button": {
       "network_not_supported": "이 작업을 수행하려면 {expectedChainName}에 연결해야 합니다."
     },

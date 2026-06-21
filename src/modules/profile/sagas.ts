@@ -1,7 +1,7 @@
 import { call, put, takeEvery, takeLatest } from 'redux-saga/effects'
 import { AuthIdentity } from '@dcl/crypto'
-import { Avatar, AvatarInfo } from '@dcl/schemas/dist/platform/profile'
 import { EntityType } from '@dcl/schemas/dist/platform/entity'
+import { Avatar, AvatarInfo } from '@dcl/schemas/dist/platform/profile'
 import { ProfileEntity } from '../../lib'
 import { EntitiesOperator } from '../../lib/entities'
 import { PeerAPI } from '../../lib/peer'
@@ -106,7 +106,7 @@ export function createProfileSaga({ getIdentity, peerUrl, peerWithNoGbCollectorU
   function* updateProfileAvatarWithoutNewFiles(address: string, changes: Partial<Avatar>) {
     const profile: ProfileEntity = yield call([entities, 'getProfileEntity'], address)
     const { avatar: avatarInfo, ...restOfAvatar } = profile.metadata.avatars[0]
-    const { snapshots, ...avatarInfoWithoutSnapshots } = avatarInfo
+    const { snapshots: _snapshots, ...avatarInfoWithoutSnapshots } = avatarInfo
     const newAvatar: Omit<Avatar, 'avatar'> & {
       avatar: Omit<AvatarInfo, 'snapshots'>
     } = {

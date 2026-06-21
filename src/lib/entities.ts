@@ -1,12 +1,12 @@
 import { ContentClient, createContentClient } from 'dcl-catalyst-client/dist/client/ContentClient'
 import { BuildEntityWithoutFilesOptions } from 'dcl-catalyst-client/dist/client/types'
+import { DeploymentBuilder } from 'dcl-catalyst-client/dist/client/utils'
 import { buildEntityWithoutNewFiles } from 'dcl-catalyst-client/dist/client/utils/DeploymentBuilder'
 import { AuthIdentity, Authenticator } from '@dcl/crypto'
 import { Entity, EntityType } from '@dcl/schemas/dist/platform/entity'
 import { fetcher } from './fetcher'
 import { PeerAPI } from './peer'
 import { ProfileEntity } from './types'
-import { DeploymentBuilder } from 'dcl-catalyst-client/dist/client/utils'
 
 export class EntitiesOperator {
   private catalystContentClient: ContentClient // Undefined until initialization
@@ -14,7 +14,10 @@ export class EntitiesOperator {
   private catalystContentClientWithoutGbCollector: ContentClient | null // Undefined until initialization
   private readonly peerAPI: PeerAPI
 
-  constructor(private peerUrl: string, private peerWithNoGbCollectorUrl?: string) {
+  constructor(
+    private peerUrl: string,
+    private peerWithNoGbCollectorUrl?: string
+  ) {
     this.catalystContentClient = createContentClient({
       url: `${peerUrl}/content`,
       fetcher

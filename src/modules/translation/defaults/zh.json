@@ -1,5 +1,10 @@
 {
   "@dapps": {
+    "notifications": {
+      "title": "通知",
+      "loading": "加载中...",
+      "empty": "暂无通知"
+    },
     "button": {
       "network_not_supported": "您需要连接到 {expectedChainName} 才能执行此操作"
     },

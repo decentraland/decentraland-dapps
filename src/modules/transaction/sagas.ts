@@ -77,7 +77,10 @@ export class FailedTransactionError extends Error {
   }
 }
 
-export function* handleCrossChainTransactionRequest(action: FetchTransactionRequestAction, config?: TransactionsConfig) {
+export function* handleCrossChainTransactionRequest(
+  action: FetchTransactionRequestAction,
+  config?: TransactionsConfig
+): Generator<any, void, any> {
   const transactionPayload = getTransactionPayloadFromAction(action.payload.action)
 
   if (!config?.crossChainProviderUrl || !transactionPayload.requestId) {

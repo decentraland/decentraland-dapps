@@ -617,7 +617,7 @@ REVOKE_TOKEN_SUCCESS
 REVOKE_TOKEN_FAILURE
 ```
 
-Keep in mind that each of these actions send a transaction, so if you wan't to check if they're done, check the action type of the `FETCH_TRANSACTION_SUCCESS` action. More info on the [transactions](#transactions) module
+Keep in mind that each of these actions send a transaction, so if you want to check if they're done, check the action type of the `FETCH_TRANSACTION_SUCCESS` action. More info on the [transactions](#transactions) module
 
 ### Installation
 

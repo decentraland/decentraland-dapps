@@ -29,6 +29,18 @@ describe('when checking if a wallet is a Web2 wallet', () => {
     })
   })
 
+  describe('and the wallet is using THIRDWEB provider', () => {
+    beforeEach(() => {
+      wallet = {
+        providerType: ProviderType.THIRDWEB
+      } as Wallet
+    })
+
+    it('should return true', () => {
+      expect(isWeb2Wallet(wallet)).toBe(true)
+    })
+  })
+
   describe.each([
     [ProviderType.INJECTED, 'INJECTED'],
     [ProviderType.NETWORK, 'NETWORK'],
