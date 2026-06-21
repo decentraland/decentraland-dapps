@@ -1,9 +1,6 @@
 import nock from 'nock'
-import axios from 'axios'
 
 import { BaseAPI, RetryParams } from './api'
-
-axios.defaults.adapter = require('axios/lib/adapters/http')
 
 const urlTest = 'http://test.com'
 

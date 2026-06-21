@@ -1,5 +1,5 @@
-import type { TransactionResponse } from '@ethersproject/providers'
 import { Web3Provider } from '@ethersproject/providers'
+import type { TransactionResponse } from '@ethersproject/providers'
 import type { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { getNetworkProvider } from '../../lib/eth'
 import {

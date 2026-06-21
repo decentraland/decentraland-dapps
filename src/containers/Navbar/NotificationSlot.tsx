@@ -1,5 +1,7 @@
 import React from 'react'
 import { DCLNotification } from 'decentraland-ui/dist/components/Notifications/types'
+import { BellIcon } from 'decentraland-ui2/dist/components/Navbar/icons'
+import { NotificationComponentByType } from 'decentraland-ui2/dist/components/Notifications/utils'
 import {
   BellButton,
   NotificationBadge,
@@ -10,8 +12,6 @@ import {
   NotificationTitle,
   NotificationWrapper
 } from 'decentraland-ui2'
-import { NotificationComponentByType } from 'decentraland-ui2/dist/components/Notifications/utils'
-import { BellIcon } from 'decentraland-ui2/dist/components/Navbar/icons'
 import type { NotificationLocale } from 'decentraland-ui2'
 import { t } from '../../modules/translation'
 
@@ -42,9 +42,10 @@ const NotificationSlot: React.FC<NotificationSlotProps> = ({ locale, notificatio
             {isLoading && notifications.length === 0 && <NotificationEmpty>{t('@dapps.notifications.loading')}</NotificationEmpty>}
             {!isLoading && notifications.length === 0 && <NotificationEmpty>{t('@dapps.notifications.empty')}</NotificationEmpty>}
             {notifications.map(notification => {
-              const Component = notification.type in NotificationComponentByType
-                ? NotificationComponentByType[notification.type as keyof typeof NotificationComponentByType]
-                : null
+              const Component =
+                notification.type in NotificationComponentByType
+                  ? NotificationComponentByType[notification.type as keyof typeof NotificationComponentByType]
+                  : null
               if (!Component) return null
               return (
                 <Component

@@ -15,19 +15,8 @@ import type {
   ReplaceTransactionSuccessAction,
   UpdateTransactionStatusAction
 } from './actions'
-import {
-  CrossChainProviderType,
-  FAILED_STATUS,
-  FINISHED_STATUS,
-  SUCCESS_STATUS,
-  TRANSACTION_ACTION_FLAG,
-  TransactionStatus
-} from './types'
-import type {
-  ActionWithTransactionPayload,
-  Transaction,
-  TransactionPayload
-} from './types'
+import { CrossChainProviderType, FAILED_STATUS, FINISHED_STATUS, SUCCESS_STATUS, TRANSACTION_ACTION_FLAG, TransactionStatus } from './types'
+import type { ActionWithTransactionPayload, Transaction, TransactionPayload } from './types'
 
 export function buildActionRef(transaction: Transaction) {
   const { actionType, withReceipt, isCrossChain, payload } = transaction

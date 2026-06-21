@@ -1,18 +1,14 @@
 import { AddressZero } from '@ethersproject/constants'
 import { Contract } from '@ethersproject/contracts'
 import { namehash } from '@ethersproject/hash'
-import type { Provider } from '@ethersproject/providers'
 import { Web3Provider } from '@ethersproject/providers'
+import type { Provider } from '@ethersproject/providers'
 import { ChainId } from '@dcl/schemas'
 import { getConnectedProvider } from '../../lib/eth'
 import { getAnalytics } from '../../modules/analytics/utils'
 
 function getResolverContract(contractAddress: string, provider: Provider) {
-  return new Contract(
-    contractAddress,
-    ['function addr(bytes32 node) public view virtual override returns (address payable)'],
-    provider
-  )
+  return new Contract(contractAddress, ['function addr(bytes32 node) public view virtual override returns (address payable)'], provider)
 }
 
 export async function resolveName(name: string) {

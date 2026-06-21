@@ -342,10 +342,7 @@ export class CreditsService {
     const executeOrderSelector = marketplaceInterface.getSighash('executeOrder')
 
     // Encode the executeOrder function parameters
-    const executeOrderData = defaultAbiCoder.encode(
-      ['address', 'uint256', 'uint256'],
-      [nft.contractAddress, nft.tokenId, order.price]
-    )
+    const executeOrderData = defaultAbiCoder.encode(['address', 'uint256', 'uint256'], [nft.contractAddress, nft.tokenId, order.price])
 
     // Prepare the external call
     const externalCall = this.prepareExternalCall({
