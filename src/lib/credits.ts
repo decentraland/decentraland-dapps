@@ -509,7 +509,7 @@ export class CreditsService {
   }
 
   async useShopCreditsCollectionManager(
-    walletAddress: string,
+    _walletAddress: string,
     chainId: ChainId,
     collectionManagerArgs: CollectionManagerCreateCollectionArgs,
     usdPriceCents: number,
