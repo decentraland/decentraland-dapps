@@ -2,6 +2,7 @@ import { Interface, defaultAbiCoder } from '@ethersproject/abi'
 import { hexZeroPad, hexlify } from '@ethersproject/bytes'
 import { randomBytes } from '@ethersproject/random'
 import { ChainId, Item, NFT, Network, Order, Trade, TradeAssetType } from '@dcl/schemas'
+import { type AuthIdentity, signedFetchFactory } from 'decentraland-crypto-fetch'
 import { ContractData, ContractName, getContract, getContractName } from 'decentraland-transactions'
 import { Credit } from '../modules/credits/types'
 import { sendTransaction } from '../modules/wallet/utils'
@@ -504,6 +505,77 @@ export class CreditsService {
       customExternalCallSignature,
       maxCreditedValue,
       maxUncreditedValue
+    )
+  }
+
+  async useShopCreditsCollectionManager(
+    walletAddress: string,
+    chainId: ChainId,
+    collectionManagerArgs: CollectionManagerCreateCollectionArgs,
+    usdPriceCents: number,
+    creditsServerUrl: string,
+    identity: AuthIdentity
+  ): Promise<string> {
+    const collectionManagerContract = getContract(ContractName.CollectionManager, chainId)
+    const collectionManagerInterface = new Interface(collectionManagerContract.abi)
+    const createCollectionSelector = collectionManagerInterface.getSighash('createCollection')
+
+    const createCollectionData = defaultAbiCoder.encode(
+      [
+        'address',
+        'address',
+        'bytes32',
+        'string',
+        'string',
+        'string',
+        'address',
+        'tuple(string,uint256,address,string)[]'
+      ],
+      collectionManagerArgs
+    )
+
+    const externalCall = this.prepareExternalCall({
+      target: collectionManagerContract.address,
+      selector: createCollectionSelector,
+      data: createCollectionData
+    })
+
+    const contract = getContract(ContractName.CreditsManager, chainId)
+
+    const signedFetch = signedFetchFactory()
+    const response = await signedFetch(`${creditsServerUrl}/credits/authorize-publication`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        usdPriceCents,
+        chainId,
+        creditsManagerAddress: contract.address,
+        externalCall
+      }),
+      identity
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(`Failed to authorize publication: ${errorData.error || response.statusText}`)
+    }
+
+    const { credit, externalCallSignature } = await response.json()
+
+    const creditData: CreditsData = {
+      value: credit.amount,
+      expiresAt: credit.expiresAt,
+      salt: hexZeroPad(credit.id, 32)
+    }
+
+    return this.executeUseCreditsWithSignature(
+      contract,
+      [creditData],
+      [credit.signature],
+      externalCall,
+      externalCallSignature,
+      credit.amount,
+      '0'
     )
   }
 
