@@ -498,8 +498,14 @@ export class CreditsService {
     })
 
     if (!signatureResponse.ok) {
-      const errorData = await signatureResponse.json()
-      throw new Error(`Failed to get external call signature: ${errorData.error || signatureResponse.statusText}`)
+      let errorMessage: string
+      try {
+        const errorData = await signatureResponse.json()
+        errorMessage = errorData.error || signatureResponse.statusText
+      } catch {
+        errorMessage = signatureResponse.statusText
+      }
+      throw new Error(`Failed to get external call signature: ${errorMessage}`)
     }
 
     const { signature: customExternalCallSignature } = await signatureResponse.json()
@@ -555,7 +561,7 @@ export class CreditsService {
     const data: AuthorizePublicationResponse = await response.json()
     const { credit, externalCallSignature } = data
 
-    if (!credit || !externalCallSignature) {
+    if (!credit?.id || !credit?.amount || !credit?.expiresAt || !credit?.signature || !externalCallSignature) {
       throw new Error('Invalid server response: missing credit or externalCallSignature')
     }
 

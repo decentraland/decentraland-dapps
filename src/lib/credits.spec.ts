@@ -2,7 +2,7 @@ import { ethers } from 'ethers'
 import { ChainId, ERC20TradeAsset, Item, Network, NFT, Order, Trade, TradeAssetType, TradeType } from '@dcl/schemas'
 import { ContractData, ContractName, getContract } from 'decentraland-transactions'
 import { Credit } from '../modules/credits/types'
-import { CreditsService, CreditsData, ExternalCallParams, CollectionManagerCreateCollectionArgs, AuthorizePublicationResponse } from './credits'
+import { CreditsService, CreditsData, ExternalCallParams, CollectionManagerCreateCollectionArgs } from './credits'
 import { getOnChainTrade } from './trades'
 
 // Only mock external dependencies
