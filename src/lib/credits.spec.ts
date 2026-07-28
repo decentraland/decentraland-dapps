@@ -8,10 +8,15 @@ import { getOnChainTrade } from './trades'
 // Only mock external dependencies
 const mockSendTransaction = jest.fn()
 const mockGetOnChainTrade = jest.fn()
+const mockSignedFetch = jest.fn()
 
 // Mock wallet utils
 jest.mock('../modules/wallet/utils', () => ({
   sendTransaction: (...args) => mockSendTransaction(...args)
+}))
+
+jest.mock('decentraland-crypto-fetch', () => ({
+  signedFetchFactory: () => mockSignedFetch
 }))
 
 // Mock trades utils
@@ -878,6 +883,154 @@ describe('CreditsService', () => {
             'https://credits-server.com'
           )
         ).rejects.toThrow('Failed to get external call signature')
+      })
+    })
+  })
+
+  describe('useShopCreditsCollectionManager', () => {
+    let walletAddress: string
+    let collectionManagerArgs: CollectionManagerCreateCollectionArgs
+    let usdPriceCents: number
+    let creditsServerUrl: string
+    const mockIdentity = {} as any
+
+    beforeEach(() => {
+      walletAddress = '0xuser'
+      collectionManagerArgs = [
+        '0x0000000000000000000000000000000000000001',
+        '0x0000000000000000000000000000000000000002',
+        ethers.utils.hexZeroPad('0x123', 32),
+        'Collection Name',
+        'COL',
+        'baseURI',
+        '0x0000000000000000000000000000000000000003',
+        [['rarity1', '1000', '0x0000000000000000000000000000000000000004', 'metadata']]
+      ]
+      usdPriceCents = 500
+      creditsServerUrl = 'https://credits-server.com'
+
+      mockSignedFetch.mockResolvedValue({
+        ok: true,
+        json: jest.fn().mockResolvedValue({
+          credit: {
+            id: '0x' + 'ab'.repeat(32),
+            amount: '100000000000000000000',
+            availableAmount: '100000000000000000000',
+            expiresAt: 1234568790,
+            signature: '0xcreditSignature',
+            contract: getContract(ContractName.CreditsManager, ChainId.MATIC_AMOY).address
+          },
+          externalCallSignature: '0xexternalCallSig',
+          usdCents: 500,
+          oracleRate: 0.5
+        })
+      } as any)
+    })
+
+    it('should call authorize-publication with signed-fetch', async () => {
+      await creditsService.useShopCreditsCollectionManager(
+        walletAddress,
+        ChainId.MATIC_AMOY,
+        collectionManagerArgs,
+        usdPriceCents,
+        creditsServerUrl,
+        mockIdentity
+      )
+
+      expect(mockSignedFetch).toHaveBeenCalledWith(
+        `${creditsServerUrl}/credits/authorize-publication`,
+        expect.objectContaining({
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          identity: mockIdentity,
+          body: expect.stringContaining('"usdPriceCents":500')
+        })
+      )
+    })
+
+    it('should send the external call targeting CollectionManager in the request body', async () => {
+      await creditsService.useShopCreditsCollectionManager(
+        walletAddress,
+        ChainId.MATIC_AMOY,
+        collectionManagerArgs,
+        usdPriceCents,
+        creditsServerUrl,
+        mockIdentity
+      )
+
+      const body = JSON.parse(mockSignedFetch.mock.calls[0][1].body)
+      expect(body.creditsManagerAddress).toEqual(getContract(ContractName.CreditsManager, ChainId.MATIC_AMOY).address)
+      expect(body.externalCall.target).toEqual(getContract(ContractName.CollectionManager, ChainId.MATIC_AMOY).address)
+      expect(body.externalCall.selector).toBeDefined()
+      expect(body.externalCall.data).toBeDefined()
+      expect(body.externalCall.expiresAt).toBeDefined()
+      expect(body.externalCall.salt).toBeDefined()
+    })
+
+    it('should execute useCredits with the server-issued credit and signature', async () => {
+      await creditsService.useShopCreditsCollectionManager(
+        walletAddress,
+        ChainId.MATIC_AMOY,
+        collectionManagerArgs,
+        usdPriceCents,
+        creditsServerUrl,
+        mockIdentity
+      )
+
+      expect(mockSendTransaction).toHaveBeenCalledWith(
+        expect.objectContaining({
+          address: getContract(ContractName.CreditsManager, ChainId.MATIC_AMOY).address
+        }),
+        'useCredits',
+        expect.objectContaining({
+          credits: [
+            expect.objectContaining({
+              value: '100000000000000000000',
+              expiresAt: 1234568790
+            })
+          ],
+          creditsSignatures: ['0xcreditSignature'],
+          customExternalCallSignature: '0xexternalCallSig',
+          maxCreditedValue: '100000000000000000000',
+          maxUncreditedValue: '0'
+        })
+      )
+    })
+
+    it('should return transaction hash', async () => {
+      const txHash = await creditsService.useShopCreditsCollectionManager(
+        walletAddress,
+        ChainId.MATIC_AMOY,
+        collectionManagerArgs,
+        usdPriceCents,
+        creditsServerUrl,
+        mockIdentity
+      )
+
+      expect(txHash).toBe('0xtransactionHash')
+    })
+
+    describe('and the authorize-publication request fails', () => {
+      beforeEach(() => {
+        mockSignedFetch.mockResolvedValue({
+          ok: false,
+          json: jest.fn().mockResolvedValue({
+            error: 'Insufficient credits'
+          })
+        } as any)
+      })
+
+      it('should throw an error', async () => {
+        await expect(
+          creditsService.useShopCreditsCollectionManager(
+            walletAddress,
+            ChainId.MATIC_AMOY,
+            collectionManagerArgs,
+            usdPriceCents,
+            creditsServerUrl,
+            mockIdentity
+          )
+        ).rejects.toThrow('Failed to authorize publication: Insufficient credits')
       })
     })
   })

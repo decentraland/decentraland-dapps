@@ -13,6 +13,10 @@ export type Credit = {
 export type CreditsResponse = {
   credits: Credit[]
   totalCredits: number
+  usd?: {
+    balanceCents: number
+    credits: number
+  }
 }
 
 export interface SeasonResponse {
