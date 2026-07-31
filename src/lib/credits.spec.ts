@@ -888,14 +888,12 @@ describe('CreditsService', () => {
   })
 
   describe('useShopCreditsCollectionManager', () => {
-    let walletAddress: string
     let collectionManagerArgs: CollectionManagerCreateCollectionArgs
     let usdPriceCents: number
     let creditsServerUrl: string
     const mockIdentity = {} as any
 
     beforeEach(() => {
-      walletAddress = '0xuser'
       collectionManagerArgs = [
         '0x0000000000000000000000000000000000000001',
         '0x0000000000000000000000000000000000000002',
@@ -907,7 +905,7 @@ describe('CreditsService', () => {
         [['rarity1', '1000', '0x0000000000000000000000000000000000000004', 'metadata']]
       ]
       usdPriceCents = 500
-      creditsServerUrl = 'https://credits-server.com'
+      creditsServerUrl = 'https://credits-server.example.com'
 
       mockSignedFetch.mockResolvedValue({
         ok: true,
@@ -929,7 +927,6 @@ describe('CreditsService', () => {
 
     it('should call authorize-publication with signed-fetch', async () => {
       await creditsService.useShopCreditsCollectionManager(
-        walletAddress,
         ChainId.MATIC_AMOY,
         collectionManagerArgs,
         usdPriceCents,
@@ -950,7 +947,6 @@ describe('CreditsService', () => {
 
     it('should send the external call targeting CollectionManager in the request body', async () => {
       await creditsService.useShopCreditsCollectionManager(
-        walletAddress,
         ChainId.MATIC_AMOY,
         collectionManagerArgs,
         usdPriceCents,
@@ -969,7 +965,6 @@ describe('CreditsService', () => {
 
     it('should execute useCredits with the server-issued credit and signature', async () => {
       await creditsService.useShopCreditsCollectionManager(
-        walletAddress,
         ChainId.MATIC_AMOY,
         collectionManagerArgs,
         usdPriceCents,
@@ -999,7 +994,6 @@ describe('CreditsService', () => {
 
     it('should return transaction hash', async () => {
       const txHash = await creditsService.useShopCreditsCollectionManager(
-        walletAddress,
         ChainId.MATIC_AMOY,
         collectionManagerArgs,
         usdPriceCents,
@@ -1023,7 +1017,6 @@ describe('CreditsService', () => {
       it('should throw an error', async () => {
         await expect(
           creditsService.useShopCreditsCollectionManager(
-            walletAddress,
             ChainId.MATIC_AMOY,
             collectionManagerArgs,
             usdPriceCents,
@@ -1031,6 +1024,91 @@ describe('CreditsService', () => {
             mockIdentity
           )
         ).rejects.toThrow('Failed to authorize publication: Insufficient credits')
+      })
+    })
+
+    describe('and the error response is non-JSON (e.g. HTML 502)', () => {
+      beforeEach(() => {
+        mockSignedFetch.mockResolvedValue({
+          ok: false,
+          statusText: 'Bad Gateway',
+          json: jest.fn().mockRejectedValue(new SyntaxError('Unexpected token < in JSON'))
+        } as any)
+      })
+
+      it('should fall back to statusText instead of crashing', async () => {
+        await expect(
+          creditsService.useShopCreditsCollectionManager(
+            ChainId.MATIC_AMOY,
+            collectionManagerArgs,
+            usdPriceCents,
+            creditsServerUrl,
+            mockIdentity
+          )
+        ).rejects.toThrow('Failed to authorize publication: Bad Gateway')
+      })
+    })
+
+    describe('and the success response is malformed', () => {
+      it('should throw if credit is missing', async () => {
+        mockSignedFetch.mockResolvedValue({
+          ok: true,
+          json: jest.fn().mockResolvedValue({
+            externalCallSignature: '0xexternalCallSig'
+          })
+        } as any)
+
+        await expect(
+          creditsService.useShopCreditsCollectionManager(
+            ChainId.MATIC_AMOY,
+            collectionManagerArgs,
+            usdPriceCents,
+            creditsServerUrl,
+            mockIdentity
+          )
+        ).rejects.toThrow('Invalid server response: missing credit or externalCallSignature')
+      })
+
+      it('should throw if externalCallSignature is missing', async () => {
+        mockSignedFetch.mockResolvedValue({
+          ok: true,
+          json: jest.fn().mockResolvedValue({
+            credit: {
+              id: '0x' + 'ab'.repeat(32),
+              amount: '100000000000000000000',
+              expiresAt: 1234568790,
+              signature: '0xcreditSignature'
+            }
+          })
+        } as any)
+
+        await expect(
+          creditsService.useShopCreditsCollectionManager(
+            ChainId.MATIC_AMOY,
+            collectionManagerArgs,
+            usdPriceCents,
+            creditsServerUrl,
+            mockIdentity
+          )
+        ).rejects.toThrow('Invalid server response: missing credit or externalCallSignature')
+      })
+    })
+
+    describe('and sendTransaction throws', () => {
+      beforeEach(() => {
+        mockSendTransaction.mockRejectedValue(new Error('Transaction failed: insufficient gas'))
+      })
+
+      it('should propagate the sendTransaction error', async () => {
+        await expect(
+          creditsService.useShopCreditsCollectionManager(
+            ChainId.MATIC_AMOY,
+            collectionManagerArgs,
+            usdPriceCents,
+            creditsServerUrl,
+            mockIdentity
+          )
+        ).rejects.toThrow('Transaction failed: insufficient gas')
       })
     })
   })

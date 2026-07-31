@@ -54,6 +54,16 @@ export type CollectionManagerCreateCollectionArgs = [
   items: CollectionManagerItem[]
 ]
 
+export type AuthorizePublicationResponse = {
+  credit: {
+    id: string
+    amount: string
+    expiresAt: number
+    signature: string
+  }
+  externalCallSignature: string
+}
+
 export class CreditsService {
   /**
    * Prepares common credits data and gets the CreditsManager contract
@@ -119,6 +129,33 @@ export class CreditsService {
       expiresAt,
       salt
     }
+  }
+
+  /**
+   * Builds the external call parameters for CollectionManager.createCollection
+   * Shared by both `prepareCreditsCollectionManager` and `useShopCreditsCollectionManager`
+   * @param chainId - The chain ID
+   * @param collectionManagerArgs - Arguments for the createCollection function
+   * @returns The external call parameters targeting CollectionManager
+   */
+  private buildCollectionManagerExternalCall(
+    chainId: ChainId,
+    collectionManagerArgs: CollectionManagerCreateCollectionArgs
+  ): ExternalCallParams {
+    const collectionManagerContract = getContract(ContractName.CollectionManager, chainId)
+    const collectionManagerInterface = new Interface(collectionManagerContract.abi)
+    const createCollectionSelector = collectionManagerInterface.getSighash('createCollection')
+
+    const createCollectionData = defaultAbiCoder.encode(
+      ['address', 'address', 'bytes32', 'string', 'string', 'string', 'address', 'tuple(string,uint256,address,string)[]'],
+      collectionManagerArgs
+    )
+
+    return this.prepareExternalCall({
+      target: collectionManagerContract.address,
+      selector: createCollectionSelector,
+      data: createCollectionData
+    })
   }
 
   /**
@@ -410,37 +447,8 @@ export class CreditsService {
     // Prepare common credits data
     const { contract, creditsData, creditsSignatures } = this.prepareCreditsData(credits, chainId)
 
-    // Get the CollectionManager contract address
-    const collectionManagerContract = getContract(ContractName.CollectionManager, chainId as ChainId)
-    const collectionManagerAddress = collectionManagerContract.address
-
-    // Create a contract interface for the CollectionManager to get the function selector
-    const collectionManagerInterface = new Interface(collectionManagerContract.abi)
-
-    // The selector for the createCollection function in the CollectionManager contract
-    const createCollectionSelector = collectionManagerInterface.getSighash('createCollection')
-
-    // Encode the createCollection function parameters
-    const createCollectionData = defaultAbiCoder.encode(
-      [
-        'address', // forwarder
-        'address', // factory
-        'bytes32', // salt
-        'string', // name
-        'string', // symbol
-        'string', // baseURI
-        'address', // creator
-        'tuple(string,uint256,address,string)[]' // items
-      ],
-      collectionManagerArgs
-    )
-
-    // Prepare the external call
-    const externalCall = this.prepareExternalCall({
-      target: collectionManagerAddress,
-      selector: createCollectionSelector,
-      data: createCollectionData
-    })
+    // Build the external call targeting CollectionManager
+    const externalCall = this.buildCollectionManagerExternalCall(chainId as ChainId, collectionManagerArgs)
 
     const maxUncreditedValue = this.calculateMaxUncreditedValue(totalPrice, credits)
 
@@ -490,8 +498,14 @@ export class CreditsService {
     })
 
     if (!signatureResponse.ok) {
-      const errorData = await signatureResponse.json()
-      throw new Error(`Failed to get external call signature: ${errorData.error || signatureResponse.statusText}`)
+      let errorMessage: string
+      try {
+        const errorData = await signatureResponse.json()
+        errorMessage = errorData.error || signatureResponse.statusText
+      } catch {
+        errorMessage = signatureResponse.statusText
+      }
+      throw new Error(`Failed to get external call signature: ${errorMessage}`)
     }
 
     const { signature: customExternalCallSignature } = await signatureResponse.json()
@@ -509,36 +523,14 @@ export class CreditsService {
   }
 
   async useShopCreditsCollectionManager(
-    _walletAddress: string,
     chainId: ChainId,
     collectionManagerArgs: CollectionManagerCreateCollectionArgs,
     usdPriceCents: number,
     creditsServerUrl: string,
     identity: AuthIdentity
   ): Promise<string> {
-    const collectionManagerContract = getContract(ContractName.CollectionManager, chainId)
-    const collectionManagerInterface = new Interface(collectionManagerContract.abi)
-    const createCollectionSelector = collectionManagerInterface.getSighash('createCollection')
-
-    const createCollectionData = defaultAbiCoder.encode(
-      [
-        'address',
-        'address',
-        'bytes32',
-        'string',
-        'string',
-        'string',
-        'address',
-        'tuple(string,uint256,address,string)[]'
-      ],
-      collectionManagerArgs
-    )
-
-    const externalCall = this.prepareExternalCall({
-      target: collectionManagerContract.address,
-      selector: createCollectionSelector,
-      data: createCollectionData
-    })
+    // Build the external call targeting CollectionManager (shared with prepareCreditsCollectionManager)
+    const externalCall = this.buildCollectionManagerExternalCall(chainId, collectionManagerArgs)
 
     const contract = getContract(ContractName.CreditsManager, chainId)
 
@@ -556,11 +548,22 @@ export class CreditsService {
     })
 
     if (!response.ok) {
-      const errorData = await response.json()
-      throw new Error(`Failed to authorize publication: ${errorData.error || response.statusText}`)
+      let errorMessage: string
+      try {
+        const errorData = await response.json()
+        errorMessage = errorData.error || response.statusText
+      } catch {
+        errorMessage = response.statusText
+      }
+      throw new Error(`Failed to authorize publication: ${errorMessage}`)
     }
 
-    const { credit, externalCallSignature } = await response.json()
+    const data: AuthorizePublicationResponse = await response.json()
+    const { credit, externalCallSignature } = data
+
+    if (!credit?.id || !credit?.amount || !credit?.expiresAt || !credit?.signature || !externalCallSignature) {
+      throw new Error('Invalid server response: missing credit or externalCallSignature')
+    }
 
     const creditData: CreditsData = {
       value: credit.amount,
