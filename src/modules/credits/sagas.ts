@@ -150,6 +150,15 @@ export function* creditsSaga(options: { creditsClient: CreditsClient }) {
         while (true) {
           // Wait for messages from the SSE connection
           const action = yield take(channel)
+          // The SSE payload carries only the MANA credits block; preserve the shop (usd)
+          // balance already in state so it doesn't vanish on every push.
+          if (action.type === FETCH_CREDITS_SUCCESS && !action.payload.credits.usd) {
+            const existing: CreditsResponse | null = yield select(getCredits, address)
+            if (existing?.usd) {
+              yield put(fetchCreditsSuccess(address, { ...action.payload.credits, usd: existing.usd }))
+              continue
+            }
+          }
           yield put(action)
         }
       } finally {

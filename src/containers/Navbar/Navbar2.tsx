@@ -95,6 +95,9 @@ const Navbar2: React.FC<NavbarProps2> = ({
     [credits]
   )
 
+  // Shop (USD-pegged) credits come in the same credits-server response; whole credits, no expiry.
+  const shopCreditsBalance = credits?.usd ? credits.usd.credits : undefined
+
   const notificationSlot = withNotifications ? (
     <NotificationSlot
       locale={locale}
@@ -114,6 +117,7 @@ const Navbar2: React.FC<NavbarProps2> = ({
             <NavbarComponent
               {...navbarProps}
               creditsBalance={withCredits ? creditsBalance : undefined}
+              shopCreditsBalance={withCredits ? shopCreditsBalance : undefined}
               notificationSlot={notificationSlot}
               manaBalances={hasMana ? manaBalances : undefined}
               onClickBalance={hasMana ? handleClickBalance : undefined}

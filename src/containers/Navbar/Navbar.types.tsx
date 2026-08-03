@@ -22,7 +22,10 @@ export type NavbarProps = NavbarComponentProps & {
   onSignIn: () => void
 }
 
-export type NavbarProps2 = Omit<NavbarComponentProps2, 'onClickSignIn' | 'onClickSignOut' | 'notificationSlot' | 'creditsBalance'> & {
+export type NavbarProps2 = Omit<
+  NavbarComponentProps2,
+  'onClickSignIn' | 'onClickSignOut' | 'notificationSlot' | 'creditsBalance' | 'shopCreditsBalance'
+> & {
   withChainSelector?: boolean
   chainId?: ChainId
   appChainId: ChainId

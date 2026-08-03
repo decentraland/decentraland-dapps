@@ -185,6 +185,30 @@ describe('Credits saga', () => {
       })
     })
 
+    it('should preserve the shop (usd) balance when an SSE message arrives without it', () => {
+      const existingCredits: CreditsResponse = { ...mockCredits, usd: { balanceCents: 500, credits: 50 } }
+      const sseCredits: CreditsResponse = { totalCredits: 2000, credits: mockCredits.credits }
+
+      const createSSEConnectionMock = jest.spyOn(creditsClient, 'createSSEConnection').mockImplementation((_addr, onMessage) => {
+        // Fire once the saga is blocked on the channel take (the channel has no buffer).
+        setTimeout(() => onMessage(sseCredits), 20)
+        return new MockEventSource(`https://example.com/users/${address}/credits/stream`) as any
+      })
+
+      return expectSaga(creditsSaga, { creditsClient })
+        .provide([
+          [select(isCreditsFeatureEnabled, address), true],
+          [call([creditsClient, 'fetchCredits'], address), existingCredits],
+          [select(getCredits, address), existingCredits]
+        ])
+        .put(fetchCreditsSuccess(address, { ...sseCredits, usd: existingCredits.usd }))
+        .dispatch(startCreditsSSE(address))
+        .silentRun()
+        .then(() => {
+          createSSEConnectionMock.mockRestore()
+        })
+    })
+
     it('should handle SSE messages by dispatching success actions', () => {
       // Mock event channel to control events
       const mockChannel = eventChannel(() => () => {})
