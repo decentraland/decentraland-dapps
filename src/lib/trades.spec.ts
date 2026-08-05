@@ -5,6 +5,7 @@ import {
   ERC20TradeAsset,
   ERC721TradeAsset,
   Trade,
+  USDPeggedManaTradeAsset,
   TradeAsset,
   TradeCreation,
   TradeType
@@ -66,6 +67,73 @@ describe('when getting the value for a trade asset', () => {
     it('should return the item id', () => {
       expect(getValueForTradeAsset(asset)).toBe((asset as CollectionItemTradeAsset).itemId)
     })
+  })
+
+  /**
+   * A USD-pegged amount is an amount like any other here. It is denominated in USD wei rather than MANA wei,
+   * but the conversion happens in the contract at settlement — this function only has to reproduce the value
+   * the seller signed.
+   */
+  describe('and the asset is USD-PEGGED MANA', () => {
+    beforeEach(() => {
+      asset = {
+        assetType: TradeAssetType.USD_PEGGED_MANA,
+        contractAddress: '0xmana',
+        amount: '500000000000000000',
+        extra: ''
+      } as USDPeggedManaTradeAsset
+    })
+
+    it('should return the amount, not an empty value', () => {
+      expect(getValueForTradeAsset(asset)).toBe((asset as USDPeggedManaTradeAsset).amount)
+    })
+  })
+})
+
+/**
+ * THE REGRESSION THAT MATTERED, AND WHY IT IS ASSERTED HERE.
+ *
+ * `getOnChainTrade` rebuilds the trade struct that `TradeService.accept` and `TradeService.cancel` hand to the
+ * contract. With no case for `USD_PEGGED_MANA`, the received value came back as `''`, so a USD-pegged listing
+ * could be neither bought nor cancelled by ANY consumer of this package — it surfaced in production as
+ * `invalid BigNumber string (argument="value", value="")` when a creator tried to take their own listing down.
+ *
+ * Asserted against the literal amount rather than through `getValueForTradeAsset`: routing the expectation
+ * through the same function under test is exactly why a green suite did not catch this.
+ */
+describe('when rebuilding a USD-pegged trade for the contract', () => {
+  it('should preserve the amount so the struct still matches the seller signature', () => {
+    const trade = {
+      signer: '0xsigner',
+      signature: '0xsignature',
+      type: TradeType.PUBLIC_NFT_ORDER,
+      network: Network.MATIC,
+      chainId: ChainId.MATIC_AMOY,
+      checks: {
+        expiration: Date.now() + 100000000,
+        effective: Date.now(),
+        uses: 1,
+        salt: '0x',
+        allowedRoot: '0x',
+        contractSignatureIndex: 0,
+        externalChecks: [],
+        signerSignatureIndex: 0
+      },
+      sent: [{ assetType: TradeAssetType.ERC721, contractAddress: '0xcollection', tokenId: '1', extra: '0x' }],
+      received: [
+        {
+          assetType: TradeAssetType.USD_PEGGED_MANA,
+          contractAddress: '0xmana',
+          amount: '500000000000000000',
+          extra: '0x',
+          beneficiary: '0xseller'
+        }
+      ]
+    } as unknown as Trade
+
+    const onChainTrade = getOnChainTrade(trade, '0xbuyer')
+
+    expect(onChainTrade.received[0].value).toBe('500000000000000000')
   })
 })
 

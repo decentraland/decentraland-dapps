@@ -63,9 +63,28 @@ export function getValueForTradeAsset(asset: TradeAsset): string {
       return asset.itemId
     case TradeAssetType.ERC20:
       return asset.amount
-    default:
-      console.error('Invalid asset type:', asset)
+    case TradeAssetType.USD_PEGGED_MANA:
+      // The amount VERBATIM, exactly as for ERC20. It is denominated in USD wei rather than MANA wei, but
+      // converting it is the contract's job at settlement — what goes in here has to reproduce the value the
+      // SELLER signed, or the rebuilt trade hashes differently and the signature check rejects it on chain.
+      //
+      // Falling through to `default` returned '' for these, and every consumer of this package inherited it:
+      // `generateTradeValues` feeds this into the EIP-712 struct and `getOnChainTrade` rebuilds that struct for
+      // `accept()` and `cancelSignature()`. So a USD-pegged listing could be neither bought NOR cancelled —
+      // observed in production as `invalid BigNumber string (argument="value", value="")` when a creator tried
+      // to take their own listing down from the Builder.
+      return asset.amount
+    default: {
+      // Compile-time exhaustiveness: `USDPeggedManaTradeAsset` has been a member of the `TradeAsset` union all
+      // along, so the missing case above was a hole in a closed union that `default` silently absorbed. A new
+      // member now becomes a type error here instead of another empty value that only surfaces on chain.
+      //
+      // Runtime behaviour is unchanged on purpose: this also receives API data, so a value outside the union
+      // must degrade rather than throw.
+      const unhandled: never = asset
+      console.error('Invalid asset type:', unhandled)
       return ''
+    }
   }
 }
 
