@@ -98,11 +98,13 @@ export function trackConnectWallet(
 
 export function getAnonymousId() {
   const analytics = getAnalytics()
-  if (analytics) {
-    return analytics.user().anonymousId()
-  } else {
+  if (!analytics) {
     return undefined
   }
+
+  // Until analytics.js is loaded `user` is one of the snippet stubs, which has no anonymous id to return yet
+  const user = analytics.user()
+  return typeof user?.anonymousId === 'function' ? user.anonymousId() : undefined
 }
 
 export function hasEvmWallet() {

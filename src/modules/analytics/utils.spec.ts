@@ -423,6 +423,19 @@ describe('Analytics Utils', () => {
         expect(result).toBeUndefined()
       })
     })
+
+    describe('when analytics.js has not been loaded yet', () => {
+      beforeEach(() => {
+        // The snippet stubs `user` with a factory that queues the call and returns the queue itself
+        mockAnalytics.user.mockReturnValue([])
+      })
+
+      it('should return undefined', () => {
+        const result = getAnonymousId()
+
+        expect(result).toBeUndefined()
+      })
+    })
   })
 
   describe('hasEvmWallet function', () => {

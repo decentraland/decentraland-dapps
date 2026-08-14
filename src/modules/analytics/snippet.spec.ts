@@ -35,6 +35,12 @@ describe('Analytics Snippet', () => {
     })
   })
 
+  describe('when the methods this package calls are stubbed', () => {
+    it('should stub user, which getAnonymousId relies on', () => {
+      expect(typeof anyWindow.analytics.user).toBe('function')
+    })
+  })
+
   describe('when a call is made after analytics.js is loaded', () => {
     it('should forward it to the loaded analytics', () => {
       const snippet = anyWindow.analytics
@@ -78,6 +84,24 @@ describe('Analytics Snippet', () => {
 
     it('should resolve the settings from its origin', () => {
       expect(anyWindow.analytics._cdn).toBe('https://analytics.example.com')
+    })
+  })
+
+  describe('when the snippet is configured with a malformed analytics url', () => {
+    let consoleWarn: jest.SpyInstance
+
+    beforeEach(() => {
+      consoleWarn = jest.spyOn(console, 'warn').mockImplementation(() => {})
+      configureAnalyticsSnippet({ analyticsUrl: 'http://[' })
+    })
+
+    afterEach(() => {
+      consoleWarn.mockRestore()
+    })
+
+    it('should warn about it and leave analytics.js resolving the settings on its own', () => {
+      expect(consoleWarn).toHaveBeenCalled()
+      expect(anyWindow.analytics._cdn).toBeUndefined()
     })
   })
 

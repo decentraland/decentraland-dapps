@@ -30,6 +30,8 @@ const METHODS = [
   'ready',
   'alias',
   'debug',
+  // Dropped by Segment in 5.2.0, kept because `getAnonymousId` calls it
+  'user',
   'page',
   'screen',
   'once',
@@ -52,7 +54,12 @@ function getAnalyticsUrl(writeKey: string) {
 }
 
 function getOrigin(url: string) {
-  return new URL(url, window.location.href).origin
+  try {
+    return new URL(url, window.location.href).origin
+  } catch (_error) {
+    console.warn(`Analytics: could not resolve the origin of the analytics url "${url}"`)
+    return undefined
+  }
 }
 
 /**
