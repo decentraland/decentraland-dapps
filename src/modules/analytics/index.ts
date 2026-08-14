@@ -1,4 +1,5 @@
 export * from './middleware'
 export * from './sagas'
+export * from './snippet'
 export * from './types'
 export * from './utils'
