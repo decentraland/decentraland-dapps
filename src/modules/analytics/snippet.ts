@@ -1,73 +1,155 @@
-// @ts-nocheck
-;(function () {
-  // Create a queue, but don't obliterate an existing one!
-  const analytics = (window.analytics = window.analytics || [])
+export type AnalyticsSnippetOptions = {
+  /**
+   * URL of the analytics.js bundle. Defaults to Segment's CDN, which ad blockers drop, so dapps can point it at a
+   * first party proxy instead.
+   */
+  analyticsUrl?: string
+  /**
+   * Origin analytics.js fetches its settings from. Defaults to the origin of `analyticsUrl`, which is what a proxy
+   * serving both the bundle and the settings needs.
+   */
+  cdnUrl?: string
+}
+
+type SegmentSnippet = any[] & Record<string, any>
+
+const GLOBAL_ANALYTICS_KEY = 'analytics'
+const SNIPPET_VERSION = '5.2.0'
+
+// Methods stubbed by the snippet, so calls made before analytics.js loads are queued and replayed afterwards
+const METHODS = [
+  'trackSubmit',
+  'trackClick',
+  'trackLink',
+  'trackForm',
+  'pageview',
+  'identify',
+  'reset',
+  'group',
+  'track',
+  'ready',
+  'alias',
+  'debug',
+  'page',
+  'screen',
+  'once',
+  'off',
+  'on',
+  'addSourceMiddleware',
+  'addIntegrationMiddleware',
+  'setAnonymousId',
+  'addDestinationMiddleware',
+  'register'
+]
+
+// Queued calls of these methods carry the page context of the moment they were made, not the one of the replay
+const METHODS_WITH_PAGE_CONTEXT = ['track', 'screen', 'alias', 'group', 'page', 'identify']
+
+const options: AnalyticsSnippetOptions = {}
+
+function getAnalyticsUrl(writeKey: string) {
+  return options.analyticsUrl || `https://cdn.segment.com/analytics.js/v1/${writeKey}/analytics.min.js`
+}
+
+function getOrigin(url: string) {
+  return new URL(url, window.location.href).origin
+}
+
+/**
+ * Points the snippet at a different analytics.js bundle. Takes effect on the next `analytics.load` call, so it must
+ * run before the analytics middleware is created.
+ */
+export function configureAnalyticsSnippet(newOptions: AnalyticsSnippetOptions = {}) {
+  if (typeof window === 'undefined') return
+
+  options.analyticsUrl = newOptions.analyticsUrl
+  options.cdnUrl = newOptions.cdnUrl || (newOptions.analyticsUrl ? getOrigin(newOptions.analyticsUrl) : undefined)
+
+  const analytics = (window as unknown as { analytics?: SegmentSnippet }).analytics
+
+  // analytics.js resolves the settings endpoint from here, it can't infer it from a proxied bundle path
+  if (analytics && options.cdnUrl) {
+    analytics._cdn = options.cdnUrl
+  }
+}
+
+/**
+ * Installs Segment's snippet, which queues every call made before analytics.js is loaded and replays them once it is.
+ */
+export function installAnalyticsSnippet() {
+  if (typeof window === 'undefined') return
+
+  const anyWindow = window as unknown as { analytics?: SegmentSnippet }
+
   // If the real analytics.js is already on the page return.
-  if (analytics.initialize) return
+  if (anyWindow.analytics?.initialize) return
+
   // If the snippet was invoked already show an error.
-  if (analytics.invoked) {
+  if (anyWindow.analytics?.invoked) {
     if (window.console && console.error) {
       console.error('Segment snippet included twice.')
     }
     return
   }
-  // Invoked flag, to make sure the snippet
-  // is never invoked twice.
+
+  const analytics = (anyWindow.analytics || []) as SegmentSnippet
+
   analytics.invoked = true
-  // A list of the methods in Analytics.js to stub.
-  analytics.methods = [
-    'trackSubmit',
-    'trackClick',
-    'trackLink',
-    'trackForm',
-    'pageview',
-    'identify',
-    'reset',
-    'group',
-    'track',
-    'ready',
-    'alias',
-    'debug',
-    'user',
-    'page',
-    'once',
-    'off',
-    'on',
-    'addSourceMiddleware',
-    'addIntegrationMiddleware',
-    'setAnonymousId',
-    'addDestinationMiddleware'
-  ]
-  // Define a factory to create stubs. These are placeholders
-  // for methods in Analytics.js so that you never have to wait
-  // for it to load to actually record data. The `method` is
-  // stored as the first argument, so we can replay the data.
-  analytics.factory = function (method) {
-    return function () {
-      const args = Array.prototype.slice.call(arguments)
-      args.unshift(method)
-      analytics.push(args)
+  analytics.methods = METHODS
+  analytics.factory = (method: string) => {
+    return (...args: unknown[]): unknown => {
+      // Once analytics.js is loaded the global is the real one, so calls kept from the snippet are forwarded to it
+      if (anyWindow.analytics?.initialized) {
+        const initializedMethod = anyWindow.analytics[method] as (...args: unknown[]) => unknown
+        return initializedMethod(...args)
+      }
+
+      if (METHODS_WITH_PAGE_CONTEXT.includes(method)) {
+        const canonical = document.querySelector("link[rel='canonical']")
+        args.push({
+          __t: 'bpc',
+          c: canonical?.getAttribute('href') || undefined,
+          p: window.location.pathname,
+          u: window.location.href,
+          s: window.location.search,
+          t: document.title,
+          r: document.referrer
+        })
+      }
+
+      analytics.push([method, ...args])
       return analytics
     }
   }
-  // For each of our methods, generate a queueing stub.
-  for (let i = 0; i < analytics.methods.length; i++) {
-    const key = analytics.methods[i]
-    analytics[key] = analytics.factory(key)
+
+  for (const method of METHODS) {
+    analytics[method] = analytics.factory(method)
   }
-  // Define a method to load Analytics.js from our CDN,
-  // and that will be sure to only ever load it once.
-  analytics.load = function (key, options) {
-    // Create an async script element based on your key.
+
+  analytics.load = (writeKey: string, loadOptions?: unknown) => {
     const script = document.createElement('script')
     script.type = 'text/javascript'
     script.async = true
-    script.src = 'https://cdn.segment.com/analytics.js/v1/' + key + '/analytics.min.js'
-    // Insert our script next to the first script element.
-    const first = document.getElementsByTagName('script')[0]
-    first.parentNode.insertBefore(script, first)
-    analytics._loadOptions = options
+    script.setAttribute('data-global-segment-analytics-key', GLOBAL_ANALYTICS_KEY)
+    script.src = getAnalyticsUrl(writeKey)
+
+    const firstScript = document.getElementsByTagName('script')[0]
+    if (firstScript?.parentNode) {
+      firstScript.parentNode.insertBefore(script, firstScript)
+    } else {
+      document.head.appendChild(script)
+    }
+
+    analytics._writeKey = writeKey
+    analytics._loadOptions = loadOptions
   }
-  // Add a version to keep track of what's in the wild.
-  analytics.SNIPPET_VERSION = '4.15.2'
-})()
+
+  if (options.cdnUrl) {
+    analytics._cdn = options.cdnUrl
+  }
+  analytics.SNIPPET_VERSION = SNIPPET_VERSION
+
+  anyWindow.analytics = analytics
+}
+
+installAnalyticsSnippet()

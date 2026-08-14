@@ -885,6 +885,16 @@ const enhancer = composeEnhancers(middleware)
 const store = createStore(rootReducer, enhancer)
 ```
 
+By default `analytics.js` is loaded from Segment's CDN, which ad blockers drop. To load it from a first party proxy instead, pass the URL of the bundle it serves:
+
+```ts
+const analyticsMiddleware = createAnalyticsMiddleware('SEGMENT WRITE KEY', {
+  analyticsUrl: 'https://analytics.example.org/aPath/aBundle.min.js'
+})
+```
+
+`analytics.js` fetches its settings from the origin of that URL. Pass `cdnUrl` as well when the proxy serves them from a different host.
+
 **Saga**:
 
 ```ts
