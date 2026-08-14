@@ -75,8 +75,13 @@ export function configureAnalyticsSnippet(newOptions: AnalyticsSnippetOptions = 
   const analytics = (window as unknown as { analytics?: SegmentSnippet }).analytics
 
   // analytics.js resolves the settings endpoint from here, it can't infer it from a proxied bundle path
-  if (analytics && options.cdnUrl) {
-    analytics._cdn = options.cdnUrl
+  if (analytics) {
+    if (options.cdnUrl) {
+      analytics._cdn = options.cdnUrl
+    } else {
+      // Reconfiguring back to Segment's CDN, leaving the previous one would resolve the settings from a stale origin
+      delete analytics._cdn
+    }
   }
 }
 
@@ -105,10 +110,12 @@ export function installAnalyticsSnippet() {
   analytics.methods = METHODS
   analytics.factory = (method: string) => {
     return (...args: unknown[]): unknown => {
-      // Once analytics.js is loaded the global is the real one, so calls kept from the snippet are forwarded to it
-      if (anyWindow.analytics?.initialized) {
-        const initializedMethod = anyWindow.analytics[method] as (...args: unknown[]) => unknown
-        return initializedMethod(...args)
+      // Once analytics.js is loaded the global is the real one, so calls kept from the snippet are forwarded to it,
+      // keeping it as the receiver because its methods rely on the analytics instance as `this`
+      const loadedAnalytics = anyWindow.analytics
+      if (loadedAnalytics?.initialized) {
+        const initializedMethod = loadedAnalytics[method] as (...args: unknown[]) => unknown
+        return initializedMethod.apply(loadedAnalytics, args)
       }
 
       if (METHODS_WITH_PAGE_CONTEXT.includes(method)) {

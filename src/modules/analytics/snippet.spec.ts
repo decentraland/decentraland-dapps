@@ -42,14 +42,27 @@ describe('Analytics Snippet', () => {
   })
 
   describe('when a call is made after analytics.js is loaded', () => {
-    it('should forward it to the loaded analytics', () => {
-      const snippet = anyWindow.analytics
-      const track = jest.fn()
-      anyWindow.analytics = { initialized: true, track }
+    let snippet: any
+    let loadedAnalytics: any
+    let track: jest.Mock
 
+    beforeEach(() => {
+      snippet = anyWindow.analytics
+      track = jest.fn(function (this: unknown) {
+        return this
+      })
+      loadedAnalytics = { initialized: true, track }
+      anyWindow.analytics = loadedAnalytics
+    })
+
+    it('should forward it to the loaded analytics', () => {
       snippet.track('Some Event')
 
       expect(track).toHaveBeenCalledWith('Some Event')
+    })
+
+    it('should forward it keeping the loaded analytics as the receiver', () => {
+      expect(snippet.track('Some Event')).toBe(loadedAnalytics)
     })
   })
 
@@ -84,6 +97,23 @@ describe('Analytics Snippet', () => {
 
     it('should resolve the settings from its origin', () => {
       expect(anyWindow.analytics._cdn).toBe('https://analytics.example.com')
+    })
+  })
+
+  describe('when the snippet is reconfigured without an analytics url', () => {
+    beforeEach(() => {
+      configureAnalyticsSnippet({ analyticsUrl: ANALYTICS_URL })
+      configureAnalyticsSnippet()
+    })
+
+    it('should stop resolving the settings from the previous cdn', () => {
+      expect(anyWindow.analytics._cdn).toBeUndefined()
+    })
+
+    it('should load the bundle from segment cdn', () => {
+      anyWindow.analytics.load(WRITE_KEY)
+
+      expect(getInjectedScript()).toHaveProperty('src', `https://cdn.segment.com/analytics.js/v1/${WRITE_KEY}/analytics.min.js`)
     })
   })
 
