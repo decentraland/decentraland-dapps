@@ -50,16 +50,29 @@ const METHODS_WITH_PAGE_CONTEXT = ['track', 'screen', 'alias', 'group', 'page', 
 const options: AnalyticsSnippetOptions = {}
 
 function getAnalyticsUrl(writeKey: string) {
-  return options.analyticsUrl || `https://cdn.segment.com/analytics.js/v1/${writeKey}/analytics.min.js`
+  return options.analyticsUrl || `https://cdn.segment.com/analytics.js/v1/${encodeURIComponent(writeKey)}/analytics.min.js`
 }
 
-function getOrigin(url: string) {
+/**
+ * These urls end up loading a script and fetching the settings that decide which integrations run, so a value that is
+ * not a valid https url, or one of the dapp's own, is dropped instead of trusted.
+ */
+function resolveUrl(name: string, url: string) {
+  let resolved: URL
+
   try {
-    return new URL(url, window.location.href).origin
+    resolved = new URL(url, window.location.href)
   } catch (_error) {
-    console.warn(`Analytics: could not resolve the origin of the analytics url "${url}"`)
+    console.warn(`Analytics: ignoring the ${name} "${url}", it is not a valid url`)
     return undefined
   }
+
+  if (resolved.protocol !== 'https:' && resolved.origin !== window.location.origin) {
+    console.warn(`Analytics: ignoring the ${name} "${url}", it is not served over https`)
+    return undefined
+  }
+
+  return resolved
 }
 
 /**
@@ -69,8 +82,11 @@ function getOrigin(url: string) {
 export function configureAnalyticsSnippet(newOptions: AnalyticsSnippetOptions = {}) {
   if (typeof window === 'undefined') return
 
-  options.analyticsUrl = newOptions.analyticsUrl
-  options.cdnUrl = newOptions.cdnUrl || (newOptions.analyticsUrl ? getOrigin(newOptions.analyticsUrl) : undefined)
+  const analyticsUrl = newOptions.analyticsUrl ? resolveUrl('analytics url', newOptions.analyticsUrl) : undefined
+  const cdnUrl = newOptions.cdnUrl ? resolveUrl('cdn url', newOptions.cdnUrl) : undefined
+
+  options.analyticsUrl = analyticsUrl?.href
+  options.cdnUrl = cdnUrl ? newOptions.cdnUrl : analyticsUrl?.origin
 
   const analytics = (window as unknown as { analytics?: SegmentSnippet }).analytics
 

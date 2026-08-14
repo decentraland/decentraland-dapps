@@ -117,21 +117,62 @@ describe('Analytics Snippet', () => {
     })
   })
 
-  describe('when the snippet is configured with a malformed analytics url', () => {
+  describe.each([
+    ['malformed', 'http://['],
+    ['not served over https', 'http://analytics.example.com/aPath/aBundle.min.js'],
+    ['not http', 'data:text/javascript,console.log(1)']
+  ])('when the snippet is configured with an analytics url that is %s', (_case, analyticsUrl) => {
     let consoleWarn: jest.SpyInstance
 
     beforeEach(() => {
       consoleWarn = jest.spyOn(console, 'warn').mockImplementation(() => {})
-      configureAnalyticsSnippet({ analyticsUrl: 'http://[' })
+      configureAnalyticsSnippet({ analyticsUrl })
     })
 
     afterEach(() => {
       consoleWarn.mockRestore()
     })
 
-    it('should warn about it and leave analytics.js resolving the settings on its own', () => {
+    it('should warn about it and ignore it', () => {
+      anyWindow.analytics.load(WRITE_KEY)
+
       expect(consoleWarn).toHaveBeenCalled()
+      expect(getInjectedScript()).toHaveProperty('src', `https://cdn.segment.com/analytics.js/v1/${WRITE_KEY}/analytics.min.js`)
       expect(anyWindow.analytics._cdn).toBeUndefined()
+    })
+  })
+
+  describe('when the snippet is configured with an analytics url of the dapp itself', () => {
+    beforeEach(() => {
+      configureAnalyticsSnippet({ analyticsUrl: '/aPath/aBundle.min.js' })
+    })
+
+    it('should load the bundle from it even if the dapp is not served over https', () => {
+      anyWindow.analytics.load(WRITE_KEY)
+
+      expect(getInjectedScript()).toHaveProperty('src', `${window.location.origin}/aPath/aBundle.min.js`)
+      expect(anyWindow.analytics._cdn).toBe(window.location.origin)
+    })
+  })
+
+  describe('when the snippet is configured with a cdn url that is not served over https', () => {
+    let consoleWarn: jest.SpyInstance
+
+    beforeEach(() => {
+      consoleWarn = jest.spyOn(console, 'warn').mockImplementation(() => {})
+      configureAnalyticsSnippet({
+        analyticsUrl: ANALYTICS_URL,
+        cdnUrl: 'http://cdn.example.com'
+      })
+    })
+
+    afterEach(() => {
+      consoleWarn.mockRestore()
+    })
+
+    it('should warn about it and fall back to the origin of the analytics url', () => {
+      expect(consoleWarn).toHaveBeenCalled()
+      expect(anyWindow.analytics._cdn).toBe('https://analytics.example.com')
     })
   })
 

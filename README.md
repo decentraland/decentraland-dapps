@@ -895,7 +895,7 @@ const analyticsMiddleware = createAnalyticsMiddleware('SEGMENT WRITE KEY', {
 
 `analytics.js` fetches its settings from the origin of that URL. Pass `cdnUrl` as well when the proxy serves them from a different host.
 
-Both are the origin a third party script is loaded from, so they are meant to be trusted HTTPS URLs that come from the build configuration of the dapp, never from user input.
+Both decide where a third party script is loaded from, so they are meant to be trusted URLs that come from the build configuration of the dapp, never from user input. Values that are not valid URLs, or that are not served over HTTPS unless they belong to the dapp's own origin, are ignored with a warning and the bundle keeps loading from Segment's CDN.
 
 **Saga**:
 
