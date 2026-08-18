@@ -4,7 +4,7 @@ import { mockAdminEntryEn, marketplaceHomepageBannerAssets, mockHomepageBannerEn
 import { ContentfulLocale, LocalizedField } from '@dcl/schemas'
 import { ContentfulEntryWithoutLocales } from './ContentfulClient.types'
 
-const CMS_URL = 'https://cms.decentraland.org'
+const CMS_URL = 'https://cms-api.decentraland.org'
 
 describe('ContentfulClient', () => {
   let client: ContentfulClient
