@@ -18,7 +18,7 @@ type ImageOptimized = ImageOptimizedFormats &
 
 export class ContentfulClient extends BaseClient {
   constructor() {
-    super('https://cms.decentraland.org')
+    super('https://cms-api.decentraland.org')
   }
 
   async fetchEntry<T extends Fields>(
