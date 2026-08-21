@@ -13,13 +13,7 @@ import {
 import * as ethUtils from './eth'
 import { ContractData, ContractName, getContract } from 'decentraland-transactions'
 import { fromMillisecondsToSeconds } from '../lib/time'
-import {
-  OFFCHAIN_MARKETPLACE_TYPES,
-  getLatestOffChainMarketplaceContract,
-  getTradeSignature,
-  getOnChainTrade,
-  getValueForTradeAsset
-} from './trades'
+import { OFFCHAIN_MARKETPLACE_TYPES, getTradeSignature, getOnChainTrade, getValueForTradeAsset } from './trades'
 
 jest.mock('./eth', () => {
   const module = jest.requireActual('./eth')
@@ -171,7 +165,7 @@ describe('when getting the trade signature', () => {
       signer = ethers.Wallet.createRandom().connect(ethers.providers.getDefaultProvider())
       jest.spyOn(ethUtils, 'getSigner').mockImplementation(() => Promise.resolve(signer))
       signerAddress = (await signer.getAddress()).toLowerCase()
-      offchainMarketplaceContract = getLatestOffChainMarketplaceContract(ChainId.ETHEREUM_SEPOLIA)
+      offchainMarketplaceContract = getContract(ContractName.OffChainMarketplaceV2, ChainId.ETHEREUM_SEPOLIA)
 
       trade = {
         signer: signerAddress,
@@ -208,7 +202,7 @@ describe('when getting the trade signature', () => {
       }
 
       const SALT = ethers.utils.hexZeroPad(ethers.utils.hexlify(trade.chainId), 32)
-      offchainMarketplaceContract = getLatestOffChainMarketplaceContract(trade.chainId)
+      offchainMarketplaceContract = getContract(ContractName.OffChainMarketplaceV2, trade.chainId)
       domain = {
         name: offchainMarketplaceContract.name,
         version: offchainMarketplaceContract.version,
@@ -328,51 +322,6 @@ describe('when getting the trade to accept', () => {
         extra: '0x',
         beneficiary: asset.beneficiary
       }))
-    })
-  })
-})
-
-describe('when getting the latest off-chain marketplace contract', () => {
-  describe('and the chain has a V3 deployment', () => {
-    let chainId: ChainId
-
-    beforeEach(() => {
-      chainId = ChainId.MATIC_AMOY
-    })
-
-    it('should return V3, so new trades settle on the newest deployment', () => {
-      expect(getLatestOffChainMarketplaceContract(chainId).address).toBe(
-        getContract(ContractName.OffChainMarketplaceV3, chainId).address
-      )
-    })
-  })
-
-  describe('and the chain has no V3 deployment', () => {
-    let chainId: ChainId
-
-    beforeEach(() => {
-      chainId = ChainId.MATIC_MAINNET
-    })
-
-    // V3 is testnet-only for now. Falling back rather than throwing is what keeps mainnet listings working.
-    it('should fall back to V2', () => {
-      expect(getLatestOffChainMarketplaceContract(chainId).address).toBe(
-        getContract(ContractName.OffChainMarketplaceV2, chainId).address
-      )
-    })
-  })
-
-  describe('and the chain has no off-chain marketplace at all', () => {
-    let chainId: ChainId
-
-    beforeEach(() => {
-      chainId = ChainId.ARBITRUM_MAINNET
-    })
-
-    it('should throw naming the chain', () => {
-      expect(() => getLatestOffChainMarketplaceContract(chainId)).toThrowError(
-        `No off-chain marketplace contract exists on chain ${chainId}`
-      )
     })
   })
 })
