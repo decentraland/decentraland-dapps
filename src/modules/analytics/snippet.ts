@@ -223,7 +223,9 @@ export function installAnalyticsSnippet() {
     }
 
     analytics._writeKey = writeKey
-    // analytics.js reads the ingestion host from here once the bundle it just injected boots
+    // analytics.js reads the ingestion host from here once the bundle it just injected boots. Applied even
+    // though the analytics middleware already applied it to what it passes: callers that load the snippet
+    // themselves never go through it, and merging the same host twice yields the same options.
     analytics._loadOptions = getAnalyticsLoadOptions(loadOptions)
   }
 

@@ -312,6 +312,46 @@ describe('Analytics Snippet', () => {
     })
   })
 
+  describe('when the snippet is configured with a bare api host, no base path', () => {
+    beforeEach(() => {
+      configureAnalyticsSnippet({ apiHost: 'api.example.com' })
+    })
+
+    it('should deliver the events to it without leaving a trailing slash behind', () => {
+      anyWindow.analytics.load(WRITE_KEY)
+
+      expect(anyWindow.analytics._loadOptions).toEqual({ integrations: { 'Segment.io': { apiHost: 'api.example.com' } } })
+    })
+  })
+
+  describe('when the snippet is configured with an api host and load carries options other than integrations', () => {
+    beforeEach(() => {
+      configureAnalyticsSnippet({ apiHost: API_HOST })
+    })
+
+    it('should keep them, only the segment destination settings are its business', () => {
+      anyWindow.analytics.load(WRITE_KEY, { obfuscate: true, initialPageview: false })
+
+      expect(anyWindow.analytics._loadOptions).toEqual({
+        obfuscate: true,
+        initialPageview: false,
+        integrations: { 'Segment.io': { apiHost: API_HOST } }
+      })
+    })
+  })
+
+  describe('when the load options already went through the api host merge, as the analytics middleware does', () => {
+    beforeEach(() => {
+      configureAnalyticsSnippet({ apiHost: API_HOST })
+    })
+
+    it('should leave them as they are, applying it twice is the same as applying it once', () => {
+      const alreadyMerged = getAnalyticsLoadOptions()
+
+      expect(getAnalyticsLoadOptions(alreadyMerged)).toEqual({ integrations: { 'Segment.io': { apiHost: API_HOST } } })
+    })
+  })
+
   describe('when reading the load options of a snippet configured with an api host', () => {
     beforeEach(() => {
       configureAnalyticsSnippet({ apiHost: API_HOST })
