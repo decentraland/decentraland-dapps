@@ -1,5 +1,5 @@
 import { RootMiddleware } from '../../types'
-import { AnalyticsSnippetOptions, configureAnalyticsSnippet } from './snippet'
+import { AnalyticsSnippetOptions, configureAnalyticsSnippet, getAnalyticsLoadOptions } from './snippet'
 import { getAnalytics, track } from './utils'
 
 const disabledMiddleware: RootMiddleware = _ => next => action => {
@@ -19,7 +19,9 @@ export function createAnalyticsMiddleware(apiKey: string, options?: AnalyticsSni
   }
 
   configureAnalyticsSnippet(options)
-  analytics.load(apiKey)
+  // Passed explicitly because analytics.js may already be on the page, in which case `load` is its own and not the
+  // snippet's, so it reads nothing from the options configured above
+  analytics.load(apiKey, getAnalyticsLoadOptions())
 
   return _ => next => action => {
     track(action)

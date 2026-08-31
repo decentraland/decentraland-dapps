@@ -9,12 +9,31 @@ export type AnalyticsSnippetOptions = {
    * serving both the bundle and the settings needs.
    */
   cdnUrl?: string
+  /**
+   * Host the events are delivered to, without a protocol (`host/basePath`). Defaults to Segment's ingestion endpoint,
+   * which ad blockers drop just like its CDN, so dapps can point it at a first party proxy instead. Example:
+   * `api.example.com/v1`.
+   *
+   * analytics.js prepends the protocol and appends the method path (`/t`, `/i`, `/p`), it takes neither of them here.
+   */
+  apiHost?: string
+}
+
+type SegmentIntegrationSettings = boolean | Record<string, unknown>
+
+export type AnalyticsLoadOptions = {
+  integrations?: Record<string, SegmentIntegrationSettings>
+  [key: string]: unknown
 }
 
 type SegmentSnippet = any[] & Record<string, any>
 
 const GLOBAL_ANALYTICS_KEY = 'analytics'
 const SNIPPET_VERSION = '5.2.0'
+// Name of the analytics.js integration that delivers the events to Segment, the one carrying the ingestion host
+const SEGMENT_IO = 'Segment.io'
+const PROTOCOL_PREFIX = /^[a-z][a-z0-9+.-]*:\/\//i
+const TRAILING_SLASHES = /\/+$/
 
 // Methods stubbed by the snippet, so calls made before analytics.js loads are queued and replayed afterwards
 const METHODS = [
@@ -76,6 +95,38 @@ function resolveUrl(name: string, url: string) {
 }
 
 /**
+ * Normalizes the host the events are delivered to. analytics.js takes it without a protocol (`host/basePath`) and
+ * prepends one, so a value that carries it is accepted and stripped instead of producing `https://https://host`.
+ */
+function resolveApiHost(apiHost: string) {
+  const resolved = resolveUrl('api host', PROTOCOL_PREFIX.test(apiHost) ? apiHost : `https://${apiHost}`)
+
+  return resolved && `${resolved.host}${resolved.pathname}`.replace(TRAILING_SLASHES, '')
+}
+
+/**
+ * Merges the configured first party ingestion host into the given load options, keeping the rest of them and the other
+ * integrations untouched, and returns them as they came when there is none so Segment's own ingestion stays in place.
+ * Exported for dapps that call `analytics.load` themselves instead of going through the analytics middleware.
+ */
+export function getAnalyticsLoadOptions(loadOptions?: AnalyticsLoadOptions): AnalyticsLoadOptions | undefined {
+  if (!options.apiHost) return loadOptions
+
+  const segmentIo = loadOptions?.integrations?.[SEGMENT_IO]
+
+  return {
+    ...loadOptions,
+    integrations: {
+      ...loadOptions?.integrations,
+      [SEGMENT_IO]: {
+        ...(typeof segmentIo === 'object' ? segmentIo : undefined),
+        apiHost: options.apiHost
+      }
+    }
+  }
+}
+
+/**
  * Points the snippet at a different analytics.js bundle. Takes effect on the next `analytics.load` call, so it must
  * run before the analytics middleware is created.
  */
@@ -87,6 +138,7 @@ export function configureAnalyticsSnippet(newOptions: AnalyticsSnippetOptions = 
 
   options.analyticsUrl = analyticsUrl?.href
   options.cdnUrl = cdnUrl ? newOptions.cdnUrl : analyticsUrl?.origin
+  options.apiHost = newOptions.apiHost ? resolveApiHost(newOptions.apiHost) : undefined
 
   const analytics = (window as unknown as { analytics?: SegmentSnippet }).analytics
 
@@ -156,7 +208,7 @@ export function installAnalyticsSnippet() {
     analytics[method] = analytics.factory(method)
   }
 
-  analytics.load = (writeKey: string, loadOptions?: unknown) => {
+  analytics.load = (writeKey: string, loadOptions?: AnalyticsLoadOptions) => {
     const script = document.createElement('script')
     script.type = 'text/javascript'
     script.async = true
@@ -171,7 +223,8 @@ export function installAnalyticsSnippet() {
     }
 
     analytics._writeKey = writeKey
-    analytics._loadOptions = loadOptions
+    // analytics.js reads the ingestion host from here once the bundle it just injected boots
+    analytics._loadOptions = getAnalyticsLoadOptions(loadOptions)
   }
 
   if (options.cdnUrl) {
