@@ -1,6 +1,7 @@
-import { configureAnalyticsSnippet, installAnalyticsSnippet } from './snippet'
+import { configureAnalyticsSnippet, getAnalyticsLoadOptions, installAnalyticsSnippet } from './snippet'
 
 const ANALYTICS_URL = 'https://analytics.example.com/aPath/aBundle.min.js'
+const API_HOST = 'api.example.com/v1'
 const WRITE_KEY = 'aWriteKey'
 
 const anyWindow = window as unknown as { analytics: any }
@@ -203,6 +204,167 @@ describe('Analytics Snippet', () => {
 
     it('should keep the snippet that was already installed and warn about it', () => {
       expect(consoleError).toHaveBeenCalledWith('Segment snippet included twice.')
+    })
+  })
+
+  describe('when the snippet is not configured with an api host', () => {
+    it('should load without options, so the events keep going to segment ingestion', () => {
+      anyWindow.analytics.load(WRITE_KEY)
+
+      expect(anyWindow.analytics._loadOptions).toBeUndefined()
+    })
+
+    it('should keep the load options it was called with untouched', () => {
+      anyWindow.analytics.load(WRITE_KEY, { integrations: { 'Google Analytics': false } })
+
+      expect(anyWindow.analytics._loadOptions).toEqual({ integrations: { 'Google Analytics': false } })
+    })
+  })
+
+  describe('when the snippet is configured with an api host', () => {
+    beforeEach(() => {
+      configureAnalyticsSnippet({ apiHost: API_HOST })
+    })
+
+    it('should deliver the events to it', () => {
+      anyWindow.analytics.load(WRITE_KEY)
+
+      expect(anyWindow.analytics._loadOptions).toEqual({ integrations: { 'Segment.io': { apiHost: API_HOST } } })
+    })
+
+    it('should merge it into the load options it was called with', () => {
+      anyWindow.analytics.load(WRITE_KEY, { integrations: { 'Google Analytics': false } })
+
+      expect(anyWindow.analytics._loadOptions).toEqual({
+        integrations: { 'Google Analytics': false, 'Segment.io': { apiHost: API_HOST } }
+      })
+    })
+  })
+
+  describe('when the snippet is configured with an api host and load already carries settings for the segment destination', () => {
+    beforeEach(() => {
+      configureAnalyticsSnippet({ apiHost: API_HOST })
+    })
+
+    it('should keep the settings it was called with', () => {
+      anyWindow.analytics.load(WRITE_KEY, { integrations: { 'Segment.io': { deliveryStrategy: { strategy: 'batching' } } } })
+
+      expect(anyWindow.analytics._loadOptions).toEqual({
+        integrations: { 'Segment.io': { deliveryStrategy: { strategy: 'batching' }, apiHost: API_HOST } }
+      })
+    })
+
+    it('should replace a boolean toggle rather than spreading it into the settings', () => {
+      anyWindow.analytics.load(WRITE_KEY, { integrations: { 'Segment.io': true } })
+
+      expect(anyWindow.analytics._loadOptions).toEqual({ integrations: { 'Segment.io': { apiHost: API_HOST } } })
+    })
+  })
+
+  describe.each([
+    ['carries a protocol', `https://${API_HOST}`],
+    ['carries a trailing slash', `${API_HOST}/`]
+  ])('when the snippet is configured with an api host that %s', (_case, apiHost) => {
+    beforeEach(() => {
+      configureAnalyticsSnippet({ apiHost })
+    })
+
+    it('should strip it, analytics.js prepends the protocol and appends the method path itself', () => {
+      anyWindow.analytics.load(WRITE_KEY)
+
+      expect(anyWindow.analytics._loadOptions).toEqual({ integrations: { 'Segment.io': { apiHost: API_HOST } } })
+    })
+  })
+
+  describe.each([
+    ['malformed', 'https://['],
+    ['not served over https', 'http://api.example.com/v1']
+  ])('when the snippet is configured with an api host that is %s', (_case, apiHost) => {
+    let consoleWarn: jest.SpyInstance
+
+    beforeEach(() => {
+      consoleWarn = jest.spyOn(console, 'warn').mockImplementation(() => {})
+      configureAnalyticsSnippet({ apiHost })
+    })
+
+    afterEach(() => {
+      consoleWarn.mockRestore()
+    })
+
+    it('should warn about it and leave the events going to segment ingestion', () => {
+      anyWindow.analytics.load(WRITE_KEY)
+
+      expect(consoleWarn).toHaveBeenCalled()
+      expect(anyWindow.analytics._loadOptions).toBeUndefined()
+    })
+  })
+
+  describe('when the snippet is reconfigured without an api host', () => {
+    beforeEach(() => {
+      configureAnalyticsSnippet({ apiHost: API_HOST })
+      configureAnalyticsSnippet()
+    })
+
+    it('should stop delivering the events to the previous api host', () => {
+      anyWindow.analytics.load(WRITE_KEY)
+
+      expect(anyWindow.analytics._loadOptions).toBeUndefined()
+    })
+  })
+
+  describe('when the snippet is configured with a bare api host, no base path', () => {
+    beforeEach(() => {
+      configureAnalyticsSnippet({ apiHost: 'api.example.com' })
+    })
+
+    it('should deliver the events to it without leaving a trailing slash behind', () => {
+      anyWindow.analytics.load(WRITE_KEY)
+
+      expect(anyWindow.analytics._loadOptions).toEqual({ integrations: { 'Segment.io': { apiHost: 'api.example.com' } } })
+    })
+  })
+
+  describe('when the snippet is configured with an api host and load carries options other than integrations', () => {
+    beforeEach(() => {
+      configureAnalyticsSnippet({ apiHost: API_HOST })
+    })
+
+    it('should keep them, only the segment destination settings are its business', () => {
+      anyWindow.analytics.load(WRITE_KEY, { obfuscate: true, initialPageview: false })
+
+      expect(anyWindow.analytics._loadOptions).toEqual({
+        obfuscate: true,
+        initialPageview: false,
+        integrations: { 'Segment.io': { apiHost: API_HOST } }
+      })
+    })
+  })
+
+  describe('when the load options already went through the api host merge, as the analytics middleware does', () => {
+    beforeEach(() => {
+      configureAnalyticsSnippet({ apiHost: API_HOST })
+    })
+
+    it('should leave them as they are, applying it twice is the same as applying it once', () => {
+      const alreadyMerged = getAnalyticsLoadOptions()
+
+      expect(getAnalyticsLoadOptions(alreadyMerged)).toEqual({ integrations: { 'Segment.io': { apiHost: API_HOST } } })
+    })
+  })
+
+  describe('when reading the load options of a snippet configured with an api host', () => {
+    beforeEach(() => {
+      configureAnalyticsSnippet({ apiHost: API_HOST })
+    })
+
+    it('should return the integrations settings analytics.js delivers the events with', () => {
+      expect(getAnalyticsLoadOptions()).toEqual({ integrations: { 'Segment.io': { apiHost: API_HOST } } })
+    })
+  })
+
+  describe('when reading the load options of a snippet configured without an api host', () => {
+    it('should return nothing, so a caller passing them along changes no default', () => {
+      expect(getAnalyticsLoadOptions()).toBeUndefined()
     })
   })
 })

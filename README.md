@@ -895,7 +895,18 @@ const analyticsMiddleware = createAnalyticsMiddleware('SEGMENT WRITE KEY', {
 
 `analytics.js` fetches its settings from the origin of that URL. Pass `cdnUrl` as well when the proxy serves them from a different host.
 
-Both decide where a third party script is loaded from, so they are meant to be trusted URLs that come from the build configuration of the dapp, never from user input. Values that are not valid URLs, or that are not served over HTTPS unless they belong to the dapp's own origin, are ignored with a warning and the bundle keeps loading from Segment's CDN.
+The events themselves keep being delivered to Segment's ingestion endpoint, which the same filter lists drop. Pass `apiHost` to deliver them through the proxy too:
+
+```ts
+const analyticsMiddleware = createAnalyticsMiddleware('SEGMENT WRITE KEY', {
+  analyticsUrl: 'https://analytics.example.org/aPath/aBundle.min.js',
+  apiHost: 'api.example.org/v1'
+})
+```
+
+`apiHost` takes no protocol: `analytics.js` prepends it and appends the method path (`/t`, `/i`, `/p`), so the value is shaped `host/basePath`. A value that carries a protocol is accepted and stripped.
+
+The three of them decide where a third party script is loaded from and where every event is delivered, so they are meant to be trusted values that come from the build configuration of the dapp, never from user input. Values that are not valid URLs, or that are not served over HTTPS unless they belong to the dapp's own origin, are ignored with a warning and analytics degrades to Segment's own CDN and ingestion.
 
 **Saga**:
 
