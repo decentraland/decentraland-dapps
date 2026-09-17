@@ -49,8 +49,8 @@ export const OFFCHAIN_MARKETPLACE_TYPES: Record<string, TypedDataField[]> = {
  * Off-chain marketplace versions, newest first.
  *
  * The EIP-712 domain names its verifying contract, so the version a trade is signed against is part of
- * what the signer signed. Trades should settle on the newest deployment, but V3 is testnet-only for now,
- * so mainnet has to keep using V2 rather than fail.
+ * what the signer signed. Trades settle on the newest deployment, which is V3 on every chain the package
+ * knows; the list stays ordered so a chain that receives an older version first still resolves.
  */
 const OFF_CHAIN_MARKETPLACE_CONTRACT_NAMES = [ContractName.OffChainMarketplaceV3, ContractName.OffChainMarketplaceV2]
 

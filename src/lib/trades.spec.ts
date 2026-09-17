@@ -339,23 +339,22 @@ describe('when getting the latest off-chain marketplace contract', () => {
     })
 
     it('should return V3, so new trades settle on the newest deployment', () => {
-      expect(getLatestOffChainMarketplaceContract(chainId).address).toBe(
-        getContract(ContractName.OffChainMarketplaceV3, chainId).address
-      )
+      expect(getLatestOffChainMarketplaceContract(chainId).address).toBe(getContract(ContractName.OffChainMarketplaceV3, chainId).address)
     })
   })
 
-  describe('and the chain has no V3 deployment', () => {
-    let chainId: ChainId
+  describe('and the chain is a mainnet, where V2 is still deployed beside V3', () => {
+    let chainIds: ChainId[]
 
     beforeEach(() => {
-      chainId = ChainId.MATIC_MAINNET
+      chainIds = [ChainId.ETHEREUM_MAINNET, ChainId.MATIC_MAINNET]
     })
 
-    // V3 is testnet-only for now. Falling back rather than throwing is what keeps mainnet listings working.
-    it('should fall back to V2', () => {
-      expect(getLatestOffChainMarketplaceContract(chainId).address).toBe(
-        getContract(ContractName.OffChainMarketplaceV2, chainId).address
+    // Both versions are live during the rollout, and picking the older one would sign trades the
+    // marketplace no longer settles.
+    it('should still return V3 rather than the version that came before it', () => {
+      expect(chainIds.map(chainId => getLatestOffChainMarketplaceContract(chainId).address)).toEqual(
+        chainIds.map(chainId => getContract(ContractName.OffChainMarketplaceV3, chainId).address)
       )
     })
   })
