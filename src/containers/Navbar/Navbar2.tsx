@@ -84,9 +84,21 @@ const Navbar2: React.FC<NavbarProps2> = ({
     }, 300)
   }, [analytics, onSignOut])
 
+  /**
+   * Legacy MANA-denominated credits. Left as an object at a ZERO balance this renders a chip announcing a
+   * programme that is no longer issued, with a tooltip reading "Expiring in 0 days (1 Credit = 1 MANA in
+   * value)" — an expiry computed from the `expiresAt: 0` fallback below, because there is no credit to take
+   * a date from. The navbar treats the object as the "has credits" signal (`creditsBalance && ...`), and
+   * the client answers `{ credits: [], totalCredits: 0 }` both for a wallet with none and for a failed
+   * request, so every signed-in user got the chip.
+   *
+   * Undefined at zero, therefore: the chip belongs to wallets that actually hold some and can still spend
+   * them. This is deliberately not `withCredits`, which the apps use to opt out of BOTH balances — the USD
+   * one below is a live programme and says something true at zero.
+   */
   const creditsBalance = useMemo(
     () =>
-      credits
+      credits && Number(credits.totalCredits) > 0
         ? {
             balance: Number(formatEther(credits.totalCredits.toString() ?? 0)),
             expiresAt: credits.credits[0]?.expiresAt ? Number(credits.credits[0].expiresAt * 1000) : 0
