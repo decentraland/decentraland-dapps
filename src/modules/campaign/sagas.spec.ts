@@ -61,7 +61,12 @@ describe('when handling the fetch campaign request', () => {
       name: mockCampaignEntry.fields.name,
       tabName: mockCampaignEntry.fields.marketplaceTabName,
       mainTag: mockCampaignEntry.fields.mainTag?.['en-US'],
-      additionalTags: mockCampaignEntry.fields.additionalTags?.['en-US']
+      additionalTags: mockCampaignEntry.fields.additionalTags?.['en-US'],
+      // The mock entry names neither, and an EMPTY list is the answer rather than `undefined`: "this
+      // campaign names no items" is a fact the selectors can act on, where absent would make every reader
+      // re-decide what nothing means.
+      itemIds: [],
+      collectionIds: []
     }
   })
 
@@ -96,11 +101,71 @@ describe('when handling the fetch campaign request', () => {
             mockResponse.name,
             mockResponse.tabName,
             mockResponse.mainTag,
-            mockResponse.additionalTags
+            mockResponse.additionalTags,
+            mockResponse.itemIds,
+            mockResponse.collectionIds
           )
         )
         .dispatch(fetchCampaignRequest())
         .run(1000)
+    })
+  })
+
+  describe('when the campaign names items and collections one by one', () => {
+    // The fields are not in `CampaignFields`, so this is the test that would catch them being dropped on
+    // the way through — which is exactly what used to happen, leaving a curated event with nothing to show.
+    const A = `0x${'a'.repeat(40)}`
+    const B = `0x${'b'.repeat(40)}`
+    const C = `0x${'c'.repeat(40)}`
+    const fields = mockCampaignEntry.fields as typeof mockCampaignEntry.fields & Record<string, unknown>
+
+    beforeEach(() => {
+      fields.itemIds = { 'en-US': `${A}-0, ${B}-007` }
+      fields.collectionIds = { 'en-US': C }
+    })
+
+    afterEach(() => {
+      delete fields.itemIds
+      delete fields.collectionIds
+    })
+
+    it('should carry them into the success action, parsed and de-duplicated', () => {
+      return expectSaga(campaignSagas, mockClient, mockConfig)
+        .provide([
+          [
+            matchers.call([mockClient, 'fetchEntryAllLocales'], mockConfig.space, mockConfig.environment, mockConfig.id),
+            Promise.resolve(mockAdminEntry)
+          ],
+          [
+            matchers.call([mockClient, 'fetchEntriesFromEntryFields'], mockConfig.space, mockConfig.environment, mockAdminEntry.fields),
+            Promise.resolve({
+              [mockCampaignEntry.sys.id]: mockCampaignEntry,
+              [mockHomepageBannerEntry.sys.id]: mockHomepageBannerEntry
+            })
+          ],
+          [
+            matchers.call([mockClient, 'fetchAssetsFromEntryFields'], mockConfig.space, mockConfig.environment, [
+              mockAdminEntry.fields,
+              mockCampaignEntry.fields,
+              mockHomepageBannerEntry.fields
+            ]),
+            Promise.resolve(mockResponse.assets)
+          ]
+        ])
+        .put(
+          fetchCampaignSuccess(
+            mockResponse.banners,
+            mockResponse.assets,
+            mockResponse.name,
+            mockResponse.tabName,
+            mockResponse.mainTag,
+            mockResponse.additionalTags,
+            [`${A}-0`, `${B}-7`],
+            [C]
+          )
+        )
+        .dispatch(fetchCampaignRequest())
+        .run()
     })
   })
 

@@ -14,6 +14,14 @@ export const isLoading = (state: any): boolean => isLoadingType(getLoading(state
 export const getMainTag = (state: any): string | undefined => getData(state)?.mainTag
 export const getCampaignName = (state: any): LocalizedField<string> | null => getData(state)?.name || null
 export const getAdditionalTags = (state: any): string[] => getData(state)?.additionalTags ?? []
+/**
+ * The items the campaign names one by one. EMPTY means it names none, never "every item": a caller that
+ * selects on this has to union it with whatever the tags and collections resolve to, and show nothing when
+ * all three are empty.
+ */
+export const getItemIds = (state: any): string[] => getData(state)?.itemIds ?? []
+/** The collections the campaign names one by one, with the same reading as {@link getItemIds}. */
+export const getCollectionIds = (state: any): string[] => getData(state)?.collectionIds ?? []
 export const getAllTags = (state: any): string[] => {
   const mainTag = getMainTag(state)
   const additionalTags = getAdditionalTags(state)
