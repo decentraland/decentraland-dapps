@@ -13,6 +13,7 @@ import {
 } from '@dcl/schemas'
 import { isErrorWithMessage } from '../../lib'
 import { FETCH_CAMPAIGN_REQUEST, FetchCampaignRequestAction, fetchCampaignFailure, fetchCampaignSuccess } from './actions'
+import { CuratedSelectionFields, parseCollectionIds, parseItemIds } from './utils'
 import { ContentfulClient } from './ContentfulClient'
 
 const BANNER_CONTENT_TYPE = 'banner'
@@ -91,7 +92,14 @@ export function* campaignSagas(
           campaignFields?.name,
           campaignFields?.marketplaceTabName,
           campaignFields?.mainTag?.[ContentfulLocale.enUS],
-          campaignFields?.additionalTags?.[ContentfulLocale.enUS]
+          campaignFields?.additionalTags?.[ContentfulLocale.enUS],
+          // Read off the entry rather than through `CampaignFields`, which does not type them: both were
+          // added to the content type after @dcl/schemas shipped that type. Parsed here so every consumer
+          // gets the same list instead of each one splitting the editor's text field its own way.
+          parseItemIds((campaignFields as (CampaignFields & CuratedSelectionFields) | undefined)?.itemIds?.[ContentfulLocale.enUS]),
+          parseCollectionIds(
+            (campaignFields as (CampaignFields & CuratedSelectionFields) | undefined)?.collectionIds?.[ContentfulLocale.enUS]
+          )
         )
       )
     } catch (error) {

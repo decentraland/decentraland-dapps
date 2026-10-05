@@ -9,6 +9,10 @@ export type CampaignState = {
     tabName?: LocalizedField<string>
     mainTag?: string
     additionalTags?: string[]
+    /** Items the campaign names ONE BY ONE, on top of whatever its tags and collections resolve to. */
+    itemIds?: string[]
+    /** Collections the campaign names one by one, for the ones nobody can tag in the builder. */
+    collectionIds?: string[]
     banners: Record<string, BannerFields & { id: string }>
     assets: Record<string, ContentfulAsset>
   } | null

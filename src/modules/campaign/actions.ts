@@ -13,13 +13,17 @@ export const fetchCampaignSuccess = (
   name?: LocalizedField<string>,
   tabName?: LocalizedField<string>,
   mainTag?: string,
-  additionalTags?: string[]
+  additionalTags?: string[],
+  itemIds?: string[],
+  collectionIds?: string[]
 ) =>
   action(FETCH_CAMPAIGN_SUCCESS, {
     name,
     tabName,
     mainTag,
     additionalTags,
+    itemIds,
+    collectionIds,
     banners,
     assets
   })

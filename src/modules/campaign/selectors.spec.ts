@@ -15,6 +15,8 @@ import {
   getBannerAssets,
   getCampaignName,
   getAdditionalTags,
+  getItemIds,
+  getCollectionIds,
   getContentfulNormalizedLocale
 } from './selectors'
 import { CampaignState } from './types'
@@ -228,6 +230,56 @@ describe('Campaign selectors', () => {
 
       it('should return an empty array', () => {
         expect(getAdditionalTags(mockState)).toEqual([])
+      })
+    })
+  })
+
+  describe('when getting the items a campaign names one by one', () => {
+    describe('and the campaign names some', () => {
+      beforeEach(() => {
+        mockState.campaign.data!.itemIds = ['0xaaa-1', '0xbbb-2']
+      })
+
+      it('should return them', () => {
+        expect(getItemIds(mockState)).toEqual(['0xaaa-1', '0xbbb-2'])
+      })
+    })
+
+    describe('and the campaign names none', () => {
+      it('should return an empty array, which a caller must read as "names none" and not as "every item"', () => {
+        expect(getItemIds(mockState)).toEqual([])
+      })
+    })
+
+    describe('and there is no data at all', () => {
+      beforeEach(() => {
+        mockState.campaign.data = null
+      })
+
+      it('should return an empty array', () => {
+        expect(getItemIds(mockState)).toEqual([])
+      })
+    })
+  })
+
+  describe('when getting the collections a campaign names one by one', () => {
+    describe('and the campaign names some', () => {
+      beforeEach(() => {
+        mockState.campaign.data!.collectionIds = ['0xaaa']
+      })
+
+      it('should return them', () => {
+        expect(getCollectionIds(mockState)).toEqual(['0xaaa'])
+      })
+    })
+
+    describe('and there is no data at all', () => {
+      beforeEach(() => {
+        mockState.campaign.data = null
+      })
+
+      it('should return an empty array', () => {
+        expect(getCollectionIds(mockState)).toEqual([])
       })
     })
   })
