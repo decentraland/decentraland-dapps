@@ -54,6 +54,13 @@ describe('when the field does not hold a string at all', () => {
     }
   })
 
+  it('should read the same items whether the text is one string or one element of a list', () => {
+    const text = `${CONTRACT_A}-1, ${CONTRACT_B}-2`
+
+    expect(parseItemIds([text])).toEqual(parseItemIds(text))
+    expect(parseItemIds([text])).toEqual([`${CONTRACT_A}-1`, `${CONTRACT_B}-2`])
+  })
+
   it('should skip non-string entries inside an array and keep the rest', () => {
     expect(parseItemIds([`${CONTRACT_A}-1`, 7, null] as never)).toEqual([`${CONTRACT_A}-1`])
   })

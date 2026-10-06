@@ -28,11 +28,17 @@ const SEPARATORS = /[\s,;]+/
  * whole campaign to a field that changed shape is the opposite of what the dropping below is for.
  */
 const entries = (value: string | string[] | undefined): string[] => {
-  const list = Array.isArray(value) ? value : typeof value === 'string' ? value.split(SEPARATORS) : []
-  return list
-    .filter((entry): entry is string => typeof entry === 'string')
-    .map(entry => entry.trim().toLowerCase())
-    .filter(Boolean)
+  const list = Array.isArray(value) ? value : typeof value === 'string' ? [value] : []
+  return (
+    list
+      .filter((entry): entry is string => typeof entry === 'string')
+      // Split every element, not just a lone string: an editor who converts the field to a list is as likely
+      // to paste the whole comma-separated list into one element as to fill one per line, and the same text
+      // has to name the same items either way.
+      .flatMap(entry => entry.split(SEPARATORS))
+      .map(entry => entry.trim().toLowerCase())
+      .filter(Boolean)
+  )
 }
 
 /**
