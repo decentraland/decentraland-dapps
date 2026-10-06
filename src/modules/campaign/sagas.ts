@@ -81,8 +81,11 @@ export function* campaignSagas(
         }
         return false
       }) as LocalizedField<SysLink<'Entry'>> | undefined
+      // `CuratedSelectionFields` is widened in once, here: `itemIds` and `collectionIds` were added to the
+      // content type after @dcl/schemas shipped `CampaignFields`, so they are read off the entry and left
+      // to the parsers to validate.
       const campaignFields = campaignField?.[ContentfulLocale.enUS].sys.id
-        ? (entries[campaignField?.[ContentfulLocale.enUS].sys.id].fields as CampaignFields)
+        ? (entries[campaignField?.[ContentfulLocale.enUS].sys.id].fields as CampaignFields & CuratedSelectionFields)
         : undefined
 
       yield put(
@@ -93,13 +96,10 @@ export function* campaignSagas(
           campaignFields?.marketplaceTabName,
           campaignFields?.mainTag?.[ContentfulLocale.enUS],
           campaignFields?.additionalTags?.[ContentfulLocale.enUS],
-          // Read off the entry rather than through `CampaignFields`, which does not type them: both were
-          // added to the content type after @dcl/schemas shipped that type. Parsed here so every consumer
-          // gets the same list instead of each one splitting the editor's text field its own way.
-          parseItemIds((campaignFields as (CampaignFields & CuratedSelectionFields) | undefined)?.itemIds?.[ContentfulLocale.enUS]),
-          parseCollectionIds(
-            (campaignFields as (CampaignFields & CuratedSelectionFields) | undefined)?.collectionIds?.[ContentfulLocale.enUS]
-          )
+          // Parsed here so every consumer gets the same list, instead of each one splitting the editor's
+          // text field its own way and disagreeing about what counts.
+          parseItemIds(campaignFields?.itemIds?.[ContentfulLocale.enUS]),
+          parseCollectionIds(campaignFields?.collectionIds?.[ContentfulLocale.enUS])
         )
       )
     } catch (error) {
