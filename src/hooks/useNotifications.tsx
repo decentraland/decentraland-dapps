@@ -6,7 +6,10 @@ import { AuthIdentity } from 'decentraland-crypto-fetch'
 import { NOTIFICATIONS_QUERY_INTERVAL } from '../containers/Navbar/constants'
 import Profile from '../containers/Profile'
 import { getBaseUrl } from '../lib'
+import { ClientError } from '../lib/ClientError'
 import { NotificationsAPI, checkIsOnboarding, setOnboardingDone } from '../modules/notifications'
+
+const isUnauthorizedError = (error: unknown) => error instanceof ClientError && (error.status === 401 || error.status === 403)
 
 const useNotifications = (identity: AuthIdentity | undefined, isNotificationsEnabled: boolean) => {
   const [{ isLoading, notifications }, setUserNotifications] = useState<{
@@ -60,11 +63,23 @@ const useNotifications = (identity: AuthIdentity | undefined, isNotificationsEna
           isLoading: true
         }))
 
-        fetchAndUpdateNotifications(notificationsClient)
+        // A failed poll must not escape as an unhandled rejection: nothing awaits it, so it would
+        // only reach the error tracker. A 401/403 means the server no longer accepts this identity
+        // (an expired session on a page left open), and asking again every minute won't change
+        // that, so polling stops until a new identity re-runs this effect. The catch always runs after
+        // `interval` below is assigned, since the request settles asynchronously.
+        const pollNotifications = () =>
+          fetchAndUpdateNotifications(notificationsClient).catch((error: unknown) => {
+            setUserNotifications(prevState => ({ ...prevState, isLoading: false }))
+            if (isUnauthorizedError(error)) {
+              clearInterval(interval)
+              return
+            }
+            console.warn('Error fetching notifications:', error)
+          })
 
-        const interval = setInterval(() => {
-          fetchAndUpdateNotifications(notificationsClient)
-        }, NOTIFICATIONS_QUERY_INTERVAL)
+        pollNotifications()
+        const interval = setInterval(pollNotifications, NOTIFICATIONS_QUERY_INTERVAL)
         return () => clearInterval(interval)
       }
     } else {
