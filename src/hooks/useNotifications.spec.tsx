@@ -57,7 +57,7 @@ describe('useNotifications', () => {
       getNotificationsSpy.mockRejectedValue(new ClientError('This endpoint requires a signed fetch request. See ADR-44.', 401, null))
     })
 
-    it('should stop loading without logging the failure', async () => {
+    it('should stop loading without warning about the failure', async () => {
       const { result } = renderHook(() => useNotifications(identity, true))
       await flushPromises()
 
