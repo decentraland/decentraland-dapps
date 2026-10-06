@@ -117,17 +117,16 @@ describe('when handling the fetch campaign request', () => {
     const A = `0x${'a'.repeat(40)}`
     const B = `0x${'b'.repeat(40)}`
     const C = `0x${'c'.repeat(40)}`
-    const fields = mockCampaignEntry.fields as typeof mockCampaignEntry.fields & Record<string, unknown>
-
-    beforeEach(() => {
-      fields.itemIds = { 'en-US': `${A}-0, ${B}-007` }
-      fields.collectionIds = { 'en-US': C }
-    })
-
-    afterEach(() => {
-      delete fields.itemIds
-      delete fields.collectionIds
-    })
+    // A LOCAL copy rather than writing onto the module-level fixture: a test that reaches into shared state
+    // is one `afterEach` away from leaking into whatever runs next.
+    const curatedEntry = {
+      ...mockCampaignEntry,
+      fields: {
+        ...mockCampaignEntry.fields,
+        itemIds: { 'en-US': `${A}-0, ${B}-007` },
+        collectionIds: { 'en-US': C }
+      }
+    } as typeof mockCampaignEntry
 
     it('should carry them into the success action, parsed and de-duplicated', () => {
       return expectSaga(campaignSagas, mockClient, mockConfig)
@@ -139,14 +138,14 @@ describe('when handling the fetch campaign request', () => {
           [
             matchers.call([mockClient, 'fetchEntriesFromEntryFields'], mockConfig.space, mockConfig.environment, mockAdminEntry.fields),
             Promise.resolve({
-              [mockCampaignEntry.sys.id]: mockCampaignEntry,
+              [curatedEntry.sys.id]: curatedEntry,
               [mockHomepageBannerEntry.sys.id]: mockHomepageBannerEntry
             })
           ],
           [
             matchers.call([mockClient, 'fetchAssetsFromEntryFields'], mockConfig.space, mockConfig.environment, [
               mockAdminEntry.fields,
-              mockCampaignEntry.fields,
+              curatedEntry.fields,
               mockHomepageBannerEntry.fields
             ]),
             Promise.resolve(mockResponse.assets)
@@ -162,6 +161,58 @@ describe('when handling the fetch campaign request', () => {
             mockResponse.additionalTags,
             [`${A}-0`, `${B}-7`],
             [C]
+          )
+        )
+        .dispatch(fetchCampaignRequest())
+        .run()
+    })
+  })
+
+  describe('when a curated field arrives in a shape the type does not promise', () => {
+    // The whole point of the hardening: the content type can be changed in the Contentful space with no
+    // deploy here, and a campaign must survive it rather than take its banners and tags down too.
+    const oddEntry = {
+      ...mockCampaignEntry,
+      fields: {
+        ...mockCampaignEntry.fields,
+        itemIds: { 'en-US': [`0x${'a'.repeat(40)}-1`] },
+        collectionIds: { 'en-US': 42 }
+      }
+    } as typeof mockCampaignEntry
+
+    it('should still succeed, reading what it can and naming nothing for what it cannot', () => {
+      return expectSaga(campaignSagas, mockClient, mockConfig)
+        .provide([
+          [
+            matchers.call([mockClient, 'fetchEntryAllLocales'], mockConfig.space, mockConfig.environment, mockConfig.id),
+            Promise.resolve(mockAdminEntry)
+          ],
+          [
+            matchers.call([mockClient, 'fetchEntriesFromEntryFields'], mockConfig.space, mockConfig.environment, mockAdminEntry.fields),
+            Promise.resolve({
+              [oddEntry.sys.id]: oddEntry,
+              [mockHomepageBannerEntry.sys.id]: mockHomepageBannerEntry
+            })
+          ],
+          [
+            matchers.call([mockClient, 'fetchAssetsFromEntryFields'], mockConfig.space, mockConfig.environment, [
+              mockAdminEntry.fields,
+              oddEntry.fields,
+              mockHomepageBannerEntry.fields
+            ]),
+            Promise.resolve(mockResponse.assets)
+          ]
+        ])
+        .put(
+          fetchCampaignSuccess(
+            mockResponse.banners,
+            mockResponse.assets,
+            mockResponse.name,
+            mockResponse.tabName,
+            mockResponse.mainTag,
+            mockResponse.additionalTags,
+            [`0x${'a'.repeat(40)}-1`],
+            []
           )
         )
         .dispatch(fetchCampaignRequest())

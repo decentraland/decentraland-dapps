@@ -37,6 +37,48 @@ describe('when parsing the items a campaign names one by one', () => {
   })
 })
 
+describe('when the field does not hold a string at all', () => {
+  // The type on the way in is a cast. Turning the content type into a Symbol LIST in the space would hand
+  // these an array with no deploy here, and throwing would cost the whole campaign, not just this field.
+  it('should read an array as the list it is', () => {
+    expect(parseItemIds([`${CONTRACT_A}-1`, `${CONTRACT_B}-2`])).toEqual([`${CONTRACT_A}-1`, `${CONTRACT_B}-2`])
+    expect(parseCollectionIds([CONTRACT_A, CONTRACT_B])).toEqual([CONTRACT_A, CONTRACT_B])
+  })
+
+  it('should name nothing for a shape it cannot read, rather than throw', () => {
+    const unreadable = [42, { nested: true }, null, true]
+    for (const value of unreadable) {
+      expect(() => parseItemIds(value as never)).not.toThrow()
+      expect(parseItemIds(value as never)).toEqual([])
+      expect(parseCollectionIds(value as never)).toEqual([])
+    }
+  })
+
+  it('should read the same items whether the text is one string or one element of a list', () => {
+    const text = `${CONTRACT_A}-1, ${CONTRACT_B}-2`
+
+    expect(parseItemIds([text])).toEqual(parseItemIds(text))
+    expect(parseItemIds([text])).toEqual([`${CONTRACT_A}-1`, `${CONTRACT_B}-2`])
+  })
+
+  it('should skip non-string entries inside an array and keep the rest', () => {
+    expect(parseItemIds([`${CONTRACT_A}-1`, 7, null] as never)).toEqual([`${CONTRACT_A}-1`])
+  })
+})
+
+describe('when an item id is longer than a number can hold', () => {
+  it('should keep it exactly, rather than rounding it into a different item', () => {
+    // `Number('9007199254740993')` gives …92, which is another item entirely.
+    expect(parseItemIds(`${CONTRACT_A}-9007199254740993`)).toEqual([`${CONTRACT_A}-9007199254740993`])
+  })
+
+  it('should still strip leading zeros', () => {
+    expect(parseItemIds(`${CONTRACT_A}-000123`)).toEqual([`${CONTRACT_A}-123`])
+    expect(parseItemIds(`${CONTRACT_A}-0`)).toEqual([`${CONTRACT_A}-0`])
+    expect(parseItemIds(`${CONTRACT_A}-000`)).toEqual([`${CONTRACT_A}-0`])
+  })
+})
+
 describe('when parsing the collections a campaign names one by one', () => {
   describe('and the field is empty', () => {
     it('should name no collections', () => {
