@@ -26,6 +26,7 @@
     "@0xsequence/multicall": "0.25.1",
     "@0xsequence/relayer": "0.25.1",
     "@dcl/single-sign-on-client": "^0.1.0",
+    "@ensdomains/ethers-patch-v5": "0.0.5",
     "@transak/transak-sdk": "4.0.0",
     "@wert-io/widget-initializer": "6.8.0",
     "date-fns": "1.30.1",

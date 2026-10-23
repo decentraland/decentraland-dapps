@@ -1,32 +1,15 @@
-import { AddressZero } from '@ethersproject/constants'
-import { Contract } from '@ethersproject/contracts'
-import { namehash } from '@ethersproject/hash'
-import { Web3Provider } from '@ethersproject/providers'
-import type { Provider } from '@ethersproject/providers'
-import { ChainId } from '@dcl/schemas'
-import { getConnectedProvider } from '../../lib/eth'
+// Adds Universal Resolver (ENSv2) support to ethers v5's provider.resolveName()
+import '@ensdomains/ethers-patch-v5'
+import { Network } from '@dcl/schemas/dist/dapps/network'
+import { getChainIdByNetwork, getNetworkWeb3Provider } from '../../lib/eth'
 import { getAnalytics } from '../../modules/analytics/utils'
 
-function getResolverContract(contractAddress: string, provider: Provider) {
-  return new Contract(contractAddress, ['function addr(bytes32 node) public view virtual override returns (address payable)'], provider)
-}
-
 export async function resolveName(name: string) {
-  const nodehash = namehash(name)
-  const connectedProvider = await getConnectedProvider()
-  if (!connectedProvider) {
-    throw new Error("Couldn't get connected provider to resolve name")
-  }
-
-  const provider = new Web3Provider(connectedProvider)
-  const { chainId } = await provider.getNetwork()
-
-  const resolverAddress =
-    chainId === ChainId.ETHEREUM_SEPOLIA ? '0x8FADE66B79cC9f707aB26799354482EB93a5B7dD' : '0x4976fb03c32e5b8cfe2b6ccb31c09ba78ebaba41'
-
-  const resolverContract = getResolverContract(resolverAddress, provider)
-  const resolvedAddress: string = await resolverContract.addr(nodehash)
-  if (resolvedAddress !== AddressZero) {
+  // ENS lives on Ethereum, so resolve against the app's Ethereum chain regardless of the network the wallet is connected to.
+  // The provider resolves the name's current resolver instead of assuming a fixed one, which could return a stale address.
+  const provider = await getNetworkWeb3Provider(getChainIdByNetwork(Network.ETHEREUM))
+  const resolvedAddress = await provider.resolveName(name)
+  if (resolvedAddress) {
     const analytics = getAnalytics()
     if (analytics) {
       analytics.track('Resolve Address from Name', {
