@@ -5,15 +5,14 @@ import { dnsEncode, namehash } from '@ethersproject/hash'
 import { Web3Provider } from '@ethersproject/providers'
 import type { TransactionRequest } from '@ethersproject/providers'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
-import { Network } from '@dcl/schemas/dist/dapps/network'
-import { getChainIdByNetwork, getNetworkWeb3Provider } from '../../lib/eth'
+import { _getAppChainId, getNetworkWeb3Provider } from '../../lib/eth'
 import { getAnalytics } from '../../modules/analytics/utils'
 import { UNIVERSAL_RESOLVER_ADDRESS, resolveName } from './utils'
 
 jest.mock('../../lib/eth')
 jest.mock('../../modules/analytics/utils')
 
-const mockGetChainIdByNetwork = getChainIdByNetwork as jest.MockedFunction<typeof getChainIdByNetwork>
+const mockGetAppChainId = _getAppChainId as jest.MockedFunction<typeof _getAppChainId>
 const mockGetNetworkWeb3Provider = getNetworkWeb3Provider as jest.MockedFunction<typeof getNetworkWeb3Provider>
 const mockGetAnalytics = getAnalytics as jest.MockedFunction<typeof getAnalytics>
 
@@ -48,7 +47,7 @@ let track: jest.Mock
 beforeEach(() => {
   call = jest.fn()
   track = jest.fn()
-  mockGetChainIdByNetwork.mockReturnValue(ChainId.ETHEREUM_MAINNET)
+  mockGetAppChainId.mockReturnValue(ChainId.ETHEREUM_MAINNET)
   mockGetNetworkWeb3Provider.mockResolvedValue({ call } as unknown as Web3Provider)
   mockGetAnalytics.mockReturnValue({ track } as unknown as ReturnType<typeof getAnalytics>)
 })
@@ -59,12 +58,12 @@ afterEach(() => {
 
 describe('when resolving a name', () => {
   it('should resolve it against the app Ethereum chain regardless of the connected network', async () => {
-    mockGetChainIdByNetwork.mockReturnValue(ChainId.ETHEREUM_SEPOLIA)
+    mockGetAppChainId.mockReturnValue(ChainId.ETHEREUM_SEPOLIA)
     call.mockResolvedValueOnce(encodeRequireResolverResult(false)).mockResolvedValueOnce(encodeAddrResult(currentAddress))
 
     await resolveName(name)
 
-    expect(mockGetChainIdByNetwork).toHaveBeenCalledWith(Network.ETHEREUM)
+    expect(mockGetAppChainId).toHaveBeenCalledWith()
     expect(mockGetNetworkWeb3Provider).toHaveBeenCalledWith(ChainId.ETHEREUM_SEPOLIA)
   })
 

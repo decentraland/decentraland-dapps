@@ -9,7 +9,21 @@ import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 
 // ENS entry points exist on Ethereum, even when the app operates on Polygon.
 export function getENSChainId(chainId: ChainId): ChainId {
-  return chainId === ChainId.ETHEREUM_SEPOLIA || chainId === ChainId.MATIC_AMOY ? ChainId.ETHEREUM_SEPOLIA : ChainId.ETHEREUM_MAINNET
+  switch (chainId) {
+    case ChainId.ETHEREUM_SEPOLIA:
+    case ChainId.MATIC_AMOY:
+      return ChainId.ETHEREUM_SEPOLIA
+    case ChainId.ETHEREUM_MAINNET:
+    case ChainId.MATIC_MAINNET:
+    case ChainId.OPTIMISM_MAINNET:
+    case ChainId.ARBITRUM_MAINNET:
+    case ChainId.FANTOM_MAINNET:
+    case ChainId.AVALANCHE_MAINNET:
+    case ChainId.BSC_MAINNET:
+      return ChainId.ETHEREUM_MAINNET
+    default:
+      throw new Error(`Unsupported ENS chain: ${chainId}`)
+  }
 }
 
 // ENS Universal Resolver proxy, deployed at the same address on Ethereum mainnet and Sepolia
@@ -46,6 +60,8 @@ export function encodeENSName(name: string) {
     node = keccak256(concat([node, keccak256(label)]))
   }
   const encodedLabels = labels.map(label => {
+    // The canonical Universal Resolver hashes bracketed labelhashes as literal labels;
+    // substituting one here would discover a different node from the namehash above.
     if (label.length > 255) {
       throw new Error('ENS label exceeds 255 UTF-8 bytes')
     }

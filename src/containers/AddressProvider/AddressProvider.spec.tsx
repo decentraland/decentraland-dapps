@@ -3,7 +3,7 @@ import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import AddressProvider from './AddressProvider'
 import { resolveENSname } from './utils'
 
-jest.mock('./utils', () => ({ isENSAddress: (value: string) => value.includes('.'), resolveENSname: jest.fn() }))
+jest.mock('./utils', () => ({ ...jest.requireActual('./utils'), resolveENSname: jest.fn() }))
 const resolveMock = resolveENSname as jest.MockedFunction<typeof resolveENSname>
 
 describe('when resolving an account input', () => {
@@ -85,5 +85,24 @@ describe('when resolving an account input', () => {
     it('should resolve using the new chain', async () => {
       await waitFor(() => expect(resolveMock).toHaveBeenLastCalledWith('alice.eth', ChainId.ETHEREUM_SEPOLIA))
     })
+  })
+})
+
+describe.each(['alice..eth', 'аlice.eth'])('when the account input is invalid: %s', input => {
+  beforeEach(() => {
+    render(
+      <AddressProvider input={input} chainId={ChainId.ETHEREUM_MAINNET}>
+        {result => <output>{JSON.stringify(result)}</output>}
+      </AddressProvider>
+    )
+  })
+
+  afterEach(() => {
+    jest.resetAllMocks()
+  })
+
+  it('should report invalid input without attempting resolution', () => {
+    expect(screen.getByRole('status').textContent).toContain('"error":"invalid_address"')
+    expect(resolveMock).not.toHaveBeenCalled()
   })
 })

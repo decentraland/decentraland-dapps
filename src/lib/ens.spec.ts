@@ -1,7 +1,8 @@
 import { Interface } from '@ethersproject/abi'
 import { namehash } from '@ethersproject/hash'
 import { Web3Provider } from '@ethersproject/providers'
-import { encodeENSName, isENSName, resolveAddress, UNIVERSAL_RESOLVER_ADDRESS } from './ens'
+import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
+import { encodeENSName, getENSChainId, isENSName, resolveAddress, UNIVERSAL_RESOLVER_ADDRESS } from './ens'
 
 describe('when encoding ENS names', () => {
   it('should encode a label longer than the legacy DNS limit', () => {
@@ -33,7 +34,7 @@ describe('when encoding ENS names', () => {
   })
 })
 
-describe('when a non-extended resolver uses CCIP Read', () => {
+describe.each(['direct', 'nested'])('when a non-extended resolver uses CCIP Read with a %s RPC error', errorFormat => {
   let provider: Web3Provider
   let gateway: jest.SpyInstance
   let resolverInterface: Interface
@@ -61,7 +62,7 @@ describe('when a non-extended resolver uses CCIP Read', () => {
           return universalInterface.encodeFunctionResult('requireResolver', [[dnsName, 0, node, resolver, false]])
         }
         if (params[0].data.startsWith('0x12345678')) return resolverInterface.encodeFunctionResult('addr', [recipient])
-        throw Object.assign(new Error('execution reverted'), {
+        const offchainError = Object.assign(new Error('execution reverted'), {
           data: offchainInterface.encodeErrorResult('OffchainLookup', [
             resolver,
             ['https://example.invalid/{data}'],
@@ -70,6 +71,7 @@ describe('when a non-extended resolver uses CCIP Read', () => {
             '0x'
           ])
         })
+        throw errorFormat === 'nested' ? Object.assign(new Error('Internal JSON-RPC error'), { error: offchainError }) : offchainError
       }
     })
     gateway = jest.spyOn(provider, 'ccipReadFetch').mockResolvedValueOnce('0x12')
@@ -82,5 +84,39 @@ describe('when a non-extended resolver uses CCIP Read', () => {
   it('should complete the gateway callback and return the address', async () => {
     await expect(resolveAddress(provider, 'alice.eth')).resolves.toBe(recipient)
     expect(gateway).toHaveBeenCalledTimes(1)
+  })
+
+  describe('and the gateway fails', () => {
+    beforeEach(() => {
+      gateway.mockReset().mockRejectedValueOnce(new Error('Gateway unavailable'))
+    })
+
+    it('should throw instead of reporting the name as absent', async () => {
+      await expect(resolveAddress(provider, 'alice.eth')).rejects.toThrow()
+      expect(gateway).toHaveBeenCalledTimes(1)
+    })
+  })
+})
+
+describe('when choosing the ENS chain', () => {
+  it.each([
+    ChainId.ETHEREUM_MAINNET,
+    ChainId.MATIC_MAINNET,
+    ChainId.OPTIMISM_MAINNET,
+    ChainId.ARBITRUM_MAINNET,
+    ChainId.FANTOM_MAINNET,
+    ChainId.AVALANCHE_MAINNET,
+    ChainId.BSC_MAINNET
+  ])('should map supported production chain %s to mainnet', chainId => {
+    expect(getENSChainId(chainId)).toBe(ChainId.ETHEREUM_MAINNET)
+  })
+
+  it.each([ChainId.ETHEREUM_SEPOLIA, ChainId.MATIC_AMOY])('should map supported test chain %s to Sepolia', chainId => {
+    expect(getENSChainId(chainId)).toBe(ChainId.ETHEREUM_SEPOLIA)
+  })
+
+  it.each([ChainId.ETHEREUM_GOERLI, ChainId.MATIC_MUMBAI, 999999, undefined])('should reject unsupported chain %s', chainId => {
+    // Include untyped consumers of the published JavaScript package.
+    expect(() => getENSChainId(chainId as ChainId)).toThrow('Unsupported ENS chain')
   })
 })
