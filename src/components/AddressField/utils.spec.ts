@@ -13,7 +13,7 @@ jest.mock('../../lib/eth')
 jest.mock('../../modules/analytics/utils')
 
 const mockGetAppChainId = _getAppChainId as jest.MockedFunction<typeof _getAppChainId>
-const mockGetNetworkWeb3Provider = getENSWeb3Provider as jest.MockedFunction<typeof getENSWeb3Provider>
+const mockGetENSWeb3Provider = getENSWeb3Provider as jest.MockedFunction<typeof getENSWeb3Provider>
 const mockGetAnalytics = getAnalytics as jest.MockedFunction<typeof getAnalytics>
 
 const universalResolverInterface = new Interface([
@@ -48,7 +48,7 @@ beforeEach(() => {
   call = jest.fn()
   track = jest.fn()
   mockGetAppChainId.mockReturnValue(ChainId.ETHEREUM_MAINNET)
-  mockGetNetworkWeb3Provider.mockResolvedValue({ call } as unknown as Web3Provider)
+  mockGetENSWeb3Provider.mockResolvedValue({ call } as unknown as Web3Provider)
   mockGetAnalytics.mockReturnValue({ track } as unknown as ReturnType<typeof getAnalytics>)
 })
 
@@ -64,7 +64,7 @@ describe('when resolving a name', () => {
     await resolveName(name)
 
     expect(mockGetAppChainId).toHaveBeenCalledWith()
-    expect(mockGetNetworkWeb3Provider).toHaveBeenCalledWith(ChainId.ETHEREUM_SEPOLIA)
+    expect(mockGetENSWeb3Provider).toHaveBeenCalledWith(ChainId.ETHEREUM_SEPOLIA)
   })
 
   it("should ask the Universal Resolver for the name's current resolver with the DNS-encoded name", async () => {
@@ -242,6 +242,6 @@ describe('when the application chain has not been initialized', () => {
 
   it('should report the missing application chain before requesting a provider', async () => {
     await expect(resolveName(name)).rejects.toThrow('Could not get app chain id')
-    expect(mockGetNetworkWeb3Provider).not.toHaveBeenCalled()
+    expect(mockGetENSWeb3Provider).not.toHaveBeenCalled()
   })
 })
