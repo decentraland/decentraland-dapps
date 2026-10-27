@@ -6,9 +6,9 @@ import { build } from 'esbuild'
 
 // Jest loads the CommonJS builds of dependencies, while apps bundle their ESM builds. This bundles the module the way
 // a browser app does and evaluates it, so code that only breaks under ESM bundling fails here.
-async function bundleUtils() {
+async function bundleUtils(entryPoint = path.join(__dirname, 'utils.ts')) {
   const result = await build({
-    entryPoints: [path.join(__dirname, 'utils.ts')],
+    entryPoints: [entryPoint],
     bundle: true,
     write: false,
     platform: 'browser',
@@ -39,5 +39,23 @@ describe('when loading the bundled module in a browser build', () => {
     // eslint-disable-next-line @typescript-eslint/no-implied-eval
     expect(() => new Function('module', 'exports', code)(bundledModule, bundledModule.exports)).not.toThrow()
     expect(typeof bundledModule.exports.resolveName).toBe('function')
+  })
+})
+
+describe('when importing the public ENS module directly in a browser bundle', () => {
+  let code: string
+  let bundledModule: { exports: Record<string, unknown> }
+
+  beforeEach(async () => {
+    code = await bundleUtils(path.join(__dirname, '../../lib/ens.ts'))
+    bundledModule = { exports: {} }
+  })
+
+  it('should expose address, contenthash and encoding helpers without loading UI modules', () => {
+    // eslint-disable-next-line @typescript-eslint/no-implied-eval
+    expect(() => new Function('module', 'exports', code)(bundledModule, bundledModule.exports)).not.toThrow()
+    expect(typeof bundledModule.exports.resolveAddress).toBe('function')
+    expect(typeof bundledModule.exports.resolveContenthash).toBe('function')
+    expect(typeof bundledModule.exports.encodeENSName).toBe('function')
   })
 })

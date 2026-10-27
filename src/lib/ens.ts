@@ -7,6 +7,9 @@ import type { Provider } from '@ethersproject/providers'
 import { toUtf8Bytes } from '@ethersproject/strings'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 
+/** A caller supplied ethers-compatible transport; call must implement CCIP-Read when enabled. */
+export type ENSProvider = Pick<Provider, 'call'>
+
 // ENS entry points exist on Ethereum, even when the app operates on Polygon.
 export function getENSChainId(chainId: ChainId): ChainId {
   switch (chainId) {
@@ -37,6 +40,7 @@ const universalResolverInterface = new Interface([
 
 const resolverInterface = new Interface([
   'function addr(bytes32 node) view returns (address)',
+  'function contenthash(bytes32 node) view returns (bytes)',
   'function resolve(bytes name, bytes data) view returns (bytes)'
 ])
 
@@ -67,7 +71,7 @@ export function encodeENSName(name: string) {
     }
     return concat([new Uint8Array([label.length]), label])
   })
-  return { dnsName: hexlify(concat([...encodedLabels, new Uint8Array([0])])), node }
+  return { name: normalized, dnsName: hexlify(concat([...encodedLabels, new Uint8Array([0])])), node }
 }
 
 export function isENSName(name: string): boolean {
@@ -78,12 +82,7 @@ export function isENSName(name: string): boolean {
   }
 }
 
-/**
- * Resolves the ETH address of an ENS name through the name's current resolver, found by the Universal Resolver.
- * Offchain (CCIP-Read) resolvers are supported. Returns undefined when the name has no resolver or no address,
- * and throws when the lookup itself fails, so an RPC or gateway error is not mistaken for a missing name.
- */
-export async function resolveAddress(provider: Provider, name: string): Promise<string | undefined> {
+async function resolveRecord(provider: ENSProvider, name: string, record: 'addr' | 'contenthash'): Promise<string | undefined> {
   const { dnsName: dnsEncodedName, node } = encodeENSName(name)
   const requireResolverResult = await provider.call({
     to: UNIVERSAL_RESOLVER_ADDRESS,
@@ -94,25 +93,39 @@ export async function resolveAddress(provider: Provider, name: string): Promise<
   }
 
   const [{ resolver, extended }] = universalResolverInterface.decodeFunctionResult('requireResolver', requireResolverResult)
-  const addrData = resolverInterface.encodeFunctionData('addr', [node])
+  const recordData = resolverInterface.encodeFunctionData(record, [node])
 
-  let addrResult: string
+  let recordResult: string
   if (extended) {
-    // ENSIP-10 wildcard or offchain resolver: the address is requested through resolve(), which may use CCIP-Read
+    // ENSIP-10 wildcard or offchain resolver: the record is requested through resolve(), which may use CCIP-Read
     const resolveResult = await provider.call({
       to: resolver,
-      data: resolverInterface.encodeFunctionData('resolve', [dnsEncodedName, addrData]),
+      data: resolverInterface.encodeFunctionData('resolve', [dnsEncodedName, recordData]),
       ccipReadEnabled: true
     })
-    ;[addrResult] = resolverInterface.decodeFunctionResult('resolve', resolveResult)
+    ;[recordResult] = resolverInterface.decodeFunctionResult('resolve', resolveResult)
   } else {
-    addrResult = await provider.call({ to: resolver, data: addrData, ccipReadEnabled: true })
+    recordResult = await provider.call({ to: resolver, data: recordData, ccipReadEnabled: true })
   }
 
-  if (hexDataLength(addrResult) === 0) {
+  if (hexDataLength(recordResult) === 0) {
     return undefined
   }
 
-  const address = resolverInterface.decodeFunctionResult('addr', addrResult)[0] as string
-  return address === AddressZero ? undefined : address
+  const value = resolverInterface.decodeFunctionResult(record, recordResult)[0] as string
+  return value === '0x' || (record === 'addr' && value === AddressZero) ? undefined : value
+}
+
+/** Resolve the ETH address using the current resolver, including wildcard and CCIP-Read records.
+ * Missing resolvers/records return undefined; RPC and gateway failures propagate.
+ */
+export function resolveAddress(provider: ENSProvider, name: string): Promise<string | undefined> {
+  return resolveRecord(provider, name, 'addr')
+}
+
+/** Resolve raw contenthash bytes; callers interpret application-specific content formats.
+ * Missing resolvers/records return undefined; RPC and gateway failures propagate.
+ */
+export function resolveContenthash(provider: ENSProvider, name: string): Promise<string | undefined> {
+  return resolveRecord(provider, name, 'contenthash')
 }
