@@ -208,3 +208,14 @@ describe('when resolving a name', () => {
     })
   })
 })
+
+describe('when the application chain has not been initialized', () => {
+  beforeEach(() => {
+    mockGetAppChainId.mockReset()
+  })
+
+  it('should report the missing application chain before requesting a provider', async () => {
+    await expect(resolveName(name)).rejects.toThrow('Could not get app chain id')
+    expect(mockGetNetworkWeb3Provider).not.toHaveBeenCalled()
+  })
+})

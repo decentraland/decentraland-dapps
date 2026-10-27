@@ -6,7 +6,11 @@ export { resolveAddress, UNIVERSAL_RESOLVER_ADDRESS } from '../../lib/ens'
 
 export async function resolveName(name: string) {
   // ENS lives on Ethereum, so resolve against the app's Ethereum chain regardless of the network the wallet is connected to
-  const provider = await getNetworkWeb3Provider(getENSChainId(_getAppChainId()))
+  const chainId = _getAppChainId()
+  if (chainId == null) {
+    throw new Error('Could not get app chain id')
+  }
+  const provider = await getNetworkWeb3Provider(getENSChainId(chainId))
   const resolvedAddress = await resolveAddress(provider, name)
   if (resolvedAddress) {
     const analytics = getAnalytics()

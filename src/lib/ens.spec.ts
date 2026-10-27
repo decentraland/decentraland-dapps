@@ -34,7 +34,12 @@ describe('when encoding ENS names', () => {
   })
 })
 
-describe.each(['direct', 'nested'])('when a non-extended resolver uses CCIP Read with a %s RPC error', errorFormat => {
+describe.each([
+  { resolverType: 'standard', errorFormat: 'direct' },
+  { resolverType: 'standard', errorFormat: 'nested' },
+  { resolverType: 'extended', errorFormat: 'direct' },
+  { resolverType: 'extended', errorFormat: 'nested' }
+])('when a $resolverType resolver uses CCIP Read with a $errorFormat RPC error', ({ resolverType, errorFormat }) => {
   let provider: Web3Provider
   let gateway: jest.SpyInstance
   let resolverInterface: Interface
@@ -42,11 +47,16 @@ describe.each(['direct', 'nested'])('when a non-extended resolver uses CCIP Read
   let offchainInterface: Interface
   let resolver: string
   let recipient: string
+  let extended: boolean
 
   beforeEach(() => {
+    extended = resolverType === 'extended'
     resolver = '0x00000000000000000000000000000000000000aa'
     recipient = '0x000000000000000000000000000000000000000b'
-    resolverInterface = new Interface(['function addr(bytes32 node) view returns (address)'])
+    resolverInterface = new Interface([
+      'function addr(bytes32 node) view returns (address)',
+      'function resolve(bytes name, bytes data) view returns (bytes)'
+    ])
     universalInterface = new Interface([
       'function requireResolver(bytes name) view returns ((bytes name,uint256 offset,bytes32 node,address resolver,bool extended) info)'
     ])
@@ -59,9 +69,12 @@ describe.each(['direct', 'nested'])('when a non-extended resolver uses CCIP Read
         if (method !== 'eth_call') throw new Error('Unexpected RPC method')
         if (params[0].to.toLowerCase() === UNIVERSAL_RESOLVER_ADDRESS.toLowerCase()) {
           const { dnsName, node } = encodeENSName('alice.eth')
-          return universalInterface.encodeFunctionResult('requireResolver', [[dnsName, 0, node, resolver, false]])
+          return universalInterface.encodeFunctionResult('requireResolver', [[dnsName, 0, node, resolver, extended]])
         }
-        if (params[0].data.startsWith('0x12345678')) return resolverInterface.encodeFunctionResult('addr', [recipient])
+        if (params[0].data.startsWith('0x12345678')) {
+          const addrResult = resolverInterface.encodeFunctionResult('addr', [recipient])
+          return extended ? resolverInterface.encodeFunctionResult('resolve', [addrResult]) : addrResult
+        }
         const offchainError = Object.assign(new Error('execution reverted'), {
           data: offchainInterface.encodeErrorResult('OffchainLookup', [
             resolver,
@@ -87,12 +100,16 @@ describe.each(['direct', 'nested'])('when a non-extended resolver uses CCIP Read
   })
 
   describe('and the gateway fails', () => {
+    let gatewayError: Error & { code: string }
+
     beforeEach(() => {
-      gateway.mockReset().mockRejectedValueOnce(new Error('Gateway unavailable'))
+      // ethers ccipReadFetch reports HTTP/gateway failures as SERVER_ERROR, which _call preserves.
+      gatewayError = Object.assign(new Error('Gateway unavailable'), { code: 'SERVER_ERROR' })
+      gateway.mockReset().mockRejectedValueOnce(gatewayError)
     })
 
-    it('should throw instead of reporting the name as absent', async () => {
-      await expect(resolveAddress(provider, 'alice.eth')).rejects.toThrow()
+    it('should propagate the original gateway error', async () => {
+      await expect(resolveAddress(provider, 'alice.eth')).rejects.toBe(gatewayError)
       expect(gateway).toHaveBeenCalledTimes(1)
     })
   })

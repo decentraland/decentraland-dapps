@@ -113,6 +113,6 @@ export async function resolveAddress(provider: Provider, name: string): Promise<
     return undefined
   }
 
-  const [address]: [string] = resolverInterface.decodeFunctionResult('addr', addrResult) as unknown as [string]
+  const address = resolverInterface.decodeFunctionResult('addr', addrResult)[0] as string
   return address === AddressZero ? undefined : address
 }
