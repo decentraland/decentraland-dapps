@@ -272,3 +272,22 @@ describe('when the address field receives a name with surrounding whitespace', (
     expect(track).toHaveBeenCalledWith('Resolve Address from Name', { name, address: currentAddress })
   })
 })
+
+describe.each([' ', '\t\n', '\u00a0\ufeff\u3000'])('when the address field receives a raw address padded with %j', padding => {
+  it('should return the trimmed address without ENS requests or name-resolution analytics', async () => {
+    await expect(resolveName(`${padding}${currentAddress}${padding}`)).resolves.toBe(currentAddress)
+    expect(mockGetAppChainId).not.toHaveBeenCalled()
+    expect(mockGetENSWeb3Provider).not.toHaveBeenCalled()
+    expect(track).not.toHaveBeenCalled()
+  })
+})
+
+describe.each([' 0x1234 ', ' 0x000000000000000000000000000000000000000g ', ' 0x00000000000000000000 0000000000000000000b '])(
+  'when the address field receives malformed padded address %s',
+  input => {
+    it('should reject the input without requesting an ENS provider', async () => {
+      await expect(resolveName(input)).resolves.toBeUndefined()
+      expect(mockGetENSWeb3Provider).not.toHaveBeenCalled()
+    })
+  }
+)

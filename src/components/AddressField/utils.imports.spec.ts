@@ -14,6 +14,7 @@ describe('when importing ENS helpers with ethers ESM exports', () => {
   beforeEach(() => {
     jest.resetModules()
     jest.doMock('@ethersproject/abi', () => jest.requireActual('@ethersproject/abi/lib.esm/index.js'))
+    jest.doMock('@ethersproject/address', () => jest.requireActual('@ethersproject/address/lib.esm/index.js'))
     jest.doMock('@ethersproject/bytes', () => jest.requireActual('@ethersproject/bytes/lib.esm/index.js'))
     jest.doMock('@ethersproject/constants', () => jest.requireActual('@ethersproject/constants/lib.esm/index.js'))
     jest.doMock('@ethersproject/hash', () => jest.requireActual('@ethersproject/hash/lib.esm/index.js'))
@@ -36,6 +37,7 @@ describe('when importing ENS helpers with ethers ESM exports', () => {
 
   afterEach(() => {
     jest.dontMock('@ethersproject/abi')
+    jest.dontMock('@ethersproject/address')
     jest.dontMock('@ethersproject/bytes')
     jest.dontMock('@ethersproject/constants')
     jest.dontMock('@ethersproject/hash')

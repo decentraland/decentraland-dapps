@@ -4,6 +4,14 @@
 
 Common modules for Decentraland dApps.
 
+## ENS resolver upgrade
+
+This resolver update requires `decentraland-ui` **7.3.0 or newer within v7** for its AddressField race and recipient-invalidation fixes. Upgrade UI alongside dapps and commit both changes in the consumer's lockfile. A manifest range such as `^7.1.0` or `^7.2.0` allows 7.3.0, but an existing lockfile can still pin an older version and cause peer warnings or `ERESOLVE`.
+
+When adopting the dapps release, explicitly update UI to `^7.3.0` in the same change (for example, `npm install decentraland-ui@^7.3.0` or `yarn add decentraland-ui@^7.3.0`), then verify the resolved version in the lockfile. Do not bypass peer checks to retain the older UI. This applies to marketplace, builder, account, and other consumers of this release.
+
+AddressField callbacks can now emit an empty value immediately to invalidate a recipient during editing or revalidation. Consumers must store that empty value rather than retaining the old recipient, and require a nonempty value with no error and `pending !== true` before submission. Clearing emits an empty value without an error.
+
 ## ⚠️ Breaking Changes in v26.0.0
 
 This version includes significant changes including **React 18 upgrade** and dependency management improvements following Decentraland's [Dependency Management Standard](https://github.com/decentraland/standards).

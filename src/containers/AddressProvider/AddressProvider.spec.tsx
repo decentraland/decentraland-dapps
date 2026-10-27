@@ -1,6 +1,7 @@
 import { act, render, screen, waitFor } from '@testing-library/react'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import AddressProvider from './AddressProvider'
+import { AddressProviderResult } from './AddressProvider.types'
 import { resolveENSname } from './utils'
 
 jest.mock('./utils', () => ({ ...jest.requireActual('./utils'), resolveENSname: jest.fn() }))
@@ -54,8 +55,13 @@ describe('when resolving an account input', () => {
   })
 
   describe('and the next lookup fails', () => {
+    let error: Error
+    let logError: jest.SpyInstance
+
     beforeEach(async () => {
-      resolveMock.mockRejectedValueOnce(new Error('RPC unavailable'))
+      error = new Error('RPC unavailable')
+      logError = jest.spyOn(console, 'error').mockImplementation(() => undefined)
+      resolveMock.mockRejectedValueOnce(error)
       await act(async () => {
         view.rerender(
           <AddressProvider input="bob.eth" chainId={ChainId.ETHEREUM_MAINNET}>
@@ -65,8 +71,16 @@ describe('when resolving an account input', () => {
       })
     })
 
+    afterEach(() => {
+      logError.mockRestore()
+    })
+
     it('should finish loading and report the failure', async () => {
       await waitFor(() => expect(screen.getByRole('status').textContent).toContain('"isLoading":false,"error":"ens_not_resolved"'))
+    })
+
+    it('should log the operational failure for diagnosis', () => {
+      expect(logError).toHaveBeenCalledWith('Failed to resolve ENS account address', error)
     })
   })
 
@@ -181,25 +195,34 @@ describe('when revisiting an ENS account after entering a direct address', () =>
   let view: ReturnType<typeof render>
   let oldRecipient: string
   let directRecipient: string
+  let renderedResults: AddressProviderResult[]
+  let renderResult: (result: AddressProviderResult) => JSX.Element
 
   beforeEach(async () => {
+    renderedResults = []
+    renderResult = result => {
+      renderedResults.push(result)
+      return <output>{JSON.stringify(result)}</output>
+    }
     oldRecipient = '0x000000000000000000000000000000000000000a'
     directRecipient = '0x000000000000000000000000000000000000000b'
     resolveMock.mockResolvedValueOnce(oldRecipient).mockReturnValueOnce(new Promise(() => undefined))
     view = render(
       <AddressProvider input="alice.eth" chainId={ChainId.ETHEREUM_MAINNET}>
-        {result => <output>{JSON.stringify(result)}</output>}
+        {renderResult}
       </AddressProvider>
     )
     await waitFor(() => expect(screen.getByRole('status').textContent).toContain(oldRecipient))
     view.rerender(
       <AddressProvider input={directRecipient} chainId={ChainId.ETHEREUM_MAINNET}>
-        {result => <output>{JSON.stringify(result)}</output>}
+        {renderResult}
       </AddressProvider>
     )
+    // Observe every render during the revisit, including the one before effects run.
+    renderedResults = []
     view.rerender(
       <AddressProvider input="alice.eth" chainId={ChainId.ETHEREUM_MAINNET}>
-        {result => <output>{JSON.stringify(result)}</output>}
+        {renderResult}
       </AddressProvider>
     )
   })
@@ -211,6 +234,8 @@ describe('when revisiting an ENS account after entering a direct address', () =>
   it('should wait for a fresh lookup rather than reusing the earlier recipient', () => {
     expect(JSON.parse(screen.getByRole('status').textContent!)).toEqual({ address: null, ens: 'alice.eth', isLoading: true })
     expect(resolveMock).toHaveBeenCalledTimes(2)
+    expect(renderedResults.length).toBeGreaterThan(0)
+    expect(renderedResults.every(result => result.address === null && result.ens === 'alice.eth' && result.isLoading)).toBe(true)
   })
 })
 

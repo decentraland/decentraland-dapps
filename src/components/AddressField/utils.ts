@@ -1,3 +1,4 @@
+import { isAddress } from '@ethersproject/address'
 import { getENSChainId, isENSName, normalizeENSName, resolveAddress } from '../../lib/ens'
 import { _getAppChainId, getENSWeb3Provider } from '../../lib/eth'
 import { getAnalytics } from '../../modules/analytics/utils'
@@ -5,6 +6,9 @@ import { getAnalytics } from '../../modules/analytics/utils'
 export { resolveAddress, UNIVERSAL_RESOLVER_ADDRESS } from '../../lib/ens'
 
 export async function resolveName(input: string) {
+  // UI delegates padded addresses here because its direct-address check is anchored.
+  const trimmedInput = input.trim()
+  if (isAddress(trimmedInput)) return trimmedInput
   if (!isENSName(input)) return undefined
   const name = normalizeENSName(input)
   // ENS lives on Ethereum, so resolve against the app's Ethereum chain regardless of the network the wallet is connected to
