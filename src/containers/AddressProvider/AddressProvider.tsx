@@ -1,44 +1,47 @@
 import React, { useEffect, useState } from 'react'
 import { isAddress } from '@ethersproject/address'
 import { isENSAddress, resolveENSname } from './utils'
-import { AddressError, Props } from './AddressProvider.types'
+import { AddressError, AddressProviderResult, Props } from './AddressProvider.types'
 
 const AddressProvider = (props: Props) => {
   const { children, input, chainId } = props
-  const isENS = input && isENSAddress(input)
-  const [address, setAddress] = useState(input && !isENS ? input : null)
-  const [isLoading, setIsLoading] = useState(!!isENS)
-  const [error, setError] = useState<AddressError>()
+  const isENS = !!input && isENSAddress(input)
+  const initial: AddressProviderResult = {
+    address: !isENS && isAddress(input) ? input : null,
+    ens: isENS ? input : null,
+    isLoading: isENS,
+    error: !isENS && input && !isAddress(input) ? AddressError.INVALID : undefined
+  }
+  const [resolved, setResolved] = useState<{ input: string; chainId: Props['chainId']; result: AddressProviderResult }>()
 
-  useEffect(() => {
-    if (address && !isAddress(address) && !isENS) {
-      setError(AddressError.INVALID)
-    }
-  }, [address, isENS])
-
-  // Resolves ENS name if needed
   useEffect(() => {
     let cancel = false
-    const resolveAddress = async () => {
-      if (input && isENS) {
-        setIsLoading(true)
-        const resolvedAddress = await resolveENSname(input, chainId)
-        setIsLoading(false)
-        if (cancel) return
-        if (!resolvedAddress) {
-          setError(AddressError.ENS_NOT_RESOLVED)
-          return
+    if (!isENS) return
+    setResolved(undefined)
+    const resolve = async () => {
+      try {
+        const address = await resolveENSname(input, chainId)
+        if (!cancel) {
+          setResolved({
+            input,
+            chainId,
+            result: { address, ens: input, isLoading: false, error: address ? undefined : AddressError.ENS_NOT_RESOLVED }
+          })
         }
-        setAddress(resolvedAddress)
+      } catch {
+        if (!cancel) {
+          setResolved({ input, chainId, result: { address: null, ens: input, isLoading: false, error: AddressError.ENS_NOT_RESOLVED } })
+        }
       }
     }
-    resolveAddress()
+    void resolve()
     return () => {
       cancel = true
     }
-  }, [isENS, input])
+  }, [isENS, input, chainId])
 
-  return <>{children({ address, ens: isENS ? input : null, isLoading, error })}</>
+  const result = resolved?.input === input && resolved.chainId === chainId ? resolved.result : initial
+  return <>{children(result)}</>
 }
 
 export default React.memo(AddressProvider)

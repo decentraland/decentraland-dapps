@@ -91,7 +91,8 @@ describe('when resolving a name', () => {
 
       expect(call).toHaveBeenNthCalledWith(2, {
         to: resolverAddress,
-        data: resolverInterface.encodeFunctionData('addr', [namehash(name)])
+        data: resolverInterface.encodeFunctionData('addr', [namehash(name)]),
+        ccipReadEnabled: true
       })
     })
 

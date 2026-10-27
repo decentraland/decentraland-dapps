@@ -25,6 +25,7 @@
   "dependencies": {
     "@0xsequence/multicall": "0.25.1",
     "@0xsequence/relayer": "0.25.1",
+    "@adraffy/ens-normalize": "1.11.1",
     "@dcl/single-sign-on-client": "^0.1.0",
     "@transak/transak-sdk": "4.0.0",
     "@wert-io/widget-initializer": "6.8.0",

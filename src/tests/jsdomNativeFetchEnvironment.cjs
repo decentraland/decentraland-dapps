@@ -24,7 +24,8 @@ const NATIVE_GLOBALS = [
   // Needed by nock's @mswjs/interceptors, which references them at import time.
   'TextEncoder',
   'TextDecoder',
-  'MessageChannel',
+  // Do not expose Node's MessageChannel: React's scheduler would retain an open
+  // MessagePort after component tests. jsdom's timer scheduling is sufficient.
   'MessagePort',
   'BroadcastChannel',
 ]
