@@ -1,13 +1,11 @@
-import { Web3Provider } from '@ethersproject/providers'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
-import { getNetworkProvider } from '../../lib/eth'
+import { getENSChainId, isENSName, resolveAddress } from '../../lib/ens'
+import { getENSWeb3Provider } from '../../lib/eth'
 
-export const isENSAddress = (address: string) => {
-  return address.includes('.eth')
-}
+export const isENSAddress = isENSName
 
 export const resolveENSname = async (name: string, chainId: ChainId) => {
-  const connectedProvider = await getNetworkProvider(chainId)
-  const ethersProvider = new Web3Provider(connectedProvider)
-  return await ethersProvider.resolveName(name)
+  const ethereumChainId = getENSChainId(chainId)
+  const provider = await getENSWeb3Provider(ethereumChainId)
+  return (await resolveAddress(provider, name)) ?? null
 }

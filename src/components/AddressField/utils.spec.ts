@@ -5,16 +5,15 @@ import { dnsEncode, namehash } from '@ethersproject/hash'
 import { Web3Provider } from '@ethersproject/providers'
 import type { TransactionRequest } from '@ethersproject/providers'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
-import { Network } from '@dcl/schemas/dist/dapps/network'
-import { getChainIdByNetwork, getNetworkWeb3Provider } from '../../lib/eth'
+import { _getAppChainId, getENSWeb3Provider } from '../../lib/eth'
 import { getAnalytics } from '../../modules/analytics/utils'
 import { UNIVERSAL_RESOLVER_ADDRESS, resolveName } from './utils'
 
 jest.mock('../../lib/eth')
 jest.mock('../../modules/analytics/utils')
 
-const mockGetChainIdByNetwork = getChainIdByNetwork as jest.MockedFunction<typeof getChainIdByNetwork>
-const mockGetNetworkWeb3Provider = getNetworkWeb3Provider as jest.MockedFunction<typeof getNetworkWeb3Provider>
+const mockGetAppChainId = _getAppChainId as jest.MockedFunction<typeof _getAppChainId>
+const mockGetENSWeb3Provider = getENSWeb3Provider as jest.MockedFunction<typeof getENSWeb3Provider>
 const mockGetAnalytics = getAnalytics as jest.MockedFunction<typeof getAnalytics>
 
 const universalResolverInterface = new Interface([
@@ -48,8 +47,8 @@ let track: jest.Mock
 beforeEach(() => {
   call = jest.fn()
   track = jest.fn()
-  mockGetChainIdByNetwork.mockReturnValue(ChainId.ETHEREUM_MAINNET)
-  mockGetNetworkWeb3Provider.mockResolvedValue({ call } as unknown as Web3Provider)
+  mockGetAppChainId.mockReturnValue(ChainId.ETHEREUM_MAINNET)
+  mockGetENSWeb3Provider.mockResolvedValue({ call } as unknown as Web3Provider)
   mockGetAnalytics.mockReturnValue({ track } as unknown as ReturnType<typeof getAnalytics>)
 })
 
@@ -59,13 +58,13 @@ afterEach(() => {
 
 describe('when resolving a name', () => {
   it('should resolve it against the app Ethereum chain regardless of the connected network', async () => {
-    mockGetChainIdByNetwork.mockReturnValue(ChainId.ETHEREUM_SEPOLIA)
+    mockGetAppChainId.mockReturnValue(ChainId.ETHEREUM_SEPOLIA)
     call.mockResolvedValueOnce(encodeRequireResolverResult(false)).mockResolvedValueOnce(encodeAddrResult(currentAddress))
 
     await resolveName(name)
 
-    expect(mockGetChainIdByNetwork).toHaveBeenCalledWith(Network.ETHEREUM)
-    expect(mockGetNetworkWeb3Provider).toHaveBeenCalledWith(ChainId.ETHEREUM_SEPOLIA)
+    expect(mockGetAppChainId).toHaveBeenCalledWith()
+    expect(mockGetENSWeb3Provider).toHaveBeenCalledWith(ChainId.ETHEREUM_SEPOLIA)
   })
 
   it("should ask the Universal Resolver for the name's current resolver with the DNS-encoded name", async () => {
@@ -91,7 +90,8 @@ describe('when resolving a name', () => {
 
       expect(call).toHaveBeenNthCalledWith(2, {
         to: resolverAddress,
-        data: resolverInterface.encodeFunctionData('addr', [namehash(name)])
+        data: resolverInterface.encodeFunctionData('addr', [namehash(name)]),
+        ccipReadEnabled: true
       })
     })
 
@@ -121,6 +121,20 @@ describe('when resolving a name', () => {
       it('should not track the resolution', async () => {
         await resolveName(name)
 
+        expect(track).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('and addr reverts without data', () => {
+      let error: Error
+
+      beforeEach(() => {
+        error = Object.assign(new Error('missing revert data in call exception'), { code: 'CALL_EXCEPTION', data: '0x' })
+        call.mockRejectedValueOnce(error)
+      })
+
+      it('should preserve the ambiguous error instead of classifying it as a missing record', async () => {
+        await expect(resolveName(name)).rejects.toBe(error)
         expect(track).not.toHaveBeenCalled()
       })
     })
@@ -164,6 +178,18 @@ describe('when resolving a name', () => {
       call.mockResolvedValueOnce(resolverInterface.encodeFunctionResult('resolve', [encodeAddrResult(AddressZero)]))
 
       await expect(resolveName(name)).resolves.toBeUndefined()
+      expect(track).not.toHaveBeenCalled()
+    })
+
+    describe('and resolve returns empty bytes', () => {
+      beforeEach(() => {
+        call.mockResolvedValueOnce(resolverInterface.encodeFunctionResult('resolve', ['0x']))
+      })
+
+      it('should return undefined without tracking a successful resolution', async () => {
+        await expect(resolveName(name)).resolves.toBeUndefined()
+        expect(track).not.toHaveBeenCalled()
+      })
     })
   })
 
@@ -206,5 +232,16 @@ describe('when resolving a name', () => {
 
       await expect(resolveName(name)).rejects.toThrow('CCIP gateway error')
     })
+  })
+})
+
+describe('when the application chain has not been initialized', () => {
+  beforeEach(() => {
+    mockGetAppChainId.mockReset()
+  })
+
+  it('should report the missing application chain before requesting a provider', async () => {
+    await expect(resolveName(name)).rejects.toThrow('Could not get app chain id')
+    expect(mockGetENSWeb3Provider).not.toHaveBeenCalled()
   })
 })
