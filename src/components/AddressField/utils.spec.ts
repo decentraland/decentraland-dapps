@@ -125,6 +125,20 @@ describe('when resolving a name', () => {
       })
     })
 
+    describe('and addr reverts without data', () => {
+      let error: Error
+
+      beforeEach(() => {
+        error = Object.assign(new Error('missing revert data in call exception'), { code: 'CALL_EXCEPTION', data: '0x' })
+        call.mockRejectedValueOnce(error)
+      })
+
+      it('should preserve the ambiguous error instead of classifying it as a missing record', async () => {
+        await expect(resolveName(name)).rejects.toBe(error)
+        expect(track).not.toHaveBeenCalled()
+      })
+    })
+
     describe('and the resolver returns no data', () => {
       it('should return undefined', async () => {
         call.mockResolvedValueOnce('0x')
@@ -164,6 +178,18 @@ describe('when resolving a name', () => {
       call.mockResolvedValueOnce(resolverInterface.encodeFunctionResult('resolve', [encodeAddrResult(AddressZero)]))
 
       await expect(resolveName(name)).resolves.toBeUndefined()
+      expect(track).not.toHaveBeenCalled()
+    })
+
+    describe('and resolve returns empty bytes', () => {
+      beforeEach(() => {
+        call.mockResolvedValueOnce(resolverInterface.encodeFunctionResult('resolve', ['0x']))
+      })
+
+      it('should return undefined without tracking a successful resolution', async () => {
+        await expect(resolveName(name)).resolves.toBeUndefined()
+        expect(track).not.toHaveBeenCalled()
+      })
     })
   })
 
