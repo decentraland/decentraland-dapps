@@ -1,12 +1,12 @@
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
 import { resolveAddress } from '../../lib/ens'
-import { getNetworkWeb3Provider } from '../../lib/eth'
+import { getENSWeb3Provider } from '../../lib/eth'
 import { resolveENSname } from './utils'
 
 jest.mock('../../lib/ens', () => ({ ...jest.requireActual('../../lib/ens'), resolveAddress: jest.fn() }))
 jest.mock('../../lib/eth')
 const resolveMock = resolveAddress as jest.MockedFunction<typeof resolveAddress>
-const providerMock = getNetworkWeb3Provider as jest.MockedFunction<typeof getNetworkWeb3Provider>
+const providerMock = getENSWeb3Provider as jest.MockedFunction<typeof getENSWeb3Provider>
 
 describe('when resolving an account name', () => {
   beforeEach(() => {

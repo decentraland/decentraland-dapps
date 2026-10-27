@@ -21,7 +21,7 @@ async function bundleUtils() {
           pluginBuild.onResolve({ filter: /\/(lib\/eth|modules\/analytics\/utils)$/ }, args => ({ path: args.path, namespace: 'stub' }))
           pluginBuild.onLoad({ filter: /.*/, namespace: 'stub' }, () => ({
             contents:
-              'export const _getAppChainId = () => 1; export const getNetworkWeb3Provider = async () => ({}); export const getAnalytics = () => undefined',
+              'export const _getAppChainId = () => 1; export const getENSWeb3Provider = async () => ({}); export const getAnalytics = () => undefined',
             loader: 'js'
           }))
         }

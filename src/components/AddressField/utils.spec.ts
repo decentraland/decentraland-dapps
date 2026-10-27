@@ -5,7 +5,7 @@ import { dnsEncode, namehash } from '@ethersproject/hash'
 import { Web3Provider } from '@ethersproject/providers'
 import type { TransactionRequest } from '@ethersproject/providers'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
-import { _getAppChainId, getNetworkWeb3Provider } from '../../lib/eth'
+import { _getAppChainId, getENSWeb3Provider } from '../../lib/eth'
 import { getAnalytics } from '../../modules/analytics/utils'
 import { UNIVERSAL_RESOLVER_ADDRESS, resolveName } from './utils'
 
@@ -13,7 +13,7 @@ jest.mock('../../lib/eth')
 jest.mock('../../modules/analytics/utils')
 
 const mockGetAppChainId = _getAppChainId as jest.MockedFunction<typeof _getAppChainId>
-const mockGetNetworkWeb3Provider = getNetworkWeb3Provider as jest.MockedFunction<typeof getNetworkWeb3Provider>
+const mockGetNetworkWeb3Provider = getENSWeb3Provider as jest.MockedFunction<typeof getENSWeb3Provider>
 const mockGetAnalytics = getAnalytics as jest.MockedFunction<typeof getAnalytics>
 
 const universalResolverInterface = new Interface([
