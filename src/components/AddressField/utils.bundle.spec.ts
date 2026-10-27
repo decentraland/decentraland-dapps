@@ -12,7 +12,9 @@ async function bundleUtils(entryPoint = path.join(__dirname, 'utils.ts')) {
     bundle: true,
     write: false,
     platform: 'browser',
+    // Browser resolution selects ESM dependencies; CJS output lets Node evaluate the bundle.
     format: 'cjs',
+    metafile: true,
     logLevel: 'silent',
     plugins: [
       {
@@ -28,12 +30,12 @@ async function bundleUtils(entryPoint = path.join(__dirname, 'utils.ts')) {
       }
     ]
   })
-  return result.outputFiles[0].text
+  return { code: result.outputFiles[0].text, inputs: Object.keys(result.metafile.inputs) }
 }
 
 describe('when loading the bundled module in a browser build', () => {
   it('should evaluate without throwing and export resolveName', async () => {
-    const code = await bundleUtils()
+    const { code } = await bundleUtils()
     const bundledModule: { exports: Record<string, unknown> } = { exports: {} }
 
     // eslint-disable-next-line @typescript-eslint/no-implied-eval
@@ -44,10 +46,13 @@ describe('when loading the bundled module in a browser build', () => {
 
 describe('when importing the public ENS module directly in a browser bundle', () => {
   let code: string
+  let inputs: string[]
   let bundledModule: { exports: Record<string, unknown> }
 
   beforeEach(async () => {
-    code = await bundleUtils(path.join(__dirname, '../../lib/ens.ts'))
+    const bundle = await bundleUtils(path.join(__dirname, '../../lib/ens.ts'))
+    code = bundle.code
+    inputs = bundle.inputs
     bundledModule = { exports: {} }
   })
 
@@ -57,5 +62,13 @@ describe('when importing the public ENS module directly in a browser bundle', ()
     expect(typeof bundledModule.exports.resolveAddress).toBe('function')
     expect(typeof bundledModule.exports.resolveContenthash).toBe('function')
     expect(typeof bundledModule.exports.encodeENSName).toBe('function')
+    expect(inputs.some(input => /node_modules\/@ethersproject\/[^/]+\/lib\.esm\//.test(input.replace(/\\/g, '/')))).toBe(true)
+    expect(
+      inputs.some(input =>
+        /(?:^|\/)(?:src\/(?:components|containers|providers)|node_modules\/(?:react(?:-dom)?|decentraland-ui2?|@mui))(?:\/|$)/.test(
+          input.replace(/\\/g, '/')
+        )
+      )
+    ).toBe(false)
   })
 })
