@@ -1,8 +1,16 @@
 import { Interface } from '@ethersproject/abi'
 import { namehash } from '@ethersproject/hash'
-import { Web3Provider } from '@ethersproject/providers'
+import { JsonRpcProvider, Web3Provider } from '@ethersproject/providers'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
-import { encodeENSName, getENSChainId, isENSName, resolveAddress, resolveContenthash, UNIVERSAL_RESOLVER_ADDRESS } from './ens'
+import {
+  encodeENSName,
+  getENSChainId,
+  isENSName,
+  normalizeENSName,
+  resolveAddress,
+  resolveContenthash,
+  UNIVERSAL_RESOLVER_ADDRESS
+} from './ens'
 
 describe('when encoding ENS names', () => {
   it('should encode a label longer than the legacy DNS limit', () => {
@@ -226,6 +234,73 @@ describe.each([false, true])('when reading contenthash from an extended=%s resol
 
     it('should preserve the ambiguous error instead of reporting a missing record', async () => {
       await expect(resolveContenthash(provider, 'alice.eth')).rejects.toBe(error)
+    })
+  })
+})
+
+describe('when a pasted ENS name contains surrounding whitespace', () => {
+  it('should normalize, classify and encode the same trimmed name', () => {
+    expect(normalizeENSName('  ALICE.ETH \n')).toBe('alice.eth')
+    expect(isENSName('  ALICE.ETH \n')).toBe(true)
+    expect(encodeENSName('  ALICE.ETH \n')).toEqual(encodeENSName('alice.eth'))
+  })
+
+  it('should continue rejecting malformed labels and internal whitespace', () => {
+    expect(isENSName(' alice..eth ')).toBe(false)
+    expect(isENSName(' alice .eth ')).toBe(false)
+  })
+})
+
+describe.each(['JsonRpcProvider', 'Web3Provider'] as const)('when %s reads a reverting standard resolver', providerType => {
+  describe.each(['addr', 'contenthash'] as const)('and the record is %s', record => {
+    let provider: JsonRpcProvider
+    let rpcError: Error & { data?: string }
+    let universalInterface: Interface
+    let read: typeof resolveAddress
+
+    beforeEach(() => {
+      read = record === 'addr' ? resolveAddress : resolveContenthash
+      rpcError = new Error('execution reverted')
+      universalInterface = new Interface([
+        'function requireResolver(bytes name) view returns ((bytes name,uint256 offset,bytes32 node,address resolver,bool extended) info)'
+      ])
+      const request = async (method: string, params: { to?: string }[]) => {
+        if (method === 'eth_chainId') return '0x1'
+        if (method !== 'eth_call') throw new Error('Unexpected RPC method')
+        if (params[0].to?.toLowerCase() === UNIVERSAL_RESOLVER_ADDRESS.toLowerCase()) {
+          const { dnsName, node } = encodeENSName('alice.eth')
+          return universalInterface.encodeFunctionResult('requireResolver', [
+            [dnsName, 0, node, '0x00000000000000000000000000000000000000aa', false]
+          ])
+        }
+        throw rpcError
+      }
+      if (providerType === 'Web3Provider') {
+        provider = new Web3Provider({ request: ({ method, params }) => request(method, params) })
+      } else {
+        provider = new JsonRpcProvider()
+        jest.spyOn(provider, 'send').mockImplementation(request)
+      }
+    })
+
+    afterEach(() => {
+      jest.restoreAllMocks()
+    })
+
+    describe('and the RPC includes explicit empty revert data', () => {
+      beforeEach(() => {
+        rpcError.data = '0x'
+      })
+
+      it('should return undefined because ethers exposes the revert as an empty call result', async () => {
+        await expect(read(provider, 'alice.eth')).resolves.toBeUndefined()
+      })
+    })
+
+    describe('and the RPC omits revert data', () => {
+      it('should propagate CALL_EXCEPTION instead of hiding the failure', async () => {
+        await expect(read(provider, 'alice.eth')).rejects.toMatchObject({ code: 'CALL_EXCEPTION', error: rpcError })
+      })
     })
   })
 })

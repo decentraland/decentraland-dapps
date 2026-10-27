@@ -1,36 +1,41 @@
 import React, { useEffect, useState } from 'react'
 import { isAddress } from '@ethersproject/address'
+import { normalizeENSName } from '../../lib/ens'
 import { isENSAddress, resolveENSname } from './utils'
 import { AddressError, AddressProviderResult, Props } from './AddressProvider.types'
 
 const AddressProvider = (props: Props) => {
   const { children, input, chainId } = props
-  const isENS = !!input && isENSAddress(input)
+  const trimmedInput = (input ?? '').trim()
+  const isENS = !!trimmedInput && isENSAddress(trimmedInput)
+  const ensName = isENS ? normalizeENSName(trimmedInput) : null
   const initial: AddressProviderResult = {
-    address: !isENS && isAddress(input) ? input : null,
-    ens: isENS ? input : null,
+    address: !isENS && isAddress(trimmedInput) ? trimmedInput : null,
+    ens: ensName,
     isLoading: isENS,
-    error: !isENS && input && !isAddress(input) ? AddressError.INVALID : undefined
+    error: !isENS && trimmedInput && !isAddress(trimmedInput) ? AddressError.INVALID : undefined
   }
   const [resolved, setResolved] = useState<{ input: string; chainId: Props['chainId']; result: AddressProviderResult }>()
 
   useEffect(() => {
     let cancel = false
-    if (!isENS) return
+    // Clear even for direct addresses so revisiting an ENS input starts a fresh lookup.
     setResolved(undefined)
+    if (!ensName) return
     const resolve = async () => {
       try {
-        const address = await resolveENSname(input, chainId)
+        const address = await resolveENSname(ensName, chainId)
         if (!cancel) {
           setResolved({
             input,
             chainId,
-            result: { address, ens: input, isLoading: false, error: address ? undefined : AddressError.ENS_NOT_RESOLVED }
+            result: { address, ens: ensName, isLoading: false, error: address ? undefined : AddressError.ENS_NOT_RESOLVED }
           })
         }
-      } catch {
+      } catch (error) {
         if (!cancel) {
-          setResolved({ input, chainId, result: { address: null, ens: input, isLoading: false, error: AddressError.ENS_NOT_RESOLVED } })
+          console.error('Failed to resolve ENS account address', error)
+          setResolved({ input, chainId, result: { address: null, ens: ensName, isLoading: false, error: AddressError.ENS_NOT_RESOLVED } })
         }
       }
     }
@@ -38,9 +43,9 @@ const AddressProvider = (props: Props) => {
     return () => {
       cancel = true
     }
-  }, [isENS, input, chainId])
+  }, [ensName, input, chainId])
 
-  const result = resolved?.input === input && resolved.chainId === chainId ? resolved.result : initial
+  const result = resolved && resolved.input === input && resolved.chainId === chainId ? resolved.result : initial
   return <>{children(result)}</>
 }
 

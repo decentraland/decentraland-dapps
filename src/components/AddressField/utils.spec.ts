@@ -245,3 +245,30 @@ describe('when the application chain has not been initialized', () => {
     expect(mockGetENSWeb3Provider).not.toHaveBeenCalled()
   })
 })
+
+describe.each(['', '   ', 'alice', 'alice..eth', 'alice.eth/other', 'аlice.eth'])(
+  'when the address field receives invalid name %s',
+  input => {
+    it('should report a missing name without creating a provider or tracking a result', async () => {
+      await expect(resolveName(input)).resolves.toBeUndefined()
+      expect(mockGetAppChainId).not.toHaveBeenCalled()
+      expect(mockGetENSWeb3Provider).not.toHaveBeenCalled()
+      expect(track).not.toHaveBeenCalled()
+    })
+  }
+)
+
+describe('when the address field receives a name with surrounding whitespace', () => {
+  beforeEach(() => {
+    call.mockResolvedValueOnce(encodeRequireResolverResult(false)).mockResolvedValueOnce(encodeAddrResult(currentAddress))
+  })
+
+  it('should resolve and track the canonical name', async () => {
+    await expect(resolveName('  SOMEONE.ETH  ')).resolves.toBe(currentAddress)
+    expect(call).toHaveBeenNthCalledWith(1, {
+      to: UNIVERSAL_RESOLVER_ADDRESS,
+      data: universalResolverInterface.encodeFunctionData('requireResolver', [dnsEncode(name)])
+    })
+    expect(track).toHaveBeenCalledWith('Resolve Address from Name', { name, address: currentAddress })
+  })
+})

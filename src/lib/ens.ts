@@ -55,9 +55,14 @@ function isNameWithoutResolver(result: string) {
   }
 }
 
+/** Trim pasted whitespace, then apply ENSIP-15 consistently for classification and resolution. */
+export function normalizeENSName(name: string): string {
+  return ens_normalize(name.trim())
+}
+
 /** Normalize once so discovery and record lookup always refer to the same ENSIP-15 name. */
 export function encodeENSName(name: string) {
-  const normalized = ens_normalize(name)
+  const normalized = normalizeENSName(name)
   const labels = normalized ? normalized.split('.').map(label => toUtf8Bytes(label)) : []
   let node = '0x' + '00'.repeat(32)
   for (const label of [...labels].reverse()) {
@@ -76,7 +81,7 @@ export function encodeENSName(name: string) {
 
 export function isENSName(name: string): boolean {
   try {
-    return ens_normalize(name).includes('.')
+    return normalizeENSName(name).includes('.')
   } catch {
     return false
   }
@@ -117,16 +122,18 @@ async function resolveRecord(provider: ENSProvider, name: string, record: 'addr'
 }
 
 /** Resolve the ETH address using the current resolver, including wildcard and CCIP-Read records.
- * Missing resolvers/records return undefined; RPC and gateway failures propagate.
+ * Missing resolvers/records return undefined. Ethers also exposes explicit empty-data
+ * reverts as empty results; errors without revert data and gateway failures propagate.
  */
 export function resolveAddress(provider: ENSProvider, name: string): Promise<string | undefined> {
   return resolveRecord(provider, name, 'addr')
 }
 
 /** Resolve raw contenthash bytes; callers interpret application-specific content formats.
- * Missing resolvers/records return undefined; RPC and gateway failures propagate.
- * A resolver without contenthash() may revert with empty data. That ambiguous
- * CALL_EXCEPTION propagates too; callers should handle unsupported resolvers.
+ * Missing resolvers/records return undefined. Ethers also exposes explicit empty-data
+ * reverts as empty results; errors without revert data and gateway failures propagate.
+ * An unsupported contenthash() function may produce either empty result or an error,
+ * depending on whether the RPC includes empty revert data; callers must handle both.
  */
 export function resolveContenthash(provider: ENSProvider, name: string): Promise<string | undefined> {
   return resolveRecord(provider, name, 'contenthash')
