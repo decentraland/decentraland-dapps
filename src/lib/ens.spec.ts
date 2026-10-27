@@ -215,4 +215,17 @@ describe.each([false, true])('when reading contenthash from an extended=%s resol
       expect(call).toHaveBeenCalledTimes(1)
     })
   })
+
+  describe('and the resolver rejects the contenthash read with no revert data', () => {
+    let error: Error & { code: string; data: string }
+
+    beforeEach(() => {
+      error = Object.assign(new Error('missing revert data in call exception'), { code: 'CALL_EXCEPTION', data: '0x' })
+      call.mockRejectedValueOnce(error)
+    })
+
+    it('should preserve the ambiguous error instead of reporting a missing record', async () => {
+      await expect(resolveContenthash(provider, 'alice.eth')).rejects.toBe(error)
+    })
+  })
 })

@@ -125,6 +125,8 @@ export function resolveAddress(provider: ENSProvider, name: string): Promise<str
 
 /** Resolve raw contenthash bytes; callers interpret application-specific content formats.
  * Missing resolvers/records return undefined; RPC and gateway failures propagate.
+ * A resolver without contenthash() may revert with empty data. That ambiguous
+ * CALL_EXCEPTION propagates too; callers should handle unsupported resolvers.
  */
 export function resolveContenthash(provider: ENSProvider, name: string): Promise<string | undefined> {
   return resolveRecord(provider, name, 'contenthash')

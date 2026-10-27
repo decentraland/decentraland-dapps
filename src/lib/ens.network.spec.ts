@@ -1,7 +1,7 @@
 import { Interface } from '@ethersproject/abi'
-import { Web3Provider } from '@ethersproject/providers'
+import type { Web3Provider } from '@ethersproject/providers'
 import { ChainId } from '@dcl/schemas/dist/dapps/chain-id'
-import { getENSWeb3Provider } from './eth'
+import type { getENSWeb3Provider as GetENSWeb3Provider } from './eth'
 import { encodeENSName, resolveAddress, UNIVERSAL_RESOLVER_ADDRESS } from './ens'
 
 describe('when the real NETWORK connector receives a JSON-RPC OffchainLookup error over HTTP', () => {
@@ -13,8 +13,11 @@ describe('when the real NETWORK connector receives a JSON-RPC OffchainLookup err
   let resolver: string
   let recipient: string
   let fetchMock: jest.SpyInstance
+  let getENSWeb3Provider: typeof GetENSWeb3Provider
 
   beforeEach(async () => {
+    jest.resetModules()
+    getENSWeb3Provider = require('./eth').getENSWeb3Provider
     resolver = '0x00000000000000000000000000000000000000aa'
     recipient = '0x000000000000000000000000000000000000000b'
     resolverInterface = new Interface([
@@ -74,7 +77,13 @@ describe('when the real NETWORK connector receives a JSON-RPC OffchainLookup err
 
   describe('and the RPC returns an HTTP error', () => {
     beforeEach(() => {
-      fetchMock.mockResolvedValue({ ok: false, status: 503, statusText: 'Service Unavailable' } as Response)
+      fetchMock.mockImplementation(async (_url, options) => {
+        const { method, id } = JSON.parse(options?.body as string)
+        if (method === 'eth_chainId') {
+          return { ok: true, json: async () => ({ jsonrpc: '2.0', id, result: '0x1' }) } as Response
+        }
+        return { ok: false, status: 503, statusText: 'Service Unavailable' } as Response
+      })
     })
 
     it('should fail closed without following a CCIP callback', async () => {
@@ -82,6 +91,17 @@ describe('when the real NETWORK connector receives a JSON-RPC OffchainLookup err
         code: 'CALL_EXCEPTION',
         error: { message: '503: Service Unavailable' }
       })
+      expect(gateway).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('and the RPC is unavailable before detecting the network', () => {
+    beforeEach(() => {
+      fetchMock.mockResolvedValue({ ok: false, status: 503, statusText: 'Service Unavailable' } as Response)
+    })
+
+    it('should report a network error without following a CCIP callback', async () => {
+      await expect(resolveAddress(provider, 'alice.eth')).rejects.toMatchObject({ code: 'NETWORK_ERROR', event: 'noNetwork' })
       expect(gateway).not.toHaveBeenCalled()
     })
   })
