@@ -1,32 +1,24 @@
-import { AddressZero } from '@ethersproject/constants'
-import { Contract } from '@ethersproject/contracts'
-import { namehash } from '@ethersproject/hash'
-import { Web3Provider } from '@ethersproject/providers'
-import type { Provider } from '@ethersproject/providers'
-import { ChainId } from '@dcl/schemas'
-import { getConnectedProvider } from '../../lib/eth'
+import { isAddress } from '@ethersproject/address'
+import { getENSChainId, isENSName, normalizeENSName, resolveAddress } from '../../lib/ens'
+import { _getAppChainId, getENSWeb3Provider } from '../../lib/eth'
 import { getAnalytics } from '../../modules/analytics/utils'
 
-function getResolverContract(contractAddress: string, provider: Provider) {
-  return new Contract(contractAddress, ['function addr(bytes32 node) public view virtual override returns (address payable)'], provider)
-}
+export { resolveAddress, UNIVERSAL_RESOLVER_ADDRESS } from '../../lib/ens'
 
-export async function resolveName(name: string) {
-  const nodehash = namehash(name)
-  const connectedProvider = await getConnectedProvider()
-  if (!connectedProvider) {
-    throw new Error("Couldn't get connected provider to resolve name")
+export async function resolveName(input: string) {
+  // UI delegates padded addresses here because its direct-address check is anchored.
+  const trimmedInput = input.trim()
+  if (isAddress(trimmedInput)) return trimmedInput
+  if (!isENSName(input)) return undefined
+  const name = normalizeENSName(input)
+  // ENS lives on Ethereum, so resolve against the app's Ethereum chain regardless of the network the wallet is connected to
+  const chainId = _getAppChainId()
+  if (chainId == null) {
+    throw new Error('Could not get app chain id')
   }
-
-  const provider = new Web3Provider(connectedProvider)
-  const { chainId } = await provider.getNetwork()
-
-  const resolverAddress =
-    chainId === ChainId.ETHEREUM_SEPOLIA ? '0x8FADE66B79cC9f707aB26799354482EB93a5B7dD' : '0x4976fb03c32e5b8cfe2b6ccb31c09ba78ebaba41'
-
-  const resolverContract = getResolverContract(resolverAddress, provider)
-  const resolvedAddress: string = await resolverContract.addr(nodehash)
-  if (resolvedAddress !== AddressZero) {
+  const provider = await getENSWeb3Provider(getENSChainId(chainId))
+  const resolvedAddress = await resolveAddress(provider, name)
+  if (resolvedAddress) {
     const analytics = getAnalytics()
     if (analytics) {
       analytics.track('Resolve Address from Name', {

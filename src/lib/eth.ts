@@ -56,6 +56,27 @@ export async function getNetworkWeb3Provider(chainId: ChainId) {
   return new Web3Provider(provider)
 }
 
+const ensProviders = new Map<ChainId, Promise<Web3Provider>>()
+
+/**
+ * Use an independent RPC for ENS: wallet error wrappers can lose CCIP revert data.
+ * Reuse saves provider construction; ethers still detects the network on calls.
+ */
+export async function getENSWeb3Provider(chainId: ChainId) {
+  let provider = ensProviders.get(chainId)
+  if (!provider) {
+    provider = connection
+      .createProvider(ProviderType.NETWORK, chainId)
+      .then(provider => new Web3Provider(provider))
+      .catch(error => {
+        ensProviders.delete(chainId)
+        throw error
+      })
+    ensProviders.set(chainId, provider)
+  }
+  return provider
+}
+
 export async function getConnectedProvider(): Promise<Provider | null> {
   try {
     return await connection.getProvider()
